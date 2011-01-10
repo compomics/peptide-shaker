@@ -1,0 +1,15 @@
+################################################################################
+#                                                                              #
+#  Parameters to the Java virtual machine.                                     #
+#                                                                              #
+#  To increase the upper memory limit increase the number on the second line   #
+#  below. Your upper limit is the RAM memory available in your computers. Set  #
+#  it to around three times the size of the spectrum file you want to convert. #
+#                                                                              #
+#  For example, if you computer has 2GB of RAM memory, you can change the      #
+#  second line to a maximum value of:                                          #
+#  -Xmx2048M                                                                   #
+#                                                                              #
+################################################################################
+-Xms128M 
+-Xmx2048M
