@@ -1,27 +1,53 @@
 package eu.isas.peptideshaker.myparameters;
 
-import com.compomics.util.experiment.utils.UrParameter;
+import com.compomics.util.experiment.personalization.UrParameter;
+
 
 /**
- * @TODO: JavaDoc missing
+ * Peptide-Shaker compomics utilities experiment customizable parameter.
+ * This parameter will be added to spectrum, peptide and protein matches to score them, indicate the estimated posterior error probability associated and flag whether they have been validated or not.
  *
  * @author Marc Vaudel
  */
-public class SVParameter implements UrParameter {
-
-    private double searchEngineProbability;
-    private double spectrumProbabilityScore;
-    private double spectrumProbability;
-    private double peptideProbabilityScore;
-    private double peptideProbability;
-    private double peptideSpecificProbability;
-    private double proteinProbabilityScore;
-    private double proteinProbability;
+public class PSParameter implements UrParameter {
 
     /**
-     * @TODO: JavaDoc missing
+     * Posterior error probability estimated for the search engine results (used only in the case of a multiple search engine study)
      */
-    public SVParameter() {
+    private double searchEngineProbability;
+    /**
+     * Probabilistic score for a peptide to spectrum match in the dataset
+     */
+    private double spectrumProbabilityScore;
+    /**
+     * Spectrum posterior error probability
+     */
+    private double spectrumProbability;
+    /**
+     * Probabilistic score for a peptide match
+     */
+    private double peptideProbabilityScore;
+    /**
+     * Peptide Posterior error probability
+     */
+    private double peptideProbability;
+    /**
+     * Probabilistic score for a protein match
+     */
+    private double proteinProbabilityScore;
+    /**
+     * Protein posterior error probability
+     */
+    private double proteinProbability;
+    /**
+     * Boolean indicating whether a match is validated or not at the selected threshold
+     */
+    private boolean validated = false;
+
+    /**
+     * Construcot
+     */
+    public PSParameter() {
 
     }
 
@@ -44,39 +70,21 @@ public class SVParameter implements UrParameter {
     }
 
     /**
-     * Returns the peptide probability score.
+     * Returns the peptide Probabilistic score.
      *
-     * @return the peptide probability score
+     * @return the peptide Probabilistic score
      */
     public double getPeptideProbabilityScore() {
         return peptideProbabilityScore;
     }
 
     /**
-     * Set the peptide probability score.
+     * Set the peptide Probabilistic score.
      *
-     * @param peptideProbabilityScore the new peptide probability score
+     * @param peptideProbabilityScore the new peptide Probabilistic score
      */
     public void setPeptideProbabilityScore(double peptideProbabilityScore) {
         this.peptideProbabilityScore = peptideProbabilityScore;
-    }
-
-    /**
-     * Returns the peptide specific probability.
-     *
-     * @return the peptide specific probability
-     */
-    public double getPeptideSpecificProbability() {
-        return peptideSpecificProbability;
-    }
-
-    /**
-     * Set the peptide specific probability
-     *
-     * @param peptideSpecificProbability the new peptide specific probability
-     */
-    public void setPeptideSpecificProbability(double peptideSpecificProbability) {
-        this.peptideSpecificProbability = peptideSpecificProbability;
     }
 
     /**
@@ -98,18 +106,18 @@ public class SVParameter implements UrParameter {
     }
 
     /**
-     * Returns the protein probability score.
+     * Returns the protein Probabilistic score.
      *
-     * @return the protein probability score
+     * @return the protein Probabilistic score
      */
     public double getProteinProbabilityScore() {
         return proteinProbabilityScore;
     }
 
     /**
-     * Set the protein probability score
+     * Set the protein Probabilistic score
      *
-     * @param proteinProbabilityScore the new protein probability score
+     * @param proteinProbabilityScore the new protein Probabilistic score
      */
     public void setProteinProbabilityScore(double proteinProbabilityScore) {
         this.proteinProbabilityScore = proteinProbabilityScore;
@@ -152,22 +160,39 @@ public class SVParameter implements UrParameter {
     }
 
     /**
-     * Returns the the spectrum probability score.
+     * Returns the the spectrum Probabilistic score.
      *
-     * @return the spectrum probability score
+     * @return the spectrum Probabilistic score
      */
     public double getSpectrumProbabilityScore() {
         return spectrumProbabilityScore;
     }
 
     /**
-     * Set the spectrum probability score
+     * Set the spectrum Probabilistic score
      *
-     * @param spectrumProbabilityScore the new spectrum probability score
+     * @param spectrumProbabilityScore the new spectrum Probabilistic score
      */
     public void setSpectrumProbabilityScore(double spectrumProbabilityScore) {
         this.spectrumProbabilityScore = spectrumProbabilityScore;
     }
+    
+    /**
+     * Un/Validates a match
+     * @param validated boolean indicating whether the match should be validated
+     */
+    public void setValidated(boolean validated) {
+        this.validated = validated;
+    }
+
+    /**
+     * Returns whether a match is validated or not
+     * @return boolean indicating whether a match is validated or not
+     */
+    public boolean isValidated() {
+        return validated;
+    }
+
 
     @Override
     public String getFamilyName() {

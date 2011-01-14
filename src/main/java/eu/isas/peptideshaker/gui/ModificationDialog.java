@@ -15,7 +15,13 @@ import java.util.Collections;
  */
 public class ModificationDialog extends javax.swing.JDialog {
 
+    /**
+     * The known modifications
+     */
     private ArrayList<String> modifications;
+    /**
+     * Boolean indicating whether the user pushed the cancel button
+     */
     private boolean cancel = false;
 
     /**

@@ -1,41 +1,74 @@
 package eu.isas.peptideshaker.fdrestimation;
 
 import eu.isas.peptideshaker.gui.WaitingDialog;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 /**
+ * This map contains the information of a target/decoy strategy
  *
  * @author Marc Vaudel
  */
-public class TargetDecoyMap {
-
-    private String level;
-    private HashMap<Double, TargetDecoyPoint> hitMap = new HashMap<Double, TargetDecoyPoint>();
-    private ArrayList<Double> scores;
-    private int nHits;
-    private double fdr;
-    private Double fnr;
-    private double fdrThreshold;
-    private Integer nmax;
-    private Integer nTargetOnly;
-    private boolean probabilistic = true;
+public class TargetDecoyMap implements Serializable {
 
     /**
-     * @TODO: JavaDoc missing
-     *
-     * @param fdrThreshold
+     * The level at which the target/decoy investigation is conducted (for instance psm, peptide, protein, phosphorylated peptides...)
+     */
+    private String level;
+    /**
+     * The hit map containing the indexed target/decoy points
+     */
+    private HashMap<Double, TargetDecoyPoint> hitMap = new HashMap<Double, TargetDecoyPoint>();
+    /**
+     * The scores imported in the map
+     */
+    private ArrayList<Double> scores;
+    /**
+     * The number of hits retained at the implemented threshold
+     */
+    private int nHits;
+    /**
+     * The estimated FDR at the implemented threshold
+     */
+    private double fdr;
+    /**
+     * The estimated FNR at the implemented threshold
+     */
+    private Double fnr;
+    /**
+     * The implemented FDR threshold
+     */
+    private double fdrThreshold;
+    /**
+     * The maximal amount of target hits comprised between two subsequent decoy hits
+     */
+    private Integer nmax;
+    /**
+     * The number of target hits found before the first decoy hit
+     */
+    private Integer nTargetOnly;
+    /**
+     * Boolean indicating whether the FDR will be estimated probabilistically or not
+     */
+    private boolean probabilistic = true;
+    /**
+     * The estimated score limit at the implemented FDR threshold
+     */
+    private double scoreLimit = -1;
+
+    /**
+     * estimates the results at a new FDR threshold
+     * @param fdrThreshold the new FDR threshold
      */
     public void getResults(double fdrThreshold) {
-        if (this.fdrThreshold != fdrThreshold) {
-            this.fdrThreshold = fdrThreshold;
-            getResults();
-        }
+        this.fdrThreshold = fdrThreshold;
+        getResults();
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Estimates the dataset metrics Nmax, NtargetOnly. Estimates whether a probabilistic processing is possible. Retrieves the FDR, FNR (when possible) and the number of hits passing the threshold.
      */
     private void getResults() {
         int nP = 0;
@@ -47,9 +80,10 @@ public class TargetDecoyMap {
             for (double score : scores) {
                 point = hitMap.get(score);
                 if (point.nTarget > 0) {
-                    if (nFP / nP <= fdrThreshold) {
+                    if ((nFP + point.nTarget * point.p) / (nP + point.nTarget) <= fdrThreshold) {
                         nFP += point.nTarget * point.p;
                         nP += point.nTarget;
+                        scoreLimit = score;
                     } else {
                         nFN += point.nTarget * (1 - point.p);
                     }
@@ -68,16 +102,24 @@ public class TargetDecoyMap {
                     nHits = nP;
                     fdr = nFP / nP;
                     fnr = Double.NaN;
+                    scoreLimit = score;
                 }
             }
         }
     }
 
     /**
-     * @TODO: JavaDoc missing
-     *
-     * @param score
-     * @return
+     * Returns the score limit at the implemented FDR threshold
+     * @return the score limit at the implemented FDR threshold
+     */
+    public double getScoreLimit() {
+        return scoreLimit;
+    }
+
+    /**
+     * Returns the posterior error probability estimated at the given score
+     * @param score the given score
+     * @return the estimated posterior error probability
      */
     public Double getProbability(double score) {
         TargetDecoyPoint point = hitMap.get(score);
@@ -85,30 +127,27 @@ public class TargetDecoyMap {
     }
 
     /**
-     * @TODO: JavaDoc missing
-     *
-     * @param score
-     * @return
+     * Returns the number of target hits found at the given score
+     * @param score the given score
+     * @return the number of target hits found at the given score
      */
     public int getNTarget(double score) {
         return hitMap.get(score).nTarget;
     }
 
     /**
-     * @TODO: JavaDoc missing
-     *
-     * @param score
-     * @return
+     * the number of decoy hits found at the given score
+     * @param score the given score
+     * @return the number of decoy hits found at the given score
      */
     public int getNDecoy(double score) {
         return hitMap.get(score).nDecoy;
     }
 
     /**
-     * @TODO: JavaDoc missing
-     *
-     * @param score
-     * @param isDecoy
+     * Puts a new point in the target/decoy map at the given score
+     * @param score   The given score
+     * @param isDecoy boolean indicating whether the hit is decoy
      */
     public void put(double score, boolean isDecoy) {
         if (!hitMap.containsKey(score)) {
@@ -122,23 +161,22 @@ public class TargetDecoyMap {
     }
 
     /**
-     * @TODO: JavaDoc missing
-     *
-     * @param level
+     * Constructs a target/decoy map at the desired level
+     * @param level the level of the target/decoy map
      */
     public TargetDecoyMap(String level) {
         this.level = level;
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * estimate the probability for this map (without graphical feedback)
      */
     public void estimateProbabilities() {
         estimateProbabilities(null);
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Estimates the metrics of the map: Nmax and NtargetOnly
      */
     private void estimateNs() {
         estimateScores();
@@ -169,9 +207,8 @@ public class TargetDecoyMap {
     }
 
     /**
-     * @TODO: JavaDoc missing
-     *
-     * @param waitingDialog
+     * Estimates the posterior error probabilities in this map.
+     * @param waitingDialog dialog giving feedback to the user.
      */
     public void estimateProbabilities(WaitingDialog waitingDialog) {
         boolean report = waitingDialog != null;
@@ -238,18 +275,16 @@ public class TargetDecoyMap {
     }
 
     /**
-     * Returns the FRD value.
-     *
-     * @return the FRD value
+     * Returns the estimated FDR at the given threshold
+     * @returnthe estimated FDR at the given threshold
      */
     public double getFdr() {
         return fdr;
     }
 
     /**
-     * @TODO: JavaDoc missing
-     *
-     * @return
+     * Returns the estimated FNR at the given threshold. NaN if no FNR could be computed.
+     * @returnthe estimated FNR at the given threshold
      */
     public Double getFnr() {
         if (probabilistic) {
@@ -260,18 +295,16 @@ public class TargetDecoyMap {
     }
 
     /**
-     * Return the number of hits.
-     *
-     * @return the number of hits
+     * Returns the number of hits retained at the given threshold.
+     * @return the number of hits retained at the given threshold.
      */
     public int getNHits() {
         return nHits;
     }
 
     /**
-     * @TODO: JavaDoc missing
-     *
-     * @return
+     * Returns the Nmax metric
+     * @return the Nmax metric
      */
     public int getnMax() {
         if (nmax == null) {
@@ -281,7 +314,7 @@ public class TargetDecoyMap {
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Sorts the scores implemented in this map
      */
     private void estimateScores() {
         scores = new ArrayList<Double>(hitMap.keySet());
@@ -289,9 +322,8 @@ public class TargetDecoyMap {
     }
 
     /**
-     * @TODO: JavaDoc missing
-     *
-     * @return
+     * Returns the sorted scores implemented in this map.
+     * @return the sorted scores implemented in this map.
      */
     public ArrayList<Double> getScores() {
         if (scores == null) {
@@ -301,30 +333,41 @@ public class TargetDecoyMap {
     }
 
     /**
-     * @TODO: JavaDoc missing
-     *
-     * @param anOtherMap
+     * Adds all the points from another target/decoy map
+     * @param anOtherMap another target/decoy map
      */
     public void addAll(TargetDecoyMap anOtherMap) {
-        for(double score : anOtherMap.getScores()) {
-            for (int i = 0 ; i < anOtherMap.getNDecoy(score) ; i++) {
+        for (double score : anOtherMap.getScores()) {
+            for (int i = 0; i < anOtherMap.getNDecoy(score); i++) {
                 put(score, true);
             }
-            for (int i = 0 ; i < anOtherMap.getNTarget(score) ; i++) {
+            for (int i = 0; i < anOtherMap.getNTarget(score); i++) {
                 put(score, false);
             }
         }
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Private class representing a point in the target/decoy map
      */
-    private class TargetDecoyPoint {
+    private class TargetDecoyPoint implements Serializable {
 
+        /**
+         * The number of target hits at this point
+         */
         public int nTarget = 0;
+        /**
+         * The number of decoy hits at this point
+         */
         public int nDecoy = 0;
+        /**
+         * The posterior error probability associated to this point
+         */
         public double p;
 
+        /**
+         * constructor
+         */
         public TargetDecoyPoint() {
         }
     }

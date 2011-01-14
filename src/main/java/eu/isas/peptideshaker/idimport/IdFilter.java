@@ -5,20 +5,35 @@ import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 
 /**
- * @TODO: JavaDoc missing
+ * This class achieves a pre-filtering of the identifications
  *
  * @author Marc Vaudel
  */
 public class IdFilter {
 
+    /**
+     * The minimal peptide length allowed
+     */
     private int minPepLength;
+    /**
+     * The maximal peptide length allowed
+     */
     private int maxPepLength;
+    /**
+     * Mascot maximal e-value allowed
+     */
     private double mascotMaxEvalue;
+    /**
+     * OMSSA maximal e-value allowed
+     */
     private double omssaMaxEvalue;
+    /**
+     * X!Tandem maximal e-value allowed
+     */
     private double xtandemMaxEvalue;
 
     /**
-     * @TODO: JavaDoc missing
+     * Constructor for an Identification filter
      *
      * @param minPepLength
      * @param maxPepLength
@@ -35,10 +50,10 @@ public class IdFilter {
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Validates a peptide assumption
      * 
-     * @param assumption
-     * @return
+     * @param assumption the considered peptide assumption
+     * @return a boolean indicating whether the given assumption passes the filter
      */
     public boolean validateId(PeptideAssumption assumption) {
         int pepLength = assumption.getPeptide().getSequence().length();
