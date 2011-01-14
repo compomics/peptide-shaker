@@ -1,13 +1,15 @@
-
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.biology.Sample;
+import com.compomics.util.experiment.io.ExperimentIO;
+import eu.isas.peptideshaker.IdentificationShaker;
 import eu.isas.peptideshaker.idimport.IdFilter;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -21,13 +23,33 @@ import javax.swing.filechooser.FileFilter;
 public class OpenDialog extends javax.swing.JDialog {
 
     /**
+     * The experiment conducted
+     */
+    MsExperiment experiment;
+    /**
+     * The sample analyzed
+     */
+    Sample sample;
+    /**
+     * The replicate number
+     */
+    int replicateNumber;
+    /**
      * A reference to the main frame.
      */
-    private PeptideShakerGUI peptideShaker;
+    private PeptideShakerGUI peptideShakerGUI;
     /**
      * The list of identification files.
      */
     private ArrayList<File> idFiles = new ArrayList<File>();
+    /**
+     * Compomics experiment saver and opener
+     */
+    private ExperimentIO experimentIO = new ExperimentIO();
+    /**
+     * Boolean indicating whether we are opening a peptideshaker file
+     */
+    private boolean psFile = false;
 
     /**
      * Creates a new open dialog.
@@ -37,7 +59,7 @@ public class OpenDialog extends javax.swing.JDialog {
      */
     public OpenDialog(PeptideShakerGUI peptideShaker, boolean modal) {
         super(peptideShaker, modal);
-        this.peptideShaker = peptideShaker;
+        this.peptideShakerGUI = peptideShaker;
         initComponents();
         idFilesTxt.setText(idFiles.size() + " file(s) selected.");
         this.setLocationRelativeTo(peptideShaker);
@@ -62,9 +84,9 @@ public class OpenDialog extends javax.swing.JDialog {
         browseId = new javax.swing.JButton();
         idFilesTxt = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        sampleName = new javax.swing.JTextField();
+        sampleNametxt = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        replicateNumber = new javax.swing.JTextField();
+        replicateNumbertxt = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         projectNameTxt = new javax.swing.JTextField();
         exitButton = new javax.swing.JButton();
@@ -111,13 +133,13 @@ public class OpenDialog extends javax.swing.JDialog {
 
         jLabel8.setText("Sample Name:");
 
-        sampleName.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        sampleName.setText("Sample 1");
+        sampleNametxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        sampleNametxt.setText("Sample 1");
 
         jLabel9.setText("Replicate Number:");
 
-        replicateNumber.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        replicateNumber.setText("0");
+        replicateNumbertxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        replicateNumbertxt.setText("0");
 
         javax.swing.GroupLayout sampleIdPanelLayout = new javax.swing.GroupLayout(sampleIdPanel);
         sampleIdPanel.setLayout(sampleIdPanelLayout);
@@ -129,11 +151,11 @@ public class OpenDialog extends javax.swing.JDialog {
                     .addGroup(sampleIdPanelLayout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addGap(49, 49, 49)
-                        .addComponent(sampleName, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE))
+                        .addComponent(sampleNametxt, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE))
                     .addGroup(sampleIdPanelLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(idFilesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)))
+                        .addComponent(idFilesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)))
                 .addGroup(sampleIdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sampleIdPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -146,11 +168,11 @@ public class OpenDialog extends javax.swing.JDialog {
                         .addGap(10, 10, 10)
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(replicateNumber, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(replicateNumbertxt, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(16, 16, 16))
         );
 
-        sampleIdPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {browseId, clearId, editId, replicateNumber});
+        sampleIdPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {browseId, clearId, editId, replicateNumbertxt});
 
         sampleIdPanelLayout.setVerticalGroup(
             sampleIdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -158,8 +180,8 @@ public class OpenDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(sampleIdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(sampleName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(replicateNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sampleNametxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(replicateNumbertxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(sampleIdPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -183,7 +205,7 @@ public class OpenDialog extends javax.swing.JDialog {
             }
         });
 
-        processButton.setText("Process");
+        processButton.setText("Open");
         processButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 processButtonActionPerformed(evt);
@@ -205,7 +227,7 @@ public class OpenDialog extends javax.swing.JDialog {
                         .addContainerGap()
                         .addComponent(sampleIdPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fileImportPanelLayout.createSequentialGroup()
-                        .addContainerGap(540, Short.MAX_VALUE)
+                        .addContainerGap(560, Short.MAX_VALUE)
                         .addComponent(processButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(exitButton)))
@@ -282,7 +304,7 @@ public class OpenDialog extends javax.swing.JDialog {
                 .addGroup(idFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(maxPepLength)
                     .addComponent(minPepLength, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(133, Short.MAX_VALUE))
+                .addContainerGap(129, Short.MAX_VALUE))
         );
 
         idFilterPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {mascotMaxEvalue, maxPepLength, minPepLength, omssaMaxEvalue, xtandemMaxEvalue});
@@ -366,7 +388,7 @@ public class OpenDialog extends javax.swing.JDialog {
      */
     private void browseIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseIdActionPerformed
 
-        JFileChooser fileChooser = new JFileChooser(peptideShaker.getLastSelectedFolder());
+        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         fileChooser.setDialogTitle("Select Identification File(s)");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         fileChooser.setMultiSelectionEnabled(true);
@@ -378,12 +400,13 @@ public class OpenDialog extends javax.swing.JDialog {
                 return myFile.getName().endsWith("dat")
                         || myFile.getName().endsWith("omx")
                         || myFile.getName().endsWith("xml")
+                        || myFile.getName().endsWith("cps")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "Supported formats: Mascot (.dat), OMSSA (.omx), X!Tandem (.xml)";
+                return "Supported formats: Mascot (.dat), OMSSA (.omx), X!Tandem (.xml), Peptide Shaker (.cps)";
             }
         };
 
@@ -394,17 +417,38 @@ public class OpenDialog extends javax.swing.JDialog {
                 if (newFile.isDirectory()) {
                     File[] tempFiles = newFile.listFiles();
                     for (File file : tempFiles) {
-                        if (file.getName().endsWith("dat")) {
+                        if (file.getName().endsWith("dat")
+                                || file.getName().endsWith("omx")
+                                || file.getName().endsWith("xml")
+                                || file.getName().endsWith("cps")) {
                             idFiles.add(file);
                         }
                     }
                 } else {
                     idFiles.add(newFile);
                 }
+                peptideShakerGUI.setLastSelectedFolder(newFile.getPath());
+            }
 
-                peptideShaker.setLastSelectedFolder(newFile.getPath());
+            if (idFiles.size() > 1) {
+                for (File file : idFiles) {
+                    if (file.getName().endsWith(".cps")) {
+                        JOptionPane.showMessageDialog(this, "A PeptideShaker file must be imported alone.", "Wrong identification file.", JOptionPane.ERROR_MESSAGE);
+                        idFiles = new ArrayList<File>();
+                    }
+                }
             }
             idFilesTxt.setText(idFiles.size() + " file(s) selected.");
+
+            if (idFiles.size() == 1 && idFiles.get(0).getName().endsWith(".cps")) {
+                importPeptideShakerFile(idFiles.get(0));
+                psFile = true;
+            } else {
+                projectNameTxt.setEditable(true);
+                sampleNametxt.setEditable(true);
+                replicateNumbertxt.setEditable(true);
+                psFile = false;
+            }
         }
 }//GEN-LAST:event_browseIdActionPerformed
 
@@ -426,17 +470,25 @@ public class OpenDialog extends javax.swing.JDialog {
      */
     private void processButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processButtonActionPerformed
         if (validateInput()) {
-            this.setVisible(false);
-            MsExperiment experiment = new MsExperiment(projectNameTxt.getText().trim());
-            Sample sample = new Sample(sampleName.getText().trim());
-            SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(getReplicateNumber()));
-            experiment.addAnalysisSet(sample, analysisSet);
-            IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue());
-            peptideShaker.importIdentifications(experiment, sample, getReplicateNumber(), idFilter, idFiles);
-            this.dispose();
+            if (psFile) {
+                peptideShakerGUI.setProject(experiment, sample, replicateNumber);
+                peptideShakerGUI.displayResults();
+                this.dispose();
+            } else {
+                experiment = new MsExperiment(projectNameTxt.getText().trim());
+                sample = new Sample(sampleNametxt.getText().trim());
+                SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(getReplicateNumber()));
+                replicateNumber = getReplicateNumber();
+                peptideShakerGUI.setProject(experiment, sample, replicateNumber);
+                experiment.addAnalysisSet(sample, analysisSet);
+                WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI, true, experiment.getReference());
+                IdentificationShaker identificationShaker = new IdentificationShaker();
+                IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue());
+                identificationShaker.importIdentifications(waitingDialog, experiment, sample, replicateNumber, idFilter, idFiles);
+                this.dispose();
+            }
         }
 }//GEN-LAST:event_processButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseId;
     private javax.swing.JButton clearId;
@@ -462,9 +514,9 @@ public class OpenDialog extends javax.swing.JDialog {
     private javax.swing.JTextField omssaMaxEvalue;
     private javax.swing.JButton processButton;
     private javax.swing.JTextField projectNameTxt;
-    private javax.swing.JTextField replicateNumber;
+    private javax.swing.JTextField replicateNumbertxt;
     private javax.swing.JPanel sampleIdPanel;
-    private javax.swing.JTextField sampleName;
+    private javax.swing.JTextField sampleNametxt;
     private javax.swing.JTextField xtandemMaxEvalue;
     // End of variables declaration//GEN-END:variables
 
@@ -473,7 +525,7 @@ public class OpenDialog extends javax.swing.JDialog {
      *
      * @return true if the input is valid, false otherwise.
      */
-     private boolean validateInput() {
+    private boolean validateInput() {
 
         if (idFiles.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Please select identification files.",
@@ -525,11 +577,11 @@ public class OpenDialog extends javax.swing.JDialog {
         return true;
     }
 
-     /**
-      * Returns the minimum peptide length.
-      *
-      * @return the minimum peptide length
-      */
+    /**
+     * Returns the minimum peptide length.
+     *
+     * @return the minimum peptide length
+     */
     private int getMinPeptideLength() {
         String input = minPepLength.getText().trim();
         if (input == null || input.equals("")) {
@@ -596,6 +648,63 @@ public class OpenDialog extends javax.swing.JDialog {
      * @return the replicate number
      */
     private int getReplicateNumber() {
-        return new Integer(replicateNumber.getText().trim());
+        return new Integer(replicateNumbertxt.getText().trim());
+    }
+
+    /**
+     * Imports informations from a peptide shaker file
+     * @param psFile    the peptide shaker file
+     */
+    private void importPeptideShakerFile(File psFile) {
+        try {
+            Date date = experimentIO.getDate(psFile);
+            // Would need a progress bar here for big projects
+
+            experiment = experimentIO.loadExperiment(psFile);
+            projectNameTxt.setText(experiment.getReference());
+            projectNameTxt.setEditable(false);
+
+            ArrayList<Sample> samples = new ArrayList(experiment.getSamples().values());
+            if (samples.size() == 1) {
+                sample = samples.get(0);
+            } else {
+                String[] sampleNames = new String[samples.size()];
+                for (int cpt = 0; cpt < sampleNames.length; cpt++) {
+                    sampleNames[cpt] = samples.get(cpt).getReference();
+                }
+                SampleSelection sampleSelection = new SampleSelection(null, true, sampleNames, "sample");
+                sampleSelection.setVisible(true);
+                String choice = sampleSelection.getChoice();
+                for (Sample sampleTemp : samples) {
+                    if (sampleTemp.getReference().equals(choice)) {
+                        sample = sampleTemp;
+                        break;
+                    }
+                }
+            }
+            sampleNametxt.setText(sample.getReference());
+            sampleNametxt.setEditable(false);
+
+            ArrayList<Integer> replicates = new ArrayList(experiment.getAnalysisSet(sample).getReplicateNumberList());
+            if (replicates.size() == 1) {
+                replicateNumber = replicates.get(0);
+            } else {
+                String[] replicateNames = new String[replicates.size()];
+                for (int cpt = 0; cpt < replicateNames.length; cpt++) {
+                    replicateNames[cpt] = samples.get(cpt).getReference();
+                }
+                SampleSelection sampleSelection = new SampleSelection(null, true, replicateNames, "replicate");
+                sampleSelection.setVisible(true);
+                Integer choice = new Integer(sampleSelection.getChoice());
+                replicateNumber = choice;
+            }
+            replicateNumbertxt.setText(replicateNumber + "");
+            replicateNumbertxt.setEditable(false);
+            JOptionPane.showMessageDialog(this, "Experiment " + experiment.getReference() + " created on " + date.toString() + " imported.", "Identifications Imported.", JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "An error occured while reading" + psFile + ". Please verif that the compomics utilities version used to create the file was the same as the one used by your version of Reporter.", "File Input Error.", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 }

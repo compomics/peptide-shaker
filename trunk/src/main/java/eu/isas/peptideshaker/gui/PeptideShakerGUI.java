@@ -1,8 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
-import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
-import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
@@ -10,41 +8,25 @@ import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
-import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
-import com.jgoodies.looks.plastic.theme.SkyKrupp;
-import eu.isas.peptideshaker.fdrestimation.InputMap;
+import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
-import eu.isas.peptideshaker.fdrestimation.SpectrumSpecificMap;
+import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
-import eu.isas.peptideshaker.idimport.IdFilter;
-import eu.isas.peptideshaker.idimport.IdImporter;
-import eu.isas.peptideshaker.myparameters.SVParameter;
+import eu.isas.peptideshaker.myparameters.PSMaps;
+import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.renderers.TrueFalseIconRenderer;
 import eu.isas.peptideshaker.utils.Properties;
 import java.awt.Color;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
@@ -58,28 +40,56 @@ import org.jfree.chart.plot.PlotOrientation;
 public class PeptideShakerGUI extends javax.swing.JFrame {
 
     /**
-     * If set to true all messages will be sent to a log file.
+     * the main class
      */
-    private static boolean useLogFile = true;
+    private PeptideShaker peptideShaker;
     /**
      * The last folder opened by the user. Defaults to user.home.
      */
     private String lastSelectedFolder = "user.home";
+    /**
+     * The compomics experiment
+     */
+
     private MsExperiment experiment;
+    /**
+     * The investigated sample
+     */
     private Sample sample;
+    /**
+     * The replicate number
+     */
     private int replicateNumber;
-    private SpectrumSpecificMap spectrumMap;
+
+    /**
+     * The specific target/decoy map at the psm level
+     */
+    private PsmSpecificMap psmMap;
+    /**
+     * The specific target/decoy map at the peptide level
+     */
     private PeptideSpecificMap peptideMap;
+    /**
+     * The target/decoy map at the protein level
+     */
     private TargetDecoyMap proteinMap;
+
     /**
      * The color used for the sparkline bar chart plots.
      */
-    private Color sparklineColor = new Color(110, 196, 97);
+    private Color sparklineColor = new Color(100, 100, 255);
+    /**
+     * Compomics experiment saver and opener
+     */
+    private ExperimentIO experimentIO = new ExperimentIO();
 
     /**
      * Creates a new PeptideShaker frame.
      */
-    public PeptideShakerGUI() {
+    public PeptideShakerGUI(PeptideShaker peptideShaker) {
+
+        this.peptideShaker = peptideShaker;
+
         initComponents();
 
         // set up the table column properties
@@ -89,12 +99,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         jTabbedPane.setEnabledAt(3, false);
 
         setTitle(this.getTitle() + " " + new Properties().getVersion());
-
-        // check if a newer version of PeptideShaker is available
-        //checkForNewVersion(new Properties().getVersion());
-
-        // set up the ErrorLog
-        setUpLogFile();
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -126,12 +130,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
 
         proteinsJTable.getColumn("#Peptides").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
         proteinsJTable.getColumn("#Spectra").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
-        proteinsJTable.getColumn("P-score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
-        proteinsJTable.getColumn("P-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
+        proteinsJTable.getColumn("p-score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
+        proteinsJTable.getColumn("PEP").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
 
         peptidesJTable.getColumn("#Spectra").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
-        peptidesJTable.getColumn("P-score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
-        peptidesJTable.getColumn("P-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
+        peptidesJTable.getColumn("p-score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
+        peptidesJTable.getColumn("PEP").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
 
         spectraJTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
         spectraJTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
@@ -139,8 +143,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         spectraJTable.getColumn("Mascot e-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
         spectraJTable.getColumn("OMSSA e-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
         spectraJTable.getColumn("X!Tandem e-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
-        spectraJTable.getColumn("P-score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
-        spectraJTable.getColumn("P-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
+        spectraJTable.getColumn("p-score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
+        spectraJTable.getColumn("PEP").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
 
         proteinsJTable.getColumn("Decoy").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")), null));
@@ -148,55 +152,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")), null));
         spectraJTable.getColumn("Decoy").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")), null));
-    }
-
-    /**
-     * Set up the log file.
-     */
-    private void setUpLogFile() {
-        if (useLogFile && !getJarFilePath().equalsIgnoreCase(".")) {
-            try {
-                String path = getJarFilePath() + "/conf/PeptideShakerLog.log";
-
-                File file = new File(path);
-                System.setOut(new java.io.PrintStream(new FileOutputStream(file, true)));
-                System.setErr(new java.io.PrintStream(new FileOutputStream(file, true)));
-
-                // creates a new log file if it does not exist
-                if (!file.exists()) {
-                    file.createNewFile();
-
-                    FileWriter w = new FileWriter(file);
-                    BufferedWriter bw = new BufferedWriter(w);
-
-                    bw.close();
-                    w.close();
-                }
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(
-                        null, "An error occured when trying to create the PeptideShaker Log.",
-                        "Error Creating Log File", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Returns the path to the jar file.
-     *
-     * @return the path to the jar file
-     */
-    private String getJarFilePath() {
-        String path = this.getClass().getResource("PeptideShakerGUI.class").getPath();
-
-        if (path.lastIndexOf("/PeptideShaker-") != -1) {
-            path = path.substring(5, path.lastIndexOf("/PeptideShaker-"));
-            path = path.replace("%20", " ");
-        } else {
-            path = ".";
-        }
-
-        return path;
     }
 
     /**
@@ -235,9 +190,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         spectraJTable = new javax.swing.JTable();
         quantificationJScrollPane = new javax.swing.JScrollPane();
         quantificationJTable = new javax.swing.JTable();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         openJMenuItem = new javax.swing.JMenuItem();
+        saveMenuItem = new javax.swing.JMenuItem();
+        exportMenuItem = new javax.swing.JMenuItem();
         exitJMenuItem = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -250,7 +208,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                " ", "Protein", "#Peptides", "#Spectra", "P-score", "P-value", "Decoy"
+                " ", "Protein", "#Peptides", "#Spectra", "p-score", "PEP", "Decoy"
             }
         ) {
             Class[] types = new Class [] {
@@ -277,7 +235,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                " ", "Protein(s)", "Sequence", "Variable Modification(s)", "#Spectra", "P-score", "P-value", "Decoy"
+                " ", "Protein(s)", "Sequence", "Variable Modification(s)", "#Spectra", "p-score", "PEP", "Decoy"
             }
         ) {
             Class[] types = new Class [] {
@@ -304,7 +262,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
 
             },
             new String [] {
-                " ", "Protein(s)", "Sequence", "Variable Modification(s)", "Charge", "Spectrum", "Spectrum File", "Identification File(s)", "Mass Error", "Mascot Score", "Mascot e-value", "OMSSA e-value", "X!Tandem e-value", "P-score", "P-value", "Decoy"
+                " ", "Protein(s)", "Sequence", "Variable Modification(s)", "Charge", "Spectrum", "Spectrum File", "Identification File(s)", "Mass Error", "Mascot Score", "Mascot e-value", "OMSSA e-value", "X!Tandem e-value", "p-score", "PEP", "Decoy"
             }
         ) {
             Class[] types = new Class [] {
@@ -345,6 +303,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         quantificationJScrollPane.setViewportView(quantificationJTable);
 
         jTabbedPane.addTab("Quantification", quantificationJScrollPane);
+        jTabbedPane.addTab("PTM analysis", jTabbedPane1);
 
         fileJMenu.setMnemonic('F');
         fileJMenu.setText("File");
@@ -358,6 +317,23 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
             }
         });
         fileJMenu.add(openJMenuItem);
+
+        saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        saveMenuItem.setText("Save as");
+        saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveMenuItemActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(saveMenuItem);
+
+        exportMenuItem.setText("Export");
+        exportMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportMenuItemActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(exportMenuItem);
 
         exitJMenuItem.setMnemonic('x');
         exitJMenuItem.setText("Exit");
@@ -392,7 +368,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1217, Short.MAX_VALUE)
+            .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1080, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -429,12 +405,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
     private void sparklinesJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sparklinesJCheckBoxMenuItemActionPerformed
         ((JSparklinesBarChartTableCellRenderer) proteinsJTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
         ((JSparklinesBarChartTableCellRenderer) proteinsJTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
-        ((JSparklinesBarChartTableCellRenderer) proteinsJTable.getColumn("P-score").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
-        ((JSparklinesBarChartTableCellRenderer) proteinsJTable.getColumn("P-value").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) proteinsJTable.getColumn("p-score").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) proteinsJTable.getColumn("PEP").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
 
         ((JSparklinesBarChartTableCellRenderer) peptidesJTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
-        ((JSparklinesBarChartTableCellRenderer) peptidesJTable.getColumn("P-score").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
-        ((JSparklinesBarChartTableCellRenderer) peptidesJTable.getColumn("P-value").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) peptidesJTable.getColumn("p-score").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) peptidesJTable.getColumn("PEP").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
 
         ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("Charge").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
         ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("Mass Error").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
@@ -442,8 +418,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("Mascot e-value").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
         ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("OMSSA e-value").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
         ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("X!Tandem e-value").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
-        ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("P-score").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
-        ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("P-value").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("p-score").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("PEP").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
 
         proteinsJTable.revalidate();
         proteinsJTable.repaint();
@@ -455,101 +431,49 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         spectraJTable.repaint();
     }//GEN-LAST:event_sparklinesJCheckBoxMenuItemActionPerformed
 
-    /**
-     * The main method.
-     *
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
+    private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
 
-            public void run() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select Result File");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        fileChooser.setMultiSelectionEnabled(false);
 
-                // update the look and feel after adding the panels
-                setLookAndFeel();
-
-                new PeptideShakerGUI();
+        int returnVal = fileChooser.showSaveDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            try {
+                experimentIO.save(fileChooser.getSelectedFile(), experiment);
+                JOptionPane.showMessageDialog(null, "Identifications were successfully saved", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
             }
-        });
-    }
-
-    /**
-     * Sets the look and feel of the PeptideShaker.
-     * <p/>
-     * Note that the GUI has been created with the following look and feel
-     * in mind. If using a different look and feel you might need to tweak the GUI
-     * to get the best appearance.
-     */
-    private static void setLookAndFeel() {
-
-        try {
-            PlasticLookAndFeel.setPlasticTheme(new SkyKrupp());
-            UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
-            //SwingUtilities.updateComponentTreeUI(mainFrame);
-        } catch (UnsupportedLookAndFeelException e) {
-            // ignore exception, i.e. use default look and feel
         }
-    }
+    }//GEN-LAST:event_saveMenuItemActionPerformed
+
+    private void exportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMenuItemActionPerformed
+        CsvExporter exporter = new CsvExporter(experiment, sample, replicateNumber);
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Select Result Folder");
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fileChooser.setMultiSelectionEnabled(false);
+
+        int returnVal = fileChooser.showDialog(this, "Save");
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            exporter.exportResults(fileChooser.getSelectedFile());
+        }
+    }//GEN-LAST:event_exportMenuItemActionPerformed
+
 
     /**
-     * Check if a newer version of PeptideShaker is available.
-     *
-     * @param currentVersion the version number of the currently running PeptideShaker
+     * This method sets the information of the project when opened
+     * @param experiment        the experiment conducted
+     * @param sample            The sample analyzed
+     * @param replicateNumber   The replicate number
      */
-    private static void checkForNewVersion(String currentVersion) {
-
-        try {
-            boolean deprecatedOrDeleted = false;
-            URL downloadPage = new URL(
-                    "http://code.google.com/p/proteomics-blender/downloads/detail?name=proteomics-blender-"
-                    + currentVersion + ".zip");
-            int respons = ((java.net.HttpURLConnection) downloadPage.openConnection()).getResponseCode();
-
-            // 404 means that the file no longer exists, which means that
-            // the running version is no longer available for download,
-            // which again means that a never version is available.
-            if (respons == 404) {
-                deprecatedOrDeleted = true;
-            } else {
-
-                // also need to check if the available running version has been
-                // deprecated (but not deleted)
-                BufferedReader in = new BufferedReader(
-                        new InputStreamReader(downloadPage.openStream()));
-
-                String inputLine;
-
-                while ((inputLine = in.readLine()) != null && !deprecatedOrDeleted) {
-                    if (inputLine.lastIndexOf("Deprecated") != -1
-                            && inputLine.lastIndexOf("Deprecated Downloads") == -1
-                            && inputLine.lastIndexOf("Deprecated downloads") == -1) {
-                        deprecatedOrDeleted = true;
-                    }
-                }
-
-                in.close();
-            }
-
-            // informs the user about an updated version of the tool, unless the user
-            // is running a beta version
-            if (deprecatedOrDeleted && currentVersion.lastIndexOf("beta") == -1) {
-                int option = JOptionPane.showConfirmDialog(null,
-                        "A newer version of PeptideShaker is available.\n"
-                        + "Do you want to upgrade?",
-                        "Upgrade Available",
-                        JOptionPane.YES_NO_CANCEL_OPTION);
-                if (option == JOptionPane.YES_OPTION) {
-                    BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com/");
-                    System.exit(0);
-                } else if (option == JOptionPane.CANCEL_OPTION) {
-                    System.exit(0);
-                }
-            }
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void setProject(MsExperiment experiment, Sample sample, int replicateNumber) {
+        this.experiment = experiment;
+        this.sample = sample;
+        this.replicateNumber = replicateNumber;
     }
 
     /**
@@ -557,19 +481,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
      */
     public void displayResults() {
 
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-        // remove the previous results
+        PSMaps psMaps = (PSMaps) identification.getUrParam(new PSMaps());
+        psmMap = psMaps.getPsmSpecificMap();
+        peptideMap = psMaps.getPeptideSpecificMap();
+        proteinMap = psMaps.getProteinMap();
+
         emptyResultTables();
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         // set the FDR threshold to use
         double threshold = 0.01;    // @TODO: this number ought to not be hardcoded!!!
-        spectrumMap.getResults(threshold);
+        psmMap.getResults(threshold);
         peptideMap.getResults(threshold);
         proteinMap.getResults(threshold);
-
-        // display the results
-        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         int indexCounter = 0;
         int maxPeptides = 1;
@@ -578,8 +505,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         // add the proteins to the table
         for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
 
-            SVParameter probabilities = new SVParameter();
-            probabilities = (SVParameter) proteinMatch.getUrParam(probabilities);
+            PSParameter probabilities = new PSParameter();
+            probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
 
             ((DefaultTableModel) proteinsJTable.getModel()).addRow(new Object[]{
                         ++indexCounter,
@@ -632,8 +559,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
                 modifications = null;
             }
 
-            SVParameter probabilities = new SVParameter();
-            probabilities = (SVParameter) peptideMatch.getUrParam(probabilities);
+            PSParameter probabilities = new PSParameter();
+            probabilities = (PSParameter) peptideMatch.getUrParam(probabilities);
 
 
             ((DefaultTableModel) peptidesJTable.getModel()).addRow(new Object[]{
@@ -662,7 +589,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         double maxMascotEValue = 0.0;
         double maxOmssaEValue = 0.0;
         double maxXTandemEValue = 0.0;
-        double maxPScore = 0;
+        double maxPScore = 1;
+        double maxPEP = 1;
 
         // add the spectra to the table
         for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
@@ -741,8 +669,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
                 }
             }
 
-            SVParameter probabilities = new SVParameter();
-            probabilities = (SVParameter) spectrumMatch.getUrParam(probabilities);
+            PSParameter probabilities = new PSParameter();
+            probabilities = (PSParameter) spectrumMatch.getUrParam(probabilities);
 
             ((DefaultTableModel) spectraJTable.getModel()).addRow(new Object[]{
                         ++indexCounter,
@@ -786,10 +714,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
             if (xTandemEValue != null && maxXTandemEValue < xTandemEValue) {
                 maxXTandemEValue = xTandemEValue;
             }
-
-            if (maxPScore < probabilities.getSpectrumProbabilityScore()) {
-                maxPScore = probabilities.getSpectrumProbabilityScore();
-            }
         }
 
         ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("Charge").getCellRenderer()).setMaxValue(maxCharge);
@@ -798,7 +722,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("Mascot e-value").getCellRenderer()).setMaxValue(maxMascotEValue);
         ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("OMSSA e-value").getCellRenderer()).setMaxValue(maxOmssaEValue);
         ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("X!Tandem e-value").getCellRenderer()).setMaxValue(maxXTandemEValue);
-        ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("P-score").getCellRenderer()).setMaxValue(maxPScore);
+        ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("p-score").getCellRenderer()).setMaxValue(maxPScore);
+        ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("PEP").getCellRenderer()).setMaxValue(maxPEP);
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
@@ -825,8 +750,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem exitJMenuItem;
+    private javax.swing.JMenuItem exportMenuItem;
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JTabbedPane jTabbedPane;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JScrollPane peptidesJScrollPane;
@@ -835,225 +762,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
     private javax.swing.JTable proteinsJTable;
     private javax.swing.JScrollPane quantificationJScrollPane;
     private javax.swing.JTable quantificationJTable;
+    private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
     private javax.swing.JScrollPane spectraJScrollPane;
     private javax.swing.JTable spectraJTable;
     private javax.swing.JMenu viewJMenu;
     // End of variables declaration//GEN-END:variables
-
-
-    // @TODO: all of the below methods ought to be moved to a non-gui class...
-
-    /**
-     * @TODO: JavaDoc missing
-     *
-     * @param experiment
-     * @param sample
-     * @param replicateNumber
-     * @param idFilter
-     * @param idFiles
-     */
-    public void importIdentifications(MsExperiment experiment, Sample sample, int replicateNumber, IdFilter idFilter, ArrayList<File> idFiles) {
-
-        // remove previuous results
-        emptyResultTables();
-
-        this.experiment = experiment;
-        this.sample = sample;
-        this.replicateNumber = replicateNumber;
-        WaitingDialog waitingDialog = new WaitingDialog(this, true, experiment.getReference());
-        ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-        Ms2Identification identification = new Ms2Identification();
-        analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, identification);
-        IdImporter idImporter = new IdImporter(this, waitingDialog, identification, idFilter);
-        idImporter.importFiles(idFiles);
-    }
-
-    /**
-     * Method for processing of results from utilities data (no file). From ms_lims for instance.
-     *
-     * @param sample            The reference sample
-     * @param replicateNumber   The replicate number
-     */
-    public void processIdentifications(Sample sample, int replicateNumber) {
-        this.sample = sample;
-        this.replicateNumber = replicateNumber;
-        WaitingDialog waitingDialog = new WaitingDialog(this, true, experiment.getReference());
-        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        IdImporter idImporter = new IdImporter(this, waitingDialog, identification);
-        idImporter.importIdentifications();
-    }
-
-    /**
-     * @TODO: JavaDoc missing
-     *
-     * @param inputMap
-     * @param waitingDialog
-     * @param identification
-     */
-    public void processIdentifications(InputMap inputMap, WaitingDialog waitingDialog, Identification identification) {
-        if (inputMap.isMultipleSearchEngines()) {
-            inputMap.computeProbabilities(waitingDialog);
-        }
-        waitingDialog.appendReport("Computing spectrum probabilities.");
-        spectrumMap = new SpectrumSpecificMap();
-        fillSpectrumMap(identification, inputMap);
-        spectrumMap.cure(waitingDialog);
-        spectrumMap.estimateProbabilities(waitingDialog);
-        attachSpectrumProbabilities(identification);
-        waitingDialog.appendReport("Computing peptide probabilities.");
-        peptideMap = new PeptideSpecificMap();
-        PeptideSpecificMap peptideSpecificMap = new PeptideSpecificMap(); //  @TODO: remove??
-        fillPeptideMaps(identification);
-        peptideMap.cure(waitingDialog);
-        peptideMap.estimateProbabilities(waitingDialog);
-        attachPeptideProbabilities(identification);
-        waitingDialog.appendReport("Computing protein probabilities.");
-        proteinMap = new TargetDecoyMap("protein");
-        fillProteinMap(identification);
-        proteinMap.estimateProbabilities(waitingDialog);
-        attachProteinProbabilities(proteinMap, identification);
-        waitingDialog.appendReport("Identification processing completed.");
-        waitingDialog.setRunFinished();
-    }
-
-    /**
-     * @TODO: JavaDoc missing
-     *
-     * @param identification
-     * @param inputMap
-     */
-    private void fillSpectrumMap(Identification identification, InputMap inputMap) {
-        HashMap<String, Double> identifications;
-        HashMap<Double, PeptideAssumption> peptideAssumptions;
-        SVParameter svParameter;
-        PeptideAssumption peptideAssumption;
-        if (inputMap.isMultipleSearchEngines()) {
-            for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
-                svParameter = new SVParameter();
-                identifications = new HashMap<String, Double>();
-                peptideAssumptions = new HashMap<Double, PeptideAssumption>();
-                String id;
-                double p, pScore = 1;
-                for (int searchEngine : spectrumMatch.getAdvocates()) {
-                    peptideAssumption = spectrumMatch.getFirstHit(searchEngine);
-                    p = inputMap.getProbability(searchEngine, peptideAssumption.getEValue());
-                    pScore = pScore * p;
-                    id = peptideAssumption.getPeptide().getIndex();
-                    if (identifications.containsKey(id)) {
-                        p = identifications.get(id) * p;
-                        identifications.put(id, p);
-                        peptideAssumptions.put(p, peptideAssumption);
-                    } else {
-                        identifications.put(id, p);
-                        peptideAssumptions.put(p, peptideAssumption);
-                    }
-                }
-                double pMin = Collections.min(identifications.values());
-                svParameter.setSpectrumProbabilityScore(pScore);
-                spectrumMatch.addUrParam(svParameter);
-                spectrumMatch.setBestAssumption(peptideAssumptions.get(pMin));
-                spectrumMap.addPoint(pScore, spectrumMatch);
-            }
-        } else {
-            double eValue;
-            for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
-                svParameter = new SVParameter();
-                for (int searchEngine : spectrumMatch.getAdvocates()) {
-                    peptideAssumption = spectrumMatch.getFirstHit(searchEngine);
-                    eValue = peptideAssumption.getEValue();
-                    svParameter.setSpectrumProbabilityScore(eValue);
-                    spectrumMatch.setBestAssumption(peptideAssumption);
-                    spectrumMap.addPoint(eValue, spectrumMatch);
-                }
-                spectrumMatch.addUrParam(svParameter);
-            }
-        }
-    }
-
-    /**
-     * @TODO: JavaDoc missing
-     *
-     * @param identification
-     */
-    private void attachSpectrumProbabilities(Identification identification) {
-        SVParameter svParameter = new SVParameter();
-        for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
-            svParameter = (SVParameter) spectrumMatch.getUrParam(svParameter);
-            svParameter.setSpectrumProbability(spectrumMap.getProbability(spectrumMatch, svParameter.getSpectrumProbabilityScore()));
-        }
-    }
-
-    /**
-     * @TODO: JavaDoc missing
-     *
-     * @param identification
-     */
-    private void fillPeptideMaps(Identification identification) {
-        double probaScore;
-        SVParameter svParameter = new SVParameter();
-        for (PeptideMatch peptideMatch : identification.getPeptideIdentification().values()) {
-            probaScore = 1;
-            for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
-                if (spectrumMatch.getBestAssumption().getPeptide().isSameAs(peptideMatch.getTheoreticPeptide())) {
-                    svParameter = (SVParameter) spectrumMatch.getUrParam(svParameter);
-                    probaScore = probaScore * svParameter.getSpectrumProbability();
-                }
-            }
-            svParameter = new SVParameter();
-            svParameter.setPeptideProbabilityScore(probaScore);
-            peptideMatch.addUrParam(svParameter);
-            peptideMap.addPoint(probaScore, peptideMatch);
-        }
-    }
-
-    /**
-     * @TODO: JavaDoc missing
-     *
-     * @param identification
-     */
-    private void attachPeptideProbabilities(Identification identification) {
-        SVParameter svParameter = new SVParameter();
-        for (PeptideMatch peptideMatch : identification.getPeptideIdentification().values()) {
-            svParameter = (SVParameter) peptideMatch.getUrParam(svParameter);
-            svParameter.setPeptideProbability(peptideMap.getProbability(peptideMatch, svParameter.getPeptideProbabilityScore()));
-        }
-    }
-
-    /**
-     * @TODO: JavaDoc missing
-     *
-     * @param identification
-     */
-    private void fillProteinMap(Identification identification) {
-        double probaScore;
-        SVParameter svParameter = new SVParameter();
-        for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
-            probaScore = 1;
-            for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-                if (peptideMatch.getTheoreticPeptide().getParentProteins().size() == 1) {
-                    svParameter = (SVParameter) peptideMatch.getUrParam(svParameter);
-                    probaScore = probaScore * svParameter.getPeptideProbability();
-                }
-            }
-            svParameter = new SVParameter();
-            svParameter.setProteinProbabilityScore(probaScore);
-            proteinMatch.addUrParam(svParameter);
-            proteinMap.put(probaScore, proteinMatch.isDecoy());
-        }
-    }
-
-    /**
-     * @TODO: JavaDoc missing
-     * 
-     * @param proteinMap
-     * @param identification
-     */
-    private void attachProteinProbabilities(TargetDecoyMap proteinMap, Identification identification) {
-        SVParameter svParameter = new SVParameter();
-        for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
-            svParameter = (SVParameter) proteinMatch.getUrParam(svParameter);
-            svParameter.setProteinProbability(proteinMap.getProbability(svParameter.getProteinProbabilityScore()));
-        }
-    }
 }

@@ -2,9 +2,10 @@ package eu.isas.peptideshaker.idimport;
 
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.IdfileReader;
-import com.compomics.util.experiment.identification.IdfileReaderFactory;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.io.identifications.IdfileReader;
+import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
+import eu.isas.peptideshaker.IdentificationShaker;
 import eu.isas.peptideshaker.fdrestimation.InputMap;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WaitingDialog;
@@ -16,52 +17,74 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 /**
- * @TODO: JavaDoc missing
+ * This class is responsible for the import of identifications
  *
  * @author  Marc Vaudel
  * @author  Harald Barsnes
  */
 public class IdImporter {
 
-    private PeptideShakerGUI peptideShaker;
+    /**
+     * The class which will load the information into the various maps and do the associated calculations
+     */
+    private IdentificationShaker identificationShaker;
+    /**
+     * The identification processed
+     */
     private Identification identification;
+    /**
+     * The identification filter to use
+     */
     private IdFilter idFilter;
+    /**
+     * A dialog to display feedback to the user
+     */
     private WaitingDialog waitingDialog;
+
+    /**
+     * The location of the modification file
+     */
     private final String MODIFICATION_FILE = "conf/peptideshaker_mods.xml";
+    /**
+     * The location of the user modification file
+     */
     private final String USER_MODIFICATION_FILE = "conf/peptideshaker_usermods.xml";
+    /**
+     * The modification factory
+     */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
 
     /**
-     * @TODO: JavaDoc missing
+     * Constructor for the importer
      *
-     * @param peptideShaker
-     * @param waitingDialog
-     * @param identification
-     * @param idFilter
+     * @param identificationShaker  the identification shaker which will load the data into the maps and do the preliminary calculations
+     * @param waitingDialog         A dialog to display feedback to the user
+     * @param identification        the identification to process
+     * @param idFilter              The identification filter to use
      */
-    public IdImporter(PeptideShakerGUI peptideShaker, WaitingDialog waitingDialog, Identification identification, IdFilter idFilter) {
-        this.peptideShaker = peptideShaker;
+    public IdImporter(IdentificationShaker identificationShaker, WaitingDialog waitingDialog, Identification identification, IdFilter idFilter) {
+        this.identificationShaker = identificationShaker;
         this.waitingDialog = waitingDialog;
         this.identification = identification;
         this.idFilter = idFilter;
     }
 
     /**
-     * @TODO: JavaDoc missing
-     *
-     * @param peptideShaker
+     * Constructor for an import without filtering
+     * @param identificationShaker
      * @param waitingDialog
      * @param identification
      */
-    public IdImporter(PeptideShakerGUI peptideShaker, WaitingDialog waitingDialog, Identification identification) {
-        this.peptideShaker = peptideShaker;
+    public IdImporter(IdentificationShaker identificationShaker, WaitingDialog waitingDialog, Identification identification) {
+        this.identificationShaker = identificationShaker;
         this.waitingDialog = waitingDialog;
+        this.identification = identification;
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Imports the identification from files
      *
-     * @param idFiles
+     * @param idFiles the identification files to import the Ids from
      */
     public void importFiles(ArrayList<File> idFiles) {
         IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles);
@@ -72,7 +95,7 @@ public class IdImporter {
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Imports the identifications from another stream
      */
     public void importIdentifications() {
         IdProcessor idProcessor = new IdProcessor();
@@ -83,7 +106,7 @@ public class IdImporter {
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Worker which processes identifications and gives feedback to the user.
      */
     private class IdProcessor extends SwingWorker {
 
@@ -96,7 +119,7 @@ public class IdImporter {
                         inputMap.addEntry(searchEngine, spectrumMatch.getFirstHit(searchEngine).getEValue(), spectrumMatch.getFirstHit(searchEngine).isDecoy());
                     }
                 }
-                peptideShaker.processIdentifications(inputMap, waitingDialog, identification);
+                identificationShaker.processIdentifications(inputMap, waitingDialog);
             } catch (Exception e) {
                 waitingDialog.appendReport("An error occured while loading the identifications:");
                 waitingDialog.appendReport(e.getLocalizedMessage());
@@ -108,13 +131,23 @@ public class IdImporter {
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Worker which loads identification from a file and processes them while giving feedback to the user.
      */
     private class IdProcessorFromFile extends SwingWorker {
 
+        /**
+         * The identification file reader factory of compomics utilities
+         */
         private IdfileReaderFactory readerFactory = IdfileReaderFactory.getInstance();
+        /**
+         * The list of identification files
+         */
         private ArrayList<File> idFiles;
 
+        /**
+         * Constructor of the worker
+         * @param idFiles ArrayList containing the identification files
+         */
         public IdProcessorFromFile(ArrayList<File> idFiles) {
             this.idFiles = idFiles;
             try {
@@ -196,7 +229,7 @@ public class IdImporter {
                 waitingDialog.appendReport("Identification file(s) import completed. "
                         + nTotal + " identifications imported, " + nRetained + " identifications retained.");
 
-                peptideShaker.processIdentifications(inputMap, waitingDialog, identification);
+                identificationShaker.processIdentifications(inputMap, waitingDialog);
 
             } catch (Exception e) {
                 waitingDialog.appendReport("An error occured while loading the identification files:");

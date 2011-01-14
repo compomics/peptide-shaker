@@ -5,44 +5,70 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import eu.isas.peptideshaker.gui.ModificationDialog;
 import eu.isas.peptideshaker.gui.WaitingDialog;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 /**
- *
+ * This class contains the various peptides matches sorted 
+ * 
  * @author Marc Vaudel
  */
-public class PeptideSpecificMap {
+public class PeptideSpecificMap implements Serializable {
 
+    /**
+     * The user specified fdr threshold
+     */
     private double fdrThreshold;
+    /**
+     * The number of hits at this threshold
+     */
     private int nHits;
+    /**
+     * The estimated FDR
+     */
     private double fdr;
+    /**
+     * The estimated FNR
+     */
     private double fnr;
+    /**
+     * The peptide target/decoy maps indexed by the modification profile of the peptide.
+     */
     private HashMap<String, TargetDecoyMap> peptideMaps = new HashMap<String, TargetDecoyMap>();
+    /**
+     * The indexes of the maps which have been put to the dustbin
+     */
     private ArrayList<String> groupedMaps = new ArrayList<String>();
+    /**
+     * The index of the dustbin
+     */
     public final static String DUSTBIN = "OTHER";
+    /**
+     * index correction map for unexpected modifications
+     */
     private HashMap<String, String> nameCorrectionMap = new HashMap<String, String>();
 
     /**
-     * @TODO: JavaDoc missing
+     * Constructor
      */
     public PeptideSpecificMap() {
     }
 
     /**
-     * Return the number of hits.
+     * Return the number of hits at the defined FDR.
      *
-     * @return the number of hits
+     * @return the number of hits at the defined FDR
      */
     public int getNHits() {
         return nHits;
     }
 
     /**
-     * Returns the FRD value.
+     * Returns the estimated FDR.
      *
-     * @return the FRD value
+     * @return the estimated FDR 
      */
     public double getFdr() {
         return fdr;
@@ -58,45 +84,39 @@ public class PeptideSpecificMap {
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Returns the estimated FNR
      *
-     * @return
+     * @return the estimated FNR
      */
     public double getFnr() {
         return fnr;
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Estimates FDR, FNR and number of hits for the peptide map at the given threshold
      *
-     * @return
-     */
-    public String getMethod() {
-        return "Specific FDR";
-    }
-
-    /**
-     * @TODO: JavaDoc missing
-     *
-     * @param newThreshold
+     * @param newThreshold the new threshold
      */
     public void getResults(double newThreshold) {
-        if (fdrThreshold != newThreshold) {
-            fdrThreshold = newThreshold;
-            process();
+        this.fdrThreshold = newThreshold;
+        for (TargetDecoyMap targetDecoyMap : peptideMaps.values()) {
+            targetDecoyMap.getResults(fdrThreshold);
         }
     }
 
     /**
-     * @TODO: JavaDoc missing
-     */
-    private void process() {
+     * returns the method used to process peptides
+     *
+     * @return
+    public String getMethod() {
+        return "Specific FDR";
     }
+     */
 
     /**
-     * @TODO: JavaDoc missing
+     * estimate the posterior error probabilities
      *
-     * @param waitingDialog
+     * @param waitingDialog The dialog which display the information while processing
      */
     public void estimateProbabilities(WaitingDialog waitingDialog) {
         for (String modifications : peptideMaps.keySet()) {
@@ -107,11 +127,11 @@ public class PeptideSpecificMap {
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Returns the posterior error probability of a peptide match at the given score
      *
-     * @param peptideMatch
-     * @param score
-     * @return
+     * @param peptideMatch the peptide match
+     * @param score        the score of the match
+     * @return the posterior error probability
      */
     public double getProbability(PeptideMatch peptideMatch, double score) {
         String key = getKey(peptideMatch);
@@ -122,10 +142,10 @@ public class PeptideSpecificMap {
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * Adds a point in the peptide specific map.
      *
-     * @param probabilityScore
-     * @param peptideMatch
+     * @param probabilityScore The estimated peptide probabilistic score
+     * @param peptideMatch     The corresponding peptide match
      */
     public void addPoint(double probabilityScore, PeptideMatch peptideMatch) {
         String key = getKey(peptideMatch);
@@ -136,11 +156,12 @@ public class PeptideSpecificMap {
     }
 
     /**
-     * @TODO: JavaDoc missing
+     * This methods puts all the small peptide groups in the dustbin to be analyzed together.
      *
-     * @param waitingDialog
+     * @param waitingDialog The waiting dialog will display the feedback
      */
     public void cure(WaitingDialog waitingDialog) {
+        if (peptideMaps.size() > 1) {
         peptideMaps.put(DUSTBIN, new TargetDecoyMap(DUSTBIN + " peptides"));
         for (String key : peptideMaps.keySet()) {
             if (!key.equals(DUSTBIN)) {
@@ -157,12 +178,27 @@ public class PeptideSpecificMap {
         }
         waitingDialog.appendReport(output + "modified peptides are analyzed together as " + DUSTBIN + " peptides.");
     }
+    }
 
     /**
-     * @TODO: JavaDoc missing
+     * Returns the score limit for the given peptide match at the selected FDR threshold
      *
-     * @param peptideMatch
-     * @return
+     * @param peptideMatch the given peptide match
+     * @return the score threshold
+     */
+    public double getScoreLimit(PeptideMatch peptideMatch) {
+        String key = getKey(peptideMatch);
+        if (groupedMaps.contains(key)) {
+            key = DUSTBIN;
+        }
+        return peptideMaps.get(key).getScoreLimit();
+    }
+
+    /**
+     * This method returns the indexing key of a peptide match
+     *
+     * @param peptideMatch  the considered peptide match
+     * @return the corresponding key
      */
     private String getKey(PeptideMatch peptideMatch) {
         ArrayList<String> modifications = new ArrayList<String>();

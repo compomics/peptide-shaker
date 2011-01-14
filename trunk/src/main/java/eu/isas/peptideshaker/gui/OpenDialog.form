@@ -63,7 +63,7 @@
                               <Component id="sampleIdPanel" max="32767" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace pref="540" max="32767" attributes="0"/>
+                              <EmptySpace pref="560" max="32767" attributes="0"/>
                               <Component id="processButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="exitButton" linkSize="1" min="-2" max="-2" attributes="0"/>
@@ -112,12 +112,12 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="49" max="-2" attributes="1"/>
-                                  <Component id="sampleName" pref="300" max="32767" attributes="0"/>
+                                  <Component id="sampleNametxt" pref="296" max="32767" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                                  <Component id="idFilesTxt" pref="300" max="32767" attributes="0"/>
+                                  <Component id="idFilesTxt" pref="296" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -133,7 +133,7 @@
                                   <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                                   <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
-                                  <Component id="replicateNumber" linkSize="2" min="-2" pref="39" max="-2" attributes="0"/>
+                                  <Component id="replicateNumbertxt" linkSize="2" min="-2" pref="39" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
@@ -146,8 +146,8 @@
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="sampleName" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="replicateNumber" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="sampleNametxt" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="replicateNumbertxt" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
@@ -201,7 +201,7 @@
                     <Property name="text" type="java.lang.String" value="Sample Name:"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="sampleName">
+                <Component class="javax.swing.JTextField" name="sampleNametxt">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="Sample 1"/>
@@ -212,7 +212,7 @@
                     <Property name="text" type="java.lang.String" value="Replicate Number:"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="replicateNumber">
+                <Component class="javax.swing.JTextField" name="replicateNumbertxt">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="0"/>
@@ -241,7 +241,7 @@
             </Component>
             <Component class="javax.swing.JButton" name="processButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Process"/>
+                <Property name="text" type="java.lang.String" value="Open"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="processButtonActionPerformed"/>
@@ -314,7 +314,7 @@
                               <Component id="maxPepLength" linkSize="3" alignment="1" max="32767" attributes="1"/>
                               <Component id="minPepLength" linkSize="3" alignment="1" min="-2" pref="133" max="-2" attributes="1"/>
                           </Group>
-                          <EmptySpace pref="133" max="32767" attributes="0"/>
+                          <EmptySpace pref="129" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>

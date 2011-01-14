@@ -13,7 +13,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 /**
- * A dialog displaying progess details when the identification files are being 
+ * A dialog displaying progress details when the identification files are being
  * analyzed.
  *
  * @author  Marc Vaudel
@@ -24,8 +24,14 @@ public class WaitingDialog extends javax.swing.JDialog {
     /**
      * A reference to the main frame.
      */
-    private PeptideShakerGUI peptideShaker;
+    private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * Boolean indicating whether the run is finished
+     */
     private boolean runFinished = false;
+    /**
+     * Boolean indicating whether the run is cancelled
+     */
     private boolean runCanceled = false;
     /**
      * Convenience date format
@@ -43,7 +49,7 @@ public class WaitingDialog extends javax.swing.JDialog {
         super(peptideShaker, modal);
         initComponents();
         this.setLocationRelativeTo(peptideShaker);
-        this.peptideShaker = peptideShaker;
+        this.peptideShakerGUI = peptideShaker;
     }
 
     /** This method is called from within the constructor to
@@ -207,10 +213,9 @@ public class WaitingDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (runFinished) {
             this.dispose();
-            peptideShaker.displayResults();
+            peptideShakerGUI.displayResults();
         } else if (runCanceled) {
             this.dispose();
-            //peptideShaker.restart();
         } else {
             setRunCanceled();
         }
