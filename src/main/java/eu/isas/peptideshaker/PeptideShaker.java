@@ -5,10 +5,6 @@ import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import com.jgoodies.looks.plastic.theme.SkyKrupp;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.utils.Properties;
-import java.awt.Dimension;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,7 +16,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -58,6 +53,10 @@ public class PeptideShaker {
      * main constructor.
      */
     public PeptideShaker() {
+
+        // update the look and feel after adding the panels
+        setLookAndFeel();
+
         // check if a newer version of PeptideShaker is available
         //checkForNewVersion(new Properties().getVersion());
 
@@ -73,33 +72,8 @@ public class PeptideShaker {
      * location of the frame and makes it visible.
      */
     private void createandshowGUI() {
-
-        mainFrame = new JFrame("PeptideShaker " + new Properties().getVersion());
-
-        mainFrame.addWindowListener(new WindowAdapter() {
-
-            /**
-             * Invoked when a window is in the process of being closed.
-             * The close operation can be overridden at this point.
-             */
-            @Override
-            public void windowClosing(WindowEvent e) {
-                close(0);
-            }
-        });
-
-        // sets the icon of the frame
-        /**
-        mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().
-        getResource("/icons/")));**/
-        // update the look and feel after adding the panels
-        setLookAndFeel();
-
         // display the start panel
         mainFrame = new PeptideShakerGUI(this);
-
-        // check if a newer version of PeptideShaker is available
-        //checkForNewVersion(new Properties().getVersion());
     }
 
     public void restart() {
@@ -240,7 +214,6 @@ public class PeptideShaker {
         try {
             PlasticLookAndFeel.setPlasticTheme(new SkyKrupp());
             UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
-            SwingUtilities.updateComponentTreeUI(mainFrame);
         } catch (UnsupportedLookAndFeelException e) {
             // ignore exception, i.e. use default look and feel
         }
@@ -252,42 +225,6 @@ public class PeptideShaker {
      */
     public JFrame getMainFrame() {
         return mainFrame;
-    }
-
-    /**
-     * displays the main frame
-     */
-    public void displayMainFrame() {
-
-
-        mainFrame = new JFrame("PeptideShaker ");
-
-        mainFrame.addWindowListener(new WindowAdapter() {
-
-            /**
-             * Invoked when a window is in the process of being closed.
-             * The close operation can be overridden at this point.
-             */
-            @Override
-            public void windowClosing(WindowEvent e) {
-                close(0);
-            }
-        });
-
-        // sets the icon of the frame
-        /**
-        mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().
-        getResource("/icons/")));**/
-        // update the look and feel after adding the panels
-        setLookAndFeel();
-
-        // set size and location
-        mainFrame.pack();
-        //mainFrame.setResizable(false);
-        mainFrame.setLocationRelativeTo(null);
-        // Pack is the minimal size, so add 20 pixels in each dimension.
-        mainFrame.setSize(new Dimension(mainFrame.getSize().width + 20, mainFrame.getSize().height));
-        mainFrame.setVisible(true);
     }
 
     /**
@@ -303,5 +240,4 @@ public class PeptideShaker {
     public void setLastSelectedFolder(String lastSelectedFolder) {
         this.lastSelectedFolder = lastSelectedFolder;
     }
-
 }
