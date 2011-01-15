@@ -27,6 +27,7 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.renderers.TrueFalseIconRenderer;
 import eu.isas.peptideshaker.utils.Properties;
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -133,7 +134,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         resultsJTabbedPane.setEnabledAt(3, false);
         resultsJTabbedPane.setEnabledAt(4, false);
 
+        // set the title of the frame and add the icon
         setTitle(this.getTitle() + " " + new Properties().getVersion());
+        this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
         setLocationRelativeTo(null);
         setVisible(true);
