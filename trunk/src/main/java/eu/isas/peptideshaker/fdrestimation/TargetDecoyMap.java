@@ -276,7 +276,7 @@ public class TargetDecoyMap implements Serializable {
 
     /**
      * Returns the estimated FDR at the given threshold
-     * @returnthe estimated FDR at the given threshold
+     * @return the estimated FDR at the given threshold
      */
     public double getFdr() {
         return fdr;
@@ -284,7 +284,7 @@ public class TargetDecoyMap implements Serializable {
 
     /**
      * Returns the estimated FNR at the given threshold. NaN if no FNR could be computed.
-     * @returnthe estimated FNR at the given threshold
+     * @return the estimated FNR at the given threshold
      */
     public Double getFnr() {
         if (probabilistic) {

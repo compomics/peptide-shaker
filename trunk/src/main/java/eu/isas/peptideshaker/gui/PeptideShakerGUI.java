@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
@@ -14,7 +15,9 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
-import eu.isas.peptideshaker.PeptideShaker;
+import com.jgoodies.looks.plastic.PlasticLookAndFeel;
+import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
+import com.jgoodies.looks.plastic.theme.SkyKrupp;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
@@ -24,9 +27,20 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.renderers.TrueFalseIconRenderer;
 import eu.isas.peptideshaker.utils.Properties;
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
@@ -37,12 +51,12 @@ import org.jfree.chart.plot.PlotOrientation;
  * @author  Harald Barsnes
  * @author  Marc Vaudel
  */
-public class PeptideShakerGUI extends javax.swing.JFrame {
+public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDialogParent {
 
     /**
-     * the main class
+     * If set to true all messages will be sent to a log file.
      */
-    private PeptideShaker peptideShaker;
+    private static boolean useLogFile = true;
     /**
      * The last folder opened by the user. Defaults to user.home.
      */
@@ -50,7 +64,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
     /**
      * The compomics experiment
      */
-
     private MsExperiment experiment;
     /**
      * The investigated sample
@@ -60,7 +73,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
      * The replicate number
      */
     private int replicateNumber;
-
     /**
      * The specific target/decoy map at the psm level
      */
@@ -73,7 +85,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
      * The target/decoy map at the protein level
      */
     private TargetDecoyMap proteinMap;
-
     /**
      * The color used for the sparkline bar chart plots.
      */
@@ -82,21 +93,45 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
      * Compomics experiment saver and opener
      */
     private ExperimentIO experimentIO = new ExperimentIO();
+    /**
+     * A simple progress dialog.
+     */
+    private static ProgressDialog progressDialog;
+    /**
+     * If set to true the progress stopped and the simple progress dialog
+     * disposed.
+     */
+    private boolean cancelProgress = false;
+
+    /**
+     * The main method used to start PeptideShaker
+     * 
+     * @param args
+     */
+    public static void main(String[] args) {
+
+        // update the look and feel after adding the panels
+        setLookAndFeel();
+
+        new PeptideShakerGUI();
+    }
 
     /**
      * Creates a new PeptideShaker frame.
      */
-    public PeptideShakerGUI(PeptideShaker peptideShaker) {
+    public PeptideShakerGUI() {
 
-        this.peptideShaker = peptideShaker;
+        // set up the ErrorLog
+        setUpLogFile();
 
         initComponents();
 
         // set up the table column properties
         setColumnProperies();
 
-        // disable the quantification tab for now
-        jTabbedPane.setEnabledAt(3, false);
+        // disable the Quantification and PTM Analysis tabs for now
+        resultsJTabbedPane.setEnabledAt(3, false);
+        resultsJTabbedPane.setEnabledAt(4, false);
 
         setTitle(this.getTitle() + " " + new Properties().getVersion());
 
@@ -181,7 +216,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTabbedPane = new javax.swing.JTabbedPane();
+        resultsJTabbedPane = new javax.swing.JTabbedPane();
         proteinsJScrollPane = new javax.swing.JScrollPane();
         proteinsJTable = new javax.swing.JTable();
         peptidesJScrollPane = new javax.swing.JScrollPane();
@@ -190,15 +225,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         spectraJTable = new javax.swing.JTable();
         quantificationJScrollPane = new javax.swing.JScrollPane();
         quantificationJTable = new javax.swing.JTable();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        ptmAnalysisScrollPane = new javax.swing.JScrollPane();
+        ptmAnalysisJTable = new javax.swing.JTable();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         openJMenuItem = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         saveMenuItem = new javax.swing.JMenuItem();
         exportMenuItem = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        helpMenu = new javax.swing.JMenu();
+        helpJMenuItem = new javax.swing.JMenuItem();
+        aboutJMenuItem = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PeptideShaker");
@@ -228,7 +269,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         });
         proteinsJScrollPane.setViewportView(proteinsJTable);
 
-        jTabbedPane.addTab("Proteins", proteinsJScrollPane);
+        resultsJTabbedPane.addTab("Proteins", proteinsJScrollPane);
 
         peptidesJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -255,7 +296,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         });
         peptidesJScrollPane.setViewportView(peptidesJTable);
 
-        jTabbedPane.addTab("Peptides", peptidesJScrollPane);
+        resultsJTabbedPane.addTab("Peptides", peptidesJScrollPane);
 
         spectraJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -282,7 +323,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         });
         spectraJScrollPane.setViewportView(spectraJTable);
 
-        jTabbedPane.addTab("Spectra", spectraJScrollPane);
+        resultsJTabbedPane.addTab("Spectra", spectraJScrollPane);
 
         quantificationJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -302,8 +343,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         });
         quantificationJScrollPane.setViewportView(quantificationJTable);
 
-        jTabbedPane.addTab("Quantification", quantificationJScrollPane);
-        jTabbedPane.addTab("PTM analysis", jTabbedPane1);
+        resultsJTabbedPane.addTab("Quantification", quantificationJScrollPane);
+
+        ptmAnalysisJTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        ptmAnalysisScrollPane.setViewportView(ptmAnalysisJTable);
+
+        resultsJTabbedPane.addTab("PTM Analysis", ptmAnalysisScrollPane);
 
         fileJMenu.setMnemonic('F');
         fileJMenu.setText("File");
@@ -317,9 +377,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
             }
         });
         fileJMenu.add(openJMenuItem);
+        fileJMenu.add(jSeparator2);
 
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        saveMenuItem.setText("Save as");
+        saveMenuItem.setMnemonic('S');
+        saveMenuItem.setText("Save As");
+        saveMenuItem.setEnabled(false);
         saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveMenuItemActionPerformed(evt);
@@ -327,13 +390,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         });
         fileJMenu.add(saveMenuItem);
 
+        exportMenuItem.setMnemonic('E');
         exportMenuItem.setText("Export");
+        exportMenuItem.setEnabled(false);
         exportMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportMenuItemActionPerformed(evt);
             }
         });
         fileJMenu.add(exportMenuItem);
+        fileJMenu.add(jSeparator1);
 
         exitJMenuItem.setMnemonic('x');
         exitJMenuItem.setText("Exit");
@@ -362,17 +428,41 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
 
         menuBar.add(viewJMenu);
 
+        helpMenu.setMnemonic('H');
+        helpMenu.setText("Help");
+
+        helpJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F1, 0));
+        helpJMenuItem.setMnemonic('H');
+        helpJMenuItem.setText("Help");
+        helpJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpJMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(helpJMenuItem);
+
+        aboutJMenuItem.setMnemonic('A');
+        aboutJMenuItem.setText("About");
+        aboutJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutJMenuItemActionPerformed(evt);
+            }
+        });
+        helpMenu.add(aboutJMenuItem);
+
+        menuBar.add(helpMenu);
+
         setJMenuBar(menuBar);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1080, Short.MAX_VALUE)
+            .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1080, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
+            .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
         );
 
         pack();
@@ -433,39 +523,133 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
 
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
 
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Select Result File");
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        final JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
+        fileChooser.setDialogTitle("Save As...");
         fileChooser.setMultiSelectionEnabled(false);
 
         int returnVal = fileChooser.showSaveDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            try {
-                experimentIO.save(fileChooser.getSelectedFile(), experiment);
-                JOptionPane.showMessageDialog(null, "Identifications were successfully saved", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);
-                e.printStackTrace();
-            }
+
+            lastSelectedFolder = fileChooser.getCurrentDirectory().getPath();
+
+            cancelProgress = false;
+
+            progressDialog = new ProgressDialog(this, this, true);
+            progressDialog.doNothingOnClose();
+
+            final PeptideShakerGUI tempRef = this; // needed due to threading issues
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setIntermidiate(true);
+                    progressDialog.setTitle("Saving. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("SaveThread") {
+
+                @Override
+                public void run() {
+
+                    String selectedFile = fileChooser.getSelectedFile().getPath();
+
+                    if (!selectedFile.endsWith(".cps")) {
+                        selectedFile += ".cps";
+                    }
+
+                    // @TODO: add check for if a file is about to be overwritten
+
+                    try {
+                        experimentIO.save(new File(selectedFile), experiment);
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        JOptionPane.showMessageDialog(tempRef, "Identifications were successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (Exception e) {
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        JOptionPane.showMessageDialog(tempRef, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
         }
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
     private void exportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMenuItemActionPerformed
-        CsvExporter exporter = new CsvExporter(experiment, sample, replicateNumber);
-        JFileChooser fileChooser = new JFileChooser();
+        final CsvExporter exporter = new CsvExporter(experiment, sample, replicateNumber);
+        final JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
         fileChooser.setDialogTitle("Select Result Folder");
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         fileChooser.setMultiSelectionEnabled(false);
 
         int returnVal = fileChooser.showDialog(this, "Save");
+
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            exporter.exportResults(fileChooser.getSelectedFile());
+
+            lastSelectedFolder = fileChooser.getCurrentDirectory().getPath();
+
+            // @TODO: add check for if a file is about to be overwritten
+
+            cancelProgress = false;
+            final PeptideShakerGUI tempRef = this; // needed due to threading issues
+
+            progressDialog = new ProgressDialog(this, this, true);
+            progressDialog.doNothingOnClose();
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setIntermidiate(true);
+                    progressDialog.setTitle("Exporting. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    boolean exported = exporter.exportResults(fileChooser.getSelectedFile());
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+
+                    if (exported) {
+                        JOptionPane.showMessageDialog(tempRef, "Identifications were successfully exported.", "Export Successful", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(tempRef, "Writing of spectrum file failed.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }.start();
         }
     }//GEN-LAST:event_exportMenuItemActionPerformed
 
+    /**
+     * Opens the help dialog.
+     * 
+     * @param evt
+     */
+    private void helpJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJMenuItemActionPerformed
+        new HelpWindow(this, getClass().getResource("/helpFiles/PeptideShaker.html"));
+    }//GEN-LAST:event_helpJMenuItemActionPerformed
+
+    /**
+     * Opens the About dialog.
+     *
+     * @param evt
+     */
+    private void aboutJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutJMenuItemActionPerformed
+        new HelpWindow(this, getClass().getResource("/helpFiles/AboutPeptideShaker.html"));
+    }//GEN-LAST:event_aboutJMenuItemActionPerformed
 
     /**
      * This method sets the information of the project when opened
+     * 
      * @param experiment        the experiment conducted
      * @param sample            The sample analyzed
      * @param replicateNumber   The replicate number
@@ -725,6 +909,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("p-score").getCellRenderer()).setMaxValue(maxPScore);
         ((JSparklinesBarChartTableCellRenderer) spectraJTable.getColumn("PEP").getCellRenderer()).setMaxValue(maxPEP);
 
+        // enable the save and export menu items
+        saveMenuItem.setEnabled(true);
+        exportMenuItem.setEnabled(true);
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
@@ -749,23 +937,161 @@ public class PeptideShakerGUI extends javax.swing.JFrame {
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem aboutJMenuItem;
     private javax.swing.JMenuItem exitJMenuItem;
     private javax.swing.JMenuItem exportMenuItem;
     private javax.swing.JMenu fileJMenu;
-    private javax.swing.JTabbedPane jTabbedPane;
-    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JMenuItem helpJMenuItem;
+    private javax.swing.JMenu helpMenu;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JScrollPane peptidesJScrollPane;
     private javax.swing.JTable peptidesJTable;
     private javax.swing.JScrollPane proteinsJScrollPane;
     private javax.swing.JTable proteinsJTable;
+    private javax.swing.JTable ptmAnalysisJTable;
+    private javax.swing.JScrollPane ptmAnalysisScrollPane;
     private javax.swing.JScrollPane quantificationJScrollPane;
     private javax.swing.JTable quantificationJTable;
+    private javax.swing.JTabbedPane resultsJTabbedPane;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
     private javax.swing.JScrollPane spectraJScrollPane;
     private javax.swing.JTable spectraJTable;
     private javax.swing.JMenu viewJMenu;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * Check if a newer version of reporter is available.
+     *
+     * @param currentVersion the version number of the currently running reporter
+     */
+    private static void checkForNewVersion(String currentVersion) {
+
+        try {
+            boolean deprecatedOrDeleted = false;
+            URL downloadPage = new URL(
+                    "http://code.google.com/p/peptide-shaker/downloads/detail?name=PeptideShaker-"
+                    + currentVersion + ".zip");
+            int respons = ((java.net.HttpURLConnection) downloadPage.openConnection()).getResponseCode();
+
+            // 404 means that the file no longer exists, which means that
+            // the running version is no longer available for download,
+            // which again means that a never version is available.
+            if (respons == 404) {
+                deprecatedOrDeleted = true;
+            } else {
+
+                // also need to check if the available running version has been
+                // deprecated (but not deleted)
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(downloadPage.openStream()));
+
+                String inputLine;
+
+                while ((inputLine = in.readLine()) != null && !deprecatedOrDeleted) {
+                    if (inputLine.lastIndexOf("Deprecated") != -1
+                            && inputLine.lastIndexOf("Deprecated Downloads") == -1
+                            && inputLine.lastIndexOf("Deprecated downloads") == -1) {
+                        deprecatedOrDeleted = true;
+                    }
+                }
+
+                in.close();
+            }
+
+            // informs the user about an updated version of the tool, unless the user
+            // is running a beta version
+            if (deprecatedOrDeleted && currentVersion.lastIndexOf("beta") == -1) {
+                int option = JOptionPane.showConfirmDialog(null,
+                        "A newer version of PeptideShaker is available.\n"
+                        + "Do you want to upgrade?",
+                        "Upgrade Available",
+                        JOptionPane.YES_NO_CANCEL_OPTION);
+                if (option == JOptionPane.YES_OPTION) {
+                    BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com/");
+                    System.exit(0);
+                } else if (option == JOptionPane.CANCEL_OPTION) {
+                    System.exit(0);
+                }
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Set up the log file.
+     */
+    private void setUpLogFile() {
+        if (useLogFile && !getJarFilePath().equalsIgnoreCase(".")) {
+            try {
+                String path = getJarFilePath() + "/conf/PeptideShakerLog.log";
+
+                File file = new File(path);
+                System.setOut(new java.io.PrintStream(new FileOutputStream(file, true)));
+                System.setErr(new java.io.PrintStream(new FileOutputStream(file, true)));
+
+                // creates a new log file if it does not exist
+                if (!file.exists()) {
+                    file.createNewFile();
+
+                    FileWriter w = new FileWriter(file);
+                    BufferedWriter bw = new BufferedWriter(w);
+
+                    bw.close();
+                    w.close();
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(
+                        null, "An error occured when trying to create the PeptideShaker Log.",
+                        "Error Creating Log File", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Returns the path to the jar file.
+     *
+     * @return the path to the jar file
+     */
+    private String getJarFilePath() {
+        String path = this.getClass().getResource("PeptideShakerGUI.class").getPath();
+
+        if (path.lastIndexOf("/PeptideShaker-") != -1) {
+            path = path.substring(5, path.lastIndexOf("/PeptideShaker-"));
+            path = path.replace("%20", " ");
+        } else {
+            path = ".";
+        }
+
+        return path;
+    }
+
+    /**
+     * Sets the look and feel of the PeptideShaker.
+     * <p/>
+     * Note that the GUI has been created with the following look and feel
+     * in mind. If using a different look and feel you might need to tweak the GUI
+     * to get the best appearance.
+     */
+    private static void setLookAndFeel() {
+
+        try {
+            PlasticLookAndFeel.setPlasticTheme(new SkyKrupp());
+            UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
+        } catch (UnsupportedLookAndFeelException e) {
+            // ignore exception, i.e. use default look and feel
+        }
+    }
+
+    @Override
+    public void cancelProgress() {
+        cancelProgress = true;
+    }
 }

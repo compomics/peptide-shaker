@@ -20,7 +20,7 @@ import javax.swing.filechooser.FileFilter;
  * @author  Marc Vaudel
  * @author  Harald Barsnes
  */
-public class OpenDialog extends javax.swing.JDialog {
+public class OpenDialog extends javax.swing.JDialog implements ProgressDialogParent {
 
     /**
      * The experiment conducted
@@ -49,7 +49,16 @@ public class OpenDialog extends javax.swing.JDialog {
     /**
      * Boolean indicating whether we are opening a peptideshaker file
      */
-    private boolean psFile = false;
+    private boolean isPsFile = false;
+    /**
+     * A simple progress dialog.
+     */
+    private static ProgressDialog progressDialog;
+    /**
+     * If set to true the progress stopped and the simple progress dialog
+     * disposed.
+     */
+    private boolean cancelProgress = false;
 
     /**
      * Creates a new open dialog.
@@ -442,12 +451,12 @@ public class OpenDialog extends javax.swing.JDialog {
 
             if (idFiles.size() == 1 && idFiles.get(0).getName().endsWith(".cps")) {
                 importPeptideShakerFile(idFiles.get(0));
-                psFile = true;
+                isPsFile = true;
             } else {
                 projectNameTxt.setEditable(true);
                 sampleNametxt.setEditable(true);
                 replicateNumbertxt.setEditable(true);
-                psFile = false;
+                isPsFile = false;
             }
         }
 }//GEN-LAST:event_browseIdActionPerformed
@@ -470,11 +479,13 @@ public class OpenDialog extends javax.swing.JDialog {
      */
     private void processButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_processButtonActionPerformed
         if (validateInput()) {
-            if (psFile) {
+            if (isPsFile) {
+                this.setVisible(false);
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
                 peptideShakerGUI.displayResults();
                 this.dispose();
             } else {
+                this.setVisible(false);
                 experiment = new MsExperiment(projectNameTxt.getText().trim());
                 sample = new Sample(sampleNametxt.getText().trim());
                 SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(getReplicateNumber()));
@@ -652,59 +663,104 @@ public class OpenDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Imports informations from a peptide shaker file
-     * @param psFile    the peptide shaker file
+     * Imports informations from a peptide shaker file.
+     *
+     * @param aPsFile    the peptide shaker file
      */
-    private void importPeptideShakerFile(File psFile) {
-        try {
-            Date date = experimentIO.getDate(psFile);
-            // Would need a progress bar here for big projects
+    private void importPeptideShakerFile(File aPsFile) {
 
-            experiment = experimentIO.loadExperiment(psFile);
-            projectNameTxt.setText(experiment.getReference());
-            projectNameTxt.setEditable(false);
+        final File psFile = aPsFile;
 
-            ArrayList<Sample> samples = new ArrayList(experiment.getSamples().values());
-            if (samples.size() == 1) {
-                sample = samples.get(0);
-            } else {
-                String[] sampleNames = new String[samples.size()];
-                for (int cpt = 0; cpt < sampleNames.length; cpt++) {
-                    sampleNames[cpt] = samples.get(cpt).getReference();
-                }
-                SampleSelection sampleSelection = new SampleSelection(null, true, sampleNames, "sample");
-                sampleSelection.setVisible(true);
-                String choice = sampleSelection.getChoice();
-                for (Sample sampleTemp : samples) {
-                    if (sampleTemp.getReference().equals(choice)) {
-                        sample = sampleTemp;
-                        break;
+        final OpenDialog tempRef = this; // needed due to threading issues
+        cancelProgress = false;
+        progressDialog = new ProgressDialog(this, this, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIntermidiate(true);
+                progressDialog.setTitle("Importing. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("ImportThread") {
+
+            @Override
+            public void run() {
+
+                try {
+                    Date date = experimentIO.getDate(psFile);
+
+                    experiment = experimentIO.loadExperiment(psFile);
+                    projectNameTxt.setText(experiment.getReference());
+                    projectNameTxt.setEditable(false);
+
+                    ArrayList<Sample> samples = new ArrayList(experiment.getSamples().values());
+                    if (samples.size() == 1) {
+                        sample = samples.get(0);
+                    } else {
+                        String[] sampleNames = new String[samples.size()];
+                        for (int cpt = 0; cpt < sampleNames.length; cpt++) {
+                            sampleNames[cpt] = samples.get(cpt).getReference();
+                        }
+                        SampleSelection sampleSelection = new SampleSelection(null, true, sampleNames, "sample");
+                        sampleSelection.setVisible(true);
+                        String choice = sampleSelection.getChoice();
+                        for (Sample sampleTemp : samples) {
+                            if (sampleTemp.getReference().equals(choice)) {
+                                sample = sampleTemp;
+                                break;
+                            }
+                        }
                     }
+
+                    sampleNametxt.setText(sample.getReference());
+                    sampleNametxt.setEditable(false);
+
+                    ArrayList<Integer> replicates = new ArrayList(experiment.getAnalysisSet(sample).getReplicateNumberList());
+                    if (replicates.size() == 1) {
+                        replicateNumber = replicates.get(0);
+                    } else {
+                        String[] replicateNames = new String[replicates.size()];
+                        for (int cpt = 0; cpt < replicateNames.length; cpt++) {
+                            replicateNames[cpt] = samples.get(cpt).getReference();
+                        }
+                        SampleSelection sampleSelection = new SampleSelection(null, true, replicateNames, "replicate");
+                        sampleSelection.setVisible(true);
+                        Integer choice = new Integer(sampleSelection.getChoice());
+                        replicateNumber = choice;
+                    }
+                    replicateNumbertxt.setText(replicateNumber + "");
+                    replicateNumbertxt.setEditable(false);
+
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+
+                    JOptionPane.showMessageDialog(tempRef,
+                            "Experiment " + experiment.getReference() + " created on " + date.toString()
+                            + " imported.\n\n"
+                            + "Click Open, to open the results.", "Identifications Imported.", JOptionPane.INFORMATION_MESSAGE);
+
+                } catch (Exception e) {
+
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+
+                    JOptionPane.showMessageDialog(tempRef, 
+                            "An error occured while reading" + psFile + ".\\" +
+                            "Please verif that the compomics utilities version used to create\n" +
+                            "the file was the same as the one used by your version of Reporter.",
+                            "File Input Error.", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
                 }
             }
-            sampleNametxt.setText(sample.getReference());
-            sampleNametxt.setEditable(false);
+        }.start();
+    }
 
-            ArrayList<Integer> replicates = new ArrayList(experiment.getAnalysisSet(sample).getReplicateNumberList());
-            if (replicates.size() == 1) {
-                replicateNumber = replicates.get(0);
-            } else {
-                String[] replicateNames = new String[replicates.size()];
-                for (int cpt = 0; cpt < replicateNames.length; cpt++) {
-                    replicateNames[cpt] = samples.get(cpt).getReference();
-                }
-                SampleSelection sampleSelection = new SampleSelection(null, true, replicateNames, "replicate");
-                sampleSelection.setVisible(true);
-                Integer choice = new Integer(sampleSelection.getChoice());
-                replicateNumber = choice;
-            }
-            replicateNumbertxt.setText(replicateNumber + "");
-            replicateNumbertxt.setEditable(false);
-            JOptionPane.showMessageDialog(this, "Experiment " + experiment.getReference() + " created on " + date.toString() + " imported.", "Identifications Imported.", JOptionPane.INFORMATION_MESSAGE);
-
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "An error occured while reading" + psFile + ". Please verif that the compomics utilities version used to create the file was the same as the one used by your version of Reporter.", "File Input Error.", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
+    @Override
+    public void cancelProgress() {
+        cancelProgress = true;
     }
 }
