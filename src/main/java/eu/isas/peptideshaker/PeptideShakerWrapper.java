@@ -62,7 +62,7 @@ public class PeptideShakerWrapper {
 
         String temp = "", cmdLine, path;
 
-        path = this.getClass().getResource("PeptideShaker.class").getPath();
+        path = this.getClass().getResource("PeptideShakerWrapper.class").getPath();
         path = path.substring(5, path.indexOf(jarFileName));
         path = path.replace("%20", " ");
 
@@ -110,7 +110,7 @@ public class PeptideShakerWrapper {
 
         cmdLine = javaHome + "java " + options + " -cp "
                 + quote + new File(tempFile, jarFileName).getAbsolutePath() + quote
-                + " eu.isas.peptideshaker.PeptideShaker";
+                + " eu.isas.peptideshaker.gui.PeptideShakerGUI";
 
         if (debug) {
             System.out.println(cmdLine);

@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
-import javax.swing.JOptionPane;
 
 /**
  * Contains methods for exporting the search engine results to csv files.
@@ -80,8 +79,9 @@ public class CsvExporter {
      * Exports the results to csv files.
      *
      * @param folder the folder to store the results in.
+     * @return true if the export was sucessfull
      */
-    public void exportResults(File folder) {
+    public boolean exportResults(File folder) {
         try {
             Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
             Writer peptideWriter = new BufferedWriter(new FileWriter(new File(folder, peptideFile)));
@@ -106,10 +106,11 @@ public class CsvExporter {
             proteinWriter.close();
             peptideWriter.close();
             spectrumWriter.close();
-            JOptionPane.showMessageDialog(null, "Identifications were successfully exported", "Export Successful", JOptionPane.INFORMATION_MESSAGE);
+
+            return true;
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Writing of spectrum file failed.", "Error", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
+            return false;
         }
     }
 

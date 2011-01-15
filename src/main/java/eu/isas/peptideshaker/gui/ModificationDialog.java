@@ -192,7 +192,7 @@ public class ModificationDialog extends javax.swing.JDialog {
     /**
      * Cancels the selection.
      *
-     * @return
+     * @return if the dialog is canceled
      */
     public boolean isCanceled() {
         return cancel;
