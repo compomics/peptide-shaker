@@ -137,6 +137,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         setLocationRelativeTo(null);
         setVisible(true);
+
+        // open the OpenDialog
+        new OpenDialog(this, true);
     }
 
     /**
