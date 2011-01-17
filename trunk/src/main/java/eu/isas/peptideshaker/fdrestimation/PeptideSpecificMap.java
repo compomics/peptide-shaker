@@ -195,6 +195,16 @@ public class PeptideSpecificMap implements Serializable {
     }
 
     /**
+     * Sets whether probabilistic thresholds should be applied when recommended
+     * @param probabilistic boolean indicating whether probabilistic thresholds should be applied when recommended
+     */
+    public void setProbabilistic(boolean probabilistic) {
+        for (TargetDecoyMap targetDecoyMap : peptideMaps.values()) {
+            targetDecoyMap.setProbabilistic(probabilistic);
+        }
+    }
+
+    /**
      * This method returns the indexing key of a peptide match
      *
      * @param peptideMatch  the considered peptide match

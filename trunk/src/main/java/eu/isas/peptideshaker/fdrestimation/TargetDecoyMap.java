@@ -322,6 +322,14 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
+     * Sets whether probabilistic thresholds should be applied when recommended
+     * @param probabilistic boolean indicating whether probabilistic thresholds should be applied when recommended
+     */
+    public void setProbabilistic(boolean probabilistic) {
+        this.probabilistic = probabilistic;
+    }
+
+    /**
      * Returns the sorted scores implemented in this map.
      * @return the sorted scores implemented in this map.
      */

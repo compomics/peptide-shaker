@@ -173,6 +173,16 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
+     * Sets whether probabilistic thresholds should be applied when recommended
+     * @param probabilistic boolean indicating whether probabilistic thresholds should be applied when recommended
+     */
+    public void setProbabilistic(boolean probabilistic) {
+        for (TargetDecoyMap targetDecoyMap : psmsMaps.values()) {
+            targetDecoyMap.setProbabilistic(probabilistic);
+        }
+    }
+
+    /**
      * Returns the key (here the charge) associated to the corresponding spectrum match
      * @param spectrumMatch the spectrum match of interest
      * @return the corresponding key
