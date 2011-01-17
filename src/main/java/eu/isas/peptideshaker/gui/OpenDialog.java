@@ -5,7 +5,7 @@ import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.io.ExperimentIO;
-import eu.isas.peptideshaker.IdentificationShaker;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.idimport.IdFilter;
 import java.io.File;
 import java.util.ArrayList;
@@ -512,7 +512,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
                 experiment.addAnalysisSet(sample, analysisSet);
                 WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI, true, experiment.getReference());
-                IdentificationShaker identificationShaker = new IdentificationShaker();
+                PeptideShaker identificationShaker = new PeptideShaker();
                 IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue());
                 identificationShaker.importIdentifications(waitingDialog, experiment, sample, replicateNumber, idFilter, idFiles);
                 this.dispose();

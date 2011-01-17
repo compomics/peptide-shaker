@@ -14,7 +14,6 @@ import eu.isas.peptideshaker.fdrestimation.InputMap;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.idimport.IdFilter;
 import eu.isas.peptideshaker.idimport.IdImporter;
@@ -29,7 +28,7 @@ import java.util.HashMap;
  * This class will be responsible for the identification import and the associated calculations
  * @author Marc
  */
-public class IdentificationShaker {
+public class PeptideShaker {
 
     /**
      * The experiment conducted
@@ -61,7 +60,7 @@ public class IdentificationShaker {
     /**
      * Main constructor
      */
-    public IdentificationShaker() {
+    public PeptideShaker() {
     }
 
     /**

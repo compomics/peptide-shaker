@@ -5,7 +5,7 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
-import eu.isas.peptideshaker.IdentificationShaker;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fdrestimation.InputMap;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.WaitingDialog;
@@ -27,7 +27,7 @@ public class IdImporter {
     /**
      * The class which will load the information into the various maps and do the associated calculations
      */
-    private IdentificationShaker identificationShaker;
+    private PeptideShaker identificationShaker;
     /**
      * The identification processed
      */
@@ -62,7 +62,7 @@ public class IdImporter {
      * @param identification        the identification to process
      * @param idFilter              The identification filter to use
      */
-    public IdImporter(IdentificationShaker identificationShaker, WaitingDialog waitingDialog, Identification identification, IdFilter idFilter) {
+    public IdImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, Identification identification, IdFilter idFilter) {
         this.identificationShaker = identificationShaker;
         this.waitingDialog = waitingDialog;
         this.identification = identification;
@@ -75,7 +75,7 @@ public class IdImporter {
      * @param waitingDialog
      * @param identification
      */
-    public IdImporter(IdentificationShaker identificationShaker, WaitingDialog waitingDialog, Identification identification) {
+    public IdImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, Identification identification) {
         this.identificationShaker = identificationShaker;
         this.waitingDialog = waitingDialog;
         this.identification = identification;
