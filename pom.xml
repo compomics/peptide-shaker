@@ -273,7 +273,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.0.33</version>
+            <version>3.0.32</version>
             <type>jar</type>
             <exclusions>
                 <exclusion>
