@@ -19,6 +19,7 @@ import eu.isas.peptideshaker.idimport.IdFilter;
 import eu.isas.peptideshaker.idimport.IdImporter;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.IdentificationPreferences;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,7 +43,6 @@ public class PeptideShaker {
      * The replicate number
      */
     int replicateNumber;
-
     /**
      * The psm map
      */
@@ -56,27 +56,44 @@ public class PeptideShaker {
      */
     TargetDecoyMap proteinMap;
 
+    /**
+     * constructor without mass specification. Calculation will be done on new maps which will be retrieved as compomics utilities parameters.
+     * @param experiment        The experiment conducted
+     * @param sample            The sample analyzed
+     * @param replicateNumber   The replicate number
+     */
+    public PeptideShaker(MsExperiment experiment, Sample sample, int replicateNumber) {
+        this.experiment = experiment;
+        this.sample = sample;
+        this.replicateNumber = replicateNumber;
+        psmMap = new PsmSpecificMap();
+        peptideMap = new PeptideSpecificMap();
+        proteinMap = new TargetDecoyMap("protein");
+    }
 
     /**
-     * Main constructor
+     * Constructor with map specifications
+     * @param experiment        The experiment conducted
+     * @param sample            The sample analyzed
+     * @param replicateNumber   The replicate number
+     * @param psMaps           the peptide shaker maps
      */
-    public PeptideShaker() {
+    public PeptideShaker(MsExperiment experiment, Sample sample, int replicateNumber, PSMaps psMaps) {
+        this.experiment = experiment;
+        this.sample = sample;
+        this.replicateNumber = replicateNumber;
+        this.psmMap = psMaps.getPsmSpecificMap();
+        this.peptideMap = psMaps.getPeptideSpecificMap();
+        this.proteinMap = psMaps.getProteinMap();
     }
 
     /**
      * Method used to import identification from identification result files
      * @param waitingDialog     A dialog to display the feedback
-     * @param experiment        The experiment conducted
-     * @param sample            The sample measured
-     * @param replicateNumber   The replicate number
      * @param idFilter          The identification filter to use
      * @param idFiles           The files to import
      */
-    public void importIdentifications(WaitingDialog waitingDialog, MsExperiment experiment, Sample sample, int replicateNumber, IdFilter idFilter, ArrayList<File> idFiles) {
-
-        this.experiment = experiment;
-        this.sample = sample;
-        this.replicateNumber = replicateNumber;
+    public void importIdentifications(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles) {
 
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         Ms2Identification identification = new Ms2Identification();
@@ -88,16 +105,8 @@ public class PeptideShaker {
     /**
      * Method for processing of results from utilities data (no file). From ms_lims for instance.
      * @param waitingDialog     A dialog to display the feedback
-     * @param experiment        The experiment conducted
-     * @param sample            The sample analyzed
-     * @param replicateNumber   The replicate number
      */
-    public void processIdentifications(WaitingDialog waitingDialog, MsExperiment experiment, Sample sample, int replicateNumber) {
-
-        this.experiment = experiment;
-        this.sample = sample;
-        this.replicateNumber = replicateNumber;
-
+    public void processIdentifications(WaitingDialog waitingDialog) {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         IdImporter idImporter = new IdImporter(this, waitingDialog, identification);
         idImporter.importIdentifications();
@@ -114,19 +123,16 @@ public class PeptideShaker {
             inputMap.computeProbabilities(waitingDialog);
         }
         waitingDialog.appendReport("Computing spectrum probabilities.");
-        psmMap = new PsmSpecificMap();
         fillPsmMap(inputMap);
         psmMap.cure(waitingDialog);
         psmMap.estimateProbabilities(waitingDialog);
         attachSpectrumProbabilities();
         waitingDialog.appendReport("Computing peptide probabilities.");
-        peptideMap = new PeptideSpecificMap();
         fillPeptideMaps();
         peptideMap.cure(waitingDialog);
         peptideMap.estimateProbabilities(waitingDialog);
         attachPeptideProbabilities();
         waitingDialog.appendReport("Computing protein probabilities.");
-        proteinMap = new TargetDecoyMap("protein");
         fillProteinMap();
         proteinMap.estimateProbabilities(waitingDialog);
         attachProteinProbabilities();
@@ -134,6 +140,54 @@ public class PeptideShaker {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap));
         waitingDialog.setRunFinished();
+    }
+
+    /**
+     * This method will estimate for each map the score thresholds, FDR and FNR when possible
+     */
+    public void estimateThresholds(IdentificationPreferences identificationPreferences) {
+        boolean probabilistic = identificationPreferences.useProbabilisticFDR();
+        proteinMap.setProbabilistic(probabilistic);
+        peptideMap.setProbabilistic(probabilistic);
+        psmMap.setProbabilistic(probabilistic);
+
+        proteinMap.getResults(identificationPreferences.getProteinThreshold());
+        peptideMap.getResults(identificationPreferences.getPeptideThreshold());
+        psmMap.getResults(identificationPreferences.getPsmThreshold());
+    }
+
+    /**
+     * This method will flag validated identifications
+     */
+    public void validateIdentifications() {
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        PSParameter psParameter = new PSParameter();
+        
+        double proteinThreshold = proteinMap.getScoreLimit();
+        for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
+            psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+            if (psParameter.getProteinProbabilityScore() < proteinThreshold) {
+                psParameter.setValidated(true);
+            }
+        }
+
+        double peptideThreshold;
+        for(PeptideMatch peptideMatch : identification.getPeptideIdentification().values()) {
+            peptideThreshold = peptideMap.getScoreLimit(peptideMatch);
+            psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+            if (psParameter.getPeptideProbabilityScore() < peptideThreshold) {
+                psParameter.setValidated(true);
+            }
+        }
+
+        double psmThreshold;
+        for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
+            psmThreshold = psmMap.getScoreLimit(spectrumMatch);
+            psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
+            if (psParameter.getSpectrumProbabilityScore() < psmThreshold) {
+                psParameter.setValidated(true);
+            }
+        }
     }
 
     /**
@@ -269,5 +323,4 @@ public class PeptideShaker {
             psParameter.setProteinProbability(proteinMap.getProbability(psParameter.getProteinProbabilityScore()));
         }
     }
-
 }

@@ -18,12 +18,15 @@ import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import com.jgoodies.looks.plastic.theme.SkyKrupp;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
+import eu.isas.peptideshaker.gui.preferencesgui.IdentificationPreferencesGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.IdentificationPreferences;
 import eu.isas.peptideshaker.renderers.TrueFalseIconRenderer;
 import eu.isas.peptideshaker.utils.Properties;
 import java.awt.Color;
@@ -86,6 +89,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The target/decoy map at the protein level
      */
     private TargetDecoyMap proteinMap;
+
+    /**
+     * The identification preferences
+     */
+    private IdentificationPreferences identificationPreferences;
     /**
      * The color used for the sparkline bar chart plots.
      */
@@ -140,6 +148,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         setLocationRelativeTo(null);
         setVisible(true);
+
+        setDefaultPreferences();
 
         // open the OpenDialog
         new OpenDialog(this, true);
@@ -243,6 +253,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         exitJMenuItem = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        preferencesMenu = new javax.swing.JMenu();
+        identificationOptionsMenu = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
         aboutJMenuItem = new javax.swing.JMenuItem();
@@ -433,6 +445,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         viewJMenu.add(sparklinesJCheckBoxMenuItem);
 
         menuBar.add(viewJMenu);
+
+        preferencesMenu.setText("Preferences");
+
+        identificationOptionsMenu.setText("Identification Options");
+        identificationOptionsMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                identificationOptionsMenuActionPerformed(evt);
+            }
+        });
+        preferencesMenu.add(identificationOptionsMenu);
+
+        menuBar.add(preferencesMenu);
 
         helpMenu.setMnemonic('H');
         helpMenu.setText("Help");
@@ -653,6 +677,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         new HelpWindow(this, getClass().getResource("/helpFiles/AboutPeptideShaker.html"));
     }//GEN-LAST:event_aboutJMenuItemActionPerformed
 
+    private void identificationOptionsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificationOptionsMenuActionPerformed
+        new IdentificationPreferencesGUI(this, identificationPreferences);
+    }//GEN-LAST:event_identificationOptionsMenuActionPerformed
+
     /**
      * This method sets the information of the project when opened
      * 
@@ -667,26 +695,34 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
+     * Sets new identification preferences
+     * @param identificationPreferences the new identification preferences
+     */
+    public void setIdentificationPreferences(IdentificationPreferences identificationPreferences) {
+        this.identificationPreferences = identificationPreferences;
+    }
+
+    /**
+     * This method calls the peptide shaker to get fdr results
+     */
+    public void getFdrResults() {
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        PSMaps psMaps = (PSMaps) identification.getUrParam(new PSMaps());
+        PeptideShaker peptideShaker = new PeptideShaker(experiment, sample, replicateNumber, psMaps);
+        peptideShaker.estimateThresholds(identificationPreferences);
+        peptideShaker.validateIdentifications();
+    }
+
+    /**
      * Displays the results in the result tables.
      */
     public void displayResults() {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-
-        PSMaps psMaps = (PSMaps) identification.getUrParam(new PSMaps());
-        psmMap = psMaps.getPsmSpecificMap();
-        peptideMap = psMaps.getPeptideSpecificMap();
-        proteinMap = psMaps.getProteinMap();
-
+        getFdrResults();
         emptyResultTables();
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-        // set the FDR threshold to use
-        double threshold = 0.01;    // @TODO: this number ought to not be hardcoded!!!
-        psmMap.getResults(threshold);
-        peptideMap.getResults(threshold);
-        proteinMap.getResults(threshold);
 
         int indexCounter = 0;
         int maxPeptides = 1;
@@ -949,12 +985,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenuItem identificationOptionsMenu;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JScrollPane peptidesJScrollPane;
     private javax.swing.JTable peptidesJTable;
+    private javax.swing.JMenu preferencesMenu;
     private javax.swing.JScrollPane proteinsJScrollPane;
     private javax.swing.JTable proteinsJTable;
     private javax.swing.JTable ptmAnalysisJTable;
@@ -1099,5 +1137,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     @Override
     public void cancelProgress() {
         cancelProgress = true;
+    }
+
+    /**
+     * Set the default preferences.
+     * TODO: Not sure that this ought to be hard coded
+     */
+    private void setDefaultPreferences() {
+        identificationPreferences = new IdentificationPreferences(0.01, 0.01, 0.01, true, false);
     }
 }

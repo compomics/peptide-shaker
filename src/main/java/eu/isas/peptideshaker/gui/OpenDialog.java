@@ -512,9 +512,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
                 experiment.addAnalysisSet(sample, analysisSet);
                 WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI, true, experiment.getReference());
-                PeptideShaker identificationShaker = new PeptideShaker();
+                PeptideShaker identificationShaker = new PeptideShaker(experiment, sample, replicateNumber);
                 IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue());
-                identificationShaker.importIdentifications(waitingDialog, experiment, sample, replicateNumber, idFilter, idFiles);
+                identificationShaker.importIdentifications(waitingDialog, idFilter, idFiles);
                 this.dispose();
             }
         }
