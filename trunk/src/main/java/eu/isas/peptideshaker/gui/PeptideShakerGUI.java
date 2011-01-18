@@ -67,7 +67,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * The compomics experiment
      */
-    private MsExperiment experiment;
+    private MsExperiment experiment = null;
     /**
      * The investigated sample
      */
@@ -503,7 +503,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void openJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJMenuItemActionPerformed
-        new OpenDialog(this, true);
+        if (experiment != null) {
+            new OpenDialog(this, true, experiment, sample, replicateNumber);
+        } else {
+            new OpenDialog(this, true);
+        }
     }//GEN-LAST:event_openJMenuItemActionPerformed
 
     /**
@@ -588,7 +592,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         selectedFile += ".cps";
                     }
 
-                    // @TODO: add check for if a file is about to be overwritten
+                    int outcome = JOptionPane.showConfirmDialog(progressDialog,
+                            "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    if (outcome != JOptionPane.YES_OPTION) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        return ;
+                    }
 
                     try {
                         experimentIO.save(new File(selectedFile), experiment);

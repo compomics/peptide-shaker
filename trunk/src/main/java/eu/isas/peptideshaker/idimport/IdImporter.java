@@ -91,7 +91,6 @@ public class IdImporter {
         idProcessor.execute();
 
         waitingDialog.appendReport("Importing identifications.");
-        waitingDialog.setVisible(true);
     }
 
     /**
@@ -222,6 +221,7 @@ public class IdImporter {
 
                 if (nRetained == 0) {
                     waitingDialog.appendReport("No identification retained.");
+                    waitingDialog.setRunCanceled();
                     waitingDialog.setRunFinished();
                     return 1;
                 }
