@@ -60,6 +60,21 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="editMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Edit"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="identificationOptionsMenu">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Identification Options"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="identificationOptionsMenuActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="viewJMenu">
           <Properties>
             <Property name="mnemonic" type="int" value="86"/>
@@ -77,21 +92,6 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sparklinesJCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-          </SubComponents>
-        </Menu>
-        <Menu class="javax.swing.JMenu" name="preferencesMenu">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Preferences"/>
-          </Properties>
-          <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="identificationOptionsMenu">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Identification Options"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="identificationOptionsMenuActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

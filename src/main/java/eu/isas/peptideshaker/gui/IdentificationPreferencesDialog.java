@@ -1,30 +1,26 @@
+package eu.isas.peptideshaker.gui;
 
-/*
- * IdentificationPreferences.java
- *
- * Created on Jan 17, 2011, 1:47:34 PM
- */
-package eu.isas.peptideshaker.gui.preferencesgui;
-
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.IdentificationPreferences;
 import javax.swing.JOptionPane;
 
 /**
- * This dialog will display the identification processing options
+ * This dialog will display the identification processing options.
  *
- * @author vaudel
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
-public class IdentificationPreferencesGUI extends javax.swing.JFrame {
+public class IdentificationPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * The peptide shaker gui parent
      */
     private PeptideShakerGUI parent;
 
-    /** Creates new form IdentificationPreferences */
-    public IdentificationPreferencesGUI(PeptideShakerGUI parent, IdentificationPreferences identificationPreferences) {
-
+    /**
+     * Creates a new IdentificationPreferences dialog
+     */
+    public IdentificationPreferencesDialog(PeptideShakerGUI parent, IdentificationPreferences identificationPreferences, boolean modal) {
+        super(parent, modal);
         this.parent = parent;
 
         initComponents();
@@ -49,42 +45,29 @@ public class IdentificationPreferencesGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        validatedProteinsBox = new javax.swing.JCheckBox();
+        probabilisticBox = new javax.swing.JCheckBox();
         jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        okButton = new javax.swing.JButton();
+        cancelButton = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         proteinThresholdTxt = new javax.swing.JTextField();
         peptideThresholdTxt = new javax.swing.JTextField();
         psmThresholdTxt = new javax.swing.JTextField();
-        validatedProteinsBox = new javax.swing.JCheckBox();
-        probabilisticBox = new javax.swing.JCheckBox();
-        cancelButton = new javax.swing.JButton();
-        okButton = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Identification Preferences");
+        setResizable(false);
 
         jLabel1.setText("Protein Validation Threshold:");
 
         jLabel2.setText("Peptide Validation Threshold:");
 
-        jLabel3.setText("PSM Validation Threshold:");
-
-        jLabel4.setText("% FDR");
-
-        jLabel5.setText("% FDR");
-
-        jLabel6.setText("% FDR");
-
-        proteinThresholdTxt.setText("jTextField1");
-
-        peptideThresholdTxt.setText("jTextField2");
-
-        psmThresholdTxt.setText("jTextField3");
-
-        validatedProteinsBox.setText("remove non-validated proteins");
+        validatedProteinsBox.setText("Remove non-validated proteins");
         validatedProteinsBox.setEnabled(false);
 
         probabilisticBox.setSelected(true);
@@ -95,12 +78,7 @@ public class IdentificationPreferencesGUI extends javax.swing.JFrame {
             }
         });
 
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        jLabel3.setText("PSM Validation Threshold:");
 
         okButton.setText("OK");
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -109,77 +87,92 @@ public class IdentificationPreferencesGUI extends javax.swing.JFrame {
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(probabilisticBox)
-                    .addComponent(validatedProteinsBox)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(proteinThresholdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(peptideThresholdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel5))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(psmThresholdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel6))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(cancelButton)))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(jLabel4)
-                    .addComponent(proteinThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel5)
-                    .addComponent(peptideThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel6)
-                    .addComponent(psmThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(validatedProteinsBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(probabilisticBox)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
+        cancelButton.setText("Cancel");
+        cancelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("% FDR");
+
+        jLabel5.setText("% FDR");
+
+        jLabel4.setText("% FDR");
+
+        proteinThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        proteinThresholdTxt.setText("jTextField1");
+
+        peptideThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        peptideThresholdTxt.setText("jTextField2");
+
+        psmThresholdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        psmThresholdTxt.setText("jTextField3");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(probabilisticBox)
+                    .addComponent(validatedProteinsBox)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cancelButton))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel1))
+                        .addGap(24, 24, 24)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(proteinThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel4))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(psmThresholdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel6))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addComponent(peptideThresholdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jLabel5)))))
+                .addGap(14, 14, 14))
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(proteinThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(peptideThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(psmThresholdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(validatedProteinsBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(probabilisticBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelButton)
+                    .addComponent(okButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -187,11 +180,11 @@ public class IdentificationPreferencesGUI extends javax.swing.JFrame {
 
     private void probabilisticBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_probabilisticBoxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_probabilisticBoxActionPerformed
+}//GEN-LAST:event_probabilisticBoxActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.dispose();
-    }//GEN-LAST:event_cancelButtonActionPerformed
+}//GEN-LAST:event_cancelButtonActionPerformed
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
@@ -199,7 +192,7 @@ public class IdentificationPreferencesGUI extends javax.swing.JFrame {
             parent.getFdrResults();
             this.dispose();
         }
-    }//GEN-LAST:event_okButtonActionPerformed
+}//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel jLabel1;
@@ -208,7 +201,6 @@ public class IdentificationPreferencesGUI extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JButton okButton;
     private javax.swing.JTextField peptideThresholdTxt;
     private javax.swing.JCheckBox probabilisticBox;
@@ -217,9 +209,9 @@ public class IdentificationPreferencesGUI extends javax.swing.JFrame {
     private javax.swing.JCheckBox validatedProteinsBox;
     // End of variables declaration//GEN-END:variables
 
-
     /**
      * Returns the new preferences
+     *
      * @return the new preferences
      */
     private IdentificationPreferences getNewPreferences() {
@@ -232,27 +224,29 @@ public class IdentificationPreferencesGUI extends javax.swing.JFrame {
 
     /**
      * This method verifies the user's imput
+     *
      * @return true if the input can be read
      */
     public boolean validateInput() {
         try {
-            new Double(proteinThresholdTxt.getText());
+            Double.parseDouble(proteinThresholdTxt.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Please verify the protein threshold.", "Input Error.", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         try {
-            new Double(peptideThresholdTxt.getText());
+            Double.parseDouble(peptideThresholdTxt.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Please verify the peptide threshold.", "Input Error.", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         try {
-            new Double(psmThresholdTxt.getText());
+            Double.parseDouble(psmThresholdTxt.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Please verify the psm threshold.", "Input Error.", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+
         return true;
     }
 }

@@ -130,6 +130,11 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         });
 
         editId.setText("Edit");
+        editId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editIdActionPerformed(evt);
+            }
+        });
 
         browseId.setText("Browse");
         browseId.addActionListener(new java.awt.event.ActionListener() {
@@ -248,15 +253,11 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         fileImportPanelLayout.setHorizontalGroup(
             fileImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fileImportPanelLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(fileImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(fileImportPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(projectDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(fileImportPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(sampleDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(projectDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(sampleDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fileImportPanelLayout.createSequentialGroup()
-                        .addContainerGap(560, Short.MAX_VALUE)
                         .addComponent(processButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(exitButton)))
@@ -330,11 +331,11 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                         .addGroup(idFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                         .addGroup(idFilterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(maxPepLength, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
                             .addComponent(minPepLength, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(383, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(381, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         idFilterPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {mascotMaxEvalue, maxPepLength, minPepLength, omssaMaxEvalue, xtandemMaxEvalue});
@@ -519,6 +520,11 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             }
         }
 }//GEN-LAST:event_processButtonActionPerformed
+
+    private void editIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editIdActionPerformed
+        // @TODO: implement
+    }//GEN-LAST:event_editIdActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseId;
     private javax.swing.JButton clearId;
