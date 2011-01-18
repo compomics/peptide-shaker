@@ -57,7 +57,7 @@ public class IdFilter {
      */
     public boolean validateId(PeptideAssumption assumption) {
         int pepLength = assumption.getPeptide().getSequence().length();
-        if (pepLength > maxPepLength || pepLength < minPepLength) {
+        if ((pepLength > maxPepLength && maxPepLength != 0) || pepLength < minPepLength) {
             return false;
         }
         int searchEngine = assumption.getAdvocate();
