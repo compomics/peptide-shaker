@@ -103,8 +103,8 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="idFilesTxt" alignment="0" pref="296" max="32767" attributes="0"/>
-                              <Component id="sampleNametxt" pref="296" max="32767" attributes="0"/>
+                              <Component id="idFilesTxt" alignment="0" pref="300" max="32767" attributes="0"/>
+                              <Component id="sampleNametxt" pref="300" max="32767" attributes="0"/>
                           </Group>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
@@ -167,6 +167,9 @@
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Edit"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editIdActionPerformed"/>
+                  </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="browseId">
                   <Properties>
@@ -238,7 +241,7 @@
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel2" min="-2" pref="114" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="projectNameTxt" pref="520" max="32767" attributes="0"/>
+                          <Component id="projectNameTxt" pref="524" max="32767" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -337,7 +340,7 @@
                                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <EmptySpace pref="35" max="32767" attributes="0"/>
+                                  <EmptySpace pref="39" max="32767" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="maxPepLength" linkSize="3" pref="133" max="32767" attributes="1"/>
                                       <Component id="minPepLength" linkSize="3" alignment="1" min="-2" pref="133" max="-2" attributes="1"/>
@@ -366,7 +369,7 @@
                               <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="xtandemMaxEvalue" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="37" max="32767" attributes="0"/>
+                          <EmptySpace pref="40" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="minPepLength" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>

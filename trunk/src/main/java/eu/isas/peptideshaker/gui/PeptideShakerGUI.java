@@ -23,7 +23,6 @@ import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
-import eu.isas.peptideshaker.gui.preferencesgui.IdentificationPreferencesGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.IdentificationPreferences;
@@ -251,10 +250,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         exportMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
+        editMenu = new javax.swing.JMenu();
+        identificationOptionsMenu = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        preferencesMenu = new javax.swing.JMenu();
-        identificationOptionsMenu = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
         aboutJMenuItem = new javax.swing.JMenuItem();
@@ -430,6 +429,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         menuBar.add(fileJMenu);
 
+        editMenu.setText("Edit");
+
+        identificationOptionsMenu.setText("Identification Options");
+        identificationOptionsMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                identificationOptionsMenuActionPerformed(evt);
+            }
+        });
+        editMenu.add(identificationOptionsMenu);
+
+        menuBar.add(editMenu);
+
         viewJMenu.setMnemonic('V');
         viewJMenu.setText("View");
 
@@ -445,18 +456,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         viewJMenu.add(sparklinesJCheckBoxMenuItem);
 
         menuBar.add(viewJMenu);
-
-        preferencesMenu.setText("Preferences");
-
-        identificationOptionsMenu.setText("Identification Options");
-        identificationOptionsMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                identificationOptionsMenuActionPerformed(evt);
-            }
-        });
-        preferencesMenu.add(identificationOptionsMenu);
-
-        menuBar.add(preferencesMenu);
 
         helpMenu.setMnemonic('H');
         helpMenu.setText("Help");
@@ -677,8 +676,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         new HelpWindow(this, getClass().getResource("/helpFiles/AboutPeptideShaker.html"));
     }//GEN-LAST:event_aboutJMenuItemActionPerformed
 
+    /**
+     * Opens the Identification Preference dialog.
+     *
+     * @param evt
+     */
     private void identificationOptionsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificationOptionsMenuActionPerformed
-        new IdentificationPreferencesGUI(this, identificationPreferences);
+        new IdentificationPreferencesDialog(this, identificationPreferences, true);
     }//GEN-LAST:event_identificationOptionsMenuActionPerformed
 
     /**
@@ -980,6 +984,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutJMenuItem;
+    private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitJMenuItem;
     private javax.swing.JMenuItem exportMenuItem;
     private javax.swing.JMenu fileJMenu;
@@ -992,7 +997,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JScrollPane peptidesJScrollPane;
     private javax.swing.JTable peptidesJTable;
-    private javax.swing.JMenu preferencesMenu;
     private javax.swing.JScrollPane proteinsJScrollPane;
     private javax.swing.JTable proteinsJTable;
     private javax.swing.JTable ptmAnalysisJTable;
