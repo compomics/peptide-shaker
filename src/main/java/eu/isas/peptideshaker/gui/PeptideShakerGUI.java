@@ -14,6 +14,8 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
+import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
+import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
@@ -47,6 +49,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * The main frame of the PeptideShaker.
@@ -731,9 +734,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * Displays the results in the result tables.
      */
-    public void displayResults() {
+    public void displayResults() throws MzMLUnmarshallerException {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        SpectrumCollection spectrumCollection = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSpectrumCollection();
         getFdrResults();
         emptyResultTables();
 
@@ -912,15 +916,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             PSParameter probabilities = new PSParameter();
             probabilities = (PSParameter) spectrumMatch.getUrParam(probabilities);
+            String spectrumKey = spectrumMatch.getSpectrumKey();
+            MSnSpectrum spectrum = (MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumKey);
 
             ((DefaultTableModel) spectraJTable.getModel()).addRow(new Object[]{
                         ++indexCounter,
                         accessionNumbers,
                         bestAssumption.getSequence(),
                         modifications,
-                        spectrumMatch.getSpectrum().getPrecursor().getCharge().value, // @TODO: check if this is correct
-                        spectrumMatch.getSpectrum().getSpectrumTitle(),
-                        spectrumMatch.getSpectrum().getFileName(),
+                        spectrum.getPrecursor().getCharge().value,
+                        spectrum.getSpectrumTitle(),
+                        spectrum.getFileName(),
                         assumptions,
                         spectrumMatch.getBestAssumption().getDeltaMass(),
                         mascotScore,
@@ -932,8 +938,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         spectrumMatch.getBestAssumption().isDecoy()
                     });
 
-            if (maxCharge < spectrumMatch.getSpectrum().getPrecursor().getCharge().value) {
-                maxCharge = spectrumMatch.getSpectrum().getPrecursor().getCharge().value;
+            if (maxCharge < spectrum.getPrecursor().getCharge().value) {
+                maxCharge = spectrum.getPrecursor().getCharge().value;
             }
 
             if (maxMassError < spectrumMatch.getBestAssumption().getDeltaMass()) {
