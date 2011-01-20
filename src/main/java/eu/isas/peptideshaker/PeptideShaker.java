@@ -10,13 +10,15 @@ import com.compomics.util.experiment.identification.identifications.Ms2Identific
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import eu.isas.peptideshaker.fdrestimation.InputMap;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
 import eu.isas.peptideshaker.gui.WaitingDialog;
-import eu.isas.peptideshaker.idimport.IdFilter;
-import eu.isas.peptideshaker.idimport.IdImporter;
+import eu.isas.peptideshaker.fileimport.IdFilter;
+import eu.isas.peptideshaker.fileimport.IdImporter;
+import eu.isas.peptideshaker.fileimport.SpectrumImporter;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.IdentificationPreferences;
@@ -34,27 +36,43 @@ public class PeptideShaker {
     /**
      * The experiment conducted
      */
-    MsExperiment experiment;
+    private MsExperiment experiment;
     /**
      * The sample analyzed
      */
-    Sample sample;
+    private Sample sample;
     /**
      * The replicate number
      */
-    int replicateNumber;
+    private int replicateNumber;
     /**
      * The psm map
      */
-    PsmSpecificMap psmMap;
+    private PsmSpecificMap psmMap;
     /**
      * The peptide map
      */
-    PeptideSpecificMap peptideMap;
+    private PeptideSpecificMap peptideMap;
     /**
      * The protein map
      */
-    TargetDecoyMap proteinMap;
+    private TargetDecoyMap proteinMap;
+    /**
+     * The id importer will import and process the identifications
+     */
+    private IdImporter idImporter = null;
+    /**
+     * The spectrum importer will import spectra
+     */
+    private SpectrumImporter spectrumImporter;
+    /**
+     * Boolean indicating whether the processing of identifications is finished
+     */
+    private boolean idProcessingFinished = false;
+    /**
+     * The queuing objects
+     */
+    private ArrayList<Object> queue = new ArrayList<Object>();
 
     /**
      * constructor without mass specification. Calculation will be done on new maps which will be retrieved as compomics utilities parameters.
@@ -66,7 +84,7 @@ public class PeptideShaker {
         this.experiment = experiment;
         this.sample = sample;
         this.replicateNumber = replicateNumber;
-        psmMap = new PsmSpecificMap();
+        psmMap = new PsmSpecificMap(experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSpectrumCollection());
         peptideMap = new PeptideSpecificMap();
         proteinMap = new TargetDecoyMap("protein");
     }
@@ -94,12 +112,64 @@ public class PeptideShaker {
      * @param idFiles           The files to import
      */
     public void importIdentifications(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles) {
-
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         Ms2Identification identification = new Ms2Identification();
         analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, identification);
-        IdImporter idImporter = new IdImporter(this, waitingDialog, identification, idFilter);
+        idImporter = new IdImporter(this, waitingDialog, experiment, sample, replicateNumber, idFilter);
         idImporter.importFiles(idFiles);
+    }
+
+    /**
+     * Method used to import spectra from files
+     * @param waitingDialog     A dialog to display feedback to the user
+     * @param identified        A boolean indicating whether only identified spectra should be loaded
+     * @param spectrumFiles     The files to import
+     */
+    public void importSpectra(WaitingDialog waitingDialog, boolean identified, ArrayList<File> spectrumFiles) {
+        ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
+        spectrumImporter = new SpectrumImporter(this, analysis, identified);
+        spectrumImporter.importSpectra(waitingDialog, spectrumFiles);
+    }
+
+    /**
+     * Add an object to the queue waiting for the identification import to complete
+     * @param object    the object to add in the queue
+     */
+    public void queue(Object object) {
+            queue.add(object);
+    }
+
+    public boolean needQueue() {
+        return (idImporter != null && !idProcessingFinished);
+    }
+
+    public synchronized void emptyQueue() {
+        for (Object object : queue) {
+            object.notify();
+        }
+    }
+
+    public void setRunFinished(WaitingDialog waitingDialog) {
+        if (idImporter != null) {
+            if (!idProcessingFinished) {
+                return;
+            }
+        }
+        if (spectrumImporter != null) {
+            if (!spectrumImporter.isRunFinished()) {
+                return;
+            }
+        }
+        waitingDialog.setRunFinished();
+    }
+
+    /**
+     * Method used to import sequences from a fasta file
+     * @param waitingDialog     A dialog to display feedback to the user
+     * @param file              the file to import
+     */
+    public void importFasta(WaitingDialog waitingDialog, File file) {
+        //@TODO implement
     }
 
     /**
@@ -107,8 +177,7 @@ public class PeptideShaker {
      * @param waitingDialog     A dialog to display the feedback
      */
     public void processIdentifications(WaitingDialog waitingDialog) {
-        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        IdImporter idImporter = new IdImporter(this, waitingDialog, identification);
+        IdImporter idImporter = new IdImporter(this, waitingDialog, experiment, sample, replicateNumber);
         idImporter.importIdentifications();
     }
 
@@ -139,7 +208,8 @@ public class PeptideShaker {
         waitingDialog.appendReport("Identification processing completed.");
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap));
-        waitingDialog.setRunFinished();
+        idProcessingFinished = true;
+        setRunFinished(waitingDialog);
     }
 
     /**
@@ -162,7 +232,7 @@ public class PeptideShaker {
     public void validateIdentifications() {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
-        
+
         double proteinThreshold = proteinMap.getScoreLimit();
         for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
             psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
@@ -172,7 +242,7 @@ public class PeptideShaker {
         }
 
         double peptideThreshold;
-        for(PeptideMatch peptideMatch : identification.getPeptideIdentification().values()) {
+        for (PeptideMatch peptideMatch : identification.getPeptideIdentification().values()) {
             peptideThreshold = peptideMap.getScoreLimit(peptideMatch);
             psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
             if (psParameter.getPeptideProbabilityScore() < peptideThreshold) {

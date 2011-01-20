@@ -12,6 +12,10 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.Charge;
+import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
+import com.compomics.util.experiment.massspectrometry.Peak;
+import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.BufferedWriter;
@@ -21,6 +25,8 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * Contains methods for exporting the search engine results to csv files.
@@ -64,7 +70,7 @@ public class CsvExporter {
      * @param experiment the ms experiment
      * @param sample the sample
      * @param replicateNumber the replicate number
-      */
+     */
     public CsvExporter(MsExperiment experiment, Sample sample, int replicateNumber) {
         this.experiment = experiment;
         this.sample = sample;
@@ -111,6 +117,9 @@ public class CsvExporter {
         } catch (IOException e) {
             e.printStackTrace();
             return false;
+        } catch (MzMLUnmarshallerException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -128,10 +137,10 @@ public class CsvExporter {
         PSParameter probabilities = new PSParameter();
         probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
         try {
-        line += probabilities.getProteinProbabilityScore() + SEPARATOR
-                + probabilities.getProteinProbability() + SEPARATOR;
+            line += probabilities.getProteinProbabilityScore() + SEPARATOR
+                    + probabilities.getProteinProbability() + SEPARATOR;
         } catch (Exception e) {
-        line += SEPARATOR + SEPARATOR;
+            line += SEPARATOR + SEPARATOR;
         }
         if (proteinMatch.isDecoy()) {
             line += "1" + SEPARATOR;
@@ -139,13 +148,12 @@ public class CsvExporter {
             line += "0" + SEPARATOR;
         }
         try {
-        if (probabilities.isValidated()) {
-            line += "1";
-        } else {
-            line += "0";
-        }
+            if (probabilities.isValidated()) {
+                line += "1";
+            } else {
+                line += "0";
+            }
         } catch (Exception e) {
-
         }
         line += "\n";
         return line;
@@ -179,10 +187,10 @@ public class CsvExporter {
         PSParameter probabilities = new PSParameter();
         probabilities = (PSParameter) peptideMatch.getUrParam(probabilities);
         try {
-        line += probabilities.getPeptideProbabilityScore() + SEPARATOR
-                + probabilities.getPeptideProbability() + SEPARATOR;
+            line += probabilities.getPeptideProbabilityScore() + SEPARATOR
+                    + probabilities.getPeptideProbability() + SEPARATOR;
         } catch (Exception e) {
-        line += SEPARATOR + SEPARATOR;
+            line += SEPARATOR + SEPARATOR;
         }
         if (peptideMatch.isDecoy()) {
             line += "1" + SEPARATOR;
@@ -190,13 +198,12 @@ public class CsvExporter {
             line += "0" + SEPARATOR;
         }
         try {
-        if (probabilities.isValidated()) {
-            line += "1";
-        } else {
-            line += "0";
-        }
+            if (probabilities.isValidated()) {
+                line += "1";
+            } else {
+                line += "0";
+            }
         } catch (Exception e) {
-
         }
         line += "\n";
         return line;
@@ -208,7 +215,9 @@ public class CsvExporter {
      * @param spectrumMatch the spectrum match to export
      * @return the spectrum match as a line of text
      */
-    private String getLine(SpectrumMatch spectrumMatch) {
+    private String getLine(SpectrumMatch spectrumMatch) throws MzMLUnmarshallerException {
+        MSnSpectrum spectrum = (MSnSpectrum) experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSpectrumCollection().getSpectrum(spectrumMatch.getSpectrumKey());
+
         String line = "";
         Peptide bestAssumption = spectrumMatch.getBestAssumption().getPeptide();
         for (Protein protein : bestAssumption.getParentProteins()) {
@@ -222,9 +231,9 @@ public class CsvExporter {
             }
         }
         line += SEPARATOR;
-        line += spectrumMatch.getSpectrum().getPrecursor().getCharge() + SEPARATOR;
-        line += spectrumMatch.getSpectrum().getSpectrumTitle() + SEPARATOR;
-        line += spectrumMatch.getSpectrum().getFileName() + SEPARATOR;
+        line += spectrum.getPrecursor().getCharge() + SEPARATOR;
+        line += spectrum.getSpectrumTitle() + SEPARATOR;
+        line += spectrum.getFileName() + SEPARATOR;
         for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions()) {
             if (assumption.getPeptide().isSameAs(bestAssumption)) {
                 line += assumption.getFile() + " ";
@@ -263,10 +272,10 @@ public class CsvExporter {
         PSParameter probabilities = new PSParameter();
         probabilities = (PSParameter) spectrumMatch.getUrParam(probabilities);
         try {
-        line += probabilities.getSpectrumProbabilityScore() + SEPARATOR
-                + probabilities.getSpectrumProbability() + SEPARATOR;
+            line += probabilities.getSpectrumProbabilityScore() + SEPARATOR
+                    + probabilities.getSpectrumProbability() + SEPARATOR;
         } catch (Exception e) {
-        line += SEPARATOR + SEPARATOR;
+            line += SEPARATOR + SEPARATOR;
         }
         if (spectrumMatch.getBestAssumption().isDecoy()) {
             line += "1" + SEPARATOR;
@@ -274,13 +283,12 @@ public class CsvExporter {
             line += "0" + SEPARATOR;
         }
         try {
-        if (probabilities.isValidated()) {
-            line += "1";
-        } else {
-            line += "0";
-        }
+            if (probabilities.isValidated()) {
+                line += "1";
+            } else {
+                line += "0";
+            }
         } catch (Exception e) {
-
         }
         line += "\n";
         return line;

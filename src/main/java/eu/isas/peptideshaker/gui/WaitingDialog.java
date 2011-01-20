@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * A dialog displaying progress details when the identification files are being
@@ -197,8 +198,14 @@ public class WaitingDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (runFinished) {
-            this.dispose();
+            try {
             peptideShakerGUI.displayResults();
+            this.dispose();
+            } catch (MzMLUnmarshallerException exception) {
+                appendReport("An error occured while loading a/the selected mzML file.");
+                setRunCanceled();
+                exception.printStackTrace();
+            }
         } else if (runCanceled) {
             this.dispose();
         } else {

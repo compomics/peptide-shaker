@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.idimport;
+package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;

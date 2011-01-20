@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.fdrestimation;
 
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
+import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -38,11 +40,17 @@ public class PsmSpecificMap implements Serializable {
      * Map used to group charges together in order to ensure statistical relevance
      */
     private HashMap<Integer, Integer> grouping = new HashMap<Integer, Integer>();
+    /**
+     * The spectrum collection where spectra are stored
+     */
+    private SpectrumCollection spectrumCollection;
 
     /**
-     * constructor
+     * Constructor
+     * @param spectrumCollection the spectrum collection where spectra are stored
      */
-    public PsmSpecificMap() {
+    public PsmSpecificMap(SpectrumCollection spectrumCollection) {
+        this.spectrumCollection = spectrumCollection;
     }
 
     /**
@@ -188,6 +196,11 @@ public class PsmSpecificMap implements Serializable {
      * @return the corresponding key
      */
     private Integer getKey(SpectrumMatch spectrumMatch) {
-        return spectrumMatch.getSpectrum().getPrecursor().getCharge().value;
+        try {
+        return ((MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumMatch.getSpectrumKey())).getPrecursor().getCharge().value;
+        } catch (Exception e) {
+            // At this point no mzML file should be loaded
+            return 0;
+        }
     }
 }

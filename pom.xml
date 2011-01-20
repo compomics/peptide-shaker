@@ -273,7 +273,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.0.32</version>
+            <version>3.0.33</version>
             <type>jar</type>
             <exclusions>
                 <exclusion>
@@ -328,6 +328,11 @@
             <groupId>no.uib</groupId>
             <artifactId>jsparklines</artifactId>
             <version>0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>uk.ac.ebi.jmzml</groupId>
+            <artifactId>jmzml</artifactId>
+            <version>1.6.5</version>
         </dependency>
     </dependencies>
 
