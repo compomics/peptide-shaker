@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>eu.isas.peptideshaker</groupId>
-    <artifactId>peptide-shaker</artifactId>
+    <artifactId>PeptideShaker</artifactId>
     <packaging>jar</packaging>
     <version>${version.number}</version>
     <name>PeptideShaker</name>
