@@ -31,22 +31,28 @@ public class IdFilter {
      * X!Tandem maximal e-value allowed
      */
     private double xtandemMaxEvalue;
+    /**
+     * The maximal mass deviation allowed in ppm
+     */
+    private double maxMassDeviation;
 
     /**
      * Constructor for an Identification filter
      *
-     * @param minPepLength
-     * @param maxPepLength
-     * @param mascotMaxEvalue
-     * @param omssaMaxEvalue
-     * @param xtandemMaxEvalue
+     * @param minPepLength      The minimal peptide length allowed
+     * @param maxPepLength      The maximal peptide length allowed
+     * @param mascotMaxEvalue   The maximal Mascot e-value allowed
+     * @param omssaMaxEvalue    The maximal OMSSA e-value allowed
+     * @param xtandemMaxEvalue  The maximal X!Tandem e-value allowed
+     * @param maxMassDeviation  The maximal mass deviation allowed
      */
-    public IdFilter(int minPepLength, int maxPepLength, double mascotMaxEvalue, double omssaMaxEvalue, double xtandemMaxEvalue) {
+    public IdFilter(int minPepLength, int maxPepLength, double mascotMaxEvalue, double omssaMaxEvalue, double xtandemMaxEvalue, double maxMassDeviation) {
         this.minPepLength = minPepLength;
         this.maxPepLength = maxPepLength;
         this.mascotMaxEvalue = mascotMaxEvalue;
         this.omssaMaxEvalue = omssaMaxEvalue;
         this.xtandemMaxEvalue = xtandemMaxEvalue;
+        this.maxMassDeviation = maxMassDeviation;
     }
 
     /**
@@ -56,6 +62,9 @@ public class IdFilter {
      * @return a boolean indicating whether the given assumption passes the filter
      */
     public boolean validateId(PeptideAssumption assumption) {
+        if (assumption.getDeltaMass() > maxMassDeviation && maxMassDeviation > 0) {
+            return false;
+        }
         int pepLength = assumption.getPeptide().getSequence().length();
         if ((pepLength > maxPepLength && maxPepLength != 0) || pepLength < minPepLength) {
             return false;
