@@ -151,6 +151,11 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         xtandemMaxEvalueTxt = new javax.swing.JTextField();
         minPeplengthTxt = new javax.swing.JTextField();
         maxPepLengthTxt = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        massDeviationTxt = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel15 = new javax.swing.JLabel();
         configPanel = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
@@ -283,6 +288,16 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
         maxPepLengthTxt.setText("20");
 
+        jLabel11.setText("Maximal mass deviation:");
+
+        massDeviationTxt.setText("10");
+
+        jLabel12.setText("ppm");
+
+        jLabel13.setText("AA");
+
+        jLabel15.setText("AA");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -305,11 +320,18 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel7)
-                    .addComponent(jLabel6))
+                    .addComponent(jLabel6)
+                    .addComponent(jLabel11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(minPeplengthTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)
-                    .addComponent(maxPepLengthTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE))
+                    .addComponent(minPeplengthTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                    .addComponent(maxPepLengthTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                    .addComponent(massDeviationTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel12, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel13, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel15, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -320,17 +342,22 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     .addComponent(jLabel3)
                     .addComponent(jLabel6)
                     .addComponent(mascotMaxEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(minPeplengthTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(minPeplengthTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel15))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jLabel7)
                     .addComponent(omssaMaxEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(maxPepLengthTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(maxPepLengthTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(xtandemMaxEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(xtandemMaxEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11)
+                    .addComponent(massDeviationTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel12))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -855,6 +882,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 xtandemMaxEvalueTxt.setEditable(false);
                 maxPepLengthTxt.setEditable(false);
                 minPeplengthTxt.setEditable(false);
+                massDeviationTxt.setEditable(false);
             } else {
                 experiment = null;
                 projectNameIdTxt.setEditable(true);
@@ -865,6 +893,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 xtandemMaxEvalueTxt.setEditable(true);
                 maxPepLengthTxt.setEditable(true);
                 minPeplengthTxt.setEditable(true);
+                massDeviationTxt.setEditable(true);
                 isPsFile = false;
             }
         }
@@ -888,7 +917,11 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     private javax.swing.JTextField idFilesTxt;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -905,6 +938,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     private javax.swing.JPanel jPanel6;
     private javax.swing.JTabbedPane jTabbedPane;
     private javax.swing.JTextField mascotMaxEvalueTxt;
+    private javax.swing.JTextField massDeviationTxt;
     private javax.swing.JTextField maxPepLengthTxt;
     private javax.swing.JTextField minPeplengthTxt;
     private javax.swing.JTextField omssaMaxEvalueTxt;
@@ -926,6 +960,13 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      */
     private boolean validateInput() {
 
+        try {
+            getMaxMassDeviation();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Please verify the input for max mass deviation.",
+                    "Input Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
         try {
             getMinPeptideLength();
         } catch (Exception e) {
@@ -998,6 +1039,18 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     }
 
     /**
+     * Returns the maximal mass deviation allowed
+     * @return the maximal mass deviation allowed
+     */
+    private double getMaxMassDeviation() {
+        String input = massDeviationTxt.getText().trim();
+        if (input == null || input.equals("")) {
+            input = "0";
+        }
+        return new Integer(input);
+    }
+
+    /**
      * Returns the Mascot max e-value.
      *
      * @return the Mascot max e-value
@@ -1050,7 +1103,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      * @param waitingDialog a dialog to display feedback to the user
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
-        IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue());
+        IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue(), getMaxMassDeviation());
         peptideShaker.importIdentifications(waitingDialog, idFilter, idFiles);
     }
 
@@ -1117,6 +1170,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         xtandemMaxEvalueTxt.setText("");
         maxPepLengthTxt.setText("");
         minPeplengthTxt.setText("");
+        massDeviationTxt.setText("");
 
     }
 
