@@ -175,7 +175,7 @@ public class ModificationDialog extends javax.swing.JDialog {
     private void loadModifications() {
         modifications = new ArrayList<String>();
         for (PTM ptm : PTMFactory.getInstance().getPtmMap().values()) {
-            modifications.add(ptm.getName());
+            modifications.add(ptm.getName().toLowerCase());
         }
         Collections.sort(modifications);
     }

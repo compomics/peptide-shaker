@@ -4,8 +4,6 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.biology.Sample;
-import com.compomics.util.experiment.identification.IdentificationMethod;
-import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.io.ExperimentIO;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
@@ -849,11 +847,24 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             if (idFiles.size() == 1 && idFiles.get(0).getName().endsWith(".cps")) {
                 importPeptideShakerFile(idFiles.get(0));
                 isPsFile = true;
+                projectNameIdTxt.setEditable(false);
+                sampleNameIdtxt.setEditable(false);
+                replicateNumberIdtxt.setEditable(false);
+                mascotMaxEvalueTxt.setEditable(false);
+                omssaMaxEvalueTxt.setEditable(false);
+                xtandemMaxEvalueTxt.setEditable(false);
+                maxPepLengthTxt.setEditable(false);
+                minPeplengthTxt.setEditable(false);
             } else {
                 experiment = null;
                 projectNameIdTxt.setEditable(true);
                 sampleNameIdtxt.setEditable(true);
                 replicateNumberIdtxt.setEditable(true);
+                mascotMaxEvalueTxt.setEditable(true);
+                omssaMaxEvalueTxt.setEditable(true);
+                xtandemMaxEvalueTxt.setEditable(true);
+                maxPepLengthTxt.setEditable(true);
+                minPeplengthTxt.setEditable(true);
                 isPsFile = false;
             }
         }
@@ -1059,10 +1070,12 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         peptideShaker.importFasta(waitingDialog, fastaFile);
     }
 
+    /**
+     * Loads the new project information
+     */
     private void loadProject() {
 
         projectNameIdTxt.setText(experiment.getReference());
-        projectNameIdTxt.setEditable(false);
 
         ArrayList<Sample> samples = new ArrayList(experiment.getSamples().values());
         if (samples.size() == 1) {
@@ -1084,7 +1097,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         }
 
         sampleNameIdtxt.setText(sample.getReference());
-        sampleNameIdtxt.setEditable(false);
 
         ArrayList<Integer> replicates = new ArrayList(experiment.getAnalysisSet(sample).getReplicateNumberList());
         if (replicates.size() == 1) {
@@ -1100,8 +1112,11 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             replicateNumber = choice;
         }
         replicateNumberIdtxt.setText(replicateNumber + "");
-        replicateNumberIdtxt.setEditable(false);
-
+        mascotMaxEvalueTxt.setText("");
+        omssaMaxEvalueTxt.setText("");
+        xtandemMaxEvalueTxt.setText("");
+        maxPepLengthTxt.setText("");
+        minPeplengthTxt.setText("");
 
     }
 
