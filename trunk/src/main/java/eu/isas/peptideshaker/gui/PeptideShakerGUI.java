@@ -14,10 +14,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
-import com.compomics.util.experiment.massspectrometry.Charge;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.Peak;
-import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
@@ -31,7 +28,6 @@ import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.IdentificationPreferences;
-import eu.isas.peptideshaker.renderers.TrueFalseIconRenderer;
 import eu.isas.peptideshaker.utils.Properties;
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -44,13 +40,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashSet;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
+import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -95,7 +91,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The target/decoy map at the protein level
      */
     private TargetDecoyMap proteinMap;
-
     /**
      * The identification preferences
      */
@@ -145,12 +140,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         setColumnProperies();
 
         // disable the Quantification and PTM Analysis tabs for now
-        resultsJTabbedPane.setEnabledAt(3, false);
         resultsJTabbedPane.setEnabledAt(4, false);
+        resultsJTabbedPane.setEnabledAt(5, false);
 
         // set the title of the frame and add the icon
         setTitle(this.getTitle() + " " + new Properties().getVersion());
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+        this.setExtendedState(MAXIMIZED_BOTH);
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -239,6 +236,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void initComponents() {
 
         resultsJTabbedPane = new javax.swing.JTabbedPane();
+        overviewJPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        proteinsJPanel = new javax.swing.JPanel();
         proteinsJScrollPane = new javax.swing.JScrollPane();
         proteinsJTable = new javax.swing.JTable();
         peptidesJScrollPane = new javax.swing.JScrollPane();
@@ -268,6 +268,31 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PeptideShaker");
 
+        resultsJTabbedPane.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
+
+        jLabel1.setText("This tab will contain the overview of the data. Protein -> Peptide -> Spectrum linking etc.");
+
+        javax.swing.GroupLayout overviewJPanelLayout = new javax.swing.GroupLayout(overviewJPanel);
+        overviewJPanel.setLayout(overviewJPanelLayout);
+        overviewJPanelLayout.setHorizontalGroup(
+            overviewJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(overviewJPanelLayout.createSequentialGroup()
+                .addGap(83, 83, 83)
+                .addComponent(jLabel1)
+                .addContainerGap(458, Short.MAX_VALUE))
+        );
+        overviewJPanelLayout.setVerticalGroup(
+            overviewJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(overviewJPanelLayout.createSequentialGroup()
+                .addGap(184, 184, 184)
+                .addComponent(jLabel1)
+                .addContainerGap(465, Short.MAX_VALUE))
+        );
+
+        resultsJTabbedPane.addTab("Overview", overviewJPanel);
+
+        proteinsJScrollPane.setBorder(null);
+
         proteinsJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -293,7 +318,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         proteinsJScrollPane.setViewportView(proteinsJTable);
 
-        resultsJTabbedPane.addTab("Proteins", proteinsJScrollPane);
+        javax.swing.GroupLayout proteinsJPanelLayout = new javax.swing.GroupLayout(proteinsJPanel);
+        proteinsJPanel.setLayout(proteinsJPanelLayout);
+        proteinsJPanelLayout.setHorizontalGroup(
+            proteinsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 969, Short.MAX_VALUE)
+            .addGroup(proteinsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(proteinsJScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 969, Short.MAX_VALUE))
+        );
+        proteinsJPanelLayout.setVerticalGroup(
+            proteinsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 663, Short.MAX_VALUE)
+            .addGroup(proteinsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(proteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 663, Short.MAX_VALUE))
+        );
+
+        resultsJTabbedPane.addTab("Proteins", proteinsJPanel);
 
         peptidesJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -494,11 +534,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1080, Short.MAX_VALUE)
+            .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1057, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
+            .addComponent(resultsJTabbedPane)
         );
 
         pack();
@@ -602,6 +642,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     int outcome = JOptionPane.showConfirmDialog(progressDialog,
                             "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
                             JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+
                     if (outcome != JOptionPane.YES_OPTION) {
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
@@ -1012,12 +1053,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem identificationOptionsMenu;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openJMenuItem;
+    private javax.swing.JPanel overviewJPanel;
     private javax.swing.JScrollPane peptidesJScrollPane;
     private javax.swing.JTable peptidesJTable;
+    private javax.swing.JPanel proteinsJPanel;
     private javax.swing.JScrollPane proteinsJScrollPane;
     private javax.swing.JTable proteinsJTable;
     private javax.swing.JTable ptmAnalysisJTable;
@@ -1170,5 +1214,26 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void setDefaultPreferences() {
         identificationPreferences = new IdentificationPreferences(0.01, 0.01, 0.01, true, false);
+    }
+
+    /**
+     * @return the experiment
+     */
+    public MsExperiment getExperiment() {
+        return experiment;
+    }
+
+    /**
+     * @return the sample
+     */
+    public Sample getSample() {
+        return sample;
+    }
+
+    /**
+     * @return the replicateNumber
+     */
+    public int getReplicateNumber() {
+        return replicateNumber;
     }
 }
