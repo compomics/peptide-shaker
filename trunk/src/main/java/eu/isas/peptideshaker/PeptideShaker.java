@@ -72,6 +72,10 @@ public class PeptideShaker {
      * The queuing objects
      */
     private ArrayList<Object> queue = new ArrayList<Object>();
+    /**
+     * The link to the FASTA file.
+     */
+    private String fastaFile;
 
     /**
      * constructor without mass specification. Calculation will be done on new maps which will be retrieved as compomics utilities parameters.
@@ -102,6 +106,15 @@ public class PeptideShaker {
         this.psmMap = psMaps.getPsmSpecificMap();
         this.peptideMap = psMaps.getPeptideSpecificMap();
         this.proteinMap = psMaps.getProteinMap();
+    }
+
+    /**
+     * Returns the FASTA file.
+     *
+     * @return the FASTA file.
+     */
+    public String getFastaFile() {
+        return fastaFile;
     }
 
     /**
@@ -168,7 +181,10 @@ public class PeptideShaker {
      * @param file              the file to import
      */
     public void importFasta(WaitingDialog waitingDialog, File file) {
-        //@TODO implement
+        
+        //@TODO implement properly!!
+
+        fastaFile = file.getAbsolutePath();
     }
 
     /**
