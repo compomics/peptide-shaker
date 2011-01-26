@@ -196,32 +196,24 @@ public class IdImporter {
                 InputMap inputMap = new InputMap();
 
                 HashSet<SpectrumMatch> tempSet;
+                IdfileReader fileReader;
 
                 for (File idFile : idFiles) {
 
                     waitingDialog.appendReport("Reading file: " + idFile.getName());
                     waitingDialog.appendReportNewLineNoDate();
 
-                    waitingDialog.appendReportProgressCounter();
                     int searchEngine = readerFactory.getSearchEngine(idFile);
 
-                    waitingDialog.appendReportProgressCounter();
-                    IdfileReader fileReader = readerFactory.getFileReader(idFile, proteomicAnalysis.getSpectrumCollection());
+                    fileReader = readerFactory.getFileReader(idFile, proteomicAnalysis.getSpectrumCollection());
 
-                    waitingDialog.appendReportProgressCounter();
                     tempSet = fileReader.getAllSpectrumMatches();
 
-                    waitingDialog.appendReportProgressCounter();
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();
                     SpectrumMatch match;
 
-                    waitingDialog.appendReportProgressCounter();
                     
                     while (matchIt.hasNext()) {
-
-                        if (nTotal % 100 == 0) {
-                            waitingDialog.appendReportProgressCounter();
-                        }
 
                         match = matchIt.next();
                         nTotal++;
@@ -237,7 +229,6 @@ public class IdImporter {
                         }
                     }
 
-                    waitingDialog.appendReportProgressCounter();
                     waitingDialog.appendReportEndLine();
                 }
 

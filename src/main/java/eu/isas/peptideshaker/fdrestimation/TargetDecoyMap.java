@@ -84,10 +84,11 @@ public class TargetDecoyMap implements Serializable {
                         nFP += point.nTarget * point.p;
                         nP += point.nTarget;
                         scoreLimit = score;
+                        nFN = 0;
                     } else {
                         nFN += point.nTarget * (1 - point.p);
                     }
-                    nTotal += point.nTarget;
+                    nTotal += point.nTarget * (1 - point.p);
                 }
             }
             nHits = nP;

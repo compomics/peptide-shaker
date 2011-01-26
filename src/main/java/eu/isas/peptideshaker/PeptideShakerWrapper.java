@@ -158,7 +158,7 @@ public class PeptideShakerWrapper {
                 System.out.println("Process exitValue: " + exitVal);
             }
 
-            if (error && debug) { // @TODO: debug should not be needed here...
+            if (error) {
 
                 javax.swing.JOptionPane.showMessageDialog(null,
                         "Failed to start PeptideShaker.\n\n" +

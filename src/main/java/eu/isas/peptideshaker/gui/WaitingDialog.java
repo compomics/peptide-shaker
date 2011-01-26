@@ -261,13 +261,6 @@ public class WaitingDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Append a progress counter to the report.
-     */
-    public void appendReportProgressCounter() {
-        reportArea.append(".");
-    }
-
-    /**
      * Append two tabs to the report. No new line.
      */
     public void appendReportNewLineNoDate() {
