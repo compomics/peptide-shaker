@@ -235,7 +235,7 @@ public class PeptideShaker {
         double proteinThreshold = proteinMap.getScoreLimit();
         for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
             psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
-            if (psParameter.getProteinProbabilityScore() < proteinThreshold) {
+            if (psParameter.getProteinProbabilityScore() <= proteinThreshold) {
                 psParameter.setValidated(true);
             }
         }
@@ -244,7 +244,7 @@ public class PeptideShaker {
         for (PeptideMatch peptideMatch : identification.getPeptideIdentification().values()) {
             peptideThreshold = peptideMap.getScoreLimit(peptideMatch);
             psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
-            if (psParameter.getPeptideProbabilityScore() < peptideThreshold) {
+            if (psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
                 psParameter.setValidated(true);
             }
         }
@@ -253,7 +253,7 @@ public class PeptideShaker {
         for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
             psmThreshold = psmMap.getScoreLimit(spectrumMatch);
             psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
-            if (psParameter.getSpectrumProbabilityScore() < psmThreshold) {
+            if (psParameter.getSpectrumProbabilityScore() <= psmThreshold) {
                 psParameter.setValidated(true);
             }
         }
