@@ -639,18 +639,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         selectedFile += ".cps";
                     }
 
-                    int outcome = JOptionPane.showConfirmDialog(progressDialog,
-                            "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
-                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-
+                    File newFile = new File(selectedFile);
+                    int outcome = JOptionPane.YES_OPTION;
+                    if (newFile.exists()) {
+                        outcome = JOptionPane.showConfirmDialog(progressDialog,
+                                "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    }
                     if (outcome != JOptionPane.YES_OPTION) {
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
-                        return ;
+                        return;
                     }
 
                     try {
-                        experimentIO.save(new File(selectedFile), experiment);
+                        experimentIO.save(newFile, experiment);
 
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
