@@ -404,6 +404,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         jLabel10.setText("Spectrum File(s):");
 
         spectrumFilesTxt.setEditable(false);
+        spectrumFilesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         browseSpectra.setText("Browse");
         browseSpectra.addActionListener(new java.awt.event.ActionListener() {
@@ -510,6 +511,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         jLabel14.setText("FASTA File:");
 
         fastaFileTxt.setEditable(false);
+        fastaFileTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         fastaFileTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fastaFileTxtActionPerformed(evt);
@@ -517,7 +519,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         });
 
         browseDbButton.setText("Browse");
-        browseDbButton.setEnabled(false);
         browseDbButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 browseDbButtonActionPerformed(evt);
@@ -719,6 +720,10 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 importSpectrumFiles(waitingDialog, onlyIdentifiedSpectraCheck.isSelected());
             }
             peptideShakerGUI.setProject(experiment, sample, replicateNumber);
+
+            // @TODO: this should not be needed...
+            peptideShakerGUI.setFastaFile(fastaFile);
+
             this.dispose();
             if (needDialog) {
                 waitingDialog.setVisible(true);
@@ -756,7 +761,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
             @Override
             public boolean accept(File myFile) {
-                return myFile.getName().toLowerCase().endsWith("fasta");
+                return myFile.getName().toLowerCase().endsWith("fasta")
+                        || myFile.getName().toLowerCase().endsWith("fast")
+                        || myFile.getName().toLowerCase().endsWith("fas");
             }
 
             @Override
@@ -770,7 +777,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             fastaFile = fileChooser.getSelectedFile();
             peptideShakerGUI.setLastSelectedFolder(fastaFile.getPath());
-            spectrumFilesTxt.setText(fastaFile.getAbsolutePath());
+            fastaFileTxt.setText("1 FASTA file selected.");
         }
 }//GEN-LAST:event_browseDbButtonActionPerformed
 
@@ -846,10 +853,10 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
             @Override
             public boolean accept(File myFile) {
-                return myFile.getName().endsWith("dat")
-                        || myFile.getName().endsWith("omx")
-                        || myFile.getName().endsWith("xml")
-                        || myFile.getName().endsWith("cps")
+                return myFile.getName().toLowerCase().endsWith("dat")
+                        || myFile.getName().toLowerCase().endsWith("omx")
+                        || myFile.getName().toLowerCase().endsWith("xml")
+                        || myFile.getName().toLowerCase().endsWith("cps")
                         || myFile.isDirectory();
             }
 
