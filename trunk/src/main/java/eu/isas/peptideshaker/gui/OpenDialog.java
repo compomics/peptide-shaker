@@ -823,7 +823,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 }
                 peptideShakerGUI.setLastSelectedFolder(newFile.getPath());
             }
-            spectrumFilesTxt.setText(idFiles.size() + " file(s) selected.");
+            spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected.");
         }
 }//GEN-LAST:event_browseSpectraActionPerformed
 
