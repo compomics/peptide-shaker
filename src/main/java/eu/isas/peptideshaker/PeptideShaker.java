@@ -253,6 +253,8 @@ public class PeptideShaker {
             psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
             if (psParameter.getProteinProbabilityScore() <= proteinThreshold) {
                 psParameter.setValidated(true);
+            } else {
+                psParameter.setValidated(false);
             }
         }
 
@@ -262,6 +264,8 @@ public class PeptideShaker {
             psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
             if (psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
                 psParameter.setValidated(true);
+            } else {
+                psParameter.setValidated(false);
             }
         }
 
@@ -271,6 +275,8 @@ public class PeptideShaker {
             psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
             if (psParameter.getSpectrumProbabilityScore() <= psmThreshold) {
                 psParameter.setValidated(true);
+            } else {
+                psParameter.setValidated(false);
             }
         }
     }
