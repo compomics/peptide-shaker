@@ -184,6 +184,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         stringAfterTxt = new javax.swing.JTextField();
         jLabel20 = new javax.swing.JLabel();
         headerExampleTxt = new javax.swing.JTextField();
+        jLabel21 = new javax.swing.JLabel();
         openButton = new javax.swing.JButton();
         exitButton = new javax.swing.JButton();
 
@@ -243,7 +244,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(idFilesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
+                .addComponent(idFilesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(browseId)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -385,7 +386,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel5)
                             .addComponent(xtandemMaxEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout fileImportPanelLayout = new javax.swing.GroupLayout(fileImportPanel);
@@ -395,7 +396,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fileImportPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(fileImportPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 736, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 777, Short.MAX_VALUE)
                     .addComponent(projectDetailsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -448,7 +449,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 .addContainerGap()
                 .addComponent(jLabel10)
                 .addGap(18, 18, 18)
-                .addComponent(spectrumFilesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE)
+                .addComponent(spectrumFilesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 427, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(browseSpectra)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -485,14 +486,14 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(onlyIdentifiedSpectraCheck)
-                .addContainerGap(547, Short.MAX_VALUE))
+                .addContainerGap(592, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(onlyIdentifiedSpectraCheck)
-                .addContainerGap(90, Short.MAX_VALUE))
+                .addContainerGap(96, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout configPanelLayout = new javax.swing.GroupLayout(configPanel);
@@ -552,7 +553,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 .addContainerGap()
                 .addComponent(jLabel14)
                 .addGap(18, 18, 18)
-                .addComponent(fastaFileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 481, Short.MAX_VALUE)
+                .addComponent(fastaFileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(browseDbButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -578,14 +579,17 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
         jLabel16.setText("Database name:");
 
+        dbNameTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         dbNameTxt.setText("UniProtKB/Swiss-prot");
 
         jLabel17.setText("Database version:");
 
+        dbVersionTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         dbVersionTxt.setText("2010.11.04");
 
-        jLabel18.setText("Separator preceding the accession:");
+        jLabel18.setText("Separators:");
 
+        stringBeforeTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         stringBeforeTxt.setText("|");
         stringBeforeTxt.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
@@ -598,8 +602,10 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             }
         });
 
-        jLabel19.setText("Separator following the accession:");
+        jLabel19.setFont(jLabel19.getFont().deriveFont((jLabel19.getFont().getStyle() | java.awt.Font.ITALIC)));
+        jLabel19.setText("(following the accession)");
 
+        stringAfterTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         stringAfterTxt.setText("|");
         stringAfterTxt.addCaretListener(new javax.swing.event.CaretListener() {
             public void caretUpdate(javax.swing.event.CaretEvent evt) {
@@ -615,6 +621,10 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         jLabel20.setText("Fasta header example:");
 
         headerExampleTxt.setEditable(false);
+        headerExampleTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel21.setFont(jLabel21.getFont().deriveFont((jLabel21.getFont().getStyle() | java.awt.Font.ITALIC)));
+        jLabel21.setText("(preceding the accession)");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -623,26 +633,23 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel20)
+                    .addComponent(jLabel17)
+                    .addComponent(jLabel16)
+                    .addComponent(jLabel18))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel16)
-                        .addGap(13, 13, 13)
-                        .addComponent(dbNameTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel17)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(dbVersionTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 608, Short.MAX_VALUE))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel18)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(stringBeforeTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(147, 147, 147)
-                        .addComponent(jLabel19)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(stringAfterTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel20)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(headerExampleTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 585, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel21)
+                        .addGap(18, 18, 18)
+                        .addComponent(stringAfterTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel19))
+                    .addComponent(headerExampleTxt)
+                    .addComponent(dbVersionTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 616, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(dbNameTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -659,9 +666,10 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel18)
-                    .addComponent(stringBeforeTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel21)
+                    .addComponent(stringAfterTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel19)
-                    .addComponent(stringAfterTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(stringBeforeTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel20)
@@ -687,7 +695,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Sequence File", jPanel2);
@@ -713,7 +721,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             .addGroup(sampleDetailsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 761, Short.MAX_VALUE)
+                    .addComponent(jTabbedPane)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sampleDetailsPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -721,8 +729,8 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                             .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(projectNameIdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
-                            .addComponent(sampleNameIdtxt, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE))
+                            .addComponent(projectNameIdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE)
+                            .addComponent(sampleNameIdtxt, javax.swing.GroupLayout.DEFAULT_SIZE, 511, Short.MAX_VALUE))
                         .addGap(18, 18, 18)
                         .addComponent(jLabel9)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1064,6 +1072,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;

@@ -280,7 +280,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="proteinScrollPane" pref="405" max="32767" attributes="0"/>
+                              <Component id="proteinScrollPane" pref="409" max="32767" attributes="0"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -289,7 +289,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="proteinScrollPane" pref="383" max="32767" attributes="0"/>
+                              <Component id="proteinScrollPane" pref="386" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -309,14 +309,15 @@
                         <Component class="javax.swing.JTable" name="proteinTable">
                           <Properties>
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="7" rowCount="0">
+                              <Table columnCount="8" rowCount="0">
+                                <Column editable="false" title=" " type="java.lang.Integer"/>
                                 <Column editable="false" title="Accession" type="java.lang.String"/>
-                                <Column editable="false" title="Sequence coverage" type="java.lang.Double"/>
-                                <Column editable="true" title="emPAI" type="java.lang.Double"/>
+                                <Column editable="false" title="Sequence Coverage" type="java.lang.Double"/>
+                                <Column editable="false" title="emPAI" type="java.lang.Double"/>
                                 <Column editable="false" title="#Peptides" type="java.lang.Integer"/>
                                 <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
-                                <Column editable="false" title="Protein score" type="java.lang.Double"/>
-                                <Column editable="true" title="Description" type="java.lang.Object"/>
+                                <Column editable="false" title="Protein Score" type="java.lang.Double"/>
+                                <Column editable="false" title="Description" type="java.lang.Object"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -390,7 +391,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="coverageScrollPane" pref="405" max="32767" attributes="0"/>
+                              <Component id="coverageScrollPane" pref="409" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -399,7 +400,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="coverageScrollPane" pref="170" max="32767" attributes="0"/>
+                              <Component id="coverageScrollPane" pref="173" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -441,7 +442,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="peptideScrollPane" pref="387" max="32767" attributes="0"/>
+                              <Component id="peptideScrollPane" pref="391" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -450,7 +451,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="peptideScrollPane" pref="163" max="32767" attributes="0"/>
+                              <Component id="peptideScrollPane" pref="166" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -470,11 +471,12 @@
                         <Component class="javax.swing.JTable" name="peptideTable">
                           <Properties>
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="4" rowCount="0">
+                              <Table columnCount="5" rowCount="0">
+                                <Column editable="false" title=" " type="java.lang.Integer"/>
                                 <Column editable="false" title="Sequence" type="java.lang.String"/>
                                 <Column editable="false" title="Variable Modifications" type="java.lang.String"/>
                                 <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
-                                <Column editable="false" title="peptide score" type="java.lang.Double"/>
+                                <Column editable="false" title="Peptide Score" type="java.lang.Double"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -522,7 +524,7 @@
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                        <TitledBorder title="PSMs"/>
+                        <TitledBorder title="Peptide/Spectrum Matches"/>
                       </Border>
                     </Property>
                     <Property name="opaque" type="boolean" value="false"/>
@@ -533,7 +535,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="spectraScrollPane" pref="387" max="32767" attributes="0"/>
+                              <Component id="spectraScrollPane" pref="391" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -542,7 +544,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="spectraScrollPane" pref="162" max="32767" attributes="0"/>
+                              <Component id="spectraScrollPane" pref="165" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -562,13 +564,14 @@
                         <Component class="javax.swing.JTable" name="psmsTable">
                           <Properties>
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="6" rowCount="0">
+                              <Table columnCount="7" rowCount="0">
+                                <Column editable="false" title=" " type="java.lang.Integer"/>
                                 <Column editable="false" title="Sequence" type="java.lang.String"/>
                                 <Column editable="false" title="Modifications" type="java.lang.String"/>
                                 <Column editable="false" title="Precursor Charge" type="java.lang.String"/>
-                                <Column editable="true" title="Precursor mass error" type="java.lang.Double"/>
-                                <Column editable="false" title="Spectrum file" type="java.lang.String"/>
-                                <Column editable="true" title="Spectrum title" type="java.lang.String"/>
+                                <Column editable="false" title="Precursor Mass Error" type="java.lang.Double"/>
+                                <Column editable="false" title="Spectrum File" type="java.lang.String"/>
+                                <Column editable="false" title="Spectrum Title" type="java.lang.String"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -637,7 +640,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="spectrumPanel" pref="387" max="32767" attributes="0"/>
+                              <Component id="spectrumPanel" pref="391" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -646,7 +649,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="spectrumPanel" pref="170" max="32767" attributes="0"/>
+                              <Component id="spectrumPanel" pref="173" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -715,7 +718,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="allProteinsJScrollPane" pref="834" max="32767" attributes="0"/>
+                              <Component id="allProteinsJScrollPane" pref="838" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -724,7 +727,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="allProteinsJScrollPane" pref="611" max="32767" attributes="0"/>
+                              <Component id="allProteinsJScrollPane" pref="614" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -866,11 +869,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="854" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="858" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="allPeptidesJScrollPane" pref="834" max="32767" attributes="0"/>
+                                  <Component id="allPeptidesJScrollPane" pref="838" max="32767" attributes="0"/>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -878,11 +881,11 @@
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="633" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="636" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="allPeptidesJScrollPane" pref="611" max="32767" attributes="0"/>
+                                  <Component id="allPeptidesJScrollPane" pref="614" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1028,11 +1031,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="854" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="858" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="allSpectraJScrollPane" pref="834" max="32767" attributes="0"/>
+                                  <Component id="allSpectraJScrollPane" pref="838" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1040,11 +1043,11 @@
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="633" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="636" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="allSpectraJScrollPane" pref="611" max="32767" attributes="0"/>
+                                  <Component id="allSpectraJScrollPane" pref="614" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1076,9 +1079,9 @@
                                 <Column editable="false" title="Identification File(s)" type="java.lang.String"/>
                                 <Column editable="false" title="Mass Error" type="java.lang.Double"/>
                                 <Column editable="false" title="Mascot Score" type="java.lang.Double"/>
-                                <Column editable="false" title="Mascot e-value" type="java.lang.Double"/>
-                                <Column editable="false" title="OMSSA e-value" type="java.lang.Double"/>
-                                <Column editable="false" title="X!Tandem e-value" type="java.lang.Double"/>
+                                <Column editable="false" title="Mascot E-value" type="java.lang.Double"/>
+                                <Column editable="false" title="OMSSA E-value" type="java.lang.Double"/>
+                                <Column editable="false" title="X!Tandem E-value" type="java.lang.Double"/>
                                 <Column editable="false" title="p-score" type="java.lang.Double"/>
                                 <Column editable="false" title="PEP" type="java.lang.Double"/>
                                 <Column editable="false" title="Decoy" type="java.lang.Boolean"/>

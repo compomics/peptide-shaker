@@ -14,17 +14,14 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceDataBase;
-import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
-import com.compomics.util.experiment.massspectrometry.Charge;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
@@ -51,7 +48,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -234,6 +230,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         allSpectraJTable.getColumn(" ").setMaxWidth(70);
         quantificationJTable.getColumn(" ").setMaxWidth(70);
 
+        proteinTable.getColumn(" ").setMaxWidth(50);
+        peptideTable.getColumn(" ").setMaxWidth(50);
+        psmsTable.getColumn(" ").setMaxWidth(50);
 
         allProteinsJTable.getColumn("Decoy").setMaxWidth(60);
         allPeptidesJTable.getColumn("Decoy").setMaxWidth(60);
@@ -251,13 +250,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         allSpectraJTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
         allSpectraJTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
         allSpectraJTable.getColumn("Mascot Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
-        allSpectraJTable.getColumn("Mascot e-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
-        allSpectraJTable.getColumn("OMSSA e-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
-        allSpectraJTable.getColumn("X!Tandem e-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        allSpectraJTable.getColumn("Mascot E-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        allSpectraJTable.getColumn("OMSSA E-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        allSpectraJTable.getColumn("X!Tandem E-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
         allSpectraJTable.getColumn("p-score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
         allSpectraJTable.getColumn("PEP").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
 
-        proteinTable.getColumn("Sequence coverage").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        proteinTable.getColumn("emPAI").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        proteinTable.getColumn("Protein Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        proteinTable.getColumn("Sequence Coverage").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColor));
 
         allProteinsJTable.getColumn("Decoy").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")), null));
@@ -448,14 +451,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             },
             new String [] {
-                "Accession", "Sequence coverage", "emPAI", "#Peptides", "#Spectra", "Protein score", "Description"
+                " ", "Accession", "Sequence Coverage", "emPAI", "#Peptides", "#Spectra", "Protein Score", "Description"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, true, false, false, false, true
+                false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -486,14 +489,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 386, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -512,14 +515,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 405, Short.MAX_VALUE)
+                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -533,14 +536,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             },
             new String [] {
-                "Sequence", "Variable Modifications", "#Spectra", "peptide score"
+                " ", "Sequence", "Variable Modifications", "#Spectra", "Peptide Score"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -571,18 +574,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("PSMs"));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide/Spectrum Matches"));
         jPanel4.setOpaque(false);
 
         spectraScrollPane.setOpaque(false);
@@ -592,14 +595,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             },
             new String [] {
-                "Sequence", "Modifications", "Precursor Charge", "Precursor mass error", "Spectrum file", "Spectrum title"
+                " ", "Sequence", "Modifications", "Precursor Charge", "Precursor Mass Error", "Spectrum File", "Spectrum Title"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, true, false, true
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -630,14 +633,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -653,14 +656,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                .addComponent(spectrumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
+                .addComponent(spectrumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -740,14 +743,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(allProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 834, Short.MAX_VALUE)
+                .addComponent(allProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(allProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
+                .addComponent(allProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -808,20 +811,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 854, Short.MAX_VALUE)
+            .addGap(0, 858, Short.MAX_VALUE)
             .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel8Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(allPeptidesJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 834, Short.MAX_VALUE)
+                    .addComponent(allPeptidesJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 633, Short.MAX_VALUE)
+            .addGap(0, 636, Short.MAX_VALUE)
             .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel8Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(allPeptidesJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
+                    .addComponent(allPeptidesJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -860,7 +863,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             },
             new String [] {
-                " ", "Protein(s)", "Sequence", "Variable Modification(s)", "Charge", "Spectrum", "Spectrum File", "Identification File(s)", "Mass Error", "Mascot Score", "Mascot e-value", "OMSSA e-value", "X!Tandem e-value", "p-score", "PEP", "Decoy"
+                " ", "Protein(s)", "Sequence", "Variable Modification(s)", "Charge", "Spectrum", "Spectrum File", "Identification File(s)", "Mass Error", "Mascot Score", "Mascot E-value", "OMSSA E-value", "X!Tandem E-value", "p-score", "PEP", "Decoy"
             }
         ) {
             Class[] types = new Class [] {
@@ -886,20 +889,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 854, Short.MAX_VALUE)
+            .addGap(0, 858, Short.MAX_VALUE)
             .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel7Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(allSpectraJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 834, Short.MAX_VALUE)
+                    .addComponent(allSpectraJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 633, Short.MAX_VALUE)
+            .addGap(0, 636, Short.MAX_VALUE)
             .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel7Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(allSpectraJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 611, Short.MAX_VALUE)
+                    .addComponent(allSpectraJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE)
                     .addContainerGap()))
         );
 
@@ -1149,11 +1152,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Charge").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
         ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Mass Error").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
         ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Mascot Score").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
-        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Mascot e-value").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
-        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("OMSSA e-value").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
-        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("X!Tandem e-value").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Mascot E-value").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("OMSSA E-value").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("X!Tandem E-value").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
         ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("p-score").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
         ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("PEP").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Sequence Coverage").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Protein Score").getCellRenderer()).showNumbers(!sparklinesJCheckBoxMenuItem.isSelected());
 
         allProteinsJTable.revalidate();
         allProteinsJTable.repaint();
@@ -1163,6 +1172,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         allSpectraJTable.revalidate();
         allSpectraJTable.repaint();
+
+        proteinTable.revalidate();
+        proteinTable.repaint();
     }//GEN-LAST:event_sparklinesJCheckBoxMenuItemActionPerformed
 
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
@@ -1319,11 +1331,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-            // update the sequence coverage map
-            updateSequenceCoverage((String) proteinTable.getValueAt(row, 1));
-
             // update the peptide selection
             updatedPeptideSelection(row);
+
+            // update the sequence coverage map
+            updateSequenceCoverage((String) proteinTable.getValueAt(row, 1));
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
@@ -1337,11 +1349,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-            // update the sequence coverage map
-            updateSequenceCoverage((String) proteinTable.getValueAt(row, 1));
-
             // update the peptide selection
             updatedPeptideSelection(row);
+
+            // update the sequence coverage map
+            updateSequenceCoverage((String) proteinTable.getValueAt(row, 1));
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
@@ -1404,7 +1416,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
     private void addPeptideRowKey(int row, String peptideKey) {
         peptideTableIndexes.put(getPeptideRowKey(row), peptideKey);
-
     }
 
     private void addPsmRowKey(int row, String psmKey) {
@@ -1412,15 +1423,24 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     private String getProteinRowKey(int row) {
-        return (String) proteinTable.getValueAt(row, 0);
+        return (String) proteinTable.getValueAt(row, 1);
     }
 
     private String getPeptideRowKey(int row) {
-        return peptideTable.getValueAt(row, 0) + "_" + peptideTable.getValueAt(row, 1);
+
+        String peptideKey = peptideTable.getValueAt(row, 1) + "_" + peptideTable.getValueAt(row, 2);
+
+        if (peptideTable.getValueAt(row, 2) == null) {
+            peptideKey = (String) peptideTable.getValueAt(row, 1);
+        } else {
+            peptideKey = peptideKey.replaceAll(", ", "_");
+        }
+        
+        return peptideKey;
     }
 
     private String getPsmRowKey(int row) {
-        return psmsTable.getValueAt(row, 4) + "_" + psmsTable.getValueAt(row, 5);
+        return psmsTable.getValueAt(row, 5) + "_" + psmsTable.getValueAt(row, 6);
     }
 
     private void emptyProteinRowKeys() {
@@ -1513,8 +1533,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         if (row != -1) {
 
-            String peptideKey = getPeptideKey(row);
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+            // update the sequence coverage map
+            updateSequenceCoverage((String) proteinTable.getValueAt(proteinTable.getSelectedRow(), 1));
+
+            String peptideKey = getPeptideKey(row);
 
             while (psmsTable.getRowCount() > 0) {
                 ((DefaultTableModel) psmsTable.getModel()).removeRow(0);
@@ -1526,7 +1550,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             spectrumPanel.repaint();
 
             PeptideMatch currentPeptideMatch = identification.getPeptideIdentification().get(peptideKey);
-            int index = 0;
+            int index = 1;
+
             for (SpectrumMatch spectrumMatch : currentPeptideMatch.getSpectrumMatches().values()) {
 
                 PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
@@ -1550,6 +1575,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     MSnSpectrum spectrum = (MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumKey);
 
                     ((DefaultTableModel) psmsTable.getModel()).addRow(new Object[]{
+                                index,
                                 peptideAssumption.getPeptide().getSequence(),
                                 modifications,
                                 spectrum.getPrecursor().getCharge(),
@@ -1557,12 +1583,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                                 spectrum.getFileName(),
                                 spectrum.getSpectrumTitle()
                             });
-                    addPsmRowKey(index, spectrumKey);
+                    addPsmRowKey(index-1, spectrumKey);
                     index++;
 
                 } catch (MzMLUnmarshallerException e) {
                     e.printStackTrace();
                 }
+            }
+
+            // select the first spectrum in the table
+            if (psmsTable.getRowCount() > 0) {
+                psmsTable.setRowSelectionInterval(0, 0);
+                psmsTableKeyReleased(null);
             }
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1627,6 +1659,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 probabilities = (PSParameter) peptideMatch.getUrParam(probabilities);
 
                 ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
+                            index + 1,
                             peptideMatch.getTheoreticPeptide().getSequence(),
                             modifications,
                             peptideMatch.getSpectrumCount(),
@@ -1634,6 +1667,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         });
                 addPeptideRowKey(index, peptideMatch.getTheoreticPeptide().getIndex());
                 index++;
+            }
+
+            // select the first peptide in the table
+            if (peptideTable.getRowCount() > 0) {
+                peptideTable.setRowSelectionInterval(0, 0);
+                peptideTableKeyReleased(null);
             }
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1689,9 +1728,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-        int index = 0, maxPeptides = 0, maxSpectra = 0;
+        int allProteinsIndex = 1, index = 1, maxPeptides = 0, maxSpectra = 0;
         double sequenceCoverage = 0;
-        double emPAI = 0;
+        double emPAI = 0, maxEmPAI = 0, maxProteinScore = 0;
         String description = "";
         SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
         String proteinKey;
@@ -1712,6 +1751,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
 
             ((DefaultTableModel) allProteinsJTable.getModel()).addRow(new Object[]{
+                        allProteinsIndex++,
                         proteinMatch.getTheoreticProtein().getAccession(),
                         proteinMatch.getPeptideMatches().size(),
                         proteinMatch.getSpectrumCount(),
@@ -1720,16 +1760,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         proteinMatch.isDecoy()
                     });
 
-            ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
-                        proteinMatch.getTheoreticProtein().getAccession(),
-                        sequenceCoverage,
-                        emPAI,
-                        proteinMatch.getPeptideMatches().size(),
-                        proteinMatch.getSpectrumCount(),
-                        probabilities.getProteinProbabilityScore(),
-                        description});
-            addProteinRowKey(index, proteinKey);
-            index++;
+            // only add non-decoy matches to the overview
+            if (!proteinMatch.isDecoy()) {
+                ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
+                            index,
+                            proteinMatch.getTheoreticProtein().getAccession(),
+                            sequenceCoverage,
+                            emPAI,
+                            proteinMatch.getPeptideMatches().size(),
+                            proteinMatch.getSpectrumCount(),
+                            probabilities.getProteinProbabilityScore(),
+                            description});
+                addProteinRowKey(index-1, proteinKey);
+                index++;
+            }
 
             if (maxPeptides < proteinMatch.getPeptideMatches().size()) {
                 maxPeptides = proteinMatch.getPeptideMatches().size();
@@ -1738,12 +1782,25 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             if (maxSpectra < proteinMatch.getSpectrumCount()) {
                 maxSpectra = proteinMatch.getSpectrumCount();
             }
+
+            if (maxEmPAI < emPAI) {
+                maxEmPAI = emPAI;
+            }
+            
+            if (maxProteinScore < probabilities.getProteinProbabilityScore()) {
+                maxProteinScore = probabilities.getProteinProbabilityScore();
+            }
         }
 
         ((JSparklinesBarChartTableCellRenderer) allProteinsJTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
         ((JSparklinesBarChartTableCellRenderer) allProteinsJTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
 
-        index = 0;
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).setMaxValue(maxEmPAI);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Protein Score").getCellRenderer()).setMaxValue(maxProteinScore);
+
+        index = 1;
         maxSpectra = 1;
 
         // add the peptides to the table
@@ -1776,7 +1833,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
 
             ((DefaultTableModel) allPeptidesJTable.getModel()).addRow(new Object[]{
-                        ++index,
+                        index++,
                         accessionNumbers,
                         peptideMatch.getTheoreticPeptide().getSequence(),
                         modifications,
@@ -1794,7 +1851,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ((JSparklinesBarChartTableCellRenderer) allPeptidesJTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
 
 
-        index = 0;
+        index = 1;
         int maxCharge = 0;
         double maxMassError = 0;
         double maxMascotScore = 0.0;
@@ -1887,7 +1944,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             MSnSpectrum spectrum = (MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumKey);
 
             ((DefaultTableModel) allSpectraJTable.getModel()).addRow(new Object[]{
-                        ++index,
+                        index++,
                         accessionNumbers,
                         bestAssumption.getSequence(),
                         modifications,
@@ -1933,9 +1990,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Charge").getCellRenderer()).setMaxValue(maxCharge);
         ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Mass Error").getCellRenderer()).setMaxValue(maxMassError);
         ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Mascot Score").getCellRenderer()).setMaxValue(maxMascotScore);
-        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Mascot e-value").getCellRenderer()).setMaxValue(maxMascotEValue);
-        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("OMSSA e-value").getCellRenderer()).setMaxValue(maxOmssaEValue);
-        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("X!Tandem e-value").getCellRenderer()).setMaxValue(maxXTandemEValue);
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Mascot E-value").getCellRenderer()).setMaxValue(maxMascotEValue);
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("OMSSA E-value").getCellRenderer()).setMaxValue(maxOmssaEValue);
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("X!Tandem E-value").getCellRenderer()).setMaxValue(maxXTandemEValue);
         ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("p-score").getCellRenderer()).setMaxValue(maxPScore);
         ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("PEP").getCellRenderer()).setMaxValue(maxPEP);
 
@@ -2196,8 +2253,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             String peptideSequence = identification.getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
 
             // @TODO: account for peptide redundancies
-            selectedPeptideStart = cleanSequence.lastIndexOf(peptideSequence);
-            selectedPeptideEnd = selectedPeptideStart + peptideSequence.length();
+            selectedPeptideStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
+            selectedPeptideEnd = selectedPeptideStart + peptideSequence.length() - 1;
         }
 
         // an array containing the coverage index for each residue
@@ -2206,14 +2263,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         // iterate the peptide table and store the coverage for each peptide
         for (int i = 0; i < peptideTable.getRowCount(); i++) {
 
-            String peptideKey = getPeptideKey(peptideTable.getSelectedRow());
+            String peptideKey = getPeptideKey(i);
             String peptideSequence = identification.getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
 
             // @TODO: account for peptide redundancies
-            int peptideTempStart = cleanSequence.lastIndexOf(peptideSequence);
-            int peptideTempEnd = selectedPeptideStart + peptideSequence.length();
+            int peptideTempStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
+            int peptideTempEnd = peptideTempStart + peptideSequence.length();
 
-            for (int j = peptideTempStart; j <= peptideTempEnd; j++) {
+            for (int j = peptideTempStart; j < peptideTempEnd; j++) {
                 coverage[j]++;
             }
         }
