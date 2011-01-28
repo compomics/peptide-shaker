@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.experiment.ProteomicAnalysis;
-import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -17,22 +16,49 @@ import javax.swing.SwingWorker;
  */
 public class SpectrumImporter {
 
+    /**
+     * The investigated proteomicAnalysis
+     */
     private ProteomicAnalysis proteomicAnalysis;
+    /**
+     * Boolean indicating whether only identified spectra should be imported
+     */
     private boolean onlyIdentified;
+    /**
+     * Boolean indicating whether the run is completed
+     */
     private boolean runFinished = false;
+    /**
+     * The parent peptide shaker
+     */
     private PeptideShaker parent;
 
+    /**
+     * Constructor for the spectrum importer
+     * @param parent            The parent peptide shaker
+     * @param proteomicAnalysis The current proteomic analysis
+     * @param onlyIdentified    Boolean indicating whether only identified spectra should be imported
+     */
     public SpectrumImporter(PeptideShaker parent, ProteomicAnalysis proteomicAnalysis, boolean onlyIdentified) {
         this.parent = parent;
         this.proteomicAnalysis = proteomicAnalysis;
         this.onlyIdentified = onlyIdentified;
     }
 
+    /**
+     * Imports spectra from various spectrum files
+     * @param waitingDialog Dialog displaying feedback to the user
+     * @param spectrumFiles The spectrum files
+     */
     public void importSpectra(WaitingDialog waitingDialog, ArrayList<File> spectrumFiles) {
         SpectrumProcessor spectrumProcessor = new SpectrumProcessor(waitingDialog, spectrumFiles);
         spectrumProcessor.execute();
     }
 
+    /**
+     * Returns a boolean indicating whether the run is finished
+     * @return a boolean indicating whether the run is finished
+     */
     public boolean isRunFinished() {
         return runFinished;
     }
@@ -42,9 +68,20 @@ public class SpectrumImporter {
      */
     private class SpectrumProcessor extends SwingWorker {
 
+        /**
+         * List of spectrum files
+         */
         private ArrayList<File> spectrumFiles;
+        /**
+         * Dialog displaying feedback to the user
+         */
         private WaitingDialog waitingDialog;
 
+        /**
+         * Constructor for the worker
+         * @param waitingDialog Dialog displaying feedback to the user
+         * @param spectrumFiles List of spectrum files
+         */
         public SpectrumProcessor(WaitingDialog waitingDialog, ArrayList<File> spectrumFiles) {
             this.waitingDialog = waitingDialog;
             this.spectrumFiles = spectrumFiles;
@@ -86,6 +123,10 @@ public class SpectrumImporter {
             return 0;
         }
 
+        /**
+         * Method used to synchronize the workers
+         * @throws InterruptedException exception thrown by the wait() method
+         */
         private synchronized void queue() throws InterruptedException {
             parent.queue(this);
             wait();

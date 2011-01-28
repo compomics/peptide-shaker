@@ -228,6 +228,9 @@ public class TargetDecoyMap implements Serializable {
             }
             probabilistic = false;
         }
+        if (nmax >= nTargetOnly) {
+            probabilistic = false;
+        }
 
         // estimate p
         TargetDecoyPoint tempPoint, previousPoint = hitMap.get(scores.get(0));
