@@ -14,6 +14,7 @@ import eu.isas.peptideshaker.fdrestimation.InputMap;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
+import eu.isas.peptideshaker.fileimport.FastaImporter;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.fileimport.IdImporter;
@@ -65,6 +66,10 @@ public class PeptideShaker {
      */
     private SpectrumImporter spectrumImporter;
     /**
+     * The fasta importer will import sequences from a fasta file
+     */
+    private FastaImporter fastaImporter;
+    /**
      * Boolean indicating whether the processing of identifications is finished
      */
     private boolean idProcessingFinished = false;
@@ -72,10 +77,6 @@ public class PeptideShaker {
      * The queuing objects
      */
     private ArrayList<Object> queue = new ArrayList<Object>();
-    /**
-     * The link to the FASTA file.
-     */
-    private String fastaFile;
 
     /**
      * constructor without mass specification. Calculation will be done on new maps which will be retrieved as compomics utilities parameters.
@@ -106,15 +107,6 @@ public class PeptideShaker {
         this.psmMap = psMaps.getPsmSpecificMap();
         this.peptideMap = psMaps.getPeptideSpecificMap();
         this.proteinMap = psMaps.getProteinMap();
-    }
-
-    /**
-     * Returns the FASTA file.
-     *
-     * @return the FASTA file.
-     */
-    public String getFastaFile() {
-        return fastaFile;
     }
 
     /**
@@ -151,16 +143,27 @@ public class PeptideShaker {
             queue.add(object);
     }
 
+    /**
+     * returns a boolean indicating whether a queue needs to be created in order to save memory
+     * @return  a boolean indicating whether a queue needs to be created in order to save memory
+     */
     public boolean needQueue() {
         return (idImporter != null && !idProcessingFinished);
     }
 
+    /**
+     * Empties the queue
+     */
     public synchronized void emptyQueue() {
         for (Object object : queue) {
             object.notify();
         }
     }
 
+    /**
+     * Sets whether the the import was finished
+     * @param waitingDialog the dialog which displays feedback to the user
+     */
     public void setRunFinished(WaitingDialog waitingDialog) {
         if (idImporter != null) {
             if (!idProcessingFinished) {
@@ -172,6 +175,11 @@ public class PeptideShaker {
                 return;
             }
         }
+        if (fastaImporter != null) {
+            if (!fastaImporter.isRunFinished()) {
+                return;
+            }
+        }
         waitingDialog.setRunFinished();
     }
 
@@ -180,11 +188,10 @@ public class PeptideShaker {
      * @param waitingDialog     A dialog to display feedback to the user
      * @param file              the file to import
      */
-    public void importFasta(WaitingDialog waitingDialog, File file) {
-        
-        //@TODO implement properly!!
-
-        fastaFile = file.getAbsolutePath();
+    public void importFasta(WaitingDialog waitingDialog, File file, String databaseName, String databseVersion, String stringBefore, String stringAfter) {
+        ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
+        fastaImporter = new FastaImporter(this);
+        fastaImporter.importSpectra(waitingDialog, analysis, file, databaseName, databseVersion, stringBefore, stringAfter);
     }
 
     /**

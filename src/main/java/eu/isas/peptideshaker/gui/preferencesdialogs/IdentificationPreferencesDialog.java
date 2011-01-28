@@ -1,5 +1,6 @@
-package eu.isas.peptideshaker.gui;
+package eu.isas.peptideshaker.gui.preferencesdialogs;
 
+import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.IdentificationPreferences;
 import javax.swing.JOptionPane;
 
