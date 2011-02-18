@@ -1326,6 +1326,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void proteinTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseClicked
 
         int row = proteinTable.rowAtPoint(evt.getPoint());
+        int column = proteinTable.getSelectedColumn();
 
         if (row != -1) {
 
@@ -1335,7 +1336,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             updatedPeptideSelection(row);
 
             // update the sequence coverage map
-            updateSequenceCoverage((String) proteinTable.getValueAt(row, 1));
+            String proteinKey = getProteinKey(row);
+            ProteinMatch proteinMatch = identification.getProteinIdentification().get(proteinKey);
+            if (proteinMatch.getNProteins() == 1) {
+                updateSequenceCoverage(proteinKey);
+            } else {
+                coverageEditorPane.setText("");
+                if (column == 1) {
+                    new ProteinInferenceDialog(this, true, proteinMatch, identification, experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSequenceDataBase());
+                }
+            }
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
@@ -1344,6 +1354,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void proteinTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinTableKeyReleased
 
         int row = proteinTable.getSelectedRow();
+        int column = proteinTable.getSelectedColumn();
 
         if (row != -1) {
 
@@ -1353,7 +1364,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             updatedPeptideSelection(row);
 
             // update the sequence coverage map
-            updateSequenceCoverage((String) proteinTable.getValueAt(row, 1));
+            String proteinKey = getProteinKey(row);
+            ProteinMatch proteinMatch = identification.getProteinIdentification().get(proteinKey);
+            if (proteinMatch.getNProteins() == 1) {
+                updateSequenceCoverage(proteinKey);
+            } else {
+                coverageEditorPane.setText("");
+                if (column == 1) {
+                    new ProteinInferenceDialog(this, true, proteinMatch, identification, experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSequenceDataBase());
+                }
+            }
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
@@ -1435,7 +1455,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         } else {
             peptideKey = peptideKey.replaceAll(", ", "_");
         }
-        
+
         return peptideKey;
     }
 
@@ -1494,7 +1514,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 HashSet<Peak> peaks = currentSpectrum.getPeakList();
 
                 if (peaks == null || peaks.isEmpty()) {
-                    JOptionPane.showMessageDialog(this, "Peaks lists not imported.", "Peak Lists Error", JOptionPane.INFORMATION_MESSAGE);
+                    // JOptionPane.showMessageDialog(this, "Peaks lists not imported.", "Peak Lists Error", JOptionPane.INFORMATION_MESSAGE);
                 } else {
 
                     double[] mzValues = new double[peaks.size()];
@@ -1536,7 +1556,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
             // update the sequence coverage map
-            updateSequenceCoverage((String) proteinTable.getValueAt(proteinTable.getSelectedRow(), 1));
+            String proteinKey = getProteinKey(proteinTable.getSelectedRow());
+            ProteinMatch proteinMatch = identification.getProteinIdentification().get(proteinKey);
+            if (proteinMatch.getNProteins() == 1) {
+                updateSequenceCoverage(proteinKey);
+            } else {
+                coverageEditorPane.setText("");
+            }
 
             String peptideKey = getPeptideKey(row);
 
@@ -1583,7 +1609,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                                 spectrum.getFileName(),
                                 spectrum.getSpectrumTitle()
                             });
-                    addPsmRowKey(index-1, spectrumKey);
+                    addPsmRowKey(index - 1, spectrumKey);
                     index++;
 
                 } catch (MzMLUnmarshallerException e) {
@@ -1738,25 +1764,29 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         // add the proteins to the table
         for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
 
-            proteinKey = proteinMatch.getTheoreticProtein().getProteinKey();
+            proteinKey = proteinMatch.getKey();
             PSParameter probabilities = new PSParameter();
             probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
 
-            if (db != null) {
+            if (db != null && proteinMatch.getNProteins() == 1) {
                 Protein currentProtein = db.getProtein(proteinKey);
                 int nPossible = currentProtein.getNPossiblePeptides(selectedEnzyme);
                 emPAI = (Math.pow(10, ((double) proteinMatch.getPeptideMatches().size()) / ((double) nPossible)));
                 description = currentProtein.getDescription();
                 sequenceCoverage = 100 * estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
+            } else {
+                description = "";
+                emPAI = 0;
+                sequenceCoverage = 0;
             }
 
             ((DefaultTableModel) allProteinsJTable.getModel()).addRow(new Object[]{
                         allProteinsIndex++,
-                        proteinMatch.getTheoreticProtein().getAccession(),
+                        proteinKey,
                         proteinMatch.getPeptideMatches().size(),
                         proteinMatch.getSpectrumCount(),
                         probabilities.getProteinProbabilityScore(),
-                        probabilities.getProteinProbability(),
+                        probabilities.getProteinCorrectedProbability(),
                         proteinMatch.isDecoy()
                     });
 
@@ -1764,14 +1794,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             if (!proteinMatch.isDecoy()) {
                 ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                             index,
-                            proteinMatch.getTheoreticProtein().getAccession(),
+                            proteinKey,
                             sequenceCoverage,
                             emPAI,
                             proteinMatch.getPeptideMatches().size(),
                             proteinMatch.getSpectrumCount(),
                             probabilities.getProteinProbabilityScore(),
                             description});
-                addProteinRowKey(index-1, proteinKey);
+                addProteinRowKey(index - 1, proteinKey);
                 index++;
             }
 
@@ -1786,7 +1816,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             if (maxEmPAI < emPAI) {
                 maxEmPAI = emPAI;
             }
-            
+
             if (maxProteinScore < probabilities.getProteinProbabilityScore()) {
                 maxProteinScore = probabilities.getProteinProbabilityScore();
             }

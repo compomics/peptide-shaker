@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
+import eu.isas.peptideshaker.fdrestimation.ProteinMap;
 import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
 
@@ -15,7 +16,7 @@ public class PSMaps implements UrParameter {
     /**
      * The protein map
      */
-    private TargetDecoyMap proteinMap;
+    private ProteinMap proteinMap;
     /**
      * The Psm map
      */
@@ -38,7 +39,7 @@ public class PSMaps implements UrParameter {
      * @param PsmSpecificMap        The psm map
      * @param PeptideSpecificMap    the peptide map
      */
-    public PSMaps(TargetDecoyMap proteinMap, PsmSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap) {
+    public PSMaps(ProteinMap proteinMap, PsmSpecificMap PsmSpecificMap, PeptideSpecificMap PeptideSpecificMap) {
         this.proteinMap = proteinMap;
         this.PeptideSpecificMap = PeptideSpecificMap;
         this.PsmSpecificMap = PsmSpecificMap;
@@ -64,7 +65,7 @@ public class PSMaps implements UrParameter {
      * getter for the protein map
      * @return the protein map
      */
-    public TargetDecoyMap getProteinMap() {
+    public ProteinMap getProteinMap() {
         return proteinMap;
     }
 
