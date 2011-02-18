@@ -219,7 +219,6 @@ public class TargetDecoyMap implements Serializable {
             if (report) {
                 waitingDialog.appendReport(level + " Nmax = " + nmax + " probability estimation might not be reliable.");
             }
-            nmax = 100;
             probabilistic = false;
         }
         if (nTargetOnly < 100) {

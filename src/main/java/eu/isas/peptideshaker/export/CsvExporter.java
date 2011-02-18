@@ -91,7 +91,7 @@ public class CsvExporter {
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
 
             String content = "Protein" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra" + SEPARATOR + "p score"
-                    + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
+                    + SEPARATOR + "p" + SEPARATOR + "corrected p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
             proteinWriter.write(content);
 
             content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR
@@ -140,7 +140,7 @@ public class CsvExporter {
      */
     private String getLine(ProteinMatch proteinMatch) {
         String line = "";
-        line += proteinMatch.getTheoreticProtein().getAccession() + SEPARATOR;
+        line += proteinMatch.getKey() + SEPARATOR;
         line += proteinMatch.getPeptideMatches().size() + SEPARATOR;
         line += proteinMatch.getSpectrumCount() + SEPARATOR;
         PSParameter probabilities = new PSParameter();
@@ -148,7 +148,8 @@ public class CsvExporter {
 
         try {
             line += probabilities.getProteinProbabilityScore() + SEPARATOR
-                    + probabilities.getProteinProbability() + SEPARATOR;
+                    + probabilities.getProteinProbability() + SEPARATOR
+                    + probabilities.getProteinCorrectedProbability() + SEPARATOR;
         } catch (Exception e) {
             line += SEPARATOR + SEPARATOR;
         }

@@ -109,10 +109,9 @@ public class PeptideSpecificMap implements Serializable {
      *
      * @return
     public String getMethod() {
-        return "Specific FDR";
+    return "Specific FDR";
     }
      */
-
     /**
      * estimate the posterior error probabilities
      *
@@ -156,28 +155,28 @@ public class PeptideSpecificMap implements Serializable {
     }
 
     /**
-     * This methods puts all the small peptide groups in the dustbin to be analyzed together.
+     * This method puts all the small peptide groups in the dustbin to be analyzed together.
      *
      * @param waitingDialog The waiting dialog will display the feedback
      */
     public void cure(WaitingDialog waitingDialog) {
         if (peptideMaps.size() > 1) {
-        peptideMaps.put(DUSTBIN, new TargetDecoyMap(DUSTBIN + " peptides"));
-        for (String key : peptideMaps.keySet()) {
-            if (!key.equals(DUSTBIN)) {
-                TargetDecoyMap peptideMap = peptideMaps.get(key);
-                if (peptideMap.getnMax() < 10) {
-                    groupedMaps.add(key);
-                    peptideMaps.get(DUSTBIN).addAll(peptideMap);
+            peptideMaps.put(DUSTBIN, new TargetDecoyMap(DUSTBIN + " peptides"));
+            for (String key : peptideMaps.keySet()) {
+                if (!key.equals(DUSTBIN)) {
+                    TargetDecoyMap peptideMap = peptideMaps.get(key);
+                    if (peptideMap.getnMax() < 10) {
+                        groupedMaps.add(key);
+                        peptideMaps.get(DUSTBIN).addAll(peptideMap);
+                    }
                 }
             }
+            String output = "";
+            for (String modifications : groupedMaps) {
+                output += modifications + ", ";
+            }
+            waitingDialog.appendReport(output + "modified peptides are analyzed together as " + DUSTBIN + " peptides.");
         }
-        String output = "";
-        for (String modifications : groupedMaps) {
-            output += modifications + ", ";
-        }
-        waitingDialog.appendReport(output + "modified peptides are analyzed together as " + DUSTBIN + " peptides.");
-    }
     }
 
     /**

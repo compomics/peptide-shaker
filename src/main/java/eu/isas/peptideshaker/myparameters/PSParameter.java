@@ -40,12 +40,16 @@ public class PSParameter implements UrParameter {
      */
     private double proteinProbability;
     /**
+     * Protein corrected probability
+     */
+    private double proteinCorrectedProbability;
+    /**
      * Boolean indicating whether a match is validated or not at the selected threshold
      */
     private boolean validated = false;
 
     /**
-     * Construcot
+     * Constructor
      */
     public PSParameter() {
 
@@ -85,6 +89,24 @@ public class PSParameter implements UrParameter {
      */
     public void setPeptideProbabilityScore(double peptideProbabilityScore) {
         this.peptideProbabilityScore = peptideProbabilityScore;
+    }
+
+    /**
+     * Returns the protein corrected probability.
+     *
+     * @return the protein corrected probability
+     */
+    public double getProteinCorrectedProbability() {
+        return proteinCorrectedProbability;
+    }
+
+    /**
+     * Set the protein corrected probability.
+     *
+     * @param proteinProbability the new protein corrected probability
+     */
+    public void setProteinCorrectedProbability(double proteinCorrectedProbability) {
+        this.proteinCorrectedProbability = proteinCorrectedProbability;
     }
 
     /**

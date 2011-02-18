@@ -12,8 +12,8 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import eu.isas.peptideshaker.fdrestimation.InputMap;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
+import eu.isas.peptideshaker.fdrestimation.ProteinMap;
 import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
-import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
 import eu.isas.peptideshaker.fileimport.FastaImporter;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.fileimport.IdFilter;
@@ -33,6 +33,10 @@ import java.util.HashMap;
  */
 public class PeptideShaker {
 
+    /**
+     * The accession for an unknown protein
+     */
+    private static final String UNKNOWN_PROTEIN = "unknown";
     /**
      * The experiment conducted
      */
@@ -56,7 +60,7 @@ public class PeptideShaker {
     /**
      * The protein map
      */
-    private TargetDecoyMap proteinMap;
+    private ProteinMap proteinMap;
     /**
      * The id importer will import and process the identifications
      */
@@ -90,7 +94,7 @@ public class PeptideShaker {
         this.replicateNumber = replicateNumber;
         psmMap = new PsmSpecificMap(experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSpectrumCollection());
         peptideMap = new PeptideSpecificMap();
-        proteinMap = new TargetDecoyMap("protein");
+        proteinMap = new ProteinMap();
     }
 
     /**
@@ -140,7 +144,7 @@ public class PeptideShaker {
      * @param object    the object to add in the queue
      */
     public void queue(Object object) {
-            queue.add(object);
+        queue.add(object);
     }
 
     /**
@@ -227,6 +231,12 @@ public class PeptideShaker {
         fillProteinMap();
         proteinMap.estimateProbabilities(waitingDialog);
         attachProteinProbabilities();
+        waitingDialog.appendReport("Solving protein inference issues.");
+        try {
+            correctProteinProbabilities(waitingDialog);
+        } catch (Exception e) {
+            waitingDialog.appendReport("An error occured while solving protein inference issues.");
+        }
         waitingDialog.appendReport("Identification processing completed.");
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap));
@@ -398,15 +408,13 @@ public class PeptideShaker {
         for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
             probaScore = 1;
             for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-                if (peptideMatch.getTheoreticPeptide().getParentProteins().size() == 1) {
-                    psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
-                    probaScore = probaScore * psParameter.getPeptideProbability();
-                }
+                psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+                probaScore = probaScore * psParameter.getPeptideProbability();
             }
             psParameter = new PSParameter();
             psParameter.setProteinProbabilityScore(probaScore);
             proteinMatch.addUrParam(psParameter);
-            proteinMap.put(probaScore, proteinMatch.isDecoy());
+            proteinMap.addPoint(probaScore, proteinMatch.isDecoy());
         }
     }
 
@@ -416,9 +424,58 @@ public class PeptideShaker {
     private void attachProteinProbabilities() {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
+        double proteinProbability;
         for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
             psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
-            psParameter.setProteinProbability(proteinMap.getProbability(psParameter.getProteinProbabilityScore()));
+            proteinProbability = proteinMap.getProbability(psParameter.getProteinProbabilityScore());
+            psParameter.setProteinProbability(proteinProbability);
+            psParameter.setProteinCorrectedProbability(proteinProbability);
         }
+    }
+
+    /**
+     * Solves protein inference issues and corrects the corresponding probabilities.
+     * @throws Exception    exception thrown whenever it is attempted to attach two different spectrum matches to the same spectrum from the same search engine.
+     */
+    private void correctProteinProbabilities(WaitingDialog waitingDialog) throws Exception {
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        PSParameter psParameter = new PSParameter();
+        boolean better;
+        ProteinMatch proteinShared;
+        double sharedProteinProbability, uniqueProteinProbability;
+        ArrayList<String> toRemove = new ArrayList<String>();
+        int nLeft = 0;
+        for (String proteinSharedKey : identification.getProteinIdentification().keySet()) {
+            proteinShared = identification.getProteinIdentification().get(proteinSharedKey);
+            psParameter = (PSParameter) proteinShared.getUrParam(psParameter);
+            sharedProteinProbability = psParameter.getProteinCorrectedProbability();
+            if (proteinShared.getNProteins() > 1 && sharedProteinProbability < 1) {
+                proteinShared = identification.getProteinIdentification().get(proteinSharedKey);
+                psParameter = (PSParameter) proteinShared.getUrParam(psParameter);
+                sharedProteinProbability = psParameter.getProteinCorrectedProbability();
+                better = false;
+                for (ProteinMatch proteinUnique : identification.getProteinIdentification().values()) {
+                    if (proteinShared.contains(proteinUnique)) {
+                        psParameter = (PSParameter) proteinUnique.getUrParam(psParameter);
+                        uniqueProteinProbability = psParameter.getProteinCorrectedProbability();
+                        for (PeptideMatch sharedPeptide : proteinShared.getPeptideMatches().values()) {
+                            proteinUnique.addPeptideMatch(sharedPeptide);
+                        }
+                        if (uniqueProteinProbability <= sharedProteinProbability) {
+                            better = true;
+                        }
+                    }
+                }
+                if (better) {
+                    toRemove.add(proteinSharedKey);
+                } else {
+                    nLeft++;
+                }
+            }
+        }
+        for (String proteinKey : toRemove) {
+            identification.getProteinIdentification().remove(proteinKey);
+        }
+        waitingDialog.appendReport(toRemove.size() + " conflicts resolved. " + nLeft + " protein groups remaining.");
     }
 }
