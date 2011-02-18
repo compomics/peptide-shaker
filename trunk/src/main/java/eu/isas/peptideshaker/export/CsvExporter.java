@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.MsExperiment;
+import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
@@ -8,6 +9,7 @@ import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -59,6 +61,14 @@ public class CsvExporter {
      * Name of the file containing the identification information at the psm level
      */
     private String psmFile;
+    /**
+     * The sequence database
+     */
+    private SequenceDataBase db;
+    /**
+     * The enzyme used for digestion
+     */
+    private Enzyme enzyme;
 
     /**
      * Creates a CsvExporter object.
@@ -67,10 +77,12 @@ public class CsvExporter {
      * @param sample the sample
      * @param replicateNumber the replicate number
      */
-    public CsvExporter(MsExperiment experiment, Sample sample, int replicateNumber) {
+    public CsvExporter(MsExperiment experiment, Sample sample, int replicateNumber, Enzyme enzyme) {
         this.experiment = experiment;
         this.sample = sample;
         this.replicateNumber = replicateNumber;
+        this.enzyme = enzyme;
+        db = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSequenceDataBase();
 
         proteinFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_proteins.txt";
         peptideFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_peptides.txt";
@@ -90,8 +102,8 @@ public class CsvExporter {
             Writer peptideWriter = new BufferedWriter(new FileWriter(new File(folder, peptideFile)));
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
 
-            String content = "Protein" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra" + SEPARATOR + "p score"
-                    + SEPARATOR + "p" + SEPARATOR + "corrected p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
+            String content = "Protein" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra" + SEPARATOR + "nPossibilities" + SEPARATOR + "p score"
+                    + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR + "Description" + "\n";
             proteinWriter.write(content);
 
             content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR
@@ -143,13 +155,18 @@ public class CsvExporter {
         line += proteinMatch.getKey() + SEPARATOR;
         line += proteinMatch.getPeptideMatches().size() + SEPARATOR;
         line += proteinMatch.getSpectrumCount() + SEPARATOR;
+        if (db != null && proteinMatch.getNProteins()==1) {
+            String accession = (new ArrayList<String>(proteinMatch.getTheoreticProteinsAccessions())).get(0);
+            line += db.getProtein(accession).getNPossiblePeptides(enzyme) + SEPARATOR;
+        } else {
+            line += SEPARATOR;
+        }
         PSParameter probabilities = new PSParameter();
         probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
 
         try {
             line += probabilities.getProteinProbabilityScore() + SEPARATOR
-                    + probabilities.getProteinProbability() + SEPARATOR
-                    + probabilities.getProteinCorrectedProbability() + SEPARATOR;
+                    + probabilities.getProteinProbability() + SEPARATOR;
         } catch (Exception e) {
             line += SEPARATOR + SEPARATOR;
         }
@@ -162,12 +179,16 @@ public class CsvExporter {
 
         try {
             if (probabilities.isValidated()) {
-                line += "1";
+                line += "1" + SEPARATOR;
             } else {
-                line += "0";
+                line += "0" + SEPARATOR;
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        if (db != null && proteinMatch.getNProteins()==1) {
+            String accession = (new ArrayList<String>(proteinMatch.getTheoreticProteinsAccessions())).get(0);
+            line += db.getProtein(accession).getDescription();
         }
 
         line += "\n";

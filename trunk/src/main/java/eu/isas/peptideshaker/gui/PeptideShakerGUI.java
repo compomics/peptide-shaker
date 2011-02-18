@@ -1249,7 +1249,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
     private void exportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMenuItemActionPerformed
-        final CsvExporter exporter = new CsvExporter(experiment, sample, replicateNumber);
+        final CsvExporter exporter = new CsvExporter(experiment, sample, replicateNumber, selectedEnzyme);
         final JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
         fileChooser.setDialogTitle("Select Result Folder");
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
