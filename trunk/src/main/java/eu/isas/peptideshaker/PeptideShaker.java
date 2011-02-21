@@ -231,11 +231,11 @@ public class PeptideShaker {
         fillProteinMap();
         proteinMap.estimateProbabilities(waitingDialog);
         attachProteinProbabilities();
-        waitingDialog.appendReport("Solving protein inference issues.");
+        waitingDialog.appendReport("Trying to resolve protein inference issues.");
         try {
             correctProteinProbabilities(waitingDialog);
         } catch (Exception e) {
-            waitingDialog.appendReport("An error occured while solving protein inference issues.");
+            waitingDialog.appendReport("An error occured while trying to resolve protein inference issues.");
         }
         waitingDialog.appendReport("Identification processing completed.");
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -399,7 +399,7 @@ public class PeptideShaker {
     }
 
     /**
-     * fills the protein map
+     * Fills the protein map
      */
     private void fillProteinMap() {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
