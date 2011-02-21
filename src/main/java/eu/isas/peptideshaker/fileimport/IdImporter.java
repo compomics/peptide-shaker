@@ -201,7 +201,6 @@ public class IdImporter {
                 for (File idFile : idFiles) {
 
                     waitingDialog.appendReport("Reading file: " + idFile.getName());
-                    waitingDialog.appendReportNewLineNoDate();
 
                     int searchEngine = readerFactory.getSearchEngine(idFile);
 
@@ -212,7 +211,6 @@ public class IdImporter {
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();
                     SpectrumMatch match;
 
-                    
                     while (matchIt.hasNext()) {
 
                         match = matchIt.next();
@@ -228,8 +226,6 @@ public class IdImporter {
                             return 1;
                         }
                     }
-
-                    waitingDialog.appendReportEndLine();
                 }
 
                 if (nRetained == 0) {

@@ -10,7 +10,7 @@ import java.io.FileNotFoundException;
 import javax.swing.SwingWorker;
 
 /**
- * This class will import sequences from a fasta file
+ * This class will import sequences from a FASTA file
  *
  * @author Marc
  */
@@ -26,7 +26,8 @@ public class FastaImporter {
     private boolean runFinished = false;
 
     /**
-     * Constructor for a a fasta importer
+     * Constructor for a a FASTA importer
+     *
      * @param parent    the parent PeptideShaker object
      */
     public FastaImporter(PeptideShaker parent) {
@@ -34,10 +35,11 @@ public class FastaImporter {
     }
 
     /**
-     * Imports proteins from a fasta file
+     * Imports proteins from a FASTA file
+     *
      * @param waitingDialog     Dialog displaying feedback to the user
      * @param proteomicAnalysis The proteomic analysis to attach the database to
-     * @param fastaFile         The fasta file
+     * @param fastaFile         The FASTA file
      * @param databaseName      Database name
      * @param databaseVersion   Database version
      * @param stringBefore      String before the protein accession
@@ -57,7 +59,7 @@ public class FastaImporter {
     }
 
     /**
-     * Worker which processes a fasta file and gives feedback to the user.
+     * Worker which processes a FASTA file and gives feedback to the user.
      */
     private class FastaProcessor extends SwingWorker {
 
@@ -82,11 +84,11 @@ public class FastaImporter {
          */
         private String databaseVersion;
         /**
-         * String before the accession in the fasta header
+         * String before the accession in the FASTA header
          */
         private String stringBefore;
         /**
-         * String after the accession in the fasta header
+         * String after the accession in the FASTA header
          */
         private String stringAfter;
 
@@ -95,7 +97,7 @@ public class FastaImporter {
          *
          * @param waitingDialog     Dialog displaying feedback to the user
          * @param proteomicAnalysis The proteomic analysis to attach the database to
-         * @param fastaFile         Fasta file to process
+         * @param fastaFile         FASTA file to process
          * @param databaseName      Database name
          * @param databaseVersion   Database version
          * @param stringBefore      String before the protein accession
@@ -119,11 +121,11 @@ public class FastaImporter {
                 FastaHeaderParser fastaHeaderParser = new FastaHeaderParser(stringBefore, stringAfter);
                 db.importDataBase(fastaHeaderParser, fastaFile);
                 proteomicAnalysis.setSequenceDataBase(db);
-                waitingDialog.appendReport("Fasta file import completed.");
+                waitingDialog.appendReport("FASTA file import completed.");
             } catch (FileNotFoundException e) {
-                waitingDialog.appendReport("File " + fastaFile + " was not found. Please open another fasta file.");
+                waitingDialog.appendReport("File " + fastaFile + " was not found. Please open another FASTA file.");
             } catch (Exception e) {
-                waitingDialog.appendReport("An error occured while loading " + fastaFile + ". Please open another fasta file.");
+                waitingDialog.appendReport("An error occured while loading " + fastaFile + ". Please open another FASTA file.");
             }
             runFinished = true;
             parent.setRunFinished(waitingDialog);

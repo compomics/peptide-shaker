@@ -160,8 +160,11 @@ public class PeptideSpecificMap implements Serializable {
      * @param waitingDialog The waiting dialog will display the feedback
      */
     public void cure(WaitingDialog waitingDialog) {
+
         if (peptideMaps.size() > 1) {
+
             peptideMaps.put(DUSTBIN, new TargetDecoyMap(DUSTBIN + " peptides"));
+
             for (String key : peptideMaps.keySet()) {
                 if (!key.equals(DUSTBIN)) {
                     TargetDecoyMap peptideMap = peptideMaps.get(key);
@@ -171,11 +174,14 @@ public class PeptideSpecificMap implements Serializable {
                     }
                 }
             }
-            String output = "";
-            for (String modifications : groupedMaps) {
-                output += modifications + ", ";
-            }
-            waitingDialog.appendReport(output + "modified peptides are analyzed together as " + DUSTBIN + " peptides.");
+
+//            String output = "";
+//
+//            for (String modifications : groupedMaps) {
+//                output += modifications + ", ";
+//            }
+
+            waitingDialog.appendReport("Modified peptides are analyzed together as " + DUSTBIN + " peptides.");
         }
     }
 
