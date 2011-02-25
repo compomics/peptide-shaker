@@ -862,7 +862,8 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             public boolean accept(File myFile) {
                 return myFile.getName().toLowerCase().endsWith("fasta")
                         || myFile.getName().toLowerCase().endsWith("fast")
-                        || myFile.getName().toLowerCase().endsWith("fas");
+                        || myFile.getName().toLowerCase().endsWith("fas")
+                        || myFile.isDirectory();
             }
 
             @Override
