@@ -273,7 +273,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.0.38</version>
+            <version>3.0.40</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -338,6 +338,12 @@
             <groupId>uk.ac.ebi.jmzml</groupId>
             <artifactId>jmzml</artifactId>
             <version>1.6.5</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>xxindex</artifactId>
+                    <groupId>psidev.psi.tools</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
