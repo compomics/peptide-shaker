@@ -9,7 +9,6 @@ import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
@@ -1558,13 +1557,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     String peptideKey = getPeptideKey(peptideTable.getSelectedRow());
                     Peptide currentPeptide = identification.getPeptideIdentification().get(peptideKey).getTheoreticPeptide();
-                    HashMap<Integer, HashMap<Integer, IonMatch>> annotations = spectrumAnnotator.annotateSpectrum(currentPeptide, currentSpectrum, annotationPreferences.getTolerance(), getIntensityLimit(currentSpectrum));
+                    HashMap<Integer, HashMap<Integer, IonMatch>> annotations = spectrumAnnotator.annotateSpectrum(
+                            currentPeptide, currentSpectrum, annotationPreferences.getTolerance(), getIntensityLimit(currentSpectrum));
 
                     // @TODO: verify that the provided informations to the spectrumpanel are correct
                     // @TODO: add ion matches to the spectrum
                     Precursor precursor = currentSpectrum.getPrecursor();
                     SpectrumPanel spectrum =
-                            new SpectrumPanel(mzValues, intValues, precursor.getMz(), precursor.getCharge().toString(), "", 50, false, false, false, false, 2, false);
+                            new SpectrumPanel(mzValues, intValues, precursor.getMz(), precursor.getCharge().toString(), "", 50, false, false, false, 2, false);
 
                     spectrumPanel.removeAll();
                     spectrumPanel.add(spectrum);
