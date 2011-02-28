@@ -229,7 +229,7 @@ public class IdImporter {
                 }
 
                 if (nRetained == 0) {
-                    waitingDialog.appendReport("No identification retained.");
+                    waitingDialog.appendReport("No identifications retained.");
                     waitingDialog.setRunCanceled();
                     waitingDialog.setRunFinished();
                     return 1;
