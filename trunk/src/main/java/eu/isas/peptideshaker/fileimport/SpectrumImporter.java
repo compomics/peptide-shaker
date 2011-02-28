@@ -91,9 +91,17 @@ public class SpectrumImporter {
         protected Object doInBackground() throws Exception {
             String fileName = "";
             try {
-                if (parent.needQueue()) {
-                    queue();
+
+//                does not seem to work...
+//                if (parent.needQueue()) {
+//                    queue();
+//                }
+
+                // wait until the identifications are imported
+                while (parent.needQueue()) {
+                    System.out.println("Waiting...");
                 }
+
                 waitingDialog.appendReport("Importing spectra.");
                 proteomicAnalysis.clearSpectrumCollection();
                 for (File spectrumFile : spectrumFiles) {
@@ -110,7 +118,6 @@ public class SpectrumImporter {
                 waitingDialog.setRunCanceled();
                 e.printStackTrace();
                 return 1;
-
             } catch (Exception e) {
                 waitingDialog.appendReport("Spectrum files import failed when trying to import " + fileName + ".");
                 proteomicAnalysis.clearSpectrumCollection();

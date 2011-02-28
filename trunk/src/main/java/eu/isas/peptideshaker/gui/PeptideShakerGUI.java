@@ -134,7 +134,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * The color used for the sparkline bar chart plots.
      */
-    private Color sparklineColor = new Color(100, 100, 255);
+    private Color sparklineColor = new Color(110, 196, 97);
     /**
      * Compomics experiment saver and opener
      */
@@ -249,28 +249,48 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         allSpectraJTable.getColumn("Decoy").setMaxWidth(60);
 
         allProteinsJTable.getColumn("#Peptides").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allProteinsJTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, 40);
         allProteinsJTable.getColumn("#Spectra").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allProteinsJTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, 40);
         allProteinsJTable.getColumn("p-score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allProteinsJTable.getColumn("p-score").getCellRenderer()).showNumberAndChart(true, 40);
         allProteinsJTable.getColumn("PEP").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allProteinsJTable.getColumn("PEP").getCellRenderer()).showNumberAndChart(true, 40);
 
         allPeptidesJTable.getColumn("#Spectra").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allPeptidesJTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, 40);
         allPeptidesJTable.getColumn("p-score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allPeptidesJTable.getColumn("p-score").getCellRenderer()).showNumberAndChart(true, 40);
         allPeptidesJTable.getColumn("PEP").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allPeptidesJTable.getColumn("PEP").getCellRenderer()).showNumberAndChart(true, 40);
 
         allSpectraJTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, 40);
         allSpectraJTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Mass Error").getCellRenderer()).showNumberAndChart(true, 40);
         allSpectraJTable.getColumn("Mascot Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Mascot Score").getCellRenderer()).showNumberAndChart(true, 40);
         allSpectraJTable.getColumn("Mascot E-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("Mascot E-value").getCellRenderer()).showNumberAndChart(true, 40);
         allSpectraJTable.getColumn("OMSSA E-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("OMSSA E-value").getCellRenderer()).showNumberAndChart(true, 40);
         allSpectraJTable.getColumn("X!Tandem E-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("X!Tandem E-value").getCellRenderer()).showNumberAndChart(true, 40);
         allSpectraJTable.getColumn("p-score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("p-score").getCellRenderer()).showNumberAndChart(true, 40);
         allSpectraJTable.getColumn("PEP").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) allSpectraJTable.getColumn("PEP").getCellRenderer()).showNumberAndChart(true, 40);
 
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, 40);
         proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, 40);
         proteinTable.getColumn("emPAI").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).showNumberAndChart(true, 40);
         proteinTable.getColumn("Protein Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Protein Score").getCellRenderer()).showNumberAndChart(true, 40);
         proteinTable.getColumn("Sequence Coverage").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, sparklineColor));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Sequence Coverage").getCellRenderer()).showNumberAndChart(true, 40);
 
         allProteinsJTable.getColumn("Decoy").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")), null));
@@ -1136,11 +1156,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void openJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJMenuItemActionPerformed
-        if (experiment != null) {
-            new OpenDialog(this, true, experiment, sample, replicateNumber);
-        } else {
+//        if (experiment != null) {
+//            new OpenDialog(this, true, experiment, sample, replicateNumber);
+//        } else {
             new OpenDialog(this, true);
-        }
+//        }
     }//GEN-LAST:event_openJMenuItemActionPerformed
 
     /**
@@ -1537,7 +1557,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 HashSet<Peak> peaks = currentSpectrum.getPeakList();
 
                 if (peaks == null || peaks.isEmpty()) {
-                    // JOptionPane.showMessageDialog(this, "Peaks lists not imported.", "Peak Lists Error", JOptionPane.INFORMATION_MESSAGE);
+                     JOptionPane.showMessageDialog(this, "Peaks lists not imported.", "Peak Lists Error", JOptionPane.INFORMATION_MESSAGE);
                 } else {
 
                     double[] mzValues = new double[peaks.size()];
