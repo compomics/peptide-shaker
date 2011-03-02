@@ -103,7 +103,7 @@ public class PSParameter implements UrParameter {
     /**
      * Set the protein corrected probability.
      *
-     * @param proteinProbability the new protein corrected probability
+     * @param proteinCorrectedProbability the new protein corrected probability
      */
     public void setProteinCorrectedProbability(double proteinCorrectedProbability) {
         this.proteinCorrectedProbability = proteinCorrectedProbability;
