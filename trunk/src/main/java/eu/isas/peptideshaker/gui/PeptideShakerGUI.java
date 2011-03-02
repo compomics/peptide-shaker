@@ -30,6 +30,8 @@ import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
 import com.jgoodies.looks.plastic.theme.SkyKrupp;
+import com.jgoodies.looks.windows.WindowsLookAndFeel;
+import com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
@@ -2288,8 +2290,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private static void setLookAndFeel() {
 
         try {
-            PlasticLookAndFeel.setPlasticTheme(new SkyKrupp());
-            UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
+            UIManager.setLookAndFeel(new NimbusLookAndFeel());
         } catch (UnsupportedLookAndFeelException e) {
             // ignore exception, i.e. use default look and feel
         }

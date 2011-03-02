@@ -71,7 +71,6 @@ public class ProteinMap implements Serializable {
     /**
      * Returns the score limit for the given peptide match at the selected FDR threshold
      *
-     * @param peptideMatch the given peptide match
      * @return the score threshold
      */
     public double getScoreLimit() {
@@ -91,7 +90,6 @@ public class ProteinMap implements Serializable {
     /**
      * Returns the posterior error probability of a peptide match at the given score
      *
-     * @param peptideMatch the peptide match
      * @param score        the score of the match
      * @return the posterior error probability
      */

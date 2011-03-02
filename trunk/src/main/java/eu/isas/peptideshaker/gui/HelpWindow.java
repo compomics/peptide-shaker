@@ -42,7 +42,7 @@ public class HelpWindow extends javax.swing.JFrame {
 
             if (fileName.getPath().endsWith("AboutPeptideShaker.html")) {
                 setTitle("About");
-                //setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/PeptideShaker.gif"))); // @TODO: set the icon
+                setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
             } else {
                 setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")));
             }
@@ -90,7 +90,7 @@ public class HelpWindow extends javax.swing.JFrame {
 
             if (fileName.getPath().endsWith("AboutPeptideShaker.html")) {
                 setTitle("About");
-                //setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/box_plot_small.GIF"))); // @TODO: set icon
+                setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
             } else {
                 setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/help.GIF")));
             }
