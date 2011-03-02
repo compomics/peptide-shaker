@@ -331,7 +331,7 @@
         <dependency>
             <groupId>no.uib</groupId>
             <artifactId>jsparklines</artifactId>
-            <version>0.5</version>
+            <version>0.5.1</version>
         </dependency>
 
         <dependency>
