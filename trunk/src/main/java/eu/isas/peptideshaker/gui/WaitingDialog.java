@@ -1,6 +1,8 @@
-
 package eu.isas.peptideshaker.gui;
 
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -9,8 +11,10 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.Timer;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -23,6 +27,18 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class WaitingDialog extends javax.swing.JDialog {
 
     /**
+     * Needed for the shaking feature.
+     */
+    private JDialog dialog;
+    /**
+     * Used in the shaking feature.
+     */
+    private Point naturalLocation;
+    /**
+     * Timer for the shaking feature.
+     */
+    private Timer shakeTimer;
+    /**
      * A reference to the main frame.
      */
     private PeptideShakerGUI peptideShakerGUI;
@@ -31,7 +47,7 @@ public class WaitingDialog extends javax.swing.JDialog {
      */
     private boolean runFinished = false;
     /**
-     * Boolean indicating whether the run is cancelled
+     * Boolean indicating whether the run is canceled
      */
     private boolean runCanceled = false;
     /**
@@ -199,10 +215,10 @@ public class WaitingDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (runFinished) {
             try {
-            peptideShakerGUI.displayResults();
-            this.dispose();
+                peptideShakerGUI.displayResults();
+                this.dispose();
             } catch (MzMLUnmarshallerException exception) {
-                appendReport("An error occured while loading a/the selected mzML file.");
+                appendReport("An error occured while loading the selected mzML file.");
                 setRunCanceled();
                 exception.printStackTrace();
             }
@@ -233,10 +249,14 @@ public class WaitingDialog extends javax.swing.JDialog {
         progressBar.setValue(progressBar.getMaximum());
         progressBar.setStringPainted(true);
         progressBar.setString("Process Completed.");
+        this.setTitle("Processing Identifications - Completed");
+
+        // make the dialog shake for a couple of seconds
+        startShake();
     }
 
     /**
-     * Set the analysis as cancelled.
+     * Set the analysis as canceled.
      */
     public void setRunCanceled() {
         runCanceled = true;
@@ -247,7 +267,8 @@ public class WaitingDialog extends javax.swing.JDialog {
         progressBar.setIndeterminate(false);
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
-        progressBar.setString("Calculation Cancelled!");
+        progressBar.setString("Calculation Canceled!");
+        this.setTitle("Processing Identifications - Canceled");
     }
 
     /**
@@ -275,9 +296,9 @@ public class WaitingDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Returns true if the run is cancelled.
+     * Returns true if the run is canceled.
      *
-     * @return true if the run is cancelled
+     * @return true if the run is canceled
      */
     public boolean isRunCanceled() {
         return runCanceled;
@@ -333,5 +354,54 @@ public class WaitingDialog extends javax.swing.JDialog {
                 }
             }
         }
+    }
+
+    /**
+     * Make the dialog shake when the analysis has completed.
+     */
+    private void startShake() {
+        final long startTime;
+
+        naturalLocation = this.getLocation();
+        startTime = System.currentTimeMillis();
+
+        dialog = this;
+
+        shakeTimer = new Timer(5, new ActionListener() {
+
+            public void actionPerformed(ActionEvent e) {
+                double TWO_PI = Math.PI * 2.0;
+                double SHAKE_CYCLE = 50;
+
+                long elapsed = System.currentTimeMillis() - startTime;
+                double waveOffset = (elapsed % SHAKE_CYCLE) / SHAKE_CYCLE;
+                double angle = waveOffset * TWO_PI;
+
+                int SHAKE_DISTANCE = 10;
+
+                int shakenX = (int) ((Math.sin(angle) * SHAKE_DISTANCE) + naturalLocation.x);
+                dialog.setLocation(shakenX, naturalLocation.y);
+                dialog.repaint();
+
+                int SHAKE_DURATION = 1000;
+
+                if (elapsed >= SHAKE_DURATION) {
+                    stopShake();
+                }
+            }
+        });
+        shakeTimer.start();
+    }
+
+    /**
+     * Stop the dialog shake.
+     */
+    private void stopShake() {
+        shakeTimer.stop();
+        dialog.setLocation(naturalLocation);
+        dialog.repaint();
+
+        appendReportEndLine();
+        appendReport("Your peptides have been shaken!");
     }
 }
