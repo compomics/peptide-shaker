@@ -67,9 +67,18 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="editMenu">
           <Properties>
+            <Property name="mnemonic" type="int" value="69"/>
             <Property name="text" type="java.lang.String" value="Edit"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="annotationPreferencesMenu">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Spectrum Annotations"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="annotationPreferencesMenuActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="identificationOptionsMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Identification Options"/>
@@ -105,14 +114,6 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sparklinesJCheckBoxMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="annotationPreferencesMenu">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Spectrum Annotation Preferences"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="annotationPreferencesMenuActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -320,12 +321,12 @@
                               <Table columnCount="8" rowCount="0">
                                 <Column editable="false" title=" " type="java.lang.Integer"/>
                                 <Column editable="false" title="Accession" type="java.lang.String"/>
-                                <Column editable="false" title="Sequence Coverage" type="java.lang.Double"/>
+                                <Column editable="false" title="Coverage" type="java.lang.Double"/>
                                 <Column editable="false" title="emPAI" type="java.lang.Double"/>
                                 <Column editable="false" title="#Peptides" type="java.lang.Integer"/>
                                 <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
-                                <Column editable="false" title="Protein Score" type="java.lang.Double"/>
-                                <Column editable="false" title="Description" type="java.lang.Object"/>
+                                <Column editable="false" title="Score" type="java.lang.Double"/>
+                                <Column editable="false" title="Description" type="java.lang.String"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -368,9 +369,6 @@
                               </TableColumnModel>
                             </Property>
                             <Property name="opaque" type="boolean" value="false"/>
-                            <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="cc" green="cc" red="cc" type="rgb"/>
-                            </Property>
                             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                               <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                             </Property>
@@ -512,9 +510,6 @@
                               </TableColumnModel>
                             </Property>
                             <Property name="opaque" type="boolean" value="false"/>
-                            <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="cc" green="cc" red="cc" type="rgb"/>
-                            </Property>
                             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                               <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                             </Property>
@@ -532,7 +527,7 @@
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                        <TitledBorder title="Peptide/Spectrum Matches"/>
+                        <TitledBorder title="Peptide-Spectrum Matches"/>
                       </Border>
                     </Property>
                     <Property name="opaque" type="boolean" value="false"/>
@@ -617,9 +612,6 @@
                               </TableColumnModel>
                             </Property>
                             <Property name="opaque" type="boolean" value="false"/>
-                            <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="cc" green="cc" red="cc" type="rgb"/>
-                            </Property>
                             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                               <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                             </Property>
@@ -808,9 +800,6 @@
                               </TableColumnModel>
                             </Property>
                             <Property name="opaque" type="boolean" value="false"/>
-                            <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="cc" green="cc" red="cc" type="rgb"/>
-                            </Property>
                             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                               <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                             </Property>
@@ -970,9 +959,6 @@
                               </TableColumnModel>
                             </Property>
                             <Property name="opaque" type="boolean" value="false"/>
-                            <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="cc" green="cc" red="cc" type="rgb"/>
-                            </Property>
                             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                               <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                             </Property>
@@ -1180,9 +1166,6 @@
                               </TableColumnModel>
                             </Property>
                             <Property name="opaque" type="boolean" value="false"/>
-                            <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                              <Color blue="cc" green="cc" red="cc" type="rgb"/>
-                            </Property>
                             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                               <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                             </Property>
@@ -1218,9 +1201,6 @@
                         <Column editable="false" title="Title 4" type="java.lang.Object"/>
                       </Table>
                     </Property>
-                    <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="cc" green="cc" red="cc" type="rgb"/>
-                    </Property>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -1248,9 +1228,6 @@
                         <Column editable="false" title="Title 3" type="java.lang.Object"/>
                         <Column editable="false" title="Title 4" type="java.lang.Object"/>
                       </Table>
-                    </Property>
-                    <Property name="selectionBackground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="cc" green="cc" red="cc" type="rgb"/>
                     </Property>
                   </Properties>
                 </Component>

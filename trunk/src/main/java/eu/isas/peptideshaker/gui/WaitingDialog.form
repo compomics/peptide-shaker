@@ -3,7 +3,7 @@
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
-    <Property name="title" type="java.lang.String" value="Processing Identifications - Please Wait..."/>
+    <Property name="title" type="java.lang.String" value="Importing Data - Please Wait..."/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -75,7 +75,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Identification Import Progress"/>
+                <TitledBorder title="Data Import Progress"/>
               </Border>
             </Property>
           </Properties>
@@ -86,8 +86,8 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jScrollPane1" alignment="0" pref="784" max="32767" attributes="0"/>
-                          <Component id="progressBar" alignment="0" pref="784" max="32767" attributes="0"/>
+                          <Component id="jScrollPane1" alignment="0" pref="842" max="32767" attributes="0"/>
+                          <Component id="progressBar" alignment="0" pref="842" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
