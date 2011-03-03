@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
@@ -67,6 +68,9 @@ public class WaitingDialog extends javax.swing.JDialog {
         initComponents();
         this.setLocationRelativeTo(peptideShaker);
         this.peptideShakerGUI = peptideShaker;
+
+        // change the peptide shaker icon to a "waiting version"
+        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
     }
 
     /** This method is called from within the constructor to
@@ -87,9 +91,9 @@ public class WaitingDialog extends javax.swing.JDialog {
         saveButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Processing Identifications - Please Wait...");
+        setTitle("Importing Data - Please Wait...");
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Identification Import Progress"));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Data Import Progress"));
 
         progressBar.setIndeterminate(true);
 
@@ -107,8 +111,8 @@ public class WaitingDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE)
-                    .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 784, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE)
+                    .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -248,8 +252,8 @@ public class WaitingDialog extends javax.swing.JDialog {
         progressBar.setIndeterminate(false);
         progressBar.setValue(progressBar.getMaximum());
         progressBar.setStringPainted(true);
-        progressBar.setString("Process Completed.");
-        this.setTitle("Processing Identifications - Completed");
+        progressBar.setString("Import Completed.");
+        this.setTitle("Importing Data - Completed");
 
         // make the dialog shake for a couple of seconds
         startShake();
@@ -268,7 +272,7 @@ public class WaitingDialog extends javax.swing.JDialog {
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
         progressBar.setString("Calculation Canceled!");
-        this.setTitle("Processing Identifications - Canceled");
+        this.setTitle("Importing Data - Canceled");
     }
 
     /**
@@ -278,7 +282,7 @@ public class WaitingDialog extends javax.swing.JDialog {
      */
     public void appendReport(String report) {
         Date date = new Date();
-        reportArea.append(date + "\t" + report + "\n");
+        reportArea.append(date + "\t\t" + report + "\n");
     }
 
     /**
@@ -403,5 +407,8 @@ public class WaitingDialog extends javax.swing.JDialog {
 
         appendReportEndLine();
         appendReport("Your peptides have been shaken!");
+
+        // return the peptide shaker icon to the standard version
+        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
     }
 }

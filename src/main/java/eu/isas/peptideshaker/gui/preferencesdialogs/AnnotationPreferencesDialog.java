@@ -1,13 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * AnnotationPreferencesDialog.java
- *
- * Created on Feb 24, 2011, 5:44:50 PM
- */
 
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
@@ -32,6 +22,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         this.annotationPreferences = annotationPreferences;
         initComponents();
         refreshSelection();
+        this.setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
 
@@ -44,137 +35,33 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        aButton = new javax.swing.JRadioButton();
-        anh3Button = new javax.swing.JRadioButton();
-        ah2oButton = new javax.swing.JRadioButton();
-        bButton = new javax.swing.JRadioButton();
-        bnh3Button = new javax.swing.JRadioButton();
-        bh2oButton = new javax.swing.JRadioButton();
-        cButton = new javax.swing.JRadioButton();
-        xButton = new javax.swing.JRadioButton();
-        yButton = new javax.swing.JRadioButton();
-        ynh3Button = new javax.swing.JRadioButton();
-        yh2oButton = new javax.swing.JRadioButton();
-        zButton = new javax.swing.JRadioButton();
-        mhButton = new javax.swing.JRadioButton();
-        mhnh3Button = new javax.swing.JRadioButton();
-        mhh2oButton = new javax.swing.JRadioButton();
-        jLabel1 = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        bh2oButton = new javax.swing.JRadioButton();
+        bnh3Button = new javax.swing.JRadioButton();
+        bButton = new javax.swing.JRadioButton();
+        yh2oButton = new javax.swing.JRadioButton();
+        yButton = new javax.swing.JRadioButton();
+        ynh3Button = new javax.swing.JRadioButton();
+        zButton = new javax.swing.JRadioButton();
+        cButton = new javax.swing.JRadioButton();
+        xButton = new javax.swing.JRadioButton();
+        aButton = new javax.swing.JRadioButton();
+        ah2oButton = new javax.swing.JRadioButton();
+        anh3Button = new javax.swing.JRadioButton();
+        mhh2oButton = new javax.swing.JRadioButton();
+        mhnh3Button = new javax.swing.JRadioButton();
+        mhButton = new javax.swing.JRadioButton();
         jLabel2 = new javax.swing.JLabel();
-        mostIntenseButton = new javax.swing.JRadioButton();
         mzToleranceTxt = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        mostIntenseButton = new javax.swing.JRadioButton();
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        aButton.setText("a");
-        aButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aButtonActionPerformed(evt);
-            }
-        });
-
-        anh3Button.setText("a-NH3");
-        anh3Button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                anh3ButtonActionPerformed(evt);
-            }
-        });
-
-        ah2oButton.setText("a-H2O");
-        ah2oButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ah2oButtonActionPerformed(evt);
-            }
-        });
-
-        bButton.setText("b");
-        bButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bButtonActionPerformed(evt);
-            }
-        });
-
-        bnh3Button.setText("b-NH3");
-        bnh3Button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bnh3ButtonActionPerformed(evt);
-            }
-        });
-
-        bh2oButton.setText("b-H2O");
-        bh2oButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bh2oButtonActionPerformed(evt);
-            }
-        });
-
-        cButton.setText("c");
-        cButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cButtonActionPerformed(evt);
-            }
-        });
-
-        xButton.setText("x");
-        xButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                xButtonActionPerformed(evt);
-            }
-        });
-
-        yButton.setText("y");
-        yButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yButtonActionPerformed(evt);
-            }
-        });
-
-        ynh3Button.setText("y-NH3");
-        ynh3Button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ynh3ButtonActionPerformed(evt);
-            }
-        });
-
-        yh2oButton.setText("y-H2O");
-        yh2oButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yh2oButtonActionPerformed(evt);
-            }
-        });
-
-        zButton.setText("z");
-        zButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                zButtonActionPerformed(evt);
-            }
-        });
-
-        mhButton.setText("MH");
-        mhButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mhButtonActionPerformed(evt);
-            }
-        });
-
-        mhnh3Button.setText("MH-NH3");
-        mhnh3Button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mhnh3ButtonActionPerformed(evt);
-            }
-        });
-
-        mhh2oButton.setText("MH-H2O");
-        mhh2oButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mhh2oButtonActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setText("Please select the ions to look for in spectra:");
+        setTitle("Spectrum Annotation");
+        setResizable(false);
 
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -190,18 +77,240 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Ion Selection"));
+
+        bh2oButton.setText("b-H2O");
+        bh2oButton.setIconTextGap(15);
+        bh2oButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bh2oButtonActionPerformed(evt);
+            }
+        });
+
+        bnh3Button.setText("b-NH3");
+        bnh3Button.setIconTextGap(15);
+        bnh3Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bnh3ButtonActionPerformed(evt);
+            }
+        });
+
+        bButton.setText("b");
+        bButton.setIconTextGap(15);
+        bButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bButtonActionPerformed(evt);
+            }
+        });
+
+        yh2oButton.setText("y-H2O");
+        yh2oButton.setIconTextGap(15);
+        yh2oButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yh2oButtonActionPerformed(evt);
+            }
+        });
+
+        yButton.setText("y");
+        yButton.setIconTextGap(15);
+        yButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yButtonActionPerformed(evt);
+            }
+        });
+
+        ynh3Button.setText("y-NH3");
+        ynh3Button.setIconTextGap(15);
+        ynh3Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ynh3ButtonActionPerformed(evt);
+            }
+        });
+
+        zButton.setText("z");
+        zButton.setIconTextGap(15);
+        zButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zButtonActionPerformed(evt);
+            }
+        });
+
+        cButton.setText("c");
+        cButton.setIconTextGap(15);
+        cButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cButtonActionPerformed(evt);
+            }
+        });
+
+        xButton.setText("x");
+        xButton.setIconTextGap(15);
+        xButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xButtonActionPerformed(evt);
+            }
+        });
+
+        aButton.setText("a");
+        aButton.setIconTextGap(15);
+        aButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aButtonActionPerformed(evt);
+            }
+        });
+
+        ah2oButton.setText("a-H2O");
+        ah2oButton.setIconTextGap(15);
+        ah2oButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ah2oButtonActionPerformed(evt);
+            }
+        });
+
+        anh3Button.setText("a-NH3");
+        anh3Button.setIconTextGap(15);
+        anh3Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                anh3ButtonActionPerformed(evt);
+            }
+        });
+
+        mhh2oButton.setText("MH-H2O");
+        mhh2oButton.setIconTextGap(15);
+        mhh2oButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mhh2oButtonActionPerformed(evt);
+            }
+        });
+
+        mhnh3Button.setText("MH-NH3");
+        mhnh3Button.setIconTextGap(15);
+        mhnh3Button.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mhnh3ButtonActionPerformed(evt);
+            }
+        });
+
+        mhButton.setText("MH");
+        mhButton.setIconTextGap(15);
+        mhButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mhButtonActionPerformed(evt);
+            }
+        });
+
         jLabel2.setText("m/z tolerance:");
 
+        mzToleranceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        mzToleranceTxt.setText("0.5");
+
+        jLabel3.setText("Da");
+
         mostIntenseButton.setText("Annotate most intense peaks");
+        mostIntenseButton.setIconTextGap(15);
         mostIntenseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mostIntenseButtonActionPerformed(evt);
             }
         });
 
-        mzToleranceTxt.setText("0.5");
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(bButton)
+                                    .addComponent(bnh3Button)
+                                    .addComponent(bh2oButton))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(ynh3Button)
+                                    .addComponent(yButton)
+                                    .addComponent(yh2oButton))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(cButton)
+                                        .addComponent(zButton))
+                                    .addComponent(xButton))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(aButton)
+                                    .addComponent(anh3Button)
+                                    .addComponent(ah2oButton))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(mhButton)
+                                    .addComponent(mhnh3Button)
+                                    .addComponent(mhh2oButton)))
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE))
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(mostIntenseButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(mzToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel3)
+                        .addGap(24, 24, 24))))
+        );
 
-        jLabel3.setText("Da");
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {aButton, ah2oButton, anh3Button, bButton, bh2oButton, bnh3Button, cButton, mhButton, mhh2oButton, mhnh3Button, xButton, yButton, yh2oButton, ynh3Button, zButton});
+
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(mhButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(mhnh3Button)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(mhh2oButton))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(aButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(anh3Button)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(ah2oButton)))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(xButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(zButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(cButton))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(yButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(ynh3Button)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(yh2oButton))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(bButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(bnh3Button)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(bh2oButton))))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(mostIntenseButton)
+                    .addComponent(jLabel2)
+                    .addComponent(mzToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -209,99 +318,28 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(aButton)
-                            .addComponent(anh3Button)
-                            .addComponent(ah2oButton)
-                            .addComponent(bButton)
-                            .addComponent(bnh3Button))
-                        .addGap(85, 85, 85)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(xButton)
-                                    .addComponent(ynh3Button)
-                                    .addComponent(yButton))
-                                .addGap(83, 83, 83)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(mhButton)
-                                    .addComponent(mhnh3Button)
-                                    .addComponent(mhh2oButton)))
-                            .addComponent(zButton)
-                            .addComponent(yh2oButton)))
-                    .addComponent(bh2oButton)
-                    .addComponent(cButton)
-                    .addComponent(jLabel1))
-                .addContainerGap(10, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(mostIntenseButton)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(mzToleranceTxt)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
-                .addContainerGap(173, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(237, Short.MAX_VALUE)
+                .addContainerGap(337, Short.MAX_VALUE)
                 .addComponent(okButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cancelButton)
-                .addContainerGap())
+                .addGap(18, 18, 18))
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(mhButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(mhnh3Button)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(mhh2oButton))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(aButton)
-                            .addComponent(xButton))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(anh3Button)
-                            .addComponent(yButton))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(ah2oButton)
-                            .addComponent(ynh3Button))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(bButton)
-                            .addComponent(yh2oButton))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(bnh3Button)
-                            .addComponent(zButton))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(bh2oButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cButton)))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(mzToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(mostIntenseButton)
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -408,9 +446,10 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JRadioButton bnh3Button;
     private javax.swing.JRadioButton cButton;
     private javax.swing.JButton cancelButton;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JRadioButton mhButton;
     private javax.swing.JRadioButton mhh2oButton;
     private javax.swing.JRadioButton mhnh3Button;
@@ -453,7 +492,4 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             return false;
         }
     }
-
-
-
 }
