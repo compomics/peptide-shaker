@@ -1162,7 +1162,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         //        if (experiment != null) {
 //            new OpenDialog(this, true, experiment, sample, replicateNumber);
 //        } else {
-            new OpenDialog(this, true);
+        new OpenDialog(this, true);
 //        }
     }//GEN-LAST:event_openJMenuItemActionPerformed
 
@@ -1546,7 +1546,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 HashSet<Peak> peaks = currentSpectrum.getPeakList();
 
                 if (peaks == null || peaks.isEmpty()) {
-                     JOptionPane.showMessageDialog(this, "Peaks lists not imported.", "Peak Lists Error", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Peaks lists not imported.", "Peak Lists Error", JOptionPane.INFORMATION_MESSAGE);
                 } else {
 
                     double[] mzValues = new double[peaks.size()];
@@ -1594,7 +1594,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 intensities.add(peak.intensity);
             }
             Collections.sort(intensities);
-            int index = 3*(intensities.size()-1)/4;
+            int index = 3 * (intensities.size() - 1) / 4;
             return intensities.get(index);
         }
         return 0;
@@ -2331,19 +2331,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public void formatProteinSequence(String cleanSequence) {
 
-        // @TODO: label the possible cleavages sites
-//         ArrayList<Character> aminoAcidAfter = new ArrayList<Character>();
-//         ArrayList<Character> aminoAcidBefore = new ArrayList<Character>();
-//         ArrayList<Character> restrictionAfter = new ArrayList<Character>();
-//         ArrayList<Character> restrictionBefore = new ArrayList<Character>();
-//
-//        if (selectedEnzyme != null) {
-//            aminoAcidAfter = selectedEnzyme.getAminoAcidAfter();
-//            aminoAcidBefore = selectedEnzyme.getAminoAcidBefore();
-//            restrictionAfter = selectedEnzyme.getRestrictionAfter();
-//            restrictionBefore = selectedEnzyme.getRestrictionBefore();
-//        }
-
         int selectedPeptideStart = -1;
         int selectedPeptideEnd = -1;
 
@@ -2442,15 +2429,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             boolean referenceMarkerFound = false;
 
-            for (int i=0; i<referenceMarkers.size()-1 && !referenceMarkerFound; i++) {
-                if (selectedPeptideStart >= referenceMarkers.get(i) && selectedPeptideStart < referenceMarkers.get(i+1)) {
+            for (int i = 0; i < referenceMarkers.size() - 1 && !referenceMarkerFound; i++) {
+                if (selectedPeptideStart >= referenceMarkers.get(i) && selectedPeptideStart < referenceMarkers.get(i + 1)) {
                     coverageEditorPane.scrollToReference(referenceMarkers.get(i).toString());
                     referenceMarkerFound = true;
                 }
             }
 
             if (!referenceMarkerFound) {
-                coverageEditorPane.scrollToReference(referenceMarkers.get(referenceMarkers.size()-1).toString());
+                coverageEditorPane.scrollToReference(referenceMarkers.get(referenceMarkers.size() - 1).toString());
             }
 
         } else {
