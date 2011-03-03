@@ -97,9 +97,14 @@ public class SpectrumImporter {
 //                    queue();
 //                }
 
+                // @TODO: has to be a better way of doing this...
                 // wait until the identifications are imported
                 while (parent.needQueue()) {
-                    System.out.println("Waiting...");
+                    int counter=0;
+
+                    for (int i=0; i<100000; i++) {
+                        counter++;
+                    }
                 }
 
                 waitingDialog.appendReport("Importing spectra.");
