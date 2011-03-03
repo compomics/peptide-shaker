@@ -41,6 +41,7 @@ import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.IdentificationPreferences;
 import eu.isas.peptideshaker.utils.Properties;
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -483,11 +484,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             },
             new String [] {
-                " ", "Accession", "Coverage", "emPAI", "#Peptides", "#Spectra", "Score", "Description"
+                " ", "Accession", "Description", "Coverage", "emPAI", "#Peptides", "#Spectra", "Score"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, false
@@ -520,14 +521,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
+                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
+                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -538,6 +539,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         coverageEditorPane.setContentType("text/html");
         coverageEditorPane.setEditable(false);
+        coverageEditorPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                coverageEditorPaneComponentResized(evt);
+            }
+        });
         coverageScrollPane.setViewportView(coverageEditorPane);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -546,14 +552,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
+                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -567,7 +573,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             },
             new String [] {
-                " ", "Sequence", "Variable Modifications", "#Spectra", "Peptide Score"
+                " ", "Sequence", "Modifications", "#Spectra", "Score"
             }
         ) {
             Class[] types = new Class [] {
@@ -604,14 +610,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -625,7 +631,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             },
             new String [] {
-                " ", "Sequence", "Modifications", "Precursor Charge", "Precursor Mass Error", "Spectrum File", "Spectrum Title"
+                " ", "Sequence", "Modifications", "Charge", "Mass Error", "File", "Title"
             }
         ) {
             Class[] types = new Class [] {
@@ -662,14 +668,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
+                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -685,14 +691,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                .addComponent(spectrumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 409, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)
+                .addComponent(spectrumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -700,32 +706,33 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         overviewJPanel.setLayout(overviewJPanelLayout);
         overviewJPanelLayout.setHorizontalGroup(
             overviewJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(overviewJPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, overviewJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(overviewJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(overviewJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(overviewJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, overviewJPanelLayout.createSequentialGroup()
+                        .addGroup(overviewJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         overviewJPanelLayout.setVerticalGroup(
             overviewJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(overviewJPanelLayout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(overviewJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(overviewJPanelLayout.createSequentialGroup()
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(overviewJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -736,7 +743,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("All Proteins"));
         jPanel6.setOpaque(false);
 
-        allProteinsJScrollPane.setBorder(null);
         allProteinsJScrollPane.setOpaque(false);
 
         allProteinsJTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -771,12 +777,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(allProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE)
+                .addComponent(allProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+            .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(allProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 614, Short.MAX_VALUE)
                 .addContainerGap())
@@ -838,11 +844,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 858, Short.MAX_VALUE)
+            .addGap(0, 876, Short.MAX_VALUE)
             .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel8Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(allPeptidesJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE)
+                    .addComponent(allPeptidesJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         jPanel8Layout.setVerticalGroup(
@@ -859,7 +865,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         allPeptidesJPanel.setLayout(allPeptidesJPanelLayout);
         allPeptidesJPanelLayout.setHorizontalGroup(
             allPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 890, Short.MAX_VALUE)
+            .addGap(0, 908, Short.MAX_VALUE)
             .addGroup(allPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(allPeptidesJPanelLayout.createSequentialGroup()
                     .addContainerGap()
@@ -915,11 +921,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 858, Short.MAX_VALUE)
+            .addGap(0, 876, Short.MAX_VALUE)
             .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel7Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(allSpectraJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE)
+                    .addComponent(allSpectraJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         jPanel7Layout.setVerticalGroup(
@@ -936,7 +942,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         allSpectraJPanel.setLayout(allSpectraJPanelLayout);
         allSpectraJPanelLayout.setHorizontalGroup(
             allSpectraJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 890, Short.MAX_VALUE)
+            .addGap(0, 908, Short.MAX_VALUE)
             .addGroup(allSpectraJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(allSpectraJPanelLayout.createSequentialGroup()
                     .addContainerGap()
@@ -999,9 +1005,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         gradientPanel.setLayout(gradientPanelLayout);
         gradientPanelLayout.setHorizontalGroup(
             gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 978, Short.MAX_VALUE)
+            .addGap(0, 996, Short.MAX_VALUE)
             .addGroup(gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 978, Short.MAX_VALUE))
+                .addComponent(resultsJTabbedPane))
         );
         gradientPanelLayout.setVerticalGroup(
             gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1433,6 +1439,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_annotationPreferencesMenuActionPerformed
 
     /**
+     * Makes sure that the sequence coverage area is rescaled to fit the new size
+     * of the frame.
+     *
+     * @param evt
+     */
+    private void coverageEditorPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_coverageEditorPaneComponentResized
+        proteinTableMouseClicked(null);
+    }//GEN-LAST:event_coverageEditorPaneComponentResized
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
     private void loadEnzymes() {
@@ -1830,12 +1846,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                             index,
                             proteinKey,
+                            description,
                             sequenceCoverage,
                             emPAI,
                             proteinMatch.getPeptideMatches().size(),
                             proteinMatch.getSpectrumCount(),
-                            probabilities.getProteinProbabilityScore(),
-                            description});
+                            probabilities.getProteinProbabilityScore()});
                 addProteinRowKey(index - 1, proteinKey);
                 index++;
             }
@@ -2364,22 +2380,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         boolean selectedPeptide = false, coveredPeptide = false;
         double sequenceCoverage = 0;
 
+        // see how many amino acids we have room for
+        FontMetrics fm = coverageEditorPane.getGraphics().getFontMetrics();
+        double temp = coverageEditorPane.getWidth() / (fm.stringWidth("W"));
+        int numberOfAminoAcidsPerRow = (int) temp / 10;
+        numberOfAminoAcidsPerRow *= 10;
+        numberOfAminoAcidsPerRow += 10;
+
+        ArrayList<Integer> referenceMarkers = new ArrayList<Integer>();
+
         // iterate the coverage table and create the formatted sequence string
         for (int i = 1; i < coverage.length; i++) {
 
-            // add indices per 50 residues
-            if (i % 50 == 1 || i == 1) {
-                sequenceTable += "</tr><tr><td height='20'><font size=2><a name=\"" + i + ".\"></a>" + i + ".</td>";
-
-                int currentCharIndex = i;
-
-                while (currentCharIndex + 10 < cleanSequence.length() && currentCharIndex + 10 < (i + 50)) {
-                    sequenceTable += "<td height='20'><font size=2><a name=\""
-                            + (currentCharIndex + 10) + ".\"></a>" + (currentCharIndex + 10) + ".</td>";
-                    currentCharIndex += 10;
-                }
-
-                sequenceTable += "</tr><tr>";
+            // add residue number and line break
+            if (i % numberOfAminoAcidsPerRow == 1 || i == 1) {
+                sequenceTable += "</tr><tr><td><font color=black><a name=\"" + i + "\">" + i + "</a></font></td>";
+                referenceMarkers.add(i);
             }
 
             // check if the current residues is covered
@@ -2423,7 +2439,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // make sure that the currently selected peptide is visible
         if (selectedPeptideStart != -1) {
-            coverageEditorPane.scrollToReference((selectedPeptideStart - selectedPeptideStart % 10 + 1) + ".");
+
+            boolean referenceMarkerFound = false;
+
+            for (int i=0; i<referenceMarkers.size()-1 && !referenceMarkerFound; i++) {
+                if (selectedPeptideStart >= referenceMarkers.get(i) && selectedPeptideStart < referenceMarkers.get(i+1)) {
+                    coverageEditorPane.scrollToReference(referenceMarkers.get(i).toString());
+                    referenceMarkerFound = true;
+                }
+            }
+
+            if (!referenceMarkerFound) {
+                coverageEditorPane.scrollToReference(referenceMarkers.get(referenceMarkers.size()-1).toString());
+            }
+
         } else {
             coverageEditorPane.setCaretPosition(0);
         }
