@@ -9,6 +9,7 @@ import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
+import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
@@ -26,6 +27,7 @@ import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
+import com.compomics.util.gui.spectrum.DefaultSpectrumAnnotation;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -60,6 +62,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -1564,12 +1567,57 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     HashMap<Integer, HashMap<Integer, IonMatch>> annotations = spectrumAnnotator.annotateSpectrum(
                             currentPeptide, currentSpectrum, annotationPreferences.getTolerance(), getIntensityLimit(currentSpectrum));
 
+                    // the fragment ions annotations
+                    Vector<DefaultSpectrumAnnotation> currentAnnotations = new Vector();
+
+                    Iterator<Integer> ionTypeIterator = annotations.keySet().iterator();
+
+                    while (ionTypeIterator.hasNext()) {
+                        Integer ionType = ionTypeIterator.next();
+
+                        HashMap<Integer, IonMatch> chargeMap = annotations.get(ionType);
+                        Iterator<Integer> chargeIterator = chargeMap.keySet().iterator();
+
+                        while (chargeIterator.hasNext()) {
+                            Integer currentCharge = chargeIterator.next();
+                            IonMatch ionMatch = chargeMap.get(currentCharge);
+
+                            PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
+
+                            // @TODO: add annotations of more then just b and y ions
+                            // @TODO: only add annotation if it is of the selected types
+                            if (!((PeptideFragmentIon) ionMatch.ion).getIonType().equalsIgnoreCase("?")) { // ? is the symbol currently used for other ions than b and y
+
+                                String annotation = fragmentIon.getIonType() 
+                                        + fragmentIon.getNumber()
+                                        + getChargeAsFormattedString(currentCharge) // @TODO: should be possible to use the getChargeAsFormattedString in Charge!?
+                                        + fragmentIon.getNeutralLoss();
+
+                                currentAnnotations.add(new DefaultSpectrumAnnotation(ionMatch.peak.mz, ionMatch.getError(),
+                                            SpectrumPanel.determineColorOfPeak(fragmentIon.getIonType() + fragmentIon.getNeutralLoss()),
+                                            annotation));
+
+                                //System.out.println("added: " + annotation);
+                            } else {
+
+//                                String annotation = fragmentIon.getIonType()
+//                                        + fragmentIon.getNumber()
+//                                        + getChargeAsFormattedString(currentCharge) // @TODO: should be possible to use the getChargeAsFormattedString in Charge!?
+//                                        + fragmentIon.getNeutralLoss();
+//
+//                                System.out.println("not added: " + annotation);
+                            }
+                        }
+                    }
+
                     // @TODO: verify that the provided informations to the spectrumpanel are correct
-                    // @TODO: add ion matches to the spectrum
                     Precursor precursor = currentSpectrum.getPrecursor();
                     SpectrumPanel spectrum = new SpectrumPanel(
                             mzValues, intValues, precursor.getMz(), precursor.getCharge().toString(),
                             "", 50, false, false, false, 2, false);
+
+                    // add the spectrum annotations
+                    spectrum.setAnnotations(currentAnnotations);
 
                     spectrumPanel.removeAll();
                     spectrumPanel.add(spectrum);
@@ -1580,6 +1628,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Returns the charge as a string of +. One for each charge.
+     * A charge of 1 however returns the empty string.
+     *
+     * @return  the charge as a string of +
+     */
+    public static String getChargeAsFormattedString(int charge) {
+
+        String temp = "";
+
+        for (int i=0; i<charge; i++) {
+            temp += "+";
+        }
+
+        if (charge == 1) {
+            temp = "";
+        }
+
+        return temp;
     }
 
     private double getIntensityLimit(MSnSpectrum mSnSpectrum) {
