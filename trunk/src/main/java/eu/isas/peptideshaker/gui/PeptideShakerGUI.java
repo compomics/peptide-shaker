@@ -34,7 +34,6 @@ import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
-import eu.isas.peptideshaker.gui.preferencesdialogs.DigestionPreferencesDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
@@ -458,7 +457,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu = new javax.swing.JMenu();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         identificationOptionsMenu = new javax.swing.JMenuItem();
-        digestionOptionMenu = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
@@ -467,6 +465,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PeptideShaker");
+        setMinimumSize(new java.awt.Dimension(1200, 800));
 
         gradientPanel.setOpaque(false);
 
@@ -1084,14 +1083,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         editMenu.add(identificationOptionsMenu);
 
-        digestionOptionMenu.setText("Digestion Options");
-        digestionOptionMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                digestionOptionMenuActionPerformed(evt);
-            }
-        });
-        editMenu.add(digestionOptionMenu);
-
         menuBar.add(editMenu);
 
         viewJMenu.setMnemonic('V');
@@ -1430,10 +1421,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         }
     }//GEN-LAST:event_psmsTableKeyReleased
 
-    private void digestionOptionMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_digestionOptionMenuActionPerformed
-        new DigestionPreferencesDialog(this, true, selectedEnzyme, this);
-    }//GEN-LAST:event_digestionOptionMenuActionPerformed
-
     private void annotationPreferencesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationPreferencesMenuActionPerformed
         new AnnotationPreferencesDialog(this, true, annotationPreferences);
     }//GEN-LAST:event_annotationPreferencesMenuActionPerformed
@@ -1457,7 +1444,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             enzymeFactory.importEnzymes(new File(ENZYME_FILE));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Impossible to load enzyme file.", "Wrong enzyme file.", JOptionPane.ERROR_MESSAGE);
-            digestionOptionMenu.setEnabled(false);
             e.printStackTrace();
         }
     }
@@ -1527,6 +1513,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         this.selectedEnzyme = selectedEnzyme;
     }
 
+    /**
+     * Returns the current enzyme.
+     *
+     * @return the current enzyme
+     */
+    public Enzyme getSelectedEnzyme() {
+        return selectedEnzyme;
+    }
+
     private void updateSequenceCoverage(String proteinAccession) {
         SequenceDataBase db = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSequenceDataBase();
         if (db != null) {
@@ -1572,15 +1567,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     // @TODO: verify that the provided informations to the spectrumpanel are correct
                     // @TODO: add ion matches to the spectrum
                     Precursor precursor = currentSpectrum.getPrecursor();
-                    SpectrumPanel spectrum =
-                            new SpectrumPanel(mzValues, intValues, precursor.getMz(), precursor.getCharge().toString(), "", 50, false, false, false, 2, false);
+                    SpectrumPanel spectrum = new SpectrumPanel(
+                            mzValues, intValues, precursor.getMz(), precursor.getCharge().toString(),
+                            "", 50, false, false, false, 2, false);
 
                     spectrumPanel.removeAll();
                     spectrumPanel.add(spectrum);
                     spectrumPanel.revalidate();
                     spectrumPanel.repaint();
                 }
-
             } catch (MzMLUnmarshallerException e) {
                 e.printStackTrace();
             }
@@ -2125,7 +2120,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem annotationPreferencesMenu;
     private javax.swing.JEditorPane coverageEditorPane;
     private javax.swing.JScrollPane coverageScrollPane;
-    private javax.swing.JMenuItem digestionOptionMenu;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitJMenuItem;
     private javax.swing.JMenuItem exportMenuItem;
