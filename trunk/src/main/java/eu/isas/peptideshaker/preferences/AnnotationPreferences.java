@@ -59,5 +59,4 @@ public class AnnotationPreferences {
     public boolean shallAnnotateMostIntensePeaks() {
         return mostIntensePeaks;
     }
-
 }
