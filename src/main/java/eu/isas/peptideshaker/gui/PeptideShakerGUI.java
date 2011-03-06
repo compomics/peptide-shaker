@@ -74,6 +74,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
@@ -162,6 +163,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private Identification identification;
     private SpectrumCollection spectrumCollection;
     private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
+    /**
+     * The current spectrum annotations.
+     */
+    private Vector<DefaultSpectrumAnnotation> currentAnnotations;
+    /**
+     * The current spectrum panel.
+     */
+    private SpectrumPanel spectrum;
 
     /**
      * The main method used to start PeptideShaker
@@ -392,24 +401,38 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }            
         }
         ;
-        jPanel2 = new javax.swing.JPanel();
+        proteinsJPanel = new javax.swing.JPanel();
         proteinScrollPane = new javax.swing.JScrollPane();
         proteinTable = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
+        sequenceCoverageJPanel = new javax.swing.JPanel();
         coverageScrollPane = new javax.swing.JScrollPane();
         coverageEditorPane = new javax.swing.JEditorPane();
         peptidesPsmSpectrumFragmentIonsJSplitPane = new javax.swing.JSplitPane();
         peptidesPsmJSplitPane = new javax.swing.JSplitPane();
-        jPanel3 = new javax.swing.JPanel();
+        peptidesJPanel = new javax.swing.JPanel();
         peptideScrollPane = new javax.swing.JScrollPane();
         peptideTable = new javax.swing.JTable();
-        jPanel4 = new javax.swing.JPanel();
+        psmJPanel = new javax.swing.JPanel();
         spectraScrollPane = new javax.swing.JScrollPane();
         psmsTable = new javax.swing.JTable();
         spectrumFragmentIonJSplitPane = new javax.swing.JSplitPane();
-        jPanel5 = new javax.swing.JPanel();
+        spectrumJPanel = new javax.swing.JPanel();
         spectrumPanel = new javax.swing.JPanel();
-        jPanel9 = new javax.swing.JPanel();
+        spectrumJToolBar = new javax.swing.JToolBar();
+        fragmentIonsLabel = new javax.swing.JLabel();
+        aIonToggleButton = new javax.swing.JToggleButton();
+        bIonToggleButton = new javax.swing.JToggleButton();
+        cIonToggleButton = new javax.swing.JToggleButton();
+        xIonToggleButton = new javax.swing.JToggleButton();
+        yIonToggleButton = new javax.swing.JToggleButton();
+        zIonToggleButton = new javax.swing.JToggleButton();
+        h2oToggleButton = new javax.swing.JToggleButton();
+        nh3ToggleButton = new javax.swing.JToggleButton();
+        otherToggleButton = new javax.swing.JToggleButton();
+        oneChargeToggleButton = new javax.swing.JToggleButton();
+        twoChargesToggleButton = new javax.swing.JToggleButton();
+        moreThanTwoChargesToggleButton = new javax.swing.JToggleButton();
+        fragmentIonJPanel = new javax.swing.JPanel();
         fragmentIonsJScrollPane = new javax.swing.JScrollPane();
         fragmentIonsJTable = new javax.swing.JTable();
         allProteinsJPanel = new JPanel() {
@@ -499,7 +522,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PeptideShaker");
-        setMinimumSize(new java.awt.Dimension(1200, 800));
+        setMinimumSize(new java.awt.Dimension(1240, 800));
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -513,8 +536,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         overviewJPanel.setOpaque(false);
         overviewJPanel.setPreferredSize(new java.awt.Dimension(900, 800));
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Proteins"));
-        jPanel2.setOpaque(false);
+        proteinsJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Proteins"));
+        proteinsJPanel.setOpaque(false);
 
         proteinScrollPane.setOpaque(false);
 
@@ -554,25 +577,25 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         proteinScrollPane.setViewportView(proteinTable);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout proteinsJPanelLayout = new javax.swing.GroupLayout(proteinsJPanel);
+        proteinsJPanel.setLayout(proteinsJPanelLayout);
+        proteinsJPanelLayout.setHorizontalGroup(
+            proteinsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proteinsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
+                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 867, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        proteinsJPanelLayout.setVerticalGroup(
+            proteinsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proteinsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Sequence Coverage"));
-        jPanel1.setOpaque(false);
+        sequenceCoverageJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Sequence Coverage"));
+        sequenceCoverageJPanel.setOpaque(false);
 
         coverageScrollPane.setOpaque(false);
 
@@ -585,18 +608,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         coverageScrollPane.setViewportView(coverageEditorPane);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout sequenceCoverageJPanelLayout = new javax.swing.GroupLayout(sequenceCoverageJPanel);
+        sequenceCoverageJPanel.setLayout(sequenceCoverageJPanelLayout);
+        sequenceCoverageJPanelLayout.setHorizontalGroup(
+            sequenceCoverageJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(sequenceCoverageJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
+                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 867, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        sequenceCoverageJPanelLayout.setVerticalGroup(
+            sequenceCoverageJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(sequenceCoverageJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
                 .addContainerGap())
@@ -615,8 +638,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         peptidesPsmJSplitPane.setResizeWeight(0.5);
         peptidesPsmJSplitPane.setOpaque(false);
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptides"));
-        jPanel3.setOpaque(false);
+        peptidesJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptides"));
+        peptidesJPanel.setOpaque(false);
 
         peptideScrollPane.setOpaque(false);
 
@@ -656,27 +679,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         peptideScrollPane.setViewportView(peptideTable);
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout peptidesJPanelLayout = new javax.swing.GroupLayout(peptidesJPanel);
+        peptidesJPanel.setLayout(peptidesJPanelLayout);
+        peptidesJPanelLayout.setHorizontalGroup(
+            peptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptidesJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        peptidesJPanelLayout.setVerticalGroup(
+            peptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peptidesJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 134, Short.MAX_VALUE)
+                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        peptidesPsmJSplitPane.setTopComponent(jPanel3);
+        peptidesPsmJSplitPane.setTopComponent(peptidesJPanel);
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide-Spectrum Matches"));
-        jPanel4.setOpaque(false);
+        psmJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide-Spectrum Matches"));
+        psmJPanel.setOpaque(false);
 
         spectraScrollPane.setOpaque(false);
 
@@ -716,24 +739,24 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         spectraScrollPane.setViewportView(psmsTable);
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout psmJPanelLayout = new javax.swing.GroupLayout(psmJPanel);
+        psmJPanel.setLayout(psmJPanelLayout);
+        psmJPanelLayout.setHorizontalGroup(
+            psmJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(psmJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        psmJPanelLayout.setVerticalGroup(
+            psmJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(psmJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 136, Short.MAX_VALUE)
+                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        peptidesPsmJSplitPane.setRightComponent(jPanel4);
+        peptidesPsmJSplitPane.setRightComponent(psmJPanel);
 
         peptidesPsmSpectrumFragmentIonsJSplitPane.setLeftComponent(peptidesPsmJSplitPane);
 
@@ -743,34 +766,199 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         spectrumFragmentIonJSplitPane.setResizeWeight(0.5);
         spectrumFragmentIonJSplitPane.setMinimumSize(new java.awt.Dimension(0, 0));
         spectrumFragmentIonJSplitPane.setOpaque(false);
+        spectrumFragmentIonJSplitPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                spectrumFragmentIonJSplitPaneComponentResized(evt);
+            }
+        });
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum"));
-        jPanel5.setOpaque(false);
+        spectrumJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum"));
+        spectrumJPanel.setOpaque(false);
 
         spectrumPanel.setOpaque(false);
         spectrumPanel.setLayout(new java.awt.BorderLayout());
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        spectrumJToolBar.setBackground(new java.awt.Color(255, 255, 255));
+        spectrumJToolBar.setFloatable(false);
+        spectrumJToolBar.setRollover(true);
+
+        fragmentIonsLabel.setFont(fragmentIonsLabel.getFont().deriveFont(fragmentIonsLabel.getFont().getStyle() | java.awt.Font.BOLD));
+        fragmentIonsLabel.setText(" Ions: ");
+        spectrumJToolBar.add(fragmentIonsLabel);
+
+        aIonToggleButton.setText("a");
+        aIonToggleButton.setFocusable(false);
+        aIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        aIonToggleButton.setMinimumSize(new java.awt.Dimension(25, 21));
+        aIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        aIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        aIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aIonToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(aIonToggleButton);
+
+        bIonToggleButton.setSelected(true);
+        bIonToggleButton.setText("b");
+        bIonToggleButton.setFocusable(false);
+        bIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        bIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bIonToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(bIonToggleButton);
+
+        cIonToggleButton.setText("c");
+        cIonToggleButton.setFocusable(false);
+        cIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        cIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        cIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        cIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cIonToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(cIonToggleButton);
+
+        xIonToggleButton.setText("x");
+        xIonToggleButton.setFocusable(false);
+        xIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        xIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        xIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        xIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xIonToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(xIonToggleButton);
+
+        yIonToggleButton.setSelected(true);
+        yIonToggleButton.setText("y");
+        yIonToggleButton.setFocusable(false);
+        yIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        yIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        yIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        yIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yIonToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(yIonToggleButton);
+
+        zIonToggleButton.setText("z");
+        zIonToggleButton.setFocusable(false);
+        zIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        zIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        zIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        zIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zIonToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(zIonToggleButton);
+
+        h2oToggleButton.setText("H2O");
+        h2oToggleButton.setFocusable(false);
+        h2oToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        h2oToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        h2oToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        h2oToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                h2oToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(h2oToggleButton);
+
+        nh3ToggleButton.setText("NH3");
+        nh3ToggleButton.setFocusable(false);
+        nh3ToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        nh3ToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        nh3ToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        nh3ToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nh3ToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(nh3ToggleButton);
+
+        otherToggleButton.setText("Oth.");
+        otherToggleButton.setFocusable(false);
+        otherToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        otherToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        otherToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        otherToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                otherToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(otherToggleButton);
+
+        oneChargeToggleButton.setSelected(true);
+        oneChargeToggleButton.setText("+");
+        oneChargeToggleButton.setFocusable(false);
+        oneChargeToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        oneChargeToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        oneChargeToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        oneChargeToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                oneChargeToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(oneChargeToggleButton);
+
+        twoChargesToggleButton.setText("++");
+        twoChargesToggleButton.setFocusable(false);
+        twoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        twoChargesToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        twoChargesToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        twoChargesToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                twoChargesToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(twoChargesToggleButton);
+
+        moreThanTwoChargesToggleButton.setText(">2 ");
+        moreThanTwoChargesToggleButton.setFocusable(false);
+        moreThanTwoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moreThanTwoChargesToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        moreThanTwoChargesToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moreThanTwoChargesToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moreThanTwoChargesToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(moreThanTwoChargesToggleButton);
+
+        javax.swing.GroupLayout spectrumJPanelLayout = new javax.swing.GroupLayout(spectrumJPanel);
+        spectrumJPanel.setLayout(spectrumJPanelLayout);
+        spectrumJPanelLayout.setHorizontalGroup(
+            spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(spectrumJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                .addGroup(spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(spectrumPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 171, Short.MAX_VALUE)
+                    .addComponent(spectrumJToolBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 171, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
+        spectrumJPanelLayout.setVerticalGroup(
+            spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
+                .addComponent(spectrumPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
-        spectrumFragmentIonJSplitPane.setLeftComponent(jPanel5);
+        spectrumFragmentIonJSplitPane.setLeftComponent(spectrumJPanel);
 
-        jPanel9.setBorder(javax.swing.BorderFactory.createTitledBorder("Fragment Ions"));
-        jPanel9.setOpaque(false);
+        fragmentIonJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Fragment Ions"));
+        fragmentIonJPanel.setOpaque(false);
 
         fragmentIonsJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -797,24 +985,24 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         fragmentIonsJScrollPane.setViewportView(fragmentIonsJTable);
 
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
+        javax.swing.GroupLayout fragmentIonJPanelLayout = new javax.swing.GroupLayout(fragmentIonJPanel);
+        fragmentIonJPanel.setLayout(fragmentIonJPanelLayout);
+        fragmentIonJPanelLayout.setHorizontalGroup(
+            fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 206, Short.MAX_VALUE)
+                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
+        fragmentIonJPanelLayout.setVerticalGroup(
+            fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        spectrumFragmentIonJSplitPane.setRightComponent(jPanel9);
+        spectrumFragmentIonJSplitPane.setRightComponent(fragmentIonJPanel);
 
         peptidesPsmSpectrumFragmentIonsJSplitPane.setRightComponent(spectrumFragmentIonJSplitPane);
 
@@ -825,20 +1013,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, overviewJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(overviewJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(peptidesPsmSpectrumFragmentIonsJSplitPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 888, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(peptidesPsmSpectrumFragmentIonsJSplitPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 899, Short.MAX_VALUE)
+                    .addComponent(proteinsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(sequenceCoverageJPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         overviewJPanelLayout.setVerticalGroup(
             overviewJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, overviewJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(proteinsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(peptidesPsmSpectrumFragmentIonsJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(sequenceCoverageJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -883,7 +1071,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(allProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
+                .addComponent(allProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 867, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -950,11 +1138,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 876, Short.MAX_VALUE)
+            .addGap(0, 887, Short.MAX_VALUE)
             .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel8Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(allPeptidesJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
+                    .addComponent(allPeptidesJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 867, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         jPanel8Layout.setVerticalGroup(
@@ -971,7 +1159,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         allPeptidesJPanel.setLayout(allPeptidesJPanelLayout);
         allPeptidesJPanelLayout.setHorizontalGroup(
             allPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 908, Short.MAX_VALUE)
+            .addGap(0, 919, Short.MAX_VALUE)
             .addGroup(allPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(allPeptidesJPanelLayout.createSequentialGroup()
                     .addContainerGap()
@@ -1027,11 +1215,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 876, Short.MAX_VALUE)
+            .addGap(0, 887, Short.MAX_VALUE)
             .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel7Layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(allSpectraJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 856, Short.MAX_VALUE)
+                    .addComponent(allSpectraJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 867, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         jPanel7Layout.setVerticalGroup(
@@ -1048,7 +1236,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         allSpectraJPanel.setLayout(allSpectraJPanelLayout);
         allSpectraJPanelLayout.setHorizontalGroup(
             allSpectraJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 908, Short.MAX_VALUE)
+            .addGap(0, 919, Short.MAX_VALUE)
             .addGroup(allSpectraJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(allSpectraJPanelLayout.createSequentialGroup()
                     .addContainerGap()
@@ -1111,9 +1299,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         gradientPanel.setLayout(gradientPanelLayout);
         gradientPanelLayout.setHorizontalGroup(
             gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 996, Short.MAX_VALUE)
+            .addGap(0, 1007, Short.MAX_VALUE)
             .addGroup(gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(resultsJTabbedPane))
+                .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1007, Short.MAX_VALUE))
         );
         gradientPanelLayout.setVerticalGroup(
             gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1572,10 +1760,134 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
-        peptidesPsmSpectrumFragmentIonsJSplitPane.setDividerLocation(peptidesPsmSpectrumFragmentIonsJSplitPane.getWidth() / 2);
-        peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
-        fragmentIonsJCheckBoxMenuItemActionPerformed(null);
+
+        // invoke later to give time for components to update
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                peptidesPsmSpectrumFragmentIonsJSplitPane.setDividerLocation(peptidesPsmSpectrumFragmentIonsJSplitPane.getWidth() / 2);
+                peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
+                fragmentIonsJCheckBoxMenuItemActionPerformed(null);
+            }
+        });
     }//GEN-LAST:event_formComponentResized
+
+    /**
+     * Update the annotations in the spectrum panel.
+     *
+     * @param evt
+     */
+    private void aIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonToggleButtonActionPerformed
+        if (spectrum != null) {
+            // update the ion coverage annotations
+            spectrum.setAnnotations(filterAnnotations(currentAnnotations));
+            spectrumPanel.validate();
+            spectrumPanel.repaint();
+        }
+    }//GEN-LAST:event_aIonToggleButtonActionPerformed
+
+    /**
+     * Update the annotations in the spectrum panel.
+     *
+     * @param evt
+     */
+    private void bIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonToggleButtonActionPerformed
+        aIonToggleButtonActionPerformed(null);
+    }//GEN-LAST:event_bIonToggleButtonActionPerformed
+
+    /**
+     * Update the annotations in the spectrum panel.
+     *
+     * @param evt
+     */
+    private void cIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonToggleButtonActionPerformed
+        aIonToggleButtonActionPerformed(null);
+    }//GEN-LAST:event_cIonToggleButtonActionPerformed
+
+    /**
+     * Update the annotations in the spectrum panel.
+     *
+     * @param evt
+     */
+    private void xIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonToggleButtonActionPerformed
+        aIonToggleButtonActionPerformed(null);
+    }//GEN-LAST:event_xIonToggleButtonActionPerformed
+
+    /**
+     * Update the annotations in the spectrum panel.
+     *
+     * @param evt
+     */
+    private void yIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonToggleButtonActionPerformed
+        aIonToggleButtonActionPerformed(null);
+    }//GEN-LAST:event_yIonToggleButtonActionPerformed
+
+    /**
+     * Update the annotations in the spectrum panel.
+     *
+     * @param evt
+     */
+    private void zIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonToggleButtonActionPerformed
+        aIonToggleButtonActionPerformed(null);
+    }//GEN-LAST:event_zIonToggleButtonActionPerformed
+
+    /**
+     * Update the annotations in the spectrum panel.
+     *
+     * @param evt
+     */
+    private void h2oToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_h2oToggleButtonActionPerformed
+        aIonToggleButtonActionPerformed(null);
+    }//GEN-LAST:event_h2oToggleButtonActionPerformed
+
+    /**
+     * Update the annotations in the spectrum panel.
+     *
+     * @param evt
+     */
+    private void nh3ToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nh3ToggleButtonActionPerformed
+        aIonToggleButtonActionPerformed(null);
+    }//GEN-LAST:event_nh3ToggleButtonActionPerformed
+
+    /**
+     * Update the annotations in the spectrum panel.
+     *
+     * @param evt
+     */
+    private void otherToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_otherToggleButtonActionPerformed
+        aIonToggleButtonActionPerformed(null);
+    }//GEN-LAST:event_otherToggleButtonActionPerformed
+
+    /**
+     * Update the annotations in the spectrum panel.
+     *
+     * @param evt
+     */
+    private void oneChargeToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oneChargeToggleButtonActionPerformed
+        aIonToggleButtonActionPerformed(null);
+    }//GEN-LAST:event_oneChargeToggleButtonActionPerformed
+
+    /**
+     * Update the annotations in the spectrum panel.
+     *
+     * @param evt
+     */
+    private void twoChargesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_twoChargesToggleButtonActionPerformed
+        aIonToggleButtonActionPerformed(null);
+    }//GEN-LAST:event_twoChargesToggleButtonActionPerformed
+
+    /**
+     * Update the annotations in the spectrum panel.
+     *
+     * @param evt
+     */
+    private void moreThanTwoChargesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moreThanTwoChargesToggleButtonActionPerformed
+        aIonToggleButtonActionPerformed(null);
+    }//GEN-LAST:event_moreThanTwoChargesToggleButtonActionPerformed
+
+    private void spectrumFragmentIonJSplitPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_spectrumFragmentIonJSplitPaneComponentResized
+        formComponentResized(null);
+    }//GEN-LAST:event_spectrumFragmentIonJSplitPaneComponentResized
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
@@ -1703,7 +2015,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     // add the data to the spectrum panel
                     Precursor precursor = currentSpectrum.getPrecursor();
-                    SpectrumPanel spectrum = new SpectrumPanel(
+                    spectrum = new SpectrumPanel(
                             mzValues, intValues, precursor.getMz(), precursor.getCharge().toString(),
                             "", 50, false, false, false, 2, false);
 
@@ -1714,7 +2026,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                             currentPeptide, currentSpectrum, annotationPreferences.getTolerance(), getIntensityLimit(currentSpectrum));
 
                     // the fragment ions annotations
-                    Vector<DefaultSpectrumAnnotation> currentAnnotations = new Vector();
+                    currentAnnotations = new Vector();
 
                     Iterator<String> ionTypeIterator = annotations.keySet().iterator();
 
@@ -1744,9 +2056,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                             annotation += getChargeAsFormattedString(currentCharge) // @TODO: should be possible to use the getChargeAsFormattedString in Charge??
                                     + fragmentIon.getNeutralLoss();
 
-
-                            // @TODO: only add annotation if it is of the selected types!!
-
                             currentAnnotations.add(new DefaultSpectrumAnnotation(ionMatch.peak.mz, ionMatch.getError(),
                                     SpectrumPanel.determineColorOfPeak(fragmentIon.getIonType() + fragmentIon.getNeutralLoss()),
                                     annotation));
@@ -1754,7 +2063,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     }
 
                     // add the spectrum annotations
-                    spectrum.setAnnotations(currentAnnotations);
+                    spectrum.setAnnotations(filterAnnotations(currentAnnotations));
 
                     spectrumPanel.removeAll();
                     spectrumPanel.add(spectrum);
@@ -1858,6 +2167,97 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Filters the annotations and returns the annotations matching the currently selected list.
+     *
+     * @param annotations the annotations to be filtered
+     * @return the filtered annotations
+     */
+    private Vector<DefaultSpectrumAnnotation> filterAnnotations(Vector<DefaultSpectrumAnnotation> annotations) {
+
+        Vector<DefaultSpectrumAnnotation> filteredAnnotations = new Vector();
+
+        for (int i = 0; i < annotations.size(); i++) {
+            String currentLabel = annotations.get(i).getLabel();
+
+            boolean useAnnotation = true;
+
+            // check ion type
+            if (currentLabel.startsWith("a")) {
+                if (!aIonToggleButton.isSelected()) {
+                    useAnnotation = false;
+                }
+            } else if (currentLabel.startsWith("b")) {
+                if (!bIonToggleButton.isSelected()) {
+                    useAnnotation = false;
+                }
+            } else if (currentLabel.startsWith("c")) {
+                if (!cIonToggleButton.isSelected()) {
+                    useAnnotation = false;
+                }
+            } else if (currentLabel.startsWith("x")) {
+                if (!xIonToggleButton.isSelected()) {
+                    useAnnotation = false;
+                }
+            } else if (currentLabel.startsWith("y")) {
+                if (!yIonToggleButton.isSelected()) {
+                    useAnnotation = false;
+                }
+            } else if (currentLabel.startsWith("z")) {
+                if (!zIonToggleButton.isSelected()) {
+                    useAnnotation = false;
+                }
+            } else {
+                if (!otherToggleButton.isSelected()) {
+                    useAnnotation = false;
+                }
+            }
+
+            // check neutral losses
+            if (useAnnotation) {
+                if (currentLabel.lastIndexOf("-H2O") != -1 || currentLabel.lastIndexOf("-H20") != -1) {
+                    if (!h2oToggleButton.isSelected()) {
+                        useAnnotation = false;
+                    }
+                }
+
+                if (currentLabel.lastIndexOf("-NH3") != -1) {
+                    if (!nh3ToggleButton.isSelected()) {
+                        useAnnotation = false;
+                    }
+                }
+            }
+
+            // check ion charge
+            if (useAnnotation) {
+                if (currentLabel.lastIndexOf("+") == -1) {
+
+                    // test needed to be able to show ions in the "other" group
+                    if (currentLabel.startsWith("a") || currentLabel.startsWith("b") || currentLabel.startsWith("c")
+                            || currentLabel.startsWith("x") || currentLabel.startsWith("y") || currentLabel.startsWith("z")) {
+                        if (!oneChargeToggleButton.isSelected()) {
+                            useAnnotation = false;
+                        }
+                    }
+                } else if (currentLabel.lastIndexOf("+++") != -1) {
+                    if (!moreThanTwoChargesToggleButton.isSelected()) {
+                        useAnnotation = false;
+                    }
+                } else if (currentLabel.lastIndexOf("++") != -1) {
+                    if (!twoChargesToggleButton.isSelected()) {
+                        useAnnotation = false;
+                    }
+                }
+            }
+
+            if (useAnnotation) {
+                filteredAnnotations.add(annotations.get(i));
+            }
+        }
+
+        return filteredAnnotations;
     }
 
     /**
@@ -2406,6 +2806,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton aIonToggleButton;
     private javax.swing.JMenuItem aboutJMenuItem;
     private javax.swing.JPanel allPeptidesJPanel;
     private javax.swing.JScrollPane allPeptidesJScrollPane;
@@ -2417,39 +2818,45 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JScrollPane allSpectraJScrollPane;
     private javax.swing.JTable allSpectraJTable;
     private javax.swing.JMenuItem annotationPreferencesMenu;
+    private javax.swing.JToggleButton bIonToggleButton;
+    private javax.swing.JToggleButton cIonToggleButton;
     private javax.swing.JEditorPane coverageEditorPane;
     private javax.swing.JScrollPane coverageScrollPane;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitJMenuItem;
     private javax.swing.JMenuItem exportMenuItem;
     private javax.swing.JMenu fileJMenu;
+    private javax.swing.JPanel fragmentIonJPanel;
     private javax.swing.JCheckBoxMenuItem fragmentIonsJCheckBoxMenuItem;
     private javax.swing.JScrollPane fragmentIonsJScrollPane;
     private javax.swing.JTable fragmentIonsJTable;
+    private javax.swing.JLabel fragmentIonsLabel;
     private javax.swing.JPanel gradientPanel;
+    private javax.swing.JToggleButton h2oToggleButton;
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenuItem identificationOptionsMenu;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel jPanel9;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JToggleButton moreThanTwoChargesToggleButton;
+    private javax.swing.JToggleButton nh3ToggleButton;
+    private javax.swing.JToggleButton oneChargeToggleButton;
     private javax.swing.JMenuItem openJMenuItem;
+    private javax.swing.JToggleButton otherToggleButton;
     private javax.swing.JPanel overviewJPanel;
     private javax.swing.JScrollPane peptideScrollPane;
     private javax.swing.JTable peptideTable;
+    private javax.swing.JPanel peptidesJPanel;
     private javax.swing.JSplitPane peptidesPsmJSplitPane;
     private javax.swing.JSplitPane peptidesPsmSpectrumFragmentIonsJSplitPane;
     private javax.swing.JScrollPane proteinScrollPane;
     private javax.swing.JTable proteinTable;
+    private javax.swing.JPanel proteinsJPanel;
+    private javax.swing.JPanel psmJPanel;
     private javax.swing.JTable psmsTable;
     private javax.swing.JTable ptmAnalysisJTable;
     private javax.swing.JScrollPane ptmAnalysisScrollPane;
@@ -2457,11 +2864,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JTable quantificationJTable;
     private javax.swing.JTabbedPane resultsJTabbedPane;
     private javax.swing.JMenuItem saveMenuItem;
+    private javax.swing.JPanel sequenceCoverageJPanel;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
     private javax.swing.JScrollPane spectraScrollPane;
     private javax.swing.JSplitPane spectrumFragmentIonJSplitPane;
+    private javax.swing.JPanel spectrumJPanel;
+    private javax.swing.JToolBar spectrumJToolBar;
     private javax.swing.JPanel spectrumPanel;
+    private javax.swing.JToggleButton twoChargesToggleButton;
     private javax.swing.JMenu viewJMenu;
+    private javax.swing.JToggleButton xIonToggleButton;
+    private javax.swing.JToggleButton yIonToggleButton;
+    private javax.swing.JToggleButton zIonToggleButton;
     // End of variables declaration//GEN-END:variables
 
     /**
