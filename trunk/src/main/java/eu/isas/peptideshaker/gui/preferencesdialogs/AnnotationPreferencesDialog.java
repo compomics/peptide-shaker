@@ -1,7 +1,5 @@
-
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import javax.swing.JOptionPane;
@@ -38,26 +36,10 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        bh2oButton = new javax.swing.JRadioButton();
-        bnh3Button = new javax.swing.JRadioButton();
-        bButton = new javax.swing.JRadioButton();
-        yh2oButton = new javax.swing.JRadioButton();
-        yButton = new javax.swing.JRadioButton();
-        ynh3Button = new javax.swing.JRadioButton();
-        zButton = new javax.swing.JRadioButton();
-        cButton = new javax.swing.JRadioButton();
-        xButton = new javax.swing.JRadioButton();
-        aButton = new javax.swing.JRadioButton();
-        ah2oButton = new javax.swing.JRadioButton();
-        anh3Button = new javax.swing.JRadioButton();
-        mhh2oButton = new javax.swing.JRadioButton();
-        mhnh3Button = new javax.swing.JRadioButton();
-        mhButton = new javax.swing.JRadioButton();
         jLabel2 = new javax.swing.JLabel();
         mzToleranceTxt = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         mostIntenseButton = new javax.swing.JRadioButton();
-        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Spectrum Annotation");
@@ -77,127 +59,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Ion Selection"));
-
-        bh2oButton.setText("b-H2O");
-        bh2oButton.setIconTextGap(15);
-        bh2oButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bh2oButtonActionPerformed(evt);
-            }
-        });
-
-        bnh3Button.setText("b-NH3");
-        bnh3Button.setIconTextGap(15);
-        bnh3Button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bnh3ButtonActionPerformed(evt);
-            }
-        });
-
-        bButton.setText("b");
-        bButton.setIconTextGap(15);
-        bButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bButtonActionPerformed(evt);
-            }
-        });
-
-        yh2oButton.setText("y-H2O");
-        yh2oButton.setIconTextGap(15);
-        yh2oButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yh2oButtonActionPerformed(evt);
-            }
-        });
-
-        yButton.setText("y");
-        yButton.setIconTextGap(15);
-        yButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yButtonActionPerformed(evt);
-            }
-        });
-
-        ynh3Button.setText("y-NH3");
-        ynh3Button.setIconTextGap(15);
-        ynh3Button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ynh3ButtonActionPerformed(evt);
-            }
-        });
-
-        zButton.setText("z");
-        zButton.setIconTextGap(15);
-        zButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                zButtonActionPerformed(evt);
-            }
-        });
-
-        cButton.setText("c");
-        cButton.setIconTextGap(15);
-        cButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cButtonActionPerformed(evt);
-            }
-        });
-
-        xButton.setText("x");
-        xButton.setIconTextGap(15);
-        xButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                xButtonActionPerformed(evt);
-            }
-        });
-
-        aButton.setText("a");
-        aButton.setIconTextGap(15);
-        aButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aButtonActionPerformed(evt);
-            }
-        });
-
-        ah2oButton.setText("a-H2O");
-        ah2oButton.setIconTextGap(15);
-        ah2oButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ah2oButtonActionPerformed(evt);
-            }
-        });
-
-        anh3Button.setText("a-NH3");
-        anh3Button.setIconTextGap(15);
-        anh3Button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                anh3ButtonActionPerformed(evt);
-            }
-        });
-
-        mhh2oButton.setText("MH-H2O");
-        mhh2oButton.setIconTextGap(15);
-        mhh2oButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mhh2oButtonActionPerformed(evt);
-            }
-        });
-
-        mhnh3Button.setText("MH-NH3");
-        mhnh3Button.setIconTextGap(15);
-        mhnh3Button.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mhnh3ButtonActionPerformed(evt);
-            }
-        });
-
-        mhButton.setText("MH");
-        mhButton.setIconTextGap(15);
-        mhButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mhButtonActionPerformed(evt);
-            }
-        });
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Preferences"));
 
         jLabel2.setText("m/z tolerance:");
 
@@ -220,90 +82,19 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(bButton)
-                                    .addComponent(bnh3Button)
-                                    .addComponent(bh2oButton))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(ynh3Button)
-                                    .addComponent(yButton)
-                                    .addComponent(yh2oButton))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                        .addComponent(cButton)
-                                        .addComponent(zButton))
-                                    .addComponent(xButton))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(aButton)
-                                    .addComponent(anh3Button)
-                                    .addComponent(ah2oButton))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(mhButton)
-                                    .addComponent(mhnh3Button)
-                                    .addComponent(mhh2oButton)))
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE))
-                        .addContainerGap())
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(mostIntenseButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(mzToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jLabel3)
-                        .addGap(24, 24, 24))))
+                .addComponent(mostIntenseButton)
+                .addGap(30, 30, 30)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addComponent(mzToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {aButton, ah2oButton, anh3Button, bButton, bh2oButton, bnh3Button, cButton, mhButton, mhh2oButton, mhnh3Button, xButton, yButton, yh2oButton, ynh3Button, zButton});
-
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(mhButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(mhnh3Button)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(mhh2oButton))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(aButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(anh3Button)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(ah2oButton)))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(xButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(zButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(cButton))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(yButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(ynh3Button)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(yh2oButton))
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addComponent(bButton)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(bnh3Button)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(bh2oButton))))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(mostIntenseButton)
                     .addComponent(jLabel2)
@@ -321,11 +112,11 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(337, Short.MAX_VALUE)
+                .addContainerGap(298, Short.MAX_VALUE)
                 .addComponent(okButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(cancelButton)
-                .addGap(18, 18, 18))
+                .addContainerGap())
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
@@ -335,7 +126,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
@@ -345,86 +136,11 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void aButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.A_ION, aButton.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_aButtonActionPerformed
-
-    private void bh2oButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bh2oButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.BH2O_ION, bh2oButton.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_bh2oButtonActionPerformed
-
-    private void ynh3ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ynh3ButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.YNH3_ION, ynh3Button.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_ynh3ButtonActionPerformed
-
-    private void anh3ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_anh3ButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.ANH3_ION, anh3Button.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_anh3ButtonActionPerformed
-
-    private void ah2oButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ah2oButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.AH2O_ION, ah2oButton.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_ah2oButtonActionPerformed
-
-    private void bButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.B_ION, bButton.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_bButtonActionPerformed
-
-    private void bnh3ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bnh3ButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.BNH3_ION, bnh3Button.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_bnh3ButtonActionPerformed
-
-    private void cButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.C_ION, cButton.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_cButtonActionPerformed
-
-    private void xButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.X_ION, xButton.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_xButtonActionPerformed
-
-    private void yButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.Y_ION, yButton.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_yButtonActionPerformed
-
-    private void yh2oButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yh2oButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.YH2O_ION, yh2oButton.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_yh2oButtonActionPerformed
-
-    private void zButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.Z_ION, zButton.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_zButtonActionPerformed
-
-    private void mhButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mhButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.MH_ION, mhButton.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_mhButtonActionPerformed
-
-    private void mhnh3ButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mhnh3ButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.MHNH3_ION, mhnh3Button.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_mhnh3ButtonActionPerformed
-
-    private void mhh2oButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mhh2oButtonActionPerformed
-        annotationPreferences.setSelected(PeptideFragmentIon.MHH2O_ION, mhh2oButton.isSelected());
-        refreshSelection();
-    }//GEN-LAST:event_mhh2oButtonActionPerformed
-
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
             annotationPreferences.setTolerance(new Double(mzToleranceTxt.getText().trim()));
-        peptideShakerGUI.updateAnnotationPreferences(annotationPreferences);
-        dispose();
+            peptideShakerGUI.updateAnnotationPreferences(annotationPreferences);
+            dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -436,50 +152,18 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         annotationPreferences.annotateMostIntensePeaks(mostIntenseButton.isSelected());
         refreshSelection();
     }//GEN-LAST:event_mostIntenseButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JRadioButton aButton;
-    private javax.swing.JRadioButton ah2oButton;
-    private javax.swing.JRadioButton anh3Button;
-    private javax.swing.JRadioButton bButton;
-    private javax.swing.JRadioButton bh2oButton;
-    private javax.swing.JRadioButton bnh3Button;
-    private javax.swing.JRadioButton cButton;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JRadioButton mhButton;
-    private javax.swing.JRadioButton mhh2oButton;
-    private javax.swing.JRadioButton mhnh3Button;
     private javax.swing.JRadioButton mostIntenseButton;
     private javax.swing.JTextField mzToleranceTxt;
     private javax.swing.JButton okButton;
-    private javax.swing.JRadioButton xButton;
-    private javax.swing.JRadioButton yButton;
-    private javax.swing.JRadioButton yh2oButton;
-    private javax.swing.JRadioButton ynh3Button;
-    private javax.swing.JRadioButton zButton;
     // End of variables declaration//GEN-END:variables
 
     private void refreshSelection() {
-            aButton.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.A_ION));
-            anh3Button.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.ANH3_ION));
-            ah2oButton.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.AH2O_ION));
-            bButton.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.B_ION));
-            bnh3Button.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.BNH3_ION));
-            bh2oButton.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.BH2O_ION));
-            cButton.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.C_ION));
-            xButton.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.X_ION));
-            yButton.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.Y_ION));
-            ynh3Button.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.YNH3_ION));
-            yh2oButton.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.YH2O_ION));
-            zButton.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.Z_ION));
-            mhButton.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.MH_ION));
-            mhnh3Button.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.MHNH3_ION));
-            mhh2oButton.setSelected(annotationPreferences.isSelected(PeptideFragmentIon.MHH2O_ION));
-            mostIntenseButton.setSelected(annotationPreferences.shallAnnotateMostIntensePeaks());
+        mostIntenseButton.setSelected(annotationPreferences.shallAnnotateMostIntensePeaks());
     }
 
     private boolean validateInput() {
