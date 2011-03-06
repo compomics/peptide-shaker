@@ -1562,18 +1562,25 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         intValues[index++] = peak.intensity;
                     }
 
+                    // add the data to the spectrum panel
+                    Precursor precursor = currentSpectrum.getPrecursor();
+                    SpectrumPanel spectrum = new SpectrumPanel(
+                            mzValues, intValues, precursor.getMz(), precursor.getCharge().toString(),
+                            "", 50, false, false, false, 2, false);
+
+                    // get the spectrum annotations
                     String peptideKey = getPeptideKey(peptideTable.getSelectedRow());
                     Peptide currentPeptide = identification.getPeptideIdentification().get(peptideKey).getTheoreticPeptide();
-                    HashMap<Integer, HashMap<Integer, IonMatch>> annotations = spectrumAnnotator.annotateSpectrum(
+                    HashMap<String, HashMap<Integer, IonMatch>> annotations = spectrumAnnotator.annotateSpectrum(
                             currentPeptide, currentSpectrum, annotationPreferences.getTolerance(), getIntensityLimit(currentSpectrum));
 
                     // the fragment ions annotations
                     Vector<DefaultSpectrumAnnotation> currentAnnotations = new Vector();
 
-                    Iterator<Integer> ionTypeIterator = annotations.keySet().iterator();
+                    Iterator<String> ionTypeIterator = annotations.keySet().iterator();
 
                     while (ionTypeIterator.hasNext()) {
-                        Integer ionType = ionTypeIterator.next();
+                        String ionType = ionTypeIterator.next();
 
                         HashMap<Integer, IonMatch> chargeMap = annotations.get(ionType);
                         Iterator<Integer> chargeIterator = chargeMap.keySet().iterator();
@@ -1584,37 +1591,28 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                             PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
 
-                            // @TODO: add annotations of more then just b and y ions
-                            // @TODO: only add annotation if it is of the selected types
-                            if (!((PeptideFragmentIon) ionMatch.ion).getIonType().equalsIgnoreCase("?")) { // ? is the symbol currently used for other ions than b and y
+                            // set up the peak annotation
+                            String annotation = fragmentIon.getIonType();
 
-                                String annotation = fragmentIon.getIonType() 
-                                        + fragmentIon.getNumber()
-                                        + getChargeAsFormattedString(currentCharge) // @TODO: should be possible to use the getChargeAsFormattedString in Charge!?
-                                        + fragmentIon.getNeutralLoss();
-
-                                currentAnnotations.add(new DefaultSpectrumAnnotation(ionMatch.peak.mz, ionMatch.getError(),
-                                            SpectrumPanel.determineColorOfPeak(fragmentIon.getIonType() + fragmentIon.getNeutralLoss()),
-                                            annotation));
-
-                                //System.out.println("added: " + annotation);
-                            } else {
-
-//                                String annotation = fragmentIon.getIonType()
-//                                        + fragmentIon.getNumber()
-//                                        + getChargeAsFormattedString(currentCharge) // @TODO: should be possible to use the getChargeAsFormattedString in Charge!?
-//                                        + fragmentIon.getNeutralLoss();
-//
-//                                System.out.println("not added: " + annotation);
+                            // add fragment ion number
+                            if (!fragmentIon.getIonType().equalsIgnoreCase("Prec")
+                                    && !fragmentIon.getIonType().equalsIgnoreCase("i")
+                                    && !fragmentIon.getIonType().equalsIgnoreCase("Prec-loss")) {
+                                annotation += fragmentIon.getNumber();
                             }
+
+                            // add charge and any neutral losses
+                            annotation += getChargeAsFormattedString(currentCharge) // @TODO: should be possible to use the getChargeAsFormattedString in Charge??
+                                    + fragmentIon.getNeutralLoss();
+
+                            
+                            // @TODO: only add annotation if it is of the selected types!!
+
+                            currentAnnotations.add(new DefaultSpectrumAnnotation(ionMatch.peak.mz, ionMatch.getError(),
+                                    SpectrumPanel.determineColorOfPeak(fragmentIon.getIonType() + fragmentIon.getNeutralLoss()),
+                                    annotation));
                         }
                     }
-
-                    // @TODO: verify that the provided informations to the spectrumpanel are correct
-                    Precursor precursor = currentSpectrum.getPrecursor();
-                    SpectrumPanel spectrum = new SpectrumPanel(
-                            mzValues, intValues, precursor.getMz(), precursor.getCharge().toString(),
-                            "", 50, false, false, false, 2, false);
 
                     // add the spectrum annotations
                     spectrum.setAnnotations(currentAnnotations);
@@ -1640,7 +1638,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         String temp = "";
 
-        for (int i=0; i<charge; i++) {
+        for (int i = 0; i < charge; i++) {
             temp += "+";
         }
 
