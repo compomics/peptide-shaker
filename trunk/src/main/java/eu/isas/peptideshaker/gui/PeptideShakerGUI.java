@@ -528,7 +528,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         spectrumJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         fragmentIonsJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        sequenceSpectrumJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        sequenceFragmentationJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
         aboutJMenuItem = new javax.swing.JMenuItem();
@@ -1475,16 +1475,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         viewJMenu.add(fragmentIonsJRadioButtonMenuItem);
 
-        sequenceSpectrumJRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        spectrumBbuttonGroup.add(sequenceSpectrumJRadioButtonMenuItem);
-        sequenceSpectrumJRadioButtonMenuItem.setMnemonic('E');
-        sequenceSpectrumJRadioButtonMenuItem.setText("Sequence Spectrum");
-        sequenceSpectrumJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        sequenceFragmentationJRadioButtonMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        spectrumBbuttonGroup.add(sequenceFragmentationJRadioButtonMenuItem);
+        sequenceFragmentationJRadioButtonMenuItem.setMnemonic('E');
+        sequenceFragmentationJRadioButtonMenuItem.setText("Sequence Fragmentation");
+        sequenceFragmentationJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sequenceSpectrumJRadioButtonMenuItemActionPerformed(evt);
+                sequenceFragmentationJRadioButtonMenuItemActionPerformed(evt);
             }
         });
-        viewJMenu.add(sequenceSpectrumJRadioButtonMenuItem);
+        viewJMenu.add(sequenceFragmentationJRadioButtonMenuItem);
 
         menuBar.add(viewJMenu);
 
@@ -1838,7 +1838,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
                 fragmentIonsJRadioButtonMenuItemActionPerformed(null);
                 sequenceCoverageJCheckBoxMenuItemActionPerformed(null);
-                sequenceSpectrumJRadioButtonMenuItemActionPerformed(null);
+                sequenceFragmentationJRadioButtonMenuItemActionPerformed(null);
             }
         });
     }//GEN-LAST:event_formComponentResized
@@ -1991,7 +1991,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             ((TitledBorder) spectrumJPanel.getBorder()).setTitle("Spectrum");
         } else {
             spectrumPanelSequenceFragmentIonJSplitPane.setDividerLocation(Integer.MAX_VALUE);
-            ((TitledBorder) spectrumJPanel.getBorder()).setTitle("Sequence Spectrum");
+            ((TitledBorder) spectrumJPanel.getBorder()).setTitle("Sequence Fragmentation");
         }
     }//GEN-LAST:event_spectrumJRadioButtonMenuItemActionPerformed
 
@@ -2000,17 +2000,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      *
      * @param evt
      */
-    private void sequenceSpectrumJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceSpectrumJRadioButtonMenuItemActionPerformed
-        if (sequenceSpectrumJRadioButtonMenuItem.isSelected()) {
+    private void sequenceFragmentationJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceFragmentationJRadioButtonMenuItemActionPerformed
+        if (sequenceFragmentationJRadioButtonMenuItem.isSelected()) {
             spectrumPanelSequenceFragmentIonJSplitPane.setDividerLocation(Integer.MAX_VALUE);
             fragmentIonsJRadioButtonMenuItem.setSelected(false);
             fragmentIonsJRadioButtonMenuItemActionPerformed(null);
-            ((TitledBorder) spectrumJPanel.getBorder()).setTitle("Sequence Spectrum");
+            ((TitledBorder) spectrumJPanel.getBorder()).setTitle("Sequence Fragmentation");
         } else {
             ((TitledBorder) spectrumJPanel.getBorder()).setTitle("Spectrum");
             spectrumPanelSequenceFragmentIonJSplitPane.setDividerLocation(0);
         }
-    }//GEN-LAST:event_sequenceSpectrumJRadioButtonMenuItemActionPerformed
+    }//GEN-LAST:event_sequenceFragmentationJRadioButtonMenuItemActionPerformed
 
     /**
      * Update the size of the sequence coverage split pane.
@@ -3023,7 +3023,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
     private javax.swing.JPanel sequenceCoverageJPanel;
     private javax.swing.JPanel sequenceFragmentIonJPanel;
-    private javax.swing.JRadioButtonMenuItem sequenceSpectrumJRadioButtonMenuItem;
+    private javax.swing.JRadioButtonMenuItem sequenceFragmentationJRadioButtonMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
     private javax.swing.JScrollPane spectraScrollPane;
     private javax.swing.ButtonGroup spectrumBbuttonGroup;
