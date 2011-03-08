@@ -156,7 +156,7 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fragmentIonsJRadioButtonMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="sequenceSpectrumJRadioButtonMenuItem">
+            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="sequenceFragmentationJRadioButtonMenuItem">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Shift+Ctrl+E"/>
@@ -165,10 +165,10 @@
                   <ComponentRef name="spectrumBbuttonGroup"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="69"/>
-                <Property name="text" type="java.lang.String" value="Sequence Spectrum"/>
+                <Property name="text" type="java.lang.String" value="Sequence Fragmentation"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sequenceSpectrumJRadioButtonMenuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sequenceFragmentationJRadioButtonMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
