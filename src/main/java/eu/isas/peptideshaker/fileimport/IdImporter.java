@@ -226,6 +226,8 @@ public class IdImporter {
                             return 1;
                         }
                     }
+
+                    waitingDialog.increaseProgressValue();
                 }
 
                 if (nRetained == 0) {

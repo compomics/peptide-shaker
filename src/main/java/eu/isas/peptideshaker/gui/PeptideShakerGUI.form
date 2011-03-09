@@ -2,8 +2,6 @@
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
-    <Component class="javax.swing.ButtonGroup" name="spectrumBbuttonGroup">
-    </Component>
     <Menu class="javax.swing.JMenuBar" name="menuBar">
       <Properties>
         <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -97,17 +95,43 @@
             <Property name="text" type="java.lang.String" value="View"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="sparklinesJCheckBoxMenuItem">
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="proteinsJCheckBoxMenuItem">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Shift+Ctrl+N"/>
+                  <KeyStroke key="Shift+Ctrl+P"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="80"/>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="JSparklines"/>
-                <Property name="toolTipText" type="java.lang.String" value="View sparklines or the underlying numbers"/>
+                <Property name="text" type="java.lang.String" value="Proteins"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sparklinesJCheckBoxMenuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinsJCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="peptidesAndPsmsJCheckBoxMenuItem">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Shift+Ctrl+E"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="69"/>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Peptides &amp; PSMs"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptidesAndPsmsJCheckBoxMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="sequenceFragmentationJCheckBoxMenuItem">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Shift+Ctrl+S"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="83"/>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Sequence Fragmentation"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sequenceFragmentationJCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="sequenceCoverageJCheckBoxMenuItem">
@@ -125,50 +149,17 @@
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator3">
             </MenuItem>
-            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="spectrumJRadioButtonMenuItem">
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="sparklinesJCheckBoxMenuItem">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Shift+Ctrl+S"/>
+                  <KeyStroke key="Shift+Ctrl+N"/>
                 </Property>
-                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-                  <ComponentRef name="spectrumBbuttonGroup"/>
-                </Property>
-                <Property name="mnemonic" type="int" value="83"/>
                 <Property name="selected" type="boolean" value="true"/>
-                <Property name="text" type="java.lang.String" value="Fragment Ion Spectrum"/>
+                <Property name="text" type="java.lang.String" value="JSparklines"/>
+                <Property name="toolTipText" type="java.lang.String" value="View sparklines or the underlying numbers"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spectrumJRadioButtonMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="fragmentIonsJRadioButtonMenuItem">
-              <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Shift+Ctrl+T"/>
-                </Property>
-                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-                  <ComponentRef name="spectrumBbuttonGroup"/>
-                </Property>
-                <Property name="mnemonic" type="int" value="84"/>
-                <Property name="text" type="java.lang.String" value="Fragment Ion Table"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fragmentIonsJRadioButtonMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JRadioButtonMenuItem" name="sequenceFragmentationJRadioButtonMenuItem">
-              <Properties>
-                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
-                  <KeyStroke key="Shift+Ctrl+E"/>
-                </Property>
-                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
-                  <ComponentRef name="spectrumBbuttonGroup"/>
-                </Property>
-                <Property name="mnemonic" type="int" value="69"/>
-                <Property name="text" type="java.lang.String" value="Sequence Fragmentation"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sequenceFragmentationJRadioButtonMenuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sparklinesJCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -208,8 +199,11 @@
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
     <Property name="title" type="java.lang.String" value="PeptideShaker"/>
+    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+    </Property>
     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-      <Dimension value="[1240, 800]"/>
+      <Dimension value="[1260, 800]"/>
     </Property>
   </Properties>
   <SyntheticProperties>
@@ -246,26 +240,25 @@
   <SubComponents>
     <Container class="javax.swing.JPanel" name="gradientPanel">
       <Properties>
-        <Property name="opaque" type="boolean" value="false"/>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+        </Property>
       </Properties>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JPanel() {&#xd;&#xa;            @Override&#xd;&#xa;            protected void paintComponent(Graphics grphcs) {&#xd;&#xa;                Graphics2D g2d = (Graphics2D) grphcs;&#xd;&#xa;                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,&#xd;&#xa;                        RenderingHints.VALUE_ANTIALIAS_ON);&#xd;&#xa;&#xd;&#xa;                GradientPaint gp = new GradientPaint(0, 0, &#xd;&#xa;                        getBackground().brighter().brighter(), 0, getHeight(),&#xd;&#xa;                        getBackground().darker());&#xd;&#xa;                &#xd;&#xa;                g2d.setPaint(gp);&#xd;&#xa;                g2d.fillRect(0, 0, getWidth(), getHeight());&#xd;&#xa;                &#xd;&#xa;                super.paintComponent(grphcs);&#xd;&#xa;            }            &#xd;&#xa;        }&#xd;&#xa;"/>
-      </AuxValues>
 
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="1007" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="1044" max="32767" attributes="0"/>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                  <Component id="resultsJTabbedPane" alignment="0" pref="1007" max="32767" attributes="0"/>
+                  <Component id="resultsJTabbedPane" alignment="0" pref="1044" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="779" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="747" max="32767" attributes="0"/>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                  <Component id="resultsJTabbedPane" alignment="0" pref="779" max="32767" attributes="0"/>
+                  <Component id="resultsJTabbedPane" alignment="0" pref="747" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -285,9 +278,6 @@
                   <Dimension value="[900, 800]"/>
                 </Property>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JPanel() {&#xd;&#xa;            @Override&#xd;&#xa;            protected void paintComponent(Graphics grphcs) {&#xd;&#xa;                Graphics2D g2d = (Graphics2D) grphcs;&#xd;&#xa;                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,&#xd;&#xa;                        RenderingHints.VALUE_ANTIALIAS_ON);&#xd;&#xa;&#xd;&#xa;                GradientPaint gp = new GradientPaint(0, 0, &#xd;&#xa;                        getBackground().brighter().brighter(), 0, getHeight(),&#xd;&#xa;                        getBackground().darker());&#xd;&#xa;                &#xd;&#xa;                g2d.setPaint(gp);&#xd;&#xa;                g2d.fillRect(0, 0, getWidth(), getHeight());&#xd;&#xa;                &#xd;&#xa;                super.paintComponent(grphcs);&#xd;&#xa;            }            &#xd;&#xa;        }&#xd;&#xa;"/>
-              </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="Overview">
@@ -301,10 +291,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="coverageJSplitPane" alignment="1" pref="899" max="32767" attributes="0"/>
-                              <Component id="proteinsJPanel" alignment="1" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="overviewJSplitPane" pref="957" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -312,129 +299,20 @@
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="proteinsJPanel" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="coverageJSplitPane" pref="490" max="32767" attributes="1"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="overviewJSplitPane" pref="720" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Container class="javax.swing.JPanel" name="proteinsJPanel">
-                  <Properties>
-                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                      <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                        <TitledBorder title="Proteins"/>
-                      </Border>
-                    </Property>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
-
-                  <Layout>
-                    <DimensionLayout dim="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="proteinScrollPane" pref="867" max="32767" attributes="0"/>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                    </DimensionLayout>
-                    <DimensionLayout dim="1">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="proteinScrollPane" pref="207" max="32767" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
-                    </DimensionLayout>
-                  </Layout>
-                  <SubComponents>
-                    <Container class="javax.swing.JScrollPane" name="proteinScrollPane">
-                      <Properties>
-                        <Property name="opaque" type="boolean" value="false"/>
-                      </Properties>
-                      <AuxValues>
-                        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                      </AuxValues>
-
-                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                      <SubComponents>
-                        <Component class="javax.swing.JTable" name="proteinTable">
-                          <Properties>
-                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="8" rowCount="0">
-                                <Column editable="false" title=" " type="java.lang.Integer"/>
-                                <Column editable="false" title="Accession" type="java.lang.String"/>
-                                <Column editable="false" title="Description" type="java.lang.String"/>
-                                <Column editable="false" title="Coverage" type="java.lang.Double"/>
-                                <Column editable="false" title="emPAI" type="java.lang.Double"/>
-                                <Column editable="false" title="#Peptides" type="java.lang.Integer"/>
-                                <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
-                                <Column editable="false" title="Score" type="java.lang.Double"/>
-                              </Table>
-                            </Property>
-                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
-                              <TableColumnModel selectionModel="0">
-                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                  <Title/>
-                                  <Editor/>
-                                  <Renderer/>
-                                </Column>
-                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                  <Title/>
-                                  <Editor/>
-                                  <Renderer/>
-                                </Column>
-                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                  <Title/>
-                                  <Editor/>
-                                  <Renderer/>
-                                </Column>
-                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                  <Title/>
-                                  <Editor/>
-                                  <Renderer/>
-                                </Column>
-                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                  <Title/>
-                                  <Editor/>
-                                  <Renderer/>
-                                </Column>
-                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                  <Title/>
-                                  <Editor/>
-                                  <Renderer/>
-                                </Column>
-                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                  <Title/>
-                                  <Editor/>
-                                  <Renderer/>
-                                </Column>
-                              </TableColumnModel>
-                            </Property>
-                            <Property name="opaque" type="boolean" value="false"/>
-                            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                              <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                            </Property>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinTableMouseClicked"/>
-                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="proteinTableKeyReleased"/>
-                          </Events>
-                        </Component>
-                      </SubComponents>
-                    </Container>
-                  </SubComponents>
-                </Container>
-                <Container class="javax.swing.JSplitPane" name="coverageJSplitPane">
+                <Container class="javax.swing.JSplitPane" name="overviewJSplitPane">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="null"/>
                     </Property>
+                    <Property name="dividerLocation" type="int" value="300"/>
                     <Property name="dividerSize" type="int" value="0"/>
                     <Property name="orientation" type="int" value="0"/>
                     <Property name="resizeWeight" type="double" value="0.5"/>
@@ -443,18 +321,18 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
                   <SubComponents>
-                    <Container class="javax.swing.JPanel" name="sequenceCoverageJPanel">
+                    <Container class="javax.swing.JPanel" name="proteinsJPanel">
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                            <TitledBorder title="Sequence Coverage"/>
+                            <TitledBorder title="Proteins"/>
                           </Border>
                         </Property>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                          <JSplitPaneConstraints position="right"/>
+                          <JSplitPaneConstraints position="top"/>
                         </Constraint>
                       </Constraints>
 
@@ -463,7 +341,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="coverageScrollPane" pref="867" max="32767" attributes="0"/>
+                                  <Component id="proteinScrollPane" pref="925" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -472,14 +350,14 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="coverageScrollPane" pref="103" max="32767" attributes="0"/>
+                                  <Component id="proteinScrollPane" pref="251" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                       </Layout>
                       <SubComponents>
-                        <Container class="javax.swing.JScrollPane" name="coverageScrollPane">
+                        <Container class="javax.swing.JScrollPane" name="proteinScrollPane">
                           <Properties>
                             <Property name="opaque" type="boolean" value="false"/>
                           </Properties>
@@ -489,45 +367,162 @@
 
                           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                           <SubComponents>
-                            <Component class="javax.swing.JEditorPane" name="coverageEditorPane">
+                            <Component class="javax.swing.JTable" name="proteinTable">
                               <Properties>
-                                <Property name="contentType" type="java.lang.String" value="text/html"/>
-                                <Property name="editable" type="boolean" value="false"/>
+                                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                  <Table columnCount="8" rowCount="0">
+                                    <Column editable="false" title=" " type="java.lang.Integer"/>
+                                    <Column editable="false" title="Accession" type="java.lang.String"/>
+                                    <Column editable="false" title="Description" type="java.lang.String"/>
+                                    <Column editable="false" title="Coverage" type="java.lang.Double"/>
+                                    <Column editable="false" title="emPAI" type="java.lang.Double"/>
+                                    <Column editable="false" title="#Peptides" type="java.lang.Integer"/>
+                                    <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
+                                    <Column editable="false" title="Score" type="java.lang.Double"/>
+                                  </Table>
+                                </Property>
+                                <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                                  <TableColumnModel selectionModel="0">
+                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                      <Title/>
+                                      <Editor/>
+                                      <Renderer/>
+                                    </Column>
+                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                      <Title/>
+                                      <Editor/>
+                                      <Renderer/>
+                                    </Column>
+                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                      <Title/>
+                                      <Editor/>
+                                      <Renderer/>
+                                    </Column>
+                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                      <Title/>
+                                      <Editor/>
+                                      <Renderer/>
+                                    </Column>
+                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                      <Title/>
+                                      <Editor/>
+                                      <Renderer/>
+                                    </Column>
+                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                      <Title/>
+                                      <Editor/>
+                                      <Renderer/>
+                                    </Column>
+                                    <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                      <Title/>
+                                      <Editor/>
+                                      <Renderer/>
+                                    </Column>
+                                  </TableColumnModel>
+                                </Property>
+                                <Property name="opaque" type="boolean" value="false"/>
+                                <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                                  <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                                </Property>
                               </Properties>
                               <Events>
-                                <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="coverageEditorPaneComponentResized"/>
+                                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinTableMouseClicked"/>
+                                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="proteinTableKeyReleased"/>
                               </Events>
                             </Component>
                           </SubComponents>
                         </Container>
                       </SubComponents>
                     </Container>
-                    <Container class="javax.swing.JSplitPane" name="peptidesPsmSpectrumFragmentIonsJSplitPane">
+                    <Container class="javax.swing.JSplitPane" name="coverageJSplitPane">
                       <Properties>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                           <Border info="null"/>
                         </Property>
-                        <Property name="dividerLocation" type="int" value="450"/>
                         <Property name="dividerSize" type="int" value="0"/>
+                        <Property name="orientation" type="int" value="0"/>
                         <Property name="resizeWeight" type="double" value="0.5"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                          <JSplitPaneConstraints position="left"/>
+                          <JSplitPaneConstraints position="right"/>
                         </Constraint>
                       </Constraints>
 
                       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
                       <SubComponents>
-                        <Container class="javax.swing.JSplitPane" name="peptidesPsmJSplitPane">
+                        <Container class="javax.swing.JPanel" name="sequenceCoverageJPanel">
+                          <Properties>
+                            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                                <TitledBorder title="Sequence Coverage"/>
+                              </Border>
+                            </Property>
+                            <Property name="opaque" type="boolean" value="false"/>
+                          </Properties>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                              <JSplitPaneConstraints position="right"/>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout>
+                            <DimensionLayout dim="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="coverageScrollPane" pref="925" max="32767" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                            <DimensionLayout dim="1">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="coverageScrollPane" pref="126" max="32767" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                            </DimensionLayout>
+                          </Layout>
+                          <SubComponents>
+                            <Container class="javax.swing.JScrollPane" name="coverageScrollPane">
+                              <Properties>
+                                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                  <Border info="null"/>
+                                </Property>
+                                <Property name="opaque" type="boolean" value="false"/>
+                              </Properties>
+                              <AuxValues>
+                                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                              </AuxValues>
+
+                              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                              <SubComponents>
+                                <Component class="javax.swing.JEditorPane" name="coverageEditorPane">
+                                  <Properties>
+                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                      <Border info="null"/>
+                                    </Property>
+                                    <Property name="contentType" type="java.lang.String" value="text/html"/>
+                                    <Property name="editable" type="boolean" value="false"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="coverageEditorPaneComponentResized"/>
+                                  </Events>
+                                </Component>
+                              </SubComponents>
+                            </Container>
+                          </SubComponents>
+                        </Container>
+                        <Container class="javax.swing.JSplitPane" name="peptidesPsmSpectrumFragmentIonsJSplitPane">
                           <Properties>
                             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                               <Border info="null"/>
                             </Property>
-                            <Property name="dividerLocation" type="int" value="170"/>
+                            <Property name="dividerLocation" type="int" value="450"/>
                             <Property name="dividerSize" type="int" value="0"/>
-                            <Property name="orientation" type="int" value="0"/>
                             <Property name="resizeWeight" type="double" value="0.5"/>
                             <Property name="opaque" type="boolean" value="false"/>
                           </Properties>
@@ -539,106 +534,234 @@
 
                           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
                           <SubComponents>
-                            <Container class="javax.swing.JPanel" name="peptidesJPanel">
+                            <Container class="javax.swing.JSplitPane" name="peptidesPsmJSplitPane">
                               <Properties>
                                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                                    <TitledBorder title="Peptides"/>
-                                  </Border>
+                                  <Border info="null"/>
                                 </Property>
+                                <Property name="dividerLocation" type="int" value="150"/>
+                                <Property name="dividerSize" type="int" value="0"/>
+                                <Property name="orientation" type="int" value="0"/>
+                                <Property name="resizeWeight" type="double" value="0.5"/>
                                 <Property name="opaque" type="boolean" value="false"/>
                               </Properties>
                               <Constraints>
                                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                                  <JSplitPaneConstraints position="top"/>
+                                  <JSplitPaneConstraints position="left"/>
                                 </Constraint>
                               </Constraints>
 
-                              <Layout>
-                                <DimensionLayout dim="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="1" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="peptideScrollPane" pref="418" max="32767" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                </DimensionLayout>
-                                <DimensionLayout dim="1">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="peptideScrollPane" pref="121" max="32767" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                </DimensionLayout>
-                              </Layout>
+                              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
                               <SubComponents>
-                                <Container class="javax.swing.JScrollPane" name="peptideScrollPane">
+                                <Container class="javax.swing.JPanel" name="peptidesJPanel">
                                   <Properties>
+                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                      <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                                        <TitledBorder title="Peptides"/>
+                                      </Border>
+                                    </Property>
                                     <Property name="opaque" type="boolean" value="false"/>
                                   </Properties>
-                                  <AuxValues>
-                                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                                  </AuxValues>
+                                  <Constraints>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                                      <JSplitPaneConstraints position="top"/>
+                                    </Constraint>
+                                  </Constraints>
 
-                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                                  <Layout>
+                                    <DimensionLayout dim="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="peptideScrollPane" pref="418" max="32767" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                    </DimensionLayout>
+                                    <DimensionLayout dim="1">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="peptideScrollPane" pref="101" max="32767" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                    </DimensionLayout>
+                                  </Layout>
                                   <SubComponents>
-                                    <Component class="javax.swing.JTable" name="peptideTable">
+                                    <Container class="javax.swing.JScrollPane" name="peptideScrollPane">
                                       <Properties>
-                                        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                          <Table columnCount="5" rowCount="0">
-                                            <Column editable="false" title=" " type="java.lang.Integer"/>
-                                            <Column editable="false" title="Sequence" type="java.lang.String"/>
-                                            <Column editable="false" title="Modifications" type="java.lang.String"/>
-                                            <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
-                                            <Column editable="false" title="Score" type="java.lang.Double"/>
-                                          </Table>
-                                        </Property>
-                                        <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
-                                          <TableColumnModel selectionModel="0">
-                                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                              <Title/>
-                                              <Editor/>
-                                              <Renderer/>
-                                            </Column>
-                                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                              <Title/>
-                                              <Editor/>
-                                              <Renderer/>
-                                            </Column>
-                                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                              <Title/>
-                                              <Editor/>
-                                              <Renderer/>
-                                            </Column>
-                                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                              <Title/>
-                                              <Editor/>
-                                              <Renderer/>
-                                            </Column>
-                                          </TableColumnModel>
-                                        </Property>
                                         <Property name="opaque" type="boolean" value="false"/>
-                                        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                                          <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                                        </Property>
                                       </Properties>
-                                      <Events>
-                                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideTableMouseClicked"/>
-                                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="peptideTableKeyReleased"/>
-                                      </Events>
-                                    </Component>
+                                      <AuxValues>
+                                        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                                      </AuxValues>
+
+                                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                                      <SubComponents>
+                                        <Component class="javax.swing.JTable" name="peptideTable">
+                                          <Properties>
+                                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                              <Table columnCount="5" rowCount="0">
+                                                <Column editable="false" title=" " type="java.lang.Integer"/>
+                                                <Column editable="false" title="Sequence" type="java.lang.String"/>
+                                                <Column editable="false" title="Modifications" type="java.lang.String"/>
+                                                <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
+                                                <Column editable="false" title="Score" type="java.lang.Double"/>
+                                              </Table>
+                                            </Property>
+                                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                                              <TableColumnModel selectionModel="0">
+                                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                                  <Title/>
+                                                  <Editor/>
+                                                  <Renderer/>
+                                                </Column>
+                                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                                  <Title/>
+                                                  <Editor/>
+                                                  <Renderer/>
+                                                </Column>
+                                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                                  <Title/>
+                                                  <Editor/>
+                                                  <Renderer/>
+                                                </Column>
+                                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                                  <Title/>
+                                                  <Editor/>
+                                                  <Renderer/>
+                                                </Column>
+                                              </TableColumnModel>
+                                            </Property>
+                                            <Property name="opaque" type="boolean" value="false"/>
+                                            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                                              <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                                            </Property>
+                                          </Properties>
+                                          <Events>
+                                            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideTableMouseClicked"/>
+                                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="peptideTableKeyReleased"/>
+                                          </Events>
+                                        </Component>
+                                      </SubComponents>
+                                    </Container>
+                                  </SubComponents>
+                                </Container>
+                                <Container class="javax.swing.JPanel" name="psmJPanel">
+                                  <Properties>
+                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                      <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                                        <TitledBorder title="Peptide-Spectrum Matches"/>
+                                      </Border>
+                                    </Property>
+                                    <Property name="opaque" type="boolean" value="false"/>
+                                  </Properties>
+                                  <Constraints>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                                      <JSplitPaneConstraints position="right"/>
+                                    </Constraint>
+                                  </Constraints>
+
+                                  <Layout>
+                                    <DimensionLayout dim="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="spectraScrollPane" pref="418" max="32767" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                    </DimensionLayout>
+                                    <DimensionLayout dim="1">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="spectraScrollPane" pref="57" max="32767" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                    </DimensionLayout>
+                                  </Layout>
+                                  <SubComponents>
+                                    <Container class="javax.swing.JScrollPane" name="spectraScrollPane">
+                                      <Properties>
+                                        <Property name="opaque" type="boolean" value="false"/>
+                                      </Properties>
+                                      <AuxValues>
+                                        <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                                      </AuxValues>
+
+                                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                                      <SubComponents>
+                                        <Component class="javax.swing.JTable" name="psmsTable">
+                                          <Properties>
+                                            <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                              <Table columnCount="7" rowCount="0">
+                                                <Column editable="false" title=" " type="java.lang.Integer"/>
+                                                <Column editable="false" title="Sequence" type="java.lang.String"/>
+                                                <Column editable="false" title="Modifications" type="java.lang.String"/>
+                                                <Column editable="false" title="Charge" type="java.lang.String"/>
+                                                <Column editable="false" title="Mass Error" type="java.lang.Double"/>
+                                                <Column editable="false" title="File" type="java.lang.String"/>
+                                                <Column editable="false" title="Title" type="java.lang.String"/>
+                                              </Table>
+                                            </Property>
+                                            <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
+                                              <TableColumnModel selectionModel="0">
+                                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                                  <Title/>
+                                                  <Editor/>
+                                                  <Renderer/>
+                                                </Column>
+                                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                                  <Title/>
+                                                  <Editor/>
+                                                  <Renderer/>
+                                                </Column>
+                                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                                  <Title/>
+                                                  <Editor/>
+                                                  <Renderer/>
+                                                </Column>
+                                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                                  <Title/>
+                                                  <Editor/>
+                                                  <Renderer/>
+                                                </Column>
+                                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                                  <Title/>
+                                                  <Editor/>
+                                                  <Renderer/>
+                                                </Column>
+                                                <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
+                                                  <Title/>
+                                                  <Editor/>
+                                                  <Renderer/>
+                                                </Column>
+                                              </TableColumnModel>
+                                            </Property>
+                                            <Property name="opaque" type="boolean" value="false"/>
+                                            <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
+                                              <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
+                                            </Property>
+                                          </Properties>
+                                          <Events>
+                                            <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="psmsTableMouseClicked"/>
+                                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="psmsTableKeyReleased"/>
+                                          </Events>
+                                        </Component>
+                                      </SubComponents>
+                                    </Container>
                                   </SubComponents>
                                 </Container>
                               </SubComponents>
                             </Container>
-                            <Container class="javax.swing.JPanel" name="psmJPanel">
+                            <Container class="javax.swing.JPanel" name="spectrumMainPanel">
                               <Properties>
                                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                                    <TitledBorder title="Peptide-Spectrum Matches"/>
+                                    <TitledBorder title="Spectrum &amp; Fragment Ions"/>
                                   </Border>
                                 </Property>
                                 <Property name="opaque" type="boolean" value="false"/>
@@ -654,206 +777,142 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="spectraScrollPane" pref="418" max="32767" attributes="0"/>
+                                          <Component id="spectrumJTabbedPane" pref="475" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                 </DimensionLayout>
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="spectraScrollPane" pref="119" max="32767" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                      </Group>
+                                      <Component id="spectrumJTabbedPane" alignment="1" pref="229" max="32767" attributes="0"/>
                                   </Group>
                                 </DimensionLayout>
                               </Layout>
                               <SubComponents>
-                                <Container class="javax.swing.JScrollPane" name="spectraScrollPane">
+                                <Container class="javax.swing.JTabbedPane" name="spectrumJTabbedPane">
                                   <Properties>
-                                    <Property name="opaque" type="boolean" value="false"/>
+                                    <Property name="selectedIndex" type="int" value="2"/>
+                                    <Property name="tabPlacement" type="int" value="3"/>
                                   </Properties>
-                                  <AuxValues>
-                                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                                  </AuxValues>
+                                  <AccessibilityProperties>
+                                    <Property name="AccessibleContext.accessibleName" type="java.lang.String" value="Spectrum"/>
+                                  </AccessibilityProperties>
 
-                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                                   <SubComponents>
-                                    <Component class="javax.swing.JTable" name="psmsTable">
-                                      <Properties>
-                                        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                          <Table columnCount="7" rowCount="0">
-                                            <Column editable="false" title=" " type="java.lang.Integer"/>
-                                            <Column editable="false" title="Sequence" type="java.lang.String"/>
-                                            <Column editable="false" title="Modifications" type="java.lang.String"/>
-                                            <Column editable="false" title="Charge" type="java.lang.String"/>
-                                            <Column editable="false" title="Mass Error" type="java.lang.Double"/>
-                                            <Column editable="false" title="File" type="java.lang.String"/>
-                                            <Column editable="false" title="Title" type="java.lang.String"/>
-                                          </Table>
-                                        </Property>
-                                        <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
-                                          <TableColumnModel selectionModel="0">
-                                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                              <Title/>
-                                              <Editor/>
-                                              <Renderer/>
-                                            </Column>
-                                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                              <Title/>
-                                              <Editor/>
-                                              <Renderer/>
-                                            </Column>
-                                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                              <Title/>
-                                              <Editor/>
-                                              <Renderer/>
-                                            </Column>
-                                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                              <Title/>
-                                              <Editor/>
-                                              <Renderer/>
-                                            </Column>
-                                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                              <Title/>
-                                              <Editor/>
-                                              <Renderer/>
-                                            </Column>
-                                            <Column maxWidth="-1" minWidth="-1" prefWidth="-1" resizable="true">
-                                              <Title/>
-                                              <Editor/>
-                                              <Renderer/>
-                                            </Column>
-                                          </TableColumnModel>
-                                        </Property>
-                                        <Property name="opaque" type="boolean" value="false"/>
-                                        <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
-                                          <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
-                                        </Property>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="psmsTableMouseClicked"/>
-                                        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="psmsTableKeyReleased"/>
-                                      </Events>
-                                    </Component>
-                                  </SubComponents>
-                                </Container>
-                              </SubComponents>
-                            </Container>
-                          </SubComponents>
-                        </Container>
-                        <Container class="javax.swing.JSplitPane" name="spectrumFragmentIonJSplitPane">
-                          <Properties>
-                            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                              <Border info="null"/>
-                            </Property>
-                            <Property name="dividerLocation" type="int" value="200"/>
-                            <Property name="dividerSize" type="int" value="0"/>
-                            <Property name="resizeWeight" type="double" value="0.5"/>
-                            <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                              <Dimension value="[0, 0]"/>
-                            </Property>
-                            <Property name="opaque" type="boolean" value="false"/>
-                          </Properties>
-                          <Events>
-                            <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="spectrumFragmentIonJSplitPaneComponentResized"/>
-                          </Events>
-                          <Constraints>
-                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                              <JSplitPaneConstraints position="right"/>
-                            </Constraint>
-                          </Constraints>
-
-                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
-                          <SubComponents>
-                            <Container class="javax.swing.JPanel" name="spectrumJPanel">
-                              <Properties>
-                                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                                    <TitledBorder title="Spectrum"/>
-                                  </Border>
-                                </Property>
-                                <Property name="opaque" type="boolean" value="false"/>
-                              </Properties>
-                              <Constraints>
-                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                                  <JSplitPaneConstraints position="left"/>
-                                </Constraint>
-                              </Constraints>
-
-                              <Layout>
-                                <DimensionLayout dim="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="spectrumPanelSequenceFragmentIonJSplitPane" alignment="0" pref="188" max="32767" attributes="0"/>
-                                  </Group>
-                                </DimensionLayout>
-                                <DimensionLayout dim="1">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="1" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="spectrumPanelSequenceFragmentIonJSplitPane" pref="289" max="32767" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                </DimensionLayout>
-                              </Layout>
-                              <SubComponents>
-                                <Container class="javax.swing.JSplitPane" name="spectrumPanelSequenceFragmentIonJSplitPane">
-                                  <Properties>
-                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                      <Border info="null"/>
-                                    </Property>
-                                    <Property name="dividerLocation" type="int" value="200"/>
-                                    <Property name="dividerSize" type="int" value="0"/>
-                                    <Property name="orientation" type="int" value="0"/>
-                                    <Property name="opaque" type="boolean" value="false"/>
-                                  </Properties>
-
-                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
-                                  <SubComponents>
-                                    <Container class="javax.swing.JPanel" name="sequenceFragmentIonJPanel">
+                                    <Container class="javax.swing.JPanel" name="bubbleJPanel">
                                       <Properties>
                                         <Property name="opaque" type="boolean" value="false"/>
                                       </Properties>
                                       <Constraints>
-                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                                          <JSplitPaneConstraints position="top"/>
-                                        </Constraint>
-                                      </Constraints>
-
-                                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignGridBagLayout"/>
-                                    </Container>
-                                    <Container class="javax.swing.JPanel" name="spectrumGroupPanel">
-                                      <Properties>
-                                        <Property name="opaque" type="boolean" value="false"/>
-                                      </Properties>
-                                      <Constraints>
-                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                                          <JSplitPaneConstraints position="right"/>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                                          <JTabbedPaneConstraints tabName="Bubble">
+                                            <Property name="tabTitle" type="java.lang.String" value="Bubble"/>
+                                          </JTabbedPaneConstraints>
                                         </Constraint>
                                       </Constraints>
 
                                       <Layout>
                                         <DimensionLayout dim="0">
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="spectrumJToolBar" alignment="0" pref="188" max="32767" attributes="0"/>
-                                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                                  <Component id="spectrumPanel" alignment="0" pref="188" max="32767" attributes="0"/>
+                                              <EmptySpace min="0" pref="470" max="32767" attributes="0"/>
+                                          </Group>
+                                        </DimensionLayout>
+                                        <DimensionLayout dim="1">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <EmptySpace min="0" pref="201" max="32767" attributes="0"/>
+                                          </Group>
+                                        </DimensionLayout>
+                                      </Layout>
+                                    </Container>
+                                    <Container class="javax.swing.JPanel" name="fragmentIonJPanel">
+                                      <Properties>
+                                        <Property name="opaque" type="boolean" value="false"/>
+                                      </Properties>
+                                      <Constraints>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                                          <JTabbedPaneConstraints tabName="Fragment Ions">
+                                            <Property name="tabTitle" type="java.lang.String" value="Fragment Ions"/>
+                                          </JTabbedPaneConstraints>
+                                        </Constraint>
+                                      </Constraints>
+
+                                      <Layout>
+                                        <DimensionLayout dim="0">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="fragmentIonsJScrollPane" pref="450" max="32767" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
                                               </Group>
                                           </Group>
                                         </DimensionLayout>
                                         <DimensionLayout dim="1">
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Group type="102" alignment="0" attributes="0">
-                                                  <EmptySpace pref="225" max="32767" attributes="0"/>
-                                                  <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="fragmentIonsJScrollPane" pref="179" max="32767" attributes="0"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
                                               </Group>
-                                              <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                                  <Group type="102" alignment="0" attributes="0">
-                                                      <Component id="spectrumPanel" pref="222" max="32767" attributes="0"/>
-                                                      <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
-                                                  </Group>
+                                          </Group>
+                                        </DimensionLayout>
+                                      </Layout>
+                                      <SubComponents>
+                                        <Container class="javax.swing.JScrollPane" name="fragmentIonsJScrollPane">
+                                          <AuxValues>
+                                            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                                          </AuxValues>
+
+                                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                                          <SubComponents>
+                                            <Component class="javax.swing.JTable" name="fragmentIonsJTable">
+                                              <Properties>
+                                                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                                  <Table columnCount="7" rowCount="0">
+                                                    <Column editable="false" title=" " type="java.lang.Integer"/>
+                                                    <Column editable="false" title="b+" type="java.lang.Double"/>
+                                                    <Column editable="false" title="b++" type="java.lang.Double"/>
+                                                    <Column editable="false" title="AA" type="java.lang.String"/>
+                                                    <Column editable="false" title="y++" type="java.lang.Double"/>
+                                                    <Column editable="false" title="y+" type="java.lang.Double"/>
+                                                    <Column editable="false" title="  " type="java.lang.Integer"/>
+                                                  </Table>
+                                                </Property>
+                                              </Properties>
+                                            </Component>
+                                          </SubComponents>
+                                        </Container>
+                                      </SubComponents>
+                                    </Container>
+                                    <Container class="javax.swing.JPanel" name="spectrumJPanel">
+                                      <Properties>
+                                        <Property name="opaque" type="boolean" value="false"/>
+                                      </Properties>
+                                      <Constraints>
+                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                                          <JTabbedPaneConstraints tabName="Spectrum">
+                                            <Property name="tabTitle" type="java.lang.String" value="Spectrum"/>
+                                          </JTabbedPaneConstraints>
+                                        </Constraint>
+                                      </Constraints>
+
+                                      <Layout>
+                                        <DimensionLayout dim="0">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="102" attributes="0">
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="spectrumJToolBar" pref="450" max="32767" attributes="0"/>
+                                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                              </Group>
+                                              <Component id="spectrumSplitPane" alignment="0" pref="470" max="32767" attributes="0"/>
+                                          </Group>
+                                        </DimensionLayout>
+                                        <DimensionLayout dim="1">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Group type="102" alignment="1" attributes="0">
+                                                  <Component id="spectrumSplitPane" pref="174" max="32767" attributes="0"/>
+                                                  <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                                                  <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                                               </Group>
                                           </Group>
                                         </DimensionLayout>
@@ -870,16 +929,6 @@
 
                                           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
                                           <SubComponents>
-                                            <Component class="javax.swing.JLabel" name="fragmentIonsLabel">
-                                              <Properties>
-                                                <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
-                                                  <FontInfo relative="true">
-                                                    <Font bold="true" component="fragmentIonsLabel" property="font" relativeSize="true" size="0"/>
-                                                  </FontInfo>
-                                                </Property>
-                                                <Property name="text" type="java.lang.String" value=" Ions: "/>
-                                              </Properties>
-                                            </Component>
                                             <Component class="javax.swing.JToggleButton" name="aIonToggleButton">
                                               <Properties>
                                                 <Property name="text" type="java.lang.String" value="a"/>
@@ -1056,77 +1105,46 @@
                                             </Component>
                                           </SubComponents>
                                         </Container>
-                                        <Container class="javax.swing.JPanel" name="spectrumPanel">
+                                        <Container class="javax.swing.JSplitPane" name="spectrumSplitPane">
                                           <Properties>
+                                            <Property name="dividerLocation" type="int" value="80"/>
+                                            <Property name="dividerSize" type="int" value="0"/>
+                                            <Property name="orientation" type="int" value="0"/>
                                             <Property name="opaque" type="boolean" value="false"/>
                                           </Properties>
 
-                                          <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+                                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
+                                          <SubComponents>
+                                            <Container class="javax.swing.JPanel" name="sequenceFragmentIonJPanel">
+                                              <Properties>
+                                                <Property name="opaque" type="boolean" value="false"/>
+                                              </Properties>
+                                              <Constraints>
+                                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                                                  <JSplitPaneConstraints position="top"/>
+                                                </Constraint>
+                                              </Constraints>
+
+                                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
+                                                <Property name="verticalGap" type="int" value="0"/>
+                                              </Layout>
+                                            </Container>
+                                            <Container class="javax.swing.JPanel" name="spectrumPanel">
+                                              <Properties>
+                                                <Property name="opaque" type="boolean" value="false"/>
+                                              </Properties>
+                                              <Constraints>
+                                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                                                  <JSplitPaneConstraints position="right"/>
+                                                </Constraint>
+                                              </Constraints>
+
+                                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+                                            </Container>
+                                          </SubComponents>
                                         </Container>
                                       </SubComponents>
                                     </Container>
-                                  </SubComponents>
-                                </Container>
-                              </SubComponents>
-                            </Container>
-                            <Container class="javax.swing.JPanel" name="fragmentIonJPanel">
-                              <Properties>
-                                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                  <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                                    <TitledBorder title="Fragment Ions"/>
-                                  </Border>
-                                </Property>
-                                <Property name="opaque" type="boolean" value="false"/>
-                              </Properties>
-                              <Constraints>
-                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                                  <JSplitPaneConstraints position="right"/>
-                                </Constraint>
-                              </Constraints>
-
-                              <Layout>
-                                <DimensionLayout dim="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="fragmentIonsJScrollPane" pref="217" max="32767" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                </DimensionLayout>
-                                <DimensionLayout dim="1">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="fragmentIonsJScrollPane" pref="289" max="32767" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                </DimensionLayout>
-                              </Layout>
-                              <SubComponents>
-                                <Container class="javax.swing.JScrollPane" name="fragmentIonsJScrollPane">
-                                  <AuxValues>
-                                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                                  </AuxValues>
-
-                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                                  <SubComponents>
-                                    <Component class="javax.swing.JTable" name="fragmentIonsJTable">
-                                      <Properties>
-                                        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                          <Table columnCount="7" rowCount="0">
-                                            <Column editable="false" title=" " type="java.lang.Integer"/>
-                                            <Column editable="false" title="b+" type="java.lang.Double"/>
-                                            <Column editable="false" title="b++" type="java.lang.Double"/>
-                                            <Column editable="false" title="AA" type="java.lang.String"/>
-                                            <Column editable="false" title="y++" type="java.lang.Double"/>
-                                            <Column editable="false" title="y+" type="java.lang.Double"/>
-                                            <Column editable="false" title="  " type="java.lang.Integer"/>
-                                          </Table>
-                                        </Property>
-                                      </Properties>
-                                    </Component>
                                   </SubComponents>
                                 </Container>
                               </SubComponents>
@@ -1141,11 +1159,11 @@
             </Container>
             <Container class="javax.swing.JPanel" name="allProteinsJPanel">
               <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JPanel() {&#xd;&#xa;            @Override&#xd;&#xa;            protected void paintComponent(Graphics grphcs) {&#xd;&#xa;                Graphics2D g2d = (Graphics2D) grphcs;&#xd;&#xa;                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,&#xd;&#xa;                        RenderingHints.VALUE_ANTIALIAS_ON);&#xd;&#xa;&#xd;&#xa;                GradientPaint gp = new GradientPaint(0, 0, &#xd;&#xa;                        getBackground().brighter().brighter(), 0, getHeight(),&#xd;&#xa;                        getBackground().darker());&#xd;&#xa;                &#xd;&#xa;                g2d.setPaint(gp);&#xd;&#xa;                g2d.fillRect(0, 0, getWidth(), getHeight());&#xd;&#xa;                &#xd;&#xa;                super.paintComponent(grphcs);&#xd;&#xa;            }            &#xd;&#xa;        }&#xd;&#xa;"/>
-              </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="Proteins">
@@ -1159,7 +1177,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jPanel6" max="32767" attributes="0"/>
+                          <Component id="allProteinsInnerPanel" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -1168,14 +1186,14 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jPanel6" max="32767" attributes="0"/>
+                          <Component id="allProteinsInnerPanel" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Container class="javax.swing.JPanel" name="jPanel6">
+                <Container class="javax.swing.JPanel" name="allProteinsInnerPanel">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -1190,7 +1208,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="allProteinsJScrollPane" pref="867" max="32767" attributes="0"/>
+                              <Component id="allProteinsJScrollPane" pref="925" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1199,7 +1217,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="allProteinsJScrollPane" pref="703" max="32767" attributes="0"/>
+                              <Component id="allProteinsJScrollPane" pref="671" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1282,11 +1300,11 @@
             </Container>
             <Container class="javax.swing.JPanel" name="allPeptidesJPanel">
               <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JPanel() {&#xd;&#xa;            @Override&#xd;&#xa;            protected void paintComponent(Graphics grphcs) {&#xd;&#xa;                Graphics2D g2d = (Graphics2D) grphcs;&#xd;&#xa;                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,&#xd;&#xa;                        RenderingHints.VALUE_ANTIALIAS_ON);&#xd;&#xa;&#xd;&#xa;                GradientPaint gp = new GradientPaint(0, 0, &#xd;&#xa;                        getBackground().brighter().brighter(), 0, getHeight(),&#xd;&#xa;                        getBackground().darker());&#xd;&#xa;                &#xd;&#xa;                g2d.setPaint(gp);&#xd;&#xa;                g2d.fillRect(0, 0, getWidth(), getHeight());&#xd;&#xa;                &#xd;&#xa;                super.paintComponent(grphcs);&#xd;&#xa;            }            &#xd;&#xa;        }&#xd;&#xa;"/>
-              </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="Peptides">
@@ -1298,11 +1316,11 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="919" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="977" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="jPanel8" max="32767" attributes="0"/>
+                              <Component id="allPeptidesInnerPanel" max="32767" attributes="0"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1310,11 +1328,11 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="774" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="742" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jPanel8" max="32767" attributes="0"/>
+                              <Component id="allPeptidesInnerPanel" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1322,7 +1340,7 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Container class="javax.swing.JPanel" name="jPanel8">
+                <Container class="javax.swing.JPanel" name="allPeptidesInnerPanel">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -1335,11 +1353,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="887" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="945" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="allPeptidesJScrollPane" pref="867" max="32767" attributes="0"/>
+                                  <Component id="allPeptidesJScrollPane" pref="925" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1347,11 +1365,11 @@
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="725" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="693" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="allPeptidesJScrollPane" pref="703" max="32767" attributes="0"/>
+                                  <Component id="allPeptidesJScrollPane" pref="671" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1441,11 +1459,11 @@
             </Container>
             <Container class="javax.swing.JPanel" name="allSpectraJPanel">
               <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
-              <AuxValues>
-                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JPanel() {&#xd;&#xa;            @Override&#xd;&#xa;            protected void paintComponent(Graphics grphcs) {&#xd;&#xa;                Graphics2D g2d = (Graphics2D) grphcs;&#xd;&#xa;                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,&#xd;&#xa;                        RenderingHints.VALUE_ANTIALIAS_ON);&#xd;&#xa;&#xd;&#xa;                GradientPaint gp = new GradientPaint(0, 0, &#xd;&#xa;                        getBackground().brighter().brighter(), 0, getHeight(),&#xd;&#xa;                        getBackground().darker());&#xd;&#xa;                &#xd;&#xa;                g2d.setPaint(gp);&#xd;&#xa;                g2d.fillRect(0, 0, getWidth(), getHeight());&#xd;&#xa;                &#xd;&#xa;                super.paintComponent(grphcs);&#xd;&#xa;            }            &#xd;&#xa;        }&#xd;&#xa;"/>
-              </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="Spectra">
@@ -1457,11 +1475,11 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="919" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="977" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jPanel7" max="32767" attributes="0"/>
+                              <Component id="allSpectraInnerPanel" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1469,11 +1487,11 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="774" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="742" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jPanel7" max="32767" attributes="0"/>
+                              <Component id="allSpectraInnerPanel" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1481,7 +1499,7 @@
                 </DimensionLayout>
               </Layout>
               <SubComponents>
-                <Container class="javax.swing.JPanel" name="jPanel7">
+                <Container class="javax.swing.JPanel" name="allSpectraInnerPanel">
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -1494,11 +1512,11 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="887" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="945" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="allSpectraJScrollPane" pref="867" max="32767" attributes="0"/>
+                                  <Component id="allSpectraJScrollPane" pref="925" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1506,11 +1524,11 @@
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="725" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="693" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="allSpectraJScrollPane" pref="703" max="32767" attributes="0"/>
+                                  <Component id="allSpectraJScrollPane" pref="671" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1652,8 +1670,8 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Quantification">
-                    <Property name="tabTitle" type="java.lang.String" value="Quantification"/>
+                  <JTabbedPaneConstraints tabName="Quant.">
+                    <Property name="tabTitle" type="java.lang.String" value="Quant."/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -1680,8 +1698,8 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="PTM Analysis">
-                    <Property name="tabTitle" type="java.lang.String" value="PTM Analysis"/>
+                  <JTabbedPaneConstraints tabName="PTMs">
+                    <Property name="tabTitle" type="java.lang.String" value="PTMs"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>

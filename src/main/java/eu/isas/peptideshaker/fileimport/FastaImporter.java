@@ -122,6 +122,7 @@ public class FastaImporter {
                 db.importDataBase(fastaHeaderParser, fastaFile);
                 proteomicAnalysis.setSequenceDataBase(db);
                 waitingDialog.appendReport("FASTA file import completed.");
+                waitingDialog.increaseProgressValue();
             } catch (FileNotFoundException e) {
                 waitingDialog.appendReport("File " + fastaFile + " was not found. Please open another FASTA file.");
             } catch (Exception e) {
