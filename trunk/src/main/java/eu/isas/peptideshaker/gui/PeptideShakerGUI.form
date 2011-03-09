@@ -1107,6 +1107,9 @@
                                         </Container>
                                         <Container class="javax.swing.JSplitPane" name="spectrumSplitPane">
                                           <Properties>
+                                            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                              <Border info="null"/>
+                                            </Property>
                                             <Property name="dividerLocation" type="int" value="80"/>
                                             <Property name="dividerSize" type="int" value="0"/>
                                             <Property name="orientation" type="int" value="0"/>
@@ -1115,7 +1118,7 @@
 
                                           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
                                           <SubComponents>
-                                            <Container class="javax.swing.JPanel" name="sequenceFragmentIonJPanel">
+                                            <Container class="javax.swing.JPanel" name="sequenceFragmentIonPlotsJPanel">
                                               <Properties>
                                                 <Property name="opaque" type="boolean" value="false"/>
                                               </Properties>
@@ -1125,9 +1128,7 @@
                                                 </Constraint>
                                               </Constraints>
 
-                                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignFlowLayout">
-                                                <Property name="verticalGap" type="int" value="0"/>
-                                              </Layout>
+                                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
                                             </Container>
                                             <Container class="javax.swing.JPanel" name="spectrumPanel">
                                               <Properties>
