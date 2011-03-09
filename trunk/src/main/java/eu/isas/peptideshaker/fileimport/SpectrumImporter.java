@@ -97,12 +97,12 @@ public class SpectrumImporter {
 //                    queue();
 //                }
 
-                // @TODO: has to be a better way of doing this...
+                // @TODO: has to be a better way of doing this...!!!
                 // wait until the identifications are imported
                 while (parent.needQueue()) {
                     int counter=0;
 
-                    for (int i=0; i<100000; i++) {
+                    for (int i=0; i<10000000; i++) {
                         counter++;
                     }
                 }
@@ -117,6 +117,8 @@ public class SpectrumImporter {
                     } else {
                         proteomicAnalysis.getSpectrumCollection().addSpectra(spectrumFile);
                     }
+
+                    waitingDialog.increaseProgressValue();
                 }
             } catch (InterruptedException e) {
                 waitingDialog.appendReport("Synchronization issue between identification and spectra import. Import failed.");

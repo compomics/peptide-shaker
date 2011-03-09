@@ -106,9 +106,6 @@
           </Layout>
           <SubComponents>
             <Component class="javax.swing.JProgressBar" name="progressBar">
-              <Properties>
-                <Property name="indeterminate" type="boolean" value="true"/>
-              </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="jScrollPane1">
               <AuxValues>

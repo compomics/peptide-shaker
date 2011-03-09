@@ -855,6 +855,14 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
             WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI, true, experiment.getReference());
 
+            int progressCounter = idFiles.size() + spectrumFiles.size();
+
+            if (fastaFile != null) {
+                progressCounter++;
+            }
+
+            waitingDialog.setMaxProgressValue(progressCounter);
+
             boolean needDialog = false;
 
             // load the identification files

@@ -73,6 +73,22 @@ public class WaitingDialog extends javax.swing.JDialog {
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
     }
 
+    /**
+     * Set the maximum value of the progress bar.
+     *
+     * @param maxProgressValue the max value
+     */
+    public void setMaxProgressValue (int maxProgressValue) {
+        progressBar.setMaximum(maxProgressValue);
+    }
+
+    /**
+     * Increase the progress bar value by one "counter".
+     */
+    public void increaseProgressValue() {
+        progressBar.setValue(progressBar.getValue() + 1);
+    }
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -94,8 +110,6 @@ public class WaitingDialog extends javax.swing.JDialog {
         setTitle("Importing Data - Please Wait...");
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Data Import Progress"));
-
-        progressBar.setIndeterminate(true);
 
         reportArea.setBackground(new java.awt.Color(254, 254, 254));
         reportArea.setColumns(20);
