@@ -48,8 +48,10 @@ import eu.isas.peptideshaker.utils.FragmentIonTableCellRenderer;
 import eu.isas.peptideshaker.utils.Properties;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Toolkit;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -65,10 +67,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -78,7 +82,15 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.StandardXYBarPainter;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.data.statistics.HistogramDataset;
+import org.jfree.data.statistics.HistogramType;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -89,6 +101,12 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDialogParent {
 
+    /**
+     * Turns of the gradient painting for the bar charts.
+     */
+    static {
+        XYBarRenderer.setDefaultBarPainter(new StandardXYBarPainter());
+    }
     /**
      * If set to true all messages will be sent to a log file.
      */
@@ -404,7 +422,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         twoChargesToggleButton = new javax.swing.JToggleButton();
         moreThanTwoChargesToggleButton = new javax.swing.JToggleButton();
         spectrumSplitPane = new javax.swing.JSplitPane();
-        sequenceFragmentIonJPanel = new javax.swing.JPanel();
+        sequenceFragmentIonPlotsJPanel = new javax.swing.JPanel();
         spectrumPanel = new javax.swing.JPanel();
         allProteinsJPanel = new javax.swing.JPanel();
         allProteinsInnerPanel = new javax.swing.JPanel();
@@ -923,14 +941,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         spectrumJToolBar.add(moreThanTwoChargesToggleButton);
 
+        spectrumSplitPane.setBorder(null);
         spectrumSplitPane.setDividerLocation(80);
         spectrumSplitPane.setDividerSize(0);
         spectrumSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         spectrumSplitPane.setOpaque(false);
 
-        sequenceFragmentIonJPanel.setOpaque(false);
-        sequenceFragmentIonJPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.CENTER, 5, 0));
-        spectrumSplitPane.setTopComponent(sequenceFragmentIonJPanel);
+        sequenceFragmentIonPlotsJPanel.setOpaque(false);
+        sequenceFragmentIonPlotsJPanel.setLayout(new javax.swing.BoxLayout(sequenceFragmentIonPlotsJPanel, javax.swing.BoxLayout.LINE_AXIS));
+        spectrumSplitPane.setTopComponent(sequenceFragmentIonPlotsJPanel);
 
         spectrumPanel.setOpaque(false);
         spectrumPanel.setLayout(new java.awt.BorderLayout());
@@ -2072,6 +2091,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     double[] mzValues = new double[peaks.size()];
                     double[] intValues = new double[peaks.size()];
 
+                    ArrayList<Double> allPeakIntensities = new ArrayList<Double>();
+                    ArrayList<Double> annotatedPeakIntensities = new ArrayList<Double>();
+
                     Iterator<Peak> iterator = peaks.iterator();
 
                     int index = 0;
@@ -2082,6 +2104,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                         mzValues[index] = peak.mz;
                         intValues[index++] = peak.intensity;
+
+                        if (peak.intensity > getIntensityLimit(currentSpectrum)) {
+                            allPeakIntensities.add(peak.intensity);
+                        }
                     }
 
                     // add the data to the spectrum panel
@@ -2135,6 +2161,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                                     SpectrumPanel.determineColorOfPeak(fragmentIon.getIonType() + fragmentIon.getNeutralLoss()),
                                     annotation));
 
+                            annotatedPeakIntensities.add(ionMatch.peak.intensity);
+
                             if ((fragmentIon.getType() == PeptideFragmentIon.B_ION
                                     || fragmentIon.getType() == PeptideFragmentIon.Y_ION) && currentCharge == 1) {
                                 fragmentIon.setIntensity(ionMatch.peak.intensity);
@@ -2154,6 +2182,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
 
                     // clear the fragment ion table
+
+                    // @TODO: this code should be simplified and moved to a separate class
+
                     while (fragmentIonsJTable.getRowCount() > 0) {
                         ((DefaultTableModel) fragmentIonsJTable.getModel()).removeRow(0);
                     }
@@ -2247,12 +2278,136 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
 
                     // create the sequence fragment ion view
-                    sequenceFragmentIonJPanel.removeAll();
+                    sequenceFragmentIonPlotsJPanel.removeAll();
                     SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(peptideSequence, sequenceAnnotations, false); // @TODO: what about modified sequences??
+                    sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                     sequenceFragmentationPanel.setOpaque(false);
-                    sequenceFragmentIonJPanel.add(sequenceFragmentationPanel);
-                    sequenceFragmentIonJPanel.revalidate();
-                    sequenceFragmentIonJPanel.repaint();
+                    sequenceFragmentationPanel.setToolTipText("Sequence Fragmentation");
+                    sequenceFragmentIonPlotsJPanel.add(sequenceFragmentationPanel);
+
+
+                    // create the peak histograms
+
+                    // @TODO: this code should be simplified and moved to a separate class
+
+                    int bins = 50;
+
+                    // the all peaks histogram
+                    double[] intensities = new double[allPeakIntensities.size()];
+
+                    for (int i = 0; i < allPeakIntensities.size(); i++) {
+                        intensities[i] = allPeakIntensities.get(i);
+                    }
+
+                    HistogramDataset dataset = new HistogramDataset();
+                    dataset.setType(HistogramType.SCALE_AREA_TO_1);
+                    dataset.addSeries("Histogram", intensities, bins);
+
+                    JFreeChart chart = ChartFactory.createHistogram(null, null, null,
+                            dataset, PlotOrientation.VERTICAL, false, true, false);
+
+                    ChartPanel chartPanel = new ChartPanel(chart) {
+
+                        @Override
+                        public String getToolTipText(MouseEvent e) {
+                            return "All Peaks";
+                        }
+
+                        @Override
+                        public String getToolTipText() {
+                            return "All Peaks";
+                        }
+                    };
+
+                    chartPanel.setBorder(null);
+                    chart.setBorderVisible(false);
+
+                    XYPlot plot = chart.getXYPlot();
+
+                    // set up the chart renderer
+                    XYBarRenderer renderer = new XYBarRenderer();
+                    renderer.setShadowVisible(false);
+                    renderer.setSeriesPaint(0, Color.ORANGE);
+                    plot.setRenderer(renderer);
+
+                    // hide unwanted chart details
+                    plot.getRangeAxis().setVisible(false);
+                    plot.getDomainAxis().setVisible(false);
+                    plot.setRangeGridlinesVisible(false);
+                    plot.setDomainGridlinesVisible(false);
+                    plot.setOutlineVisible(false);
+
+                    plot.setBackgroundPaint(Color.WHITE);
+                    chartPanel.setBackground(Color.WHITE);
+                    chart.setBackgroundPaint(Color.WHITE);
+
+                    chartPanel.setDomainZoomable(false);
+                    chartPanel.setRangeZoomable(false);
+                    chartPanel.setPopupMenu(null);
+                    chartPanel.setDisplayToolTips(true);
+
+                    sequenceFragmentIonPlotsJPanel.add(chartPanel);
+
+
+                    // the annotated peaks histogram
+                    double[] annotatedIntensities = new double[annotatedPeakIntensities.size()];
+
+                    for (int i = 0; i < annotatedPeakIntensities.size(); i++) {
+                        annotatedIntensities[i] = annotatedPeakIntensities.get(i);
+                    }
+
+                    dataset = new HistogramDataset();
+                    dataset.setType(HistogramType.SCALE_AREA_TO_1);
+                    dataset.addSeries("Histogram", annotatedIntensities, bins);
+
+                    chart = ChartFactory.createHistogram(null, null, null,
+                            dataset, PlotOrientation.VERTICAL, false, false, false);
+
+                    chartPanel = new ChartPanel(chart) {
+
+                        @Override
+                        public String getToolTipText(MouseEvent e) {
+                            return "Annotated Peaks";
+                        }
+
+                        @Override
+                        public String getToolTipText() {
+                            return "Annotated Peaks";
+                        }
+                    };
+
+                    chartPanel.setBorder(null);
+                    chart.setBorderVisible(false);
+
+                    plot = chart.getXYPlot();
+
+                    // set up the chart renderer
+                    renderer = new XYBarRenderer();
+                    renderer.setShadowVisible(false);
+                    renderer.setSeriesPaint(0, sparklineColor);
+                    plot.setRenderer(renderer);
+
+                    // hide unwanted chart details
+                    plot.getRangeAxis().setVisible(false);
+                    plot.getDomainAxis().setVisible(false);
+                    plot.setRangeGridlinesVisible(false);
+                    plot.setDomainGridlinesVisible(false);
+                    plot.setOutlineVisible(false);
+
+                    plot.setBackgroundPaint(Color.WHITE);
+                    chartPanel.setBackground(Color.WHITE);
+                    chart.setBackgroundPaint(Color.WHITE);
+
+                    chartPanel.setDomainZoomable(false);
+                    chartPanel.setRangeZoomable(false);
+                    chartPanel.setPopupMenu(null);
+                    chartPanel.setDisplayToolTips(true);
+
+                    sequenceFragmentIonPlotsJPanel.add(chartPanel);
+
+
+                    sequenceFragmentIonPlotsJPanel.revalidate();
+                    sequenceFragmentIonPlotsJPanel.repaint();
                 }
             } catch (MzMLUnmarshallerException e) {
                 e.printStackTrace();
@@ -2961,7 +3116,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
     private javax.swing.JPanel sequenceCoverageJPanel;
-    private javax.swing.JPanel sequenceFragmentIonJPanel;
+    private javax.swing.JPanel sequenceFragmentIonPlotsJPanel;
     private javax.swing.JCheckBoxMenuItem sequenceFragmentationJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
     private javax.swing.JScrollPane spectraScrollPane;
