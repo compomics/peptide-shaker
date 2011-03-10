@@ -86,12 +86,12 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.DefaultXYItemRenderer;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
 import org.jfree.data.xy.DefaultXYDataset;
-import org.jfree.data.xy.DefaultXYZDataset;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -2097,7 +2097,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     double highestMzValue = 0.0;
                     double totalIntensity = 0.0;
 
-                    ArrayList<Double> allPeakIntensities = new ArrayList<Double>();
+                    ArrayList<Double> nonAnnotatedPeakIntensities = new ArrayList<Double>();
                     ArrayList<Double> annotatedPeakIntensities = new ArrayList<Double>();
                     ArrayList<IonMatch> annotatedIons = new ArrayList<IonMatch>();
 
@@ -2113,7 +2113,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         intValues[index++] = peak.intensity;
 
                         if (peak.intensity > getIntensityLimit(currentSpectrum)) {
-                            allPeakIntensities.add(peak.intensity);
+                            nonAnnotatedPeakIntensities.add(peak.intensity);
                         }
 
                         if (peak.intensity > mostIntensePeak) {
@@ -2180,7 +2180,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                                     SpectrumPanel.determineColorOfPeak(fragmentIon.getIonType() + fragmentIon.getNeutralLoss()),
                                     annotation));
 
+                            // @TODO: only include currently selected fragment ion types!!
                             annotatedPeakIntensities.add(ionMatch.peak.intensity);
+                            nonAnnotatedPeakIntensities.remove(ionMatch.peak.intensity);
 
                             if ((fragmentIon.getType() == PeptideFragmentIon.B_ION
                                     || fragmentIon.getType() == PeptideFragmentIon.Y_ION) && currentCharge == 1) {
@@ -2321,20 +2323,28 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     // @TODO: this code should be simplified and moved to a separate class
 
-                    int bins = 50;
+                    int bins = 50; // @TODO: make this a user selection!
 
-                    // the all peaks histogram
-                    double[] allIntensities = new double[allPeakIntensities.size()];
+                    // the non annotated peaks histogram
+                    double[] nonAnnotatedIntensities = new double[nonAnnotatedPeakIntensities.size()];
 
-                    if (allIntensities.length > 0) {
+                    // the annotated peaks histogram
+                    double[] annotatedIntensities = new double[annotatedPeakIntensities.size()];
 
-                        for (int i = 0; i < allPeakIntensities.size(); i++) {
-                            allIntensities[i] = allPeakIntensities.get(i);
+                    if (nonAnnotatedIntensities.length > 0 && annotatedIntensities.length > 0) {
+
+                        for (int i = 0; i < nonAnnotatedPeakIntensities.size(); i++) {
+                            nonAnnotatedIntensities[i] = nonAnnotatedPeakIntensities.get(i);
+                        }
+
+                        for (int i = 0; i < annotatedPeakIntensities.size(); i++) {
+                            annotatedIntensities[i] = annotatedPeakIntensities.get(i);
                         }
 
                         HistogramDataset dataset = new HistogramDataset();
                         dataset.setType(HistogramType.SCALE_AREA_TO_1);
-                        dataset.addSeries("All", allIntensities, bins);
+                        dataset.addSeries("NonAnnotated", nonAnnotatedIntensities, bins, 0, mostIntensePeak);
+                        dataset.addSeries("Annotated", annotatedIntensities, bins, 0, mostIntensePeak);
 
                         JFreeChart chart = ChartFactory.createHistogram(null, null, null,
                                 dataset, PlotOrientation.VERTICAL, false, true, false);
@@ -2343,12 +2353,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                             @Override
                             public String getToolTipText(MouseEvent e) {
-                                return "Intensity Distribution - All Peaks";
+                                return "Intensity Distribution";
                             }
 
                             @Override
                             public String getToolTipText() {
-                                return "Intensity Distribution - All Peaks";
+                                return "Intensity Distribution";
                             }
                         };
 
@@ -2360,7 +2370,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         // set up the chart renderer
                         XYBarRenderer renderer = new XYBarRenderer();
                         renderer.setShadowVisible(false);
-                        renderer.setSeriesPaint(0, Color.LIGHT_GRAY);
+                        renderer.setSeriesPaint(0, new Color(210, 210, 210, 150)); // @TODO: make this selectable by the user
+                        renderer.setSeriesPaint(1, sparklineColor);
                         plot.setRenderer(renderer);
 
                         // hide unwanted chart details
@@ -2382,105 +2393,69 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         sequenceFragmentIonPlotsJPanel.add(chartPanel);
                     }
 
-                    // the annotated peaks histogram
-                    double[] annotatedIntensities = new double[annotatedPeakIntensities.size()];
-
-                    if (annotatedIntensities.length > 0) {
-
-                        for (int i = 0; i < annotatedPeakIntensities.size(); i++) {
-                            annotatedIntensities[i] = annotatedPeakIntensities.get(i);
-                        }
-
-                        HistogramDataset dataset = new HistogramDataset();
-                        dataset.setType(HistogramType.SCALE_AREA_TO_1);
-                        dataset.addSeries("Histogram", annotatedIntensities, bins, 0, mostIntensePeak);
-
-                        JFreeChart chart = ChartFactory.createHistogram(null, null, null,
-                                dataset, PlotOrientation.VERTICAL, false, false, false);
-
-                        ChartPanel chartPanel = new ChartPanel(chart) {
-
-                            @Override
-                            public String getToolTipText(MouseEvent e) {
-                                return "Intensity Distribution - Annotated Peaks";
-                            }
-
-                            @Override
-                            public String getToolTipText() {
-                                return "Intensity Distribution - Annotated Peaks";
-                            }
-                        };
-
-                        chartPanel.setBorder(null);
-                        chart.setBorderVisible(false);
-
-                        XYPlot plot = chart.getXYPlot();
-
-                        // set up the chart renderer
-                        XYBarRenderer renderer = new XYBarRenderer();
-                        renderer.setShadowVisible(false);
-                        renderer.setSeriesPaint(0, sparklineColor);
-                        plot.setRenderer(renderer);
-
-                        // hide unwanted chart details
-                        plot.getRangeAxis().setVisible(false);
-                        plot.getDomainAxis().setVisible(false);
-                        plot.setRangeGridlinesVisible(false);
-                        plot.setDomainGridlinesVisible(false);
-                        plot.setOutlineVisible(false);
-
-                        plot.setBackgroundPaint(Color.WHITE);
-                        chartPanel.setBackground(Color.WHITE);
-                        chart.setBackgroundPaint(Color.WHITE);
-
-                        chartPanel.setDomainZoomable(false);
-                        chartPanel.setRangeZoomable(false);
-                        chartPanel.setPopupMenu(null);
-                        chartPanel.setDisplayToolTips(true);
-
-                        sequenceFragmentIonPlotsJPanel.add(chartPanel);
-                    }
-
-
+                    
 
                     // mass error plot
 
                     // @TODO: move to a separate class/method!
 
-                    boolean useScatterPlot = true;
+                    boolean useIntensityGrading = false;  // @TODO: make this selectable by the user?
 
-                    DefaultXYZDataset xyzDataset = new DefaultXYZDataset();
                     DefaultXYDataset xyDataset = new DefaultXYDataset();
 
-                    double[][] dataXYZ = new double[3][annotatedIons.size()];
-                    double[][] dataXY = new double[2][annotatedIons.size()];
+                    ArrayList<Color> colors = new ArrayList<Color>();
+
+                    // find the most intense annotated peak
+                    double maxAnnotatedIntensity = 0.0;
 
                     for (int i = 0; i < annotatedIons.size(); i++) {
 
                         IonMatch ionMatch = (IonMatch) annotatedIons.get(i);
                         PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
 
-                        dataXYZ[0][i] = ionMatch.peak.mz;
-                        dataXYZ[1][i] = ionMatch.getError();
-                        dataXYZ[2][i] = (fragmentIon.getIntensity() / totalIntensity) * 2; // @TODO: check the scaling factor
-
-                        dataXY[0][i] = ionMatch.peak.mz;
-                        dataXY[1][i] = ionMatch.getError();
+                        if (fragmentIon.getIntensity() > maxAnnotatedIntensity) {
+                            maxAnnotatedIntensity = fragmentIon.getIntensity();
+                        }
                     }
 
-                    xyzDataset.addSeries("Mass Errors", dataXYZ);
-                    xyDataset.addSeries("Mass Errors", dataXY);
+                    for (int i = 0; i < annotatedIons.size(); i++) {
 
-                    JFreeChart chart;
+                        double[][] dataXY = new double[2][1];
 
-                    if (!useScatterPlot) {
-                        chart = ChartFactory.createBubbleChart(null, null, null, xyzDataset, PlotOrientation.VERTICAL, false, false, false);
-                    } else {
-                        chart = ChartFactory.createScatterPlot(null, null, null, xyzDataset, PlotOrientation.VERTICAL, false, false, false);
+                        IonMatch ionMatch = (IonMatch) annotatedIons.get(i);
+                        PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
+
+                        dataXY[0][0] = ionMatch.peak.mz;
+                        dataXY[1][0] = ionMatch.getError();
+
+                        xyDataset.addSeries(i, dataXY);
+
+                        int alphaLevel = Double.valueOf((fragmentIon.getIntensity() / totalIntensity) / (maxAnnotatedIntensity / totalIntensity) * 255).intValue();
+
+                        colors.add(new Color(255, 0, 0, alphaLevel)); // @TODO: make color selectable by the user?
                     }
 
+                    JFreeChart chart = ChartFactory.createScatterPlot(null, null, null, xyDataset, PlotOrientation.VERTICAL, false, false, false);
+                    
                     // fine tune the chart properites
                     XYPlot plot = chart.getXYPlot();
+
+                    DefaultXYItemRenderer renderer = new  DefaultXYItemRenderer();
+
+                    // set the colors and shape for the datapoints
+                    for (int i=0; i<colors.size(); i++) {
+
+                        if (useIntensityGrading) {
+                            renderer.setSeriesPaint(i, colors.get(i));
+                            renderer.setSeriesShape(i, renderer.getBaseShape());
+                        } else {
+                            renderer.setSeriesPaint(i, Color.RED); // @TODO: make this selectable by the user?
+                            renderer.setSeriesShape(i, renderer.getBaseShape());
+                        }
+                    }
+
+                    plot.setRenderer(renderer);
+
 
                     // remove space before/after the domain axis
                     plot.getDomainAxis().setUpperMargin(0);
@@ -2498,6 +2473,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         rangeAxis.setLowerBound(-Math.abs(upperBound));
                     }
 
+                    plot.setRangeGridlinePaint(Color.black);
+
                     ValueAxis domainAxis = plot.getDomainAxis();
 
                     domainAxis.setRange(0, highestMzValue);
@@ -2505,13 +2482,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     // hide unwanted chart details
 //                    plot.getRangeAxis().setVisible(false);
 //                    plot.getDomainAxis().setVisible(false);
-                    plot.setRangeGridlinesVisible(false);
+                    //plot.setRangeGridlinesVisible(false);
                     plot.setDomainGridlinesVisible(false);
 
                     // hide the outline
                     chart.getPlot().setOutlineVisible(false);
 
-                    // make sure the background is the same as the table row color
+                    // set background color
                     chart.getPlot().setBackgroundPaint(Color.WHITE);
                     chart.setBackgroundPaint(Color.WHITE);
 
@@ -2529,6 +2506,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         };
 
                     chartPanel.setBackground(Color.WHITE);
+
+                    chartPanel.setDomainZoomable(false);
+                    chartPanel.setRangeZoomable(false);
+                    chartPanel.setPopupMenu(null);
 
                     sequenceFragmentIonPlotsJPanel.add(chartPanel);
 
