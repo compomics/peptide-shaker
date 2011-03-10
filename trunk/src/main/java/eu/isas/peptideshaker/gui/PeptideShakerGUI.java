@@ -67,12 +67,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Vector;
-import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -85,12 +83,15 @@ import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.statistics.HistogramDataset;
 import org.jfree.data.statistics.HistogramType;
+import org.jfree.data.xy.DefaultXYDataset;
+import org.jfree.data.xy.DefaultXYZDataset;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -2091,8 +2092,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     double[] mzValues = new double[peaks.size()];
                     double[] intValues = new double[peaks.size()];
 
+                    // store some properties of the spectrum
+                    double mostIntensePeak = 0.0;
+                    double highestMzValue = 0.0;
+                    double totalIntensity = 0.0;
+
                     ArrayList<Double> allPeakIntensities = new ArrayList<Double>();
                     ArrayList<Double> annotatedPeakIntensities = new ArrayList<Double>();
+                    ArrayList<IonMatch> annotatedIons = new ArrayList<IonMatch>();
 
                     Iterator<Peak> iterator = peaks.iterator();
 
@@ -2108,6 +2115,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         if (peak.intensity > getIntensityLimit(currentSpectrum)) {
                             allPeakIntensities.add(peak.intensity);
                         }
+
+                        if (peak.intensity > mostIntensePeak) {
+                            mostIntensePeak = peak.intensity;
+                        }
+
+                        if (peak.mz > highestMzValue) {
+                            highestMzValue = peak.mz;
+                        }
+
+                        totalIntensity += peak.intensity;
                     }
 
                     // add the data to the spectrum panel
@@ -2143,6 +2160,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                             PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
 
+                            fragmentIon.setIntensity(ionMatch.peak.intensity);
+
                             // set up the peak annotation
                             String annotation = fragmentIon.getIonType();
 
@@ -2165,8 +2184,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                             if ((fragmentIon.getType() == PeptideFragmentIon.B_ION
                                     || fragmentIon.getType() == PeptideFragmentIon.Y_ION) && currentCharge == 1) {
-                                fragmentIon.setIntensity(ionMatch.peak.intensity);
+                                fragmentIon.setIntensity(ionMatch.peak.intensity);  //  @TODO: check why this has to be done twice
                                 sequenceAnnotations.add(fragmentIon);
+                            }
+
+                            if ((fragmentIon.getType() == PeptideFragmentIon.B_ION
+                                    || fragmentIon.getType() == PeptideFragmentIon.BH2O_ION
+                                    || fragmentIon.getType() == PeptideFragmentIon.BNH3_ION
+                                    || fragmentIon.getType() == PeptideFragmentIon.Y_ION
+                                    || fragmentIon.getType() == PeptideFragmentIon.YH2O_ION
+                                    || fragmentIon.getType() == PeptideFragmentIon.YNH3_ION)
+                                    && (currentCharge == 1 || currentCharge == 2)) {
+                                annotatedIons.add(ionMatch);
                             }
                         }
                     }
@@ -2210,6 +2239,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     // add the theoretical masses to the table
                     for (PeptideFragmentIon fragmentIon : fragmentIons) {
+
+                        // @TODO: also include charge 2 and neutral loss versions??
 
                         if (fragmentIon.getType() == PeptideFragmentIon.B_ION || fragmentIon.getType() == PeptideFragmentIon.Y_ION) {
                             double fragmentMzChargeOne = (fragmentIon.theoreticMass + 1 * Atom.H.mass) / 1;
@@ -2293,118 +2324,213 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     int bins = 50;
 
                     // the all peaks histogram
-                    double[] intensities = new double[allPeakIntensities.size()];
+                    double[] allIntensities = new double[allPeakIntensities.size()];
 
-                    for (int i = 0; i < allPeakIntensities.size(); i++) {
-                        intensities[i] = allPeakIntensities.get(i);
+                    if (allIntensities.length > 0) {
+
+                        for (int i = 0; i < allPeakIntensities.size(); i++) {
+                            allIntensities[i] = allPeakIntensities.get(i);
+                        }
+
+                        HistogramDataset dataset = new HistogramDataset();
+                        dataset.setType(HistogramType.SCALE_AREA_TO_1);
+                        dataset.addSeries("All", allIntensities, bins);
+
+                        JFreeChart chart = ChartFactory.createHistogram(null, null, null,
+                                dataset, PlotOrientation.VERTICAL, false, true, false);
+
+                        ChartPanel chartPanel = new ChartPanel(chart) {
+
+                            @Override
+                            public String getToolTipText(MouseEvent e) {
+                                return "Intensity Distribution - All Peaks";
+                            }
+
+                            @Override
+                            public String getToolTipText() {
+                                return "Intensity Distribution - All Peaks";
+                            }
+                        };
+
+                        chartPanel.setBorder(null);
+                        chart.setBorderVisible(false);
+
+                        XYPlot plot = chart.getXYPlot();
+
+                        // set up the chart renderer
+                        XYBarRenderer renderer = new XYBarRenderer();
+                        renderer.setShadowVisible(false);
+                        renderer.setSeriesPaint(0, Color.LIGHT_GRAY);
+                        plot.setRenderer(renderer);
+
+                        // hide unwanted chart details
+                        plot.getRangeAxis().setVisible(false);
+                        plot.getDomainAxis().setVisible(false);
+                        plot.setRangeGridlinesVisible(false);
+                        plot.setDomainGridlinesVisible(false);
+                        plot.setOutlineVisible(false);
+
+                        plot.setBackgroundPaint(Color.WHITE);
+                        chartPanel.setBackground(Color.WHITE);
+                        chart.setBackgroundPaint(Color.WHITE);
+
+                        chartPanel.setDomainZoomable(false);
+                        chartPanel.setRangeZoomable(false);
+                        chartPanel.setPopupMenu(null);
+                        chartPanel.setDisplayToolTips(true);
+
+                        sequenceFragmentIonPlotsJPanel.add(chartPanel);
                     }
-
-                    HistogramDataset dataset = new HistogramDataset();
-                    dataset.setType(HistogramType.SCALE_AREA_TO_1);
-                    dataset.addSeries("Histogram", intensities, bins);
-
-                    JFreeChart chart = ChartFactory.createHistogram(null, null, null,
-                            dataset, PlotOrientation.VERTICAL, false, true, false);
-
-                    ChartPanel chartPanel = new ChartPanel(chart) {
-
-                        @Override
-                        public String getToolTipText(MouseEvent e) {
-                            return "All Peaks";
-                        }
-
-                        @Override
-                        public String getToolTipText() {
-                            return "All Peaks";
-                        }
-                    };
-
-                    chartPanel.setBorder(null);
-                    chart.setBorderVisible(false);
-
-                    XYPlot plot = chart.getXYPlot();
-
-                    // set up the chart renderer
-                    XYBarRenderer renderer = new XYBarRenderer();
-                    renderer.setShadowVisible(false);
-                    renderer.setSeriesPaint(0, Color.ORANGE);
-                    plot.setRenderer(renderer);
-
-                    // hide unwanted chart details
-                    plot.getRangeAxis().setVisible(false);
-                    plot.getDomainAxis().setVisible(false);
-                    plot.setRangeGridlinesVisible(false);
-                    plot.setDomainGridlinesVisible(false);
-                    plot.setOutlineVisible(false);
-
-                    plot.setBackgroundPaint(Color.WHITE);
-                    chartPanel.setBackground(Color.WHITE);
-                    chart.setBackgroundPaint(Color.WHITE);
-
-                    chartPanel.setDomainZoomable(false);
-                    chartPanel.setRangeZoomable(false);
-                    chartPanel.setPopupMenu(null);
-                    chartPanel.setDisplayToolTips(true);
-
-                    sequenceFragmentIonPlotsJPanel.add(chartPanel);
-
 
                     // the annotated peaks histogram
                     double[] annotatedIntensities = new double[annotatedPeakIntensities.size()];
 
-                    for (int i = 0; i < annotatedPeakIntensities.size(); i++) {
-                        annotatedIntensities[i] = annotatedPeakIntensities.get(i);
+                    if (annotatedIntensities.length > 0) {
+
+                        for (int i = 0; i < annotatedPeakIntensities.size(); i++) {
+                            annotatedIntensities[i] = annotatedPeakIntensities.get(i);
+                        }
+
+                        HistogramDataset dataset = new HistogramDataset();
+                        dataset.setType(HistogramType.SCALE_AREA_TO_1);
+                        dataset.addSeries("Histogram", annotatedIntensities, bins, 0, mostIntensePeak);
+
+                        JFreeChart chart = ChartFactory.createHistogram(null, null, null,
+                                dataset, PlotOrientation.VERTICAL, false, false, false);
+
+                        ChartPanel chartPanel = new ChartPanel(chart) {
+
+                            @Override
+                            public String getToolTipText(MouseEvent e) {
+                                return "Intensity Distribution - Annotated Peaks";
+                            }
+
+                            @Override
+                            public String getToolTipText() {
+                                return "Intensity Distribution - Annotated Peaks";
+                            }
+                        };
+
+                        chartPanel.setBorder(null);
+                        chart.setBorderVisible(false);
+
+                        XYPlot plot = chart.getXYPlot();
+
+                        // set up the chart renderer
+                        XYBarRenderer renderer = new XYBarRenderer();
+                        renderer.setShadowVisible(false);
+                        renderer.setSeriesPaint(0, sparklineColor);
+                        plot.setRenderer(renderer);
+
+                        // hide unwanted chart details
+                        plot.getRangeAxis().setVisible(false);
+                        plot.getDomainAxis().setVisible(false);
+                        plot.setRangeGridlinesVisible(false);
+                        plot.setDomainGridlinesVisible(false);
+                        plot.setOutlineVisible(false);
+
+                        plot.setBackgroundPaint(Color.WHITE);
+                        chartPanel.setBackground(Color.WHITE);
+                        chart.setBackgroundPaint(Color.WHITE);
+
+                        chartPanel.setDomainZoomable(false);
+                        chartPanel.setRangeZoomable(false);
+                        chartPanel.setPopupMenu(null);
+                        chartPanel.setDisplayToolTips(true);
+
+                        sequenceFragmentIonPlotsJPanel.add(chartPanel);
                     }
 
-                    dataset = new HistogramDataset();
-                    dataset.setType(HistogramType.SCALE_AREA_TO_1);
-                    dataset.addSeries("Histogram", annotatedIntensities, bins);
 
-                    chart = ChartFactory.createHistogram(null, null, null,
-                            dataset, PlotOrientation.VERTICAL, false, false, false);
 
-                    chartPanel = new ChartPanel(chart) {
+                    // mass error plot
 
-                        @Override
-                        public String getToolTipText(MouseEvent e) {
-                            return "Annotated Peaks";
-                        }
+                    // @TODO: move to a separate class/method!
 
-                        @Override
-                        public String getToolTipText() {
-                            return "Annotated Peaks";
-                        }
-                    };
+                    boolean useScatterPlot = true;
 
-                    chartPanel.setBorder(null);
-                    chart.setBorderVisible(false);
+                    DefaultXYZDataset xyzDataset = new DefaultXYZDataset();
+                    DefaultXYDataset xyDataset = new DefaultXYDataset();
 
-                    plot = chart.getXYPlot();
+                    double[][] dataXYZ = new double[3][annotatedIons.size()];
+                    double[][] dataXY = new double[2][annotatedIons.size()];
 
-                    // set up the chart renderer
-                    renderer = new XYBarRenderer();
-                    renderer.setShadowVisible(false);
-                    renderer.setSeriesPaint(0, sparklineColor);
-                    plot.setRenderer(renderer);
+                    for (int i = 0; i < annotatedIons.size(); i++) {
+
+                        IonMatch ionMatch = (IonMatch) annotatedIons.get(i);
+                        PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
+
+                        dataXYZ[0][i] = ionMatch.peak.mz;
+                        dataXYZ[1][i] = ionMatch.getError();
+                        dataXYZ[2][i] = (fragmentIon.getIntensity() / totalIntensity) * 2; // @TODO: check the scaling factor
+
+                        dataXY[0][i] = ionMatch.peak.mz;
+                        dataXY[1][i] = ionMatch.getError();
+                    }
+
+                    xyzDataset.addSeries("Mass Errors", dataXYZ);
+                    xyDataset.addSeries("Mass Errors", dataXY);
+
+                    JFreeChart chart;
+
+                    if (!useScatterPlot) {
+                        chart = ChartFactory.createBubbleChart(null, null, null, xyzDataset, PlotOrientation.VERTICAL, false, false, false);
+                    } else {
+                        chart = ChartFactory.createScatterPlot(null, null, null, xyzDataset, PlotOrientation.VERTICAL, false, false, false);
+                    }
+
+                    // fine tune the chart properites
+                    XYPlot plot = chart.getXYPlot();
+
+                    // remove space before/after the domain axis
+                    plot.getDomainAxis().setUpperMargin(0);
+                    plot.getDomainAxis().setLowerMargin(0);
+
+                    // make sure that the chart as a symmetrical y-axis
+                    ValueAxis rangeAxis = plot.getRangeAxis();
+
+                    double lowerBound = rangeAxis.getLowerBound();
+                    double upperBound = rangeAxis.getUpperBound();
+
+                    if (Math.abs(lowerBound) > Math.abs(upperBound)) {
+                        rangeAxis.setUpperBound(Math.abs(lowerBound));
+                    } else {
+                        rangeAxis.setLowerBound(-Math.abs(upperBound));
+                    }
+
+                    ValueAxis domainAxis = plot.getDomainAxis();
+
+                    domainAxis.setRange(0, highestMzValue);
 
                     // hide unwanted chart details
-                    plot.getRangeAxis().setVisible(false);
-                    plot.getDomainAxis().setVisible(false);
+//                    plot.getRangeAxis().setVisible(false);
+//                    plot.getDomainAxis().setVisible(false);
                     plot.setRangeGridlinesVisible(false);
                     plot.setDomainGridlinesVisible(false);
-                    plot.setOutlineVisible(false);
 
-                    plot.setBackgroundPaint(Color.WHITE);
-                    chartPanel.setBackground(Color.WHITE);
+                    // hide the outline
+                    chart.getPlot().setOutlineVisible(false);
+
+                    // make sure the background is the same as the table row color
+                    chart.getPlot().setBackgroundPaint(Color.WHITE);
                     chart.setBackgroundPaint(Color.WHITE);
 
-                    chartPanel.setDomainZoomable(false);
-                    chartPanel.setRangeZoomable(false);
-                    chartPanel.setPopupMenu(null);
-                    chartPanel.setDisplayToolTips(true);
+                    ChartPanel chartPanel = new ChartPanel(chart) {
+
+                            @Override
+                            public String getToolTipText(MouseEvent e) {
+                                return "Mass Error Plot";
+                            }
+
+                            @Override
+                            public String getToolTipText() {
+                                return "Mass Error Plot";
+                            }
+                        };
+
+                    chartPanel.setBackground(Color.WHITE);
 
                     sequenceFragmentIonPlotsJPanel.add(chartPanel);
-
 
                     sequenceFragmentIonPlotsJPanel.revalidate();
                     sequenceFragmentIonPlotsJPanel.repaint();
