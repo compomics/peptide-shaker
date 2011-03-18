@@ -2365,7 +2365,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     // @TODO: this code should be simplified and moved to a separate class
 
-                    int bins = 50; // @TODO: make this a user selection!
+                    int bins = 30; // @TODO: make this a user selection!
 
                     // the non annotated peaks histogram
                     double[] nonAnnotatedIntensities = new double[nonAnnotatedPeakIntensities.size()];
@@ -2382,9 +2382,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         for (int i = 0; i < annotatedPeakIntensities.size(); i++) {
                             annotatedIntensities[i] = annotatedPeakIntensities.get(i);
                         }
-
+                        
                         HistogramDataset dataset = new HistogramDataset();
-                        dataset.setType(HistogramType.SCALE_AREA_TO_1);
+                        dataset.setType(HistogramType.SCALE_AREA_TO_1); // @TODO: use RELATIVE_FREQUENCY instead??
                         dataset.addSeries("NonAnnotated", nonAnnotatedIntensities, bins, 0, mostIntensePeak);
                         dataset.addSeries("Annotated", annotatedIntensities, bins, 0, mostIntensePeak);
 
@@ -2417,7 +2417,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         renderer.setSeriesPaint(1, sparklineColor);
                         plot.setRenderer(renderer);
 
-                        plot.getRangeAxis().setRange(0, plot.getRangeAxis().getUpperBound() / 3); // @TODO: make the "zoom" selectable by the user
+                        //plot.getRangeAxis().setRange(0, plot.getRangeAxis().getUpperBound() / 3); // @TODO: make the "zoom" selectable by the user
+                        plot.getRangeAxis().setRange(0, plot.getRangeAxis().getUpperBound());
 
                         // hide unwanted chart details
                         plot.getRangeAxis().setVisible(false);
