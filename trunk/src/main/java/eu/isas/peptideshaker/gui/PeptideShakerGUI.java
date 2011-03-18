@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.Util;
 import com.compomics.util.gui.spectrum.SequenceFragmentationPanel;
 import eu.isas.peptideshaker.gui.preferencesdialogs.IdentificationPreferencesDialog;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
@@ -30,6 +31,7 @@ import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
+import com.compomics.util.gui.protein.ProteinSequencePane;
 import com.compomics.util.gui.spectrum.DefaultSpectrumAnnotation;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel;
@@ -49,7 +51,6 @@ import eu.isas.peptideshaker.utils.Properties;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -76,6 +77,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
@@ -2067,10 +2069,53 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         return selectedEnzyme;
     }
 
+    /**
+     * Updates the sequence coverage pane.
+     *
+     * @param proteinAccession
+     */
     private void updateSequenceCoverage(String proteinAccession) {
         SequenceDataBase db = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSequenceDataBase();
         if (db != null) {
-            formatProteinSequence(db.getProtein(proteinAccession).getSequence());
+
+            int selectedPeptideStart = -1;
+            int selectedPeptideEnd = -1;
+
+            String cleanSequence = db.getProtein(proteinAccession).getSequence();
+
+            // find the start end end indices for the currently selected peptide, if any
+            if (peptideTable.getSelectedRow() != -1) {
+
+                String peptideKey = getPeptideKey(peptideTable.getSelectedRow());
+                String peptideSequence = identification.getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
+
+                // @TODO: account for peptide redundancies
+                selectedPeptideStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
+                selectedPeptideEnd = selectedPeptideStart + peptideSequence.length() - 1;
+            }
+
+            // an array containing the coverage index for each residue
+            int[] coverage = new int[cleanSequence.length() + 1];
+
+            // iterate the peptide table and store the coverage for each peptide
+            for (int i = 0; i < peptideTable.getRowCount(); i++) {
+
+                String peptideKey = getPeptideKey(i);
+                String peptideSequence = identification.getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
+
+                // @TODO: account for peptide redundancies
+                int peptideTempStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
+                int peptideTempEnd = peptideTempStart + peptideSequence.length();
+
+                for (int j = peptideTempStart; j < peptideTempEnd; j++) {
+                    coverage[j]++;
+                }
+            }
+
+            double sequenceCoverage = ProteinSequencePane.formatProteinSequence(
+                    coverageEditorPane, db.getProtein(proteinAccession).getSequence(), selectedPeptideStart, selectedPeptideEnd, coverage);
+
+            ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Sequence Coverage (" + Util.roundDouble(sequenceCoverage, 2) + "%)");
         }
     }
 
@@ -2166,7 +2211,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                             String annotation = fragmentIon.getIonType();
 
                             // add fragment ion number
-                            if (!fragmentIon.getIonType().equalsIgnoreCase("Prec")
+                            if (!fragmentIon.getIonType().equalsIgnoreCase("MH")
                                     && !fragmentIon.getIonType().equalsIgnoreCase("i")
                                     && !fragmentIon.getIonType().equalsIgnoreCase("Prec-loss")) {
                                 annotation += fragmentIon.getNumber();
@@ -2370,7 +2415,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         // set up the chart renderer
                         XYBarRenderer renderer = new XYBarRenderer();
                         renderer.setShadowVisible(false);
-                        renderer.setSeriesPaint(0, new Color(210, 210, 210, 150)); // @TODO: make this selectable by the user
+                        //renderer.setSeriesPaint(0, new Color(210, 210, 210, 150)); // @TODO: make this selectable by the user
+                        renderer.setSeriesPaint(0, new Color(0, 0, 250, 150)); // @TODO: make this selectable by the user
                         renderer.setSeriesPaint(1, sparklineColor);
                         plot.setRenderer(renderer);
 
@@ -2393,7 +2439,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         sequenceFragmentIonPlotsJPanel.add(chartPanel);
                     }
 
-                    
+
 
                     // mass error plot
 
@@ -2436,14 +2482,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     }
 
                     JFreeChart chart = ChartFactory.createScatterPlot(null, null, null, xyDataset, PlotOrientation.VERTICAL, false, false, false);
-                    
+
                     // fine tune the chart properites
                     XYPlot plot = chart.getXYPlot();
 
-                    DefaultXYItemRenderer renderer = new  DefaultXYItemRenderer();
+                    DefaultXYItemRenderer renderer = new DefaultXYItemRenderer();
 
                     // set the colors and shape for the datapoints
-                    for (int i=0; i<colors.size(); i++) {
+                    for (int i = 0; i < colors.size(); i++) {
 
                         if (useIntensityGrading) {
                             renderer.setSeriesPaint(i, colors.get(i));
@@ -2494,16 +2540,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     ChartPanel chartPanel = new ChartPanel(chart) {
 
-                            @Override
-                            public String getToolTipText(MouseEvent e) {
-                                return "Mass Error Plot";
-                            }
+                        @Override
+                        public String getToolTipText(MouseEvent e) {
+                            return "Mass Error Plot";
+                        }
 
-                            @Override
-                            public String getToolTipText() {
-                                return "Mass Error Plot";
-                            }
-                        };
+                        @Override
+                        public String getToolTipText() {
+                            return "Mass Error Plot";
+                        }
+                    };
 
                     chartPanel.setBackground(Color.WHITE);
 
@@ -2617,7 +2663,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Returns the charge as a string of +. One for each charge.
      * A charge of 1 however returns the empty string.
      *
-     * @return  the charge as a string of +
+     * @param charge    the charge to format as a string
+     * @return          the charge as a string of +
      */
     public static String getChargeAsFormattedString(int charge) {
 
@@ -3399,126 +3446,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public int getReplicateNumber() {
         return replicateNumber;
-    }
-
-    /**
-     * Formats the protein sequence such that both the covered parts of the sequence
-     * and the peptide selected in the peptide table is highlighted.
-     */
-    public void formatProteinSequence(String cleanSequence) {
-
-        int selectedPeptideStart = -1;
-        int selectedPeptideEnd = -1;
-
-        // find the start end end indices for the currently selected peptide, if any
-        if (peptideTable.getSelectedRow() != -1) {
-
-            String peptideKey = getPeptideKey(peptideTable.getSelectedRow());
-            String peptideSequence = identification.getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
-
-            // @TODO: account for peptide redundancies
-            selectedPeptideStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
-            selectedPeptideEnd = selectedPeptideStart + peptideSequence.length() - 1;
-        }
-
-        // an array containing the coverage index for each residue
-        int[] coverage = new int[cleanSequence.length() + 1];
-
-        // iterate the peptide table and store the coverage for each peptide
-        for (int i = 0; i < peptideTable.getRowCount(); i++) {
-
-            String peptideKey = getPeptideKey(i);
-            String peptideSequence = identification.getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
-
-            // @TODO: account for peptide redundancies
-            int peptideTempStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
-            int peptideTempEnd = peptideTempStart + peptideSequence.length();
-
-            for (int j = peptideTempStart; j < peptideTempEnd; j++) {
-                coverage[j]++;
-            }
-        }
-
-        String sequenceTable = "", currentCellSequence = "";
-        boolean selectedPeptide = false, coveredPeptide = false;
-        double sequenceCoverage = 0;
-
-        // see how many amino acids we have room for
-        FontMetrics fm = coverageEditorPane.getGraphics().getFontMetrics();
-        double temp = coverageEditorPane.getWidth() / (fm.stringWidth("W"));
-        int numberOfAminoAcidsPerRow = (int) temp / 10;
-        numberOfAminoAcidsPerRow *= 10;
-        numberOfAminoAcidsPerRow += 10;
-
-        ArrayList<Integer> referenceMarkers = new ArrayList<Integer>();
-
-        // iterate the coverage table and create the formatted sequence string
-        for (int i = 1; i < coverage.length; i++) {
-
-            // add residue number and line break
-            if (i % numberOfAminoAcidsPerRow == 1 || i == 1) {
-                sequenceTable += "</tr><tr><td><font color=black><a name=\"" + i + "\">" + i + "</a></font></td>";
-                referenceMarkers.add(i);
-            }
-
-            // check if the current residues is covered
-            if (coverage[i] > 0) {
-                sequenceCoverage++;
-                coveredPeptide = true;
-            } else {
-                coveredPeptide = false;
-            }
-
-            // check if the current residue is contained in the selected peptide
-            if (i == selectedPeptideStart) {
-                selectedPeptide = true;
-            } else if (i == selectedPeptideEnd + 1) {
-                selectedPeptide = false;
-            }
-
-            // highlight the covered and selected peptides
-            if (selectedPeptide) {
-                currentCellSequence += "<font color=red>" + cleanSequence.charAt(i - 1) + "</font>";
-            } else if (coveredPeptide) {
-                currentCellSequence += "<font color=blue>" + cleanSequence.charAt(i - 1) + "</font>";
-            } else {
-                currentCellSequence += "<font color=black>" + cleanSequence.charAt(i - 1) + "</font>";
-            }
-
-            // add the sequence to the formatted sequence
-            if (i % 10 == 0) {
-                sequenceTable += "<td><tt>" + currentCellSequence + "</tt></td>";
-                currentCellSequence = "";
-            }
-        }
-
-        // add remaining tags and complete the formatted sequence
-        sequenceTable += "<td><tt>" + currentCellSequence + "</tt></td></table><font color=black>";
-        String formattedSequence = "<html><body><table cellspacing='2'>" + sequenceTable + "</html></body>";
-
-        // display the formatted sequence
-        coverageEditorPane.setText(formattedSequence);
-        coverageEditorPane.updateUI();
-
-        // make sure that the currently selected peptide is visible
-        if (selectedPeptideStart != -1) {
-
-            boolean referenceMarkerFound = false;
-
-            for (int i = 0; i < referenceMarkers.size() - 1 && !referenceMarkerFound; i++) {
-                if (selectedPeptideStart >= referenceMarkers.get(i) && selectedPeptideStart < referenceMarkers.get(i + 1)) {
-                    coverageEditorPane.scrollToReference(referenceMarkers.get(i).toString());
-                    referenceMarkerFound = true;
-                }
-            }
-
-            if (!referenceMarkerFound) {
-                coverageEditorPane.scrollToReference(referenceMarkers.get(referenceMarkers.size() - 1).toString());
-            }
-
-        } else {
-            coverageEditorPane.setCaretPosition(0);
-        }
     }
 
     private double estimateSequenceCoverage(ProteinMatch proteinMatch, String sequence) {
