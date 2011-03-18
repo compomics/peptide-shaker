@@ -859,28 +859,11 @@
                                       </Layout>
                                       <SubComponents>
                                         <Container class="javax.swing.JScrollPane" name="fragmentIonsJScrollPane">
-                                          <AuxValues>
-                                            <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
-                                          </AuxValues>
+                                          <Properties>
+                                            <Property name="opaque" type="boolean" value="false"/>
+                                          </Properties>
 
                                           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                                          <SubComponents>
-                                            <Component class="javax.swing.JTable" name="fragmentIonsJTable">
-                                              <Properties>
-                                                <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                                  <Table columnCount="7" rowCount="0">
-                                                    <Column editable="false" title=" " type="java.lang.Integer"/>
-                                                    <Column editable="false" title="b+" type="java.lang.Double"/>
-                                                    <Column editable="false" title="b++" type="java.lang.Double"/>
-                                                    <Column editable="false" title="AA" type="java.lang.String"/>
-                                                    <Column editable="false" title="y++" type="java.lang.Double"/>
-                                                    <Column editable="false" title="y+" type="java.lang.Double"/>
-                                                    <Column editable="false" title="  " type="java.lang.Integer"/>
-                                                  </Table>
-                                                </Property>
-                                              </Properties>
-                                            </Component>
-                                          </SubComponents>
                                         </Container>
                                       </SubComponents>
                                     </Container>
