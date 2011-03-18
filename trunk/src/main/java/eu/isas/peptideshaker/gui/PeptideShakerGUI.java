@@ -2189,7 +2189,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     currentAnnotations = new Vector();
 
                     // the sequence fragment annotations
-                    ArrayList<PeptideFragmentIon> sequenceAnnotations = new ArrayList<PeptideFragmentIon>();
+                    ArrayList<IonMatch> sequenceAnnotations = new ArrayList<IonMatch>();
 
                     Iterator<String> ionTypeIterator = annotations.keySet().iterator();
 
@@ -2204,8 +2204,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                             IonMatch ionMatch = chargeMap.get(currentCharge);
 
                             PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
-
-                            fragmentIon.setIntensity(ionMatch.peak.intensity);
 
                             // set up the peak annotation
                             String annotation = fragmentIon.getIonType();
@@ -2231,8 +2229,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                             if ((fragmentIon.getType() == PeptideFragmentIon.B_ION
                                     || fragmentIon.getType() == PeptideFragmentIon.Y_ION) && currentCharge == 1) {
-                                fragmentIon.setIntensity(ionMatch.peak.intensity);  //  @TODO: check why this has to be done twice
-                                sequenceAnnotations.add(fragmentIon);
+                                sequenceAnnotations.add(ionMatch);
                             }
 
                             if ((fragmentIon.getType() == PeptideFragmentIon.B_ION
@@ -2459,10 +2456,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     for (int i = 0; i < annotatedIons.size(); i++) {
 
                         IonMatch ionMatch = (IonMatch) annotatedIons.get(i);
-                        PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
-
-                        if (fragmentIon.getIntensity() > maxAnnotatedIntensity) {
-                            maxAnnotatedIntensity = fragmentIon.getIntensity();
+                        if (ionMatch.peak.intensity > maxAnnotatedIntensity) {
+                            maxAnnotatedIntensity = ionMatch.peak.intensity;
                         }
                     }
 
@@ -2471,14 +2466,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         double[][] dataXY = new double[2][1];
 
                         IonMatch ionMatch = (IonMatch) annotatedIons.get(i);
-                        PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
 
                         dataXY[0][0] = ionMatch.peak.mz;
                         dataXY[1][0] = ionMatch.getError();
 
                         xyDataset.addSeries(i, dataXY);
 
-                        int alphaLevel = Double.valueOf((fragmentIon.getIntensity() / totalIntensity) / (maxAnnotatedIntensity / totalIntensity) * 255).intValue();
+                        int alphaLevel = Double.valueOf((ionMatch.peak.intensity / totalIntensity) / (maxAnnotatedIntensity / totalIntensity) * 255).intValue();
 
                         colors.add(new Color(255, 0, 0, alphaLevel)); // @TODO: make color selectable by the user?
                     }
