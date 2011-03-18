@@ -14,6 +14,7 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
+import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
@@ -2134,48 +2135,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     JOptionPane.showMessageDialog(this, "Peaks lists not imported.", "Peak Lists Error", JOptionPane.INFORMATION_MESSAGE);
                 } else {
 
-                    double[] mzValues = new double[peaks.size()];
-                    double[] intValues = new double[peaks.size()];
-
-                    // store some properties of the spectrum
-                    double mostIntensePeak = 0.0;
-                    double highestMzValue = 0.0;
-                    double totalIntensity = 0.0;
-
-                    ArrayList<Double> nonAnnotatedPeakIntensities = new ArrayList<Double>();
-                    ArrayList<Double> annotatedPeakIntensities = new ArrayList<Double>();
-                    ArrayList<IonMatch> annotatedIons = new ArrayList<IonMatch>();
-
-                    Iterator<Peak> iterator = peaks.iterator();
-
-                    int index = 0;
-
-                    while (iterator.hasNext()) {
-
-                        Peak peak = iterator.next();
-
-                        mzValues[index] = peak.mz;
-                        intValues[index++] = peak.intensity;
-
-                        if (peak.intensity > getIntensityLimit(currentSpectrum)) {
-                            nonAnnotatedPeakIntensities.add(peak.intensity);
-                        }
-
-                        if (peak.intensity > mostIntensePeak) {
-                            mostIntensePeak = peak.intensity;
-                        }
-
-                        if (peak.mz > highestMzValue) {
-                            highestMzValue = peak.mz;
-                        }
-
-                        totalIntensity += peak.intensity;
-                    }
-
                     // add the data to the spectrum panel
                     Precursor precursor = currentSpectrum.getPrecursor();
                     spectrum = new SpectrumPanel(
-                            mzValues, intValues, precursor.getMz(), precursor.getCharge().toString(),
+                            currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
+                            precursor.getMz(), precursor.getCharge().toString(),
                             "", 40, false, false, false, 2, false);
                     spectrum.setBorder(null);
 
@@ -2185,14 +2149,36 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     HashMap<String, HashMap<Integer, IonMatch>> annotations = spectrumAnnotator.annotateSpectrum(
                             currentPeptide, currentSpectrum, annotationPreferences.getTolerance(), getIntensityLimit(currentSpectrum));
 
-                    // the fragment ion annotations
-                    currentAnnotations = new Vector();
+                    // add the spectrum annotations
+                    currentAnnotations = spectrumAnnotator.getSpectrumAnnotations(annotations);
+                    spectrum.setAnnotations(filterAnnotations(currentAnnotations));
+
+                    // add the spectrum panel to the frame
+                    spectrumPanel.removeAll();
+                    spectrumPanel.add(spectrum);
+                    spectrumPanel.revalidate();
+                    spectrumPanel.repaint();
+
+
+                    // -----------------------
+                    // @TODO: the code below needs to be reformatted and parts of it moved to other classes etc
+                    // -----------------------
+
+                    // store some properties of the spectrum
+                    double mostIntensePeak = currentSpectrum.getMaxIntensity();
+                    double highestMzValue = currentSpectrum.getMaxMz();
+                    double totalIntensity = currentSpectrum.getTotalIntensity();
+
+                    ArrayList<Double> nonAnnotatedPeakIntensities = currentSpectrum.getPeaksAboveIntensityThreshold(getIntensityLimit(currentSpectrum));
+                    ArrayList<Double> annotatedPeakIntensities = new ArrayList<Double>();
+                    ArrayList<IonMatch> annotatedIons = new ArrayList<IonMatch>();
 
                     // the sequence fragment annotations
                     ArrayList<IonMatch> sequenceAnnotations = new ArrayList<IonMatch>();
 
                     Iterator<String> ionTypeIterator = annotations.keySet().iterator();
 
+                    // iterate the annotations and add them to the spectrum
                     while (ionTypeIterator.hasNext()) {
                         String ionType = ionTypeIterator.next();
 
@@ -2205,53 +2191,26 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                             PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
 
-                            // set up the peak annotation
-                            String annotation = fragmentIon.getIonType();
-
-                            // add fragment ion number
-                            if (!fragmentIon.getIonType().equalsIgnoreCase("MH")
-                                    && !fragmentIon.getIonType().equalsIgnoreCase("i")
-                                    && !fragmentIon.getIonType().equalsIgnoreCase("Prec-loss")) {
-                                annotation += fragmentIon.getNumber();
-                            }
-
-                            // add charge and any neutral losses
-                            annotation += getChargeAsFormattedString(currentCharge) // @TODO: should be possible to use the getChargeAsFormattedString in Charge??
-                                    + fragmentIon.getNeutralLoss();
-
-                            currentAnnotations.add(new DefaultSpectrumAnnotation(ionMatch.peak.mz, ionMatch.getError(),
-                                    SpectrumPanel.determineColorOfPeak(fragmentIon.getIonType() + fragmentIon.getNeutralLoss()),
-                                    annotation));
-
                             // @TODO: only include currently selected fragment ion types!!
                             annotatedPeakIntensities.add(ionMatch.peak.intensity);
                             nonAnnotatedPeakIntensities.remove(ionMatch.peak.intensity);
 
-                            if ((fragmentIon.getType() == PeptideFragmentIon.B_ION
-                                    || fragmentIon.getType() == PeptideFragmentIon.Y_ION) && currentCharge == 1) {
+                            if ((fragmentIon.getType() == PeptideFragmentIonType.B_ION
+                                    || fragmentIon.getType() == PeptideFragmentIonType.Y_ION) && currentCharge == 1) {
                                 sequenceAnnotations.add(ionMatch);
                             }
 
-                            if ((fragmentIon.getType() == PeptideFragmentIon.B_ION
-                                    || fragmentIon.getType() == PeptideFragmentIon.BH2O_ION
-                                    || fragmentIon.getType() == PeptideFragmentIon.BNH3_ION
-                                    || fragmentIon.getType() == PeptideFragmentIon.Y_ION
-                                    || fragmentIon.getType() == PeptideFragmentIon.YH2O_ION
-                                    || fragmentIon.getType() == PeptideFragmentIon.YNH3_ION)
+                            if ((fragmentIon.getType() == PeptideFragmentIonType.B_ION
+                                    || fragmentIon.getType() == PeptideFragmentIonType.BH2O_ION
+                                    || fragmentIon.getType() == PeptideFragmentIonType.BNH3_ION
+                                    || fragmentIon.getType() == PeptideFragmentIonType.Y_ION
+                                    || fragmentIon.getType() == PeptideFragmentIonType.YH2O_ION
+                                    || fragmentIon.getType() == PeptideFragmentIonType.YNH3_ION)
                                     && (currentCharge == 1 || currentCharge == 2)) {
                                 annotatedIons.add(ionMatch);
                             }
                         }
                     }
-
-                    // add the spectrum annotations
-                    spectrum.setAnnotations(filterAnnotations(currentAnnotations));
-
-                    // add the spectrum panel to the frame
-                    spectrumPanel.removeAll();
-                    spectrumPanel.add(spectrum);
-                    spectrumPanel.revalidate();
-                    spectrumPanel.repaint();
 
 
                     // clear the fragment ion table
@@ -2286,13 +2245,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                         // @TODO: also include charge 2 and neutral loss versions??
 
-                        if (fragmentIon.getType() == PeptideFragmentIon.B_ION || fragmentIon.getType() == PeptideFragmentIon.Y_ION) {
+                        if (fragmentIon.getType() == PeptideFragmentIonType.B_ION || fragmentIon.getType() == PeptideFragmentIonType.Y_ION) {
                             double fragmentMzChargeOne = (fragmentIon.theoreticMass + 1 * Atom.H.mass) / 1;
                             double fragmentMzChargeTwo = (fragmentIon.theoreticMass + 2 * Atom.H.mass) / 2;
 
                             int fragmentNumber = fragmentIon.getNumber();
 
-                            if (fragmentIon.getType() == PeptideFragmentIon.B_ION) {
+                            if (fragmentIon.getType() == PeptideFragmentIonType.B_ION) {
                                 fragmentIonsJTable.setValueAt(fragmentMzChargeOne, fragmentNumber - 1, fragmentIonsJTable.getColumn("b+").getModelIndex());
                                 fragmentIonsJTable.setValueAt(fragmentMzChargeTwo, fragmentNumber - 1, fragmentIonsJTable.getColumn("b++").getModelIndex());
                             } else {
@@ -2324,10 +2283,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                                 PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
 
-                                if (fragmentIon.getType() == PeptideFragmentIon.B_ION || fragmentIon.getType() == PeptideFragmentIon.Y_ION) {
+                                if (fragmentIon.getType() == PeptideFragmentIonType.B_ION || fragmentIon.getType() == PeptideFragmentIonType.Y_ION) {
                                     int fragmentNumber = fragmentIon.getNumber();
 
-                                    if (fragmentIon.getType() == PeptideFragmentIon.B_ION) {
+                                    if (fragmentIon.getType() == PeptideFragmentIonType.B_ION) {
                                         if (currentCharge == 1) {
                                             bIonsSinglyCharged.add(fragmentNumber - 1);
                                         } else {
@@ -2382,7 +2341,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         for (int i = 0; i < annotatedPeakIntensities.size(); i++) {
                             annotatedIntensities[i] = annotatedPeakIntensities.get(i);
                         }
-                        
+
                         HistogramDataset dataset = new HistogramDataset();
                         dataset.setType(HistogramType.SCALE_AREA_TO_1); // @TODO: use RELATIVE_FREQUENCY instead??
                         dataset.addSeries("NonAnnotated", nonAnnotatedIntensities, bins, 0, mostIntensePeak);
@@ -2573,109 +2532,85 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private Vector<DefaultSpectrumAnnotation> filterAnnotations(Vector<DefaultSpectrumAnnotation> annotations) {
 
-        Vector<DefaultSpectrumAnnotation> filteredAnnotations = new Vector();
-
-        for (int i = 0; i < annotations.size(); i++) {
-            String currentLabel = annotations.get(i).getLabel();
-
-            boolean useAnnotation = true;
-
-            // check ion type
-            if (currentLabel.startsWith("a")) {
-                if (!aIonToggleButton.isSelected()) {
-                    useAnnotation = false;
-                }
-            } else if (currentLabel.startsWith("b")) {
-                if (!bIonToggleButton.isSelected()) {
-                    useAnnotation = false;
-                }
-            } else if (currentLabel.startsWith("c")) {
-                if (!cIonToggleButton.isSelected()) {
-                    useAnnotation = false;
-                }
-            } else if (currentLabel.startsWith("x")) {
-                if (!xIonToggleButton.isSelected()) {
-                    useAnnotation = false;
-                }
-            } else if (currentLabel.startsWith("y")) {
-                if (!yIonToggleButton.isSelected()) {
-                    useAnnotation = false;
-                }
-            } else if (currentLabel.startsWith("z")) {
-                if (!zIonToggleButton.isSelected()) {
-                    useAnnotation = false;
-                }
-            } else {
-                if (!otherToggleButton.isSelected()) {
-                    useAnnotation = false;
-                }
-            }
-
-            // check neutral losses
-            if (useAnnotation) {
-                if (currentLabel.lastIndexOf("-H2O") != -1 || currentLabel.lastIndexOf("-H20") != -1) {
-                    if (!h2oToggleButton.isSelected()) {
-                        useAnnotation = false;
-                    }
-                }
-
-                if (currentLabel.lastIndexOf("-NH3") != -1) {
-                    if (!nh3ToggleButton.isSelected()) {
-                        useAnnotation = false;
-                    }
-                }
-            }
-
-            // check ion charge
-            if (useAnnotation) {
-                if (currentLabel.lastIndexOf("+") == -1) {
-
-                    // test needed to be able to show ions in the "other" group
-                    if (currentLabel.startsWith("a") || currentLabel.startsWith("b") || currentLabel.startsWith("c")
-                            || currentLabel.startsWith("x") || currentLabel.startsWith("y") || currentLabel.startsWith("z")) {
-                        if (!oneChargeToggleButton.isSelected()) {
-                            useAnnotation = false;
-                        }
-                    }
-                } else if (currentLabel.lastIndexOf("+++") != -1) {
-                    if (!moreThanTwoChargesToggleButton.isSelected()) {
-                        useAnnotation = false;
-                    }
-                } else if (currentLabel.lastIndexOf("++") != -1) {
-                    if (!twoChargesToggleButton.isSelected()) {
-                        useAnnotation = false;
-                    }
-                }
-            }
-
-            if (useAnnotation) {
-                filteredAnnotations.add(annotations.get(i));
-            }
-        }
-
-        return filteredAnnotations;
+        return SpectrumPanel.filterAnnotations(annotations, getCurrentFragmentIonTypes(),
+                h2oToggleButton.isSelected(),
+                nh3ToggleButton.isSelected(),
+                oneChargeToggleButton.isSelected(),
+                twoChargesToggleButton.isSelected(),
+                moreThanTwoChargesToggleButton.isSelected());
     }
 
     /**
-     * Returns the charge as a string of +. One for each charge.
-     * A charge of 1 however returns the empty string.
+     * Returns an arraylist of the currently selected fragment ion types.
      *
-     * @param charge    the charge to format as a string
-     * @return          the charge as a string of +
+     * @return an arraylist of the currently selected fragment ion types
      */
-    public static String getChargeAsFormattedString(int charge) {
+    private ArrayList<PeptideFragmentIonType> getCurrentFragmentIonTypes() {
 
-        String temp = "";
+        ArrayList<PeptideFragmentIonType> fragmentIontypes = new ArrayList<PeptideFragmentIonType>();
 
-        for (int i = 0; i < charge; i++) {
-            temp += "+";
+        if (aIonToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.A_ION);
+
+            if (h2oToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.AH2O_ION);
+            }
+
+            if (nh3ToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.ANH3_ION);
+            }
         }
 
-        if (charge == 1) {
-            temp = "";
+        if (bIonToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.B_ION);
+
+            if (h2oToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.BH2O_ION);
+            }
+
+            if (nh3ToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.BNH3_ION);
+            }
         }
 
-        return temp;
+        if (cIonToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.C_ION);
+        }
+
+        if (xIonToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.X_ION);
+        }
+
+        if (yIonToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.Y_ION);
+
+            if (h2oToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.YH2O_ION);
+            }
+
+            if (nh3ToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.YNH3_ION);
+            }
+        }
+
+        if (zIonToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.Z_ION);
+        }
+
+        if (otherToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM);
+            fragmentIontypes.add(PeptideFragmentIonType.MH_ION);
+
+            if (h2oToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.MHH2O_ION);
+            }
+
+            if (nh3ToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.MHNH3_ION);
+            }
+        }
+
+        return fragmentIontypes;
     }
 
     private double getIntensityLimit(MSnSpectrum mSnSpectrum) {
@@ -2740,16 +2675,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                 try {
                     String spectrumKey = spectrumMatch.getSpectrumKey();
-                    MSnSpectrum spectrum = (MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumKey);
+                    MSnSpectrum tempSpectrum = (MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumKey);
 
                     ((DefaultTableModel) psmsTable.getModel()).addRow(new Object[]{
                                 index,
                                 peptideAssumption.getPeptide().getSequence(),
                                 modifications,
-                                spectrum.getPrecursor().getCharge(),
+                                tempSpectrum.getPrecursor().getCharge(),
                                 peptideAssumption.getDeltaMass(),
-                                spectrum.getFileName(),
-                                spectrum.getSpectrumTitle()
+                                tempSpectrum.getFileName(),
+                                tempSpectrum.getSpectrumTitle()
                             });
                     addPsmRowKey(index - 1, spectrumKey);
                     index++;
@@ -2882,6 +2817,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
     /**
      * Displays the results in the result tables.
+     * @throws MzMLUnmarshallerException
      */
     public void displayResults() throws MzMLUnmarshallerException {
 
@@ -3113,16 +3049,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             PSParameter probabilities = new PSParameter();
             probabilities = (PSParameter) spectrumMatch.getUrParam(probabilities);
             String spectrumKey = spectrumMatch.getSpectrumKey();
-            MSnSpectrum spectrum = (MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumKey);
+            MSnSpectrum tempSpectrum = (MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumKey);
 
             ((DefaultTableModel) allSpectraJTable.getModel()).addRow(new Object[]{
                         index++,
                         accessionNumbers,
                         bestAssumption.getSequence(),
                         modifications,
-                        spectrum.getPrecursor().getCharge().value,
-                        spectrum.getSpectrumTitle(),
-                        spectrum.getFileName(),
+                        tempSpectrum.getPrecursor().getCharge().value,
+                        tempSpectrum.getSpectrumTitle(),
+                        tempSpectrum.getFileName(),
                         assumptions,
                         spectrumMatch.getBestAssumption().getDeltaMass(),
                         mascotScore,
@@ -3134,8 +3070,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         spectrumMatch.getBestAssumption().isDecoy()
                     });
 
-            if (maxCharge < spectrum.getPrecursor().getCharge().value) {
-                maxCharge = spectrum.getPrecursor().getCharge().value;
+            if (maxCharge < tempSpectrum.getPrecursor().getCharge().value) {
+                maxCharge = tempSpectrum.getPrecursor().getCharge().value;
             }
 
             if (maxMassError < spectrumMatch.getBestAssumption().getDeltaMass()) {
