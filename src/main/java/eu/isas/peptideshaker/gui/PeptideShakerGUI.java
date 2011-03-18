@@ -2185,7 +2185,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     HashMap<String, HashMap<Integer, IonMatch>> annotations = spectrumAnnotator.annotateSpectrum(
                             currentPeptide, currentSpectrum, annotationPreferences.getTolerance(), getIntensityLimit(currentSpectrum));
 
-                    // the fragment ions annotations
+                    // the fragment ion annotations
                     currentAnnotations = new Vector();
 
                     // the sequence fragment annotations
