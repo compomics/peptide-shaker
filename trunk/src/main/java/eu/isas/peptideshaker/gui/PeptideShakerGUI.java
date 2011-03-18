@@ -2420,6 +2420,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         renderer.setSeriesPaint(1, sparklineColor);
                         plot.setRenderer(renderer);
 
+                        plot.getRangeAxis().setRange(0, plot.getRangeAxis().getUpperBound() / 3); // @TODO: make the "zoom" selectable by the user
+
                         // hide unwanted chart details
                         plot.getRangeAxis().setVisible(false);
                         plot.getDomainAxis().setVisible(false);
