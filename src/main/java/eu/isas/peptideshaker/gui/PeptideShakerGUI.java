@@ -6,14 +6,11 @@ import eu.isas.peptideshaker.gui.preferencesdialogs.IdentificationPreferencesDia
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
-import com.compomics.util.experiment.biology.Atom;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
-import com.compomics.util.experiment.biology.FragmentFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
@@ -21,7 +18,7 @@ import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
-import com.compomics.util.experiment.identification.matches.IonMatch;
+import com.compomics.util.experiment.identification.SpectrumAnnotator.SpectrumAnnotationMap;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -34,6 +31,9 @@ import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.gui.protein.ProteinSequencePane;
 import com.compomics.util.gui.spectrum.DefaultSpectrumAnnotation;
+import com.compomics.util.gui.spectrum.FragmentIonTable;
+import com.compomics.util.gui.spectrum.IntensityHistogram;
+import com.compomics.util.gui.spectrum.MassErrorPlot;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -46,14 +46,11 @@ import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.IdentificationPreferences;
-import eu.isas.peptideshaker.utils.AlignedTableCellRenderer;
-import eu.isas.peptideshaker.utils.FragmentIonTableCellRenderer;
 import eu.isas.peptideshaker.utils.Properties;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -64,37 +61,23 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.DefaultXYItemRenderer;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.data.statistics.HistogramDataset;
-import org.jfree.data.statistics.HistogramType;
-import org.jfree.data.xy.DefaultXYDataset;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -135,18 +118,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The replicate number
      */
     private int replicateNumber;
-    /**
-     * The specific target/decoy map at the psm level
-     */
-    private PsmSpecificMap psmMap;
-    /**
-     * The specific target/decoy map at the peptide level
-     */
-    private PeptideSpecificMap peptideMap;
-    /**
-     * The target/decoy map at the protein level
-     */
-    private TargetDecoyMap proteinMap;
     /**
      * The identification preferences
      */
@@ -261,12 +232,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         allPeptidesJTable.getTableHeader().setReorderingAllowed(false);
         allSpectraJTable.getTableHeader().setReorderingAllowed(false);
         quantificationJTable.getTableHeader().setReorderingAllowed(false);
-        fragmentIonsJTable.getTableHeader().setReorderingAllowed(false);
 
         proteinTable.getTableHeader().setReorderingAllowed(false);
         peptideTable.getTableHeader().setReorderingAllowed(false);
         psmsTable.getTableHeader().setReorderingAllowed(false);
-        fragmentIonsJTable.getTableHeader().setReorderingAllowed(false);
 
         allProteinsJTable.setAutoCreateRowSorter(true);
         allPeptidesJTable.setAutoCreateRowSorter(true);
@@ -289,10 +258,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         allProteinsJTable.getColumn("Decoy").setMaxWidth(60);
         allPeptidesJTable.getColumn("Decoy").setMaxWidth(60);
         allSpectraJTable.getColumn("Decoy").setMaxWidth(60);
-
-        fragmentIonsJTable.getColumn(" ").setMaxWidth(40);
-        fragmentIonsJTable.getColumn("  ").setMaxWidth(40);
-        fragmentIonsJTable.getColumn("AA").setMaxWidth(40);
 
         int labelWidth = 35;
 
@@ -347,16 +312,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")), null));
         allSpectraJTable.getColumn("Decoy").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")), null));
-
-        // centrally align the columns in the fragment ions table
-        fragmentIonsJTable.getColumn(" ").setCellRenderer(new AlignedTableCellRenderer(SwingConstants.CENTER, Color.LIGHT_GRAY));
-        fragmentIonsJTable.getColumn("  ").setCellRenderer(new AlignedTableCellRenderer(SwingConstants.CENTER, Color.LIGHT_GRAY));
-        fragmentIonsJTable.getColumn("AA").setCellRenderer(new AlignedTableCellRenderer(SwingConstants.CENTER, Color.LIGHT_GRAY));
-
-        // centrally align the column headers in the fragment ions table
-        TableCellRenderer renderer = fragmentIonsJTable.getTableHeader().getDefaultRenderer();
-        JLabel label = (JLabel) renderer;
-        label.setHorizontalAlignment(JLabel.CENTER);
     }
 
     /**
@@ -410,7 +365,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         bubbleJPanel = new javax.swing.JPanel();
         fragmentIonJPanel = new javax.swing.JPanel();
         fragmentIonsJScrollPane = new javax.swing.JScrollPane();
-        fragmentIonsJTable = new javax.swing.JTable();
         spectrumJPanel = new javax.swing.JPanel();
         spectrumJToolBar = new javax.swing.JToolBar();
         aIonToggleButton = new javax.swing.JToggleButton();
@@ -584,7 +538,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         sequenceCoverageJPanelLayout.setVerticalGroup(
             sequenceCoverageJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sequenceCoverageJPanelLayout.createSequentialGroup()
-                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -717,7 +671,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             psmJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
+                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -740,37 +694,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         );
         bubbleJPanelLayout.setVerticalGroup(
             bubbleJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 201, Short.MAX_VALUE)
+            .addGap(0, 202, Short.MAX_VALUE)
         );
 
         spectrumJTabbedPane.addTab("Bubble", bubbleJPanel);
 
         fragmentIonJPanel.setOpaque(false);
 
-        fragmentIonsJTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                " ", "b+", "b++", "AA", "y++", "y+", "  "
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Integer.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        fragmentIonsJScrollPane.setViewportView(fragmentIonsJTable);
+        fragmentIonsJScrollPane.setOpaque(false);
 
         javax.swing.GroupLayout fragmentIonJPanelLayout = new javax.swing.GroupLayout(fragmentIonJPanel);
         fragmentIonJPanel.setLayout(fragmentIonJPanelLayout);
@@ -785,7 +716,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -972,7 +903,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
+                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -992,7 +923,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         );
         spectrumMainPanelLayout.setVerticalGroup(
             spectrumMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 229, Short.MAX_VALUE)
+            .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
         );
 
         spectrumJTabbedPane.getAccessibleContext().setAccessibleName("Spectrum");
@@ -1795,10 +1726,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void aIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonToggleButtonActionPerformed
         if (spectrum != null) {
-            // update the ion coverage annotations
-            spectrum.setAnnotations(filterAnnotations(currentAnnotations));
-            spectrumPanel.validate();
-            spectrumPanel.repaint();
+            // update the spectrum plots
+            psmsTableKeyReleased(null);
         }
     }//GEN-LAST:event_aIonToggleButtonActionPerformed
 
@@ -2146,8 +2075,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     // get the spectrum annotations
                     String peptideKey = getPeptideKey(peptideTable.getSelectedRow());
                     Peptide currentPeptide = identification.getPeptideIdentification().get(peptideKey).getTheoreticPeptide();
-                    HashMap<String, HashMap<Integer, IonMatch>> annotations = spectrumAnnotator.annotateSpectrum(
-                            currentPeptide, currentSpectrum, annotationPreferences.getTolerance(), getIntensityLimit(currentSpectrum));
+                    SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
+                            currentPeptide, currentSpectrum, annotationPreferences.getTolerance(),
+                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()));
 
                     // add the spectrum annotations
                     currentAnnotations = spectrumAnnotator.getSpectrumAnnotations(annotations);
@@ -2160,361 +2090,40 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     spectrumPanel.repaint();
 
 
-                    // -----------------------
-                    // @TODO: the code below needs to be reformatted and parts of it moved to other classes etc
-                    // -----------------------
-
-                    // store some properties of the spectrum
-                    double mostIntensePeak = currentSpectrum.getMaxIntensity();
-                    double highestMzValue = currentSpectrum.getMaxMz();
-                    double totalIntensity = currentSpectrum.getTotalIntensity();
-
-                    ArrayList<Double> nonAnnotatedPeakIntensities = currentSpectrum.getPeaksAboveIntensityThreshold(getIntensityLimit(currentSpectrum));
-                    ArrayList<Double> annotatedPeakIntensities = new ArrayList<Double>();
-                    ArrayList<IonMatch> annotatedIons = new ArrayList<IonMatch>();
-
-                    // the sequence fragment annotations
-                    ArrayList<IonMatch> sequenceAnnotations = new ArrayList<IonMatch>();
-
-                    Iterator<String> ionTypeIterator = annotations.keySet().iterator();
-
-                    // iterate the annotations and add them to the spectrum
-                    while (ionTypeIterator.hasNext()) {
-                        String ionType = ionTypeIterator.next();
-
-                        HashMap<Integer, IonMatch> chargeMap = annotations.get(ionType);
-                        Iterator<Integer> chargeIterator = chargeMap.keySet().iterator();
-
-                        while (chargeIterator.hasNext()) {
-                            Integer currentCharge = chargeIterator.next();
-                            IonMatch ionMatch = chargeMap.get(currentCharge);
-
-                            PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
-
-                            // @TODO: only include currently selected fragment ion types!!
-                            annotatedPeakIntensities.add(ionMatch.peak.intensity);
-                            nonAnnotatedPeakIntensities.remove(ionMatch.peak.intensity);
-
-                            if ((fragmentIon.getType() == PeptideFragmentIonType.B_ION
-                                    || fragmentIon.getType() == PeptideFragmentIonType.Y_ION) && currentCharge == 1) {
-                                sequenceAnnotations.add(ionMatch);
-                            }
-
-                            if ((fragmentIon.getType() == PeptideFragmentIonType.B_ION
-                                    || fragmentIon.getType() == PeptideFragmentIonType.BH2O_ION
-                                    || fragmentIon.getType() == PeptideFragmentIonType.BNH3_ION
-                                    || fragmentIon.getType() == PeptideFragmentIonType.Y_ION
-                                    || fragmentIon.getType() == PeptideFragmentIonType.YH2O_ION
-                                    || fragmentIon.getType() == PeptideFragmentIonType.YNH3_ION)
-                                    && (currentCharge == 1 || currentCharge == 2)) {
-                                annotatedIons.add(ionMatch);
-                            }
-                        }
-                    }
-
-
-                    // clear the fragment ion table
-
-                    // @TODO: this code should be simplified and moved to a separate class
-
-                    while (fragmentIonsJTable.getRowCount() > 0) {
-                        ((DefaultTableModel) fragmentIonsJTable.getModel()).removeRow(0);
-                    }
-
-                    String peptideSequence = currentPeptide.getSequence();
-
-                    // add the peptide sequence and numbers to the table
-                    for (int i = 0; i < peptideSequence.length(); i++) {
-                        ((DefaultTableModel) fragmentIonsJTable.getModel()).addRow(new Object[]{
-                                    (i + 1),
-                                    null,
-                                    null,
-                                    peptideSequence.charAt(i),
-                                    null,
-                                    null,
-                                    peptideSequence.length() - i
-                                });
-                    }
-
-                    // get all singly and doubly charged  b and y fragmentions for the peptide
-                    FragmentFactory fragmentFactory = FragmentFactory.getInstance();
-                    ArrayList<PeptideFragmentIon> fragmentIons = fragmentFactory.getFragmentIons(currentPeptide);
-
-                    // add the theoretical masses to the table
-                    for (PeptideFragmentIon fragmentIon : fragmentIons) {
-
-                        // @TODO: also include charge 2 and neutral loss versions??
-
-                        if (fragmentIon.getType() == PeptideFragmentIonType.B_ION || fragmentIon.getType() == PeptideFragmentIonType.Y_ION) {
-                            double fragmentMzChargeOne = (fragmentIon.theoreticMass + 1 * Atom.H.mass) / 1;
-                            double fragmentMzChargeTwo = (fragmentIon.theoreticMass + 2 * Atom.H.mass) / 2;
-
-                            int fragmentNumber = fragmentIon.getNumber();
-
-                            if (fragmentIon.getType() == PeptideFragmentIonType.B_ION) {
-                                fragmentIonsJTable.setValueAt(fragmentMzChargeOne, fragmentNumber - 1, fragmentIonsJTable.getColumn("b+").getModelIndex());
-                                fragmentIonsJTable.setValueAt(fragmentMzChargeTwo, fragmentNumber - 1, fragmentIonsJTable.getColumn("b++").getModelIndex());
-                            } else {
-                                fragmentIonsJTable.setValueAt(fragmentMzChargeOne, peptideSequence.length() - fragmentNumber, fragmentIonsJTable.getColumn("y+").getModelIndex());
-                                fragmentIonsJTable.setValueAt(fragmentMzChargeTwo, peptideSequence.length() - fragmentNumber, fragmentIonsJTable.getColumn("y++").getModelIndex());
-                            }
-                        }
-                    }
-
-                    // see which ions are detected in the spectrum
-                    ionTypeIterator = annotations.keySet().iterator();
-
-                    ArrayList<Integer> bIonsSinglyCharged = new ArrayList<Integer>();
-                    ArrayList<Integer> bIonsDoublyCharged = new ArrayList<Integer>();
-                    ArrayList<Integer> yIonsSinglyCharged = new ArrayList<Integer>();
-                    ArrayList<Integer> yIonsDoublyCharged = new ArrayList<Integer>();
-
-                    while (ionTypeIterator.hasNext()) {
-                        String ionType = ionTypeIterator.next();
-
-                        HashMap<Integer, IonMatch> chargeMap = annotations.get(ionType);
-                        Iterator<Integer> chargeIterator = chargeMap.keySet().iterator();
-
-                        while (chargeIterator.hasNext()) {
-                            Integer currentCharge = chargeIterator.next();
-
-                            if (currentCharge == 1 || currentCharge == 2) {
-                                IonMatch ionMatch = chargeMap.get(currentCharge);
-
-                                PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
-
-                                if (fragmentIon.getType() == PeptideFragmentIonType.B_ION || fragmentIon.getType() == PeptideFragmentIonType.Y_ION) {
-                                    int fragmentNumber = fragmentIon.getNumber();
-
-                                    if (fragmentIon.getType() == PeptideFragmentIonType.B_ION) {
-                                        if (currentCharge == 1) {
-                                            bIonsSinglyCharged.add(fragmentNumber - 1);
-                                        } else {
-                                            bIonsDoublyCharged.add(fragmentNumber - 1);
-                                        }
-                                    } else {
-                                        if (currentCharge == 1) {
-                                            yIonsSinglyCharged.add(peptideSequence.length() - fragmentNumber);
-                                        } else {
-                                            yIonsDoublyCharged.add(peptideSequence.length() - fragmentNumber);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    // highlight the detected fragment ions in the table
-                    fragmentIonsJTable.getColumn("b+").setCellRenderer(new FragmentIonTableCellRenderer(bIonsSinglyCharged, Color.BLUE, Color.WHITE));
-                    fragmentIonsJTable.getColumn("b++").setCellRenderer(new FragmentIonTableCellRenderer(bIonsDoublyCharged, Color.BLUE, Color.WHITE));
-                    fragmentIonsJTable.getColumn("y+").setCellRenderer(new FragmentIonTableCellRenderer(yIonsSinglyCharged, Color.RED, Color.WHITE));
-                    fragmentIonsJTable.getColumn("y++").setCellRenderer(new FragmentIonTableCellRenderer(yIonsDoublyCharged, Color.RED, Color.WHITE));
+                    // create and display the fragment ion table
+                    fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, annotations));
 
 
                     // create the sequence fragment ion view
                     sequenceFragmentIonPlotsJPanel.removeAll();
-                    SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(peptideSequence, sequenceAnnotations, false); // @TODO: what about modified sequences??
+                    SequenceFragmentationPanel sequenceFragmentationPanel =
+                            new SequenceFragmentationPanel(currentPeptide.getSequence(), annotations, false); // @TODO: what about modified sequences??
                     sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                     sequenceFragmentationPanel.setOpaque(false);
                     sequenceFragmentationPanel.setToolTipText("Sequence Fragmentation");
                     sequenceFragmentIonPlotsJPanel.add(sequenceFragmentationPanel);
 
 
-                    // create the peak histograms
+                    // create the intensity histograms
+                    sequenceFragmentIonPlotsJPanel.add(new IntensityHistogram(
+                            annotations, getCurrentFragmentIonTypes(), currentSpectrum,
+                            annotationPreferences.shallAnnotateMostIntensePeaks(),
+                            oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected(),
+                            moreThanTwoChargesToggleButton.isSelected()));
 
-                    // @TODO: this code should be simplified and moved to a separate class
 
-                    int bins = 30; // @TODO: make this a user selection!
+                    // create the mass error plot
+                    MassErrorPlot massErrorPlot = new MassErrorPlot(
+                            annotations, getCurrentFragmentIonTypes(), currentSpectrum,
+                            oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected(),
+                            moreThanTwoChargesToggleButton.isSelected());
 
-                    // the non annotated peaks histogram
-                    double[] nonAnnotatedIntensities = new double[nonAnnotatedPeakIntensities.size()];
-
-                    // the annotated peaks histogram
-                    double[] annotatedIntensities = new double[annotatedPeakIntensities.size()];
-
-                    if (nonAnnotatedIntensities.length > 0 && annotatedIntensities.length > 0) {
-
-                        for (int i = 0; i < nonAnnotatedPeakIntensities.size(); i++) {
-                            nonAnnotatedIntensities[i] = nonAnnotatedPeakIntensities.get(i);
-                        }
-
-                        for (int i = 0; i < annotatedPeakIntensities.size(); i++) {
-                            annotatedIntensities[i] = annotatedPeakIntensities.get(i);
-                        }
-
-                        HistogramDataset dataset = new HistogramDataset();
-                        dataset.setType(HistogramType.SCALE_AREA_TO_1); // @TODO: use RELATIVE_FREQUENCY instead??
-                        dataset.addSeries("NonAnnotated", nonAnnotatedIntensities, bins, 0, mostIntensePeak);
-                        dataset.addSeries("Annotated", annotatedIntensities, bins, 0, mostIntensePeak);
-
-                        JFreeChart chart = ChartFactory.createHistogram(null, null, null,
-                                dataset, PlotOrientation.VERTICAL, false, true, false);
-
-                        ChartPanel chartPanel = new ChartPanel(chart) {
-
-                            @Override
-                            public String getToolTipText(MouseEvent e) {
-                                return "Intensity Distribution";
-                            }
-
-                            @Override
-                            public String getToolTipText() {
-                                return "Intensity Distribution";
-                            }
-                        };
-
-                        chartPanel.setBorder(null);
-                        chart.setBorderVisible(false);
-
-                        XYPlot plot = chart.getXYPlot();
-
-                        // set up the chart renderer
-                        XYBarRenderer renderer = new XYBarRenderer();
-                        renderer.setShadowVisible(false);
-                        //renderer.setSeriesPaint(0, new Color(210, 210, 210, 150)); // @TODO: make this selectable by the user
-                        renderer.setSeriesPaint(0, new Color(0, 0, 250, 150)); // @TODO: make this selectable by the user
-                        renderer.setSeriesPaint(1, sparklineColor);
-                        plot.setRenderer(renderer);
-
-                        //plot.getRangeAxis().setRange(0, plot.getRangeAxis().getUpperBound() / 3); // @TODO: make the "zoom" selectable by the user
-                        plot.getRangeAxis().setRange(0, plot.getRangeAxis().getUpperBound());
-
-                        // hide unwanted chart details
-                        plot.getRangeAxis().setVisible(false);
-                        plot.getDomainAxis().setVisible(false);
-                        plot.setRangeGridlinesVisible(false);
-                        plot.setDomainGridlinesVisible(false);
-                        plot.setOutlineVisible(false);
-
-                        plot.setBackgroundPaint(Color.WHITE);
-                        chartPanel.setBackground(Color.WHITE);
-                        chart.setBackgroundPaint(Color.WHITE);
-
-                        chartPanel.setDomainZoomable(false);
-                        chartPanel.setRangeZoomable(false);
-                        chartPanel.setPopupMenu(null);
-                        chartPanel.setDisplayToolTips(true);
-
-                        sequenceFragmentIonPlotsJPanel.add(chartPanel);
+                    if (massErrorPlot.getNumberOfDataPointsInPlot() > 0) {
+                        sequenceFragmentIonPlotsJPanel.add(massErrorPlot);
                     }
 
 
-
-                    // mass error plot
-
-                    // @TODO: move to a separate class/method!
-
-                    boolean useIntensityGrading = false;  // @TODO: make this selectable by the user?
-
-                    DefaultXYDataset xyDataset = new DefaultXYDataset();
-
-                    ArrayList<Color> colors = new ArrayList<Color>();
-
-                    // find the most intense annotated peak
-                    double maxAnnotatedIntensity = 0.0;
-
-                    for (int i = 0; i < annotatedIons.size(); i++) {
-
-                        IonMatch ionMatch = (IonMatch) annotatedIons.get(i);
-                        if (ionMatch.peak.intensity > maxAnnotatedIntensity) {
-                            maxAnnotatedIntensity = ionMatch.peak.intensity;
-                        }
-                    }
-
-                    for (int i = 0; i < annotatedIons.size(); i++) {
-
-                        double[][] dataXY = new double[2][1];
-
-                        IonMatch ionMatch = (IonMatch) annotatedIons.get(i);
-
-                        dataXY[0][0] = ionMatch.peak.mz;
-                        dataXY[1][0] = ionMatch.getError();
-
-                        xyDataset.addSeries(i, dataXY);
-
-                        int alphaLevel = Double.valueOf((ionMatch.peak.intensity / totalIntensity) / (maxAnnotatedIntensity / totalIntensity) * 255).intValue();
-
-                        colors.add(new Color(255, 0, 0, alphaLevel)); // @TODO: make color selectable by the user?
-                    }
-
-                    JFreeChart chart = ChartFactory.createScatterPlot(null, null, null, xyDataset, PlotOrientation.VERTICAL, false, false, false);
-
-                    // fine tune the chart properites
-                    XYPlot plot = chart.getXYPlot();
-
-                    DefaultXYItemRenderer renderer = new DefaultXYItemRenderer();
-
-                    // set the colors and shape for the datapoints
-                    for (int i = 0; i < colors.size(); i++) {
-
-                        if (useIntensityGrading) {
-                            renderer.setSeriesPaint(i, colors.get(i));
-                            renderer.setSeriesShape(i, renderer.getBaseShape());
-                        } else {
-                            renderer.setSeriesPaint(i, Color.RED); // @TODO: make this selectable by the user?
-                            renderer.setSeriesShape(i, renderer.getBaseShape());
-                        }
-                    }
-
-                    plot.setRenderer(renderer);
-
-
-                    // remove space before/after the domain axis
-                    plot.getDomainAxis().setUpperMargin(0);
-                    plot.getDomainAxis().setLowerMargin(0);
-
-                    // make sure that the chart as a symmetrical y-axis
-                    ValueAxis rangeAxis = plot.getRangeAxis();
-
-                    double lowerBound = rangeAxis.getLowerBound();
-                    double upperBound = rangeAxis.getUpperBound();
-
-                    if (Math.abs(lowerBound) > Math.abs(upperBound)) {
-                        rangeAxis.setUpperBound(Math.abs(lowerBound));
-                    } else {
-                        rangeAxis.setLowerBound(-Math.abs(upperBound));
-                    }
-
-                    plot.setRangeGridlinePaint(Color.black);
-
-                    ValueAxis domainAxis = plot.getDomainAxis();
-
-                    domainAxis.setRange(0, highestMzValue);
-
-                    // hide unwanted chart details
-//                    plot.getRangeAxis().setVisible(false);
-//                    plot.getDomainAxis().setVisible(false);
-                    //plot.setRangeGridlinesVisible(false);
-                    plot.setDomainGridlinesVisible(false);
-
-                    // hide the outline
-                    chart.getPlot().setOutlineVisible(false);
-
-                    // set background color
-                    chart.getPlot().setBackgroundPaint(Color.WHITE);
-                    chart.setBackgroundPaint(Color.WHITE);
-
-                    ChartPanel chartPanel = new ChartPanel(chart) {
-
-                        @Override
-                        public String getToolTipText(MouseEvent e) {
-                            return "Mass Error Plot";
-                        }
-
-                        @Override
-                        public String getToolTipText() {
-                            return "Mass Error Plot";
-                        }
-                    };
-
-                    chartPanel.setBackground(Color.WHITE);
-
-                    chartPanel.setDomainZoomable(false);
-                    chartPanel.setRangeZoomable(false);
-                    chartPanel.setPopupMenu(null);
-
-                    sequenceFragmentIonPlotsJPanel.add(chartPanel);
-
+                    // update the UI
                     sequenceFragmentIonPlotsJPanel.revalidate();
                     sequenceFragmentIonPlotsJPanel.repaint();
                 }
@@ -2611,19 +2220,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         }
 
         return fragmentIontypes;
-    }
-
-    private double getIntensityLimit(MSnSpectrum mSnSpectrum) {
-        if (annotationPreferences.shallAnnotateMostIntensePeaks()) {
-            ArrayList<Double> intensities = new ArrayList<Double>();
-            for (Peak peak : mSnSpectrum.getPeakList()) {
-                intensities.add(peak.intensity);
-            }
-            Collections.sort(intensities);
-            int index = 3 * (intensities.size() - 1) / 4;
-            return intensities.get(index);
-        }
-        return 0;
     }
 
     private void updatePsmSelection(int row) {
@@ -3166,7 +2762,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JPanel fragmentIonJPanel;
     private javax.swing.JScrollPane fragmentIonsJScrollPane;
-    private javax.swing.JTable fragmentIonsJTable;
     private javax.swing.JPanel gradientPanel;
     private javax.swing.JToggleButton h2oToggleButton;
     private javax.swing.JMenuItem helpJMenuItem;
