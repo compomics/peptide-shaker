@@ -212,6 +212,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         jLabel8 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         sampleNameIdtxt = new javax.swing.JTextField();
+        jLabel12 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PeptideShaker - Open Files");
@@ -776,6 +777,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel12.setFont(jLabel12.getFont().deriveFont((jLabel12.getFont().getStyle() | java.awt.Font.ITALIC)));
+        jLabel12.setText("Select the identification, spectrum and sequence files, and click Open to load and view the files.");
+
         javax.swing.GroupLayout sampleDetailsPanelLayout = new javax.swing.GroupLayout(sampleDetailsPanel);
         sampleDetailsPanel.setLayout(sampleDetailsPanelLayout);
         sampleDetailsPanelLayout.setHorizontalGroup(
@@ -786,6 +790,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     .addComponent(jTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 823, Short.MAX_VALUE)
                     .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sampleDetailsPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel12)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 231, Short.MAX_VALUE)
                         .addComponent(openButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(exitButton)))
@@ -804,7 +811,8 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exitButton)
-                    .addComponent(openButton))
+                    .addComponent(openButton)
+                    .addComponent(jLabel12))
                 .addContainerGap())
         );
 
@@ -1127,6 +1135,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
