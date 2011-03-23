@@ -38,9 +38,6 @@ import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.export.CsvExporter;
-import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
-import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
-import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -63,6 +60,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.Vector;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -2435,8 +2435,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
         String proteinKey;
 
-        // add the proteins to the table
+        TreeMap<Double, ProteinMatch> scoresMap = new TreeMap<Double, ProteinMatch>();
+
+        // order the proteins based on the score
         for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
+
+            PSParameter probabilities = (PSParameter) proteinMatch.getUrParam(new PSParameter());
+            double score = ((PSParameter) proteinMatch.getUrParam(probabilities)).getProteinProbabilityScore();
+
+            // make sure that the same score is not already in the map
+            while (scoresMap.containsKey(score)) {
+                score += 0.0000000000001;  //  @TODO: find a better way of doing this?
+            }
+
+            scoresMap.put(score, proteinMatch);
+        }
+
+        Iterator<Entry<Double, ProteinMatch>> iterator = scoresMap.entrySet().iterator(); // @TODO: use descendingKeySet() if switching to "high scores are good"!
+
+        // add the proteins to the table
+        while (iterator.hasNext()) {
+            ProteinMatch proteinMatch = iterator.next().getValue();
 
             proteinKey = proteinMatch.getKey();
             PSParameter probabilities = new PSParameter();
