@@ -216,6 +216,8 @@ public class PeptideSpecificMap implements Serializable {
      * @return the corresponding key
      */
     private String getKey(PeptideMatch peptideMatch) {
+        return "null";
+        /**
         ArrayList<String> modifications = new ArrayList<String>();
         for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
             if (modificationMatch.getTheoreticPtm() != null
@@ -243,5 +245,6 @@ public class PeptideSpecificMap implements Serializable {
             key += modification + "_";
         }
         return key;
+         **/
     }
 }

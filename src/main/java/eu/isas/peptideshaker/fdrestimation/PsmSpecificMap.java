@@ -197,7 +197,8 @@ public class PsmSpecificMap implements Serializable {
      */
     private Integer getKey(SpectrumMatch spectrumMatch) {
         try {
-            return ((MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumMatch.getSpectrumKey())).getPrecursor().getCharge().value;
+            return 0;
+            //return ((MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumMatch.getSpectrumKey())).getPrecursor().getCharge().value;
         } catch (Exception e) {
             // At this point no mzML file should be loaded
             return 0;
