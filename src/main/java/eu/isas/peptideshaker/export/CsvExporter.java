@@ -267,7 +267,7 @@ public class CsvExporter {
      * @return the spectrum match as a line of text
      */
     private String getLine(SpectrumMatch spectrumMatch) throws MzMLUnmarshallerException {
-        MSnSpectrum spectrum = (MSnSpectrum) experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSpectrumCollection().getSpectrum(spectrumMatch.getSpectrumKey());
+        MSnSpectrum spectrum = (MSnSpectrum) experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSpectrumCollection().getSpectrum(spectrumMatch.getKey());
 
         String line = "";
 
