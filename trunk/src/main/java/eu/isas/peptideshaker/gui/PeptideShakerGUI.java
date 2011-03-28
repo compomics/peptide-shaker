@@ -54,6 +54,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -182,6 +183,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         setUpLogFile();
 
         initComponents();
+
+        // set the title
+        this.setTitle(this.getTitle() + " - v" + getVersion() + " beta");
 
         // set up the table column properties
         setColumnProperies();
@@ -332,6 +336,25 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public void setLastSelectedFolder(String lastSelectedFolder) {
         this.lastSelectedFolder = lastSelectedFolder;
+    }
+
+    /**
+     * Retrieves the version number set in the pom file.
+     *
+     * @return the version number of PeptideShaker
+     */
+    public String getVersion() {
+
+        java.util.Properties p = new java.util.Properties();
+
+        try {
+            InputStream is = this.getClass().getClassLoader().getResourceAsStream("peptide-shaker.properties");
+            p.load(is);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return p.getProperty("peptide-shaker.version");
     }
 
     /** This method is called from within the constructor to
