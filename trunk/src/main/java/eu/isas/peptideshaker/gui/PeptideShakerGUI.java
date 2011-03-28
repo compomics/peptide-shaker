@@ -572,14 +572,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             },
             new String [] {
-                " ", "Sequence", "Modifications", "#Spectra", "Score"
+                " ", "Sequence", "Modifications", "#Spectra", "Score", "Confidence [%]"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -2295,7 +2295,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             PeptideMatch currentPeptideMatch = identification.getPeptideIdentification().get(peptideKey);
             int index = 1;
-
+            double score;
             for (SpectrumMatch spectrumMatch : currentPeptideMatch.getSpectrumMatches().values()) {
 
                 PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
@@ -2315,7 +2315,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 }
 
                 try {
-                    String spectrumKey = spectrumMatch.getSpectrumKey();
+                    String spectrumKey = spectrumMatch.getKey();
                     MSnSpectrum tempSpectrum = (MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumKey);
 
                     ((DefaultTableModel) psmTable.getModel()).addRow(new Object[]{
@@ -2376,7 +2376,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             ProteinMatch proteinMatch = identification.getProteinIdentification().get(proteinKey);
 
             int index = 0;
-
+            double score;
             for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
 
                 ArrayList<String> proteinAccessions = new ArrayList<String>();
@@ -2401,15 +2401,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                 PSParameter probabilities = new PSParameter();
                 probabilities = (PSParameter) peptideMatch.getUrParam(probabilities);
-
+                if (probabilities.getPeptideProbabilityScore() < Math.pow(10, -100)) {
+                    score = 100;
+                } else {
+                    score = -10*Math.log10(probabilities.getPeptideProbabilityScore());
+                }
+                double confidence = (1-probabilities.getPeptideProbability())*100;
                 ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
                             index + 1,
                             peptideMatch.getTheoreticPeptide().getSequence(),
                             modifications,
                             peptideMatch.getSpectrumCount(),
-                            probabilities.getPeptideProbabilityScore()
+                            score,
+                            confidence
                         });
-                addPeptideRowKey(index, peptideMatch.getTheoreticPeptide().getIndex());
+                addPeptideRowKey(index, peptideMatch.getTheoreticPeptide().getKey());
                 index++;
             }
 
@@ -2729,7 +2735,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
 
             probabilities = (PSParameter) spectrumMatch.getUrParam(probabilities);
-            String spectrumKey = spectrumMatch.getSpectrumKey();
+            String spectrumKey = spectrumMatch.getKey();
             MSnSpectrum tempSpectrum = (MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumKey);
 
             ((DefaultTableModel) allSpectraJTable.getModel()).addRow(new Object[]{

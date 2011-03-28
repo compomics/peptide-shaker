@@ -320,7 +320,7 @@ public class PeptideShaker {
                     peptideAssumption = spectrumMatch.getFirstHit(searchEngine);
                     p = inputMap.getProbability(searchEngine, peptideAssumption.getEValue());
                     pScore = pScore * p;
-                    id = peptideAssumption.getPeptide().getIndex();
+                    id = peptideAssumption.getPeptide().getKey();
                     if (identifications.containsKey(id)) {
                         p = identifications.get(id) * p;
                         identifications.put(id, p);

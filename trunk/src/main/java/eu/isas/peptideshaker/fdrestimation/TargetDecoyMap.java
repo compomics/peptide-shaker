@@ -240,39 +240,47 @@ public class TargetDecoyMap implements Serializable {
         double nDecoy = previousPoint.nDecoy;
         int cptInf = 0;
         int cptSup = 1;
+        boolean oneReached = false;
         double change;
         TargetDecoyPoint point;
         for (int cpt = 0; cpt < scores.size(); cpt++) {
             point = hitMap.get(scores.get(cpt));
-            change = 0.5 * (previousPoint.nTarget + point.nTarget);
-            nTargetInf += change;
-            nTargetSup -= change;
-            while (nTargetInf > nLimit) {
-                if (cptInf < cpt) {
-                    tempPoint = hitMap.get(scores.get(cptInf));
-                    nTargetInfTemp = nTargetInf - tempPoint.nTarget;
-                    if (nTargetInfTemp >= nLimit) {
-                        nDecoy -= tempPoint.nDecoy;
-                        nTargetInf = nTargetInfTemp;
-                        cptInf++;
+            if (!oneReached) {
+                change = 0.5 * (previousPoint.nTarget + point.nTarget);
+                nTargetInf += change;
+                nTargetSup -= change;
+                while (nTargetInf > nLimit) {
+                    if (cptInf < cpt) {
+                        tempPoint = hitMap.get(scores.get(cptInf));
+                        nTargetInfTemp = nTargetInf - tempPoint.nTarget;
+                        if (nTargetInfTemp >= nLimit) {
+                            nDecoy -= tempPoint.nDecoy;
+                            nTargetInf = nTargetInfTemp;
+                            cptInf++;
+                        } else {
+                            break;
+                        }
                     } else {
                         break;
                     }
-                } else {
-                    break;
                 }
-            }
-            while (nTargetSup < nLimit) {
-                if (cptSup < scores.size()) {
-                    tempPoint = hitMap.get(scores.get(cptSup));
-                    nTargetSup += tempPoint.nTarget;
-                    nDecoy += tempPoint.nDecoy;
-                    cptSup++;
-                } else {
-                    break;
+                while (nTargetSup < nLimit) {
+                    if (cptSup < scores.size()) {
+                        tempPoint = hitMap.get(scores.get(cptSup));
+                        nTargetSup += tempPoint.nTarget;
+                        nDecoy += tempPoint.nDecoy;
+                        cptSup++;
+                    } else {
+                        break;
+                    }
                 }
+                point.p = Math.min(nDecoy / (nTargetInf + nTargetSup), 1);
+                if (point.p >= 0.98) {
+                    oneReached = true;
+                }
+            } else {
+                point.p = 1;
             }
-            point.p = Math.min(nDecoy / (nTargetInf + nTargetSup), 1);
             previousPoint = point;
         }
     }
