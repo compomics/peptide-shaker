@@ -189,8 +189,13 @@ public class PeptideShaker {
 
     /**
      * Method used to import sequences from a fasta file
+     *
      * @param waitingDialog     A dialog to display feedback to the user
      * @param file              the file to import
+     * @param databaseName
+     * @param databseVersion
+     * @param stringBefore
+     * @param stringAfter
      */
     public void importFasta(WaitingDialog waitingDialog, File file, String databaseName, String databseVersion, String stringBefore, String stringAfter) {
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
@@ -246,6 +251,8 @@ public class PeptideShaker {
 
     /**
      * This method will estimate for each map the score thresholds, FDR and FNR when possible
+     *
+     * @param identificationPreferences
      */
     public void estimateThresholds(IdentificationPreferences identificationPreferences) {
         boolean probabilistic = identificationPreferences.useProbabilisticFDR();
