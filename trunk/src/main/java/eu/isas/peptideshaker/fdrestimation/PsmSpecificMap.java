@@ -159,13 +159,7 @@ public class PsmSpecificMap implements Serializable {
         Collections.sort(charges);
         int ref = 0;
         for (int charge : charges) {
-            if (psmsMaps.get(charge).getnMax() >= 100) {
-                ref = charge;
-                break;
-            }
-        }
-        for (int charge : charges) {
-            if (psmsMaps.get(charge).getnMax() >= 100) {
+            if (psmsMaps.get(charge).getnMax() >= 100 && psmsMaps.get(charge).getnTargetOnly() >= 100) {
                 ref = charge;
             } else if (ref == 0) {
                 ref = charge;
@@ -197,8 +191,7 @@ public class PsmSpecificMap implements Serializable {
      */
     private Integer getKey(SpectrumMatch spectrumMatch) {
         try {
-            return 0;
-            //return ((MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumMatch.getSpectrumKey())).getPrecursor().getCharge().value;
+            return ((MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumMatch.getKey())).getPrecursor().getCharge().value;
         } catch (Exception e) {
             // At this point no mzML file should be loaded
             return 0;
