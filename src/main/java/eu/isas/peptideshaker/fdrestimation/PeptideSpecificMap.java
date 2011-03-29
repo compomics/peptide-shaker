@@ -168,7 +168,7 @@ public class PeptideSpecificMap implements Serializable {
             for (String key : peptideMaps.keySet()) {
                 if (!key.equals(DUSTBIN)) {
                     TargetDecoyMap peptideMap = peptideMaps.get(key);
-                    if (peptideMap.getnMax() < 10) {
+                    if (peptideMap.getnMax() < 100 || peptideMap.getnTargetOnly() < 100) {
                         groupedMaps.add(key);
                         peptideMaps.get(DUSTBIN).addAll(peptideMap);
                     }
@@ -216,8 +216,6 @@ public class PeptideSpecificMap implements Serializable {
      * @return the corresponding key
      */
     private String getKey(PeptideMatch peptideMatch) {
-        return "null";
-        /**
         ArrayList<String> modifications = new ArrayList<String>();
         for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
             if (modificationMatch.getTheoreticPtm() != null
@@ -245,6 +243,5 @@ public class PeptideSpecificMap implements Serializable {
             key += modification + "_";
         }
         return key;
-         **/
     }
 }

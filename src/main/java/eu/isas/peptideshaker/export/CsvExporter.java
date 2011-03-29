@@ -112,7 +112,7 @@ public class CsvExporter {
 
             content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR
                     + "Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
-                    + SEPARATOR + "Mass Error" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
+                    + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
                     + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
             spectrumWriter.write(content);
 
@@ -298,6 +298,7 @@ public class CsvExporter {
         }
 
         line += SEPARATOR;
+        line += spectrumMatch.getBestAssumption().getPeptide().getMass() + SEPARATOR;
         line += spectrumMatch.getBestAssumption().getDeltaMass() + SEPARATOR;
         PeptideAssumption assumption = spectrumMatch.getFirstHit(Advocate.MASCOT);
 

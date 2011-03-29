@@ -325,6 +325,16 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
+     * Returns the number of target hits before the first decoy hit
+     * @return the number of target hits before the first decoy hit
+     */
+    public Integer getnTargetOnly() {
+        return nTargetOnly;
+    }
+
+
+
+    /**
      * Sorts the scores implemented in this map
      */
     private void estimateScores() {
