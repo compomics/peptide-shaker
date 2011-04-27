@@ -4,35 +4,18 @@ import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import eu.isas.peptideshaker.gui.ModificationDialog;
-import eu.isas.peptideshaker.gui.WaitingDialog;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This class contains the various peptides matches sorted 
+ * This class contains the various peptides matches sorted according to their variable modification status
  * 
  * @author Marc Vaudel
  */
 public class PeptideSpecificMap implements Serializable {
 
-    /**
-     * The user specified fdr threshold
-     */
-    private double fdrThreshold;
-    /**
-     * The number of hits at this threshold
-     */
-    private int nHits;
-    /**
-     * The estimated FDR
-     */
-    private double fdr;
-    /**
-     * The estimated FNR
-     */
-    private double fnr;
     /**
      * The peptide target/decoy maps indexed by the modification profile of the peptide.
      */
@@ -57,70 +40,12 @@ public class PeptideSpecificMap implements Serializable {
     }
 
     /**
-     * Return the number of hits at the defined FDR.
-     *
-     * @return the number of hits at the defined FDR
-     */
-    public int getNHits() {
-        return nHits;
-    }
-
-    /**
-     * Returns the estimated FDR.
-     *
-     * @return the estimated FDR 
-     */
-    public double getFdr() {
-        return fdr;
-    }
-
-    /**
-     * Returns the FDR threshold.
-     *
-     * @return the FDR threshold
-     */
-    public double getFdrThreshold() {
-        return fdrThreshold;
-    }
-
-    /**
-     * Returns the estimated FNR
-     *
-     * @return the estimated FNR
-     */
-    public double getFnr() {
-        return fnr;
-    }
-
-    /**
-     * Estimates FDR, FNR and number of hits for the peptide map at the given threshold
-     *
-     * @param newThreshold the new threshold
-     */
-    public void getResults(double newThreshold) {
-        this.fdrThreshold = newThreshold;
-        for (TargetDecoyMap targetDecoyMap : peptideMaps.values()) {
-            targetDecoyMap.getResults(fdrThreshold);
-        }
-    }
-
-    /**
-     * returns the method used to process peptides
-     *
-     * @return
-    public String getMethod() {
-    return "Specific FDR";
-    }
-     */
-    /**
      * estimate the posterior error probabilities
-     *
-     * @param waitingDialog The dialog which display the information while processing
      */
-    public void estimateProbabilities(WaitingDialog waitingDialog) {
+    public void estimateProbabilities() {
         for (String modifications : peptideMaps.keySet()) {
             if (!groupedMaps.contains(modifications)) {
-                peptideMaps.get(modifications).estimateProbabilities(waitingDialog);
+                peptideMaps.get(modifications).estimateProbabilities();
             }
         }
     }
@@ -149,22 +74,32 @@ public class PeptideSpecificMap implements Serializable {
     public void addPoint(double probabilityScore, PeptideMatch peptideMatch) {
         String key = getKey(peptideMatch);
         if (!peptideMaps.containsKey(key)) {
-            peptideMaps.put(key, new TargetDecoyMap(key + "peptides"));
+            peptideMaps.put(key, new TargetDecoyMap());
         }
         peptideMaps.get(key).put(probabilityScore, peptideMatch.isDecoy());
     }
 
     /**
+     * Returns a list of keys from maps presenting a suspicious input
+     * @return a list of keys from maps presenting a suspicious input
+     */
+    public ArrayList<String> suspiciousInput() {
+        ArrayList<String> result = new ArrayList<String>();
+        for (String key : peptideMaps.keySet()) {
+            if (peptideMaps.get(key).suspiciousInput()) {
+                result.add(key);
+            }
+        }
+        return result;
+    }
+
+    /**
      * This method puts all the small peptide groups in the dustbin to be analyzed together.
      *
-     * @param waitingDialog The waiting dialog will display the feedback
      */
-    public void cure(WaitingDialog waitingDialog) {
-
+    public void cure() {
         if (peptideMaps.size() > 1) {
-
-            peptideMaps.put(DUSTBIN, new TargetDecoyMap(DUSTBIN + " peptides"));
-
+            peptideMaps.put(DUSTBIN, new TargetDecoyMap());
             for (String key : peptideMaps.keySet()) {
                 if (!key.equals(DUSTBIN)) {
                     TargetDecoyMap peptideMap = peptideMaps.get(key);
@@ -174,39 +109,21 @@ public class PeptideSpecificMap implements Serializable {
                     }
                 }
             }
-
-//            String output = "";
-//
-//            for (String modifications : groupedMaps) {
-//                output += modifications + ", ";
-//            }
-
-            waitingDialog.appendReport("Modified peptides are analyzed together as " + DUSTBIN + " peptides.");
         }
     }
 
     /**
-     * Returns the score limit for the given peptide match at the selected FDR threshold
+     * This method returns the indexing key of a peptide match after curation
      *
-     * @param peptideMatch the given peptide match
-     * @return the score threshold
+     * @param peptideMatch  the considered peptide match
+     * @return the corresponding key
      */
-    public double getScoreLimit(PeptideMatch peptideMatch) {
+    public String getCorrectedKey(PeptideMatch peptideMatch) {
         String key = getKey(peptideMatch);
         if (groupedMaps.contains(key)) {
-            key = DUSTBIN;
+            return DUSTBIN;
         }
-        return peptideMaps.get(key).getScoreLimit();
-    }
-
-    /**
-     * Sets whether probabilistic thresholds should be applied when recommended
-     * @param probabilistic boolean indicating whether probabilistic thresholds should be applied when recommended
-     */
-    public void setProbabilistic(boolean probabilistic) {
-        for (TargetDecoyMap targetDecoyMap : peptideMaps.values()) {
-            targetDecoyMap.setProbabilistic(probabilistic);
-        }
+        return key;
     }
 
     /**
@@ -215,7 +132,7 @@ public class PeptideSpecificMap implements Serializable {
      * @param peptideMatch  the considered peptide match
      * @return the corresponding key
      */
-    private String getKey(PeptideMatch peptideMatch) {
+    public String getKey(PeptideMatch peptideMatch) {
         ArrayList<String> modifications = new ArrayList<String>();
         for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
             if (modificationMatch.getTheoreticPtm() != null
@@ -243,5 +160,28 @@ public class PeptideSpecificMap implements Serializable {
             key += modification + "_";
         }
         return key;
+    }
+
+    /**
+     * Returns the statistically retained peptide groups
+     * @return the statistically retained peptide groups
+     */
+    public ArrayList<String> getKeys() {
+        ArrayList<String> results = new ArrayList<String>();
+        for (String key : peptideMaps.keySet()) {
+            if (!groupedMaps.contains(key)) {
+                results.add(key);
+            }
+        }
+        return results;
+    }
+    
+    /**
+     * Returns the desired target decoy map
+     * @param key   the key of the desired map
+     * @return      the corresponding target decoy map
+     */
+    public TargetDecoyMap getTargetDecoyMap(String key) {
+        return peptideMaps.get(key);
     }
 }

@@ -24,9 +24,9 @@ public class IdentificationPreferences {
      */
     private boolean probabilisticFDR;
     /**
-     * Shall non validated proteins be removed
+     * Shall validate peptides and PSMs after protein validation
      */
-    private boolean removeNonValidated;
+    private boolean aPosterioriValidation;
 
     /**
      * Constructor
@@ -34,14 +34,14 @@ public class IdentificationPreferences {
      * @param peptideThreshold      The peptide threshold to be used
      * @param psmThreshold          The psm threshold to be used
      * @param probabilisticFDR      Boolean indicating whether probabilistic FDR should be used
-     * @param removeNonValidated    Boolean indicating whether the non validated hits should be removed
+     * @param aPosterioriValidation    Boolean indicating whether peptides and PSMs should be a posteriori validated
      */
-    public IdentificationPreferences(double proteinThreshold, double peptideThreshold, double psmThreshold, boolean probabilisticFDR, boolean removeNonValidated) {
+    public IdentificationPreferences(double proteinThreshold, double peptideThreshold, double psmThreshold, boolean probabilisticFDR, boolean aPosterioriValidation) {
         this.proteinThreshold = proteinThreshold;
         this.peptideThreshold = peptideThreshold;
         this.psmThreshold = psmThreshold;
         this.probabilisticFDR = probabilisticFDR;
-        this.removeNonValidated = removeNonValidated;
+        this.aPosterioriValidation = aPosterioriValidation;
     }
 
     /**
@@ -77,11 +77,11 @@ public class IdentificationPreferences {
     }
 
     /**
-     * Returns true if non validated proteins should be removed
-     * @return true if non validated proteins should be removed
+     * Returns true if the peptides and PSMs shall be validated after protein validation
+     * @return true if the peptides and PSMs shall be validated after protein validation
      */
-    public boolean removeNonValidated() {
-        return removeNonValidated;
+    public boolean aPosterioriValidation() {
+        return aPosterioriValidation;
     }
 
 }

@@ -30,7 +30,7 @@
               <EmptySpace max="32767" attributes="0"/>
           </Group>
           <Group type="102" alignment="1" attributes="0">
-              <EmptySpace pref="298" max="32767" attributes="0"/>
+              <EmptySpace pref="302" max="32767" attributes="0"/>
               <Component id="okButton" linkSize="2" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="cancelButton" linkSize="2" min="-2" max="-2" attributes="0"/>

@@ -32,9 +32,13 @@ public class IdFilter {
      */
     private double xtandemMaxEvalue;
     /**
-     * The maximal mass deviation allowed in ppm
+     * The maximal mass deviation allowed
      */
     private double maxMassDeviation;
+    /**
+     * Boolean indicating the unit of the allowed mass deviation (true: ppm, false: Da)
+     */
+    private boolean isPpm;
 
     /**
      * Constructor for an Identification filter
@@ -45,14 +49,16 @@ public class IdFilter {
      * @param omssaMaxEvalue    The maximal OMSSA e-value allowed
      * @param xtandemMaxEvalue  The maximal X!Tandem e-value allowed
      * @param maxMassDeviation  The maximal mass deviation allowed
+     * @param isPpm             Boolean indicating the unit of the allowed mass deviation (true: ppm, false: Da)
      */
-    public IdFilter(int minPepLength, int maxPepLength, double mascotMaxEvalue, double omssaMaxEvalue, double xtandemMaxEvalue, double maxMassDeviation) {
+    public IdFilter(int minPepLength, int maxPepLength, double mascotMaxEvalue, double omssaMaxEvalue, double xtandemMaxEvalue, double maxMassDeviation, boolean isPpm) {
         this.minPepLength = minPepLength;
         this.maxPepLength = maxPepLength;
         this.mascotMaxEvalue = mascotMaxEvalue;
         this.omssaMaxEvalue = omssaMaxEvalue;
         this.xtandemMaxEvalue = xtandemMaxEvalue;
         this.maxMassDeviation = maxMassDeviation;
+        this.isPpm = isPpm;
     }
 
     /**
@@ -62,8 +68,14 @@ public class IdFilter {
      * @return a boolean indicating whether the given assumption passes the filter
      */
     public boolean validateId(PeptideAssumption assumption) {
-        if (assumption.getDeltaMass() > maxMassDeviation && maxMassDeviation > 0) {
-            return false;
+        if (isPpm) {
+            if (assumption.getDeltaMass() > maxMassDeviation && maxMassDeviation > 0) {
+                return false;
+            }
+        } else {
+            if (Math.abs(assumption.getMeasuredMass() - assumption.getPeptide().getMass()) > maxMassDeviation && maxMassDeviation > 0) {
+                return false;
+            }
         }
         int pepLength = assumption.getPeptide().getSequence().length();
         if ((pepLength > maxPepLength && maxPepLength != 0) || pepLength < minPepLength) {

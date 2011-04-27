@@ -29,7 +29,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="sampleDetailsPanel" alignment="0" max="32767" attributes="0"/>
+          <Component id="sampleDetailsPanel" min="-2" max="-2" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -39,17 +39,17 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jTabbedPane" alignment="0" pref="823" max="32767" attributes="1"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="jTabbedPane" alignment="0" max="32767" attributes="1"/>
                       <Component id="jPanel7" alignment="0" min="-2" max="-2" attributes="1"/>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                           <Component id="jLabel12" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="231" max="32767" attributes="0"/>
+                          <EmptySpace pref="235" max="32767" attributes="0"/>
                           <Component id="openButton" linkSize="1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="exitButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -63,14 +63,14 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jPanel7" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jTabbedPane" pref="263" max="32767" attributes="0"/>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <Component id="jTabbedPane" pref="270" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="exitButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="openButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -95,8 +95,8 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="jPanel1" alignment="0" pref="802" max="32767" attributes="2"/>
                               <Component id="projectDetailsPanel" alignment="0" max="32767" attributes="2"/>
-                              <Component id="jPanel1" alignment="0" pref="798" max="32767" attributes="2"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -107,9 +107,9 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="projectDetailsPanel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="jPanel1" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="26" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -209,7 +209,6 @@
                           <Group type="102" max="-2" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel22" alignment="0" min="-2" pref="128" max="-2" attributes="1"/>
                                   <Component id="jLabel5" alignment="0" min="-2" pref="128" max="-2" attributes="1"/>
                                   <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
                                       <Component id="jLabel3" alignment="0" pref="128" max="32767" attributes="1"/>
@@ -218,7 +217,6 @@
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="enzymesCmb" max="32767" attributes="1"/>
                                   <Component id="mascotMaxEvalueTxt" linkSize="9" pref="236" max="32767" attributes="1"/>
                                   <Component id="omssaMaxEvalueTxt" linkSize="9" pref="236" max="32767" attributes="1"/>
                                   <Component id="xtandemMaxEvalueTxt" linkSize="9" alignment="0" pref="236" max="32767" attributes="1"/>
@@ -229,13 +227,17 @@
                                   <Component id="jLabel6" linkSize="7" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel11" linkSize="7" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="minPeplengthTxt" pref="236" max="32767" attributes="0"/>
-                                  <Component id="maxPepLengthTxt" alignment="0" pref="236" max="32767" attributes="0"/>
-                                  <Component id="massDeviationTxt" alignment="0" pref="236" max="32767" attributes="0"/>
+                                  <Component id="minPeplengthTxt" pref="222" max="32767" attributes="1"/>
+                                  <Component id="maxPepLengthTxt" alignment="1" pref="222" max="32767" attributes="1"/>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="massDeviationTxt" pref="180" max="32767" attributes="1"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="precMassUnitCmb" min="-2" pref="67" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -258,6 +260,7 @@
                                       <Group type="103" groupAlignment="3" attributes="0">
                                           <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="massDeviationTxt" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="precMassUnitCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
@@ -274,11 +277,6 @@
                                       <Group type="103" groupAlignment="3" attributes="0">
                                           <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="xtandemMaxEvalueTxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="3" attributes="0">
-                                          <Component id="jLabel22" alignment="3" min="-2" max="-2" attributes="0"/>
-                                          <Component id="enzymesCmb" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -351,7 +349,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel11">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Max Mass Deviation (ppm):"/>
+                        <Property name="text" type="java.lang.String" value="Max Mass Deviation:"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="massDeviationTxt">
@@ -360,15 +358,13 @@
                         <Property name="text" type="java.lang.String" value="10"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JLabel" name="jLabel22">
+                    <Component class="javax.swing.JComboBox" name="precMassUnitCmb">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Enzyme:"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JComboBox" name="enzymesCmb">
-                      <Properties>
-                        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                          <Connection code="new DefaultComboBoxModel(loadEnzymes())" type="code"/>
+                        <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+                          <StringArray count="2">
+                            <StringItem index="0" value="ppm"/>
+                            <StringItem index="1" value="Da"/>
+                          </StringArray>
                         </Property>
                       </Properties>
                     </Component>
@@ -390,10 +386,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="jPanel4" alignment="0" max="32767" attributes="0"/>
-                              <Component id="jPanel3" alignment="0" max="32767" attributes="0"/>
-                          </Group>
+                          <Component id="jPanel3" max="32767" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -403,9 +396,7 @@
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="jPanel4" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="156" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -490,45 +481,6 @@
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearSpectraActionPerformed"/>
                       </Events>
-                    </Component>
-                  </SubComponents>
-                </Container>
-                <Container class="javax.swing.JPanel" name="jPanel4">
-                  <Properties>
-                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                      <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                        <TitledBorder title="Spectra Processing Options"/>
-                      </Border>
-                    </Property>
-                  </Properties>
-
-                  <Layout>
-                    <DimensionLayout dim="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="onlyIdentifiedSpectraCheck" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="597" max="32767" attributes="0"/>
-                          </Group>
-                      </Group>
-                    </DimensionLayout>
-                    <DimensionLayout dim="1">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="onlyIdentifiedSpectraCheck" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="78" max="32767" attributes="0"/>
-                          </Group>
-                      </Group>
-                    </DimensionLayout>
-                  </Layout>
-                  <SubComponents>
-                    <Component class="javax.swing.JCheckBox" name="onlyIdentifiedSpectraCheck">
-                      <Properties>
-                        <Property name="selected" type="boolean" value="true"/>
-                        <Property name="text" type="java.lang.String" value="Import Only Identified Spectra"/>
-                        <Property name="iconTextGap" type="int" value="15"/>
-                      </Properties>
                     </Component>
                   </SubComponents>
                 </Container>

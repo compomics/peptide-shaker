@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
 
-
 /**
  * Peptide-Shaker compomics utilities experiment customizable parameter.
  * This parameter will be added to spectrum, peptide and protein matches to score them, indicate the estimated posterior error probability associated and flag whether they have been validated or not.
@@ -18,11 +17,11 @@ public class PSParameter implements UrParameter {
     /**
      * Probabilistic score for a peptide to spectrum match in the dataset
      */
-    private double spectrumProbabilityScore;
+    private double psmProbabilityScore;
     /**
      * Spectrum posterior error probability
      */
-    private double spectrumProbability;
+    private double psmProbability;
     /**
      * Probabilistic score for a peptide match
      */
@@ -40,10 +39,6 @@ public class PSParameter implements UrParameter {
      */
     private double proteinProbability;
     /**
-     * Protein corrected probability
-     */
-    private double proteinCorrectedProbability;
-    /**
      * Boolean indicating whether a match is validated or not at the selected threshold
      */
     private boolean validated = false;
@@ -52,7 +47,6 @@ public class PSParameter implements UrParameter {
      * Constructor
      */
     public PSParameter() {
-
     }
 
     /**
@@ -83,30 +77,46 @@ public class PSParameter implements UrParameter {
     }
 
     /**
+     * Returns the peptide score
+     * @return the peptide score
+     */
+    public double getPeptideScore() {
+        double score;
+        if (peptideProbabilityScore < Math.pow(10, -100)) {
+            score = 100;
+        } else {
+            score = -10 * Math.log10(peptideProbabilityScore);
+        }
+        if (score <= 0) {
+            score = 0;
+        }
+        return score;
+    }
+
+    /**
+     * Returns the peptide confidence
+     * @return the peptide confidence
+     */
+    public double getPeptideConfidence() {
+        double confidence;
+        if (peptideProbability < Math.pow(10, -100)) {
+            confidence = 100;
+        } else {
+            confidence = -10 * Math.log10(peptideProbability);
+        }
+        if (confidence <= 0) {
+            confidence = 0;
+        }
+        return confidence;
+    }
+
+    /**
      * Set the peptide Probabilistic score.
      *
      * @param peptideProbabilityScore the new peptide Probabilistic score
      */
     public void setPeptideProbabilityScore(double peptideProbabilityScore) {
         this.peptideProbabilityScore = peptideProbabilityScore;
-    }
-
-    /**
-     * Returns the protein corrected probability.
-     *
-     * @return the protein corrected probability
-     */
-    public double getProteinCorrectedProbability() {
-        return proteinCorrectedProbability;
-    }
-
-    /**
-     * Set the protein corrected probability.
-     *
-     * @param proteinCorrectedProbability the new protein corrected probability
-     */
-    public void setProteinCorrectedProbability(double proteinCorrectedProbability) {
-        this.proteinCorrectedProbability = proteinCorrectedProbability;
     }
 
     /**
@@ -137,6 +147,40 @@ public class PSParameter implements UrParameter {
     }
 
     /**
+     * Returns the protein score
+     * @return the protein score
+     */
+    public double getProteinScore() {
+        double score;
+        if (proteinProbabilityScore < Math.pow(10, -100)) {
+            score = 100;
+        } else {
+            score = -10 * Math.log10(proteinProbabilityScore);
+        }
+        if (score <= 0) {
+            score = 0;
+        }
+        return score;
+    }
+
+    /**
+     * Returns the protein confidence
+     * @return the protein confidence
+     */
+    public double getProteinConfidence() {
+        double confidence;
+        if (proteinProbability < Math.pow(10, -100)) {
+            confidence = 100;
+        } else {
+            confidence = -10 * Math.log10(proteinProbability);
+        }
+        if (confidence <= 0) {
+            confidence = 0;
+        }
+        return confidence;
+    }
+
+    /**
      * Set the protein Probabilistic score
      *
      * @param proteinProbabilityScore the new protein Probabilistic score
@@ -164,41 +208,93 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the spectrum probability.
-     *
-     * @return the spectrum probability
+     * Returns the protein confidence
+     * @return the protein confidence
      */
-    public double getSpectrumProbability() {
-        return spectrumProbability;
+    public double getSearchEngineConfidence() {
+        double confidence;
+        if (searchEngineProbability < Math.pow(10, -100)) {
+            confidence = 100;
+        } else {
+            confidence = -10 * Math.log10(searchEngineProbability);
+        }
+        if (confidence <= 0) {
+            confidence = 0;
+        }
+        return confidence;
     }
 
     /**
-     * Set the the spectrum probability.
+     * Returns the PSM probability.
      *
-     * @param spectrumProbability the new the spectrum probability
+     * @return the PSM probability
      */
-    public void setSpectrumProbability(double spectrumProbability) {
-        this.spectrumProbability = spectrumProbability;
+    public double getPsmProbability() {
+        return psmProbability;
     }
 
     /**
-     * Returns the the spectrum Probabilistic score.
+     * Set the the PSM probability.
      *
-     * @return the spectrum Probabilistic score
+     * @param spectrumProbability the new the PSM probability
      */
-    public double getSpectrumProbabilityScore() {
-        return spectrumProbabilityScore;
+    public void setPsmProbability(double psmProbability) {
+        this.psmProbability = psmProbability;
     }
 
     /**
-     * Set the spectrum Probabilistic score
+     * Returns the the PSM Probabilistic score.
      *
-     * @param spectrumProbabilityScore the new spectrum Probabilistic score
+     * @return the PSM Probabilistic score
      */
-    public void setSpectrumProbabilityScore(double spectrumProbabilityScore) {
-        this.spectrumProbabilityScore = spectrumProbabilityScore;
+    public double getPsmProbabilityScore() {
+        return psmProbabilityScore;
     }
-    
+
+    /**
+     * Set the PSM Probabilistic score
+     *
+     * @param psmProbabilityScore the new PSM Probabilistic score
+     */
+    public void setSpectrumProbabilityScore(double psmProbabilityScore) {
+        this.psmProbabilityScore = psmProbabilityScore;
+    }
+
+    /**
+     * Returns the PSM score
+     * @return the PSM score
+     */
+    public double getPsmScore() {
+        double score;
+        if (psmProbabilityScore < Math.pow(10, -100)) {
+            score = 100;
+        } else {
+            score = -10 * Math.log10(psmProbabilityScore);
+        }
+        if (score <= 0) {
+            score = 0;
+        }
+        return score;
+    }
+
+    /**
+     * Returns the PSM confidence
+     * @return the PSM confidence
+     */
+    public double getPsmConfidence() {
+        double confidence;
+        if (psmProbability < Math.pow(10, -100)) {
+            confidence = 100;
+        } else {
+            confidence = -10 * Math.log10(psmProbability);
+        }
+        if (confidence <= 0) {
+            confidence = 0;
+        }
+        return confidence;
+    }
+
+
     /**
      * Un/Validates a match
      * @param validated boolean indicating whether the match should be validated

@@ -78,7 +78,7 @@ public class WaitingDialog extends javax.swing.JDialog {
      *
      * @param maxProgressValue the max value
      */
-    public void setMaxProgressValue (int maxProgressValue) {
+    public void setMaxProgressValue(int maxProgressValue) {
         progressBar.setMaximum(maxProgressValue);
     }
 
@@ -231,16 +231,7 @@ public class WaitingDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        if (runFinished) {
-            try {
-                peptideShakerGUI.displayResults();
-                this.dispose();
-            } catch (MzMLUnmarshallerException exception) {
-                appendReport("An error occured while loading the selected mzML file.");
-                setRunCanceled();
-                exception.printStackTrace();
-            }
-        } else if (runCanceled) {
+        if (runFinished || runCanceled) {
             this.dispose();
         } else {
             setRunCanceled();

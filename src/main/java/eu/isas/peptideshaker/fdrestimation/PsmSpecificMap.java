@@ -3,35 +3,18 @@ package eu.isas.peptideshaker.fdrestimation;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
-import eu.isas.peptideshaker.gui.WaitingDialog;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
 /**
- * This map will store basic informations about the psms grouped according to their mass.
+ * This map will store target decoy informations about the psms grouped according to their precursor charge.
  *
  * @author Marc
  */
 public class PsmSpecificMap implements Serializable {
 
-    /**
-     * The user specified FDR threshold
-     */
-    private double fdrThreshold;
-    /**
-     * The number of hits retained at the specified threshold
-     */
-    private int nHits;
-    /**
-     * The FDR estimated at the specified threshold
-     */
-    private double fdr;
-    /**
-     * The FNR estimated at the specified threshold
-     */
-    private double fnr;
     /**
      * The map of the psm target/decoy maps indexed by the psm charge
      */
@@ -54,56 +37,12 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the number of hits at the implemented threshold
-     * @return the number of hits at the implemented threshold
-     */
-    public int getNHits() {
-        return nHits;
-    }
-
-    /**
-     * Returns the estimated FDR at the implemented threshold
-     * @return the estimated FDR at the implemented threshold
-     */
-    public double getFdr() {
-        return fdr;
-    }
-
-    /**
-     * Returns the implemented threshold
-     * @return the implemented threshold
-     */
-    public double getFdrThreshold() {
-        return fdrThreshold;
-    }
-
-    /**
-     * Returns the estimated FNR at the implemented threshold
-     * @return Returns the estimated FNR at the implemented threshold
-     */
-    public double getFnr() {
-        return fnr;
-    }
-
-    /**
-     * Estimate the FDR, FNR, number of hits at a new threshold
-     * @param newThreshold  the new threshold to implement
-     */
-    public void getResults(double newThreshold) {
-        this.fdrThreshold = newThreshold;
-        for (TargetDecoyMap targetDecoyMap : psmsMaps.values()) {
-            targetDecoyMap.getResults(fdrThreshold);
-        }
-    }
-
-    /**
      * estimate the posterior error probabilities of the psms
-     * @param waitingDialog the waiting dialog will display feedback to the user
      */
-    public void estimateProbabilities(WaitingDialog waitingDialog) {
+    public void estimateProbabilities() {
         for (int charge : psmsMaps.keySet()) {
             if (!grouping.keySet().contains(charge)) {
-                psmsMaps.get(charge).estimateProbabilities(waitingDialog);
+                psmsMaps.get(charge).estimateProbabilities();
             }
         }
     }
@@ -120,8 +59,6 @@ public class PsmSpecificMap implements Serializable {
             key = grouping.get(key);
         }
         return psmsMaps.get(key).getProbability(score);
-
-
     }
 
     /**
@@ -132,29 +69,29 @@ public class PsmSpecificMap implements Serializable {
     public void addPoint(double probabilityScore, SpectrumMatch spectrumMatch) {
         int key = getKey(spectrumMatch);
         if (!psmsMaps.containsKey(key)) {
-            psmsMaps.put(key, new TargetDecoyMap("Charge " + key + " psms"));
+            psmsMaps.put(key, new TargetDecoyMap());
         }
         psmsMaps.get(key).put(probabilityScore, spectrumMatch.getBestAssumption().isDecoy());
     }
 
     /**
-     * Returns the score limit estimated for the implemented threshold for the selected spectrum match
-     * @param spectrumMatch the spectrum match of interest
-     * @return the score limit for this kind of spectrum match at the implemented threshold
+     * Returns a list of keys from maps presenting a suspicious input
+     * @return a list of keys from maps presenting a suspicious input
      */
-    public double getScoreLimit(SpectrumMatch spectrumMatch) {
-        int key = getKey(spectrumMatch);
-        if (grouping.containsKey(key)) {
-            key = grouping.get(key);
+    public ArrayList<String> suspiciousInput() {
+        ArrayList<String> result = new ArrayList<String>();
+        for (Integer key : psmsMaps.keySet()) {
+            if (psmsMaps.get(key).suspiciousInput()) {
+                result.add(getGroupKey(key));
+            }
         }
-        return psmsMaps.get(key).getScoreLimit();
+        return result;
     }
 
     /**
      * This method groups the statistically non significant psms with the ones having a charge directly smaller
-     * @param waitingDialog the waiting dialog which will display feedback to the user
      */
-    public void cure(WaitingDialog waitingDialog) {
+    public void cure() {
         ArrayList<Integer> charges = new ArrayList(psmsMaps.keySet());
         Collections.sort(charges);
         int ref = 0;
@@ -170,18 +107,50 @@ public class PsmSpecificMap implements Serializable {
         for (int charge : grouping.keySet()) {
             ref = grouping.get(charge);
             psmsMaps.get(ref).addAll(psmsMaps.get(charge));
-            waitingDialog.appendReport("Charge " + charge + " is analyzed together with charge " + ref + ".");
+
         }
     }
 
     /**
-     * Sets whether probabilistic thresholds should be applied when recommended
-     * @param probabilistic boolean indicating whether probabilistic thresholds should be applied when recommended
+     * Returns a map of the keys: charge -> group name
+     * @return a map of the keys: charge -> group name
      */
-    public void setProbabilistic(boolean probabilistic) {
-        for (TargetDecoyMap targetDecoyMap : psmsMaps.values()) {
-            targetDecoyMap.setProbabilistic(probabilistic);
+    public HashMap<Integer, String> getKeys() {
+        HashMap<Integer, String> result = new HashMap<Integer, String>();
+        for (int key : psmsMaps.keySet()) {
+            if (!grouping.containsKey(key)) {
+                result.put(key, getGroupKey(key));
+            }
         }
+        return result;
+    }
+
+    /**
+     * Return a key of the selected charge group indexed by the main charge
+     * @param mainCharge the selected charge
+     * @return key of the corresponding charge group
+     */
+    private String getGroupKey(Integer mainCharge) {
+        String tempKey = mainCharge + "";
+        for (int mergedKey : grouping.keySet()) {
+            if (grouping.get(mergedKey) == mainCharge) {
+                tempKey += ", " + mergedKey;
+            }
+        }
+        return tempKey;
+    }
+
+    /**
+     * Returns the key (here the charge) associated to the corresponding spectrum match after curation
+     * @param spectrumMatch the spectrum match of interest
+     * @return the corresponding key
+     */
+    public Integer getCorrectedKey(SpectrumMatch spectrumMatch) {
+        Integer key = getKey(spectrumMatch);
+        if (grouping.containsKey(key)) {
+            return grouping.get(key);
+        }
+        return key;
     }
 
     /**
@@ -189,12 +158,21 @@ public class PsmSpecificMap implements Serializable {
      * @param spectrumMatch the spectrum match of interest
      * @return the corresponding key
      */
-    private Integer getKey(SpectrumMatch spectrumMatch) {
+    public Integer getKey(SpectrumMatch spectrumMatch) {
         try {
             return ((MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumMatch.getKey())).getPrecursor().getCharge().value;
         } catch (Exception e) {
             // At this point no mzML file should be loaded
             return 0;
         }
+    }
+
+    /**
+     * Returns the desired target decoy map
+     * @param key   the key of the desired map
+     * @return      the corresponding target decoy map
+     */
+    public TargetDecoyMap getTargetDecoyMap(int key) {
+        return psmsMaps.get(key);
     }
 }

@@ -7,20 +7,10 @@ package eu.isas.peptideshaker.preferences;
  */
 public class AnnotationPreferences {
 
-    private double mzTolerance;
     private boolean mostIntensePeaks;
 
     public AnnotationPreferences() {
-        mzTolerance = 0.5;
         mostIntensePeaks = true;
-    }
-
-    public double getTolerance() {
-        return mzTolerance;
-    }
-
-    public void setTolerance(double mzTolerance) {
-        this.mzTolerance = mzTolerance;
     }
 
     public void annotateMostIntensePeaks(boolean annotateMostIntensePeaks) {
