@@ -14,13 +14,14 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private PeptideShakerGUI peptideShakerGUI;
 
     /** Creates new form AnnotationPreferencesDialog */
-    public AnnotationPreferencesDialog(PeptideShakerGUI peptideShakerGUI, boolean modal, AnnotationPreferences annotationPreferences) {
-        super(peptideShakerGUI, modal);
+    public AnnotationPreferencesDialog(PeptideShakerGUI peptideShakerGUI) {
+        super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
-        this.annotationPreferences = annotationPreferences;
+        this.annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
         initComponents();
         refreshSelection();
         this.setLocationRelativeTo(peptideShakerGUI);
+        mzToleranceTxt.setText(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance() + "");
         setVisible(true);
     }
 
@@ -138,8 +139,8 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
-            annotationPreferences.setTolerance(new Double(mzToleranceTxt.getText().trim()));
-            peptideShakerGUI.updateAnnotationPreferences(annotationPreferences);
+            peptideShakerGUI.getSearchParameters().setFragmentIonMZTolerance(new Double(mzToleranceTxt.getText()));
+            peptideShakerGUI.setAnnotationPreferences(annotationPreferences);
             dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed

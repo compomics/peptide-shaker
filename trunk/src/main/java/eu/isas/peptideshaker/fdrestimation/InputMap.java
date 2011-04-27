@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.fdrestimation;
 
-import com.compomics.util.experiment.identification.AdvocateFactory;
-import eu.isas.peptideshaker.gui.WaitingDialog;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -39,12 +38,10 @@ public class InputMap {
 
     /**
      * Estimates the posterior error probability for each search engine
-     *
-     * @param waitingDialog the dialog displaying the output
      */
-    public void computeProbabilities(WaitingDialog waitingDialog) {
+    public void estimateProbabilities() {
         for (TargetDecoyMap hitmap : inputMap.values()) {
-            hitmap.estimateProbabilities(waitingDialog);
+            hitmap.estimateProbabilities();
         }
     }
 
@@ -57,6 +54,23 @@ public class InputMap {
      */
     public double getProbability(int searchEngine, double eValue) {
         return inputMap.get(searchEngine).getProbability(eValue);
+    }
+
+    /**
+     * Returns a list of search engines indexed by utilities index presenting a suspicious input
+     * @return a list of search engines presenting a suspicious input
+     */
+    public ArrayList<Integer> suspiciousInput() {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        if (inputMap.size() == 1) {
+            return result;
+        }
+        for (int key : inputMap.keySet()) {
+            if (inputMap.get(key).suspiciousInput()) {
+                result.add(key);
+            }
+        }
+        return result;
     }
 
     /**
@@ -74,8 +88,7 @@ public class InputMap {
      */
     public void addEntry(int searchEngine, double eValue, boolean isDecoy) {
         if (inputMap.get(searchEngine) == null) {
-            String searchEngineName = AdvocateFactory.getInstance().getAdvocate(searchEngine).getName();
-            inputMap.put(searchEngine, new TargetDecoyMap(searchEngineName + " spectrum match"));
+            inputMap.put(searchEngine, new TargetDecoyMap());
         }
         inputMap.get(searchEngine).put(eValue, isDecoy);
     }

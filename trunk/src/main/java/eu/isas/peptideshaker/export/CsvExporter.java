@@ -340,8 +340,8 @@ public class CsvExporter {
         probabilities = (PSParameter) spectrumMatch.getUrParam(probabilities);
 
         try {
-            line += probabilities.getSpectrumProbabilityScore() + SEPARATOR
-                    + probabilities.getSpectrumProbability() + SEPARATOR;
+            line += probabilities.getPsmProbabilityScore() + SEPARATOR
+                    + probabilities.getPsmProbability() + SEPARATOR;
         } catch (Exception e) {
             line += SEPARATOR + SEPARATOR;
         }

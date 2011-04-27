@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.fdrestimation;
 
-import eu.isas.peptideshaker.gui.WaitingDialog;
 import java.io.Serializable;
 
 /**
@@ -11,26 +10,9 @@ import java.io.Serializable;
 public class ProteinMap implements Serializable {
 
     /**
-     * The user specified fdr threshold
-     */
-    private double fdrThreshold;
-    /**
-     * The number of hits at this threshold
-     */
-    private int nHits;
-    /**
-     * The estimated FDR
-     */
-    private double fdr;
-    /**
-     * The estimated FNR
-     */
-    private double fnr;
-
-    /**
      * The protein target/decoy map
      */
-    private TargetDecoyMap proteinMatchMap = new TargetDecoyMap("protein inferences");
+    private TargetDecoyMap proteinMatchMap = new TargetDecoyMap();
 
     /**
      * Constructor
@@ -39,53 +21,32 @@ public class ProteinMap implements Serializable {
         
     }
 
-
     /**
      * estimate the posterior error probabilities
-     *
-     * @param waitingDialog The dialog which display the information while processing
      */
-    public void estimateProbabilities(WaitingDialog waitingDialog) {
-        proteinMatchMap.estimateProbabilities(waitingDialog);
-    }
-
-
-    /**
-     * Sets whether probabilistic thresholds should be applied when recommended
-     * @param probabilistic boolean indicating whether probabilistic thresholds should be applied when recommended
-     */
-    public void setProbabilistic(boolean probabilistic) {
-        proteinMatchMap.setProbabilistic(probabilistic);
-    }
-
-    /**
-     * Estimates FDR, FNR and number of hits for the protein map at the given threshold
-     *
-     * @param newThreshold the new threshold
-     */
-    public void getResults(double newThreshold) {
-        this.fdrThreshold = newThreshold;
-        proteinMatchMap.getResults(fdrThreshold);
-    }
-
-    /**
-     * Returns the score limit for the given peptide match at the selected FDR threshold
-     *
-     * @return the score threshold
-     */
-    public double getScoreLimit() {
-        return proteinMatchMap.getScoreLimit();
+    public void estimateProbabilities() {
+        proteinMatchMap.estimateProbabilities();
     }
 
     /**
      * Adds a point in the target/decoy map.
      *
      * @param probabilityScore The estimated protein probabilistic score
+     * @param isDecoy a boolean indicating whether the protein is decoy
      */
     public void addPoint(double probabilityScore, boolean isDecoy) {
         proteinMatchMap.put(probabilityScore, isDecoy);
     }
 
+    /**
+     * Removes a point in the target/decoy map.
+     * 
+     * @param probabilityScore The estimated protein probabilistic score
+     * @param isDecoy a boolean indicating whether the protein is decoy
+     */
+    public void removePoint(double probabilityScore, boolean isDecoy) {
+        proteinMatchMap.remove(probabilityScore, isDecoy);
+    }
 
     /**
      * Returns the posterior error probability of a peptide match at the given score
@@ -95,5 +56,21 @@ public class ProteinMap implements Serializable {
      */
     public double getProbability(double score) {
         return proteinMatchMap.getProbability(score);
+    }
+
+    /**
+     * Returns a boolean indicating if a suspicious input was detected
+     * @return a boolean indicating if a suspicious input was detected
+     */
+    public boolean suspicousInput() {
+        return proteinMatchMap.suspiciousInput();
+    }
+
+    /**
+     * Returns the target decoy map
+     * @return the target decoy map
+     */
+    public TargetDecoyMap getTargetDecoyMap() {
+        return proteinMatchMap;
     }
 }

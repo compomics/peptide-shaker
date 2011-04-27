@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.fdrestimation;
 
-import eu.isas.peptideshaker.gui.WaitingDialog;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,10 +13,6 @@ import java.util.HashMap;
 public class TargetDecoyMap implements Serializable {
 
     /**
-     * The level at which the target/decoy investigation is conducted (for instance psm, peptide, protein, phosphorylated peptides...)
-     */
-    private String level;
-    /**
      * The hit map containing the indexed target/decoy points
      */
     private HashMap<Double, TargetDecoyPoint> hitMap = new HashMap<Double, TargetDecoyPoint>();
@@ -26,96 +21,21 @@ public class TargetDecoyMap implements Serializable {
      */
     private ArrayList<Double> scores;
     /**
-     * The number of hits retained at the implemented threshold
-     */
-    private int nHits;
-    /**
-     * The estimated FDR at the implemented threshold
-     */
-    private double fdr;
-    /**
-     * The estimated FNR at the implemented threshold
-     */
-    private Double fnr;
-    /**
-     * The implemented FDR threshold
-     */
-    private double fdrThreshold;
-    /**
      * The maximal amount of target hits comprised between two subsequent decoy hits
      */
     private Integer nmax;
+    /**
+     * The window size for pep estimation
+     */
+    private Integer windowSize;
     /**
      * The number of target hits found before the first decoy hit
      */
     private Integer nTargetOnly;
     /**
-     * Boolean indicating whether the FDR will be estimated probabilistically or not
+     * the results computed on this map
      */
-    private boolean probabilistic = true;
-    /**
-     * The estimated score limit at the implemented FDR threshold
-     */
-    private double scoreLimit = -1;
-
-    /**
-     * estimates the results at a new FDR threshold
-     * @param fdrThreshold the new FDR threshold
-     */
-    public void getResults(double fdrThreshold) {
-        this.fdrThreshold = fdrThreshold;
-        getResults();
-    }
-
-    /**
-     * Estimates the dataset metrics Nmax, NtargetOnly. Estimates whether a probabilistic processing is possible. Retrieves the FDR, FNR (when possible) and the number of hits passing the threshold.
-     */
-    private void getResults() {
-        int nP = 0;
-        int nTotal = 0;
-        double nFP = 0;
-        double nFN = 0;
-        TargetDecoyPoint point;
-        if (probabilistic) {
-            for (double score : scores) {
-                point = hitMap.get(score);
-                if (point.nTarget > 0) {
-                    if ((nFP + point.nTarget * point.p) / (nP + point.nTarget) <= fdrThreshold) {
-                        nFP += point.nTarget * point.p;
-                        nP += point.nTarget;
-                        scoreLimit = score;
-                        nFN = 0;
-                    } else {
-                        nFN += point.nTarget * (1 - point.p);
-                    }
-                    nTotal += point.nTarget * (1 - point.p);
-                }
-            }
-            nHits = nP;
-            fdr = nFP / nP;
-            fnr = nFN / nTotal;
-        } else {
-            for (double score : scores) {
-                point = hitMap.get(score);
-                nFP += point.nDecoy;
-                nP += point.nTarget;
-                if (nFP / nP <= fdrThreshold) {
-                    nHits = nP;
-                    fdr = nFP / nP;
-                    fnr = Double.NaN;
-                    scoreLimit = score;
-                }
-            }
-        }
-    }
-
-    /**
-     * Returns the score limit at the implemented FDR threshold
-     * @return the score limit at the implemented FDR threshold
-     */
-    public double getScoreLimit() {
-        return scoreLimit;
-    }
+    private TargetDecoyResults targetDecoyResults = new TargetDecoyResults();
 
     /**
      * Returns the posterior error probability estimated at the given score
@@ -162,28 +82,38 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Constructs a target/decoy map at the desired level
-     * @param level the level of the target/decoy map
+     * Removes a point in the target/decoy map at the given score
+     * @param score the given score
+     * @param isDecoy boolean indicating whether the hit is decoy
      */
-    public TargetDecoyMap(String level) {
-        this.level = level;
+    public void remove(double score, boolean isDecoy) {
+        if (!isDecoy) {
+            hitMap.get(score).nTarget--;
+        } else {
+            hitMap.get(score).nDecoy--;
+        }
+        if (hitMap.get(score).nTarget == 0
+                && hitMap.get(score).nDecoy == 0) {
+            hitMap.remove(score);
+        }
     }
 
     /**
-     * estimate the probability for this map (without graphical feedback)
+     * Constructs a target/decoy map
      */
-    public void estimateProbabilities() {
-        estimateProbabilities(null);
+    public TargetDecoyMap() {
     }
 
     /**
      * Estimates the metrics of the map: Nmax and NtargetOnly
      */
     private void estimateNs() {
-        estimateScores();
-        // get N
+        if (scores == null) {
+            estimateScores();
+        }
+        double scoreMax = scores.get(scores.size() - 1); // used to avoid side effects at p=1
         boolean onlyTarget = true;
-        int nMax = 0;
+        int nMax1 = 0;
         int targetCpt = 0;
         nTargetOnly = 0;
         TargetDecoyPoint point;
@@ -197,43 +127,33 @@ public class TargetDecoyMap implements Serializable {
             } else {
                 targetCpt += point.nTarget;
                 if (point.nDecoy > 0) {
-                    if (targetCpt > nMax && peptideP < 1) {
-                        nMax = targetCpt;
+                    if (targetCpt > nMax1 && peptideP < scoreMax) {
+                        nMax1 = targetCpt;
                     }
                     targetCpt = point.nTarget;
                 }
             }
         }
-        nmax = nMax;
+        nmax = nMax1;
     }
 
     /**
      * Estimates the posterior error probabilities in this map.
-     * @param waitingDialog dialog giving feedback to the user.
      */
-    public void estimateProbabilities(WaitingDialog waitingDialog) {
-        boolean report = waitingDialog != null;
-        estimateScores();
-        estimateNs();
-        if (nmax < 100) {
-            if (report) {
-                waitingDialog.appendReport(level + " Nmax = " + nmax + " probability estimation might not be reliable.");
-            }
-            probabilistic = false;
+    public void estimateProbabilities() {
+        if (scores == null) {
+            estimateScores();
         }
-        if (nTargetOnly < 100) {
-            if (report) {
-                waitingDialog.appendReport("Less than 100 " + level + " were identified confidently. Statistics might not be reliable.");
-            }
-            probabilistic = false;
+        if (nmax == null) {
+            estimateNs();
         }
-        if (nmax >= nTargetOnly) {
-            probabilistic = false;
+        if (windowSize == null) {
+            windowSize = nmax;
         }
 
         // estimate p
         TargetDecoyPoint tempPoint, previousPoint = hitMap.get(scores.get(0));
-        double nLimit = 0.5 * nmax;
+        double nLimit = 0.5 * windowSize;
         double nTargetSup = 1.5 * previousPoint.nTarget;
         double nTargetInf = -0.5 * previousPoint.nTarget;
         double nTargetInfTemp;
@@ -286,34 +206,6 @@ public class TargetDecoyMap implements Serializable {
     }
 
     /**
-     * Returns the estimated FDR at the given threshold
-     * @return the estimated FDR at the given threshold
-     */
-    public double getFdr() {
-        return fdr;
-    }
-
-    /**
-     * Returns the estimated FNR at the given threshold. NaN if no FNR could be computed.
-     * @return the estimated FNR at the given threshold
-     */
-    public Double getFnr() {
-        if (probabilistic) {
-            return fnr;
-        } else {
-            return Double.NaN;
-        }
-    }
-
-    /**
-     * Returns the number of hits retained at the given threshold.
-     * @return the number of hits retained at the given threshold.
-     */
-    public int getNHits() {
-        return nHits;
-    }
-
-    /**
      * Returns the Nmax metric
      * @return the Nmax metric
      */
@@ -332,22 +224,12 @@ public class TargetDecoyMap implements Serializable {
         return nTargetOnly;
     }
 
-
-
     /**
      * Sorts the scores implemented in this map
      */
     private void estimateScores() {
         scores = new ArrayList<Double>(hitMap.keySet());
         Collections.sort(scores);
-    }
-
-    /**
-     * Sets whether probabilistic thresholds should be applied when recommended
-     * @param probabilistic boolean indicating whether probabilistic thresholds should be applied when recommended
-     */
-    public void setProbabilistic(boolean probabilistic) {
-        this.probabilistic = probabilistic;
     }
 
     /**
@@ -374,30 +256,53 @@ public class TargetDecoyMap implements Serializable {
                 put(score, false);
             }
         }
+        scores = null;
+        nmax = null;
+        windowSize = null;
     }
 
     /**
-     * Private class representing a point in the target/decoy map
+     * Returns a boolean indicating if a suspicious input was detected
+     * @return a boolean indicating if a suspicious input was detected
      */
-    private class TargetDecoyPoint implements Serializable {
-
-        /**
-         * The number of target hits at this point
-         */
-        public int nTarget = 0;
-        /**
-         * The number of decoy hits at this point
-         */
-        public int nDecoy = 0;
-        /**
-         * The posterior error probability associated to this point
-         */
-        public double p;
-
-        /**
-         * constructor
-         */
-        public TargetDecoyPoint() {
+    public boolean suspiciousInput() {
+        if (nmax < 100
+                || nTargetOnly < 100
+                || nTargetOnly <= nmax) {
+            return true;
         }
+        return false;
+    }
+
+    /**
+     * Returns the current target decoy results
+     * @return the current target decoy results
+     */
+    public TargetDecoyResults getTargetDecoyResults() {
+        return targetDecoyResults;
+    }
+
+    /**
+     * Returns the target decoy series
+     * @return the target decoy series
+     */
+    public TargetDecoySeries getTargetDecoySeries() {
+        return new TargetDecoySeries(hitMap);
+    }
+
+    /**
+     * Returns the window size used for pep estimation
+     * @return the window size used for pep estimation
+     */
+    public int getWindowSize() {
+        return windowSize;
+    }
+
+    /**
+     * Sets the window size used for pep estimation
+     * @param windowSize the window size used for pep estimation
+     */
+    public void setWindowSize(int windowSize) {
+        this.windowSize = windowSize;
     }
 }

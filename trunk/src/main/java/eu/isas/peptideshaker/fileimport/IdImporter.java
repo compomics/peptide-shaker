@@ -1,19 +1,19 @@
 package eu.isas.peptideshaker.fileimport;
 
-import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.PTMFactory;
-import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fdrestimation.InputMap;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import javax.swing.JOptionPane;
@@ -32,17 +32,9 @@ public class IdImporter {
      */
     private PeptideShaker peptideShaker;
     /**
-     * The experiment conducted
+     * The current proteomicAnalysis
      */
-    private MsExperiment experiment;
-    /**
-     * The sample analyzed
-     */
-    private Sample sample;
-    /**
-     * The replicate number
-     */
-    private int replicateNumber;
+    private ProteomicAnalysis proteomicAnalysis;
     /**
      * The identification filter to use
      */
@@ -51,7 +43,6 @@ public class IdImporter {
      * A dialog to display feedback to the user
      */
     private WaitingDialog waitingDialog;
-
     /**
      * The location of the modification file
      */
@@ -70,45 +61,37 @@ public class IdImporter {
      *
      * @param identificationShaker  the identification shaker which will load the data into the maps and do the preliminary calculations
      * @param waitingDialog         A dialog to display feedback to the user
-     * @param experiment            the experiment conducted
-     * @param sample                the sample analyzed
-     * @param replicateNumber       the replicate number
+     * @param proteomicAnalysis     The current proteomic analysis
      * @param idFilter              The identification filter to use
      */
-    public IdImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, MsExperiment experiment, Sample sample, int replicateNumber, IdFilter idFilter) {
+    public IdImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter) {
         this.peptideShaker = identificationShaker;
         this.waitingDialog = waitingDialog;
-        this.experiment = experiment;
-        this.sample = sample;
-        this.replicateNumber = replicateNumber;
+        this.proteomicAnalysis = proteomicAnalysis;
         this.idFilter = idFilter;
     }
 
     /**
      * Constructor for an import without filtering
-     * @param identificationShaker
-     * @param waitingDialog
-     * @param experiment            the experiment conducted
-     * @param sample                the sample analyzed
-     * @param replicateNumber       the replicate number
+     * @param identificationShaker  the parent identification shaker
+     * @param waitingDialog         a dialog to give feedback to the user
+     * @param proteomicAnalysis     the current proteomic analysis
      */
-    public IdImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, MsExperiment experiment, Sample sample, int replicateNumber) {
+    public IdImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis) {
         this.peptideShaker = identificationShaker;
         this.waitingDialog = waitingDialog;
-        this.experiment = experiment;
-        this.sample = sample;
-        this.replicateNumber = replicateNumber;
+        this.proteomicAnalysis = proteomicAnalysis;
     }
 
     /**
      * Imports the identification from files
      *
      * @param idFiles the identification files to import the Ids from
+     * @param spectrumFiles the files where the corresponding spectra can be imported
      */
-    public void importFiles(ArrayList<File> idFiles) {
-        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles);
+    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles) {
+        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles);
         idProcessor.execute();
-
         waitingDialog.appendReport("Importing identifications.");
     }
 
@@ -131,7 +114,7 @@ public class IdImporter {
         @Override
         protected Object doInBackground() throws Exception {
             try {
-                Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+                Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
                 InputMap inputMap = new InputMap();
                 for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
                     for (int searchEngine : spectrumMatch.getAdvocates()) {
@@ -162,13 +145,21 @@ public class IdImporter {
          * The list of identification files
          */
         private ArrayList<File> idFiles;
+        /**
+         * A list of spectrum files (can be empty, no spectrum will be imported)
+         */
+        private HashMap<String, File> spectrumFiles;
 
         /**
          * Constructor of the worker
          * @param idFiles ArrayList containing the identification files
          */
-        public IdProcessorFromFile(ArrayList<File> idFiles) {
+        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles) {
             this.idFiles = idFiles;
+            this.spectrumFiles = new HashMap<String, File>();
+            for (File file : spectrumFiles) {
+                this.spectrumFiles.put(file.getName(), file);
+            }
             try {
                 ptmFactory.importModifications(new File(MODIFICATION_FILE));
             } catch (Exception e) {
@@ -189,7 +180,6 @@ public class IdImporter {
             int nTotal = 0;
             int nRetained = 0;
 
-            ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             try {
                 waitingDialog.appendReport("Reading identification files.");
@@ -197,6 +187,7 @@ public class IdImporter {
 
                 HashSet<SpectrumMatch> tempSet;
                 IdfileReader fileReader;
+                ArrayList<String> mgfNeeded = new ArrayList<String>();
 
                 for (File idFile : idFiles) {
 
@@ -210,6 +201,7 @@ public class IdImporter {
 
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();
                     SpectrumMatch match;
+                    String mgfName;
 
                     while (matchIt.hasNext()) {
 
@@ -220,6 +212,10 @@ public class IdImporter {
                         } else {
                             inputMap.addEntry(searchEngine, match.getFirstHit(searchEngine).getEValue(), match.getFirstHit(searchEngine).isDecoy());
                             identification.addSpectrumMatch(match);
+                            mgfName = Spectrum.getSpectrumFile(match.getKey());
+                            if (!mgfNeeded.contains(mgfName)) {
+                                mgfNeeded.add(mgfName);
+                            }
                             nRetained++;
                         }
                         if (waitingDialog.isRunCanceled()) {
@@ -240,6 +236,19 @@ public class IdImporter {
                 waitingDialog.appendReport("Identification file(s) import completed. "
                         + nTotal + " identifications imported, " + nRetained + " identifications retained.");
 
+                ArrayList<String> mgfMissing = new ArrayList<String>();
+                ArrayList<String> mgfNames = new ArrayList<String>(spectrumFiles.keySet());
+                ArrayList<File> mgfImported = new ArrayList<File>();
+                for (String mgfFile : mgfNeeded) {
+                    if (!mgfNames.contains(mgfFile)) {
+                        mgfMissing.add(mgfFile);
+                    } else {
+                        mgfImported.add(spectrumFiles.get(mgfFile));
+                    }
+                }
+                if (mgfMissing.isEmpty()) {
+                    peptideShaker.importSpectra(waitingDialog, mgfImported);
+                }
                 peptideShaker.processIdentifications(inputMap, waitingDialog);
 
             } catch (Exception e) {

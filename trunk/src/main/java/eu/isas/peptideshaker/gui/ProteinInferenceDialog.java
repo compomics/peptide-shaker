@@ -53,9 +53,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         initComponents();
 
         PSParameter psParameter = (PSParameter) inspectedMatch.getUrParam(new PSParameter());
-        matchInfoLbl.setText(inspectedMatch.getKey() + " (pscore=" 
-                + Util.roundDouble(psParameter.getProteinProbabilityScore(), 2)
-                + ", p=" + Util.roundDouble(psParameter.getProteinCorrectedProbability(), 2) + ")");
+        matchInfoLbl.setText(inspectedMatch.getKey() + " (score:"
+                + Util.roundDouble(psParameter.getProteinScore(), 2)
+                + ", confidence:" + Util.roundDouble(psParameter.getProteinConfidence(), 2) + ")");
 
         // set up the table column properties
         setColumnProperies();
@@ -384,8 +384,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         public String getColumnName(int column) {
             switch(column) {
                 case 0: return "Accession";
-                case 1: return "p score";
-                case 2: return "p";
+                case 1: return "score";
+                case 2: return "confidence";
                 case 3: return "validated";
                 default: return "";
             }
@@ -397,8 +397,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             PSParameter pSParameter = (PSParameter) currentMatch.getUrParam(new PSParameter());
             switch(column) {
                 case 0: return currentMatch.getKey();
-                case 1: return pSParameter.getProteinProbabilityScore();
-                case 2: return pSParameter.getProteinCorrectedProbability();
+                case 1: return pSParameter.getProteinScore();
+                case 2: return pSParameter.getProteinConfidence();
                 case 3: return pSParameter.isValidated();
                 default: return "";
             }
@@ -430,8 +430,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         public String getColumnName(int column) {
             switch(column) {
                 case 0: return "Accession";
-                case 1: return "p score";
-                case 2: return "p";
+                case 1: return "score";
+                case 2: return "confidence";
                 case 3: return "validated";
                 default: return "";
             }
@@ -443,8 +443,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             PSParameter pSParameter = (PSParameter) currentMatch.getUrParam(new PSParameter());
             switch(column) {
                 case 0: return currentMatch.getKey();
-                case 1: return pSParameter.getProteinProbabilityScore();
-                case 2: return pSParameter.getProteinCorrectedProbability();
+                case 1: return pSParameter.getProteinScore();
+                case 2: return pSParameter.getProteinConfidence();
                 case 3: return pSParameter.isValidated();
                 default: return "";
             }

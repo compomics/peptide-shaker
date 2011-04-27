@@ -4,7 +4,6 @@ import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.ProteinMap;
 import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
-import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
 
 /**
  * This class contains all scoring maps from PeptideShaker and will be used to store the information
