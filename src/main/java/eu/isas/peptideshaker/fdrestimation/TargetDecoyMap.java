@@ -95,6 +95,9 @@ public class TargetDecoyMap implements Serializable {
         if (hitMap.get(score).nTarget == 0
                 && hitMap.get(score).nDecoy == 0) {
             hitMap.remove(score);
+            scores = null;
+            nmax = null;
+            windowSize = null;
         }
     }
 
@@ -266,6 +269,9 @@ public class TargetDecoyMap implements Serializable {
      * @return a boolean indicating if a suspicious input was detected
      */
     public boolean suspiciousInput() {
+        if (nmax == null) {
+            estimateNs();
+        }
         if (nmax < 100
                 || nTargetOnly < 100
                 || nTargetOnly <= nmax) {
@@ -295,6 +301,9 @@ public class TargetDecoyMap implements Serializable {
      * @return the window size used for pep estimation
      */
     public int getWindowSize() {
+        if (windowSize == null) {
+            windowSize = getnMax();
+        }
         return windowSize;
     }
 
