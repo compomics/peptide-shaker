@@ -1,13 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * SearchPreferencesDialog.java
- *
- * Created on Apr 12, 2011, 4:25:58 PM
- */
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.experiment.biology.EnzymeFactory;
@@ -33,8 +23,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 
 /**
+ * A dialog for displaying and editing the search preferences.
  *
- * @author vaudel
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class SearchPreferencesDialog extends javax.swing.JDialog {
 
@@ -63,7 +55,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private ArrayList<String> modificationList;
 
-    /** Creates new form SearchPreferencesDialog */
+    /**
+     * Create a new SearchPreferencesDialog.
+     *
+     * @param parent the PeptideShaker parent
+     */
     public SearchPreferencesDialog(PeptideShakerGUI parent) {
         super(parent, true);
         this.searchParameters = parent.getSearchParameters();
@@ -72,8 +68,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         this.parent = parent;
         loadModifications();
         initComponents();
+        enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         loadValues();
         updateModificationLists();
+        setLocationRelativeTo(parent);
         setVisible(true);
     }
 
@@ -86,142 +84,37 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        fragmentIonToleranceTxt = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        expectedModificationsTable = new javax.swing.JTable();
-        jLabel5 = new javax.swing.JLabel();
-        enzymesCmb = new javax.swing.JComboBox();
-        addModifications = new javax.swing.JButton();
-        removeModification = new javax.swing.JButton();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        availableModifications = new javax.swing.JList();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        missedCleavagesTxt = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         fileTxt = new javax.swing.JTextField();
         loadButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        fragmentIonToleranceTxt = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        enzymesCmb = new javax.swing.JComboBox();
+        jLabel5 = new javax.swing.JLabel();
+        missedCleavagesTxt = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        addModifications = new javax.swing.JButton();
+        removeModification = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        expectedModificationsTable = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        availableModifications = new javax.swing.JList();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Search Parameters Details"));
-
-        jLabel1.setText("Fragment ion tolerance:");
-
-        jLabel2.setText("Da");
-
-        jLabel3.setText("Expected variable modifications:");
-
-        expectedModificationsTable.setModel(new ModificationTable());
-        jScrollPane1.setViewportView(expectedModificationsTable);
-
-        jLabel5.setText("Enzyme used:");
-
-        enzymesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
-        addModifications.setText("<<");
-        addModifications.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addModificationsActionPerformed(evt);
-            }
-        });
-
-        removeModification.setText(">>");
-        removeModification.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeModificationActionPerformed(evt);
-            }
-        });
-
-        availableModifications.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane2.setViewportView(availableModifications);
-
-        jLabel6.setText("Available modifications:");
-
-        jLabel7.setText("Missed cleavages:");
-
-        missedCleavagesTxt.setText("1");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel5))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(fragmentIonToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jLabel2))
-                            .addComponent(enzymesCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jLabel3)
-                    .addComponent(jScrollPane1, 0, 0, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(addModifications)
-                    .addComponent(removeModification))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
-                    .addComponent(jLabel6)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(missedCleavagesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(addModifications)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(removeModification)
-                        .addGap(85, 85, 85))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(fragmentIonToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel7)
-                            .addComponent(missedCleavagesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel5)
-                            .addComponent(enzymesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel6))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE))
-                        .addContainerGap())))
-        );
+        setTitle("Search Preferences");
+        setResizable(false);
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Load Parameters from SearchGUI Parameter File"));
 
-        jLabel4.setText("SearchGUI file:");
+        jLabel4.setText("SearchGUI File:");
 
         fileTxt.setEditable(false);
 
@@ -239,10 +132,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(fileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(fileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(loadButton)
+                .addComponent(loadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -270,6 +163,133 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Search Paramaters"));
+
+        jLabel1.setText("Fragment Ion Tolerance:");
+
+        fragmentIonToleranceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel2.setText("Da");
+
+        enzymesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        jLabel5.setText("Enzyme Used:");
+
+        missedCleavagesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        missedCleavagesTxt.setText("1");
+
+        jLabel7.setText("Missed cleavages:");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(enzymesCmb, 0, 125, Short.MAX_VALUE)
+                .addGap(26, 26, 26)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(missedCleavagesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(fragmentIonToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addContainerGap())
+        );
+
+        jPanel5Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {enzymesCmb, fragmentIonToleranceTxt, missedCleavagesTxt});
+
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(jLabel7)
+                    .addComponent(missedCleavagesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(enzymesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(fragmentIonToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Modifications"));
+
+        addModifications.setText("<<");
+        addModifications.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addModificationsActionPerformed(evt);
+            }
+        });
+
+        removeModification.setText(">>");
+        removeModification.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeModificationActionPerformed(evt);
+            }
+        });
+
+        expectedModificationsTable.setModel(new ModificationTable());
+        jScrollPane1.setViewportView(expectedModificationsTable);
+
+        jLabel3.setText("Expected Variable Modifications:");
+
+        availableModifications.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        jScrollPane2.setViewportView(availableModifications);
+
+        jLabel6.setText("Available Modifications:");
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(removeModification)
+                            .addComponent(addModifications)))
+                    .addComponent(jLabel3))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 333, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGap(71, 71, 71)
+                        .addComponent(addModifications)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(removeModification))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -277,31 +297,42 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel6, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(cancelButton)))
                 .addContainerGap())
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Saves the settings and closes the dialog.
+     *
+     * @param evt
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
             searchParameters.setFragmentIonMZTolerance(new Double(fragmentIonToleranceTxt.getText()));
@@ -312,32 +343,57 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
+    /**
+     * Closes the dialog.
+     *
+     * @param evt
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         this.dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Adds a modification to the list.
+     *
+     * @param evt
+     */
     private void addModificationsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addModificationsActionPerformed
         String name;
+
         for (Object selection : availableModifications.getSelectedValues()) {
             name = (String) selection;
             searchParameters.addExpectedModifications(name, 2);
             modificationList.add(name);
         }
+
         updateModificationLists();
     }//GEN-LAST:event_addModificationsActionPerformed
 
+    /**
+     * Removes a modification from the list.
+     *
+     * @param evt
+     */
     private void removeModificationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeModificationActionPerformed
         ArrayList<String> toRemove = new ArrayList<String>();
+
         for (int selectedRow : expectedModificationsTable.getSelectedRows()) {
             toRemove.add((String) expectedModificationsTable.getValueAt(selectedRow, 0));
         }
+
         for (String name : toRemove) {
             modificationList.remove(name);
             searchParameters.getExpectedModifications().remove(name);
         }
+
         updateModificationLists();
     }//GEN-LAST:event_removeModificationActionPerformed
 
+    /**
+     * Loads the search preferences from a SearchGUI file.
+     *
+     * @param evt
+     */
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
         JFileChooser fc = new JFileChooser(parent.getLastSelectedFolder());
         int result = fc.showOpenDialog(this);
@@ -354,7 +410,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, "An error occured while reading " + file.getName() + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
             }
         }
-
     }//GEN-LAST:event_loadButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addModifications;
@@ -371,8 +426,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton loadButton;
@@ -382,7 +438,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Returns true if the input can be correctly imported
+     * Returns true if the input can be correctly imported.
+     * 
      * @return true if the input can be correctly imported
      */
     private boolean validateInput() {
@@ -393,6 +450,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+
         try {
             new Integer(missedCleavagesTxt.getText());
         } catch (Exception e) {
@@ -400,6 +458,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+
         return true;
     }
 
@@ -412,8 +471,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param aProps Properties with the values for the GUI.
      */
     public void setScreenProps(Properties aProps) {
+
         ArrayList<String> variableMods = new ArrayList<String>();
+
         String temp = aProps.getProperty(IdentificationParametersReader.VARIABLE_MODIFICATIONS);
+
         if (temp != null && !temp.trim().equals("")) {
             try {
                 variableMods = IdentificationParametersReader.parseModificationLine(temp, ptmFactory);
@@ -421,29 +483,37 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Modification Not Found", JOptionPane.WARNING_MESSAGE);
             }
         }
+
         for (String name : variableMods) {
             searchParameters.addExpectedModifications(name, 2);
             modificationList.add(name);
         }
+
         updateModificationLists();
         temp = aProps.getProperty(IdentificationParametersReader.ENZYME);
+
         if (temp != null && !temp.equals("")) {
             enzymesCmb.setSelectedItem(temp.trim());
         }
+
         temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_MASS_TOLERANCE);
+
         if (temp == null) {
             temp = "";
         }
+
         fragmentIonToleranceTxt.setText(temp.trim());
         temp = aProps.getProperty(IdentificationParametersReader.MISSED_CLEAVAGES);
+
         if (temp == null) {
             temp = "";
         }
+        
         missedCleavagesTxt.setText(temp.trim());
     }
 
     /**
-     * Repaints the table
+     * Repaints the table.
      */
     private void repaintTable() {
 
@@ -462,10 +532,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @return the list of enzyme names
      */
     private String[] loadEnzymes() {
+
         String[] enzymes = new String[enzymeFactory.getEnzymes().size()];
+
         for (int i = 0; i < enzymeFactory.getEnzymes().size(); i++) {
             enzymes[i] = enzymeFactory.getEnzymes().get(i).getName();
         }
+
         return enzymes;
     }
 
@@ -473,11 +546,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * Loads values from the searchParameters
      */
     private void loadValues() {
+
         fragmentIonToleranceTxt.setText(searchParameters.getFragmentIonMZTolerance() + "");
         enzymesCmb.setModel(new DefaultComboBoxModel(loadEnzymes()));
         enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         enzymesCmb.setSelectedItem(searchParameters.getEnzyme().getName());
         missedCleavagesTxt.setText(searchParameters.getnMissedCleavages() + "");
+
         if (searchParameters.getParametersFile() != null) {
             fileTxt.setText(searchParameters.getParametersFile().getAbsolutePath());
         }
@@ -496,26 +571,32 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * Updates the modification list (right)
      */
     private void updateModificationLists() {
+
         ArrayList<String> allModificationsList = new ArrayList<String>(ptms.keySet());
         ArrayList<String> allModifications = new ArrayList<String>();
         boolean found = false;
+
         for (String name : allModificationsList) {
             found = false;
+
             for (String modification : modificationList) {
                 if (modification.equals(name)) {
                     found = true;
                     break;
                 }
             }
+
             if (!found) {
                 allModifications.add(name);
             }
         }
+
         String[] allModificationsAsArray = new String[allModifications.size()];
-        for (int i = 0; i
-                < allModifications.size(); i++) {
+
+        for (int i = 0; i < allModifications.size(); i++) {
             allModificationsAsArray[i] = allModifications.get(i);
         }
+
         Arrays.sort(allModificationsAsArray);
         availableModifications.setListData(allModificationsAsArray);
         availableModifications.setSelectedIndex(0);
@@ -542,7 +623,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             if (column == 0) {
                 return "Modification";
             } else if (column == 1) {
-                return "Maximal number of occurrences expected per peptide";
+                return "Max #Number";
             } else {
                 return "";
             }

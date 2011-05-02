@@ -29,14 +29,16 @@ import java.util.HashMap;
 
 /**
  * This class will be responsible for the identification import and the associated calculations
- * @author Marc
+ *
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PeptideShaker {
 
     /**
-     * The accession for an unknown protein
+     * If set to true, detailed information is sent to the waiting dialog.
      */
-    private static final String UNKNOWN_PROTEIN = "unknown";
+    private boolean detailedReport = false;
     /**
      * The experiment conducted
      */
@@ -79,7 +81,9 @@ public class PeptideShaker {
     private boolean idProcessingFinished = false;
 
     /**
-     * constructor without mass specification. Calculation will be done on new maps which will be retrieved as compomics utilities parameters.
+     * Constructor without mass specification. Calculation will be done on new maps
+     * which will be retrieved as compomics utilities parameters.
+     *
      * @param experiment        The experiment conducted
      * @param sample            The sample analyzed
      * @param replicateNumber   The replicate number
@@ -94,11 +98,12 @@ public class PeptideShaker {
     }
 
     /**
-     * Constructor with map specifications
+     * Constructor with map specifications.
+     *
      * @param experiment        The experiment conducted
      * @param sample            The sample analyzed
      * @param replicateNumber   The replicate number
-     * @param psMaps           the peptide shaker maps
+     * @param psMaps            the peptide shaker maps
      */
     public PeptideShaker(MsExperiment experiment, Sample sample, int replicateNumber, PSMaps psMaps) {
         this.experiment = experiment;
@@ -111,6 +116,7 @@ public class PeptideShaker {
 
     /**
      * Method used to import identification from identification result files
+     *
      * @param waitingDialog     A dialog to display the feedback
      * @param idFilter          The identification filter to use
      * @param idFiles           The files to import
@@ -126,6 +132,7 @@ public class PeptideShaker {
 
     /**
      * Method used to import identified spectra from files
+     *
      * @param waitingDialog     A dialog to display feedback to the user
      * @param spectrumFiles     The files to import
      */
@@ -137,6 +144,7 @@ public class PeptideShaker {
 
     /**
      * Sets whether the the import was finished
+     *
      * @param waitingDialog the dialog which displays feedback to the user
      */
     public void setRunFinished(WaitingDialog waitingDialog) {
@@ -171,6 +179,7 @@ public class PeptideShaker {
 
     /**
      * Method for processing of results from utilities data (no file). From ms_lims for instance.
+     *
      * @param waitingDialog     A dialog to display the feedback
      */
     public void processIdentifications(WaitingDialog waitingDialog) {
@@ -218,47 +227,54 @@ public class PeptideShaker {
                 || suspiciousPsms.size() > 0
                 || suspiciousPeptides.size() > 0
                 || suspiciousProteins) {
-            report += "The following identification classes retieved non robust statistical estimations, we advice to control the quality of the corresponding matches: \n";
 
-            boolean firstLine = true;
-            for (int searchEngine : suspiciousInput) {
-                if (firstLine) {
-                    firstLine = false;
-                } else {
-                    report += ", ";
+            // @TODO: display this in a separate dialog??
+
+            if (detailedReport) {
+
+                report += "The following identification classes retieved non robust statistical estimations, we advice to control the quality of the corresponding matches: \n";
+
+                boolean firstLine = true;
+                for (int searchEngine : suspiciousInput) {
+                    if (firstLine) {
+                        firstLine = false;
+                    } else {
+                        report += ", ";
+                    }
+                    report += AdvocateFactory.getInstance().getAdvocate(searchEngine).getName();
                 }
-                report += AdvocateFactory.getInstance().getAdvocate(searchEngine).getName();
-            }
-            if (suspiciousInput.size() > 0) {
-                report += " identifications.\n";
-            }
-
-            firstLine = true;
-            for (String fraction : suspiciousPsms) {
-                if (firstLine) {
-                    firstLine = false;
-                } else {
-                    report += ", ";
+                if (suspiciousInput.size() > 0) {
+                    report += " identifications.\n";
                 }
-                report += fraction;
-            }
-            report += " charged spectra.\n";
 
-            firstLine = true;
-            for (String fraction : suspiciousPeptides) {
-                if (firstLine) {
-                    firstLine = false;
-                } else {
-                    report += ", ";
+                firstLine = true;
+                for (String fraction : suspiciousPsms) {
+                    if (firstLine) {
+                        firstLine = false;
+                    } else {
+                        report += ", ";
+                    }
+                    report += fraction;
                 }
-                report += fraction;
-            }
-            report += " modified peptides.\n";
+                report += " charged spectra.\n";
 
-            if (suspiciousProteins) {
-                report += "proteins. \n";
+                firstLine = true;
+                for (String fraction : suspiciousPeptides) {
+                    if (firstLine) {
+                        firstLine = false;
+                    } else {
+                        report += ", ";
+                    }
+                    report += fraction;
+                }
+                report += " modified peptides.\n";
+
+                if (suspiciousProteins) {
+                    report += "proteins. \n";
+                }
             }
         }
+
         waitingDialog.appendReport(report);
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap));
@@ -268,7 +284,9 @@ public class PeptideShaker {
 
     /**
      * Processes the identifications if a change occured in the psm map
-     * @throws Exception    Exception thrown whenever it is attempted to attach more than one identification per search engine per spectrum
+     *
+     * @throws Exception    Exception thrown whenever it is attempted to attach more
+     *                      than one identification per search engine per spectrum
      */
     public void spectrumMapChanged() throws Exception {
         peptideMap = new PeptideSpecificMap();
@@ -286,7 +304,8 @@ public class PeptideShaker {
 
     /**
      * Processes the identifications if a change occured in the peptide map
-     * @throws Exception    Exception thrown whenever it is attempted to attach more than one identification per search engine per spectrum
+     * @throws Exception    Exception thrown whenever it is attempted to attach
+     *                      more than one identification per search engine per spectrum
      */
     public void peptideMapChanged() throws Exception {
         proteinMap = new ProteinMap();

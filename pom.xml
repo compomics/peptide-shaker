@@ -12,7 +12,7 @@
 
     <!-- Set the version number for the whole project -->
     <properties>
-        <version.number>0.7</version.number>
+        <version.number>0.7.1</version.number>
     </properties>
 
 
@@ -266,7 +266,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.0.56</version>
+            <version>3.0.57</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -289,6 +289,13 @@
                     <groupId>org.swinglabs</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <!-- backup look and feel if Nimbus is not available -->
+        <dependency>
+            <groupId>com.jgoodies</groupId>
+            <artifactId>looks</artifactId>
+            <version>2.2.2</version>
         </dependency>
 
         <dependency>
