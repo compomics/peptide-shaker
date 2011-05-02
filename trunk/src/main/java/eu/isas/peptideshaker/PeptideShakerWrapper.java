@@ -1,22 +1,15 @@
 package eu.isas.peptideshaker;
 
-import com.jgoodies.looks.plastic.PlasticLookAndFeel;
-import com.jgoodies.looks.plastic.PlasticXPLookAndFeel;
-import com.jgoodies.looks.plastic.theme.SkyKrupp;
+import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.utils.Properties;
 import java.io.*;
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 /**
  * A wrapper class used to start the jar file with parameters. The parameters
  * are read from the JavaOptions file in the Properties folder.
  *
  * @author  Harald Barsnes
- *
- * Created October 2005
- * Revised December 2008
  */
 public class PeptideShakerWrapper {
 
@@ -39,12 +32,7 @@ public class PeptideShakerWrapper {
         // get the version number set in the pom file
         jarFileName = jarFileName + new Properties().getVersion() + ".jar";
 
-        try {
-            PlasticLookAndFeel.setPlasticTheme(new SkyKrupp());
-            UIManager.setLookAndFeel(new PlasticXPLookAndFeel());
-        } catch (UnsupportedLookAndFeelException e) {
-            // ignore exception
-        }
+        UtilitiesGUIDefaults.setLookAndFeel();
 
         try {
             launch();

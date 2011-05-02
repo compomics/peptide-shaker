@@ -16,7 +16,6 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * A dialog displaying progress details when the identification files are being
@@ -55,6 +54,10 @@ public class WaitingDialog extends javax.swing.JDialog {
      * Convenience date format
      */
     private static final SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy, HH:mm");
+    /**
+     * The tab space to add when using tab.
+     */
+    private String tab = "        "; // tab could be used, but is location dependent
 
     /**
      * Creates a new WaitingDialog.
@@ -287,14 +290,14 @@ public class WaitingDialog extends javax.swing.JDialog {
      */
     public void appendReport(String report) {
         Date date = new Date();
-        reportArea.append(date + "\t\t" + report + "\n");
+        reportArea.append(date + tab + report + "\n");
     }
 
     /**
      * Append two tabs to the report. No new line.
      */
     public void appendReportNewLineNoDate() {
-        reportArea.append("\t\t");
+        reportArea.append(tab);
     }
 
     /**
@@ -410,7 +413,6 @@ public class WaitingDialog extends javax.swing.JDialog {
         dialog.setLocation(naturalLocation);
         dialog.repaint();
 
-        appendReportEndLine();
         appendReport("Your peptides have been shaken!");
 
         // return the peptide shaker icon to the standard version

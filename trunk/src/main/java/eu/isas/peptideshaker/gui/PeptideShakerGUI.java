@@ -12,7 +12,7 @@ import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
-import com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel;
+import com.compomics.util.gui.UtilitiesGUIDefaults;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
@@ -34,13 +34,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -108,10 +104,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private SearchParameters searchParameters = new SearchParameters();
     /**
-     * The color used for the sparkline bar chart plots.
-     */
-    private Color sparklineColor = new Color(110, 196, 97);
-    /**
      * Compomics experiment saver and opener
      */
     private ExperimentIO experimentIO = new ExperimentIO();
@@ -126,15 +118,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * The overview panel
      */
-    private OverviewPanel overviewPanel = new OverviewPanel(this);
+    private OverviewPanel overviewPanel;
     /**
      * The statistics panel
      */
-    private StatsPanel statsPanel = new StatsPanel(this);
+    private StatsPanel statsPanel;
     /**
      * The PTM panel
      */
-    private PtmPanel ptmPanel = new PtmPanel(this);
+    private PtmPanel ptmPanel;
     /**
      * The sequence database used for identification
      */
@@ -143,6 +135,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The spectrum collection loaded
      */
     private SpectrumCollection spectrumCollection;
+    /**
+     * The label with for the numbers in the jsparklines columns.
+     */
+    private int labelWidth = 40;
+    /**
+     * The color used for the sparkline bar chart plots.
+     */
+    private Color sparklineColor = new Color(110, 196, 97);
 
     /**
      * The main method used to start PeptideShaker
@@ -152,7 +152,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public static void main(String[] args) {
 
         // update the look and feel after adding the panels
-        setLookAndFeel();
+        UtilitiesGUIDefaults.setLookAndFeel();
 
         new PeptideShakerGUI();
     }
@@ -165,6 +165,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         // set up the ErrorLog
         setUpLogFile();
 
+        overviewPanel = new OverviewPanel(this);
+        statsPanel = new StatsPanel(this);
+        ptmPanel = new PtmPanel(this);
+
         initComponents();
 
         // set the title
@@ -175,20 +179,26 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         this.setExtendedState(MAXIMIZED_BOTH);
 
-        setLocationRelativeTo(null);
-        setVisible(true);
-
         loadEnzymes();
         loadModifications();
         setDefaultPreferences();
 
         overviewJPanel.removeAll();
         overviewJPanel.add(overviewPanel);
-        overviewJPanel.revalidate();
-        overviewJPanel.repaint();
+        
+        // invoke later to give time for components to update
+        SwingUtilities.invokeLater(new Runnable() {
 
+            public void run() {
+                overviewPanel.updateSeparators();
+                overviewJPanel.revalidate();
+                overviewJPanel.repaint();
+            }
+        });
+        
         statsJPanel.removeAll();
         statsJPanel.add(statsPanel);
+        statsPanel.updatePlotSizes();
         statsJPanel.revalidate();
         statsJPanel.repaint();
 
@@ -196,6 +206,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ptmJPanel.add(ptmPanel);
         ptmJPanel.revalidate();
         ptmJPanel.repaint();
+
+        setLocationRelativeTo(null);
+        setVisible(true);
 
         // open the OpenDialog
         new OpenDialog(this, true);
@@ -250,8 +263,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         gradientPanel = new javax.swing.JPanel();
         resultsJTabbedPane = new javax.swing.JTabbedPane();
         overviewJPanel = new javax.swing.JPanel();
-        statsJPanel = new javax.swing.JPanel();
         ptmJPanel = new javax.swing.JPanel();
+        statsJPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         openJMenuItem = new javax.swing.JMenuItem();
@@ -264,6 +277,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         searchParametersMenu = new javax.swing.JMenuItem();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
+        overViewTabViewMenu = new javax.swing.JMenu();
+        proteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        peptidesAndPsmsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         sequenceFragmentationJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         sequenceCoverageJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
@@ -275,7 +291,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PeptideShaker");
         setBackground(new java.awt.Color(255, 255, 255));
-        setMinimumSize(new java.awt.Dimension(1260, 800));
+        setMinimumSize(new java.awt.Dimension(1100, 600));
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -283,6 +299,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
 
         gradientPanel.setBackground(new java.awt.Color(255, 255, 255));
+        gradientPanel.setPreferredSize(new java.awt.Dimension(1260, 800));
 
         resultsJTabbedPane.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
 
@@ -291,25 +308,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         overviewJPanel.setLayout(new javax.swing.BoxLayout(overviewJPanel, javax.swing.BoxLayout.LINE_AXIS));
         resultsJTabbedPane.addTab("Overview", overviewJPanel);
 
-        statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        resultsJTabbedPane.addTab("Statistics", statsJPanel);
-
+        ptmJPanel.setOpaque(false);
         ptmJPanel.setLayout(new javax.swing.BoxLayout(ptmJPanel, javax.swing.BoxLayout.LINE_AXIS));
         resultsJTabbedPane.addTab("PTMs", ptmJPanel);
+
+        statsJPanel.setOpaque(false);
+        statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
+        resultsJTabbedPane.addTab("FDR/PEP", statsJPanel);
 
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
         gradientPanelLayout.setHorizontalGroup(
             gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1044, Short.MAX_VALUE)
+            .addGap(0, 1260, Short.MAX_VALUE)
             .addGroup(gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1044, Short.MAX_VALUE))
+                .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1260, Short.MAX_VALUE))
         );
         gradientPanelLayout.setVerticalGroup(
             gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 747, Short.MAX_VALUE)
+            .addGap(0, 779, Short.MAX_VALUE)
             .addGroup(gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 747, Short.MAX_VALUE))
+                .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE))
         );
 
         menuBar.setBackground(new java.awt.Color(255, 255, 255));
@@ -383,11 +402,40 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         viewJMenu.setMnemonic('V');
         viewJMenu.setText("View");
 
+        overViewTabViewMenu.setText("OverView Tab");
+
+        proteinsJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        proteinsJCheckBoxMenuItem.setMnemonic('P');
+        proteinsJCheckBoxMenuItem.setSelected(true);
+        proteinsJCheckBoxMenuItem.setText("Proteins");
+        proteinsJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proteinsJCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        overViewTabViewMenu.add(proteinsJCheckBoxMenuItem);
+
+        peptidesAndPsmsJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        peptidesAndPsmsJCheckBoxMenuItem.setMnemonic('E');
+        peptidesAndPsmsJCheckBoxMenuItem.setSelected(true);
+        peptidesAndPsmsJCheckBoxMenuItem.setText("Peptides & PSMs");
+        peptidesAndPsmsJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptidesAndPsmsJCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        overViewTabViewMenu.add(peptidesAndPsmsJCheckBoxMenuItem);
+
         sequenceFragmentationJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         sequenceFragmentationJCheckBoxMenuItem.setMnemonic('S');
         sequenceFragmentationJCheckBoxMenuItem.setSelected(true);
         sequenceFragmentationJCheckBoxMenuItem.setText("Spectrum");
-        viewJMenu.add(sequenceFragmentationJCheckBoxMenuItem);
+        sequenceFragmentationJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sequenceFragmentationJCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        overViewTabViewMenu.add(sequenceFragmentationJCheckBoxMenuItem);
 
         sequenceCoverageJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         sequenceCoverageJCheckBoxMenuItem.setMnemonic('C');
@@ -398,10 +446,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 sequenceCoverageJCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        viewJMenu.add(sequenceCoverageJCheckBoxMenuItem);
+        overViewTabViewMenu.add(sequenceCoverageJCheckBoxMenuItem);
+
+        viewJMenu.add(overViewTabViewMenu);
         viewJMenu.add(jSeparator3);
 
-        sparklinesJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        sparklinesJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         sparklinesJCheckBoxMenuItem.setSelected(true);
         sparklinesJCheckBoxMenuItem.setText("JSparklines");
         sparklinesJCheckBoxMenuItem.setToolTipText("View sparklines or the underlying numbers");
@@ -448,7 +498,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(gradientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(gradientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE)
         );
 
         pack();
@@ -485,10 +535,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      *
      * @param evt
      */
-    private void sparklinesJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sparklinesJCheckBoxMenuItemActionPerformed
-        overviewPanel.showSparkLines(!sparklinesJCheckBoxMenuItem.isSelected());
-    }//GEN-LAST:event_sparklinesJCheckBoxMenuItemActionPerformed
-
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
 
         final JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
@@ -632,23 +678,79 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         new AnnotationPreferencesDialog(this);
     }//GEN-LAST:event_annotationPreferencesMenuActionPerformed
 
+    /**
+     * Resize the overview panel when the frame resizes.
+     *
+     * @param evt
+     */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
-        overviewPanel.udateSeparators();
+        overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
+        overviewPanel.updateSeparators();
     }//GEN-LAST:event_formComponentResized
 
-    private void sequenceCoverageJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceCoverageJCheckBoxMenuItemActionPerformed
-        overviewPanel.setDisplayOptions(sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
-        overviewPanel.udateSeparators();
-}//GEN-LAST:event_sequenceCoverageJCheckBoxMenuItemActionPerformed
-
-    private void sequenceFragmentationJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceFragmentationJCheckBoxMenuItemActionPerformed
-        overviewPanel.setDisplayOptions(sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
-        overviewPanel.udateSeparators();
-    }//GEN-LAST:event_sequenceFragmentationJCheckBoxMenuItemActionPerformed
-
+    /**
+     * Open the SearchPreferencesDialog.
+     *
+     * @param evt
+     */
     private void searchParametersMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchParametersMenuActionPerformed
         new SearchPreferencesDialog(this);
     }//GEN-LAST:event_searchParametersMenuActionPerformed
+
+    /**
+     * Show or hide the sparklines.
+     *
+     * @param evt
+     */
+    private void sparklinesJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sparklinesJCheckBoxMenuItemActionPerformed
+        overviewPanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
+        ptmPanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
+}//GEN-LAST:event_sparklinesJCheckBoxMenuItemActionPerformed
+
+    /**
+     * Resize the overview panel when the frame resizes.
+     *
+     * @param evt
+     */
+    private void sequenceCoverageJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceCoverageJCheckBoxMenuItemActionPerformed
+        overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
+        overviewPanel.updateSeparators();
+}//GEN-LAST:event_sequenceCoverageJCheckBoxMenuItemActionPerformed
+
+    /**
+     * Resize the overview panel when the frame resizes.
+     *
+     * @param evt
+     */
+    private void sequenceFragmentationJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceFragmentationJCheckBoxMenuItemActionPerformed
+        overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
+        overviewPanel.updateSeparators();
+    }//GEN-LAST:event_sequenceFragmentationJCheckBoxMenuItemActionPerformed
+
+    /**
+     * Resize the overview panel when the frame resizes.
+     *
+     * @param evt
+     */
+    private void peptidesAndPsmsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesAndPsmsJCheckBoxMenuItemActionPerformed
+        overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
+        overviewPanel.updateSeparators();
+}//GEN-LAST:event_peptidesAndPsmsJCheckBoxMenuItemActionPerformed
+
+    /**
+     * Resize the overview panel when the frame resizes.
+     *
+     * @param evt
+     */
+    private void proteinsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinsJCheckBoxMenuItemActionPerformed
+        overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
+        overviewPanel.updateSeparators();
+}//GEN-LAST:event_proteinsJCheckBoxMenuItemActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
@@ -670,6 +772,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         try {
             boolean displaySpectrum = true;
             boolean displaySequence = true;
+            boolean displayProteins = true;
+            boolean displayPeptidesAndPSMs = true;
             String tempSpectrumKey = spectrumCollection.getAllKeys(2).get(0);
             Spectrum tempSpectrum = spectrumCollection.getSpectrum(2, tempSpectrumKey);
             if (tempSpectrum.getPeakList() == null || tempSpectrum.getPeakList().isEmpty()) {
@@ -680,13 +784,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
             sequenceCoverageJCheckBoxMenuItem.setSelected(displaySequence);
             sequenceFragmentationJCheckBoxMenuItem.setSelected(displaySpectrum);
-            overviewPanel.setDisplayOptions(displaySequence, displaySpectrum);
-            overviewPanel.udateSeparators();
+            overviewPanel.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displaySequence, displaySpectrum);
+            overviewPanel.updateSeparators();
 
             overviewPanel.displayResults();
             ptmPanel.displayResults();
             statsPanel.displayResults();
-
 
         } catch (MzMLUnmarshallerException e) {
             JOptionPane.showMessageDialog(this, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
@@ -735,7 +838,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openJMenuItem;
+    private javax.swing.JMenu overViewTabViewMenu;
     private javax.swing.JPanel overviewJPanel;
+    private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
     private javax.swing.JPanel ptmJPanel;
     private javax.swing.JTabbedPane resultsJTabbedPane;
     private javax.swing.JMenuItem saveMenuItem;
@@ -753,6 +859,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param currentVersion the version number of the currently running reporter
      */
     private static void checkForNewVersion(String currentVersion) {
+
+        // @TODO: use this test :)
 
         try {
             boolean deprecatedOrDeleted = false;
@@ -858,22 +966,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Sets the look and feel of the PeptideShaker.
-     * <p/>
-     * Note that the GUI has been created with the following look and feel
-     * in mind. If using a different look and feel you might need to tweak the GUI
-     * to get the best appearance.
-     */
-    private static void setLookAndFeel() {
-
-        try {
-            UIManager.setLookAndFeel(new NimbusLookAndFeel());
-        } catch (UnsupportedLookAndFeelException e) {
-            // ignore exception, i.e. use default look and feel
-        }
-    }
-
-    /**
      * Set the default preferences.
      * TODO: Not sure that this ought to be hard coded
      */
@@ -885,6 +977,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
+     * Returns the experiment.
+     *
      * @return the experiment
      */
     public MsExperiment getExperiment() {
@@ -892,6 +986,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
+     * Returns the sample.
+     *
      * @return the sample
      */
     public Sample getSample() {
@@ -899,6 +995,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
+     * Returns the replicate number.
+     *
      * @return the replicateNumber
      */
     public int getReplicateNumber() {
@@ -906,7 +1004,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * returns the identification displayed
+     * Returns the identification displayed.
+     * 
      * @return  the identification displayed
      */
     public Identification getIdentification() {
@@ -914,7 +1013,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Returns the sequence database used for identification
+     * Returns the sequence database used for identification.
+     * 
      * @return the sequence database used for identification
      */
     public SequenceDataBase getSequenceDataBase() {
@@ -922,7 +1022,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Returns the spectrum collection loaded
+     * Returns the spectrum collection loaded.
+     *
      * @return the spectrum collection loaded
      */
     public SpectrumCollection getSpectrumCollection() {
@@ -930,7 +1031,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Returns the annotation preferences as set by the user
+     * Returns the annotation preferences as set by the user.
+     *
      * @return the annotation preferences as set by the user
      */
     public AnnotationPreferences getAnnotationPreferences() {
@@ -938,7 +1040,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Returns the displayed proteomicAnalysis
+     * Returns the displayed proteomicAnalysis.
+     *
      * @return the displayed proteomicAnalysis
      */
     public ProteomicAnalysis getProteomicanalysis() {
@@ -946,7 +1049,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Returns the search parameters
+     * Returns the search parameters.
+     *
      * @return the search parameters
      */
     public SearchParameters getSearchParameters() {
@@ -954,7 +1058,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * updates the search parameters
+     * updates the search parameters.
+     *
      * @param searchParameters  the new search parameters
      */
     public void setSearchParameters(SearchParameters searchParameters) {
@@ -963,7 +1068,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Updates the new annotation preferences
+     * Updates the new annotation preferences.
+     * 
      * @param annotationPreferences the new annotation preferences
      */
     public void setAnnotationPreferences(AnnotationPreferences annotationPreferences) {
@@ -971,7 +1077,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Loads the modifications from the modification file
+     * Loads the modifications from the modification file.
      */
     private void loadModifications() {
         try {
@@ -992,5 +1098,41 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void cancelProgress() {
         // @TODO not sure how to implement this
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Returns the label width for the sparklines.
+     *
+     * @return the labelWidth
+     */
+    public int getLabelWidth() {
+        return labelWidth;
+    }
+
+    /**
+     * Set the label width for the sparklines.
+     *
+     * @param labelWidth the labelWidth to set
+     */
+    public void setLabelWidth(int labelWidth) {
+        this.labelWidth = labelWidth;
+    }
+
+    /**
+     * Get the sparklines color.
+     *
+     * @return the sparklineColor
+     */
+    public Color getSparklineColor() {
+        return sparklineColor;
+    }
+
+    /**
+     * Set the sparklines color.
+     *
+     * @param sparklineColor the sparklineColor to set
+     */
+    public void setSparklineColor(Color sparklineColor) {
+        this.sparklineColor = sparklineColor;
     }
 }
