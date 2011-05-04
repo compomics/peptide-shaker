@@ -4,9 +4,11 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.AdvocateFactory;
+import com.compomics.util.experiment.identification.FastaHeaderParser;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -15,11 +17,12 @@ import eu.isas.peptideshaker.fdrestimation.InputMap;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.ProteinMap;
 import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
-import eu.isas.peptideshaker.fileimport.FastaImporter;
+import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
+import eu.isas.peptideshaker.fdrestimation.TargetDecoyResults;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.fileimport.IdFilter;
-import eu.isas.peptideshaker.fileimport.IdImporter;
-import eu.isas.peptideshaker.fileimport.SpectrumImporter;
+import eu.isas.peptideshaker.fileimport.FileImporter;
+import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.File;
@@ -66,19 +69,7 @@ public class PeptideShaker {
     /**
      * The id importer will import and process the identifications
      */
-    private IdImporter idImporter = null;
-    /**
-     * The spectrum importer will import spectra
-     */
-    private SpectrumImporter spectrumImporter;
-    /**
-     * The fasta importer will import sequences from a fasta file
-     */
-    private FastaImporter fastaImporter;
-    /**
-     * Boolean indicating whether the processing of identifications is finished
-     */
-    private boolean idProcessingFinished = false;
+    private FileImporter fileImporter = null;
 
     /**
      * Constructor without mass specification. Calculation will be done on new maps
@@ -121,60 +112,17 @@ public class PeptideShaker {
      * @param idFilter          The identification filter to use
      * @param idFiles           The files to import
      * @param spectrumFiles     The corresponding spectra (can be empty: spectra will not be loaded)
+     * @param fastaFile         The database file in the fasta format
      */
-    public void importIdentifications(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles) {
+    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, String databaseName, String databaseVersion, String stringBefore, String stringAfter) {
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         Ms2Identification identification = new Ms2Identification();
         analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, identification);
-        idImporter = new IdImporter(this, waitingDialog, analysis, idFilter);
-        idImporter.importFiles(idFiles, spectrumFiles);
-    }
-
-    /**
-     * Method used to import identified spectra from files
-     *
-     * @param waitingDialog     A dialog to display feedback to the user
-     * @param spectrumFiles     The files to import
-     */
-    public void importSpectra(WaitingDialog waitingDialog, ArrayList<File> spectrumFiles) {
-        ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-        spectrumImporter = new SpectrumImporter(this, analysis);
-        spectrumImporter.importSpectra(waitingDialog, spectrumFiles);
-    }
-
-    /**
-     * Sets whether the the import was finished
-     *
-     * @param waitingDialog the dialog which displays feedback to the user
-     */
-    public void setRunFinished(WaitingDialog waitingDialog) {
-        if (idImporter != null) {
-            if (!idProcessingFinished) {
-                return;
-            }
-        }
-        if (fastaImporter != null) {
-            if (!fastaImporter.isRunFinished()) {
-                return;
-            }
-        }
-        waitingDialog.setRunFinished();
-    }
-
-    /**
-     * Method used to import sequences from a fasta file
-     *
-     * @param waitingDialog     A dialog to display feedback to the user
-     * @param file              the file to import
-     * @param databaseName
-     * @param databseVersion
-     * @param stringBefore
-     * @param stringAfter
-     */
-    public void importFasta(WaitingDialog waitingDialog, File file, String databaseName, String databseVersion, String stringBefore, String stringAfter) {
-        ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-        fastaImporter = new FastaImporter(this);
-        fastaImporter.importSpectra(waitingDialog, analysis, file, databaseName, databseVersion, stringBefore, stringAfter);
+        SequenceDataBase db = new SequenceDataBase(databaseName, databaseVersion);
+        FastaHeaderParser fastaHeaderParser = new FastaHeaderParser(stringBefore, stringAfter);
+        analysis.setSequenceDataBase(db);
+        fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
+        fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, fastaHeaderParser);
     }
 
     /**
@@ -184,8 +132,8 @@ public class PeptideShaker {
      */
     public void processIdentifications(WaitingDialog waitingDialog) {
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-        idImporter = new IdImporter(this, waitingDialog, analysis);
-        idImporter.importIdentifications();
+        fileImporter = new FileImporter(this, waitingDialog, analysis);
+        fileImporter.importIdentifications();
     }
 
     /**
@@ -218,6 +166,9 @@ public class PeptideShaker {
         } catch (Exception e) {
             waitingDialog.appendReport("An error occured while trying to resolve protein inference issues.");
         }
+        waitingDialog.appendReport("Validating identifications at 1% FDR.");
+        fdrValidation();
+
         String report = "Identification processing completed.\n\n";
         ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();
         ArrayList<String> suspiciousPsms = psmMap.suspiciousInput();
@@ -278,8 +229,39 @@ public class PeptideShaker {
         waitingDialog.appendReport(report);
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         identification.addUrParam(new PSMaps(proteinMap, psmMap, peptideMap));
-        idProcessingFinished = true;
-        setRunFinished(waitingDialog);
+        waitingDialog.setRunFinished();
+    }
+
+    /**
+     * Makes a preliminary validation of hits. By default a 1% FDR is used for all maps
+     */
+    public void fdrValidation() {
+        TargetDecoyMap currentMap = proteinMap.getTargetDecoyMap();
+        TargetDecoyResults currentResults = currentMap.getTargetDecoyResults();
+        currentResults.setClassicalEstimators(true);
+        currentResults.setClassicalValidation(true);
+        currentResults.setFdrLimit(1.0);
+        currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+
+        for (String mapKey : peptideMap.getKeys()) {
+            currentMap = peptideMap.getTargetDecoyMap(mapKey);
+            currentResults = currentMap.getTargetDecoyResults();
+            currentResults.setClassicalEstimators(true);
+            currentResults.setClassicalValidation(true);
+            currentResults.setFdrLimit(1.0);
+            currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+        }
+
+        for (int mapKey : psmMap.getKeys().keySet()) {
+            currentMap = psmMap.getTargetDecoyMap(mapKey);
+            currentResults = currentMap.getTargetDecoyResults();
+            currentResults.setClassicalEstimators(true);
+            currentResults.setClassicalValidation(true);
+            currentResults.setFdrLimit(1.0);
+            currentMap.getTargetDecoySeries().getFDRResults(currentResults);
+        }
+
+        validateIdentifications();
     }
 
     /**
@@ -330,7 +312,7 @@ public class PeptideShaker {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
 
-        double proteinThreshold = 0;
+        double proteinThreshold = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getScoreLimit();
         for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
             psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
             if (psParameter.getProteinProbabilityScore() <= proteinThreshold) {
@@ -342,7 +324,7 @@ public class PeptideShaker {
 
         double peptideThreshold;
         for (PeptideMatch peptideMatch : identification.getPeptideIdentification().values()) {
-            peptideThreshold = 0;
+            peptideThreshold = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(peptideMatch)).getTargetDecoyResults().getScoreLimit();
             psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
             if (psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
                 psParameter.setValidated(true);
@@ -353,7 +335,7 @@ public class PeptideShaker {
 
         double psmThreshold;
         for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
-            psmThreshold = 0;
+            psmThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(spectrumMatch)).getTargetDecoyResults().getScoreLimit();
             psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
             if (psParameter.getPsmProbabilityScore() <= psmThreshold) {
                 psParameter.setValidated(true);
@@ -514,9 +496,6 @@ public class PeptideShaker {
             psParameter = (PSParameter) proteinShared.getUrParam(psParameter);
             sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
             if (proteinShared.getNProteins() > 1 && sharedProteinProbabilityScore < 1) {
-                proteinShared = identification.getProteinIdentification().get(proteinSharedKey);
-                psParameter = (PSParameter) proteinShared.getUrParam(psParameter);
-                sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
                 better = false;
                 for (ProteinMatch proteinUnique : identification.getProteinIdentification().values()) {
                     if (proteinShared.contains(proteinUnique)) {

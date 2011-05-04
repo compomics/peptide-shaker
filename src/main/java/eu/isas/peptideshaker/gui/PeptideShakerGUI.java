@@ -185,7 +185,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         overviewJPanel.removeAll();
         overviewJPanel.add(overviewPanel);
-        
+
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -195,7 +195,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 overviewJPanel.repaint();
             }
         });
-        
+
         statsJPanel.removeAll();
         statsJPanel.add(statsPanel);
         statsPanel.updatePlotSizes();
@@ -769,6 +769,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * This method will display results in all panels
      */
     public void displayResults() {
+
         try {
             boolean displaySpectrum = true;
             boolean displaySequence = true;
@@ -788,8 +789,31 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             overviewPanel.updateSeparators();
 
             overviewPanel.displayResults();
-            ptmPanel.displayResults();
-            statsPanel.displayResults();
+            progressDialog = new ProgressDialog(this, this, true);
+            progressDialog.doNothingOnClose();
+
+            final PeptideShakerGUI tempRef = this; // needed due to threading issues
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setIntermidiate(true);
+                    progressDialog.setTitle("Loading. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("SaveThread") {
+
+                @Override
+                public void run() {
+                    statsPanel.displayResults();
+                    ptmPanel.displayResults();
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                }
+            }.start();
+
 
         } catch (MzMLUnmarshallerException e) {
             JOptionPane.showMessageDialog(this, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
@@ -797,6 +821,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             JOptionPane.showMessageDialog(this, "A problem occured while displaying results. Please send the log file to the developers.", "Display problem", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
+
     }
 
     /**
