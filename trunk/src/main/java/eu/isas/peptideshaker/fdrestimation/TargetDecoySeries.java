@@ -19,6 +19,10 @@ public class TargetDecoySeries {
      */
     private double[] confidence;
     /**
+     * The pep
+     */
+    private double[] pep;
+    /**
      * The classical FDR
      */
     private double[] classicalFDR;
@@ -80,6 +84,7 @@ public class TargetDecoySeries {
         probaFP = new double[scores.length];
         classicalFP = new double[scores.length];
         probaBenefit = new double[scores.length];
+        pep = new double[scores.length];
         decoy = new boolean[scores.length];
         double nTemp = 0;
         double classicalFPTemp = 0;
@@ -93,6 +98,7 @@ public class TargetDecoySeries {
             probaFPTemp += currentPoint.nTarget * (currentPoint.p);
             probaTP += currentPoint.nTarget * (1 - currentPoint.p);
             probaFnrTemp = 100 * (probaNTotal - probaTP) / probaNTotal;
+            pep[i] = 100 * currentPoint.p;
             confidence[i] = 100 * (1 - currentPoint.p);
             n[i] = nTemp;
             classicalFP[i] = classicalFPTemp;
@@ -276,5 +282,13 @@ public class TargetDecoySeries {
      */
     public double[] getScores() {
         return scores;
+    }
+
+    /**
+     * Returns the score series
+     * @return the score series
+     */
+    public double[] getPEP() {
+        return pep;
     }
 }

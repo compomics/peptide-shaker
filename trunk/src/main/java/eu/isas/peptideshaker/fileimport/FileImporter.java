@@ -2,8 +2,14 @@ package eu.isas.peptideshaker.fileimport;
 
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.FastaHeaderParser;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
+import com.compomics.util.experiment.identification.SequenceDataBase;
+import com.compomics.util.experiment.identification.identifications.Ms2Identification;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
@@ -12,6 +18,7 @@ import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fdrestimation.InputMap;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -25,7 +32,7 @@ import javax.swing.SwingWorker;
  * @author  Marc Vaudel
  * @author  Harald Barsnes
  */
-public class IdImporter {
+public class FileImporter {
 
     /**
      * The class which will load the information into the various maps and do the associated calculations
@@ -55,6 +62,7 @@ public class IdImporter {
      * The modification factory
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
+    private HashMap<String, ArrayList<String>> sequences = new HashMap<String, ArrayList<String>>();
 
     /**
      * Constructor for the importer
@@ -64,7 +72,7 @@ public class IdImporter {
      * @param proteomicAnalysis     The current proteomic analysis
      * @param idFilter              The identification filter to use
      */
-    public IdImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter) {
+    public FileImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter) {
         this.peptideShaker = identificationShaker;
         this.waitingDialog = waitingDialog;
         this.proteomicAnalysis = proteomicAnalysis;
@@ -77,7 +85,7 @@ public class IdImporter {
      * @param waitingDialog         a dialog to give feedback to the user
      * @param proteomicAnalysis     the current proteomic analysis
      */
-    public IdImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis) {
+    public FileImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis) {
         this.peptideShaker = identificationShaker;
         this.waitingDialog = waitingDialog;
         this.proteomicAnalysis = proteomicAnalysis;
@@ -89,10 +97,9 @@ public class IdImporter {
      * @param idFiles the identification files to import the Ids from
      * @param spectrumFiles the files where the corresponding spectra can be imported
      */
-    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles) {
-        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles);
+    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, FastaHeaderParser fastaHeaderParser) {
+        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, fastaFile, fastaHeaderParser);
         idProcessor.execute();
-        waitingDialog.appendReport("Importing identifications.");
     }
 
     /**
@@ -104,6 +111,80 @@ public class IdImporter {
 
         waitingDialog.appendReport("Importing identifications.");
         waitingDialog.setVisible(true);
+    }
+
+    /**
+     * Imports sequences from a fasta file
+     *
+     * @param waitingDialog     Dialog displaying feedback to the user
+     * @param proteomicAnalysis The proteomic analysis to attach the database to
+     * @param fastaFile         FASTA file to process
+     * @param databaseName      Database name
+     * @param databaseVersion   Database version
+     * @param stringBefore      String before the protein accession
+     * @param stringAfter       String after the protein accession
+     */
+    public void importSequences(WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, File fastaFile, FastaHeaderParser fastaHeaderParser) {
+
+        try {
+            waitingDialog.appendReport("Importing sequences from " + fastaFile.getName() + ".");
+            SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
+            db.importDataBase(fastaHeaderParser, fastaFile);
+            waitingDialog.appendReport("FASTA file import completed.");
+            waitingDialog.increaseProgressValue();
+        } catch (FileNotFoundException e) {
+            waitingDialog.appendReport("File " + fastaFile + " was not found. Please open another FASTA file.");
+        } catch (Exception e) {
+            waitingDialog.appendReport("An error occured while loading " + fastaFile + ". Please open another FASTA file.");
+        }
+    }
+
+    /**
+     * Imports spectra from various spectrum files
+     * @param waitingDialog Dialog displaying feedback to the user
+     * @param spectrumFiles The spectrum files
+     */
+    public void importSpectra(WaitingDialog waitingDialog, ArrayList<File> spectrumFiles) {
+        String fileName = "";
+        try {
+            waitingDialog.appendReport("Importing spectra.");
+            proteomicAnalysis.clearSpectrumCollection();
+            for (File spectrumFile : spectrumFiles) {
+                fileName = spectrumFile.getName();
+                waitingDialog.appendReport("Loading " + fileName);
+                proteomicAnalysis.getSpectrumCollection().addIdentifiedSpectra(spectrumFile, (Ms2Identification) proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION));
+                waitingDialog.increaseProgressValue();
+            }
+        } catch (InterruptedException e) {
+            waitingDialog.appendReport("Synchronization issue between identification and spectra import. Import failed.");
+            waitingDialog.setRunCanceled();
+            e.printStackTrace();
+        } catch (Exception e) {
+            waitingDialog.appendReport("Spectrum files import failed when trying to import " + fileName + ".");
+            proteomicAnalysis.clearSpectrumCollection();
+            e.printStackTrace();
+        }
+        waitingDialog.appendReport("Spectra import completed.");
+    }
+
+    /**
+     * Returns the list of proteins which contain in their sequence the given peptide sequence
+     * @param sequence the tested peptide sequence
+     * @return          a list of corresponding proteins found in the database
+     */
+    private ArrayList<String> getProteins(String sequence) {
+        if (sequences.keySet().contains(sequence)) {
+            return sequences.get(sequence);
+        }
+        ArrayList<String> result = new ArrayList<String>();
+        SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
+        for (String proteinKey : db.getProteinList()) {
+            if (db.getProtein(proteinKey).getSequence().contains(sequence)) {
+                result.add(proteinKey);
+            }
+        }
+        sequences.put(sequence, result);
+        return result;
     }
 
     /**
@@ -146,6 +227,14 @@ public class IdImporter {
          */
         private ArrayList<File> idFiles;
         /**
+         * The fasta file
+         */
+        private File fastaFile;
+        /**
+         * The fasta header parser
+         */
+        private FastaHeaderParser fastaHeaderParser;
+        /**
          * A list of spectrum files (can be empty, no spectrum will be imported)
          */
         private HashMap<String, File> spectrumFiles;
@@ -154,9 +243,11 @@ public class IdImporter {
          * Constructor of the worker
          * @param idFiles ArrayList containing the identification files
          */
-        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles) {
+        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, FastaHeaderParser fastaHeaderParser) {
             this.idFiles = idFiles;
             this.spectrumFiles = new HashMap<String, File>();
+            this.fastaFile = fastaFile;
+            this.fastaHeaderParser = fastaHeaderParser;
             for (File file : spectrumFiles) {
                 this.spectrumFiles.put(file.getName(), file);
             }
@@ -181,6 +272,7 @@ public class IdImporter {
             int nRetained = 0;
 
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+            importSequences(waitingDialog, proteomicAnalysis, fastaFile, fastaHeaderParser);
             try {
                 waitingDialog.appendReport("Reading identification files.");
                 InputMap inputMap = new InputMap();
@@ -211,6 +303,13 @@ public class IdImporter {
                             matchIt.remove();
                         } else {
                             inputMap.addEntry(searchEngine, match.getFirstHit(searchEngine).getEValue(), match.getFirstHit(searchEngine).isDecoy());
+// Temporary solution for X!Tandem input wayting for their bug correction
+                            Peptide peptide = match.getFirstHit(searchEngine).getPeptide();
+                            ArrayList<Protein> proteins = new ArrayList<Protein>();
+                            for (String proteinKey : getProteins(peptide.getSequence())) {
+                                proteins.add(new Protein(proteinKey, proteinKey.contains("REV")));
+                            }
+                            peptide.setParentProteins(proteins);
                             identification.addSpectrumMatch(match);
                             mgfName = Spectrum.getSpectrumFile(match.getKey());
                             if (!mgfNeeded.contains(mgfName)) {
@@ -247,8 +346,16 @@ public class IdImporter {
                     }
                 }
                 if (mgfMissing.isEmpty()) {
-                    peptideShaker.importSpectra(waitingDialog, mgfImported);
+                    for (int i = mgfImported.size(); i < mgfNames.size(); i++) {
+                        waitingDialog.increaseProgressValue();
+                    }
+                    importSpectra(waitingDialog, mgfImported);
+                } else {
+                    for (int i = 0 ; i < mgfNames.size() ; i++) {
+                    waitingDialog.increaseProgressValue();
+                    }
                 }
+
                 peptideShaker.processIdentifications(inputMap, waitingDialog);
 
             } catch (Exception e) {

@@ -81,7 +81,7 @@ public class PsmSpecificMap implements Serializable {
     public ArrayList<String> suspiciousInput() {
         ArrayList<String> result = new ArrayList<String>();
         for (Integer key : psmsMaps.keySet()) {
-            if (psmsMaps.get(key).suspiciousInput()) {
+            if (psmsMaps.get(key).suspiciousInput() && !grouping.containsKey(key)) {
                 result.add(getGroupKey(key));
             }
         }
@@ -107,7 +107,6 @@ public class PsmSpecificMap implements Serializable {
         for (int charge : grouping.keySet()) {
             ref = grouping.get(charge);
             psmsMaps.get(ref).addAll(psmsMaps.get(charge));
-
         }
     }
 

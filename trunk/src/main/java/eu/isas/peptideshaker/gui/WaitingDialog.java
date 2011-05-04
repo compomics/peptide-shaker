@@ -59,6 +59,7 @@ public class WaitingDialog extends javax.swing.JDialog {
      */
     private String tab = "        "; // tab could be used, but is location dependent
 
+
     /**
      * Creates a new WaitingDialog.
      *

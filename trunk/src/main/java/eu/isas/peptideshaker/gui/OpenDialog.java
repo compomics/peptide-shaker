@@ -842,15 +842,10 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             boolean needDialog = false;
 
             // load the identification files
-            if (idFiles.size() > 0 && !isPsFile) {
+            if (idFiles.size() > 0 && !isPsFile
+                    || fastaFile != null) {
                 needDialog = true;
                 importIdentificationFiles(waitingDialog);
-            }
-
-            // load the fasta files
-            if (fastaFile != null) {
-                needDialog = true;
-                importFastaFile(waitingDialog);
             }
             
             if (needDialog) {
@@ -1009,7 +1004,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                                 || file.getName().toLowerCase().endsWith("cps")) {
                             idFiles.add(file);
                         } else if (file.getName().toLowerCase().endsWith(".properties")) {
+                            if (!searchParametersFiles.contains(file)) {
                             searchParametersFiles.add(file);
+                            }
                         }
                     }
                 } else {
@@ -1313,15 +1310,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             precTolUnit = false;
         }
         IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue(), getMaxMassDeviation(), precTolUnit);
-        peptideShaker.importIdentifications(waitingDialog, idFilter, idFiles, spectrumFiles);
-    }
-
-    /**
-     * Imports sequences form a fasta file
-     * @param waitingDialog a dialog to display feedback to the user
-     */
-    private void importFastaFile(WaitingDialog waitingDialog) {
-        peptideShaker.importFasta(waitingDialog, fastaFile, dbNameTxt.getText().trim(), dbVersionTxt.getText().trim(), stringBeforeTxt.getText(), stringAfterTxt.getText());
+        peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, dbNameTxt.getText().trim(), dbVersionTxt.getText().trim(), stringBeforeTxt.getText(), stringAfterTxt.getText());
     }
 
     /**
