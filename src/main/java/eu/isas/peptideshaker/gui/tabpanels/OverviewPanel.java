@@ -2137,7 +2137,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                                         description,
                                         sequenceCoverage,
                                         emPAI,
-                                        proteinMatch.getSpectrumCount(),
+                                        proteinMatch.getPeptideCount(),
                                         proteinMatch.getSpectrumCount(),
                                         probabilities.getProteinScore(),
                                         probabilities.getProteinConfidence(),
