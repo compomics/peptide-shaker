@@ -18,7 +18,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Properties;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -843,16 +842,17 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
             // load the identification files
             if (idFiles.size() > 0 && !isPsFile
-                    || fastaFile != null) {
+                    || fastaFile != null
+                    || spectrumFiles.size() > 0) {
                 needDialog = true;
                 importIdentificationFiles(waitingDialog);
             }
-            
+
             if (needDialog) {
                 waitingDialog.setVisible(true);
                 this.dispose();
             }
-            
+
             if (!needDialog || !waitingDialog.isRunCanceled()) {
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
                 peptideShakerGUI.displayResults();
@@ -900,7 +900,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             fastaFile = fileChooser.getSelectedFile();
             peptideShakerGUI.setLastSelectedFolder(fastaFile.getPath());
-            fastaFileTxt.setText(fastaFile.getAbsolutePath());
+            fastaFileTxt.setText(fastaFile.getName());
         }
 }//GEN-LAST:event_browseDbButtonActionPerformed
 
@@ -1005,7 +1005,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                             idFiles.add(file);
                         } else if (file.getName().toLowerCase().endsWith(".properties")) {
                             if (!searchParametersFiles.contains(file)) {
-                            searchParametersFiles.add(file);
+                                searchParametersFiles.add(file);
                             }
                         }
                     }
@@ -1021,6 +1021,19 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     }
                 }
                 peptideShakerGUI.setLastSelectedFolder(newFile.getPath());
+            }
+
+            if (searchParametersFiles.size() == 1) {
+                importSearchParameters(searchParametersFiles.get(0));
+            } else if (searchParametersFiles.size() > 1) {
+                new FileSelection(this, searchParametersFiles);
+            }
+
+            for (File folder : folders) {
+                File inputFile = new File(folder, SEARCHGUI_INPUT);
+                if (inputFile.exists()) {
+                    importMgfFiles(inputFile);
+                }
             }
 
             if (idFiles.size() > 1) {
@@ -1045,6 +1058,10 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 maxPepLengthTxt.setEditable(false);
                 minPeplengthTxt.setEditable(false);
                 massDeviationTxt.setEditable(false);
+                precMassUnitCmb.setEnabled(false);
+                fastaFileTxt.setText("");
+                browseDbButton.setEnabled(false);
+                clearDbButton.setEnabled(false);
             } else {
                 experiment = null;
                 projectNameIdTxt.setEditable(true);
@@ -1056,20 +1073,23 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 maxPepLengthTxt.setEditable(true);
                 minPeplengthTxt.setEditable(true);
                 massDeviationTxt.setEditable(true);
-                isPsFile = false;
-            }
-
-            if (searchParametersFiles.size() == 1) {
-                importSearchParameters(searchParametersFiles.get(0));
-            } else if (searchParametersFiles.size() > 1) {
-                new FileSelection(this, searchParametersFiles);
-            }
-
-            for (File folder : folders) {
-                File inputFile = new File(folder, SEARCHGUI_INPUT);
-                if (inputFile.exists()) {
-                    importMgfFiles(inputFile);
+                precMassUnitCmb.setEnabled(true);
+                browseDbButton.setEnabled(true);
+                clearDbButton.setEnabled(true);
+                if (isPsFile) {
+                    projectNameIdTxt.setText("New Project");
+                    sampleNameIdtxt.setText("New Sample");
+                    replicateNumberIdtxt.setText("0");
+                    mascotMaxEvalueTxt.setText("10");
+                    omssaMaxEvalueTxt.setText("10");
+                    xtandemMaxEvalueTxt.setText("10");
+                    maxPepLengthTxt.setText("20");
+                    minPeplengthTxt.setText("8");
+                    massDeviationTxt.setText("10");
+                    precMassUnitCmb.setSelectedItem("ppm");
+            fastaFileTxt.setText(fastaFile.getName());
                 }
+                isPsFile = false;
             }
         }
 }//GEN-LAST:event_browseIdActionPerformed
@@ -1362,7 +1382,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             try {
                 File file = new File(temp);
                 searchParameters.setFastaFile(file);
-                fastaFileTxt.setText(file.getAbsolutePath());
+                fastaFileTxt.setText(file.getName());
                 fastaFile = file;
             } catch (Exception e) {
                 // file not found: use manual input
@@ -1491,7 +1511,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             public void run() {
 
                 try {
-                    Date date = experimentIO.getDate(psFile);
                     experiment = experimentIO.loadExperiment(psFile);
                     loadProject();
 
@@ -1499,7 +1518,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     progressDialog.dispose();
 
                     JOptionPane.showMessageDialog(tempRef,
-                            "Experiment " + experiment.getReference() + " created on " + date.toString()
+                            "Experiment " + experiment.getReference()
                             + " imported.\n\n"
                             + "Click Open, to open the results.", "Identifications Imported.", JOptionPane.INFORMATION_MESSAGE);
 
