@@ -7,10 +7,8 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.FastaHeaderParser;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
-import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
@@ -63,7 +61,14 @@ public class FileImporter {
      * The modification factory
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
+    /**
+     * TODO: JavaDoc missing...
+     */
     private HashMap<String, ArrayList<String>> sequences = new HashMap<String, ArrayList<String>>();
+    /**
+     * Turns the temporary solution for the X!Tandem bug correction on or off.
+     */
+    private boolean temporaryXTandemFix = true;
 
     /**
      * Constructor for the importer
@@ -93,10 +98,12 @@ public class FileImporter {
     }
 
     /**
-     * Imports the identification from files
+     * Imports the identification from files.
      *
      * @param idFiles the identification files to import the Ids from
      * @param spectrumFiles the files where the corresponding spectra can be imported
+     * @param fastaFile
+     * @param fastaHeaderParser
      */
     public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, FastaHeaderParser fastaHeaderParser) {
         IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, fastaFile, fastaHeaderParser);
@@ -104,7 +111,8 @@ public class FileImporter {
     }
 
     /**
-     * Import spectra from spectrum files
+     * Import spectra from spectrum files.
+     * 
      * @param spectrumFiles
      */
     public void importFiles(ArrayList<File> spectrumFiles) {
@@ -118,10 +126,7 @@ public class FileImporter {
      * @param waitingDialog     Dialog displaying feedback to the user
      * @param proteomicAnalysis The proteomic analysis to attach the database to
      * @param fastaFile         FASTA file to process
-     * @param databaseName      Database name
-     * @param databaseVersion   Database version
-     * @param stringBefore      String before the protein accession
-     * @param stringAfter       String after the protein accession
+     * @param fastaHeaderParser 
      */
     public void importSequences(WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, File fastaFile, FastaHeaderParser fastaHeaderParser) {
 
@@ -132,22 +137,26 @@ public class FileImporter {
             waitingDialog.appendReport("FASTA file import completed.");
             waitingDialog.increaseProgressValue();
         } catch (FileNotFoundException e) {
-            waitingDialog.appendReport("File " + fastaFile + " was not found. Please open another FASTA file.");
+            waitingDialog.appendReport("File " + fastaFile + " was not found. Please select a different FASTA file.");
         } catch (Exception e) {
-            waitingDialog.appendReport("An error occured while loading " + fastaFile + ". Please open another FASTA file.");
+            waitingDialog.appendReport("An error occured while loading " + fastaFile + ". Please select a different FASTA file.");
         }
     }
 
     /**
-     * Imports spectra from various spectrum files
+     * Imports spectra from various spectrum files.
+     * 
      * @param waitingDialog Dialog displaying feedback to the user
      * @param spectrumFiles The spectrum files
      */
     public void importSpectra(WaitingDialog waitingDialog, ArrayList<File> spectrumFiles) {
+
         String fileName = "";
+
         try {
             waitingDialog.appendReport("Importing spectra.");
             proteomicAnalysis.clearSpectrumCollection();
+
             for (File spectrumFile : spectrumFiles) {
                 fileName = spectrumFile.getName();
                 waitingDialog.appendReport("Loading " + fileName);
@@ -172,16 +181,20 @@ public class FileImporter {
      * @return          a list of corresponding proteins found in the database
      */
     private ArrayList<String> getProteins(String sequence) {
+
         if (sequences.keySet().contains(sequence)) {
             return sequences.get(sequence);
         }
+
         ArrayList<String> result = new ArrayList<String>();
         SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
+
         for (String proteinKey : db.getProteinList()) {
             if (db.getProtein(proteinKey).getSequence().contains(sequence)) {
                 result.add(proteinKey);
             }
         }
+
         sequences.put(sequence, result);
         return result;
     }
@@ -217,19 +230,23 @@ public class FileImporter {
          * @param idFiles ArrayList containing the identification files
          */
         public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, FastaHeaderParser fastaHeaderParser) {
+
             this.idFiles = idFiles;
             this.spectrumFiles = new HashMap<String, File>();
             this.fastaFile = fastaFile;
             this.fastaHeaderParser = fastaHeaderParser;
+
             for (File file : spectrumFiles) {
                 this.spectrumFiles.put(file.getName(), file);
             }
+
             try {
                 ptmFactory.importModifications(new File(MODIFICATION_FILE));
             } catch (Exception e) {
                 waitingDialog.appendReport("Failed importing modifications from " + MODIFICATION_FILE);
                 waitingDialog.setRunCanceled();
             }
+            
             try {
                 ptmFactory.importModifications(new File(USER_MODIFICATION_FILE));
             } catch (Exception e) {
@@ -246,6 +263,7 @@ public class FileImporter {
 
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             importSequences(waitingDialog, proteomicAnalysis, fastaFile, fastaHeaderParser);
+
             try {
                 waitingDialog.appendReport("Reading identification files.");
                 InputMap inputMap = new InputMap();
@@ -272,24 +290,35 @@ public class FileImporter {
 
                         match = matchIt.next();
                         nTotal++;
+
                         if (!idFilter.validateId(match.getFirstHit(searchEngine))) {
                             matchIt.remove();
                         } else {
                             inputMap.addEntry(searchEngine, match.getFirstHit(searchEngine).getEValue(), match.getFirstHit(searchEngine).isDecoy());
-// Temporary solution for X!Tandem input waiting for their bug correction
-                            Peptide peptide = match.getFirstHit(searchEngine).getPeptide();
-                            ArrayList<Protein> proteins = new ArrayList<Protein>();
-                            for (String proteinKey : getProteins(peptide.getSequence())) {
-                                proteins.add(new Protein(proteinKey, proteinKey.contains("REV")));
+
+                            // Temporary solution for X!Tandem input wayting for their bug correction
+                            if (temporaryXTandemFix) {
+
+                                Peptide peptide = match.getFirstHit(searchEngine).getPeptide();
+                                ArrayList<Protein> proteins = new ArrayList<Protein>();
+
+                                for (String proteinKey : getProteins(peptide.getSequence())) {
+                                    proteins.add(new Protein(proteinKey, proteinKey.contains("REV")));
+                                }
+
+                                peptide.setParentProteins(proteins);
                             }
-                            peptide.setParentProteins(proteins);
+
                             identification.addSpectrumMatch(match);
                             mgfName = Spectrum.getSpectrumFile(match.getKey());
+                            
                             if (!mgfNeeded.contains(mgfName)) {
                                 mgfNeeded.add(mgfName);
                             }
+
                             nRetained++;
                         }
+
                         if (waitingDialog.isRunCanceled()) {
                             return 1;
                         }
@@ -300,7 +329,7 @@ public class FileImporter {
 
                 if (nRetained == 0) {
                     waitingDialog.appendReport("No identifications retained.");
-                    waitingDialog.setRunCanceled();
+                    //waitingDialog.setRunCanceled();
                     waitingDialog.setRunFinished();
                     return 1;
                 }
@@ -311,6 +340,7 @@ public class FileImporter {
                 ArrayList<String> mgfMissing = new ArrayList<String>();
                 ArrayList<String> mgfNames = new ArrayList<String>(spectrumFiles.keySet());
                 ArrayList<File> mgfImported = new ArrayList<File>();
+
                 for (String mgfFile : mgfNeeded) {
                     if (!mgfNames.contains(mgfFile)) {
                         mgfMissing.add(mgfFile);
@@ -318,6 +348,7 @@ public class FileImporter {
                         mgfImported.add(spectrumFiles.get(mgfFile));
                     }
                 }
+
                 if (mgfMissing.isEmpty()) {
                     for (int i = mgfImported.size(); i < mgfNames.size(); i++) {
                         waitingDialog.increaseProgressValue();
@@ -350,6 +381,7 @@ public class FileImporter {
                 System.out.println("Ran out of memory!");
                 error.printStackTrace();
             }
+            
             return 0;
         }
     }
@@ -369,16 +401,20 @@ public class FileImporter {
          * @param spectrumFiles ArrayList containing the spectrum files
          */
         public SpectrumProcessor(ArrayList<File> spectrumFiles) {
+
             this.spectrumFiles = new HashMap<String, File>();
+
             for (File file : spectrumFiles) {
                 this.spectrumFiles.put(file.getName(), file);
             }
+
             try {
                 ptmFactory.importModifications(new File(MODIFICATION_FILE));
             } catch (Exception e) {
                 waitingDialog.appendReport("Failed importing modifications from " + MODIFICATION_FILE);
                 waitingDialog.setRunCanceled();
             }
+
             try {
                 ptmFactory.importModifications(new File(USER_MODIFICATION_FILE));
             } catch (Exception e) {
@@ -391,20 +427,24 @@ public class FileImporter {
         protected Object doInBackground() throws Exception {
 
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+
             try {
                 ArrayList<String> mgfNeeded = new ArrayList<String>();
                 String newFile;
+
                 for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
                     newFile = Spectrum.getSpectrumFile(spectrumMatch.getKey());
                     if (!mgfNeeded.contains(newFile)) {
                         mgfNeeded.add(newFile);
                     }
                 }
+
                 waitingDialog.increaseProgressValue();
 
                 ArrayList<String> mgfMissing = new ArrayList<String>();
                 ArrayList<String> mgfNames = new ArrayList<String>(spectrumFiles.keySet());
                 ArrayList<File> mgfImported = new ArrayList<File>();
+
                 for (String mgfFile : mgfNeeded) {
                     if (!mgfNames.contains(mgfFile)) {
                         mgfMissing.add(mgfFile);
@@ -412,6 +452,7 @@ public class FileImporter {
                         mgfImported.add(spectrumFiles.get(mgfFile));
                     }
                 }
+
                 if (mgfMissing.isEmpty()) {
                     for (int i = mgfImported.size(); i < mgfNames.size(); i++) {
                         waitingDialog.increaseProgressValue();
@@ -422,6 +463,7 @@ public class FileImporter {
                         waitingDialog.increaseProgressValue();
                     }
                 }
+                
                 waitingDialog.appendReport("File import finished!");
                 waitingDialog.setRunFinished();
 
@@ -444,6 +486,7 @@ public class FileImporter {
                 System.out.println("Ran out of memory!");
                 error.printStackTrace();
             }
+            
             return 0;
         }
     }

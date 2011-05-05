@@ -1323,12 +1323,15 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      * @param waitingDialog a dialog to display feedback to the user
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
+
         boolean precTolUnit;
+
         if (((String) precMassUnitCmb.getSelectedItem()).equals("ppm")) {
             precTolUnit = true;
         } else {
             precTolUnit = false;
         }
+
         IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue(), getMaxMassDeviation(), precTolUnit);
         peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, dbNameTxt.getText().trim(), dbVersionTxt.getText().trim(), stringBeforeTxt.getText(), stringAfterTxt.getText());
     }

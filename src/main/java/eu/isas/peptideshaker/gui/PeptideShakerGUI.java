@@ -760,7 +760,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
             enzymeFactory.importEnzymes(new File(ENZYME_FILE));
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Impossible to load enzyme file.", "Wrong enzyme file.", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Not able to load the enzyme file.", "Wrong enzyme file.", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -777,36 +777,42 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             boolean displayPeptidesAndPSMs = true;
             String tempSpectrumKey = spectrumCollection.getAllKeys(2).get(0);
             Spectrum tempSpectrum = spectrumCollection.getSpectrum(2, tempSpectrumKey);
+            
             if (tempSpectrum.getPeakList() == null || tempSpectrum.getPeakList().isEmpty()) {
                 displaySpectrum = false;
             }
+
             if (sequenceDataBase == null) {
                 displaySequence = false;
             }
+
             sequenceCoverageJCheckBoxMenuItem.setSelected(displaySequence);
             sequenceFragmentationJCheckBoxMenuItem.setSelected(displaySpectrum);
+
             overviewPanel.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displaySequence, displaySpectrum);
             overviewPanel.updateSeparators();
-
-            overviewPanel.displayResults();
+            
             progressDialog = new ProgressDialog(this, this, true);
+            progressDialog.setIntermidiate(true);
             progressDialog.doNothingOnClose();
-
-            final PeptideShakerGUI tempRef = this; // needed due to threading issues
 
             new Thread(new Runnable() {
 
-                public void run() {
-                    progressDialog.setIntermidiate(true);
-                    progressDialog.setTitle("Loading. Please Wait...");
+                public void run() { 
+                    progressDialog.setTitle("Loading Data. Please Wait...");
                     progressDialog.setVisible(true);
                 }
             }, "ProgressDialog").start();
 
-            new Thread("SaveThread") {
+            new Thread("DisplayThread") {
 
                 @Override
                 public void run() {
+                    try {
+                        overviewPanel.displayResults();
+                    } catch (MzMLUnmarshallerException e) {
+                        JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
+                    }
                     statsPanel.displayResults();
                     ptmPanel.displayResults();
                     progressDialog.setVisible(false);
@@ -814,14 +820,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 }
             }.start();
 
-
         } catch (MzMLUnmarshallerException e) {
             JOptionPane.showMessageDialog(this, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "A problem occured while displaying results. Please send the log file to the developers.", "Display problem", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
-
     }
 
     /**

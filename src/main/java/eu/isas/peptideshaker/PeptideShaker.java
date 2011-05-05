@@ -113,20 +113,27 @@ public class PeptideShaker {
      * @param idFiles           The files to import
      * @param spectrumFiles     The corresponding spectra (can be empty: spectra will not be loaded)
      * @param fastaFile         The database file in the fasta format
+     * @param databaseName
+     * @param databaseVersion
+     * @param stringBefore
+     * @param stringAfter
      */
-    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, String databaseName, String databaseVersion, String stringBefore, String stringAfter) {
+    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
+            File fastaFile, String databaseName, String databaseVersion, String stringBefore, String stringAfter) {
+        
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
+
         if (analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION) == null) {
             Ms2Identification identification = new Ms2Identification();
             analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, identification);
             SequenceDataBase db = new SequenceDataBase(databaseName, databaseVersion);
             FastaHeaderParser fastaHeaderParser = new FastaHeaderParser(stringBefore, stringAfter);
             analysis.setSequenceDataBase(db);
-        fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
-        fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, fastaHeaderParser);
+            fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
+            fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, fastaHeaderParser);
         } else {
             fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
-        fileImporter.importFiles(spectrumFiles);
+            fileImporter.importFiles(spectrumFiles);
         }
     }
 
@@ -137,9 +144,11 @@ public class PeptideShaker {
      * @param waitingDialog     A dialog to display the feedback
      */
     public void processIdentifications(InputMap inputMap, WaitingDialog waitingDialog) {
+
         if (inputMap.isMultipleSearchEngines()) {
             inputMap.estimateProbabilities();
         }
+
         waitingDialog.appendReport("Computing spectrum probabilities.");
         fillPsmMap(inputMap);
         psmMap.cure();
@@ -155,11 +164,13 @@ public class PeptideShaker {
         proteinMap.estimateProbabilities();
         attachProteinProbabilities();
         waitingDialog.appendReport("Trying to resolve protein inference issues.");
+
         try {
             cleanProteinGroups(waitingDialog);
         } catch (Exception e) {
             waitingDialog.appendReport("An error occured while trying to resolve protein inference issues.");
         }
+
         waitingDialog.appendReport("Validating identifications at 1% FDR.");
         fdrValidation();
 
@@ -168,18 +179,19 @@ public class PeptideShaker {
         ArrayList<String> suspiciousPsms = psmMap.suspiciousInput();
         ArrayList<String> suspiciousPeptides = peptideMap.suspiciousInput();
         boolean suspiciousProteins = proteinMap.suspicousInput();
+
         if (suspiciousInput.size() > 0
                 || suspiciousPsms.size() > 0
                 || suspiciousPeptides.size() > 0
                 || suspiciousProteins) {
 
             // @TODO: display this in a separate dialog??
-
             if (detailedReport) {
 
                 report += "The following identification classes retieved non robust statistical estimations, we advice to control the quality of the corresponding matches: \n";
 
                 boolean firstLine = true;
+
                 for (int searchEngine : suspiciousInput) {
                     if (firstLine) {
                         firstLine = false;
@@ -188,11 +200,13 @@ public class PeptideShaker {
                     }
                     report += AdvocateFactory.getInstance().getAdvocate(searchEngine).getName();
                 }
+
                 if (suspiciousInput.size() > 0) {
                     report += " identifications.\n";
                 }
 
                 firstLine = true;
+
                 for (String fraction : suspiciousPsms) {
                     if (firstLine) {
                         firstLine = false;
@@ -201,9 +215,11 @@ public class PeptideShaker {
                     }
                     report += fraction;
                 }
+
                 report += " charged spectra.\n";
 
                 firstLine = true;
+
                 for (String fraction : suspiciousPeptides) {
                     if (firstLine) {
                         firstLine = false;
@@ -212,6 +228,7 @@ public class PeptideShaker {
                     }
                     report += fraction;
                 }
+
                 report += " modified peptides.\n";
 
                 if (suspiciousProteins) {
