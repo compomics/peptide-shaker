@@ -1305,7 +1305,6 @@ public class StatsPanel extends javax.swing.JPanel {
             nFP = nFP.multiply(p);
             BigDecimal nTP = new BigDecimal(peptideSpaceSize);
             nTP = nTP.subtract(nFP);
-            BigDecimal fdr = nFP.divide(new BigDecimal(peptideSpaceSize));
 
             nTotalTxt.setText(Util.roundDouble(nTPTotal, 2) + "");
             nValidatedProbaTxt.setEnabled(true);
@@ -1432,7 +1431,6 @@ public class StatsPanel extends javax.swing.JPanel {
             nFP = nFP.multiply(p);
             BigDecimal nTP = new BigDecimal(posteriorValidationPoint.specificPsmSpaceSize.get(psmKey));
             nTP = nTP.subtract(nFP);
-            BigDecimal fdr = nFP.divide(new BigDecimal(posteriorValidationPoint.specificPsmSpaceSize.get(psmKey)));
 
             nValidatedProbaTxt.setEnabled(true);
             confidenceProbaTxt.setEnabled(true);

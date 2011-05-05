@@ -116,24 +116,18 @@ public class PeptideShaker {
      */
     public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, String databaseName, String databaseVersion, String stringBefore, String stringAfter) {
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-        Ms2Identification identification = new Ms2Identification();
-        analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, identification);
-        SequenceDataBase db = new SequenceDataBase(databaseName, databaseVersion);
-        FastaHeaderParser fastaHeaderParser = new FastaHeaderParser(stringBefore, stringAfter);
-        analysis.setSequenceDataBase(db);
+        if (analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION) == null) {
+            Ms2Identification identification = new Ms2Identification();
+            analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, identification);
+            SequenceDataBase db = new SequenceDataBase(databaseName, databaseVersion);
+            FastaHeaderParser fastaHeaderParser = new FastaHeaderParser(stringBefore, stringAfter);
+            analysis.setSequenceDataBase(db);
         fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
         fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, fastaHeaderParser);
-    }
-
-    /**
-     * Method for processing of results from utilities data (no file). From ms_lims for instance.
-     *
-     * @param waitingDialog     A dialog to display the feedback
-     */
-    public void processIdentifications(WaitingDialog waitingDialog) {
-        ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
-        fileImporter = new FileImporter(this, waitingDialog, analysis);
-        fileImporter.importIdentifications();
+        } else {
+            fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
+        fileImporter.importFiles(spectrumFiles);
+        }
     }
 
     /**

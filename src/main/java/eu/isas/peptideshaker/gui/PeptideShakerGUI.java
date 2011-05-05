@@ -585,7 +585,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     }
 
                     try {
-                        experimentIO.save(newFile, experiment);
+                        experimentIO.saveIdentifications(newFile, experiment);
 
                         progressDialog.setVisible(false);
                         progressDialog.dispose();

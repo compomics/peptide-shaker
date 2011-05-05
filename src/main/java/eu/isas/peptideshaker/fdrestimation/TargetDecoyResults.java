@@ -1,11 +1,13 @@
 package eu.isas.peptideshaker.fdrestimation;
 
+import java.io.Serializable;
+
 /**
  * This class will compile Target/decoy results of a certain target/decoy map according to user's validation criteria
  *
  * @author Marc
  */
-public class TargetDecoyResults {
+public class TargetDecoyResults implements Serializable {
 
     /**
      * Boolean indicating whether a classical validation was used or an a posteriori probabilistic validation

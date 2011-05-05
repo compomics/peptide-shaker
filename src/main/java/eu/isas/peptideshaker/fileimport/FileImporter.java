@@ -7,6 +7,7 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.FastaHeaderParser;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
+import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -103,14 +104,12 @@ public class FileImporter {
     }
 
     /**
-     * Imports the identifications from another stream
+     * Import spectra from spectrum files
+     * @param spectrumFiles
      */
-    public void importIdentifications() {
-        IdProcessor idProcessor = new IdProcessor();
-        idProcessor.execute();
-
-        waitingDialog.appendReport("Importing identifications.");
-        waitingDialog.setVisible(true);
+    public void importFiles(ArrayList<File> spectrumFiles) {
+        SpectrumProcessor spectrumProcessor = new SpectrumProcessor(spectrumFiles);
+        spectrumProcessor.execute();
     }
 
     /**
@@ -185,32 +184,6 @@ public class FileImporter {
         }
         sequences.put(sequence, result);
         return result;
-    }
-
-    /**
-     * Worker which processes identifications and gives feedback to the user.
-     */
-    private class IdProcessor extends SwingWorker {
-
-        @Override
-        protected Object doInBackground() throws Exception {
-            try {
-                Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-                InputMap inputMap = new InputMap();
-                for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
-                    for (int searchEngine : spectrumMatch.getAdvocates()) {
-                        inputMap.addEntry(searchEngine, spectrumMatch.getFirstHit(searchEngine).getEValue(), spectrumMatch.getFirstHit(searchEngine).isDecoy());
-                    }
-                }
-                peptideShaker.processIdentifications(inputMap, waitingDialog);
-            } catch (Exception e) {
-                waitingDialog.appendReport("An error occured while loading the identifications:");
-                waitingDialog.appendReport(e.getLocalizedMessage());
-                waitingDialog.setRunCanceled();
-                e.printStackTrace();
-            }
-            return 0;
-        }
     }
 
     /**
@@ -303,7 +276,7 @@ public class FileImporter {
                             matchIt.remove();
                         } else {
                             inputMap.addEntry(searchEngine, match.getFirstHit(searchEngine).getEValue(), match.getFirstHit(searchEngine).isDecoy());
-// Temporary solution for X!Tandem input wayting for their bug correction
+// Temporary solution for X!Tandem input waiting for their bug correction
                             Peptide peptide = match.getFirstHit(searchEngine).getPeptide();
                             ArrayList<Protein> proteins = new ArrayList<Protein>();
                             for (String proteinKey : getProteins(peptide.getSequence())) {
@@ -351,12 +324,106 @@ public class FileImporter {
                     }
                     importSpectra(waitingDialog, mgfImported);
                 } else {
-                    for (int i = 0 ; i < mgfNames.size() ; i++) {
-                    waitingDialog.increaseProgressValue();
+                    for (int i = 0; i < mgfNames.size(); i++) {
+                        waitingDialog.increaseProgressValue();
                     }
                 }
 
                 peptideShaker.processIdentifications(inputMap, waitingDialog);
+
+            } catch (Exception e) {
+                waitingDialog.appendReport("An error occured while loading the identification files:");
+                waitingDialog.appendReport(e.getLocalizedMessage());
+                waitingDialog.setRunCanceled();
+                e.printStackTrace();
+            } catch (OutOfMemoryError error) {
+                Runtime.getRuntime().gc();
+                waitingDialog.appendReportEndLine();
+                waitingDialog.appendReport("Ran out of memory!");
+                waitingDialog.setRunCanceled();
+                JOptionPane.showMessageDialog(null,
+                        "The task used up all the available memory and had to be stopped.\n"
+                        + "Memory boundaries are set in ../conf/JavaOptions.txt.",
+                        "Out Of Memory Error",
+                        JOptionPane.ERROR_MESSAGE);
+
+                System.out.println("Ran out of memory!");
+                error.printStackTrace();
+            }
+            return 0;
+        }
+    }
+
+    /**
+     * Worker which loads spectra from files assuming that ids are already loaded them while giving feedback to the user.
+     */
+    private class SpectrumProcessor extends SwingWorker {
+
+        /**
+         * A list of spectrum files (can be empty, no spectrum will be imported)
+         */
+        private HashMap<String, File> spectrumFiles;
+
+        /**
+         * Constructor of the worker
+         * @param spectrumFiles ArrayList containing the spectrum files
+         */
+        public SpectrumProcessor(ArrayList<File> spectrumFiles) {
+            this.spectrumFiles = new HashMap<String, File>();
+            for (File file : spectrumFiles) {
+                this.spectrumFiles.put(file.getName(), file);
+            }
+            try {
+                ptmFactory.importModifications(new File(MODIFICATION_FILE));
+            } catch (Exception e) {
+                waitingDialog.appendReport("Failed importing modifications from " + MODIFICATION_FILE);
+                waitingDialog.setRunCanceled();
+            }
+            try {
+                ptmFactory.importModifications(new File(USER_MODIFICATION_FILE));
+            } catch (Exception e) {
+                waitingDialog.appendReport("Failed importing modifications from " + USER_MODIFICATION_FILE);
+                waitingDialog.setRunCanceled();
+            }
+        }
+
+        @Override
+        protected Object doInBackground() throws Exception {
+
+            Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+            try {
+                ArrayList<String> mgfNeeded = new ArrayList<String>();
+                String newFile;
+                for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
+                    newFile = Spectrum.getSpectrumFile(spectrumMatch.getKey());
+                    if (!mgfNeeded.contains(newFile)) {
+                        mgfNeeded.add(newFile);
+                    }
+                }
+                waitingDialog.increaseProgressValue();
+
+                ArrayList<String> mgfMissing = new ArrayList<String>();
+                ArrayList<String> mgfNames = new ArrayList<String>(spectrumFiles.keySet());
+                ArrayList<File> mgfImported = new ArrayList<File>();
+                for (String mgfFile : mgfNeeded) {
+                    if (!mgfNames.contains(mgfFile)) {
+                        mgfMissing.add(mgfFile);
+                    } else {
+                        mgfImported.add(spectrumFiles.get(mgfFile));
+                    }
+                }
+                if (mgfMissing.isEmpty()) {
+                    for (int i = mgfImported.size(); i < mgfNames.size(); i++) {
+                        waitingDialog.increaseProgressValue();
+                    }
+                    importSpectra(waitingDialog, mgfImported);
+                } else {
+                    for (int i = 0; i < mgfNames.size(); i++) {
+                        waitingDialog.increaseProgressValue();
+                    }
+                }
+                waitingDialog.appendReport("File import finished!");
+                waitingDialog.setRunFinished();
 
             } catch (Exception e) {
                 waitingDialog.appendReport("An error occured while loading the identification files:");
