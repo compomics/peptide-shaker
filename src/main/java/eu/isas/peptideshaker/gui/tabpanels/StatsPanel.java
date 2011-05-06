@@ -9,6 +9,7 @@ import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyResults;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoySeries;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.gui.ProgressDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -199,6 +200,8 @@ public class StatsPanel extends javax.swing.JPanel {
         cancelButton = new javax.swing.JButton();
         fdrCombo1 = new javax.swing.JComboBox();
         jLabel31 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        validationCmb = new javax.swing.JComboBox();
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -233,7 +236,7 @@ public class StatsPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 73, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -257,7 +260,7 @@ public class StatsPanel extends javax.swing.JPanel {
         nMaxTxt.setEditable(false);
         nMaxTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
-        jLabel6.setText("Classical Validation:");
+        jLabel6.setText("Threshold Validation:");
 
         jLabel1.setText("# Validated Hits:");
 
@@ -276,7 +279,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
-        jLabel8.setText("Probabilistic Validation:");
+        jLabel8.setText("Posterior Validation:");
 
         jLabel7.setText("# Validated Hits:");
 
@@ -332,7 +335,7 @@ public class StatsPanel extends javax.swing.JPanel {
                                     .addComponent(confidenceProbaTxt)
                                     .addComponent(nValidatedProbaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addComponent(jLabel8))))
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {nMaxTxt, nTotalTxt});
@@ -431,11 +434,11 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(confidencePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(confidenceChartPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                    .addComponent(confidenceChartPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
                     .addGroup(confidencePanelLayout.createSequentialGroup()
                         .addComponent(jLabel25)
                         .addGap(18, 18, 18)
-                        .addComponent(confidenceSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+                        .addComponent(confidenceSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel26)))
                 .addContainerGap())
@@ -444,7 +447,7 @@ public class StatsPanel extends javax.swing.JPanel {
             confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, confidencePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(confidenceChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                .addComponent(confidenceChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(confidenceSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -491,11 +494,11 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrFnrPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(fdrFnrChartPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
+                    .addComponent(fdrFnrChartPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
                     .addGroup(fdrFnrPanelLayout.createSequentialGroup()
                         .addComponent(jLabel28)
                         .addGap(18, 18, 18)
-                        .addComponent(fdrSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
+                        .addComponent(fdrSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel29)))
                 .addContainerGap())
@@ -504,7 +507,7 @@ public class StatsPanel extends javax.swing.JPanel {
             fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrFnrPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fdrFnrChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                .addComponent(fdrFnrChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(fdrSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -544,11 +547,11 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, benefitCostPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(benefitCostChartPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+                    .addComponent(benefitCostChartPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
                     .addGroup(benefitCostPanelLayout.createSequentialGroup()
                         .addComponent(jLabel32)
                         .addGap(18, 18, 18)
-                        .addComponent(fdrSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                        .addComponent(fdrSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel33)))
                 .addContainerGap())
@@ -557,7 +560,7 @@ public class StatsPanel extends javax.swing.JPanel {
             benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, benefitCostPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(benefitCostChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                .addComponent(benefitCostChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel32)
@@ -574,7 +577,7 @@ public class StatsPanel extends javax.swing.JPanel {
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPlotSplitPane)
+            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1161, Short.MAX_VALUE)
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -620,12 +623,12 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pepPanelLayout.createSequentialGroup()
-                        .addComponent(pepChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                        .addComponent(pepChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
                         .addGap(10, 10, 10))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pepPanelLayout.createSequentialGroup()
                         .addComponent(jLabel30)
                         .addGap(18, 18, 18)
-                        .addComponent(sensitivitySlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
+                        .addComponent(sensitivitySlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel27)
                         .addContainerGap())))
@@ -634,7 +637,7 @@ public class StatsPanel extends javax.swing.JPanel {
             pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pepPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pepChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                .addComponent(pepChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel30)
@@ -673,11 +676,11 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(fdrsChartPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 707, Short.MAX_VALUE)
+                    .addComponent(fdrsChartPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 711, Short.MAX_VALUE)
                     .addGroup(fdrsPanelLayout.createSequentialGroup()
                         .addComponent(jLabel34)
                         .addGap(18, 18, 18)
-                        .addComponent(sensitivitySlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE)
+                        .addComponent(sensitivitySlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 570, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel35)))
                 .addContainerGap())
@@ -686,7 +689,7 @@ public class StatsPanel extends javax.swing.JPanel {
             fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fdrsChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                .addComponent(fdrsChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(sensitivitySlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -701,7 +704,7 @@ public class StatsPanel extends javax.swing.JPanel {
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estimatorsPlotSplitPane)
+            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1161, Short.MAX_VALUE)
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -716,7 +719,7 @@ public class StatsPanel extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane3)
+                .addComponent(jTabbedPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 1166, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -730,7 +733,7 @@ public class StatsPanel extends javax.swing.JPanel {
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Parameters"));
         jPanel5.setOpaque(false);
 
-        jLabel21.setText("Confidence Threshold:");
+        jLabel21.setText("Confidence:");
 
         confidenceClassicalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         confidenceClassicalTxt.addActionListener(new java.awt.event.ActionListener() {
@@ -741,7 +744,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel18.setText("%");
 
-        jLabel12.setText("FDR Threshold:");
+        jLabel12.setText("FDR:");
 
         fdrClassicalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         fdrClassicalTxt.addActionListener(new java.awt.event.ActionListener() {
@@ -752,7 +755,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel14.setText("%");
 
-        jLabel24.setText("FNR Threshold:");
+        jLabel24.setText("FNR:");
 
         fnrClassicalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         fnrClassicalTxt.addActionListener(new java.awt.event.ActionListener() {
@@ -810,6 +813,15 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel31.setText("Estimator:");
 
+        jLabel9.setText("Validation:");
+
+        validationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Threshold", "Posterior" }));
+        validationCmb.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                validationCmbMouseReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -842,22 +854,22 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(applyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel22)
-                                    .addComponent(jLabel31))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(fdrCombo1, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(windowTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))))))
-                .addContainerGap(96, Short.MAX_VALUE))
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel5Layout.createSequentialGroup()
+                            .addComponent(applyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(cancelButton, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel5Layout.createSequentialGroup()
+                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel22)
+                                .addComponent(jLabel31)
+                                .addComponent(jLabel9))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(validationCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(fdrCombo1, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(windowTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)))))
+                .addContainerGap(84, Short.MAX_VALUE))
         );
 
         jPanel5Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {applyButton, cancelButton});
@@ -868,7 +880,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -895,7 +907,11 @@ public class StatsPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(fdrCombo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel31))))
+                                    .addComponent(jLabel31))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel9)
+                                    .addComponent(validationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(validateButton)
@@ -914,7 +930,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -925,10 +941,11 @@ public class StatsPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -1085,8 +1102,8 @@ public class StatsPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_validateButtonActionPerformed
 
     private void fdrSlider2MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrSlider2MouseReleased
-       fdrSlider1.setValue(fdrSlider2.getValue());
-       fdrSlider2MouseReleased(null);
+        fdrSlider1.setValue(fdrSlider2.getValue());
+        fdrSlider2MouseReleased(null);
     }//GEN-LAST:event_fdrSlider2MouseReleased
 
     private void fdrSlider2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrSlider2MouseDragged
@@ -1103,6 +1120,18 @@ public class StatsPanel extends javax.swing.JPanel {
         sensitivitySlider1MouseDragged(null);
     }//GEN-LAST:event_sensitivitySlider2MouseDragged
 
+    private void validationCmbMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validationCmbMouseReleased
+        TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
+        if (validationCmb.getSelectedIndex() == 0) {
+            currentResults.setClassicalValidation(true);
+        } else {
+            currentResults.setClassicalValidation(false);
+        }
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        updateResults();
+        updateDisplayedComponents();
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_validationCmbMouseReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JPanel benefitCostChartPanel;
@@ -1153,6 +1182,7 @@ public class StatsPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel4;
@@ -1176,6 +1206,7 @@ public class StatsPanel extends javax.swing.JPanel {
     private javax.swing.JSlider sensitivitySlider1;
     private javax.swing.JSlider sensitivitySlider2;
     private javax.swing.JButton validateButton;
+    private javax.swing.JComboBox validationCmb;
     private javax.swing.JTextField windowTxt;
     // End of variables declaration//GEN-END:variables
     /**
@@ -1236,20 +1267,22 @@ public class StatsPanel extends javax.swing.JPanel {
     /**
      * Metrics and methods used for posterior validation of PSMs and peptides
      */
-    private PosteriorValidationMetrics posteriorValidationMetrics = new PosteriorValidationMetrics();
+    private PosteriorValidationMetrics posteriorValidationMetrics;
     /**
-     * Boolean indicating that results are displayed
+     * A simple progress dialog.
      */
-    private boolean resultDisplayed = false;
+    private static ProgressDialog progressDialog;
+    /**
+     * Boolean indicating whether results are displayed
+     */
+    private boolean displayingResults = false;
 
     /**
      * This method displays results on the panel
      */
     public void displayResults() {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        resultDisplayed = true;
-        estimatePossibilities();
-
+        displayingResults = true;
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
         ArrayList<String> peptideKeys = pSMaps.getPeptideSpecificMap().getKeys();
@@ -1322,6 +1355,10 @@ public class StatsPanel extends javax.swing.JPanel {
                 }
             }
         } else if (peptideMap.containsKey(selectedGroup)) {
+            if (posteriorValidationMetrics == null) {
+                posteriorValidationMetrics = new PosteriorValidationMetrics();
+                estimatePossibilities();
+            }
             currentTargetDecoyMap = pSMaps.getPeptideSpecificMap().getTargetDecoyMap(peptideMap.get(selectedGroup));
             boolean found = false;
             for (int key : psmMap.keySet()) {
@@ -1331,7 +1368,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 }
             }
             if (found) {
-                int outcome = JOptionPane.showConfirmDialog(this, 
+                int outcome = JOptionPane.showConfirmDialog(this,
                         "Probabilities modifications at the PSM level will influence peptide results.\n"
                         + "Recalculate probabilities?", "Non Applied Changes", JOptionPane.YES_NO_OPTION);
                 if (outcome == JOptionPane.YES_OPTION) {
@@ -1339,8 +1376,16 @@ public class StatsPanel extends javax.swing.JPanel {
                 }
             }
         } else if (psmMap.containsKey(selectedGroup)) {
+            if (posteriorValidationMetrics == null) {
+                posteriorValidationMetrics = new PosteriorValidationMetrics();
+                estimatePossibilities();
+            }
             currentTargetDecoyMap = pSMaps.getPsmSpecificMap().getTargetDecoyMap(psmMap.get(selectedGroup));
         } else if (selectedGroup == peptideMap.size()) {
+            if (posteriorValidationMetrics == null) {
+                posteriorValidationMetrics = new PosteriorValidationMetrics();
+                estimatePossibilities();
+            }
             clearScreen();
             int peptideSpaceSize = 0;
             double nTPTotal = 0;
@@ -1373,6 +1418,10 @@ public class StatsPanel extends javax.swing.JPanel {
             cancelButton.setEnabled(false);
             return;
         } else {
+            if (posteriorValidationMetrics == null) {
+                posteriorValidationMetrics = new PosteriorValidationMetrics();
+                estimatePossibilities();
+            }
             clearScreen();
             int psmSpaceSize = 0;
             double nTPTotal = 0;
@@ -1392,11 +1441,6 @@ public class StatsPanel extends javax.swing.JPanel {
 
             BigDecimal p = BigDecimal.ONE;
             p = p.divide(new BigDecimal(posteriorValidationMetrics.getSearchSpace()), BigDecimal.ROUND_HALF_DOWN);
-            BigDecimal nFP = new BigDecimal(psmSpaceSize);
-            nFP = nFP.multiply(p);
-            BigDecimal nTP = new BigDecimal(psmSpaceSize);
-            nTP = nTP.subtract(nFP);
-            BigDecimal fdr = nFP.divide(new BigDecimal(psmSpaceSize));
 
             nTotalTxt.setText(Util.roundDouble(nTPTotal, 2) + "");
             nValidatedProbaTxt.setEnabled(true);
@@ -1458,9 +1502,6 @@ public class StatsPanel extends javax.swing.JPanel {
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
         double proteinScore = pSMaps.getProteinMap().getTargetDecoyMap().getTargetDecoyResults().getScoreLimit();
-        PosteriorValidationPoint posteriorValidationPoint = posteriorValidationMetrics.getResults(proteinScore);
-        BigDecimal p = BigDecimal.ONE;
-        p = p.divide(new BigDecimal(posteriorValidationMetrics.getSearchSpace()), BigDecimal.ROUND_HALF_DOWN);
 
         if (groupList.getSelectedIndex() == 0) {
             //probaValidationCheck.setEnabled(false);
@@ -1470,29 +1511,34 @@ public class StatsPanel extends javax.swing.JPanel {
             confidenceProbaTxt.setText("");
         } else if (peptideMap.containsKey(groupList.getSelectedIndex())) {
             String peptideKey = peptideMap.get(groupList.getSelectedIndex());
-            BigDecimal nFP = new BigDecimal(posteriorValidationPoint.specificPeptideSpaceSize.get(peptideKey));
-            nFP = nFP.multiply(p);
-            BigDecimal nTP = new BigDecimal(posteriorValidationPoint.specificPeptideSpaceSize.get(peptideKey));
-            nTP = nTP.subtract(nFP);
-            BigDecimal fdr = nFP.divide(new BigDecimal(posteriorValidationPoint.specificPeptideSpaceSize.get(peptideKey)));
-
+            if (posteriorValidationMetrics != null) {
+                BigDecimal p = BigDecimal.ONE;
+                PosteriorValidationPoint posteriorValidationPoint = posteriorValidationMetrics.getResults(proteinScore);
+                p = p.divide(new BigDecimal(posteriorValidationMetrics.getSearchSpace()), BigDecimal.ROUND_HALF_DOWN);
+                nValidatedProbaTxt.setText(posteriorValidationPoint.specificPeptideSpaceSize.get(peptideKey) + "");
+                confidenceProbaTxt.setText(p.toEngineeringString());
+            } else {
+                nValidatedProbaTxt.setText("");
+                confidenceProbaTxt.setText("");
+            }
             nValidatedProbaTxt.setEnabled(true);
             confidenceProbaTxt.setEnabled(true);
-            nValidatedProbaTxt.setText(posteriorValidationPoint.specificPeptideSpaceSize.get(peptideKey) + "");
-            confidenceProbaTxt.setText(p.toEngineeringString());
 
         } else if (psmMap.containsKey(groupList.getSelectedIndex())) {
 
             int psmKey = psmMap.get(groupList.getSelectedIndex());
-            BigDecimal nFP = new BigDecimal(posteriorValidationPoint.specificPsmSpaceSize.get(psmKey));
-            nFP = nFP.multiply(p);
-            BigDecimal nTP = new BigDecimal(posteriorValidationPoint.specificPsmSpaceSize.get(psmKey));
-            nTP = nTP.subtract(nFP);
-
+            if (posteriorValidationMetrics != null) {
+                BigDecimal p = BigDecimal.ONE;
+                PosteriorValidationPoint posteriorValidationPoint = posteriorValidationMetrics.getResults(proteinScore);
+                p = p.divide(new BigDecimal(posteriorValidationMetrics.getSearchSpace()), BigDecimal.ROUND_HALF_DOWN);
+                nValidatedProbaTxt.setText(posteriorValidationPoint.specificPsmSpaceSize.get(psmKey) + "");
+                confidenceProbaTxt.setText(p.toEngineeringString());
+            } else {
+                nValidatedProbaTxt.setText("");
+                confidenceProbaTxt.setText("");
+            }
             nValidatedProbaTxt.setEnabled(true);
             confidenceProbaTxt.setEnabled(true);
-            nValidatedProbaTxt.setText(posteriorValidationPoint.specificPsmSpaceSize.get(psmKey) + "");
-            confidenceProbaTxt.setText(p + "");
 
         } else {
             nValidatedProbaTxt.setEnabled(true);
@@ -1845,7 +1891,7 @@ public class StatsPanel extends javax.swing.JPanel {
         try {
             miniShaker.spectrumMapChanged();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "An identification conflict occured. If you can reproduce the error please contact the developers.", 
+            JOptionPane.showMessageDialog(this, "An identification conflict occured. If you can reproduce the error please contact the developers.",
                     "Identification Conflict", JOptionPane.WARNING_MESSAGE);
             e.printStackTrace();
         }
@@ -1864,7 +1910,7 @@ public class StatsPanel extends javax.swing.JPanel {
         try {
             miniShaker.peptideMapChanged();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "An identification conflict occured. If you can reproduce the error please contact the developers.", 
+            JOptionPane.showMessageDialog(this, "An identification conflict occured. If you can reproduce the error please contact the developers.",
                     "Identification Conflict", JOptionPane.WARNING_MESSAGE);
             e.printStackTrace();
         }
@@ -1885,16 +1931,39 @@ public class StatsPanel extends javax.swing.JPanel {
         modifiedMaps.put(0, false);
     }
 
+    public void probabilitiesChanged() {
+        posteriorValidationMetrics = null;
+        if (displayingResults) {
+            groupSelectionChanged();
+        }
+    }
+
     /**
      * Estimates the database and dataset possibilities.
      */
-    public void estimatePossibilities() {
-        if (resultDisplayed) {
-            PSMaps pSMaps = new PSMaps();
-            pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-            posteriorValidationMetrics.estimateDatasetPossibilities(peptideShakerGUI.getSearchParameters(),
-                    peptideShakerGUI.getSequenceDataBase(), peptideShakerGUI.getIdentification(), pSMaps.getPeptideSpecificMap(), pSMaps.getPsmSpecificMap());
-            posteriorValidationMetrics.estimateDataBasePossibilities(peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceDataBase());
-        }
+    private void estimatePossibilities() {
+
+        progressDialog = new ProgressDialog(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.setIntermidiate(true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setTitle("Estimating probabilities. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+                PSMaps pSMaps = new PSMaps();
+                pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
+                posteriorValidationMetrics.estimateDatasetPossibilities(peptideShakerGUI.getSearchParameters(),
+                        peptideShakerGUI.getSequenceDataBase(), peptideShakerGUI.getIdentification(), pSMaps.getPeptideSpecificMap(), pSMaps.getPsmSpecificMap());
+                posteriorValidationMetrics.estimateDataBasePossibilities(peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceDataBase());
+
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+            
+
     }
 }

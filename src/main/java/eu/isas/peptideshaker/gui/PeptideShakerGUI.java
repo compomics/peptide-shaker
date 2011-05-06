@@ -1093,7 +1093,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public void setSearchParameters(SearchParameters searchParameters) {
         this.searchParameters = searchParameters;
-        statsPanel.estimatePossibilities();
+        statsPanel.probabilitiesChanged();
     }
 
     /**
