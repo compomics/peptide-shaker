@@ -2058,7 +2058,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                         maxSpectra = peptideMatch.getSpectrumCount();
                     }
 
-                    peptideTableMap.put(getPeptideKey(index), peptideMatch.getKey());
+                    peptideTableMap.put(peptideMatch.getTheoreticPeptide().getSequence() + modifications, peptideMatch.getKey());
                     index++;
                 }
             }
