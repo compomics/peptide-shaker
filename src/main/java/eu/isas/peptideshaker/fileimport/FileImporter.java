@@ -464,7 +464,7 @@ public class FileImporter {
                     }
                 }
                 
-                waitingDialog.appendReport("File import finished!");
+                waitingDialog.appendReport("File import finished!\n\n");
                 waitingDialog.setRunFinished();
 
             } catch (Exception e) {
