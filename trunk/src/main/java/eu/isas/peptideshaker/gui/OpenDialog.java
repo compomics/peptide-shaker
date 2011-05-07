@@ -856,6 +856,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             if (!needDialog || !waitingDialog.isRunCanceled()) {
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
                 peptideShakerGUI.displayResults();
+                peptideShakerGUI.setFrameTitle(projectNameIdTxt.getText().trim());
                 this.dispose();
             }
         }
@@ -1521,9 +1522,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     progressDialog.dispose();
 
                     JOptionPane.showMessageDialog(tempRef,
-                            "Experiment " + experiment.getReference()
-                            + " imported.\n\n"
-                            + "Click Open, to open the results.", "Identifications Imported.", JOptionPane.INFORMATION_MESSAGE);
+                            "Experiment \'" + experiment.getReference()
+                            + "\' imported.\n"
+                            + "Click Open to view the results.", "Identifications Imported", JOptionPane.INFORMATION_MESSAGE);
 
                 } catch (Exception e) {
 
@@ -1534,7 +1535,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                             "An error occured while reading" + psFile + ".\\"
                             + "Please verif that the compomics utilities version used to create\n"
                             + "the file was the same as the one used by your version of Reporter.",
-                            "File Input Error.", JOptionPane.ERROR_MESSAGE);
+                            "File Input Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
             }
