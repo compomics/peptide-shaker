@@ -172,7 +172,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         initComponents();
 
         // set the title
-        this.setTitle(this.getTitle() + " - v" + getVersion() + " beta");
+        setFrameTitle(null);
 
         // set the title of the frame and add the icon
         this.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -212,6 +212,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // open the OpenDialog
         new OpenDialog(this, true);
+    }
+
+    /**
+     * Add the experiment title to the frame title.
+     *
+     * @param experimentTitle the title to add
+     */
+    public void setFrameTitle (String experimentTitle) {
+
+        if (experimentTitle != null) {
+            this.setTitle("PeptideShaker " + getVersion() + " beta" + " - " + experimentTitle);
+        } else {
+            this.setTitle("PeptideShaker " + getVersion() + " beta");
+        }
+
     }
 
     /**
@@ -291,7 +306,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PeptideShaker");
         setBackground(new java.awt.Color(255, 255, 255));
-        setMinimumSize(new java.awt.Dimension(1100, 600));
+        setMinimumSize(new java.awt.Dimension(1280, 600));
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
