@@ -56,6 +56,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         XYBarRenderer.setDefaultBarPainter(new StandardXYBarPainter());
     }
     /**
+     * The scaling value for the bubbles.
+     */
+    private int bubbleScale = 5;
+    /**
      * If set to true all messages will be sent to a log file.
      */
     private static boolean useLogFile = true;
@@ -219,7 +223,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      *
      * @param experimentTitle the title to add
      */
-    public void setFrameTitle (String experimentTitle) {
+    public void setFrameTitle(String experimentTitle) {
 
         if (experimentTitle != null) {
             this.setTitle("PeptideShaker " + getVersion() + " beta" + " - " + experimentTitle);
@@ -291,6 +295,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu = new javax.swing.JMenu();
         searchParametersMenu = new javax.swing.JMenuItem();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
+        bubbleScaleJMenuItem = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         overViewTabViewMenu = new javax.swing.JMenu();
         proteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -411,6 +416,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         editMenu.add(annotationPreferencesMenu);
+
+        bubbleScaleJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        bubbleScaleJMenuItem.setText("Bubble Plot Scale");
+        bubbleScaleJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bubbleScaleJMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(bubbleScaleJMenuItem);
 
         menuBar.add(editMenu);
 
@@ -768,6 +782,26 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 }//GEN-LAST:event_proteinsJCheckBoxMenuItemActionPerformed
 
     /**
+     * Opens a dialog where the bubble scale factor can be selected.
+     *
+     * @param evt
+     */
+    private void bubbleScaleJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bubbleScaleJMenuItemActionPerformed
+
+        String input = JOptionPane.showInputDialog(this, "Bubble Scale:", bubbleScale);
+
+        if (input != null) {
+            try {
+                bubbleScale = new Integer(input);
+                overviewPanel.updateBubblePlot();
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Bubble scale has to be an integer.", "Input Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+    }//GEN-LAST:event_bubbleScaleJMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
     private void loadEnzymes() {
@@ -792,7 +826,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             boolean displayPeptidesAndPSMs = true;
             String tempSpectrumKey = spectrumCollection.getAllKeys(2).get(0);
             Spectrum tempSpectrum = spectrumCollection.getSpectrum(2, tempSpectrumKey);
-            
+
             if (tempSpectrum.getPeakList() == null || tempSpectrum.getPeakList().isEmpty()) {
                 displaySpectrum = false;
             }
@@ -806,14 +840,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             overviewPanel.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displaySequence, displaySpectrum);
             overviewPanel.updateSeparators();
-            
+
             progressDialog = new ProgressDialog(this, this, true);
             progressDialog.setIntermidiate(true);
             progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
 
-                public void run() { 
+                public void run() {
                     progressDialog.setTitle("Loading Data. Please Wait...");
                     progressDialog.setVisible(true);
                 }
@@ -870,6 +904,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutJMenuItem;
     private javax.swing.JMenuItem annotationPreferencesMenu;
+    private javax.swing.JMenuItem bubbleScaleJMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitJMenuItem;
     private javax.swing.JMenuItem exportMenuItem;
@@ -1178,5 +1213,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public void setSparklineColor(Color sparklineColor) {
         this.sparklineColor = sparklineColor;
+    }
+
+    /**
+     * Returns the bubble plot scale value.
+     *
+     * @return the bubble plot scale value
+     */
+    public int getBubbleScale() {
+        return bubbleScale;
     }
 }

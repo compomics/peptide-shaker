@@ -12,6 +12,7 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.preferences.SearchParameters;
+import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -1515,18 +1516,32 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             public void run() {
 
                 try {
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
                     experiment = experimentIO.loadExperiment(psFile);
                     loadProject();
 
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
 
-                    JOptionPane.showMessageDialog(tempRef,
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                    int option = JOptionPane.showConfirmDialog(tempRef,
                             "Experiment \'" + experiment.getReference()
                             + "\' imported.\n"
-                            + "Click Open to view the results.", "Identifications Imported", JOptionPane.INFORMATION_MESSAGE);
+                            + "View the results?", "Identifications Imported", JOptionPane.YES_NO_OPTION);
+
+                    if (option == JOptionPane.YES_OPTION) {
+                        tempRef.setVisible(false);
+                        tempRef.openButtonActionPerformed(null);
+                    }
 
                 } catch (Exception e) {
+
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
