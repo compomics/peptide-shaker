@@ -57,6 +57,11 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class OverviewPanel extends javax.swing.JPanel {
 
     /**
+     * The maximum mz value in the current list of PSMs. Needed to make sure that
+     * the PSMs for the same peptide all use the same mz range.
+     */
+    private double maxPsmMzValue = Double.MIN_VALUE;
+    /**
      * The spectrum annotator
      */
     private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
@@ -723,7 +728,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        spectrumJTabbedPane.addTab("Fragment Ions", fragmentIonJPanel);
+        spectrumJTabbedPane.addTab("Ions", fragmentIonJPanel);
 
         spectrumJPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1036,7 +1041,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         if (row != -1) {
             updatePsmSelection(row);
             row = psmTable.getSelectedRow();
-            updateSpectrum(row);
+            updateSpectrum(row, true);
         }
 }//GEN-LAST:event_peptideTableMouseClicked
 
@@ -1051,7 +1056,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         if (row != -1) {
             updatePsmSelection(row);
             row = psmTable.getSelectedRow();
-            updateSpectrum(row);
+            updateSpectrum(row, true);
         }
 }//GEN-LAST:event_peptideTableKeyReleased
 
@@ -1064,7 +1069,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         int row = psmTable.rowAtPoint(evt.getPoint());
 
         if (row != -1) {
-            updateSpectrum(row);
+            updateSpectrum(row, false);
         }
 }//GEN-LAST:event_psmTableMouseClicked
 
@@ -1077,7 +1082,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         int row = psmTable.getSelectedRow();
 
         if (row != -1) {
-            updateSpectrum(row);
+            updateSpectrum(row, false);
         }
 }//GEN-LAST:event_psmTableKeyReleased
 
@@ -1520,7 +1525,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     /**
      * Updated the bubble plot with the current PSMs.
      */
-    private void updateBubblePlot() {
+    public void updateBubblePlot() {
         try {
             ArrayList<SpectrumAnnotationMap> allAnnotations = new ArrayList<SpectrumAnnotationMap>();
             ArrayList<MSnSpectrum> allSpectra = new ArrayList<MSnSpectrum>();
@@ -1546,6 +1551,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                     allAnnotations, getCurrentFragmentIonTypes(), allSpectra, searchParameters.getFragmentIonMZTolerance(),
+                    peptideShakerGUI.getBubbleScale(),
                     oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected(),
                     moreThanTwoChargesToggleButton.isSelected(), false, barsBubblePlotToggleButton.isSelected());
 
@@ -1658,9 +1664,10 @@ public class OverviewPanel extends javax.swing.JPanel {
     /**
      * Update the spectrum to the currently selected PSM.
      *
-     * @param row the row index of the PSM
+     * @param row           the row index of the PSM
+     * @param resetMzRange  if true the mz range is reset, if false the current zoom range is kept
      */
-    private void updateSpectrum(int row) {
+    private void updateSpectrum(int row, boolean resetMzRange) {
 
         if (row != -1) {
 
@@ -1680,6 +1687,14 @@ public class OverviewPanel extends javax.swing.JPanel {
                         }
                     } else {
 
+                        double lowerMzZoomRange = 0;
+                        double upperMzZoomRange = maxPsmMzValue;
+
+                        if (spectrum != null && spectrum.getXAxisZoomRangeLowerValue() != 0 && !resetMzRange) {
+                            lowerMzZoomRange = spectrum.getXAxisZoomRangeLowerValue();
+                            upperMzZoomRange = spectrum.getXAxisZoomRangeUpperValue();
+                        }
+
                         // add the data to the spectrum panel
                         Precursor precursor = currentSpectrum.getPrecursor();
                         spectrum = new SpectrumPanel(
@@ -1698,6 +1713,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                         // add the spectrum annotations
                         currentAnnotations = spectrumAnnotator.getSpectrumAnnotations(annotations);
                         spectrum.setAnnotations(filterAnnotations(currentAnnotations));
+                        spectrum.rescale(lowerMzZoomRange, upperMzZoomRange);
 
                         // add the spectrum panel to the frame
                         spectrumPanel.removeAll();
@@ -1868,6 +1884,8 @@ public class OverviewPanel extends javax.swing.JPanel {
             double maxMassError = Double.MIN_VALUE;
             double maxCharge = Double.MIN_VALUE;
 
+            maxPsmMzValue = Double.MIN_VALUE;
+
             for (SpectrumMatch spectrumMatch : currentPeptideMatch.getSpectrumMatches().values()) {
                 PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
                 if (peptideAssumption.getPeptide().isSameAs(currentPeptideMatch.getTheoreticPeptide())) {
@@ -1932,6 +1950,10 @@ public class OverviewPanel extends javax.swing.JPanel {
 
                         if (maxCharge < tempSpectrum.getPrecursor().getCharge().value) {
                             maxCharge = tempSpectrum.getPrecursor().getCharge().value;
+                        }
+
+                        if (maxPsmMzValue < tempSpectrum.getMaxMz()) {
+                            maxPsmMzValue = tempSpectrum.getMaxMz();
                         }
 
                     } catch (MzMLUnmarshallerException e) {

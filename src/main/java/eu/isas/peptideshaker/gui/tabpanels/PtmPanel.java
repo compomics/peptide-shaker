@@ -961,7 +961,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 });
 
                 // make sure that the two spectra have the same x-axis range
-                spectrum.rescale(spectrum.getMinXAxisValue(), spectrum.getMaxXAxisValue());
+                spectrum.rescale(0, spectrum.getMaxXAxisValue());
 
                 spectrumJPanel.add(spectrum);
             }
