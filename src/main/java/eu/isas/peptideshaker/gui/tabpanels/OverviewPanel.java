@@ -43,6 +43,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
+import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
@@ -156,6 +157,10 @@ public class OverviewPanel extends javax.swing.JPanel {
         peptideTable.getColumn("").setMinWidth(30);
         psmTable.getColumn("").setMinWidth(30);
 
+        // the include in bubble plot column
+        psmTable.getColumn("  ").setMinWidth(30);
+        psmTable.getColumn("  ").setMaxWidth(30);
+
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
@@ -187,6 +192,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
         psmTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")), new ImageIcon(this.getClass().getResource("/icons/Error_3.png"))));
+        psmTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
 
         updateSeparators();
     }
@@ -453,14 +459,14 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Sequence", "Modifications", "Charge", "Mass Error", "File", "Title", "Mascot", "OMSSA", "X!Tandem", ""
+                " ", "Sequence", "Modifications", "Charge", "Mass Error", "File", "Title", "Mascot", "OMSSA", "X!Tandem", "  ", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1529,6 +1535,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         try {
             ArrayList<SpectrumAnnotationMap> allAnnotations = new ArrayList<SpectrumAnnotationMap>();
             ArrayList<MSnSpectrum> allSpectra = new ArrayList<MSnSpectrum>();
+            ArrayList<String> selectedIndexes = new ArrayList<String>();
 
             String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
             PeptideMatch selectedPeptideMatch = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey);
@@ -1536,20 +1543,34 @@ public class OverviewPanel extends javax.swing.JPanel {
             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
             SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
 
+            // get the list of currently selected psms
+            ArrayList<String> selectedPsmKeys = new ArrayList<String>();
+
+            for (int i = 0; i < psmTable.getRowCount(); i++) {
+                if (((Boolean) psmTable.getValueAt(i, psmTable.getColumn("  ").getModelIndex()))) {
+                    selectedPsmKeys.add(psmTableMap.get(getPsmKey(i)));
+                    selectedIndexes.add("" + psmTable.getValueAt(i, 0));
+                }
+            }
+
             for (SpectrumMatch spectrumMatch : selectedPeptideMatch.getSpectrumMatches().values()) {
 
-                MSnSpectrum currentSpectrum = (MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumMatch.getKey());
+                if (selectedPsmKeys.contains(spectrumMatch.getKey())) {
 
-                // get the spectrum annotations
-                SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
-                        selectedPeptideMatch.getTheoreticPeptide(), currentSpectrum, searchParameters.getFragmentIonMZTolerance(),
-                        currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()));
+                    MSnSpectrum currentSpectrum = (MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumMatch.getKey());
 
-                allAnnotations.add(annotations);
-                allSpectra.add(currentSpectrum);
+                    // get the spectrum annotations
+                    SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
+                            selectedPeptideMatch.getTheoreticPeptide(), currentSpectrum, searchParameters.getFragmentIonMZTolerance(),
+                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()));
+
+                    allAnnotations.add(annotations);
+                    allSpectra.add(currentSpectrum);
+                }
             }
 
             MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
+                    selectedIndexes,
                     allAnnotations, getCurrentFragmentIonTypes(), allSpectra, searchParameters.getFragmentIonMZTolerance(),
                     peptideShakerGUI.getBubbleScale(),
                     oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected(),
@@ -1927,6 +1948,9 @@ public class OverviewPanel extends javax.swing.JPanel {
                         PSParameter probabilities = new PSParameter();
                         probabilities = (PSParameter) spectrumMatch.getUrParam(probabilities);
 
+                        // @TODO: only select PSMs with a given charge??
+                        //boolean selected = (tempSpectrum.getPrecursor().getCharge().value == 2);
+
                         ((DefaultTableModel) psmTable.getModel()).addRow(new Object[]{
                                     index,
                                     peptideAssumption.getPeptide().getSequence(),
@@ -1938,10 +1962,11 @@ public class OverviewPanel extends javax.swing.JPanel {
                                     mascotEValue,
                                     omssaEValue,
                                     xTandemEValue,
+                                    true,
                                     probabilities.isValidated()
                                 });
 
-                        psmTableMap.put(getPsmKey(index - 1), spectrumKey);
+                        psmTableMap.put(tempSpectrum.getFileName() + tempSpectrum.getSpectrumTitle(), spectrumKey);
                         index++;
 
                         if (maxMassError < peptideAssumption.getDeltaMass()) {
