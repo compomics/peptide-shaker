@@ -508,7 +508,7 @@
                                 <Component class="javax.swing.JTable" name="psmTable">
                                   <Properties>
                                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                      <Table columnCount="11" rowCount="0">
+                                      <Table columnCount="12" rowCount="0">
                                         <Column editable="false" title=" " type="java.lang.Integer"/>
                                         <Column editable="false" title="Sequence" type="java.lang.String"/>
                                         <Column editable="false" title="Modifications" type="java.lang.String"/>
@@ -519,6 +519,7 @@
                                         <Column editable="false" title="Mascot" type="java.lang.String"/>
                                         <Column editable="false" title="OMSSA" type="java.lang.String"/>
                                         <Column editable="false" title="X!Tandem" type="java.lang.String"/>
+                                        <Column editable="true" title="  " type="java.lang.Boolean"/>
                                         <Column editable="false" title="" type="java.lang.Boolean"/>
                                       </Table>
                                     </Property>

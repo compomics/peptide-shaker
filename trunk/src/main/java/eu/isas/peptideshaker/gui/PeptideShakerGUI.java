@@ -350,7 +350,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         resultsJTabbedPane.addTab("FDR/PEP", statsJPanel);
 
         spectrumJPanel.setLayout(new javax.swing.BoxLayout(spectrumJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        resultsJTabbedPane.addTab("Spectrum Identification", spectrumJPanel);
+        resultsJTabbedPane.addTab("Spectrum IDs", spectrumJPanel);
 
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
@@ -858,7 +858,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             overviewPanel.updateSeparators();
 
             progressDialog = new ProgressDialog(this, this, true);
-            progressDialog.setMax(4);
+            progressDialog.setMax(5);
             progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
@@ -873,18 +873,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                 @Override
                 public void run() {
+
+                    int counter = 0;
+
                     try {
+                        progressDialog.setValue(++counter);
                         overviewPanel.displayResults();
-                        progressDialog.setValue(1);
+                        progressDialog.setValue(++counter);
                     } catch (MzMLUnmarshallerException e) {
                         JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
                     }
                     statsPanel.displayResults();
-                    progressDialog.setValue(2);
+                    progressDialog.setValue(++counter);
                     ptmPanel.displayResults();
-                    progressDialog.setValue(3);
+                    progressDialog.setValue(++counter);
                     spectrumIdentificationPanel.displayResults();
-                    progressDialog.setValue(4);
+                    progressDialog.setValue(++counter);
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
                 }
