@@ -262,6 +262,7 @@ public class FileImporter {
             int nRetained = 0;
 
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+
             importSequences(waitingDialog, proteomicAnalysis, fastaFile, fastaHeaderParser);
 
             try {
@@ -296,7 +297,7 @@ public class FileImporter {
                         } else {
                             inputMap.addEntry(searchEngine, match.getFirstHit(searchEngine).getEValue(), match.getFirstHit(searchEngine).isDecoy());
 
-                            // Temporary solution for X!Tandem input wayting for their bug correction
+                            // Temporary solution for X!Tandem input waiting for their bug correction
                             if (temporaryXTandemFix) {
 
                                 Peptide peptide = match.getFirstHit(searchEngine).getPeptide();
