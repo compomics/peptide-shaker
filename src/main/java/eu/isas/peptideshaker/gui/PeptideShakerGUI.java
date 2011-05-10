@@ -13,11 +13,13 @@ import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
+import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.gui.tabpanels.OverviewPanel;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
+import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.IdentificationPreferences;
@@ -132,6 +134,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private PtmPanel ptmPanel;
     /**
+     * The spectrum panel
+     */
+    private SpectrumIdentificationPanel spectrumIdentificationPanel;
+    /**
      * The sequence database used for identification
      */
     private SequenceDataBase sequenceDataBase;
@@ -172,6 +178,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         overviewPanel = new OverviewPanel(this);
         statsPanel = new StatsPanel(this);
         ptmPanel = new PtmPanel(this);
+        spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
 
         initComponents();
 
@@ -210,6 +217,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ptmJPanel.add(ptmPanel);
         ptmJPanel.revalidate();
         ptmJPanel.repaint();
+
+        spectrumJPanel.removeAll();
+        spectrumJPanel.add(spectrumIdentificationPanel);
+        spectrumJPanel.revalidate();
+        spectrumJPanel.repaint();
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -284,6 +296,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         overviewJPanel = new javax.swing.JPanel();
         ptmJPanel = new javax.swing.JPanel();
         statsJPanel = new javax.swing.JPanel();
+        spectrumJPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         openJMenuItem = new javax.swing.JMenuItem();
@@ -335,6 +348,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         statsJPanel.setOpaque(false);
         statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
         resultsJTabbedPane.addTab("FDR/PEP", statsJPanel);
+
+        spectrumJPanel.setLayout(new javax.swing.BoxLayout(spectrumJPanel, javax.swing.BoxLayout.LINE_AXIS));
+        resultsJTabbedPane.addTab("Spectrum Identification", spectrumJPanel);
 
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
@@ -842,7 +858,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             overviewPanel.updateSeparators();
 
             progressDialog = new ProgressDialog(this, this, true);
-            progressDialog.setIntermidiate(true);
+            progressDialog.setMax(4);
             progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
@@ -859,11 +875,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 public void run() {
                     try {
                         overviewPanel.displayResults();
+                        progressDialog.setValue(1);
                     } catch (MzMLUnmarshallerException e) {
                         JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
                     }
                     statsPanel.displayResults();
+                    progressDialog.setValue(2);
                     ptmPanel.displayResults();
+                    progressDialog.setValue(3);
+                    spectrumIdentificationPanel.displayResults();
+                    progressDialog.setValue(4);
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
                 }
@@ -928,6 +949,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sequenceFragmentationJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
+    private javax.swing.JPanel spectrumJPanel;
     private javax.swing.JPanel statsJPanel;
     private javax.swing.JMenu viewJMenu;
     // End of variables declaration//GEN-END:variables

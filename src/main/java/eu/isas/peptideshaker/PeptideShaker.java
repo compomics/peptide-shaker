@@ -169,6 +169,7 @@ public class PeptideShaker {
             cleanProteinGroups(waitingDialog);
         } catch (Exception e) {
             waitingDialog.appendReport("An error occured while trying to resolve protein inference issues.");
+            e.printStackTrace();
         }
 
         waitingDialog.appendReport("Validating identifications at 1% FDR.");
