@@ -12,7 +12,7 @@
 
     <!-- Set the version number for the whole project -->
     <properties>
-        <version.number>007.2.4</version.number>
+        <version.number>007.2.5</version.number>
     </properties>
 
 
@@ -241,6 +241,32 @@
             <url>http://genesis.UGent.be/maven2</url>
             <layout>default</layout>
         </repository>
+        
+        <!-- EBI repository -->
+        <repository>
+	     <id>ebi-repo</id>
+	     <name>The EBI internal repository</name>
+	     <url>http://www.ebi.ac.uk/~maven/m2repo</url>
+	     <releases>
+	         <enabled>true</enabled>
+	     </releases>
+	     <snapshots>
+	         <enabled>false</enabled>
+	     </snapshots>
+     </repository>
+     
+     <!-- EBI snapshot repository -->
+     <repository>
+	     <id>ebi-snapshot-repo</id>
+	     <name>The EBI internal snapshot repository</name>
+	     <url>http://www.ebi.ac.uk/~maven/m2repo_snapshots</url>
+	     <releases>
+	         <enabled>false</enabled>
+	     </releases>
+	     <snapshots>
+	         <enabled>true</enabled>
+	     </snapshots>
+	 </repository>
     </repositories>
 
 
@@ -345,6 +371,20 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!-- Used for the Venn diagrams -->
+        <dependency>
+            <groupId>com.googlecode.charts4j</groupId>
+            <artifactId>charts4j</artifactId>
+            <version>1.3</version>
+        </dependency>  
+        
+        <!-- Used for the mgf-parser -->
+        <dependency>
+            <groupId>uk.ac.ebi.pride.tools</groupId>
+            <artifactId>mgf-parser</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>  
     </dependencies>
 
 
