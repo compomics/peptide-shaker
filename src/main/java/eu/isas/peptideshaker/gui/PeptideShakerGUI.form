@@ -321,6 +321,17 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
             </Container>
+            <Container class="javax.swing.JPanel" name="spectrumJPanel">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Spectrum IDs">
+                    <Property name="tabTitle" type="java.lang.String" value="Spectrum IDs"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+            </Container>
             <Container class="javax.swing.JPanel" name="statsJPanel">
               <Properties>
                 <Property name="opaque" type="boolean" value="false"/>
@@ -329,17 +340,6 @@
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="FDR/PEP">
                     <Property name="tabTitle" type="java.lang.String" value="FDR/PEP"/>
-                  </JTabbedPaneConstraints>
-                </Constraint>
-              </Constraints>
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-            </Container>
-            <Container class="javax.swing.JPanel" name="spectrumJPanel">
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Spectrum IDs">
-                    <Property name="tabTitle" type="java.lang.String" value="Spectrum IDs"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>

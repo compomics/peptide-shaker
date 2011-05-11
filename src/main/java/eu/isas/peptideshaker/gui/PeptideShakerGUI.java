@@ -148,7 +148,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * The label with for the numbers in the jsparklines columns.
      */
-    private int labelWidth = 40;
+    private int labelWidth = 50;
     /**
      * The color used for the sparkline bar chart plots.
      */
@@ -295,8 +295,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         resultsJTabbedPane = new javax.swing.JTabbedPane();
         overviewJPanel = new javax.swing.JPanel();
         ptmJPanel = new javax.swing.JPanel();
-        statsJPanel = new javax.swing.JPanel();
         spectrumJPanel = new javax.swing.JPanel();
+        statsJPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         openJMenuItem = new javax.swing.JMenuItem();
@@ -345,12 +345,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ptmJPanel.setLayout(new javax.swing.BoxLayout(ptmJPanel, javax.swing.BoxLayout.LINE_AXIS));
         resultsJTabbedPane.addTab("PTMs", ptmJPanel);
 
+        spectrumJPanel.setLayout(new javax.swing.BoxLayout(spectrumJPanel, javax.swing.BoxLayout.LINE_AXIS));
+        resultsJTabbedPane.addTab("Spectrum IDs", spectrumJPanel);
+
         statsJPanel.setOpaque(false);
         statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
         resultsJTabbedPane.addTab("FDR/PEP", statsJPanel);
-
-        spectrumJPanel.setLayout(new javax.swing.BoxLayout(spectrumJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        resultsJTabbedPane.addTab("Spectrum IDs", spectrumJPanel);
 
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
@@ -751,6 +751,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void sparklinesJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sparklinesJCheckBoxMenuItemActionPerformed
         overviewPanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
         ptmPanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
+        spectrumIdentificationPanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
 }//GEN-LAST:event_sparklinesJCheckBoxMenuItemActionPerformed
 
     /**

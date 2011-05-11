@@ -11,8 +11,15 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import com.compomics.util.gui.spectrum.SpectrumPanel;
+import com.googlecode.charts4j.Color;
+import com.googlecode.charts4j.Fills;
+import com.googlecode.charts4j.GCharts;
+import com.googlecode.charts4j.VennDiagram;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,6 +30,9 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
+import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
+import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
+import org.jfree.chart.plot.PlotOrientation;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -46,9 +56,90 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         fileNamesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
-        peptideShakerJTable.getColumn("Validated").setCellRenderer(new TrueFalseIconRenderer(
+        peptideShakerJTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")), new ImageIcon(this.getClass().getResource("/icons/Error_3.png"))));
 
+        searchEngineTable.getTableHeader().setReorderingAllowed(false);
+        peptideShakerJTable.getTableHeader().setReorderingAllowed(false);
+        spectrumTable.getTableHeader().setReorderingAllowed(false);
+        omssaTable.getTableHeader().setReorderingAllowed(false);
+        mascotTable.getTableHeader().setReorderingAllowed(false);
+        xTandemTable.getTableHeader().setReorderingAllowed(false);
+
+        spectrumTable.setAutoCreateRowSorter(true);
+        searchEngineTable.setAutoCreateRowSorter(true);
+        omssaTable.setAutoCreateRowSorter(true);
+        mascotTable.setAutoCreateRowSorter(true);
+        xTandemTable.setAutoCreateRowSorter(true);
+
+        peptideShakerJTable.getColumn("  ").setMinWidth(30);
+        peptideShakerJTable.getColumn("  ").setMaxWidth(30);
+
+        omssaTable.getColumn(" ").setMinWidth(30);
+        omssaTable.getColumn(" ").setMaxWidth(30);
+        mascotTable.getColumn(" ").setMinWidth(30);
+        mascotTable.getColumn(" ").setMaxWidth(30);
+        xTandemTable.getColumn(" ").setMinWidth(30);
+        xTandemTable.getColumn(" ").setMaxWidth(30);
+
+
+        peptideShakerJTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        peptideShakerJTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+
+        searchEngineTable.getColumn("Validated PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        searchEngineTable.getColumn("Unique PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        searchEngineTable.getColumn("OMSSA").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        searchEngineTable.getColumn("X!Tandem").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        searchEngineTable.getColumn("Mascot").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        searchEngineTable.getColumn("All").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("OMSSA").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+
+        spectrumTable.getColumn("Title").setMinWidth(200);
+        spectrumTable.getColumn("Title").setMaxWidth(200);
+
+        spectrumTable.getColumn("m/z").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        spectrumTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
+        spectrumTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, 10d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+    }
+
+    /**
+     * Displays or hide sparklines in the tables.
+     * 
+     * @param showSparkLines    boolean indicating whether sparklines shall be displayed or hidden
+     */
+    public void showSparkLines(boolean showSparkLines) {
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("OMSSA").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).showNumbers(!showSparkLines);
+
+        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumbers(!showSparkLines);
+
+        ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
+
+        searchEngineTable.revalidate();
+        searchEngineTable.repaint();
+
+        spectrumTable.revalidate();
+        spectrumTable.repaint();
+
+        peptideShakerJTable.revalidate();
+        peptideShakerJTable.repaint();
     }
 
     /** This method is called from within the constructor to
@@ -63,26 +154,29 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         searchEnginetableJScrollPane = new javax.swing.JScrollPane();
         searchEngineTable = new javax.swing.JTable();
+        vennDiagramButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         fileNamesCmb = new javax.swing.JComboBox();
         spectrumTableJScrollPane = new javax.swing.JScrollPane();
         spectrumTable = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
+        spectrumChartJPanel = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         peptideShakerJScrollPane = new javax.swing.JScrollPane();
         peptideShakerJTable = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        mascotTableJScrollPane = new javax.swing.JScrollPane();
-        mascotTable = new javax.swing.JTable();
+        jPanel5 = new javax.swing.JPanel();
         omssaTableJScrollPane = new javax.swing.JScrollPane();
         omssaTable = new javax.swing.JTable();
+        jLabel3 = new javax.swing.JLabel();
+        jPanel7 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
         xTandemTableJScrollPane = new javax.swing.JScrollPane();
         xTandemTable = new javax.swing.JTable();
-        jPanel5 = new javax.swing.JPanel();
-        jLabel5 = new javax.swing.JLabel();
+        jPanel8 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        mascotTableJScrollPane = new javax.swing.JScrollPane();
+        mascotTable = new javax.swing.JTable();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -94,14 +188,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Search Engine", "#Validated PSMs"
+                "Search Engine", "Validated PSMs", "Unique PSMs", "OMSSA", "X!Tandem", "Mascot", "All"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -114,21 +208,28 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         });
         searchEnginetableJScrollPane.setViewportView(searchEngineTable);
 
+        vennDiagramButton.setBorderPainted(false);
+        vennDiagramButton.setContentAreaFilled(false);
+        vennDiagramButton.setFocusable(false);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
+                .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1133, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(vennDiagramButton, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
                 .addContainerGap())
+            .addComponent(vennDiagramButton, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
         );
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum Selection"));
@@ -146,11 +247,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Title", "Precursor m/z", "Precursor Charge", "Precursor RT"
+                "Title", "m/z", "Charge", "RT"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Double.class, java.lang.String.class, java.lang.Double.class
+                java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false
@@ -183,8 +284,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
-                    .addComponent(fileNamesCmb, 0, 337, Short.MAX_VALUE))
+                    .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
+                    .addComponent(fileNamesCmb, 0, 528, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -193,22 +294,31 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(fileNamesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 293, Short.MAX_VALUE)
+                .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum"));
         jPanel3.setOpaque(false);
 
+        spectrumChartJPanel.setBackground(new java.awt.Color(255, 255, 255));
+        spectrumChartJPanel.setLayout(new javax.swing.BoxLayout(spectrumChartJPanel, javax.swing.BoxLayout.Y_AXIS));
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 671, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 341, Short.MAX_VALUE)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide to Spectrum Matches"));
@@ -219,7 +329,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                "Protein(s)", "Sequence", "Modifications", "Score", "Confidence", "delta p", "Validated"
+                "Protein(s)", "Sequence", "Modifications", "Score", "Confidence", "delta p", "  "
             }
         ) {
             Class[] types = new Class [] {
@@ -241,65 +351,148 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         jLabel1.setText("Peptide-Shaker:");
 
-        jLabel2.setText("Mascot:");
-
-        jLabel3.setText("OMSSA:");
-
-        jLabel4.setText("X!Tandem:");
-
-        mascotTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Rank", "Protein(s)", "Peptide(s)", "Modification(s)", "e-Value", "Confidence"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        mascotTableJScrollPane.setViewportView(mascotTable);
+        jPanel5.setOpaque(false);
 
         omssaTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Rank", "Protein(s)", "Peptide", "Modification(s)", "e-value", "Confidence"
+                " ", "Protein(s)", "Peptide", "Modification(s)", "e-value", "Confidence"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        omssaTable.setMinimumSize(new java.awt.Dimension(0, 0));
         omssaTableJScrollPane.setViewportView(omssaTable);
+
+        jLabel3.setText("OMSSA:");
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(jLabel3)
+                .addContainerGap(387, Short.MAX_VALUE))
+            .addComponent(omssaTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(omssaTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))
+        );
+
+        jPanel7.setOpaque(false);
+
+        jLabel4.setText("X!Tandem:");
 
         xTandemTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Protein(s)", "Peptide", "Modification(s)", "e-value", "Confidence"
+                " ", "Protein(s)", "Peptide", "Modification(s)", "e-value", "Confidence"
             }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        xTandemTable.setMinimumSize(new java.awt.Dimension(0, 0));
         xTandemTableJScrollPane.setViewportView(xTandemTable);
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addComponent(jLabel4)
+                .addContainerGap(376, Short.MAX_VALUE))
+            .addComponent(xTandemTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(xTandemTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))
+        );
+
+        jPanel8.setOpaque(false);
+
+        jLabel2.setText("Mascot:");
+
+        mascotTableJScrollPane.setMinimumSize(new java.awt.Dimension(23, 87));
+
+        mascotTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                " ", "Protein(s)", "Peptide(s)", "Modification(s)", "e-value", "Confidence"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        mascotTable.setMinimumSize(new java.awt.Dimension(0, 0));
+        mascotTableJScrollPane.setViewportView(mascotTable);
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addComponent(jLabel2)
+                .addContainerGap(388, Short.MAX_VALUE))
+            .addComponent(mascotTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel8Layout.createSequentialGroup()
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(mascotTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -308,23 +501,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1026, Short.MAX_VALUE)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(mascotTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE))
+                    .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1316, Short.MAX_VALUE)
+                    .addComponent(jLabel1)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
+                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(omssaTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
-                                .addGap(18, 18, 18))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(309, 309, 309)))
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(xTandemTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE))))
+                        .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -333,41 +517,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 51, Short.MAX_VALUE)
+                .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2)
-                        .addComponent(jLabel3))
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(xTandemTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
-                    .addComponent(mascotTableJScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
-                    .addComponent(omssaTableJScrollPane, 0, 94, Short.MAX_VALUE))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
-        );
-
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Empty"));
-        jPanel5.setOpaque(false);
-
-        jLabel5.setText("Currently not used!");
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(82, 82, 82)
-                .addComponent(jLabel5)
-                .addContainerGap(495, Short.MAX_VALUE))
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(41, 41, 41)
-                .addComponent(jLabel5)
-                .addContainerGap(54, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -378,27 +534,22 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -422,12 +573,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JTable mascotTable;
     private javax.swing.JScrollPane mascotTableJScrollPane;
     private javax.swing.JTable omssaTable;
@@ -436,8 +588,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JTable peptideShakerJTable;
     private javax.swing.JTable searchEngineTable;
     private javax.swing.JScrollPane searchEnginetableJScrollPane;
+    private javax.swing.JPanel spectrumChartJPanel;
     private javax.swing.JTable spectrumTable;
     private javax.swing.JScrollPane spectrumTableJScrollPane;
+    private javax.swing.JButton vennDiagramButton;
     private javax.swing.JTable xTandemTable;
     private javax.swing.JScrollPane xTandemTableJScrollPane;
     // End of variables declaration//GEN-END:variables
@@ -473,6 +627,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         int omx = 0;
         boolean mascot, omssa, xTandem;
         PSParameter probabilities = new PSParameter();
+
         for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
             mascot = false;
             omssa = false;
@@ -495,14 +650,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     }
                 }
             }
+
             if (mascot && omssa && xTandem) {
-                omx ++;
+                omx++;
             } else if (mascot && omssa) {
-                mo ++;
+                mo++;
             } else if (omssa && xTandem) {
-                ox ++;
+                ox++;
             } else if (mascot && xTandem) {
-                mx ++;
+                mx++;
             } else if (mascot) {
                 m++;
             } else if (omssa) {
@@ -511,22 +667,39 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 x++;
             }
         }
-        int nMascot = omx+mo+mx+m;
+
+        int nMascot = omx + mo + mx + m;
         int nOMSSA = omx + mo + ox + o;
         int nXTandem = omx + mx + ox + x;
 
-        ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                    "Mascot",
-                    nMascot
-                });
+        double biggestValue = Math.max(Math.max(nMascot, nOMSSA), nXTandem);
+
+        updateVennDiagram(nOMSSA, nXTandem, nMascot,
+                (ox + omx), (mo + omx), (mx + omx), omx,
+                biggestValue, "OMSSA", "X!Tandem", "Mascot");
+
         ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
                     "OMSSA",
-                    nOMSSA
+                    nOMSSA, o, nOMSSA, ox + omx, mo + omx, omx
                 });
         ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
                     "X!Tandem",
-                    nXTandem
+                    nXTandem, x, ox + omx, nXTandem, mx + omx, omx
                 });
+        ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                    "Mascot",
+                    nMascot, m, mo + omx, mx + omx, nMascot, omx
+                });
+
+
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).setMaxValue(biggestValue);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).setMaxValue(biggestValue);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("OMSSA").getCellRenderer()).setMaxValue(biggestValue);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).setMaxValue(biggestValue);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).setMaxValue(biggestValue);
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).setMaxValue(biggestValue);
+
+
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
@@ -554,6 +727,68 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         fileSelectionChanged();
     }
 
+    private void updateVennDiagram(double a, double b, double c, double ab, double ac, double bc, double abc,
+            double maxValue, String titleA, String titleB, String titleC) {
+
+        final VennDiagram chart = GCharts.newVennDiagram(
+                a / maxValue, b / maxValue, c / maxValue, ab / maxValue, ac / maxValue, bc / maxValue, abc / maxValue);
+        //chart.setTitle("Venn Diagram", Color.WHITE, 16);
+        chart.setSize(vennDiagramButton.getWidth(), vennDiagramButton.getHeight());
+        chart.setCircleLegends(titleA, titleB, titleC);
+        chart.setCircleColors(Color.YELLOW, Color.RED, Color.BLUE);
+        chart.setBackgroundFill(Fills.newSolidFill(Color.WHITE));
+
+        try {
+
+            ImageIcon icon = new ImageIcon(new URL(chart.toURLString()));
+            vennDiagramButton.setIcon(icon);
+
+            vennDiagramButton.setToolTipText("<html>"
+                    + titleA + ": " + a + "<br>"
+                    + titleB + ": " + b + "<br>"
+                    + titleC + ": " + c + "<br><br>"
+                    + titleA + " & " + titleB + ": " + ab + "<br>"
+                    + titleA + " & " + titleC + ": " + ac + "<br>"
+                    + titleB + " & " + titleC + ": " + bc + "<br><br>"
+                    + titleA + " & " + titleB + " & " + titleC + ": " + abc
+                    + "</html>");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateVennDiagram(int a, int b, int c, int ab, int ac, int bc, int abc,
+            double maxValue, String titleA, String titleB, String titleC) {
+
+        // @TODO: add test of internet is not available
+
+        final VennDiagram chart = GCharts.newVennDiagram(
+                a / maxValue, b / maxValue, c / maxValue, ab / maxValue, ac / maxValue, bc / maxValue, abc / maxValue);
+        chart.setSize(vennDiagramButton.getWidth(), vennDiagramButton.getHeight());
+        chart.setCircleLegends(titleA, titleB, titleC);
+        chart.setCircleColors(Color.YELLOW, Color.RED, Color.BLUE);
+        chart.setBackgroundFill(Fills.newSolidFill(Color.WHITE));
+
+        try {
+            ImageIcon icon = new ImageIcon(new URL(chart.toURLString()));
+            vennDiagramButton.setIcon(icon);
+
+            vennDiagramButton.setToolTipText("<html>"
+                    + titleA + ": " + a + "<br>"
+                    + titleB + ": " + b + "<br>"
+                    + titleC + ": " + c + "<br><br>"
+                    + titleA + " & " + titleB + ": " + ab + "<br>"
+                    + titleA + " & " + titleC + ": " + ac + "<br>"
+                    + titleB + " & " + titleC + ": " + bc + "<br><br>"
+                    + titleA + " & " + titleB + " & " + titleC + ": " + abc
+                    + "</html>");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Method called whenever the file selection changed
      */
@@ -562,19 +797,54 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             while (spectrumTable.getRowCount() > 0) {
                 ((DefaultTableModel) spectrumTable.getModel()).removeRow(0);
             }
+
             String fileSelected = (String) fileNamesCmb.getSelectedItem();
-            MSnSpectrum spectrum;
-            Precursor precursor;
+
+            int maxCharge = Integer.MIN_VALUE;
+            double maxMz = Double.MIN_VALUE;
+
+            double lLowRT = Double.MAX_VALUE;
+            double lHighRT = Double.MIN_VALUE;
+
             for (String spectrumKey : filesMap.get(fileSelected)) {
-                spectrum = (MSnSpectrum) spectrumCollection.getSpectrum(spectrumKey);
-                precursor = spectrum.getPrecursor();
+                MSnSpectrum spectrum = (MSnSpectrum) spectrumCollection.getSpectrum(spectrumKey);
+                Precursor precursor = spectrum.getPrecursor();
                 ((DefaultTableModel) spectrumTable.getModel()).addRow(new Object[]{
                             spectrum.getSpectrumTitle(),
                             precursor.getMz(),
-                            precursor.getCharge().toString(),
+                            precursor.getCharge().value,
                             precursor.getRt()
                         });
+
+                if (precursor.getCharge().value > maxCharge) {
+                    maxCharge = precursor.getCharge().value;
+                }
+
+                if (lLowRT > precursor.getRt()) {
+                    lLowRT = precursor.getRt();
+                }
+
+                if (lHighRT < precursor.getRt()) {
+                    lHighRT = precursor.getRt();
+                }
+
+                if (precursor.getMz() > maxMz) {
+                    maxMz = precursor.getMz();
+                }
             }
+
+            lLowRT -= 1.0;
+            double widthOfMarker = (lHighRT / lLowRT) * 4;
+
+            ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).setMaxValue(maxCharge);
+            ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
+
+            JSparklinesIntervalChartTableCellRenderer lRTCellRenderer = new JSparklinesIntervalChartTableCellRenderer(
+                    PlotOrientation.HORIZONTAL, lLowRT - widthOfMarker / 2, lHighRT + widthOfMarker / 2, widthOfMarker,
+                    peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor());
+            spectrumTable.getColumn("RT").setCellRenderer(lRTCellRenderer);
+            lRTCellRenderer.showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+
             spectrumTable.setRowSelectionInterval(0, 0);
             spectrumSelectionChanged();
         } catch (MzMLUnmarshallerException e) {
@@ -603,6 +873,38 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         }
         while (xTandemTable.getRowCount() > 0) {
             ((DefaultTableModel) xTandemTable.getModel()).removeRow(0);
+        }
+
+        MSnSpectrum currentSpectrum = null;
+
+        spectrumChartJPanel.removeAll();
+
+        if (spectrumTable.getSelectedRow() != -1) {
+
+            try {
+
+                currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(spectrumMatch.getKey());
+
+                Precursor precursor = currentSpectrum.getPrecursor();
+                SpectrumPanel spectrumB = new SpectrumPanel(
+                        currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
+                        precursor.getMz(), precursor.getCharge().toString(),
+                        "", 40, false, false, false, 2, false);
+                spectrumB.setBorder(null);
+
+                spectrumChartJPanel.add(spectrumB);
+
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    public void run() {
+                        spectrumChartJPanel.revalidate();
+                        spectrumChartJPanel.repaint();
+                    }
+                });
+
+            } catch (MzMLUnmarshallerException e) {
+                e.printStackTrace();
+            }
         }
 
         // Fill peptide shaker table
@@ -660,6 +962,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             currentAssumption.getEValue(),
                             0
                         });
+            }
+
+            if (mascotTable.getRowCount() > 0) {
             }
         }
 
