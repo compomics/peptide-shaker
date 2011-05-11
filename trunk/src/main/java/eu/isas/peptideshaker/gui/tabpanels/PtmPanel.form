@@ -27,7 +27,7 @@
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="1" attributes="0">
-                  <Component id="psmSpectraSplitPane" alignment="0" pref="1066" max="32767" attributes="0"/>
+                  <Component id="psmSpectraSplitPane" alignment="0" pref="1070" max="32767" attributes="0"/>
                   <Component id="jPanel8" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -94,7 +94,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jScrollPane1" pref="372" max="32767" attributes="0"/>
+                      <Component id="jScrollPane1" pref="375" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -157,7 +157,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="peptidesTableJScrollPane" pref="798" max="32767" attributes="0"/>
+                          <Component id="peptidesTableJScrollPane" pref="794" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -166,7 +166,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="peptidesTableJScrollPane" pref="161" max="32767" attributes="0"/>
+                          <Component id="peptidesTableJScrollPane" pref="118" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -228,7 +228,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="relatedPeptidesTableJScrollPane" pref="798" max="32767" attributes="0"/>
+                          <Component id="relatedPeptidesTableJScrollPane" pref="794" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -237,7 +237,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="relatedPeptidesTableJScrollPane" pref="162" max="32767" attributes="0"/>
+                          <Component id="relatedPeptidesTableJScrollPane" pref="205" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -335,9 +335,9 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="primarySelectionJScrollPane" pref="231" max="32767" attributes="0"/>
+                          <Component id="primarySelectionJScrollPane" pref="229" max="32767" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="psmsModifiedTableJScrollPane" pref="231" max="32767" attributes="0"/>
+                          <Component id="psmsModifiedTableJScrollPane" pref="229" max="32767" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -346,8 +346,8 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="primarySelectionJScrollPane" alignment="0" pref="137" max="32767" attributes="0"/>
-                              <Component id="psmsModifiedTableJScrollPane" alignment="1" pref="137" max="32767" attributes="0"/>
+                              <Component id="primarySelectionJScrollPane" alignment="0" pref="134" max="32767" attributes="0"/>
+                              <Component id="psmsModifiedTableJScrollPane" alignment="1" pref="134" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -450,9 +450,9 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="secondarySelectionJScrollPane" pref="231" max="32767" attributes="0"/>
+                          <Component id="secondarySelectionJScrollPane" pref="229" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="psmsRelatedPeptidesTableJScrollPane" pref="231" max="32767" attributes="0"/>
+                          <Component id="psmsRelatedPeptidesTableJScrollPane" pref="229" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -461,8 +461,8 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="psmsRelatedPeptidesTableJScrollPane" alignment="0" pref="140" max="32767" attributes="2"/>
-                              <Component id="secondarySelectionJScrollPane" alignment="1" pref="140" max="32767" attributes="2"/>
+                              <Component id="psmsRelatedPeptidesTableJScrollPane" alignment="0" pref="137" max="32767" attributes="2"/>
+                              <Component id="secondarySelectionJScrollPane" alignment="1" pref="137" max="32767" attributes="2"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -567,7 +567,7 @@
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="spectrumJPanel" alignment="0" pref="326" max="32767" attributes="0"/>
+                  <Component id="spectrumJPanel" alignment="0" pref="323" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
           </Layout>

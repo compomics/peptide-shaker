@@ -965,6 +965,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     private void clearIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearIdActionPerformed
         idFiles = new ArrayList<File>();
         idFilesTxt.setText(idFiles.size() + " file(s) selected.");
+        searchParametersFiles = new ArrayList<File>();
 }//GEN-LAST:event_clearIdActionPerformed
 
     private void browseIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseIdActionPerformed
