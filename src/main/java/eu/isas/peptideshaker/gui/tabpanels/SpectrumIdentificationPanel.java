@@ -464,30 +464,57 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     public void displayResults() {
         spectrumCollection = peptideShakerGUI.getSpectrumCollection();
         identification = peptideShakerGUI.getIdentification();
-        int nMascot = 0;
-        int nOMSSA = 0;
-        int nXTandem = 0;
+        int m = 0;
+        int o = 0;
+        int x = 0;
+        int mo = 0;
+        int mx = 0;
+        int ox = 0;
+        int omx = 0;
+        boolean mascot, omssa, xTandem;
         PSParameter probabilities = new PSParameter();
         for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
+            mascot = false;
+            omssa = false;
+            xTandem = false;
             probabilities = (PSParameter) spectrumMatch.getUrParam(probabilities);
             if (probabilities.isValidated()) {
                 if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
                     if (spectrumMatch.getFirstHit(Advocate.MASCOT).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
-                        nMascot++;
+                        mascot = true;
                     }
                 }
                 if (spectrumMatch.getFirstHit(Advocate.OMSSA) != null) {
                     if (spectrumMatch.getFirstHit(Advocate.OMSSA).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
-                        nOMSSA++;
+                        omssa = true;
                     }
                 }
                 if (spectrumMatch.getFirstHit(Advocate.XTANDEM) != null) {
                     if (spectrumMatch.getFirstHit(Advocate.XTANDEM).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
-                        nXTandem++;
+                        xTandem = true;
                     }
                 }
             }
+            if (mascot && omssa && xTandem) {
+                omx ++;
+            } else if (mascot && omssa) {
+                mo ++;
+            } else if (omssa && xTandem) {
+                ox ++;
+            } else if (mascot && xTandem) {
+                mx ++;
+            } else if (mascot) {
+                m++;
+            } else if (omssa) {
+                o++;
+            } else if (xTandem) {
+                x++;
+            }
         }
+        int nMascot = omx+mo+mx+m;
+        int nOMSSA = omx + mo + ox + o;
+        int nXTandem = omx + mx + ox + x;
+
         ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
                     "Mascot",
                     nMascot

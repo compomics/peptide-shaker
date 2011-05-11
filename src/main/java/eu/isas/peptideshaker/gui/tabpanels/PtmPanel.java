@@ -1359,6 +1359,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             }
                             break;
                         }
+                        cpt++;
                     }
                 }
                 return result;
@@ -1454,7 +1455,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 ArrayList<Integer> searchEngines = new ArrayList<Integer>(spectrumMatch.getAdvocates());
                 Collections.sort(searchEngines);
                 for (int seKey : searchEngines) {
-                    cpt = 0;
+                    cpt = 1;
                     eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(seKey).keySet());
                     Collections.sort(eValues);
                     for (double eValue : eValues) {
@@ -1468,6 +1469,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             }
                             break;
                         }
+                        cpt++;
                     }
                 }
                 return result;
