@@ -1,9 +1,13 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
+import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.SpectrumAnnotator;
+import com.compomics.util.experiment.identification.SpectrumAnnotator.SpectrumAnnotationMap;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
@@ -11,6 +15,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import com.compomics.util.gui.spectrum.DefaultSpectrumAnnotation;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.googlecode.charts4j.Color;
 import com.googlecode.charts4j.Fills;
@@ -23,6 +28,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -36,13 +42,55 @@ import org.jfree.chart.plot.PlotOrientation;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- *
- * @author Matrc Vaudel
+ * The Spectrum ID panel.
+ * 
+ * @author Marc Vaudel
  * @author Harald Barsnes
  */
 public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
-    /** Creates new form SpectrumPanel */
+    /**
+     * The current spectrum annotations.
+     */
+    private Vector<DefaultSpectrumAnnotation> currentAnnotations;
+    /**
+     * The spectrum annotator
+     */
+    private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
+    /**
+     * 
+     */
+    private HashMap<Integer, String> omssaPeptideKeys = new HashMap<Integer, String>();
+    /**
+     * 
+     */
+    private HashMap<Integer, String> xtandemPeptideKeys = new HashMap<Integer, String>();
+    /**
+     * 
+     */
+    private HashMap<Integer, String> mascotPeptideKeys = new HashMap<Integer, String>();
+    /**
+     * The main GUI
+     */
+    private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The spectrum collection
+     */
+    private SpectrumCollection spectrumCollection;
+    /**
+     * The identification
+     */
+    private Identification identification;
+    /**
+     * The spectra indexed by their file name
+     */
+    private HashMap<String, ArrayList<String>> filesMap = new HashMap<String, ArrayList<String>>();
+
+    /**
+     * Create a new SpectrumIdentificationPanel.
+     * 
+     * @param peptideShakerGUI  the PeptideShaker parent frame
+     */
     public SpectrumIdentificationPanel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
@@ -155,12 +203,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginetableJScrollPane = new javax.swing.JScrollPane();
         searchEngineTable = new javax.swing.JTable();
         vennDiagramButton = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
-        fileNamesCmb = new javax.swing.JComboBox();
-        spectrumTableJScrollPane = new javax.swing.JScrollPane();
-        spectrumTable = new javax.swing.JTable();
-        jPanel3 = new javax.swing.JPanel();
-        spectrumChartJPanel = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
         peptideShakerJScrollPane = new javax.swing.JScrollPane();
         peptideShakerJTable = new javax.swing.JTable();
@@ -177,8 +219,33 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         mascotTableJScrollPane = new javax.swing.JScrollPane();
         mascotTable = new javax.swing.JTable();
+        spectrumJSplitPane = new javax.swing.JSplitPane();
+        jPanel2 = new javax.swing.JPanel();
+        fileNamesCmb = new javax.swing.JComboBox();
+        spectrumTableJScrollPane = new javax.swing.JScrollPane();
+        spectrumTable = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
+        spectrumChartPanel = new javax.swing.JPanel();
+        spectrumJToolBar = new javax.swing.JToolBar();
+        aIonToggleButton = new javax.swing.JToggleButton();
+        bIonToggleButton = new javax.swing.JToggleButton();
+        cIonToggleButton = new javax.swing.JToggleButton();
+        xIonToggleButton = new javax.swing.JToggleButton();
+        yIonToggleButton = new javax.swing.JToggleButton();
+        zIonToggleButton = new javax.swing.JToggleButton();
+        h2oToggleButton = new javax.swing.JToggleButton();
+        nh3ToggleButton = new javax.swing.JToggleButton();
+        otherToggleButton = new javax.swing.JToggleButton();
+        oneChargeToggleButton = new javax.swing.JToggleButton();
+        twoChargesToggleButton = new javax.swing.JToggleButton();
+        moreThanTwoChargesToggleButton = new javax.swing.JToggleButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Search Engine Performance"));
         jPanel1.setOpaque(false);
@@ -218,7 +285,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1133, Short.MAX_VALUE)
+                .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1093, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(vennDiagramButton, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -230,95 +297,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
                 .addContainerGap())
             .addComponent(vennDiagramButton, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
-        );
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum Selection"));
-        jPanel2.setOpaque(false);
-
-        fileNamesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "File Name" }));
-        fileNamesCmb.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fileNamesCmbActionPerformed(evt);
-            }
-        });
-
-        spectrumTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Title", "m/z", "Charge", "RT"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Double.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        spectrumTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                spectrumTableMouseReleased(evt);
-            }
-        });
-        spectrumTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                spectrumTableKeyReleased(evt);
-            }
-        });
-        spectrumTableJScrollPane.setViewportView(spectrumTable);
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 528, Short.MAX_VALUE)
-                    .addComponent(fileNamesCmb, 0, 528, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(fileNamesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum"));
-        jPanel3.setOpaque(false);
-
-        spectrumChartJPanel.setBackground(new java.awt.Color(255, 255, 255));
-        spectrumChartJPanel.setLayout(new javax.swing.BoxLayout(spectrumChartJPanel, javax.swing.BoxLayout.Y_AXIS));
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 750, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
-                .addContainerGap())
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide to Spectrum Matches"));
@@ -377,6 +355,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         });
         omssaTable.setMinimumSize(new java.awt.Dimension(0, 0));
+        omssaTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        omssaTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                omssaTableMouseClicked(evt);
+            }
+        });
+        omssaTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                omssaTableKeyReleased(evt);
+            }
+        });
         omssaTableJScrollPane.setViewportView(omssaTable);
 
         jLabel3.setText("OMSSA:");
@@ -387,8 +376,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jLabel3)
-                .addContainerGap(387, Short.MAX_VALUE))
-            .addComponent(omssaTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
+                .addContainerGap(374, Short.MAX_VALUE))
+            .addComponent(omssaTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -426,6 +415,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         });
         xTandemTable.setMinimumSize(new java.awt.Dimension(0, 0));
+        xTandemTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        xTandemTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                xTandemTableMouseClicked(evt);
+            }
+        });
+        xTandemTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                xTandemTableKeyReleased(evt);
+            }
+        });
         xTandemTableJScrollPane.setViewportView(xTandemTable);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -434,8 +434,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addComponent(jLabel4)
-                .addContainerGap(376, Short.MAX_VALUE))
-            .addComponent(xTandemTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+                .addContainerGap(363, Short.MAX_VALUE))
+            .addComponent(xTandemTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -475,6 +475,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         });
         mascotTable.setMinimumSize(new java.awt.Dimension(0, 0));
+        mascotTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        mascotTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                mascotTableMouseClicked(evt);
+            }
+        });
+        mascotTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                mascotTableKeyReleased(evt);
+            }
+        });
         mascotTableJScrollPane.setViewportView(mascotTable);
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
@@ -483,8 +494,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addComponent(jLabel2)
-                .addContainerGap(388, Short.MAX_VALUE))
-            .addComponent(mascotTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE)
+                .addContainerGap(374, Short.MAX_VALUE))
+            .addComponent(mascotTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 412, Short.MAX_VALUE)
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -501,7 +512,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1316, Short.MAX_VALUE)
+                    .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1276, Short.MAX_VALUE)
                     .addComponent(jLabel1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -526,6 +537,261 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
+        spectrumJSplitPane.setBorder(null);
+        spectrumJSplitPane.setDividerLocation(600);
+        spectrumJSplitPane.setDividerSize(0);
+        spectrumJSplitPane.setResizeWeight(0.5);
+        spectrumJSplitPane.setOpaque(false);
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum Selection"));
+        jPanel2.setOpaque(false);
+
+        fileNamesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "File Name" }));
+        fileNamesCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fileNamesCmbActionPerformed(evt);
+            }
+        });
+
+        spectrumTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Title", "m/z", "Charge", "RT"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Double.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        spectrumTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                spectrumTableMouseReleased(evt);
+            }
+        });
+        spectrumTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                spectrumTableKeyReleased(evt);
+            }
+        });
+        spectrumTableJScrollPane.setViewportView(spectrumTable);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 568, Short.MAX_VALUE)
+                    .addComponent(fileNamesCmb, 0, 568, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(fileNamesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        spectrumJSplitPane.setLeftComponent(jPanel2);
+
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum"));
+        jPanel3.setOpaque(false);
+
+        spectrumChartPanel.setBackground(new java.awt.Color(255, 255, 255));
+        spectrumChartPanel.setLayout(new javax.swing.BoxLayout(spectrumChartPanel, javax.swing.BoxLayout.Y_AXIS));
+
+        spectrumJToolBar.setBackground(new java.awt.Color(255, 255, 255));
+        spectrumJToolBar.setBorder(null);
+        spectrumJToolBar.setFloatable(false);
+        spectrumJToolBar.setRollover(true);
+
+        aIonToggleButton.setText("a");
+        aIonToggleButton.setFocusable(false);
+        aIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        aIonToggleButton.setMinimumSize(new java.awt.Dimension(25, 21));
+        aIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        aIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        aIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aIonToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(aIonToggleButton);
+
+        bIonToggleButton.setSelected(true);
+        bIonToggleButton.setText("b");
+        bIonToggleButton.setFocusable(false);
+        bIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        bIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bIonToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(bIonToggleButton);
+
+        cIonToggleButton.setText("c");
+        cIonToggleButton.setFocusable(false);
+        cIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        cIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        cIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        cIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cIonToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(cIonToggleButton);
+
+        xIonToggleButton.setText("x");
+        xIonToggleButton.setFocusable(false);
+        xIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        xIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        xIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        xIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xIonToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(xIonToggleButton);
+
+        yIonToggleButton.setSelected(true);
+        yIonToggleButton.setText("y");
+        yIonToggleButton.setFocusable(false);
+        yIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        yIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        yIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        yIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yIonToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(yIonToggleButton);
+
+        zIonToggleButton.setText("z");
+        zIonToggleButton.setFocusable(false);
+        zIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        zIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        zIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        zIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zIonToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(zIonToggleButton);
+
+        h2oToggleButton.setText("H2O");
+        h2oToggleButton.setFocusable(false);
+        h2oToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        h2oToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        h2oToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        h2oToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                h2oToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(h2oToggleButton);
+
+        nh3ToggleButton.setText("NH3");
+        nh3ToggleButton.setFocusable(false);
+        nh3ToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        nh3ToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        nh3ToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        nh3ToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nh3ToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(nh3ToggleButton);
+
+        otherToggleButton.setText("Oth.");
+        otherToggleButton.setFocusable(false);
+        otherToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        otherToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        otherToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        otherToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                otherToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(otherToggleButton);
+
+        oneChargeToggleButton.setSelected(true);
+        oneChargeToggleButton.setText("+");
+        oneChargeToggleButton.setFocusable(false);
+        oneChargeToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        oneChargeToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        oneChargeToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        oneChargeToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                oneChargeToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(oneChargeToggleButton);
+
+        twoChargesToggleButton.setText("++");
+        twoChargesToggleButton.setFocusable(false);
+        twoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        twoChargesToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        twoChargesToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        twoChargesToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                twoChargesToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(twoChargesToggleButton);
+
+        moreThanTwoChargesToggleButton.setText(">2 ");
+        moreThanTwoChargesToggleButton.setFocusable(false);
+        moreThanTwoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        moreThanTwoChargesToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        moreThanTwoChargesToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        moreThanTwoChargesToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moreThanTwoChargesToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(moreThanTwoChargesToggleButton);
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(spectrumChartPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE)
+                    .addComponent(spectrumJToolBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addComponent(spectrumChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 347, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        spectrumJSplitPane.setRightComponent(jPanel3);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -534,11 +800,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(spectrumJSplitPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1308, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -547,9 +810,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(spectrumJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -567,8 +828,131 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private void spectrumTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_spectrumTableKeyReleased
         spectrumSelectionChanged();
     }//GEN-LAST:event_spectrumTableKeyReleased
+
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+
+        // invoke later to give time for components to update
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                spectrumJSplitPane.setDividerLocation(spectrumJSplitPane.getWidth() / 2);
+            }
+        });
+    }//GEN-LAST:event_formComponentResized
+
+    private void omssaTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_omssaTableMouseClicked
+        
+        if (omssaTable.getSelectedRow() != -1) {
+            
+            if (xTandemTable.getSelectedRow() != -1) {
+                xTandemTable.removeRowSelectionInterval(xTandemTable.getSelectedRow(), xTandemTable.getSelectedRow());
+            }
+            
+            if (mascotTable.getSelectedRow() != -1) {
+                mascotTable.removeRowSelectionInterval(mascotTable.getSelectedRow(), mascotTable.getSelectedRow());
+            }
+
+            updateSpectrum();
+        }
+
+    }//GEN-LAST:event_omssaTableMouseClicked
+
+    private void omssaTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_omssaTableKeyReleased
+        omssaTableMouseClicked(null);
+    }//GEN-LAST:event_omssaTableKeyReleased
+
+    private void xTandemTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xTandemTableMouseClicked
+        if (xTandemTable.getSelectedRow() != -1) {
+            
+            if (mascotTable.getSelectedRow() != -1) {
+                mascotTable.removeRowSelectionInterval(mascotTable.getSelectedRow(), mascotTable.getSelectedRow());
+            }
+            
+            if (omssaTable.getSelectedRow() != -1) {
+                omssaTable.removeRowSelectionInterval(omssaTable.getSelectedRow(), omssaTable.getSelectedRow());
+            }
+
+            updateSpectrum();
+        }
+    }//GEN-LAST:event_xTandemTableMouseClicked
+
+    private void xTandemTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_xTandemTableKeyReleased
+        xTandemTableMouseClicked(null);
+    }//GEN-LAST:event_xTandemTableKeyReleased
+
+    private void mascotTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_mascotTableKeyReleased
+        mascotTableMouseClicked(null);
+    }//GEN-LAST:event_mascotTableKeyReleased
+
+    private void mascotTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mascotTableMouseClicked
+        if (mascotTable.getSelectedRow() != -1) {
+            
+            if (xTandemTable.getSelectedRow() != -1) {
+                xTandemTable.removeRowSelectionInterval(xTandemTable.getSelectedRow(), xTandemTable.getSelectedRow());
+            }
+            
+            if (omssaTable.getSelectedRow() != -1) {
+                omssaTable.removeRowSelectionInterval(omssaTable.getSelectedRow(), omssaTable.getSelectedRow());
+            }
+
+            updateSpectrum();
+        }
+    }//GEN-LAST:event_mascotTableMouseClicked
+
+    private void aIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonToggleButtonActionPerformed
+        updateSpectrum();
+}//GEN-LAST:event_aIonToggleButtonActionPerformed
+
+    private void bIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonToggleButtonActionPerformed
+        updateSpectrum();
+}//GEN-LAST:event_bIonToggleButtonActionPerformed
+
+    private void cIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonToggleButtonActionPerformed
+        updateSpectrum();
+}//GEN-LAST:event_cIonToggleButtonActionPerformed
+
+    private void xIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonToggleButtonActionPerformed
+        updateSpectrum();
+}//GEN-LAST:event_xIonToggleButtonActionPerformed
+
+    private void yIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonToggleButtonActionPerformed
+        updateSpectrum();
+}//GEN-LAST:event_yIonToggleButtonActionPerformed
+
+    private void zIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonToggleButtonActionPerformed
+        updateSpectrum();
+}//GEN-LAST:event_zIonToggleButtonActionPerformed
+
+    private void h2oToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_h2oToggleButtonActionPerformed
+        updateSpectrum();
+}//GEN-LAST:event_h2oToggleButtonActionPerformed
+
+    private void nh3ToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nh3ToggleButtonActionPerformed
+        updateSpectrum();
+}//GEN-LAST:event_nh3ToggleButtonActionPerformed
+
+    private void otherToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_otherToggleButtonActionPerformed
+        updateSpectrum();
+}//GEN-LAST:event_otherToggleButtonActionPerformed
+
+    private void oneChargeToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oneChargeToggleButtonActionPerformed
+        updateSpectrum();
+}//GEN-LAST:event_oneChargeToggleButtonActionPerformed
+
+    private void twoChargesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_twoChargesToggleButtonActionPerformed
+        updateSpectrum();
+}//GEN-LAST:event_twoChargesToggleButtonActionPerformed
+
+    private void moreThanTwoChargesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moreThanTwoChargesToggleButtonActionPerformed
+        updateSpectrum();
+}//GEN-LAST:event_moreThanTwoChargesToggleButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton aIonToggleButton;
+    private javax.swing.JToggleButton bIonToggleButton;
+    private javax.swing.JToggleButton cIonToggleButton;
     private javax.swing.JComboBox fileNamesCmb;
+    private javax.swing.JToggleButton h2oToggleButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -582,36 +966,30 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JTable mascotTable;
     private javax.swing.JScrollPane mascotTableJScrollPane;
+    private javax.swing.JToggleButton moreThanTwoChargesToggleButton;
+    private javax.swing.JToggleButton nh3ToggleButton;
     private javax.swing.JTable omssaTable;
     private javax.swing.JScrollPane omssaTableJScrollPane;
+    private javax.swing.JToggleButton oneChargeToggleButton;
+    private javax.swing.JToggleButton otherToggleButton;
     private javax.swing.JScrollPane peptideShakerJScrollPane;
     private javax.swing.JTable peptideShakerJTable;
     private javax.swing.JTable searchEngineTable;
     private javax.swing.JScrollPane searchEnginetableJScrollPane;
-    private javax.swing.JPanel spectrumChartJPanel;
+    private javax.swing.JPanel spectrumChartPanel;
+    private javax.swing.JSplitPane spectrumJSplitPane;
+    private javax.swing.JToolBar spectrumJToolBar;
     private javax.swing.JTable spectrumTable;
     private javax.swing.JScrollPane spectrumTableJScrollPane;
+    private javax.swing.JToggleButton twoChargesToggleButton;
     private javax.swing.JButton vennDiagramButton;
+    private javax.swing.JToggleButton xIonToggleButton;
     private javax.swing.JTable xTandemTable;
     private javax.swing.JScrollPane xTandemTableJScrollPane;
+    private javax.swing.JToggleButton yIonToggleButton;
+    private javax.swing.JToggleButton zIonToggleButton;
     // End of variables declaration//GEN-END:variables
-    /**
-     * The main GUI
-     */
-    private PeptideShakerGUI peptideShakerGUI;
-    /**
-     * The spectrum collection
-     */
-    private SpectrumCollection spectrumCollection;
-    /**
-     * The identification
-     */
-    private Identification identification;
-    /**
-     * The spectra indexed by their file name
-     */
-    private HashMap<String, ArrayList<String>> filesMap = new HashMap<String, ArrayList<String>>();
-
+    
     /**
      * Displays the results on the panel
      */
@@ -771,6 +1149,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         chart.setBackgroundFill(Fills.newSolidFill(Color.WHITE));
 
         try {
+            vennDiagramButton.setText("");
             ImageIcon icon = new ImageIcon(new URL(chart.toURLString()));
             vennDiagramButton.setIcon(icon);
 
@@ -786,6 +1165,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         } catch (IOException e) {
             e.printStackTrace();
+            vennDiagramButton.setText("<Not Available>");
         }
     }
 
@@ -875,38 +1255,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             ((DefaultTableModel) xTandemTable.getModel()).removeRow(0);
         }
 
-        MSnSpectrum currentSpectrum = null;
-
-        spectrumChartJPanel.removeAll();
-
-        if (spectrumTable.getSelectedRow() != -1) {
-
-            try {
-
-                currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(spectrumMatch.getKey());
-
-                Precursor precursor = currentSpectrum.getPrecursor();
-                SpectrumPanel spectrumB = new SpectrumPanel(
-                        currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
-                        precursor.getMz(), precursor.getCharge().toString(),
-                        "", 40, false, false, false, 2, false);
-                spectrumB.setBorder(null);
-
-                spectrumChartJPanel.add(spectrumB);
-
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    public void run() {
-                        spectrumChartJPanel.revalidate();
-                        spectrumChartJPanel.repaint();
-                    }
-                });
-
-            } catch (MzMLUnmarshallerException e) {
-                e.printStackTrace();
-            }
-        }
-
         // Fill peptide shaker table
         String proteins = "";
         for (Protein protein : spectrumMatch.getBestAssumption().getPeptide().getParentProteins()) {
@@ -933,6 +1281,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 });
 
         // Fill Mascot table
+
+        mascotPeptideKeys = new HashMap<Integer, String>();
+
         if (spectrumMatch.getAllAssumptions(Advocate.MASCOT) != null) {
             ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.MASCOT).keySet());
             Collections.sort(eValues);
@@ -962,13 +1313,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             currentAssumption.getEValue(),
                             0
                         });
-            }
 
-            if (mascotTable.getRowCount() > 0) {
+                mascotPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
             }
         }
 
         // Fill OMSSA table
+
+        omssaPeptideKeys = new HashMap<Integer, String>();
 
         if (spectrumMatch.getAllAssumptions(Advocate.OMSSA) != null) {
             ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA).keySet());
@@ -999,10 +1351,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             currentAssumption.getEValue(),
                             0
                         });
+
+                omssaPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
             }
         }
 
         // Fill X!Tandem table
+
+        xtandemPeptideKeys = new HashMap<Integer, String>();
 
         if (spectrumMatch.getAllAssumptions(Advocate.XTANDEM) != null) {
             ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTANDEM).keySet());
@@ -1033,11 +1389,26 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             currentAssumption.getEValue(),
                             0
                         });
+
+                xtandemPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
             }
         }
-        SwingUtilities.invokeLater(new Runnable() {
 
-            public void run() {
+        
+            // select one of the matches
+            if (omssaTable.getRowCount() > 0) {
+                omssaTable.setRowSelectionInterval(0, 0);
+            } else if (xTandemTable.getRowCount() > 0) {
+                xTandemTable.setRowSelectionInterval(0, 0);
+            } else if (mascotTable.getRowCount() > 0) {
+                mascotTable.setRowSelectionInterval(0, 0);
+            }
+        
+
+
+//        SwingUtilities.invokeLater(new Runnable() {
+//
+//            public void run() {
                 peptideShakerJTable.revalidate();
                 peptideShakerJTable.repaint();
                 mascotTable.revalidate();
@@ -1046,7 +1417,170 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 xTandemTable.repaint();
                 omssaTable.revalidate();
                 omssaTable.repaint();
+                
+                // update the spectrum
+                updateSpectrum();
+//            }
+//        });
+    }
+
+    private void updateSpectrum() {
+        
+        if (spectrumTable.getSelectedRow() != -1) {
+
+            spectrumChartPanel.removeAll();
+
+            try {
+                String key = Spectrum.getSpectrumKey((String) fileNamesCmb.getSelectedItem(), (String) spectrumTable.getValueAt(spectrumTable.getSelectedRow(), 0));
+                SpectrumMatch spectrumMatch = identification.getSpectrumIdentification().get(key);
+                MSnSpectrum currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(spectrumMatch.getKey());
+                Precursor precursor = currentSpectrum.getPrecursor();
+
+                SpectrumPanel spectrum = new SpectrumPanel(
+                        currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
+                        precursor.getMz(), precursor.getCharge().toString(),
+                        "", 40, false, false, false, 2, false);
+                spectrum.setBorder(null);
+
+
+                // omssa annotation (if any)
+                if (omssaTable.getSelectedRow() != -1) {
+
+                    String peptideKey = omssaPeptideKeys.get((Integer) omssaTable.getValueAt(omssaTable.getSelectedRow(), 0));
+                    Peptide currentPeptide = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide();
+                    SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
+                            currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
+                            currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
+
+                    // add the spectrum annotations
+                    spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
+                } 
+                
+                // xtandem annotation (if any)
+                if (xTandemTable.getSelectedRow() != -1) {
+
+                    String peptideKey = xtandemPeptideKeys.get((Integer) xTandemTable.getValueAt(xTandemTable.getSelectedRow(), 0));
+                    Peptide currentPeptide = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide();
+                    SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
+                            currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
+                            currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
+
+                    // add the spectrum annotations
+                    spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
+                } 
+                
+                // mascot annotation (if any)
+                if (mascotTable.getSelectedRow() != -1) {
+
+                    String peptideKey = mascotPeptideKeys.get((Integer) mascotTable.getValueAt(mascotTable.getSelectedRow(), 0));
+                    Peptide currentPeptide = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide();
+                    SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
+                            currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
+                            currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
+
+                    // add the spectrum annotations
+                    //spectrum.setAnnotations(filterAnnotations(currentAnnotations));
+                    spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
+                } 
+
+                
+                spectrumChartPanel.add(spectrum);
+
+
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    public void run() {
+                        spectrumChartPanel.revalidate();
+                        spectrumChartPanel.repaint();
+                    }
+                });
+
+            } catch (MzMLUnmarshallerException e) {
+                e.printStackTrace();
             }
-        });
+        }
+
+    }
+    
+    /**
+     * Filters the annotations and returns the annotations matching the currently selected list.
+     *
+     * @param annotations the annotations to be filtered
+     * @return the filtered annotations
+     */
+    private Vector<DefaultSpectrumAnnotation> filterAnnotations(Vector<DefaultSpectrumAnnotation> annotations) {
+
+        return SpectrumPanel.filterAnnotations(annotations, getCurrentFragmentIonTypes(),
+                h2oToggleButton.isSelected(),
+                nh3ToggleButton.isSelected(),
+                oneChargeToggleButton.isSelected(),
+                twoChargesToggleButton.isSelected(),
+                moreThanTwoChargesToggleButton.isSelected());
+    }
+    
+    /**
+     * Returns an arraylist of the currently selected fragment ion types.
+     *
+     * @return an arraylist of the currently selected fragment ion types
+     */
+    private ArrayList<PeptideFragmentIonType> getCurrentFragmentIonTypes() {
+
+        ArrayList<PeptideFragmentIonType> fragmentIontypes = new ArrayList<PeptideFragmentIonType>();
+
+        if (aIonToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.A_ION);
+            if (h2oToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.AH2O_ION);
+            }
+            if (nh3ToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.ANH3_ION);
+            }
+        }
+
+        if (bIonToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.B_ION);
+            if (h2oToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.BH2O_ION);
+            }
+            if (nh3ToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.BNH3_ION);
+            }
+        }
+
+        if (cIonToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.C_ION);
+        }
+
+        if (xIonToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.X_ION);
+        }
+
+        if (yIonToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.Y_ION);
+            if (h2oToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.YH2O_ION);
+            }
+            if (nh3ToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.YNH3_ION);
+            }
+        }
+
+        if (zIonToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.Z_ION);
+        }
+
+        if (otherToggleButton.isSelected()) {
+            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM);
+            fragmentIontypes.add(PeptideFragmentIonType.MH_ION);
+
+            if (h2oToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.MHH2O_ION);
+            }
+            if (nh3ToggleButton.isSelected()) {
+                fragmentIontypes.add(PeptideFragmentIonType.MHNH3_ION);
+            }
+        }
+
+        return fragmentIontypes;
     }
 }
