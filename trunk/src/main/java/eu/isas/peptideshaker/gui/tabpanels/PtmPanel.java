@@ -1284,6 +1284,7 @@ public class PtmPanel extends javax.swing.JPanel {
             if (selectedPsmTable.getSelectedRow() != -1) {
                 String familyKey = (String) primarySelectionTable.getValueAt(primarySelectionTable.getSelectedRow(), 0);
                 String spectrumKey = psmsMap.get(familyKey).get(selectedPsmTable.getSelectedRow());
+                peptideShakerGUI.selectSpectrum(spectrumKey);
                 MSnSpectrum currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(
                         2, spectrumKey);
 

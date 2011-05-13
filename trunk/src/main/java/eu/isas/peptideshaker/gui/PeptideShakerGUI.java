@@ -350,7 +350,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         statsJPanel.setOpaque(false);
         statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        resultsJTabbedPane.addTab("FDR/PEP", statsJPanel);
+        resultsJTabbedPane.addTab("Validation", statsJPanel);
 
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
@@ -877,6 +877,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     int counter = 0;
 
+                    spectrumIdentificationPanel.displayResults();
+                    progressDialog.setValue(++counter);
                     try {
                         progressDialog.setValue(++counter);
                         overviewPanel.displayResults();
@@ -887,8 +889,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     statsPanel.displayResults();
                     progressDialog.setValue(++counter);
                     ptmPanel.displayResults();
-                    progressDialog.setValue(++counter);
-                    spectrumIdentificationPanel.displayResults();
                     progressDialog.setValue(++counter);
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
@@ -1250,4 +1250,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public int getBubbleScale() {
         return bubbleScale;
     }
+
+    /**
+     * Selects the desired spectrum in the spectrum Id tab
+     * @param spectrumKey the key of the desired spectrum
+     */
+    public void selectSpectrum(String spectrumKey) {
+        spectrumIdentificationPanel.selectSpectrum(spectrumKey);
+    }
+
 }

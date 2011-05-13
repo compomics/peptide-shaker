@@ -1089,6 +1089,8 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         if (row != -1) {
             updateSpectrum(row, false);
+            String spectrumKey = psmTableMap.get(getPsmKey(row));
+            peptideShakerGUI.selectSpectrum(spectrumKey);
         }
 }//GEN-LAST:event_psmTableKeyReleased
 
