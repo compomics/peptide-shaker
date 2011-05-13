@@ -111,7 +111,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="proteinScrollPane" pref="921" max="32767" attributes="0"/>
+                          <Component id="proteinScrollPane" pref="925" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -120,7 +120,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="proteinScrollPane" pref="248" max="32767" attributes="0"/>
+                          <Component id="proteinScrollPane" pref="251" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -216,6 +216,9 @@
                         <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinTableMouseClicked"/>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="proteinTableKeyReleased"/>
                       </Events>
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) { &#xa;                String tip = null;                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                tip = (String) proteinTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+                      </AuxValues>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -259,7 +262,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="coverageScrollPane" pref="921" max="32767" attributes="0"/>
+                              <Component id="coverageScrollPane" pref="925" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -267,7 +270,7 @@
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="coverageScrollPane" pref="122" max="32767" attributes="0"/>
+                              <Component id="coverageScrollPane" pref="125" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -361,7 +364,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="peptideScrollPane" pref="414" max="32767" attributes="0"/>
+                                      <Component id="peptideScrollPane" pref="418" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -370,7 +373,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="peptideScrollPane" pref="98" max="32767" attributes="0"/>
+                                      <Component id="peptideScrollPane" pref="101" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -454,6 +457,9 @@
                                     <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideTableMouseClicked"/>
                                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="peptideTableKeyReleased"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) { &#xa;                String tip = null;                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                tip = (String) peptideTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+                                  </AuxValues>
                                 </Component>
                               </SubComponents>
                             </Container>
@@ -479,7 +485,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="spectraScrollPane" pref="414" max="32767" attributes="0"/>
+                                      <Component id="spectraScrollPane" pref="418" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -488,7 +494,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="spectraScrollPane" pref="55" max="32767" attributes="0"/>
+                                      <Component id="spectraScrollPane" pref="58" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -508,17 +514,12 @@
                                 <Component class="javax.swing.JTable" name="psmTable">
                                   <Properties>
                                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                      <Table columnCount="12" rowCount="0">
+                                      <Table columnCount="7" rowCount="0">
                                         <Column editable="false" title=" " type="java.lang.Integer"/>
                                         <Column editable="false" title="Sequence" type="java.lang.String"/>
                                         <Column editable="false" title="Modifications" type="java.lang.String"/>
                                         <Column editable="false" title="Charge" type="java.lang.Integer"/>
                                         <Column editable="false" title="Mass Error" type="java.lang.Double"/>
-                                        <Column editable="false" title="File" type="java.lang.String"/>
-                                        <Column editable="false" title="Title" type="java.lang.String"/>
-                                        <Column editable="false" title="Mascot" type="java.lang.String"/>
-                                        <Column editable="false" title="OMSSA" type="java.lang.String"/>
-                                        <Column editable="false" title="X!Tandem" type="java.lang.String"/>
                                         <Column editable="true" title="  " type="java.lang.Boolean"/>
                                         <Column editable="false" title="" type="java.lang.Boolean"/>
                                       </Table>
@@ -591,6 +592,9 @@
                                     <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="psmTableMouseClicked"/>
                                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="psmTableKeyReleased"/>
                                   </Events>
+                                  <AuxValues>
+                                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) { &#xa;                String tip = null;                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                tip = (String) psmTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+                                  </AuxValues>
                                 </Component>
                               </SubComponents>
                             </Container>
@@ -618,14 +622,14 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="spectrumJTabbedPane" pref="471" max="32767" attributes="0"/>
+                                  <Component id="spectrumJTabbedPane" pref="475" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="spectrumJTabbedPane" alignment="1" pref="227" max="32767" attributes="0"/>
+                              <Component id="spectrumJTabbedPane" alignment="1" pref="230" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                       </Layout>
@@ -657,23 +661,23 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="bubblePlotJToolBar" pref="446" max="32767" attributes="0"/>
+                                          <Component id="bubblePlotJToolBar" pref="450" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                          <Component id="bubbleJPanel" alignment="0" pref="466" max="32767" attributes="0"/>
+                                          <Component id="bubbleJPanel" alignment="0" pref="470" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                                 </DimensionLayout>
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace pref="174" max="32767" attributes="0"/>
+                                          <EmptySpace pref="177" max="32767" attributes="0"/>
                                           <Component id="bubblePlotJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
-                                              <Component id="bubbleJPanel" pref="166" max="32767" attributes="0"/>
+                                              <Component id="bubbleJPanel" pref="169" max="32767" attributes="0"/>
                                               <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -917,7 +921,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="fragmentIonsJScrollPane" pref="446" max="32767" attributes="0"/>
+                                          <Component id="fragmentIonsJScrollPane" pref="450" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -926,7 +930,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="fragmentIonsJScrollPane" pref="177" max="32767" attributes="0"/>
+                                          <Component id="fragmentIonsJScrollPane" pref="180" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -961,16 +965,16 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="spectrumJToolBar" pref="446" max="32767" attributes="0"/>
+                                          <Component id="spectrumJToolBar" pref="450" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="spectrumSplitPane" alignment="0" pref="466" max="32767" attributes="0"/>
+                                      <Component id="spectrumSplitPane" alignment="0" pref="470" max="32767" attributes="0"/>
                                   </Group>
                                 </DimensionLayout>
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="spectrumSplitPane" pref="174" max="32767" attributes="0"/>
+                                          <Component id="spectrumSplitPane" pref="177" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                                           <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>

@@ -20,14 +20,17 @@ import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.ComponentOrientation;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -40,6 +43,14 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class PtmPanel extends javax.swing.JPanel {
 
+    /**
+     * The selected peptides table column header tooltips.
+     */
+    private ArrayList<String> selectedPeptidesTableToolTips;
+    /**
+     * The related peptides table column header tooltips.
+     */
+    private ArrayList<String> relatedPeptidesTableToolTips;
     /**
      * A hashmap of both the linked spectra.
      */
@@ -102,11 +113,6 @@ public class PtmPanel extends javax.swing.JPanel {
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
 
-        peptidesTable.getColumn(" ").setMaxWidth(50);
-        relatedPeptidesTable.getColumn(" ").setMaxWidth(50);
-        selectedPsmTable.getColumn("Rank").setMaxWidth(50);
-        relatedPsmTable.getColumn("Rank").setMaxWidth(50);
-
         relatedPeptidesTableJScrollPane.getViewport().setOpaque(false);
         psmsModifiedTableJScrollPane.getViewport().setOpaque(false);
         peptidesTableJScrollPane.getViewport().setOpaque(false);
@@ -114,9 +120,29 @@ public class PtmPanel extends javax.swing.JPanel {
         primarySelectionJScrollPane.getViewport().setOpaque(false);
         secondarySelectionJScrollPane.getViewport().setOpaque(false);
         
+        setTableProperties ();
+
         // make the tabs in the spectrum tabbed pane go from right to left
         spectrumTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-
+    }
+    
+    /**
+     * Set up the properties of the tables.
+     */
+    private void setTableProperties () {
+        
+        peptidesTable.getColumn(" ").setMaxWidth(50);
+        relatedPeptidesTable.getColumn(" ").setMaxWidth(50);
+        selectedPsmTable.getColumn("Rank").setMaxWidth(50);
+        relatedPsmTable.getColumn("Rank").setMaxWidth(50);
+        
+        peptidesTable.getTableHeader().setReorderingAllowed(false);
+        relatedPeptidesTable.getTableHeader().setReorderingAllowed(false);
+        primarySelectionTable.getTableHeader().setReorderingAllowed(false);
+        selectedPsmTable.getTableHeader().setReorderingAllowed(false);
+        secondarySelectionTable.getTableHeader().setReorderingAllowed(false);
+        relatedPsmTable.getTableHeader().setReorderingAllowed(false);
+        
         peptidesTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
@@ -128,6 +154,24 @@ public class PtmPanel extends javax.swing.JPanel {
 
         relatedPeptidesTable.getColumn("Confidence [%]").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        
+        // set up the table header tooltips
+        selectedPeptidesTableToolTips = new ArrayList<String>();
+        selectedPeptidesTableToolTips.add(null);
+        selectedPeptidesTableToolTips.add("Mapping Protein(s)");
+        selectedPeptidesTableToolTips.add("Peptide Sequence");
+        selectedPeptidesTableToolTips.add("Peptide Modifications");
+        selectedPeptidesTableToolTips.add("Peptide Score");
+        selectedPeptidesTableToolTips.add("Peptide Confidence");
+        
+        // set up the table header tooltips
+        relatedPeptidesTableToolTips = new ArrayList<String>();
+        relatedPeptidesTableToolTips.add(null);
+        relatedPeptidesTableToolTips.add("Mapping Protein(s)");
+        relatedPeptidesTableToolTips.add("Peptide Sequence");
+        relatedPeptidesTableToolTips.add("Peptide Modifications");
+        relatedPeptidesTableToolTips.add("Peptide Score");
+        relatedPeptidesTableToolTips.add("Peptide Confidence");
     }
 
     /** This method is called from within the constructor to
@@ -146,10 +190,36 @@ public class PtmPanel extends javax.swing.JPanel {
         peptideTablesJSplitPane = new javax.swing.JSplitPane();
         jPanel4 = new javax.swing.JPanel();
         peptidesTableJScrollPane = new javax.swing.JScrollPane();
-        peptidesTable = new javax.swing.JTable();
+        peptidesTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        String tip = null;
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        tip = (String) selectedPeptidesTableToolTips.get(realIndex);
+                        return tip;
+                    }
+                };
+            }
+        };
         jPanel2 = new javax.swing.JPanel();
         relatedPeptidesTableJScrollPane = new javax.swing.JScrollPane();
-        relatedPeptidesTable = new javax.swing.JTable();
+        relatedPeptidesTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        String tip = null;
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        tip = (String) relatedPeptidesTableToolTips.get(realIndex);
+                        return tip;
+                    }
+                };
+            }
+        };
         psmSpectraSplitPane = new javax.swing.JSplitPane();
         psmSplitPane = new javax.swing.JSplitPane();
         jPanel7 = new javax.swing.JPanel();
@@ -218,7 +288,7 @@ public class PtmPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -256,7 +326,7 @@ public class PtmPanel extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 802, Short.MAX_VALUE)
+                .addComponent(peptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -295,14 +365,14 @@ public class PtmPanel extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(relatedPeptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 802, Short.MAX_VALUE)
+                .addComponent(relatedPeptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(relatedPeptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(relatedPeptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -315,12 +385,12 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 834, Short.MAX_VALUE))
+                .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+            .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
         );
 
         psmSpectraSplitPane.setBorder(null);
@@ -488,7 +558,7 @@ public class PtmPanel extends javax.swing.JPanel {
         fragmentIonsJPanel.setLayout(fragmentIonsJPanelLayout);
         fragmentIonsJPanelLayout.setHorizontalGroup(
             fragmentIonsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 533, Short.MAX_VALUE)
+            .addGap(0, 537, Short.MAX_VALUE)
         );
         fragmentIonsJPanelLayout.setVerticalGroup(
             fragmentIonsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -661,9 +731,9 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 513, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 533, Short.MAX_VALUE)
+            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
         );
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -683,7 +753,7 @@ public class PtmPanel extends javax.swing.JPanel {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
+                .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -700,7 +770,7 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(psmSpectraSplitPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1070, Short.MAX_VALUE)
+                    .addComponent(psmSpectraSplitPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1074, Short.MAX_VALUE)
                     .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1285,6 +1355,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 String familyKey = (String) primarySelectionTable.getValueAt(primarySelectionTable.getSelectedRow(), 0);
                 String spectrumKey = psmsMap.get(familyKey).get(selectedPsmTable.getSelectedRow());
                 peptideShakerGUI.selectSpectrum(spectrumKey);
+                
                 MSnSpectrum currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(
                         2, spectrumKey);
 

@@ -879,6 +879,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     spectrumIdentificationPanel.displayResults();
                     progressDialog.setValue(++counter);
+                    
                     try {
                         progressDialog.setValue(++counter);
                         overviewPanel.displayResults();
@@ -886,10 +887,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     } catch (MzMLUnmarshallerException e) {
                         JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
                     }
+                    
                     statsPanel.displayResults();
                     progressDialog.setValue(++counter);
                     ptmPanel.displayResults();
                     progressDialog.setValue(++counter);
+                    
+                    // make sure same spectrum is selected across the tabs 
+                    overviewPanel.setSelectedSpectrum();
+                    
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
                 }
@@ -1252,11 +1258,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Selects the desired spectrum in the spectrum Id tab
+     * Selects the desired spectrum in the spectrum Id tab.
+     * 
      * @param spectrumKey the key of the desired spectrum
      */
     public void selectSpectrum(String spectrumKey) {
         spectrumIdentificationPanel.selectSpectrum(spectrumKey);
     }
-
+    
+    /**
+     * Opens the Spectrum ID tab.
+     */
+    public void openSpectrumIdTab () {
+        resultsJTabbedPane.setSelectedIndex(2);
+    }
 }

@@ -65,7 +65,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="searchEnginetableJScrollPane" pref="1093" max="32767" attributes="0"/>
+                  <Component id="searchEnginetableJScrollPane" pref="1097" max="32767" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="vennDiagramButton" min="-2" pref="173" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -94,7 +94,8 @@
             <Component class="javax.swing.JTable" name="searchEngineTable">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="7" rowCount="0">
+                  <Table columnCount="8" rowCount="0">
+                    <Column editable="false" title=" " type="java.lang.Integer"/>
                     <Column editable="false" title="Search Engine" type="java.lang.String"/>
                     <Column editable="false" title="Validated PSMs" type="java.lang.Integer"/>
                     <Column editable="false" title="Unique PSMs" type="java.lang.Integer"/>
@@ -122,6 +123,9 @@
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                 </Property>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) { &#xa;                String tip = null;                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                tip = (String) searchEngineTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
@@ -150,7 +154,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="peptideShakerJScrollPane" alignment="0" pref="1276" max="32767" attributes="2"/>
+                      <Component id="peptideShakerJScrollPane" alignment="0" pref="1280" max="32767" attributes="2"/>
                       <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="jPanel5" max="32767" attributes="0"/>
@@ -193,7 +197,8 @@
             <Component class="javax.swing.JTable" name="peptideShakerJTable">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="7" rowCount="0">
+                  <Table columnCount="8" rowCount="0">
+                    <Column editable="false" title=" " type="java.lang.Integer"/>
                     <Column editable="false" title="Protein(s)" type="java.lang.String"/>
                     <Column editable="false" title="Sequence" type="java.lang.String"/>
                     <Column editable="false" title="Modifications" type="java.lang.String"/>
@@ -246,6 +251,9 @@
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                 </Property>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) { &#xa;                String tip = null;                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                tip = (String) peptideShakerTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>
@@ -264,9 +272,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="374" max="32767" attributes="0"/>
+                      <EmptySpace pref="375" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="omssaTableJScrollPane" alignment="0" pref="413" max="32767" attributes="2"/>
+                  <Component id="omssaTableJScrollPane" alignment="0" pref="414" max="32767" attributes="2"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -344,6 +352,9 @@
                     <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="omssaTableMouseClicked"/>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="omssaTableKeyReleased"/>
                   </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) { &#xa;                String tip = null;                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                tip = (String) omssaTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
@@ -364,9 +375,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="363" max="32767" attributes="0"/>
+                      <EmptySpace pref="364" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="xTandemTableJScrollPane" alignment="0" pref="415" max="32767" attributes="2"/>
+                  <Component id="xTandemTableJScrollPane" alignment="0" pref="416" max="32767" attributes="2"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -444,6 +455,9 @@
                     <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="xTandemTableMouseClicked"/>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="xTandemTableKeyReleased"/>
                   </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) { &#xa;                String tip = null;                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                tip = (String) xTandemTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
@@ -459,9 +473,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="374" max="32767" attributes="0"/>
+                      <EmptySpace pref="376" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="mascotTableJScrollPane" alignment="0" pref="412" max="32767" attributes="2"/>
+                  <Component id="mascotTableJScrollPane" alignment="0" pref="414" max="32767" attributes="2"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -549,6 +563,9 @@
                     <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="mascotTableMouseClicked"/>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="mascotTableKeyReleased"/>
                   </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) { &#xa;                String tip = null;                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                tip = (String) mascotTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
@@ -590,8 +607,8 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="spectrumTableJScrollPane" alignment="0" pref="564" max="32767" attributes="0"/>
-                          <Component id="fileNamesCmb" alignment="0" pref="564" max="32767" attributes="0"/>
+                          <Component id="spectrumTableJScrollPane" alignment="0" pref="568" max="32767" attributes="0"/>
+                          <Component id="fileNamesCmb" alignment="0" pref="568" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -603,7 +620,7 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="fileNamesCmb" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="spectrumTableJScrollPane" pref="338" max="32767" attributes="0"/>
+                      <Component id="spectrumTableJScrollPane" pref="341" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -632,7 +649,8 @@
                 <Component class="javax.swing.JTable" name="spectrumTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="4" rowCount="0">
+                      <Table columnCount="5" rowCount="0">
+                        <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Title" type="java.lang.String"/>
                         <Column editable="false" title="m/z" type="java.lang.Double"/>
                         <Column editable="false" title="Charge" type="java.lang.Integer"/>
@@ -671,6 +689,9 @@
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="spectrumTableMouseReleased"/>
                     <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="spectrumTableKeyReleased"/>
                   </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) { &#xa;                String tip = null;                 &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                tip = (String) searchEngineTableToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+                  </AuxValues>
                 </Component>
               </SubComponents>
             </Container>
@@ -697,8 +718,8 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="spectrumChartPanel" alignment="0" pref="676" max="32767" attributes="0"/>
-                          <Component id="spectrumJToolBar" alignment="0" pref="676" max="32767" attributes="0"/>
+                          <Component id="spectrumChartPanel" alignment="0" pref="680" max="32767" attributes="0"/>
+                          <Component id="spectrumJToolBar" alignment="0" pref="680" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -707,7 +728,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="spectrumChartPanel" pref="344" max="32767" attributes="0"/>
+                      <Component id="spectrumChartPanel" pref="347" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
