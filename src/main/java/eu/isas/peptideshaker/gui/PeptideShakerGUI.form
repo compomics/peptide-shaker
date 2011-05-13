@@ -338,8 +338,8 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="FDR/PEP">
-                    <Property name="tabTitle" type="java.lang.String" value="FDR/PEP"/>
+                  <JTabbedPaneConstraints tabName="Validation">
+                    <Property name="tabTitle" type="java.lang.String" value="Validation"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>

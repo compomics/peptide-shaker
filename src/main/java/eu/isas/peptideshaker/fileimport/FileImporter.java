@@ -4,6 +4,7 @@ import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.FastaHeaderParser;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
@@ -246,7 +247,7 @@ public class FileImporter {
                 waitingDialog.appendReport("Failed importing modifications from " + MODIFICATION_FILE);
                 waitingDialog.setRunCanceled();
             }
-            
+
             try {
                 ptmFactory.importModifications(new File(USER_MODIFICATION_FILE));
             } catch (Exception e) {
@@ -306,13 +307,14 @@ public class FileImporter {
                                 for (String proteinKey : getProteins(peptide.getSequence())) {
                                     proteins.add(new Protein(proteinKey, proteinKey.contains("REV")));
                                 }
-
-                                peptide.setParentProteins(proteins);
+                                if (!proteins.isEmpty()) {
+                                    peptide.setParentProteins(proteins);
+                                }
                             }
 
                             identification.addSpectrumMatch(match);
                             mgfName = Spectrum.getSpectrumFile(match.getKey());
-                            
+
                             if (!mgfNeeded.contains(mgfName)) {
                                 mgfNeeded.add(mgfName);
                             }
@@ -382,7 +384,7 @@ public class FileImporter {
                 System.out.println("Ran out of memory!");
                 error.printStackTrace();
             }
-            
+
             return 0;
         }
     }
@@ -464,7 +466,7 @@ public class FileImporter {
                         waitingDialog.increaseProgressValue();
                     }
                 }
-                
+
                 waitingDialog.appendReport("File import finished.\n\n");
                 waitingDialog.setRunFinished();
 
@@ -487,7 +489,7 @@ public class FileImporter {
                 System.out.println("Ran out of memory!");
                 error.printStackTrace();
             }
-            
+
             return 0;
         }
     }
