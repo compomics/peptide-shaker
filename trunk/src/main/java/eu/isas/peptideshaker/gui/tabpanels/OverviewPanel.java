@@ -5,7 +5,6 @@ import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
-import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
@@ -138,7 +137,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         this.displaySpectrum = false;
 
         initComponents();
-        
+
         setTableProperties();
 
         // make sure that the scroll panes are see-through
@@ -153,12 +152,12 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         updateSeparators();
     }
-    
+
     /**
      * Set up the properties of the tables.
      */
-    private void setTableProperties () {
-        
+    private void setTableProperties() {
+
         // set table properties
         proteinTable.getTableHeader().setReorderingAllowed(false);
         peptideTable.getTableHeader().setReorderingAllowed(false);
@@ -220,7 +219,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         psmTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")), new ImageIcon(this.getClass().getResource("/icons/Error_3.png"))));
         psmTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
-        
+
         // set up the table header tooltips
         proteinTableToolTips = new ArrayList<String>();
         proteinTableToolTips.add(null);
@@ -233,7 +232,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTableToolTips.add("Protein Score");
         proteinTableToolTips.add("Protein Confidence");
         proteinTableToolTips.add("Validated");
-        
+
         peptideTableToolTips = new ArrayList<String>();
         peptideTableToolTips.add(null);
         peptideTableToolTips.add("Peptide Sequence");
@@ -243,7 +242,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         peptideTableToolTips.add("Peptide Score");
         peptideTableToolTips.add("Peptide Confidence");
         peptideTableToolTips.add("Validated");
-        
+
         psmTableToolTips = new ArrayList<String>();
         psmTableToolTips.add(null);
         psmTableToolTips.add("Peptide Sequence");
@@ -626,7 +625,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         aIonBubblePlotToggleButton.setFocusable(false);
         aIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         aIonBubblePlotToggleButton.setMinimumSize(new java.awt.Dimension(25, 21));
-        aIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        aIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         aIonBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         aIonBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -639,7 +638,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         bIonBubblePlotToggleButton.setText("b");
         bIonBubblePlotToggleButton.setFocusable(false);
         bIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        bIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         bIonBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         bIonBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -651,7 +650,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         cIonBubblePlotToggleButton.setText("c");
         cIonBubblePlotToggleButton.setFocusable(false);
         cIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        cIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        cIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         cIonBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         cIonBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -663,7 +662,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         xIonBubblePlotToggleButton.setText("x");
         xIonBubblePlotToggleButton.setFocusable(false);
         xIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        xIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        xIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         xIonBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         xIonBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -676,7 +675,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         yIonBubblePlotToggleButton.setText("y");
         yIonBubblePlotToggleButton.setFocusable(false);
         yIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        yIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        yIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         yIonBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         yIonBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -688,7 +687,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         zIonBubblePlotToggleButton.setText("z");
         zIonBubblePlotToggleButton.setFocusable(false);
         zIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        zIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        zIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         zIonBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         zIonBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -700,7 +699,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         h2oBubblePlotToggleButton.setText("H2O");
         h2oBubblePlotToggleButton.setFocusable(false);
         h2oBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        h2oBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        h2oBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         h2oBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         h2oBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -712,7 +711,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         nh3BubblePlotToggleButton.setText("NH3");
         nh3BubblePlotToggleButton.setFocusable(false);
         nh3BubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        nh3BubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        nh3BubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         nh3BubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         nh3BubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -724,7 +723,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         otherBubblePlotToggleButton.setText("Oth.");
         otherBubblePlotToggleButton.setFocusable(false);
         otherBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        otherBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        otherBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         otherBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         otherBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -737,7 +736,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         oneChargeBubblePlotToggleButton.setText("+");
         oneChargeBubblePlotToggleButton.setFocusable(false);
         oneChargeBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        oneChargeBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        oneChargeBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         oneChargeBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         oneChargeBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -749,7 +748,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         twoChargesBubblePlotToggleButton.setText("++");
         twoChargesBubblePlotToggleButton.setFocusable(false);
         twoChargesBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        twoChargesBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        twoChargesBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         twoChargesBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         twoChargesBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -761,7 +760,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         moreThanTwoChargesBubblePlotToggleButton.setText(">2 ");
         moreThanTwoChargesBubblePlotToggleButton.setFocusable(false);
         moreThanTwoChargesBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        moreThanTwoChargesBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        moreThanTwoChargesBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         moreThanTwoChargesBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         moreThanTwoChargesBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -776,7 +775,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         barsBubblePlotToggleButton.setToolTipText("Add bars highlighting the fragment ion types");
         barsBubblePlotToggleButton.setFocusable(false);
         barsBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        barsBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        barsBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         barsBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         barsBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -843,7 +842,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         aIonToggleButton.setFocusable(false);
         aIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         aIonToggleButton.setMinimumSize(new java.awt.Dimension(25, 21));
-        aIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        aIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         aIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         aIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -856,7 +855,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         bIonToggleButton.setText("b");
         bIonToggleButton.setFocusable(false);
         bIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        bIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         bIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         bIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -868,7 +867,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         cIonToggleButton.setText("c");
         cIonToggleButton.setFocusable(false);
         cIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        cIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        cIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         cIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         cIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -880,7 +879,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         xIonToggleButton.setText("x");
         xIonToggleButton.setFocusable(false);
         xIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        xIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        xIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         xIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         xIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -893,7 +892,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         yIonToggleButton.setText("y");
         yIonToggleButton.setFocusable(false);
         yIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        yIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        yIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         yIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         yIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -905,7 +904,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         zIonToggleButton.setText("z");
         zIonToggleButton.setFocusable(false);
         zIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        zIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        zIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         zIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         zIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -917,7 +916,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         h2oToggleButton.setText("H2O");
         h2oToggleButton.setFocusable(false);
         h2oToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        h2oToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        h2oToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         h2oToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         h2oToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -929,7 +928,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         nh3ToggleButton.setText("NH3");
         nh3ToggleButton.setFocusable(false);
         nh3ToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        nh3ToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        nh3ToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         nh3ToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         nh3ToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -941,7 +940,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         otherToggleButton.setText("Oth.");
         otherToggleButton.setFocusable(false);
         otherToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        otherToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        otherToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         otherToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         otherToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -954,7 +953,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         oneChargeToggleButton.setText("+");
         oneChargeToggleButton.setFocusable(false);
         oneChargeToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        oneChargeToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        oneChargeToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         oneChargeToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         oneChargeToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -966,7 +965,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         twoChargesToggleButton.setText("++");
         twoChargesToggleButton.setFocusable(false);
         twoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        twoChargesToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        twoChargesToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         twoChargesToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         twoChargesToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -978,7 +977,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         moreThanTwoChargesToggleButton.setText(">2 ");
         moreThanTwoChargesToggleButton.setFocusable(false);
         moreThanTwoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        moreThanTwoChargesToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        moreThanTwoChargesToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         moreThanTwoChargesToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         moreThanTwoChargesToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1174,11 +1173,11 @@ public class OverviewPanel extends javax.swing.JPanel {
             updateSpectrum(row, false);
             String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
             peptideShakerGUI.selectSpectrum(spectrumKey);
-            
+
             if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
                 peptideShakerGUI.openSpectrumIdTab();
             }
-        } 
+        }
 }//GEN-LAST:event_psmTableMouseClicked
 
     /**
@@ -2345,19 +2344,4 @@ public class OverviewPanel extends javax.swing.JPanel {
             }
         }
     }
-    
-    /**
-     * Make sure same spectrum as the one currently selected in the Overview 
-     * tab is selected across all the tabs.
-     */
-    public void setSelectedSpectrum () {
-        
-        int row = psmTable.getSelectedRow();
-
-        if (row != -1) {
-            updateSpectrum(row, false);
-            String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
-            peptideShakerGUI.selectSpectrum(spectrumKey);
-        }
-    }         
 }

@@ -859,7 +859,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             overviewPanel.updateSeparators();
 
             progressDialog = new ProgressDialog(this, this, true);
-            progressDialog.setMax(5);
+            progressDialog.setMax(6);
             progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
@@ -877,8 +877,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     int counter = 0;
 
+                    progressDialog.setValue(++counter);
                     spectrumIdentificationPanel.displayResults();
                     progressDialog.setValue(++counter);
+                    progressDialog.setValue(++counter);
+                    ptmPanel.displayResults();
                     
                     try {
                         progressDialog.setValue(++counter);
@@ -890,11 +893,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     
                     statsPanel.displayResults();
                     progressDialog.setValue(++counter);
-                    ptmPanel.displayResults();
-                    progressDialog.setValue(++counter);
-                    
-                    // make sure same spectrum is selected across the tabs 
-                    overviewPanel.setSelectedSpectrum();
                     
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
