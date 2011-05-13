@@ -1294,7 +1294,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void fdrSlider2MouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrSlider2MouseReleased
         fdrSlider1.setValue(fdrSlider2.getValue());
-        fdrSlider2MouseReleased(null);
+        fdrSlider1MouseReleased(null);
     }//GEN-LAST:event_fdrSlider2MouseReleased
 
     /**
@@ -1304,7 +1304,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void fdrSlider2MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrSlider2MouseDragged
         fdrSlider1.setValue(fdrSlider2.getValue());
-        fdrSlider2MouseDragged(null);
+        fdrSlider1MouseDragged(null);
     }//GEN-LAST:event_fdrSlider2MouseDragged
 
     /**

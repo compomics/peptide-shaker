@@ -771,7 +771,7 @@
                       <Dimension value="[25, 21]"/>
                     </Property>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[40, 25]"/>
+                      <Dimension value="[39, 25]"/>
                     </Property>
                     <Property name="verticalTextPosition" type="int" value="3"/>
                   </Properties>
@@ -786,7 +786,7 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[40, 25]"/>
+                      <Dimension value="[39, 25]"/>
                     </Property>
                     <Property name="verticalTextPosition" type="int" value="3"/>
                   </Properties>
@@ -800,7 +800,7 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[40, 25]"/>
+                      <Dimension value="[39, 25]"/>
                     </Property>
                     <Property name="verticalTextPosition" type="int" value="3"/>
                   </Properties>
@@ -814,7 +814,7 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[40, 25]"/>
+                      <Dimension value="[39, 25]"/>
                     </Property>
                     <Property name="verticalTextPosition" type="int" value="3"/>
                   </Properties>
@@ -829,7 +829,7 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[40, 25]"/>
+                      <Dimension value="[39, 25]"/>
                     </Property>
                     <Property name="verticalTextPosition" type="int" value="3"/>
                   </Properties>
@@ -843,7 +843,7 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[40, 25]"/>
+                      <Dimension value="[39, 25]"/>
                     </Property>
                     <Property name="verticalTextPosition" type="int" value="3"/>
                   </Properties>
@@ -857,7 +857,7 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[40, 25]"/>
+                      <Dimension value="[39, 25]"/>
                     </Property>
                     <Property name="verticalTextPosition" type="int" value="3"/>
                   </Properties>
@@ -871,7 +871,7 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[40, 25]"/>
+                      <Dimension value="[39, 25]"/>
                     </Property>
                     <Property name="verticalTextPosition" type="int" value="3"/>
                   </Properties>
@@ -885,7 +885,7 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[40, 25]"/>
+                      <Dimension value="[39, 25]"/>
                     </Property>
                     <Property name="verticalTextPosition" type="int" value="3"/>
                   </Properties>
@@ -900,7 +900,7 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[40, 25]"/>
+                      <Dimension value="[39, 25]"/>
                     </Property>
                     <Property name="verticalTextPosition" type="int" value="3"/>
                   </Properties>
@@ -914,7 +914,7 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[40, 25]"/>
+                      <Dimension value="[39, 25]"/>
                     </Property>
                     <Property name="verticalTextPosition" type="int" value="3"/>
                   </Properties>
@@ -928,7 +928,7 @@
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                      <Dimension value="[40, 25]"/>
+                      <Dimension value="[39, 25]"/>
                     </Property>
                     <Property name="verticalTextPosition" type="int" value="3"/>
                   </Properties>

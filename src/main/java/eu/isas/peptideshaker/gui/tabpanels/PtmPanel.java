@@ -578,7 +578,7 @@ public class PtmPanel extends javax.swing.JPanel {
         aIonToggleButton.setFocusable(false);
         aIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         aIonToggleButton.setMinimumSize(new java.awt.Dimension(25, 21));
-        aIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        aIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         aIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         aIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -591,7 +591,7 @@ public class PtmPanel extends javax.swing.JPanel {
         bIonToggleButton.setText("b");
         bIonToggleButton.setFocusable(false);
         bIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        bIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         bIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         bIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -603,7 +603,7 @@ public class PtmPanel extends javax.swing.JPanel {
         cIonToggleButton.setText("c");
         cIonToggleButton.setFocusable(false);
         cIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        cIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        cIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         cIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         cIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -615,7 +615,7 @@ public class PtmPanel extends javax.swing.JPanel {
         xIonToggleButton.setText("x");
         xIonToggleButton.setFocusable(false);
         xIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        xIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        xIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         xIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         xIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -628,7 +628,7 @@ public class PtmPanel extends javax.swing.JPanel {
         yIonToggleButton.setText("y");
         yIonToggleButton.setFocusable(false);
         yIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        yIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        yIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         yIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         yIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -640,7 +640,7 @@ public class PtmPanel extends javax.swing.JPanel {
         zIonToggleButton.setText("z");
         zIonToggleButton.setFocusable(false);
         zIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        zIonToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        zIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         zIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         zIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -652,7 +652,7 @@ public class PtmPanel extends javax.swing.JPanel {
         h2oToggleButton.setText("H2O");
         h2oToggleButton.setFocusable(false);
         h2oToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        h2oToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        h2oToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         h2oToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         h2oToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -664,7 +664,7 @@ public class PtmPanel extends javax.swing.JPanel {
         nh3ToggleButton.setText("NH3");
         nh3ToggleButton.setFocusable(false);
         nh3ToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        nh3ToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        nh3ToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         nh3ToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         nh3ToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -676,7 +676,7 @@ public class PtmPanel extends javax.swing.JPanel {
         otherToggleButton.setText("Oth.");
         otherToggleButton.setFocusable(false);
         otherToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        otherToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        otherToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         otherToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         otherToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -689,7 +689,7 @@ public class PtmPanel extends javax.swing.JPanel {
         oneChargeToggleButton.setText("+");
         oneChargeToggleButton.setFocusable(false);
         oneChargeToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        oneChargeToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        oneChargeToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         oneChargeToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         oneChargeToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -701,7 +701,7 @@ public class PtmPanel extends javax.swing.JPanel {
         twoChargesToggleButton.setText("++");
         twoChargesToggleButton.setFocusable(false);
         twoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        twoChargesToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        twoChargesToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         twoChargesToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         twoChargesToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -713,7 +713,7 @@ public class PtmPanel extends javax.swing.JPanel {
         moreThanTwoChargesToggleButton.setText(">2 ");
         moreThanTwoChargesToggleButton.setFocusable(false);
         moreThanTwoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        moreThanTwoChargesToggleButton.setPreferredSize(new java.awt.Dimension(40, 25));
+        moreThanTwoChargesToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
         moreThanTwoChargesToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         moreThanTwoChargesToggleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
