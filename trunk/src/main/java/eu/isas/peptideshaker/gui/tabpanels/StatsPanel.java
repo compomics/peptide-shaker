@@ -1254,6 +1254,14 @@ public class StatsPanel extends javax.swing.JPanel {
                 rightPlotSplitPane.setDividerLocation(rightPlotSplitPane.getWidth() / 2);
             }
         });
+        
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                optimizationJPanel.revalidate();
+                optimizationJPanel.repaint();
+            }
+        });
     }//GEN-LAST:event_formComponentResized
 
     /**
