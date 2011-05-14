@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
@@ -45,6 +46,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
@@ -187,6 +189,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         psmTable.getColumn("  ").setMinWidth(30);
         psmTable.getColumn("  ").setMaxWidth(30);
 
+        proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
@@ -402,6 +405,14 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 proteinTableMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                proteinTableMouseExited(evt);
+            }
+        });
+        proteinTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                proteinTableMouseMoved(evt);
             }
         });
         proteinTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1101,6 +1112,21 @@ public class OverviewPanel extends javax.swing.JPanel {
             updateSequenceCoverageMap(row, column);
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+            // open protein link in web browser
+            if (column == 1 && evt != null && evt.getButton() == MouseEvent.BUTTON1
+                    && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                String link = (String) proteinTable.getValueAt(row, column);
+                link = link.substring(link.indexOf("\"") + 1);
+                link = link.substring(0, link.indexOf("\""));
+
+                //System.out.println("Open link: " + link);
+
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                BareBonesBrowserLaunch.openURL(link);
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
         }
 }//GEN-LAST:event_proteinTableMouseClicked
 
@@ -1400,6 +1426,39 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void barsBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barsBubblePlotToggleButtonActionPerformed
         aIonToggleButtonActionPerformed(null);
 }//GEN-LAST:event_barsBubblePlotToggleButtonActionPerformed
+
+    /**
+     * Changes the cursor into a hand cursor if the table cell contains an
+     * html link.
+     *
+     * @param evt
+     */
+    private void proteinTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseMoved
+        int row = proteinTable.rowAtPoint(evt.getPoint());
+        int column = proteinTable.columnAtPoint(evt.getPoint());
+
+        if (column == 1 && proteinTable.getValueAt(row, column) != null) {
+
+            String tempValue = (String) proteinTable.getValueAt(row, column);
+
+            if (tempValue.lastIndexOf("<html>") != -1) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        } else {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_proteinTableMouseMoved
+
+    /**
+     * Changes the cursor back to the default cursor a hand.
+     *
+     * @param evt
+     */
+    private void proteinTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_proteinTableMouseExited
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonBubblePlotToggleButton;
     private javax.swing.JToggleButton aIonToggleButton;
@@ -2280,7 +2339,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                         if (!proteinMatch.isDecoy()) {
                             ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                                         index + 1,
-                                        proteinKey,
+                                        addDatabaseLink(proteinKey),
                                         description,
                                         sequenceCoverage,
                                         emPAI,
@@ -2343,5 +2402,39 @@ public class OverviewPanel extends javax.swing.JPanel {
                 new ProteinInferenceDialog(peptideShakerGUI, true, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
             }
         }
+    }
+
+    /**
+     * Transforms the protein accesion number into an html link to the 
+     * corresponding database.
+     * 
+     * @param proteinAccessionNumber    the protein accession number to transform
+     * @return                          the transformed accession number
+     */
+    private String addDatabaseLink(String proteinAccessionNumber) {
+
+        String accessionNumberWithLink = proteinAccessionNumber;
+        String database = peptideShakerGUI.getSequenceDataBase().getName();
+
+        if (database.toUpperCase().startsWith("IPI")
+                || proteinAccessionNumber.toUpperCase().startsWith("IPI")) {
+            database = "IPI";
+        } else if (database.toUpperCase().startsWith("SWISS-PROT")
+                || database.toUpperCase().startsWith("SWISSPROT")
+                || database.toUpperCase().startsWith("UNI-PROT")
+                || database.toUpperCase().startsWith("UNIPROT")) {
+            database = "UNIPROT";
+        } else {
+            database = "unknown";
+        }
+
+        if (!database.equalsIgnoreCase("unknown")) {
+            accessionNumberWithLink = "<html><a href=\"http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b"
+                    + database + "-AccNumber:" + proteinAccessionNumber
+                    + "%5d\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">" 
+                    + proteinAccessionNumber + "</font></a></html>";
+        }
+
+        return accessionNumberWithLink;
     }
 }
