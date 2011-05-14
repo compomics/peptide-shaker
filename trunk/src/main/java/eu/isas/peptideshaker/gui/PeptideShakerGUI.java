@@ -13,7 +13,6 @@ import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
-import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
@@ -153,7 +152,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The color used for the sparkline bar chart plots.
      */
     private Color sparklineColor = new Color(110, 196, 97);
-
+    /**
+     * The color to use for the HTML tags for the selected rows, in HTML color code.
+     */
+    private String selectedRowHtmlTagFontColor = "#FFFFFF";
+    /**
+     * The color to use for the HTML tags for the rows that are not selected, in HTML color code.
+     */
+    private String notSelectedRowHtmlTagFontColor = "#0101DF";
+    
     /**
      * The main method used to start PeptideShaker
      * 
@@ -324,7 +331,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PeptideShaker");
         setBackground(new java.awt.Color(255, 255, 255));
-        setMinimumSize(new java.awt.Dimension(1280, 600));
+        setMinimumSize(new java.awt.Dimension(1280, 700));
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -1269,5 +1276,23 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public void openSpectrumIdTab () {
         resultsJTabbedPane.setSelectedIndex(2);
+    }
+
+    /**
+     * Returns the color to use for the HTML tags for the selected rows, in HTML color code.
+     * 
+     * @return the color to use for the HTML tags for the selected rows, in HTML color code
+     */
+    public String getSelectedRowHtmlTagFontColor() {
+        return selectedRowHtmlTagFontColor;
+    }
+
+    /**
+     * Returns the color to use for the HTML tags for the rows that are not selected, in HTML color code.
+     * 
+     * @return the color to use for the HTML tags for the rows that are not selected, in HTML color code
+     */
+    public String getNotSelectedRowHtmlTagFontColor() {
+        return notSelectedRowHtmlTagFontColor;
     }
 }
