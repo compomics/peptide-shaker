@@ -98,6 +98,24 @@
             </MenuItem>
           </SubComponents>
         </Menu>
+        <Menu class="javax.swing.JMenu" name="filterMenu">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Filter"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="proteinFilterJMenuItem">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Ctrl+F"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Proteins"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinFilterJMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
         <Menu class="javax.swing.JMenu" name="viewJMenu">
           <Properties>
             <Property name="mnemonic" type="int" value="86"/>
@@ -249,7 +267,7 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="gradientPanel" pref="779" max="32767" attributes="0"/>
+          <Component id="gradientPanel" pref="781" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -275,9 +293,9 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="779" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="781" max="32767" attributes="0"/>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                  <Component id="resultsJTabbedPane" alignment="0" pref="779" max="32767" attributes="0"/>
+                  <Component id="resultsJTabbedPane" alignment="0" pref="781" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
