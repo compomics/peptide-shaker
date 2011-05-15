@@ -37,6 +37,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
@@ -56,6 +57,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     static {
         XYBarRenderer.setDefaultBarPainter(new StandardXYBarPainter());
     }
+    /**
+     * The current protein filter values.
+     */
+    private String[] currentProteinFilterValues = {"", "", "", "", "", "", "", ""};
+    /**
+     * The current settings for the radio buttons for the protein filters.
+     */
+    private Integer[] currrentProteinFilterRadioButtonSelections = {0, 0, 0, 0, 0, 0};
     /**
      * The scaling value for the bubbles.
      */
@@ -316,6 +325,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         searchParametersMenu = new javax.swing.JMenuItem();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         bubbleScaleJMenuItem = new javax.swing.JMenuItem();
+        filterMenu = new javax.swing.JMenu();
+        proteinFilterJMenuItem = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         overViewTabViewMenu = new javax.swing.JMenu();
         proteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -369,9 +380,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         );
         gradientPanelLayout.setVerticalGroup(
             gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 779, Short.MAX_VALUE)
+            .addGap(0, 781, Short.MAX_VALUE)
             .addGroup(gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE))
+                .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE))
         );
 
         menuBar.setBackground(new java.awt.Color(255, 255, 255));
@@ -450,6 +461,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu.add(bubbleScaleJMenuItem);
 
         menuBar.add(editMenu);
+
+        filterMenu.setText("Filter");
+
+        proteinFilterJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
+        proteinFilterJMenuItem.setText("Proteins");
+        proteinFilterJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proteinFilterJMenuItemActionPerformed(evt);
+            }
+        });
+        filterMenu.add(proteinFilterJMenuItem);
+
+        menuBar.add(filterMenu);
 
         viewJMenu.setMnemonic('V');
         viewJMenu.setText("View");
@@ -550,7 +574,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(gradientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 779, Short.MAX_VALUE)
+            .addComponent(gradientPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE)
         );
 
         pack();
@@ -826,6 +850,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_bubbleScaleJMenuItemActionPerformed
 
     /**
+     * Opens the ProteinFilter dialog.
+     * 
+     * @param evt 
+     */
+    private void proteinFilterJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinFilterJMenuItemActionPerformed
+        new ProteinFilter(this, true, currentProteinFilterValues, currrentProteinFilterRadioButtonSelections, true);
+    }//GEN-LAST:event_proteinFilterJMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
     private void loadEnzymes() {
@@ -946,6 +979,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem exitJMenuItem;
     private javax.swing.JMenuItem exportMenuItem;
     private javax.swing.JMenu fileJMenu;
+    private javax.swing.JMenu filterMenu;
     private javax.swing.JPanel gradientPanel;
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
@@ -957,6 +991,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenu overViewTabViewMenu;
     private javax.swing.JPanel overviewJPanel;
     private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
+    private javax.swing.JMenuItem proteinFilterJMenuItem;
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
     private javax.swing.JPanel ptmJPanel;
     private javax.swing.JTabbedPane resultsJTabbedPane;
@@ -1294,5 +1329,60 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public String getNotSelectedRowHtmlTagFontColor() {
         return notSelectedRowHtmlTagFontColor;
+    }
+    
+    /**
+     * Returns the protein table from the overview panel.
+     * 
+     * @return the protein table from the overview panel
+     */
+    public JTable getOverviewProteinTable () {
+        return overviewPanel.getProteinTable();
+    }
+    
+    /**
+     * Returns the current protein filter values.
+     *
+     * @return the current protein filter values
+     */
+    public String[] getCurrentProteinFilterValues() {
+        return currentProteinFilterValues;
+    }
+
+    /**
+     * Set the current protein filter values.
+     *
+     * @param currentProteinFilterValues the protein filter values to set
+     */
+    public void setCurrentProteinFilterValues(String[] currentProteinFilterValues) {
+        this.currentProteinFilterValues = currentProteinFilterValues;
+    }
+
+    /**
+     * Returns the current protein filter radio button settings.
+     *
+     * @return the current protein filter radio button settings
+     */
+    public Integer[] getCurrrentProteinFilterRadioButtonSelections() {
+        return currrentProteinFilterRadioButtonSelections;
+    }
+
+    /**
+     * Set the current protein filter radio button settings.
+     *
+     * @param currrentProteinFilterRadioButtonSelections the protein filter radio buttons to set
+     */
+    public void setCurrrentProteinFilterRadioButtonSelections(Integer[] currrentProteinFilterRadioButtonSelections) {
+        this.currrentProteinFilterRadioButtonSelections = currrentProteinFilterRadioButtonSelections;
+    }
+    
+    /**
+     * Update the overview panel to make sure that the currently selected protein 
+     * in the protein table is displayed in the other tables.
+     * 
+     * @param updateProteinSelection if true the protein selection will be updated
+     */
+    public void updateProteinTableSelection (boolean updateProteinSelection) {
+        overviewPanel.updateProteinSelection(updateProteinSelection);
     }
 }

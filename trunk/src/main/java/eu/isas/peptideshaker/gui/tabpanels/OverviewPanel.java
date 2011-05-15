@@ -2115,6 +2115,9 @@ public class OverviewPanel extends javax.swing.JPanel {
                     }
                 }
             }
+            
+            ((TitledBorder) psmJPanel.getBorder()).setTitle("Peptide-Spectrum Matched (" + psmTable.getRowCount() + ")");
+            psmJPanel.repaint();
 
             ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).setMaxValue(maxMassError);
             ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).setMaxValue(maxCharge);
@@ -2237,6 +2240,10 @@ public class OverviewPanel extends javax.swing.JPanel {
                     index++;
                 }
             }
+            
+            ((TitledBorder) peptidesJPanel.getBorder()).setTitle("Peptides (" + peptideTable.getRowCount() + ")");
+            peptidesJPanel.repaint();
+            
 
             ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
 
@@ -2368,6 +2375,9 @@ public class OverviewPanel extends javax.swing.JPanel {
                 }
             }
         }
+        
+        ((TitledBorder) proteinsJPanel.getBorder()).setTitle("Proteins (" + proteinTable.getRowCount() + ")");
+        proteinsJPanel.repaint();
 
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
@@ -2436,5 +2446,60 @@ public class OverviewPanel extends javax.swing.JPanel {
         }
 
         return accessionNumberWithLink;
+    }
+    
+    /**
+     * Returns the protein table.
+     * 
+     * @return the protein table
+     */
+    public JTable getProteinTable () {
+        return proteinTable;
+    }
+    
+    /**
+     * Make sure that the currently selected protein in the protein table is 
+     * displayed in the other tables.
+     * 
+     * @param updateProteinSelection if true the protein selection will be updated
+     */
+    public void updateProteinSelection (boolean updateProteinSelection) {
+        
+        if (updateProteinSelection) {
+            proteinTableMouseClicked(null);
+        }
+        
+        ((TitledBorder) proteinsJPanel.getBorder()).setTitle("Proteins (" + proteinTable.getRowCount() + ")");
+        proteinsJPanel.repaint();
+        
+        // if required, clear the peptide and psm tables, and the spectrum and protein sequence displays
+        if (proteinTable.getRowCount() == 0) {
+            
+            while (peptideTable.getRowCount() > 0) {
+                ((DefaultTableModel) peptideTable.getModel()).removeRow(0);
+            }
+
+            while (psmTable.getRowCount() > 0) {
+                ((DefaultTableModel) psmTable.getModel()).removeRow(0);
+            }
+            
+            ((TitledBorder) peptidesJPanel.getBorder()).setTitle("Peptides (0)");
+            peptidesJPanel.repaint();
+
+            ((TitledBorder) psmJPanel.getBorder()).setTitle("Peptide-Spectrum Matches (0)");
+            psmJPanel.repaint();
+
+            spectrumPanel.removeAll(); 
+            sequenceFragmentIonPlotsJPanel.removeAll();
+            fragmentIonsJScrollPane.removeAll(); 
+            bubbleJPanel.removeAll();
+            
+            spectrumJTabbedPane.revalidate();
+            spectrumJTabbedPane.repaint();
+            
+            coverageEditorPane.setText("");
+            ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Protein Sequence Coverage");
+            sequenceCoverageJPanel.repaint();  
+        }
     }
 }
