@@ -2335,7 +2335,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                             Protein currentProtein = db.getProtein(proteinKey);
                             int nPossible = currentProtein.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
                             emPAI = (Math.pow(10, ((double) proteinMatch.getPeptideMatches().size()) / ((double) nPossible))) - 1;
-                            description = currentProtein.getDescription();
+                            description = db.getProteinHeader(proteinKey).getDescription();
                             sequenceCoverage = 100 * estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
                         } catch (Exception e) {
                             description = "";

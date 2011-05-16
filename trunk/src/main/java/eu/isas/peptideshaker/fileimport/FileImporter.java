@@ -5,7 +5,6 @@ import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Advocate;
-import com.compomics.util.experiment.identification.FastaHeaderParser;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SequenceDataBase;
@@ -106,8 +105,8 @@ public class FileImporter {
      * @param fastaFile
      * @param fastaHeaderParser
      */
-    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, FastaHeaderParser fastaHeaderParser) {
-        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, fastaFile, fastaHeaderParser);
+    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile) {
+        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, fastaFile);
         idProcessor.execute();
     }
 
@@ -129,12 +128,12 @@ public class FileImporter {
      * @param fastaFile         FASTA file to process
      * @param fastaHeaderParser 
      */
-    public void importSequences(WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, File fastaFile, FastaHeaderParser fastaHeaderParser) {
+    public void importSequences(WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, File fastaFile) {
 
         try {
             waitingDialog.appendReport("Importing sequences from " + fastaFile.getName() + ".");
             SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
-            db.importDataBase(fastaHeaderParser, fastaFile);
+            db.importDataBase(fastaFile);
             waitingDialog.appendReport("FASTA file import completed.");
             waitingDialog.increaseProgressValue();
         } catch (FileNotFoundException e) {
@@ -218,10 +217,6 @@ public class FileImporter {
          */
         private File fastaFile;
         /**
-         * The fasta header parser
-         */
-        private FastaHeaderParser fastaHeaderParser;
-        /**
          * A list of spectrum files (can be empty, no spectrum will be imported)
          */
         private HashMap<String, File> spectrumFiles;
@@ -230,12 +225,11 @@ public class FileImporter {
          * Constructor of the worker
          * @param idFiles ArrayList containing the identification files
          */
-        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, FastaHeaderParser fastaHeaderParser) {
+        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile) {
 
             this.idFiles = idFiles;
             this.spectrumFiles = new HashMap<String, File>();
             this.fastaFile = fastaFile;
-            this.fastaHeaderParser = fastaHeaderParser;
 
             for (File file : spectrumFiles) {
                 this.spectrumFiles.put(file.getName(), file);
@@ -264,7 +258,7 @@ public class FileImporter {
 
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-            importSequences(waitingDialog, proteomicAnalysis, fastaFile, fastaHeaderParser);
+            importSequences(waitingDialog, proteomicAnalysis, fastaFile);
 
             try {
                 waitingDialog.appendReport("Reading identification files.");
