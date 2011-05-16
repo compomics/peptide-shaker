@@ -4,7 +4,6 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.AdvocateFactory;
-import com.compomics.util.experiment.identification.FastaHeaderParser;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
@@ -119,7 +118,7 @@ public class PeptideShaker {
      * @param stringAfter
      */
     public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
-            File fastaFile, String databaseName, String databaseVersion, String stringBefore, String stringAfter) {
+            File fastaFile, String databaseName, String databaseVersion) {
         
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
 
@@ -127,10 +126,9 @@ public class PeptideShaker {
             Ms2Identification identification = new Ms2Identification();
             analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, identification);
             SequenceDataBase db = new SequenceDataBase(databaseName, databaseVersion);
-            FastaHeaderParser fastaHeaderParser = new FastaHeaderParser(stringBefore, stringAfter);
             analysis.setSequenceDataBase(db);
             fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
-            fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, fastaHeaderParser);
+            fileImporter.importFiles(idFiles, spectrumFiles, fastaFile);
         } else {
             fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
             fileImporter.importFiles(spectrumFiles);

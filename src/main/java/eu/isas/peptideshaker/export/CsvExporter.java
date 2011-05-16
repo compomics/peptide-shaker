@@ -222,7 +222,7 @@ public class CsvExporter {
         }
         if (db != null && proteinMatch.getNProteins() == 1) {
             String accession = (new ArrayList<String>(proteinMatch.getTheoreticProteinsAccessions())).get(0);
-            line += db.getProtein(accession).getDescription();
+            line += db.getProteinHeader(accession).getDescription();
         }
 
         line += "\n";

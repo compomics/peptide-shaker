@@ -346,7 +346,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0: return accessions.get(row);
                 case 1:
                     if (db != null) {
-                            return db.getProtein(inspectedMatch.getTheoreticProtein(accessions.get(row)).getProteinKey()).getDescription();
+                            return db.getProteinHeader(inspectedMatch.getTheoreticProtein(accessions.get(row)).getProteinKey()).getDescription();
                     } else {
                         return "Database not loaded";
                     }
