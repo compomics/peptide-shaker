@@ -6,6 +6,7 @@ import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
+import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -1383,6 +1384,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         minPeplengthTxt.setText("");
         massDeviationTxt.setText("");
 
+        SequenceDataBase db = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSequenceDataBase();
+        dbNameTxt.setText(db.getName());
+        dbVersionTxt.setText(db.getVersion());
     }
 
     /**
