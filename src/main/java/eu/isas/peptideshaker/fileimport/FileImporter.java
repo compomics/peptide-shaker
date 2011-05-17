@@ -4,7 +4,6 @@ import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
-import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SequenceDataBase;
@@ -103,7 +102,6 @@ public class FileImporter {
      * @param idFiles the identification files to import the Ids from
      * @param spectrumFiles the files where the corresponding spectra can be imported
      * @param fastaFile
-     * @param fastaHeaderParser
      */
     public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile) {
         IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, fastaFile);
@@ -126,7 +124,6 @@ public class FileImporter {
      * @param waitingDialog     Dialog displaying feedback to the user
      * @param proteomicAnalysis The proteomic analysis to attach the database to
      * @param fastaFile         FASTA file to process
-     * @param fastaHeaderParser 
      */
     public void importSequences(WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, File fastaFile) {
 
