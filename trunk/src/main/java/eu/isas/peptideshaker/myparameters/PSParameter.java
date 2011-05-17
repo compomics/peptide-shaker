@@ -236,7 +236,7 @@ public class PSParameter implements UrParameter {
     /**
      * Set the the PSM probability.
      *
-     * @param spectrumProbability the new the PSM probability
+     * @param psmProbability the new the PSM probability
      */
     public void setPsmProbability(double psmProbability) {
         this.psmProbability = psmProbability;

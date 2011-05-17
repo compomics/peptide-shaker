@@ -21,7 +21,6 @@ import eu.isas.peptideshaker.fdrestimation.TargetDecoyResults;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.fileimport.FileImporter;
-import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.File;
@@ -114,8 +113,6 @@ public class PeptideShaker {
      * @param fastaFile         The database file in the fasta format
      * @param databaseName
      * @param databaseVersion
-     * @param stringBefore
-     * @param stringAfter
      */
     public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             File fastaFile, String databaseName, String databaseVersion) {
