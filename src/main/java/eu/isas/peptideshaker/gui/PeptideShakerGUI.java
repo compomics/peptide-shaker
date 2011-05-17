@@ -9,6 +9,8 @@ import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SequenceDataBase;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
@@ -17,6 +19,7 @@ import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.gui.tabpanels.OverviewPanel;
+import eu.isas.peptideshaker.gui.tabpanels.ProteinStructurePanel;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
@@ -146,6 +149,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private SpectrumIdentificationPanel spectrumIdentificationPanel;
     /**
+     * The protein structure panel.
+     */
+    private ProteinStructurePanel proteinStructurePanel;
+    /**
      * The sequence database used for identification
      */
     private SequenceDataBase sequenceDataBase;
@@ -195,6 +202,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         statsPanel = new StatsPanel(this);
         ptmPanel = new PtmPanel(this);
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
+        proteinStructurePanel = new ProteinStructurePanel(this);
 
         initComponents();
 
@@ -238,6 +246,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         spectrumJPanel.add(spectrumIdentificationPanel);
         spectrumJPanel.revalidate();
         spectrumJPanel.repaint();
+        
+        proteinStructureJPanel.removeAll();
+        proteinStructureJPanel.add(proteinStructurePanel);
+        proteinStructureJPanel.revalidate();
+        proteinStructureJPanel.repaint();
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -310,8 +323,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         gradientPanel = new javax.swing.JPanel();
         resultsJTabbedPane = new javax.swing.JTabbedPane();
         overviewJPanel = new javax.swing.JPanel();
-        ptmJPanel = new javax.swing.JPanel();
         spectrumJPanel = new javax.swing.JPanel();
+        ptmJPanel = new javax.swing.JPanel();
+        proteinStructureJPanel = new javax.swing.JPanel();
         statsJPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
@@ -359,12 +373,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         overviewJPanel.setLayout(new javax.swing.BoxLayout(overviewJPanel, javax.swing.BoxLayout.LINE_AXIS));
         resultsJTabbedPane.addTab("Overview", overviewJPanel);
 
-        ptmJPanel.setOpaque(false);
-        ptmJPanel.setLayout(new javax.swing.BoxLayout(ptmJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        resultsJTabbedPane.addTab("PTMs", ptmJPanel);
-
         spectrumJPanel.setLayout(new javax.swing.BoxLayout(spectrumJPanel, javax.swing.BoxLayout.LINE_AXIS));
         resultsJTabbedPane.addTab("Spectrum IDs", spectrumJPanel);
+
+        ptmJPanel.setOpaque(false);
+        ptmJPanel.setLayout(new javax.swing.BoxLayout(ptmJPanel, javax.swing.BoxLayout.LINE_AXIS));
+        resultsJTabbedPane.addTab("Modifications", ptmJPanel);
+
+        proteinStructureJPanel.setOpaque(false);
+        proteinStructureJPanel.setLayout(new javax.swing.BoxLayout(proteinStructureJPanel, javax.swing.BoxLayout.LINE_AXIS));
+        resultsJTabbedPane.addTab("3D Structures", proteinStructureJPanel);
 
         statsJPanel.setOpaque(false);
         statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -899,7 +917,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             overviewPanel.updateSeparators();
 
             progressDialog = new ProgressDialog(this, this, true);
-            progressDialog.setMax(6);
+            progressDialog.setMax(resultsJTabbedPane.getComponentCount() + 1);
             progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
@@ -920,19 +938,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     progressDialog.setValue(++counter);
                     spectrumIdentificationPanel.displayResults();
                     progressDialog.setValue(++counter);
-                    progressDialog.setValue(++counter);
                     ptmPanel.displayResults();
+                    progressDialog.setValue(++counter);
                     
                     try {
-                        progressDialog.setValue(++counter);
                         overviewPanel.displayResults();
+                        progressDialog.setValue(++counter);
+                    
+                        statsPanel.displayResults();
+                        progressDialog.setValue(++counter);
+
+                        proteinStructurePanel.displayResults();
                         progressDialog.setValue(++counter);
                     } catch (MzMLUnmarshallerException e) {
                         JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
                     }
-                    
-                    statsPanel.displayResults();
-                    progressDialog.setValue(++counter);
                     
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
@@ -992,6 +1012,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JPanel overviewJPanel;
     private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
     private javax.swing.JMenuItem proteinFilterJMenuItem;
+    private javax.swing.JPanel proteinStructureJPanel;
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
     private javax.swing.JPanel ptmJPanel;
     private javax.swing.JTabbedPane resultsJTabbedPane;
@@ -1384,5 +1405,86 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public void updateProteinTableSelection (boolean updateProteinSelection) {
         overviewPanel.updateProteinSelection(updateProteinSelection);
+    }
+    
+    /**
+     * Set the selected protein index in the protein structure tab.
+     * 
+     * @param selectedProteinIndex the selected protein index
+     */
+    public void setSelectedProteinIndex(Integer selectedProteinIndex) {
+        proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
+    }
+    
+    /**
+     * Estimate the sequence coverage for the given protein.
+     *
+     * @param proteinMatch  the protein match
+     * @param sequence      the protein sequence
+     * @return              the estimated sequence coverage
+     */
+    public double estimateSequenceCoverage(ProteinMatch proteinMatch, String sequence) {
+
+        // an array containing the coverage index for each residue
+        int[] coverage = new int[sequence.length() + 1];
+        int peptideTempStart, peptideTempEnd;
+        String tempSequence, peptideSequence;
+
+        // iterate the peptide table and store the coverage for each peptide
+        for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
+            tempSequence = sequence;
+            peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+            peptideTempStart = 0;
+            while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+                peptideTempStart += tempSequence.lastIndexOf(peptideSequence) + 1;
+                peptideTempEnd = peptideTempStart + peptideSequence.length();
+                for (int j = peptideTempStart; j < peptideTempEnd; j++) {
+                    coverage[j] = 1;
+                }
+                tempSequence = sequence.substring(0, peptideTempStart);
+            }
+        }
+
+        double covered = 0.0;
+
+        for (int aa : coverage) {
+            covered += aa;
+        }
+
+        return covered / ((double) sequence.length());
+    }
+    
+    /**
+     * Transforms the protein accesion number into an html link to the 
+     * corresponding database.
+     * 
+     * @param proteinAccessionNumber    the protein accession number to transform
+     * @return                          the transformed accession number
+     */
+    public String addDatabaseLink(String proteinAccessionNumber) {
+
+        String accessionNumberWithLink = proteinAccessionNumber;
+        String database = getSequenceDataBase().getName();
+
+        if (database.toUpperCase().startsWith("IPI")
+                || proteinAccessionNumber.toUpperCase().startsWith("IPI")) {
+            database = "IPI";
+        } else if (database.toUpperCase().startsWith("SWISS-PROT")
+                || database.toUpperCase().startsWith("SWISSPROT")
+                || database.toUpperCase().startsWith("UNI-PROT")
+                || database.toUpperCase().startsWith("UNIPROT")) {
+            database = "UNIPROT";
+        } else {
+            database = "unknown";
+        }
+
+        if (!database.equalsIgnoreCase("unknown")) {
+            accessionNumberWithLink = "<html><a href=\"http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b"
+                    + database + "-AccNumber:" + proteinAccessionNumber
+                    + "%5d\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
+                    + proteinAccessionNumber + "</font></a></html>";
+        }
+
+        return accessionNumberWithLink;
     }
 }

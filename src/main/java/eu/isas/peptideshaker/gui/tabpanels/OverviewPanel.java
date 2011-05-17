@@ -1104,6 +1104,8 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            
+            peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
 
             // update the peptide selection
             updatedPeptideSelection(row);
@@ -1797,44 +1799,6 @@ public class OverviewPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Estimate the sequence coverage for the given protein.
-     *
-     * @param proteinMatch  the protein match
-     * @param sequence      the protein sequence
-     * @return              the estimated sequence coverage
-     */
-    private double estimateSequenceCoverage(ProteinMatch proteinMatch, String sequence) {
-
-        // an array containing the coverage index for each residue
-        int[] coverage = new int[sequence.length() + 1];
-        int peptideTempStart, peptideTempEnd;
-        String tempSequence, peptideSequence;
-
-        // iterate the peptide table and store the coverage for each peptide
-        for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-            tempSequence = sequence;
-            peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
-            peptideTempStart = 0;
-            while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                peptideTempStart += tempSequence.lastIndexOf(peptideSequence) + 1;
-                peptideTempEnd = peptideTempStart + peptideSequence.length();
-                for (int j = peptideTempStart; j < peptideTempEnd; j++) {
-                    coverage[j] = 1;
-                }
-                tempSequence = sequence.substring(0, peptideTempStart);
-            }
-        }
-
-        double covered = 0.0;
-
-        for (int aa : coverage) {
-            covered += aa;
-        }
-
-        return covered / ((double) sequence.length());
-    }
-
-    /**
      * Update the spectrum to the currently selected PSM.
      *
      * @param row           the row index of the PSM
@@ -2336,7 +2300,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                             int nPossible = currentProtein.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
                             emPAI = (Math.pow(10, ((double) proteinMatch.getPeptideMatches().size()) / ((double) nPossible))) - 1;
                             description = db.getProteinHeader(proteinKey).getDescription();
-                            sequenceCoverage = 100 * estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
+                            sequenceCoverage = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
                         } catch (Exception e) {
                             description = "";
                             emPAI = 0;
@@ -2346,7 +2310,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                         if (!proteinMatch.isDecoy()) {
                             ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                                         index + 1,
-                                        addDatabaseLink(proteinKey),
+                                        peptideShakerGUI.addDatabaseLink(proteinKey),
                                         description,
                                         sequenceCoverage,
                                         emPAI,
@@ -2414,40 +2378,6 @@ public class OverviewPanel extends javax.swing.JPanel {
         }
     }
 
-    /**
-     * Transforms the protein accesion number into an html link to the 
-     * corresponding database.
-     * 
-     * @param proteinAccessionNumber    the protein accession number to transform
-     * @return                          the transformed accession number
-     */
-    private String addDatabaseLink(String proteinAccessionNumber) {
-
-        String accessionNumberWithLink = proteinAccessionNumber;
-        String database = peptideShakerGUI.getSequenceDataBase().getName();
-
-        if (database.toUpperCase().startsWith("IPI")
-                || proteinAccessionNumber.toUpperCase().startsWith("IPI")) {
-            database = "IPI";
-        } else if (database.toUpperCase().startsWith("SWISS-PROT")
-                || database.toUpperCase().startsWith("SWISSPROT")
-                || database.toUpperCase().startsWith("UNI-PROT")
-                || database.toUpperCase().startsWith("UNIPROT")) {
-            database = "UNIPROT";
-        } else {
-            database = "unknown";
-        }
-
-        if (!database.equalsIgnoreCase("unknown")) {
-            accessionNumberWithLink = "<html><a href=\"http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b"
-                    + database + "-AccNumber:" + proteinAccessionNumber
-                    + "%5d\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">" 
-                    + proteinAccessionNumber + "</font></a></html>";
-        }
-
-        return accessionNumberWithLink;
-    }
-    
     /**
      * Returns the protein table.
      * 

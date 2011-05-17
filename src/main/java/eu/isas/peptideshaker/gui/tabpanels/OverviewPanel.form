@@ -111,7 +111,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="proteinScrollPane" pref="921" max="32767" attributes="0"/>
+                          <Component id="proteinScrollPane" pref="925" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -120,7 +120,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="proteinScrollPane" pref="248" max="32767" attributes="0"/>
+                          <Component id="proteinScrollPane" pref="251" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -264,7 +264,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="coverageScrollPane" pref="921" max="32767" attributes="0"/>
+                              <Component id="coverageScrollPane" pref="925" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -272,7 +272,7 @@
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="coverageScrollPane" pref="122" max="32767" attributes="0"/>
+                              <Component id="coverageScrollPane" pref="125" max="32767" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -366,7 +366,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="peptideScrollPane" pref="414" max="32767" attributes="0"/>
+                                      <Component id="peptideScrollPane" pref="418" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -375,7 +375,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="peptideScrollPane" pref="98" max="32767" attributes="0"/>
+                                      <Component id="peptideScrollPane" pref="101" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -487,7 +487,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="spectraScrollPane" pref="414" max="32767" attributes="0"/>
+                                      <Component id="spectraScrollPane" pref="418" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -496,7 +496,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="spectraScrollPane" pref="55" max="32767" attributes="0"/>
+                                      <Component id="spectraScrollPane" pref="58" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -624,14 +624,14 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="spectrumJTabbedPane" pref="471" max="32767" attributes="0"/>
+                                  <Component id="spectrumJTabbedPane" pref="475" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="spectrumJTabbedPane" alignment="1" pref="227" max="32767" attributes="0"/>
+                              <Component id="spectrumJTabbedPane" alignment="1" pref="230" max="32767" attributes="0"/>
                           </Group>
                         </DimensionLayout>
                       </Layout>
@@ -663,23 +663,23 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="bubblePlotJToolBar" pref="446" max="32767" attributes="0"/>
+                                          <Component id="bubblePlotJToolBar" pref="450" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                          <Component id="bubbleJPanel" alignment="0" pref="466" max="32767" attributes="0"/>
+                                          <Component id="bubbleJPanel" alignment="0" pref="470" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                                 </DimensionLayout>
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace pref="174" max="32767" attributes="0"/>
+                                          <EmptySpace pref="177" max="32767" attributes="0"/>
                                           <Component id="bubblePlotJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
-                                              <Component id="bubbleJPanel" pref="166" max="32767" attributes="0"/>
+                                              <Component id="bubbleJPanel" pref="169" max="32767" attributes="0"/>
                                               <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -923,7 +923,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="fragmentIonsJScrollPane" pref="446" max="32767" attributes="0"/>
+                                          <Component id="fragmentIonsJScrollPane" pref="450" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -932,7 +932,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="fragmentIonsJScrollPane" pref="177" max="32767" attributes="0"/>
+                                          <Component id="fragmentIonsJScrollPane" pref="180" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -967,16 +967,16 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="spectrumJToolBar" pref="446" max="32767" attributes="0"/>
+                                          <Component id="spectrumJToolBar" pref="450" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="spectrumSplitPane" alignment="0" pref="466" max="32767" attributes="0"/>
+                                      <Component id="spectrumSplitPane" alignment="0" pref="470" max="32767" attributes="0"/>
                                   </Group>
                                 </DimensionLayout>
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="spectrumSplitPane" pref="174" max="32767" attributes="0"/>
+                                          <Component id="spectrumSplitPane" pref="177" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                                           <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>

@@ -325,25 +325,39 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
             </Container>
-            <Container class="javax.swing.JPanel" name="ptmJPanel">
-              <Properties>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
+            <Container class="javax.swing.JPanel" name="spectrumJPanel">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="PTMs">
-                    <Property name="tabTitle" type="java.lang.String" value="PTMs"/>
+                  <JTabbedPaneConstraints tabName="Spectrum IDs">
+                    <Property name="tabTitle" type="java.lang.String" value="Spectrum IDs"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
             </Container>
-            <Container class="javax.swing.JPanel" name="spectrumJPanel">
+            <Container class="javax.swing.JPanel" name="ptmJPanel">
+              <Properties>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Spectrum IDs">
-                    <Property name="tabTitle" type="java.lang.String" value="Spectrum IDs"/>
+                  <JTabbedPaneConstraints tabName="Modifications">
+                    <Property name="tabTitle" type="java.lang.String" value="Modifications"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+            </Container>
+            <Container class="javax.swing.JPanel" name="proteinStructureJPanel">
+              <Properties>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="3D Structures">
+                    <Property name="tabTitle" type="java.lang.String" value="3D Structures"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
