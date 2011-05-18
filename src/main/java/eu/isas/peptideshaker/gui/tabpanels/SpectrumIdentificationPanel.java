@@ -1332,7 +1332,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             String fileSelected = (String) fileNamesCmb.getSelectedItem();
-
+            
             int maxCharge = Integer.MIN_VALUE;
             double maxMz = Double.MIN_VALUE;
 
@@ -1342,6 +1342,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             int counter = 0;
 
             for (String spectrumKey : filesMap.get(fileSelected)) {
+                
                 MSnSpectrum spectrum = (MSnSpectrum) spectrumCollection.getSpectrum(spectrumKey);
                 Precursor precursor = spectrum.getPrecursor();
                 ((DefaultTableModel) spectrumTable.getModel()).addRow(new Object[]{
@@ -1370,7 +1371,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             lLowRT -= 1.0;
-            double widthOfMarker = (lHighRT / lLowRT) * 4;
+            //double widthOfMarker = (lHighRT / lLowRT) * 4; // @TODO: switch this back on later??
+            
+            lLowRT = 100;
+            double widthOfMarker = 200;
 
             ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).setMaxValue(maxCharge);
             ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
