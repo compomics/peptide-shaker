@@ -1113,7 +1113,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             // update the sequence coverage map
             updateSequenceCoverageMap(row, column);
-
+            
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
             // open protein link in web browser
@@ -1761,14 +1761,14 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void updateSequenceCoverage(String proteinAccession) {
 
         SequenceDataBase db = peptideShakerGUI.getSequenceDataBase();
-
+        
         if (db != null) {
             ArrayList<Integer> selectedPeptideStart = new ArrayList<Integer>();
             ArrayList<Integer> selectedPeptideEnd = new ArrayList<Integer>();
 
             String cleanSequence = db.getProtein(proteinAccession).getSequence();
             String tempSequence = cleanSequence;
-
+            
             if (peptideTable.getSelectedRow() != -1) {
 
                 String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
@@ -1782,7 +1782,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                     tempSequence = cleanSequence.substring(0, startIndex);
                 }
             }
-
+            
             // an array containing the coverage index for each residue
             int[] coverage = new int[cleanSequence.length() + 1];
 
@@ -1791,9 +1791,9 @@ public class OverviewPanel extends javax.swing.JPanel {
                 String peptideKey = peptideTableMap.get(getPeptideKey(i));
                 String peptideSequence = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
                 tempSequence = cleanSequence;
-
+                
                 while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                    int peptideTempStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
+                    int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
                     int peptideTempEnd = peptideTempStart + peptideSequence.length();
                     for (int j = peptideTempStart; j < peptideTempEnd; j++) {
                         coverage[j]++;
@@ -1801,7 +1801,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                     tempSequence = cleanSequence.substring(0, peptideTempStart);
                 }
             }
-
+            
             double sequenceCoverage = ProteinSequencePane.formatProteinSequence(
                     coverageEditorPane, db.getProtein(proteinAccession).getSequence(), selectedPeptideStart, selectedPeptideEnd, coverage);
 
@@ -1819,7 +1819,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void updateSpectrum(int row, boolean resetMzRange) {
 
         if (row != -1) {
-
+            
             String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
 
             if (displaySpectrum) {
@@ -2002,7 +2002,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void updatePsmSelection(int row) {
 
         if (row != -1) {
-
+            
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
             // update the sequence coverage map
@@ -2124,7 +2124,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             while (psmTable.getRowCount() > 0) {
                 ((DefaultTableModel) psmTable.getModel()).removeRow(0);
             }
-
+            
             spectrumPanel.removeAll();
             spectrumPanel.revalidate();
             spectrumPanel.repaint();
@@ -2136,7 +2136,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             HashMap<Double, ArrayList<PeptideMatch>> peptideMap = new HashMap<Double, ArrayList<PeptideMatch>>();
             PSParameter probabilities = new PSParameter();
             double peptideProbabilityScore;
-
+            
             for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
                 probabilities = (PSParameter) peptideMatch.getUrParam(probabilities);
                 peptideProbabilityScore = probabilities.getPeptideProbabilityScore();
@@ -2147,7 +2147,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
                 peptideMap.get(peptideProbabilityScore).add(peptideMatch);
             }
-
+            
             ArrayList<Double> scores = new ArrayList<Double>(peptideMap.keySet());
             Collections.sort(scores);
 
@@ -2216,7 +2216,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                     index++;
                 }
             }
-
+            
             ((TitledBorder) peptidesJPanel.getBorder()).setTitle("Peptides (" + peptideTable.getRowCount() + ")");
             peptidesJPanel.repaint();
 
@@ -2247,7 +2247,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         double emPAI = 0, maxEmPAI = 0;
         String description = "";
         SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
-
+        
         // sort the proteins according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
         HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap =
                 new HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>>(); // Maps are my passion
@@ -2256,9 +2256,9 @@ public class OverviewPanel extends javax.swing.JPanel {
         ProteinMatch proteinMatch;
         double score;
         int nPeptides, nSpectra;
-
+        
         for (String key : peptideShakerGUI.getIdentification().getProteinIdentification().keySet()) {
-
+            
             proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(key);
             probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
             score = probabilities.getProteinProbabilityScore();
@@ -2280,15 +2280,15 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             orderMap.get(score).get(nPeptides).get(nSpectra).add(key);
         }
-
+        
         Collections.sort(scores);
         proteinTableMap = new HashMap<String, String>();
         // add the proteins to the table
         ArrayList<Integer> nP, nS;
         ArrayList<String> keys;
-
+        
         for (double currentScore : scores) {
-
+            
             nP = new ArrayList(orderMap.get(currentScore).keySet());
             Collections.sort(nP);
 
@@ -2351,23 +2351,23 @@ public class OverviewPanel extends javax.swing.JPanel {
                 }
             }
         }
-
+        
         ((TitledBorder) proteinsJPanel.getBorder()).setTitle("Proteins (" + proteinTable.getRowCount() + ")");
         proteinsJPanel.repaint();
-
+        
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).setMaxValue(maxEmPAI);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).setMaxValue(100.0);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence [%]").getCellRenderer()).setMaxValue(100.0);
-
+        
         // select the first row
         if (proteinTable.getRowCount() > 0) {
             proteinTable.setRowSelectionInterval(0, 0);
             proteinTableMouseClicked(null);
             proteinTable.requestFocus();
         }
-
+        
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
@@ -2378,8 +2378,9 @@ public class OverviewPanel extends javax.swing.JPanel {
      * @param column    the column index in the protein table
      */
     private void updateSequenceCoverageMap(int row, int column) {
-        String proteinKey = proteinTableMap.get(getProteinKey(row));
+        String proteinKey = proteinTableMap.get(getProteinKey(row)); 
         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
+
         if (proteinMatch.getNProteins() == 1) {
             updateSequenceCoverage(proteinKey);
         } else {

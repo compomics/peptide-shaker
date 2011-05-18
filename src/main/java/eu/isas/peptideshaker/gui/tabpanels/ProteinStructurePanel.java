@@ -656,7 +656,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     String tempSequence = cleanSequence;
 
                     while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                        int peptideTempStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
+                        int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
                         int peptideTempEnd = peptideTempStart + peptideSequence.length();
                         jmolPanel.getViewer().evalString("select resno >=" + peptideTempStart + "and resno <=" + peptideTempEnd + "; color orange");
                         tempSequence = cleanSequence.substring(0, peptideTempStart);
@@ -669,7 +669,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 String tempSequence = cleanSequence;
 
                 while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                    int peptideTempStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
+                    int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
                     int peptideTempEnd = peptideTempStart + peptideSequence.length();
                     jmolPanel.getViewer().evalString("select resno >=" + peptideTempStart + "and resno <=" + peptideTempEnd + "; color blue");
                     tempSequence = cleanSequence.substring(0, peptideTempStart);
