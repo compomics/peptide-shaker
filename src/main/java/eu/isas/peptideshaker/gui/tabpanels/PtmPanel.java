@@ -20,6 +20,7 @@ import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.ComponentOrientation;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -829,14 +830,20 @@ public class PtmPanel extends javax.swing.JPanel {
      * @see #peptidesTableMouseClicked(java.awt.event.MouseEvent)
      */
     private void peptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptidesTableKeyReleased
-        peptidesTableMouseClicked(null);
+        
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            peptidesTableMouseClicked(null);
+        }
     }//GEN-LAST:event_peptidesTableKeyReleased
 
     /**
      * @see #relatedPeptidesTableMouseClicked(java.awt.event.MouseEvent)
      */
     private void relatedPeptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_relatedPeptidesTableKeyReleased
-        relatedPeptidesTableMouseClicked(null);
+        
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            relatedPeptidesTableMouseClicked(null);
+        }
     }//GEN-LAST:event_relatedPeptidesTableKeyReleased
 
     /**
@@ -854,7 +861,9 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void selectedPsmTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_selectedPsmTableKeyReleased
-        updateSpectra();
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            updateSpectra();
+        }
     }//GEN-LAST:event_selectedPsmTableKeyReleased
 
     /**
@@ -872,7 +881,9 @@ public class PtmPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void relatedPsmTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_relatedPsmTableKeyReleased
-        updateSpectra();
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            updateSpectra();
+        }
     }//GEN-LAST:event_relatedPsmTableKeyReleased
 
     /**
@@ -902,7 +913,9 @@ public class PtmPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_primarySelectionTableMouseReleased
 
     private void primarySelectionTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_primarySelectionTableKeyReleased
-        primarySelectionTableMouseReleased(null);
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            primarySelectionTableMouseReleased(null);
+        }
     }//GEN-LAST:event_primarySelectionTableKeyReleased
 
     private void secondarySelectionTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_secondarySelectionTableMouseReleased
@@ -911,7 +924,9 @@ public class PtmPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_secondarySelectionTableMouseReleased
 
     private void secondarySelectionTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_secondarySelectionTableKeyReleased
-        secondarySelectionTableMouseReleased(null);
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            secondarySelectionTableMouseReleased(null);
+        }
     }//GEN-LAST:event_secondarySelectionTableKeyReleased
 
     private void aIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonToggleButtonActionPerformed

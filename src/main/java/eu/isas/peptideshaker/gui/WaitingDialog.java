@@ -263,6 +263,9 @@ public class WaitingDialog extends javax.swing.JDialog {
         progressBar.setStringPainted(true);
         progressBar.setString("Import Completed.");
         this.setTitle("Importing Data - Completed");
+        
+        // change the peptide shaker icon back to the default version
+        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
         // make the dialog shake for a couple of seconds
         startShake();

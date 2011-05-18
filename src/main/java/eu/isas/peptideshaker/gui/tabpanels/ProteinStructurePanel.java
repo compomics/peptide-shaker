@@ -10,10 +10,13 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.pdbfinder.FindPdbForUniprotAccessions;
 import com.compomics.util.pdbfinder.pdb.PdbParameter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.gui.ProgressDialog;
+import eu.isas.peptideshaker.gui.ProgressDialogParent;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,8 +41,12 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * 
  * @author Harald Barsnes
  */
-public class ProteinStructurePanel extends javax.swing.JPanel {
+public class ProteinStructurePanel extends javax.swing.JPanel implements ProgressDialogParent {
 
+    /**
+     * A simple progress dialog.
+     */
+    private static ProgressDialog progressDialog;
     /**
      * The UniProt to PDB finder.
      */
@@ -125,7 +132,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         peptideTableToolTips.add("PDB Accession Number");
         peptideTableToolTips.add("PDB Title");
         peptideTableToolTips.add("Type of Structure");
-        peptideTableToolTips.add("Resolution");
         peptideTableToolTips.add("Number of Blocks");
 
         proteinTable.getColumn(" ").setMaxWidth(50);
@@ -398,14 +404,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "PDB", "Title", "Type", "Resolution", "Blocks"
+                " ", "PDB", "Title", "Type", "Blocks"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -495,11 +501,18 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
             // @TODO: update the selection in the Overview panel??
             //peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
 
-            // update the peptide selection
-            updatedPeptideSelection(row);
-
             // update the pdb file table
             updatePdbTable(proteinTableMap.get(getProteinKey(row)));
+
+            // empty the jmol panel
+            jmolPanel = new JmolPanel();
+            pdbPanel.removeAll();
+            pdbPanel.add(jmolPanel);
+            pdbPanel.revalidate();
+            pdbPanel.repaint();
+
+            // update the peptide selection
+            updatedPeptideSelection(row);
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
@@ -584,13 +597,17 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      */
     private void peptideTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideTableKeyReleased
 
-        int row = peptideTable.getSelectedRow();
+        if (evt == null || evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            
+            int row = peptideTable.getSelectedRow();
 
-        if (row != -1) {
-            if (pdbMatchesJTable.getSelectedRow() != -1) {
-                pdbMatchesJTableMouseClicked(null);
+            if (row != -1) {
+                if (pdbMatchesJTable.getSelectedRow() != -1) {
+                    pdbMatchesJTableMouseClicked(null);
+                }
             }
         }
+
 }//GEN-LAST:event_peptideTableKeyReleased
 
     /**
@@ -600,46 +617,69 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      */
     private void pdbMatchesJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbMatchesJTableMouseClicked
 
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-        int selectedPdbIndex = (Integer) pdbMatchesJTable.getValueAt(pdbMatchesJTable.getSelectedRow(), 0);
-        PdbParameter lParam = uniProtPdb.getPdbs().get(selectedPdbIndex - 1);
-        String link = "http://www.rcsb.org/pdb/files/" + lParam.getPdbaccession() + ".pdb";
+        progressDialog = new ProgressDialog(peptideShakerGUI, this, true);
+        progressDialog.setIntermidiate(true);
+        progressDialog.doNothingOnClose();
 
-        jmolPanel.getViewer().openFile(link);
-        jmolPanel.getViewer().evalString("ribbon ONLY");
+        new Thread(new Runnable() {
 
-        SequenceDataBase db = peptideShakerGUI.getSequenceDataBase();
-        String cleanSequence = db.getProtein(proteinTableMap.get(getProteinKey(proteinTable.getSelectedRow()))).getSequence();
-
-        // iterate the peptide table and store the coverage for each peptide
-        for (int i = 0; i < peptideTable.getRowCount(); i++) {
-            String peptideKey = peptideTableMap.get(getPeptideKey(i));
-            String peptideSequence = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
-            String tempSequence = cleanSequence;
-
-            while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                int peptideTempStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
-                int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                jmolPanel.getViewer().evalString("select resno >=" + peptideTempStart + "and resno <=" + peptideTempEnd + "; color orange");
-                tempSequence = cleanSequence.substring(0, peptideTempStart);
+            public void run() {
+                progressDialog.setTitle("Loading Structure. Please Wait...");
+                progressDialog.setVisible(true);
             }
-        }
+        }, "ProgressDialog2").start();
 
-        // highlight the selected peptide
-        String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
-        String peptideSequence = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
-        String tempSequence = cleanSequence;
+        new Thread("StructureThread") {
 
-        while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-            int peptideTempStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
-            int peptideTempEnd = peptideTempStart + peptideSequence.length();
-            jmolPanel.getViewer().evalString("select resno >=" + peptideTempStart + "and resno <=" + peptideTempEnd + "; color blue");
-            tempSequence = cleanSequence.substring(0, peptideTempStart);
-        }
+            @Override
+            public void run() {
 
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                progressDialog.setIntermidiate(true);
 
+                int selectedPdbIndex = (Integer) pdbMatchesJTable.getValueAt(pdbMatchesJTable.getSelectedRow(), 0);
+                PdbParameter lParam = uniProtPdb.getPdbs().get(selectedPdbIndex - 1);
+
+                String link = "http://www.rcsb.org/pdb/files/" + lParam.getPdbaccession() + ".pdb";
+
+                jmolPanel.getViewer().openFile(link);
+                jmolPanel.getViewer().evalString("ribbon ONLY");
+
+                SequenceDataBase db = peptideShakerGUI.getSequenceDataBase();
+                String cleanSequence = db.getProtein(proteinTableMap.get(getProteinKey(proteinTable.getSelectedRow()))).getSequence();
+
+                // iterate the peptide table and store the coverage for each peptide
+                for (int i = 0; i < peptideTable.getRowCount(); i++) {
+                    String peptideKey = peptideTableMap.get(getPeptideKey(i));
+                    String peptideSequence = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
+                    String tempSequence = cleanSequence;
+
+                    while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+                        int peptideTempStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
+                        int peptideTempEnd = peptideTempStart + peptideSequence.length();
+                        jmolPanel.getViewer().evalString("select resno >=" + peptideTempStart + "and resno <=" + peptideTempEnd + "; color orange");
+                        tempSequence = cleanSequence.substring(0, peptideTempStart);
+                    }
+                }
+
+                // highlight the selected peptide
+                String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
+                String peptideSequence = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
+                String tempSequence = cleanSequence;
+
+                while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+                    int peptideTempStart = cleanSequence.lastIndexOf(peptideSequence) + 1;
+                    int peptideTempEnd = peptideTempStart + peptideSequence.length();
+                    jmolPanel.getViewer().evalString("select resno >=" + peptideTempStart + "and resno <=" + peptideTempEnd + "; color blue");
+                    tempSequence = cleanSequence.substring(0, peptideTempStart);
+                }
+
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+                setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        }.start();
     }//GEN-LAST:event_pdbMatchesJTableMouseClicked
 
     /**
@@ -648,7 +688,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void pdbMatchesJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_pdbMatchesJTableKeyReleased
-        pdbMatchesJTableMouseClicked(null);
+
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            pdbMatchesJTableMouseClicked(null);
+        }
+
     }//GEN-LAST:event_pdbMatchesJTableKeyReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
@@ -989,7 +1033,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
                         lParam.getPdbaccession(),
                         lParam.getTitle(),
                         lParam.getExperiment_type(),
-                        lParam.getResolution(),
                         lParam.getBlocks().length});
 
             // @TODO: include the block comparisson..?
@@ -1006,6 +1049,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel {
         ((TitledBorder) pdbMatchesJPanel.getBorder()).setTitle("PDB Matches (" + pdbMatchesJTable.getRowCount() + ")");
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }
+
+    @Override
+    public void cancelProgress() {
+        // do nothing
     }
 
     /**

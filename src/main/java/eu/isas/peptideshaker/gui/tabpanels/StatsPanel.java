@@ -14,6 +14,7 @@ import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.event.KeyEvent;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1270,7 +1271,9 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void groupListKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_groupListKeyReleased
-        groupSelectionChanged();
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            groupSelectionChanged();
+        }
     }//GEN-LAST:event_groupListKeyReleased
 
     /**
