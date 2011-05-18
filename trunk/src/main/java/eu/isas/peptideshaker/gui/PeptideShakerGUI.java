@@ -961,10 +961,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     try {
                         overviewPanel.displayResults();
                         progressDialog.setValue(++counter);
-                    
+
                         statsPanel.displayResults();
                         progressDialog.setValue(++counter);
-
+                        
                         proteinStructurePanel.displayResults();
                         progressDialog.setValue(++counter);
                     } catch (MzMLUnmarshallerException e) {
