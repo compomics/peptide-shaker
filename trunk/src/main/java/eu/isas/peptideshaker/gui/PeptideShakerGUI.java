@@ -42,6 +42,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -634,8 +635,24 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         final JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
         fileChooser.setDialogTitle("Save As...");
         fileChooser.setMultiSelectionEnabled(false);
+        
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.getName().toLowerCase().endsWith("cps");
+            }
+
+            @Override
+            public String getDescription() {
+                return "(Compressed Peptide Shaker format) *.cps";
+            }
+        };
+
+        fileChooser.setFileFilter(filter);
 
         int returnVal = fileChooser.showSaveDialog(this);
+        
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
             lastSelectedFolder = fileChooser.getCurrentDirectory().getPath();

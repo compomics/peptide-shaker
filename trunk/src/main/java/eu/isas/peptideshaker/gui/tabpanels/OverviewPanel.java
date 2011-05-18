@@ -33,6 +33,7 @@ import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -1104,7 +1105,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            
+
             peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
 
             // update the peptide selection
@@ -1136,7 +1137,10 @@ public class OverviewPanel extends javax.swing.JPanel {
      * @see #proteinTableMouseClicked(java.awt.event.MouseEvent)
      */
     private void proteinTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinTableKeyReleased
-        proteinTableMouseClicked(null);
+
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            proteinTableMouseClicked(null);
+        }
 }//GEN-LAST:event_proteinTableKeyReleased
 
     /**
@@ -1180,12 +1184,15 @@ public class OverviewPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void peptideTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideTableKeyReleased
-        int row = peptideTable.getSelectedRow();
 
-        if (row != -1) {
-            updatePsmSelection(row);
-            row = psmTable.getSelectedRow();
-            updateSpectrum(row, true);
+        if (evt == null || evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            int row = peptideTable.getSelectedRow();
+
+            if (row != -1) {
+                updatePsmSelection(row);
+                row = psmTable.getSelectedRow();
+                updateSpectrum(row, true);
+            }
         }
 }//GEN-LAST:event_peptideTableKeyReleased
 
@@ -1196,13 +1203,14 @@ public class OverviewPanel extends javax.swing.JPanel {
      */
     private void psmTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmTableMouseClicked
         int row = psmTable.rowAtPoint(evt.getPoint());
+        int column = psmTable.columnAtPoint(evt.getPoint());
 
         if (row != -1) {
             updateSpectrum(row, false);
             String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
             peptideShakerGUI.selectSpectrum(spectrumKey);
 
-            if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+            if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2 && column != psmTable.getColumn("  ").getModelIndex()) {
                 peptideShakerGUI.openSpectrumIdTab();
             }
         }
@@ -1214,12 +1222,16 @@ public class OverviewPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void psmTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_psmTableKeyReleased
-        int row = psmTable.getSelectedRow();
 
-        if (row != -1) {
-            updateSpectrum(row, false);
-            String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
-            peptideShakerGUI.selectSpectrum(spectrumKey);
+        if (evt == null || evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+
+            int row = psmTable.getSelectedRow();
+
+            if (row != -1) {
+                updateSpectrum(row, false);
+                String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
+                peptideShakerGUI.selectSpectrum(spectrumKey);
+            }
         }
 }//GEN-LAST:event_psmTableKeyReleased
 
@@ -2079,7 +2091,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                     }
                 }
             }
-            
+
             ((TitledBorder) psmJPanel.getBorder()).setTitle("Peptide-Spectrum Matched (" + psmTable.getRowCount() + ")");
             psmJPanel.repaint();
 
@@ -2204,10 +2216,10 @@ public class OverviewPanel extends javax.swing.JPanel {
                     index++;
                 }
             }
-            
+
             ((TitledBorder) peptidesJPanel.getBorder()).setTitle("Peptides (" + peptideTable.getRowCount() + ")");
             peptidesJPanel.repaint();
-            
+
 
             ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
 
@@ -2339,7 +2351,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 }
             }
         }
-        
+
         ((TitledBorder) proteinsJPanel.getBorder()).setTitle("Proteins (" + proteinTable.getRowCount() + ")");
         proteinsJPanel.repaint();
 
@@ -2383,28 +2395,28 @@ public class OverviewPanel extends javax.swing.JPanel {
      * 
      * @return the protein table
      */
-    public JTable getProteinTable () {
+    public JTable getProteinTable() {
         return proteinTable;
     }
-    
+
     /**
      * Make sure that the currently selected protein in the protein table is 
      * displayed in the other tables.
      * 
      * @param updateProteinSelection if true the protein selection will be updated
      */
-    public void updateProteinSelection (boolean updateProteinSelection) {
-        
+    public void updateProteinSelection(boolean updateProteinSelection) {
+
         if (updateProteinSelection) {
             proteinTableMouseClicked(null);
         }
-        
+
         ((TitledBorder) proteinsJPanel.getBorder()).setTitle("Proteins (" + proteinTable.getRowCount() + ")");
         proteinsJPanel.repaint();
-        
+
         // if required, clear the peptide and psm tables, and the spectrum and protein sequence displays
         if (proteinTable.getRowCount() == 0) {
-            
+
             while (peptideTable.getRowCount() > 0) {
                 ((DefaultTableModel) peptideTable.getModel()).removeRow(0);
             }
@@ -2412,24 +2424,24 @@ public class OverviewPanel extends javax.swing.JPanel {
             while (psmTable.getRowCount() > 0) {
                 ((DefaultTableModel) psmTable.getModel()).removeRow(0);
             }
-            
+
             ((TitledBorder) peptidesJPanel.getBorder()).setTitle("Peptides (0)");
             peptidesJPanel.repaint();
 
             ((TitledBorder) psmJPanel.getBorder()).setTitle("Peptide-Spectrum Matches (0)");
             psmJPanel.repaint();
 
-            spectrumPanel.removeAll(); 
+            spectrumPanel.removeAll();
             sequenceFragmentIonPlotsJPanel.removeAll();
-            fragmentIonsJScrollPane.removeAll(); 
+            fragmentIonsJScrollPane.removeAll();
             bubbleJPanel.removeAll();
-            
+
             spectrumJTabbedPane.revalidate();
             spectrumJTabbedPane.repaint();
-            
+
             coverageEditorPane.setText("");
             ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Protein Sequence Coverage");
-            sequenceCoverageJPanel.repaint();  
+            sequenceCoverageJPanel.repaint();
         }
     }
 }
