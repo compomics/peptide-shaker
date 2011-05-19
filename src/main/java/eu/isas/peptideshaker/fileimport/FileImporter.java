@@ -6,6 +6,7 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
+import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -261,8 +262,6 @@ public class FileImporter {
                 waitingDialog.appendReport("Reading identification files.");
                 InputMap inputMap = new InputMap();
 
-                HashSet<SpectrumMatch> tempSet;
-                IdfileReader fileReader;
                 ArrayList<String> mgfNeeded = new ArrayList<String>();
 
                 for (File idFile : idFiles) {
@@ -270,41 +269,40 @@ public class FileImporter {
                     waitingDialog.appendReport("Reading file: " + idFile.getName());
 
                     int searchEngine = readerFactory.getSearchEngine(idFile);
-
-                    fileReader = readerFactory.getFileReader(idFile, proteomicAnalysis.getSpectrumCollection());
-
-                    tempSet = fileReader.getAllSpectrumMatches();
+                    IdfileReader fileReader = readerFactory.getFileReader(idFile, proteomicAnalysis.getSpectrumCollection());
+                    HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches();
 
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();
-                    SpectrumMatch match;
-                    String mgfName;
 
                     while (matchIt.hasNext()) {
 
-                        match = matchIt.next();
+                        SpectrumMatch match = matchIt.next();
                         nTotal++;
+                        
+                        PeptideAssumption firstHit = match.getFirstHit(searchEngine);
 
-                        if (!idFilter.validateId(match.getFirstHit(searchEngine))) {
+                        if (!idFilter.validateId(firstHit)) {
                             matchIt.remove();
                         } else {
-                            inputMap.addEntry(searchEngine, match.getFirstHit(searchEngine).getEValue(), match.getFirstHit(searchEngine).isDecoy());
+                            inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
 
                             // Temporary solution for X!Tandem input waiting for their bug correction
                             if (temporaryXTandemFix) {
 
-                                Peptide peptide = match.getFirstHit(searchEngine).getPeptide();
+                                Peptide peptide = firstHit.getPeptide();
                                 ArrayList<Protein> proteins = new ArrayList<Protein>();
 
                                 for (String proteinKey : getProteins(peptide.getSequence())) {
                                     proteins.add(new Protein(proteinKey, proteinKey.contains("REV")));
                                 }
+                                
                                 if (!proteins.isEmpty()) {
                                     peptide.setParentProteins(proteins);
                                 }
                             }
 
                             identification.addSpectrumMatch(match);
-                            mgfName = Spectrum.getSpectrumFile(match.getKey());
+                            String mgfName = Spectrum.getSpectrumFile(match.getKey());
 
                             if (!mgfNeeded.contains(mgfName)) {
                                 mgfNeeded.add(mgfName);
@@ -323,7 +321,6 @@ public class FileImporter {
 
                 if (nRetained == 0) {
                     waitingDialog.appendReport("No identifications retained.");
-                    //waitingDialog.setRunCanceled();
                     waitingDialog.setRunFinished();
                     return 1;
                 }
@@ -344,14 +341,10 @@ public class FileImporter {
                 }
 
                 if (mgfMissing.isEmpty()) {
-                    for (int i = mgfImported.size(); i < mgfNames.size(); i++) {
-                        waitingDialog.increaseProgressValue();
-                    }
+                    waitingDialog.increaseProgressValue(mgfNames.size() - mgfImported.size());
                     importSpectra(waitingDialog, mgfImported);
                 } else {
-                    for (int i = 0; i < mgfNames.size(); i++) {
-                        waitingDialog.increaseProgressValue();
-                    }
+                    waitingDialog.increaseProgressValue(mgfNames.size());
                 }
 
                 peptideShaker.processIdentifications(inputMap, waitingDialog);

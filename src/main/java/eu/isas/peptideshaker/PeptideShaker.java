@@ -120,8 +120,7 @@ public class PeptideShaker {
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
 
         if (analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION) == null) {
-            Ms2Identification identification = new Ms2Identification();
-            analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, identification);
+            analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification());
             SequenceDataBase db = new SequenceDataBase(databaseName, databaseVersion);
             analysis.setSequenceDataBase(db);
             fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
@@ -167,7 +166,7 @@ public class PeptideShaker {
             e.printStackTrace();
         }
 
-        waitingDialog.appendReport("Validating identifications at 1% FDR.");
+        waitingDialog.appendReport("Validating identifications at 1% FDR."); //   @TODO: check if 1% ought to be hardcoded here
         fdrValidation();
 
         String report = "Identification processing completed.\n\n";
@@ -184,7 +183,8 @@ public class PeptideShaker {
             // @TODO: display this in a separate dialog??
             if (detailedReport) {
 
-                report += "The following identification classes retieved non robust statistical estimations, we advice to control the quality of the corresponding matches: \n";
+                report += "The following identification classes retieved non robust statistical estimations, "
+                        + "we advice to control the quality of the corresponding matches: \n";
 
                 boolean firstLine = true;
 
