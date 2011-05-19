@@ -748,6 +748,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      */
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
         if (validateInput()) {
+            
+            // clear the previuos data
+            peptideShakerGUI.clearData();
 
             this.setVisible(false);
 
@@ -1237,14 +1240,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
 
-        boolean precTolUnit;
-
-        if (((String) precMassUnitCmb.getSelectedItem()).equals("ppm")) {
-            precTolUnit = true;
-        } else {
-            precTolUnit = false;
-        }
-
+        boolean precTolUnit = ((String) precMassUnitCmb.getSelectedItem()).equals("ppm");
         IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue(), getMaxMassDeviation(), precTolUnit);
         peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, dbNameTxt.getText().trim(), dbVersionTxt.getText().trim());
     }
