@@ -143,8 +143,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         pdbMatchesJTable.getColumn(" ").setMinWidth(50);
         pdbMatchesJTable.getColumn("PDB").setMinWidth(50);
 
-        pdbMatchesJTable.getColumn("Blocks").setMinWidth(55);
-        pdbMatchesJTable.getColumn("Blocks").setMaxWidth(55);
+        pdbMatchesJTable.getColumn("Blocks").setMinWidth(100);
+        pdbMatchesJTable.getColumn("Blocks").setMaxWidth(100);
 
         // the validated column
         proteinTable.getColumn("").setMaxWidth(30);
