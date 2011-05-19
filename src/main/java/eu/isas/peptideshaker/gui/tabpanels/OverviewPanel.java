@@ -102,11 +102,11 @@ public class OverviewPanel extends javax.swing.JPanel {
     /**
      * A mapping of the protein table entries
      */
-    private HashMap<String, String> proteinTableMap = new HashMap<String, String>();
+    private HashMap<Integer, String> proteinTableMap = new HashMap<Integer, String>();
     /**
      * A mapping of the peptide table entries
      */
-    private HashMap<String, String> peptideTableMap = new HashMap<String, String>();
+    private HashMap<Integer, String> peptideTableMap = new HashMap<Integer, String>();
     /**
      * A mapping of the psm table entries
      */
@@ -384,14 +384,14 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Accession", "Description", "Coverage", "emPAI", "#Peptides", "#Spectra", "Score", "Confidence [%]", ""
+                " ", "Accession", "", "Description", "Coverage", "emPAI", "#Peptides", "#Spectra", "Score", "Confidence [%]", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -429,14 +429,14 @@ public class OverviewPanel extends javax.swing.JPanel {
             proteinsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 925, Short.MAX_VALUE)
+                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 921, Short.MAX_VALUE)
                 .addContainerGap())
         );
         proteinsJPanelLayout.setVerticalGroup(
             proteinsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
+                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -471,13 +471,13 @@ public class OverviewPanel extends javax.swing.JPanel {
             sequenceCoverageJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sequenceCoverageJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 925, Short.MAX_VALUE)
+                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 921, Short.MAX_VALUE)
                 .addContainerGap())
         );
         sequenceCoverageJPanelLayout.setVerticalGroup(
             sequenceCoverageJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sequenceCoverageJPanelLayout.createSequentialGroup()
-                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -543,14 +543,14 @@ public class OverviewPanel extends javax.swing.JPanel {
             peptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptidesJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
+                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
                 .addContainerGap())
         );
         peptidesJPanelLayout.setVerticalGroup(
             peptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptidesJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
+                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -603,14 +603,14 @@ public class OverviewPanel extends javax.swing.JPanel {
             psmJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
+                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
                 .addContainerGap())
         );
         psmJPanelLayout.setVerticalGroup(
             psmJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 58, Short.MAX_VALUE)
+                .addComponent(spectraScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -802,19 +802,19 @@ public class OverviewPanel extends javax.swing.JPanel {
             bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(bubblePlotJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
+                .addComponent(bubblePlotJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE))
+                .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE))
         );
         bubblePlotTabJPanelLayout.setVerticalGroup(
             bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
-                .addContainerGap(177, Short.MAX_VALUE)
+                .addContainerGap(174, Short.MAX_VALUE)
                 .addComponent(bubblePlotJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
-                    .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+                    .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 166, Short.MAX_VALUE)
                     .addGap(33, 33, 33)))
         );
 
@@ -830,14 +830,14 @@ public class OverviewPanel extends javax.swing.JPanel {
             fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
+                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
                 .addContainerGap())
         );
         fragmentIonJPanelLayout.setVerticalGroup(
             fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
+                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1018,14 +1018,14 @@ public class OverviewPanel extends javax.swing.JPanel {
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
+            .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
         );
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1040,12 +1040,12 @@ public class OverviewPanel extends javax.swing.JPanel {
             spectrumMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumMainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 471, Short.MAX_VALUE)
                 .addContainerGap())
         );
         spectrumMainPanelLayout.setVerticalGroup(
             spectrumMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
+            .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
         );
 
         peptidesPsmSpectrumFragmentIonsJSplitPane.setRightComponent(spectrumMainPanel);
@@ -1129,6 +1129,13 @@ public class OverviewPanel extends javax.swing.JPanel {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                 BareBonesBrowserLaunch.openURL(link);
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+
+            // open the protein inference dialog
+            if (column == 2 && evt != null && evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+                String proteinKey = proteinTableMap.get(getProteinKey(row));
+                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
+                new ProteinInferenceDialog(peptideShakerGUI, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
             }
         }
 }//GEN-LAST:event_proteinTableMouseClicked
@@ -1581,8 +1588,8 @@ public class OverviewPanel extends javax.swing.JPanel {
      * @param row
      * @return
      */
-    private String getPeptideKey(int row) {
-        return (String) peptideTable.getValueAt(row, 1) + (String) peptideTable.getValueAt(row, 2);
+    private Integer getPeptideKey(int row) {
+        return (Integer) peptideTable.getValueAt(row, 0);
     }
 
     /**
@@ -1591,8 +1598,8 @@ public class OverviewPanel extends javax.swing.JPanel {
      * @param row
      * @return
      */
-    private String getProteinKey(int row) {
-        return (String) proteinTable.getValueAt(row, 1);
+    private Integer getProteinKey(int row) {
+        return (Integer) proteinTable.getValueAt(row, 0);
     }
 
     /**
@@ -1790,7 +1797,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
                 int startIndex = 0;
                 while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                    startIndex += tempSequence.lastIndexOf(peptideSequence) + 1;
+                    startIndex = tempSequence.lastIndexOf(peptideSequence) + 1;
                     selectedPeptideStart.add(startIndex);
                     selectedPeptideEnd.add(startIndex + peptideSequence.length());
                     tempSequence = cleanSequence.substring(0, startIndex);
@@ -1800,19 +1807,24 @@ public class OverviewPanel extends javax.swing.JPanel {
             // an array containing the coverage index for each residue
             int[] coverage = new int[cleanSequence.length() + 1];
 
-            // iterate the peptide table and store the coverage for each peptide
+            PSParameter pSParameter = new PSParameter();
+            // iterate the peptide table and store the coverage for each validated peptide
             for (int i = 0; i < peptideTable.getRowCount(); i++) {
                 String peptideKey = peptideTableMap.get(getPeptideKey(i));
-                String peptideSequence = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
-                tempSequence = cleanSequence;
+                PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey);
+                pSParameter = (PSParameter) peptideMatch.getUrParam(pSParameter);
+                if (pSParameter.isValidated()) {
+                    String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+                    tempSequence = cleanSequence;
 
-                while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                    int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
-                    int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                    for (int j = peptideTempStart; j < peptideTempEnd; j++) {
-                        coverage[j]++;
+                    while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+                        int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+                        int peptideTempEnd = peptideTempStart + peptideSequence.length();
+                        for (int j = peptideTempStart; j < peptideTempEnd; j++) {
+                            coverage[j]++;
+                        }
+                        tempSequence = cleanSequence.substring(0, peptideTempStart);
                     }
-                    tempSequence = cleanSequence.substring(0, peptideTempStart);
                 }
             }
 
@@ -2144,7 +2156,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             spectrumPanel.repaint();
 
             String proteinKey = proteinTableMap.get(getProteinKey(row));
-            peptideTableMap = new HashMap<String, String>();
+            peptideTableMap = new HashMap<Integer, String>();
 
             ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
             HashMap<Double, ArrayList<PeptideMatch>> peptideMap = new HashMap<Double, ArrayList<PeptideMatch>>();
@@ -2226,7 +2238,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                         maxSpectra = peptideMatch.getSpectrumCount();
                     }
 
-                    peptideTableMap.put(peptideMatch.getTheoreticPeptide().getSequence() + modifications, peptideMatch.getKey());
+                    peptideTableMap.put(index+1, peptideMatch.getKey());
                     index++;
                 }
             }
@@ -2296,7 +2308,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         }
 
         Collections.sort(scores);
-        proteinTableMap = new HashMap<String, String>();
+        proteinTableMap = new HashMap<Integer, String>();
         // add the proteins to the table
         ArrayList<Integer> nP, nS;
         ArrayList<String> keys;
@@ -2321,22 +2333,19 @@ public class OverviewPanel extends javax.swing.JPanel {
                         proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
                         probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
 
-                        try {
-                            Protein currentProtein = db.getProtein(proteinKey);
+                            Protein currentProtein = db.getProtein(proteinMatch.getMainMatch().getAccession());
                             int nPossible = currentProtein.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
-                            emPAI = (Math.pow(10, ((double) proteinMatch.getPeptideMatches().size()) / ((double) nPossible))) - 1;
-                            description = db.getProteinHeader(proteinKey).getDescription();
+                            emPAI = (Math.pow(10, ((double) proteinMatch.getPeptideCount()) / ((double) nPossible))) - 1;
+                            description = db.getProteinHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
                             sequenceCoverage = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
-                        } catch (Exception e) {
-                            description = "";
-                            emPAI = 0;
-                            sequenceCoverage = 0;
-                        } // only add non-decoy matches to the overview
+
+                        // only add non-decoy matches to the overview
 
                         if (!proteinMatch.isDecoy()) {
                             ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                                         index + 1,
-                                        peptideShakerGUI.addDatabaseLink(proteinKey),
+                                        peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch().getAccession()),
+                                        probabilities.getGroupClass(),
                                         description,
                                         sequenceCoverage,
                                         emPAI,
@@ -2346,7 +2355,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                                         probabilities.getProteinConfidence(),
                                         probabilities.isValidated()
                                     });
-                            proteinTableMap.put(getProteinKey(index), proteinKey);
+                            proteinTableMap.put(index+1, proteinKey);
                             index++;
                         }
 
@@ -2394,15 +2403,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void updateSequenceCoverageMap(int row, int column) {
         String proteinKey = proteinTableMap.get(getProteinKey(row));
         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
-
-        if (proteinMatch.getNProteins() == 1) {
-            updateSequenceCoverage(proteinKey);
-        } else {
-            coverageEditorPane.setText("");
-            if (column == 1) {
-                new ProteinInferenceDialog(peptideShakerGUI, true, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
-            }
-        }
+        updateSequenceCoverage(proteinMatch.getMainMatch().getAccession());
     }
 
     /**

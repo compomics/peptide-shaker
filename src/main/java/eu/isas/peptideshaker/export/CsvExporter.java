@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -108,7 +109,7 @@ public class CsvExporter {
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
             Writer assumptionWriter = new BufferedWriter(new FileWriter(new File(folder, assumptionFile)));
 
-            String content = "Protein" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra" + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "nPossibilities" + SEPARATOR + "Protein length" + SEPARATOR + "p score"
+            String content = "Protein" + SEPARATOR + "Other proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra" + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "nPossibilities" + SEPARATOR + "Protein length" + SEPARATOR + "p score"
                     + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR + "Description" + "\n";
             proteinWriter.write(content);
 
@@ -168,8 +169,16 @@ public class CsvExporter {
      * @return the protein match as a line of text
      */
     private String getLine(ProteinMatch proteinMatch) {
+        PSParameter probabilities = new PSParameter();
+        probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
         String line = "";
-        line += proteinMatch.getKey() + SEPARATOR;
+        line += proteinMatch.getMainMatch().getAccession() + SEPARATOR;
+        for (String otherAccession : proteinMatch.getTheoreticProteinsAccessions()) {
+            if (!otherAccession.equals(proteinMatch.getMainMatch().getAccession())) {
+                line += otherAccession + " ";
+            }
+        }
+        line += SEPARATOR + probabilities.getGroupClass() + SEPARATOR;
         line += proteinMatch.getPeptideCount() + SEPARATOR;
         line += proteinMatch.getSpectrumCount() + SEPARATOR;
         int nValidatedPeptides = 0;
@@ -195,8 +204,6 @@ public class CsvExporter {
         } else {
             line += SEPARATOR + SEPARATOR;
         }
-        PSParameter probabilities = new PSParameter();
-        probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
 
         try {
             line += probabilities.getProteinProbabilityScore() + SEPARATOR
@@ -428,84 +435,85 @@ public class CsvExporter {
             Collections.sort(eValues);
             rank = 1;
             for (double eValue : eValues) {
-                PeptideAssumption assumption = spectrumMatch.getAllAssumptions(se).get(eValue);
-                if (se == Advocate.MASCOT) {
-                    line += "M" + SEPARATOR;
-                } else if (se == Advocate.OMSSA) {
-                    line += "O" + SEPARATOR;
-                } else if (se == Advocate.XTANDEM) {
-                    line += "X" + SEPARATOR;
-                }
-                line += rank + SEPARATOR;
-                for (Protein protein : assumption.getPeptide().getParentProteins()) {
-                    line += protein.getAccession() + " ";
-                }
-
-                line += SEPARATOR;
-                line += assumption.getPeptide().getSequence() + SEPARATOR;
-
-                for (ModificationMatch mod : assumption.getPeptide().getModificationMatches()) {
-                    if (mod.isVariable()) {
-                line += mod.getTheoreticPtm().getName() + "(" + mod.getModificationSite() + ") ";
+                for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                    if (se == Advocate.MASCOT) {
+                        line += "M" + SEPARATOR;
+                    } else if (se == Advocate.OMSSA) {
+                        line += "O" + SEPARATOR;
+                    } else if (se == Advocate.XTANDEM) {
+                        line += "X" + SEPARATOR;
                     }
-                }
+                    line += rank + SEPARATOR;
+                    for (Protein protein : assumption.getPeptide().getParentProteins()) {
+                        line += protein.getAccession() + " ";
+                    }
 
-                line += SEPARATOR;
-                line += spectrum.getPrecursor().getCharge() + SEPARATOR;
-                line += spectrum.getSpectrumTitle() + SEPARATOR;
-                line += spectrum.getFileName() + SEPARATOR;
+                    line += SEPARATOR;
+                    line += assumption.getPeptide().getSequence() + SEPARATOR;
 
-                line += assumption.getFile() + SEPARATOR;
+                    for (ModificationMatch mod : assumption.getPeptide().getModificationMatches()) {
+                        if (mod.isVariable()) {
+                            line += mod.getTheoreticPtm().getName() + "(" + mod.getModificationSite() + ") ";
+                        }
+                    }
 
-                line += spectrumMatch.getBestAssumption().getPeptide().getMass() + SEPARATOR;
-                line += spectrumMatch.getBestAssumption().getDeltaMass() + SEPARATOR;
+                    line += SEPARATOR;
+                    line += spectrum.getPrecursor().getCharge() + SEPARATOR;
+                    line += spectrum.getSpectrumTitle() + SEPARATOR;
+                    line += spectrum.getFileName() + SEPARATOR;
 
-                if (se == Advocate.MASCOT) {
-                    MascotScore score = (MascotScore) assumption.getUrParam(new MascotScore(0));
-                    line += score.getScore() + SEPARATOR;
-                    line += assumption.getEValue() + SEPARATOR;
-                } else {
-                    line += SEPARATOR + SEPARATOR;
-                }
+                    line += assumption.getFile() + SEPARATOR;
 
-                if (se == Advocate.OMSSA) {
-                    line += assumption.getEValue() + "";
-                }
-                line += SEPARATOR;
+                    line += spectrumMatch.getBestAssumption().getPeptide().getMass() + SEPARATOR;
+                    line += spectrumMatch.getBestAssumption().getDeltaMass() + SEPARATOR;
 
-                if (se == Advocate.XTANDEM) {
-                    line += assumption.getEValue() + "";
-                }
-                line += SEPARATOR;
-
-                PSParameter probabilities = new PSParameter();
-                probabilities = (PSParameter) spectrumMatch.getUrParam(probabilities);
-
-                try {
-                    line += probabilities.getPsmProbabilityScore() + SEPARATOR
-                            + probabilities.getPsmProbability() + SEPARATOR;
-                } catch (Exception e) {
-                    line += SEPARATOR + SEPARATOR;
-                }
-
-                if (assumption.isDecoy()) {
-                    line += "1" + SEPARATOR;
-                } else {
-                    line += "0" + SEPARATOR;
-                }
-
-                try {
-                    if (probabilities.isValidated()) {
-                        line += "1";
+                    if (se == Advocate.MASCOT) {
+                        MascotScore score = (MascotScore) assumption.getUrParam(new MascotScore(0));
+                        line += score.getScore() + SEPARATOR;
+                        line += assumption.getEValue() + SEPARATOR;
                     } else {
-                        line += "0";
+                        line += SEPARATOR + SEPARATOR;
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
 
-                line += "\n";
-            rank++;
+                    if (se == Advocate.OMSSA) {
+                        line += assumption.getEValue() + "";
+                    }
+                    line += SEPARATOR;
+
+                    if (se == Advocate.XTANDEM) {
+                        line += assumption.getEValue() + "";
+                    }
+                    line += SEPARATOR;
+
+                    PSParameter probabilities = new PSParameter();
+                    probabilities = (PSParameter) spectrumMatch.getUrParam(probabilities);
+
+                    try {
+                        line += probabilities.getPsmProbabilityScore() + SEPARATOR
+                                + probabilities.getPsmProbability() + SEPARATOR;
+                    } catch (Exception e) {
+                        line += SEPARATOR + SEPARATOR;
+                    }
+
+                    if (assumption.isDecoy()) {
+                        line += "1" + SEPARATOR;
+                    } else {
+                        line += "0" + SEPARATOR;
+                    }
+
+                    try {
+                        if (probabilities.isValidated()) {
+                            line += "1";
+                        } else {
+                            line += "0";
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    line += "\n";
+                    rank++;
+                }
             }
         }
         return line;

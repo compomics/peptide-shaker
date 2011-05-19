@@ -1332,7 +1332,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             String fileSelected = (String) fileNamesCmb.getSelectedItem();
-            
+
             int maxCharge = Integer.MIN_VALUE;
             double maxMz = Double.MIN_VALUE;
 
@@ -1342,7 +1342,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             int counter = 0;
 
             for (String spectrumKey : filesMap.get(fileSelected)) {
-                
+
                 MSnSpectrum spectrum = (MSnSpectrum) spectrumCollection.getSpectrum(spectrumKey);
                 Precursor precursor = spectrum.getPrecursor();
                 ((DefaultTableModel) spectrumTable.getModel()).addRow(new Object[]{
@@ -1372,7 +1372,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             lLowRT -= 1.0;
             //double widthOfMarker = (lHighRT / lLowRT) * 4; // @TODO: switch this back on later??
-            
+
             lLowRT = 100;
             double widthOfMarker = 200;
 
@@ -1455,12 +1455,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             String modifications = "";
             boolean firstline = true;
             for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
+                            if (modificationMatch.isVariable()) {
                 if (!firstline) {
                     modifications += ", ";
                 } else {
                     firstline = false;
                 }
                 modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
+                }
             }
             ((DefaultTableModel) peptideShakerJTable.getModel()).addRow(new Object[]{
                         1,
@@ -1475,39 +1477,39 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             // Fill Mascot table
 
-            mascotPeptideKeys = new HashMap<Integer, String>();
-
             if (spectrumMatch.getAllAssumptions(Advocate.MASCOT) != null) {
                 ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.MASCOT).keySet());
                 Collections.sort(eValues);
-                PeptideAssumption currentAssumption;
                 int rank = 0;
                 for (double eValue : eValues) {
-                    currentAssumption = spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValue);
-                    proteins = "";
-                    for (Protein protein : currentAssumption.getPeptide().getParentProteins()) {
-                        proteins += protein.getAccession() + " ";
-                    }
-                    modifications = "";
-                    firstline = true;
-                    for (ModificationMatch modificationMatch : currentAssumption.getPeptide().getModificationMatches()) {
-                        if (!firstline) {
-                            modifications += ", ";
-                        } else {
-                            firstline = false;
+                    for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValue)) {
+                        proteins = "";
+                        for (Protein protein : currentAssumption.getPeptide().getParentProteins()) {
+                            proteins += protein.getAccession() + " ";
                         }
-                        modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
-                    }
-                    ((DefaultTableModel) mascotTable.getModel()).addRow(new Object[]{
-                                ++rank,
-                                proteins,
-                                currentAssumption.getPeptide().getSequence(),
-                                modifications,
-                                currentAssumption.getEValue(),
-                                0
-                            });
+                        modifications = "";
+                        firstline = true;
+                        for (ModificationMatch modificationMatch : currentAssumption.getPeptide().getModificationMatches()) {
+                            if (modificationMatch.isVariable()) {
+                            if (!firstline) {
+                                modifications += ", ";
+                            } else {
+                                firstline = false;
+                            }
+                            modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
+                            }
+                        }
+                        ((DefaultTableModel) mascotTable.getModel()).addRow(new Object[]{
+                                    ++rank,
+                                    proteins,
+                                    currentAssumption.getPeptide().getSequence(),
+                                    modifications,
+                                    currentAssumption.getEValue(),
+                                    0
+                                });
 
-                    mascotPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
+                        mascotPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
+                    }
                 }
             }
 
@@ -1518,34 +1520,36 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             if (spectrumMatch.getAllAssumptions(Advocate.OMSSA) != null) {
                 ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA).keySet());
                 Collections.sort(eValues);
-                PeptideAssumption currentAssumption;
                 int rank = 0;
                 for (double eValue : eValues) {
-                    currentAssumption = spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValue);
-                    proteins = "";
-                    for (Protein protein : currentAssumption.getPeptide().getParentProteins()) {
-                        proteins += protein.getAccession() + " ";
-                    }
-                    modifications = "";
-                    firstline = true;
-                    for (ModificationMatch modificationMatch : currentAssumption.getPeptide().getModificationMatches()) {
-                        if (!firstline) {
-                            modifications += ", ";
-                        } else {
-                            firstline = false;
+                    for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValue)) {
+                        proteins = "";
+                        for (Protein protein : currentAssumption.getPeptide().getParentProteins()) {
+                            proteins += protein.getAccession() + " ";
                         }
-                        modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
-                    }
-                    ((DefaultTableModel) omssaTable.getModel()).addRow(new Object[]{
-                                ++rank,
-                                proteins,
-                                currentAssumption.getPeptide().getSequence(),
-                                modifications,
-                                currentAssumption.getEValue(),
-                                0
-                            });
+                        modifications = "";
+                        firstline = true;
+                        for (ModificationMatch modificationMatch : currentAssumption.getPeptide().getModificationMatches()) {
+                            if (modificationMatch.isVariable()) {
+                            if (!firstline) {
+                                modifications += ", ";
+                            } else {
+                                firstline = false;
+                            }
+                            modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
+                            }
+                        }
+                        ((DefaultTableModel) omssaTable.getModel()).addRow(new Object[]{
+                                    ++rank,
+                                    proteins,
+                                    currentAssumption.getPeptide().getSequence(),
+                                    modifications,
+                                    currentAssumption.getEValue(),
+                                    0
+                                });
 
-                    omssaPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
+                        omssaPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
+                    }
                 }
             }
 
@@ -1556,34 +1560,36 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             if (spectrumMatch.getAllAssumptions(Advocate.XTANDEM) != null) {
                 ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTANDEM).keySet());
                 Collections.sort(eValues);
-                PeptideAssumption currentAssumption;
                 int rank = 0;
                 for (double eValue : eValues) {
-                    currentAssumption = spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValue);
-                    proteins = "";
-                    for (Protein protein : currentAssumption.getPeptide().getParentProteins()) {
-                        proteins += protein.getAccession() + " ";
-                    }
-                    modifications = "";
-                    firstline = true;
-                    for (ModificationMatch modificationMatch : currentAssumption.getPeptide().getModificationMatches()) {
-                        if (!firstline) {
-                            modifications += ", ";
-                        } else {
-                            firstline = false;
+                    for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValue)) {
+                        proteins = "";
+                        for (Protein protein : currentAssumption.getPeptide().getParentProteins()) {
+                            proteins += protein.getAccession() + " ";
                         }
-                        modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
-                    }
-                    ((DefaultTableModel) xTandemTable.getModel()).addRow(new Object[]{
-                                ++rank,
-                                proteins,
-                                currentAssumption.getPeptide().getSequence(),
-                                modifications,
-                                currentAssumption.getEValue(),
-                                0
-                            });
+                        modifications = "";
+                        firstline = true;
+                        for (ModificationMatch modificationMatch : currentAssumption.getPeptide().getModificationMatches()) {
+                            if (modificationMatch.isVariable()) {
+                            if (!firstline) {
+                                modifications += ", ";
+                            } else {
+                                firstline = false;
+                            }
+                            modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
+                            }
+                        }
+                        ((DefaultTableModel) xTandemTable.getModel()).addRow(new Object[]{
+                                    ++rank,
+                                    proteins,
+                                    currentAssumption.getPeptide().getSequence(),
+                                    modifications,
+                                    currentAssumption.getEValue(),
+                                    0
+                                });
 
-                    xtandemPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
+                        xtandemPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
+                    }
                 }
             }
 
@@ -1641,7 +1647,22 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     ArrayList<Double> omssaEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA).keySet());
                     Collections.sort(omssaEValues);
-                    Peptide currentPeptide = spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(omssaEValues.get(omssaTable.getSelectedRow())).getPeptide();
+                    Peptide currentPeptide = null;
+                    int cpt = 0;
+                    boolean found = false;
+                    for (double eValue : omssaEValues) {
+                        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValue)) {
+                            if (cpt == omssaTable.getSelectedRow()) {
+                                currentPeptide = peptideAssumption.getPeptide();
+                                found = true;
+                                break;
+                            }
+                            cpt++;
+                        }
+                        if (found) {
+                            break;
+                        }
+                    }
                     SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
                             currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
                             currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
@@ -1655,7 +1676,22 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     ArrayList<Double> xTandemEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTANDEM).keySet());
                     Collections.sort(xTandemEValues);
-                    Peptide currentPeptide = spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(xTandemEValues.get(xTandemTable.getSelectedRow())).getPeptide();
+                    Peptide currentPeptide = null;
+                    int cpt = 0;
+                    boolean found = false;
+                    for (double eValue : xTandemEValues) {
+                        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValue)) {
+                            if (cpt == xTandemTable.getSelectedRow()) {
+                                currentPeptide = peptideAssumption.getPeptide();
+                                found = true;
+                                break;
+                            }
+                            cpt++;
+                        }
+                        if (found) {
+                            break;
+                        }
+                    }
                     SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
                             currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
                             currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
@@ -1669,7 +1705,22 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     ArrayList<Double> mascotEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.MASCOT).keySet());
                     Collections.sort(mascotEValues);
-                    Peptide currentPeptide = spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(mascotEValues.get(mascotTable.getSelectedRow())).getPeptide();
+                    Peptide currentPeptide = null;
+                    int cpt = 0;
+                    boolean found = false;
+                    for (double eValue : mascotEValues) {
+                        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValue)) {
+                            if (cpt == mascotTable.getSelectedRow()) {
+                                currentPeptide = peptideAssumption.getPeptide();
+                                found = true;
+                                break;
+                            }
+                            cpt++;
+                        }
+                        if (found) {
+                            break;
+                        }
+                    }
                     SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
                             currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
                             currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));

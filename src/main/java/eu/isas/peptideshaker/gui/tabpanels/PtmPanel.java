@@ -1808,8 +1808,10 @@ public class PtmPanel extends javax.swing.JPanel {
                     cpt = 1;
                     eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(seKey).keySet());
                     Collections.sort(eValues);
+                    boolean found = false;
                     for (double eValue : eValues) {
-                        if (getModificationFamily(spectrumMatch.getAllAssumptions(seKey).get(eValue).getPeptide()).equals(familyKey)) {
+                        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(seKey).get(eValue)) {
+                        if (getModificationFamily(peptideAssumption.getPeptide()).equals(familyKey)) {
                             if (seKey == Advocate.MASCOT) {
                                 result += "M" + cpt + " ";
                             } else if (seKey == Advocate.OMSSA) {
@@ -1817,9 +1819,14 @@ public class PtmPanel extends javax.swing.JPanel {
                             } else if (seKey == Advocate.XTANDEM) {
                                 result += "X" + cpt + " ";
                             }
+                            found = true;
                             break;
                         }
                         cpt++;
+                        }
+                        if (found == true) {
+                            break;
+                        }
                     }
                 }
                 return result;
@@ -1918,8 +1925,10 @@ public class PtmPanel extends javax.swing.JPanel {
                     cpt = 1;
                     eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(seKey).keySet());
                     Collections.sort(eValues);
+                    boolean found = false;
                     for (double eValue : eValues) {
-                        if (getModificationFamily(spectrumMatch.getAllAssumptions(seKey).get(eValue).getPeptide()).equals(familyKey)) {
+                        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(seKey).get(eValue)) {
+                        if (getModificationFamily(peptideAssumption.getPeptide()).equals(familyKey)) {
                             if (seKey == Advocate.MASCOT) {
                                 result += "M" + cpt + " ";
                             } else if (seKey == Advocate.OMSSA) {
@@ -1927,9 +1936,14 @@ public class PtmPanel extends javax.swing.JPanel {
                             } else if (seKey == Advocate.XTANDEM) {
                                 result += "X" + cpt + " ";
                             }
+                            found = true;
                             break;
                         }
                         cpt++;
+                        }
+                        if (found == true) {
+                            break;
+                        }
                     }
                 }
                 return result;
