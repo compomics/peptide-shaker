@@ -42,6 +42,31 @@ public class PSParameter implements UrParameter {
      * Boolean indicating whether a match is validated or not at the selected threshold
      */
     private boolean validated = false;
+    /**
+     * Protein groups can belong to the following groups according to the static field indexing.
+     */
+    private int groupClass = NOT_GROUP;
+    /**
+     * Static index for a protein group:
+     * 0- not a group
+     */
+    public static final int NOT_GROUP = 0;
+    /**
+     * Static index for a protein group:
+     * 1- isoforms
+     */
+    public static final int ISOFORMS = 1;
+    /**
+     * Static index for a protein group:
+     * 2- isoforms and a few unrelated proteins (less than 50%)
+     */
+    public static final int ISOFORMS_UNRELATED = 2;
+    /**
+     * Static index for a protein group:
+     * 3- unrelated proteins proteins
+     */
+    public static final int UNRELATED = 3;
+
 
     /**
      * Constructor
@@ -309,6 +334,22 @@ public class PSParameter implements UrParameter {
      */
     public boolean isValidated() {
         return validated;
+    }
+
+    /**
+     * Returns the protein group class
+     * @return the protein group class
+     */
+    public int getGroupClass() {
+        return groupClass;
+    }
+
+    /**
+     * Sets the protein group class
+     * @param groupClass the protein group class
+     */
+    public void setGroupClass(int groupClass) {
+        this.groupClass = groupClass;
     }
 
 

@@ -12,26 +12,40 @@ import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 
 /**
+ * This dialog allows the user to resolve manually some protein inference issues
  *
  * @author vaudel
  */
 public class ProteinInferenceDialog extends javax.swing.JDialog {
 
+    /**
+     * The inspected protein match
+     */
     private ProteinMatch inspectedMatch;
+    /**
+     * The protein accessions
+     */
     private ArrayList<String> accessions;
+    /**
+     * The detected unique matches (if any)
+     */
     private ArrayList<ProteinMatch> uniqueMatches = new ArrayList<ProteinMatch>();
+    /**
+     * Associated matches presenting the same proteins or a share.
+     */
     private ArrayList<ProteinMatch> associatedMatches = new ArrayList<ProteinMatch>();
+    /**
+     * The sequence database
+     */
     private SequenceDataBase db;
-    private boolean[] selection;
 
     /** Creates new form ProteinInferenceDialog */
-    public ProteinInferenceDialog(java.awt.Frame parent, boolean modal, ProteinMatch inspectedMatch, Identification identification, SequenceDataBase db) {
-        super(parent, modal);
+    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, ProteinMatch inspectedMatch, Identification identification, SequenceDataBase db) {
+        super(peptideShakerGUI, true);
 
         this.db = db;
         this.inspectedMatch = inspectedMatch;
         accessions = new ArrayList(inspectedMatch.getTheoreticProteinsAccessions());
-        selection = new boolean[accessions.size()];
         for (String proteinAccession : inspectedMatch.getTheoreticProteinsAccessions()) {
             ProteinMatch uniqueProteinMatch = identification.getProteinIdentification().get(inspectedMatch.getTheoreticProtein(proteinAccession).getProteinKey());
             if (uniqueProteinMatch != null) {
@@ -60,7 +74,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         // set up the table column properties
         setColumnProperies();
 
-        setLocationRelativeTo(parent);
+        // The index should be set in the design according to the PSParameter class static fields!
+        groupClassLbl.setSelectedIndex(psParameter.getGroupClass());
+
+        setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
 
@@ -73,11 +90,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         uniqueHitsTable.getTableHeader().setReorderingAllowed(false);
         relatedHitsTable.getTableHeader().setReorderingAllowed(false);
 
-        proteinMatchTable.getColumn(" ").setMaxWidth(60);
-        proteinMatchTable.getColumn(" ").setMinWidth(60);
 
         // change the cell renderer to fix a problem in Nimbus and alternating row colors
-        proteinMatchTable.getColumn(" ").setCellRenderer(new NimbusCheckBoxRenderer());
+        proteinMatchTable.getColumn("Main match").setCellRenderer(new NimbusCheckBoxRenderer());
     }
 
     /** This method is called from within the constructor to
@@ -90,7 +105,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         okButton = new javax.swing.JButton();
-        cancelButton = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         relatedHitsTable = new javax.swing.JTable();
@@ -100,10 +114,11 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         proteinMatchTable = new javax.swing.JTable();
-        removeButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         matchInfoLbl = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        groupClassLbl = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Unresolved Protein Inference");
@@ -113,13 +128,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         okButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 okButtonActionPerformed(evt);
-            }
-        });
-
-        cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
             }
         });
 
@@ -177,35 +185,37 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(proteinMatchTable);
 
-        removeButton.setText("Remove");
-        removeButton.setEnabled(false);
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
-                    .addComponent(removeButton))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 755, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(removeButton)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Details"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Group Details"));
 
-        jLabel1.setText("Protein Details:");
+        jLabel1.setText("Candidate proteins:");
 
         matchInfoLbl.setText("protein match information");
+
+        jLabel2.setText("Group Class:");
+
+        groupClassLbl.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0: Single protein", "1: Group of isoforms", "2: Group of isoforms with unrelated protein", "3: Group of unrelated proteins" }));
+        groupClassLbl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                groupClassLblActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -216,7 +226,11 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(matchInfoLbl)
-                .addContainerGap(551, Short.MAX_VALUE))
+                .addGap(159, 159, 159)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(groupClassLbl, 0, 295, Short.MAX_VALUE)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -224,7 +238,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(matchInfoLbl))
+                    .addComponent(matchInfoLbl)
+                    .addComponent(jLabel2)
+                    .addComponent(groupClassLbl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -233,29 +249,15 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap(661, Short.MAX_VALUE)
-                        .addComponent(okButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton)))
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(okButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
-
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -267,10 +269,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(okButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -283,23 +283,23 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
-    private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-        this.dispose();
-    }//GEN-LAST:event_cancelButtonActionPerformed
-
     private void proteinMatchTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinMatchTableMouseClicked
-
         int row = proteinMatchTable.rowAtPoint(evt.getPoint());
-
-        if (row != -1) {
-            selection[row] = !selection[row];
-        }
-
+        inspectedMatch.setMainMatch(inspectedMatch.getTheoreticProtein(accessions.get(row)));
+        proteinMatchTable.revalidate();
+        proteinMatchTable.repaint();
     }//GEN-LAST:event_proteinMatchTableMouseClicked
 
+    private void groupClassLblActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupClassLblActionPerformed
+        PSParameter pSParameter = new PSParameter();
+        pSParameter = (PSParameter) inspectedMatch.getUrParam(pSParameter);
+        pSParameter.setGroupClass(groupClassLbl.getSelectedIndex());
+    }//GEN-LAST:event_groupClassLblActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton cancelButton;
+    private javax.swing.JComboBox groupClassLbl;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -311,7 +311,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     private javax.swing.JButton okButton;
     private javax.swing.JTable proteinMatchTable;
     private javax.swing.JTable relatedHitsTable;
-    private javax.swing.JButton removeButton;
     private javax.swing.JTable uniqueHitsTable;
     // End of variables declaration//GEN-END:variables
 
@@ -333,8 +332,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         @Override
         public String getColumnName(int column) {
             switch(column) {
-                case 0: return "Accession";
-                case 1: return "Description";
+                case 0: return "Main match";
+                case 1: return "Accession";
+                case 2: return "Description";
                 default: return " ";
             }
         }
@@ -342,9 +342,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         @Override
         public Object getValueAt(int row, int column) {
             switch(column) {
-                case 2: return selection[row];
-                case 0: return accessions.get(row);
-                case 1:
+                case 0: return inspectedMatch.getMainMatch().getAccession().equals(accessions.get(row));
+                case 1: return accessions.get(row);
+                case 2:
                     if (db != null) {
                             return db.getProteinHeader(inspectedMatch.getTheoreticProtein(accessions.get(row)).getProteinKey()).getDescription();
                     } else {
@@ -361,7 +361,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return columnIndex == 2;
+            return columnIndex == 0;
         }
     }
 

@@ -19,10 +19,10 @@ import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.gui.tabpanels.OverviewPanel;
-import eu.isas.peptideshaker.gui.tabpanels.ProteinStructurePanel;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
+import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.IdentificationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
@@ -152,7 +152,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * The protein structure panel.
      */
-    private ProteinStructurePanel proteinStructurePanel;
+//    private ProteinStructurePanel proteinStructurePanel;
     /**
      * The sequence database used for identification
      */
@@ -177,7 +177,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The color to use for the HTML tags for the rows that are not selected, in HTML color code.
      */
     private String notSelectedRowHtmlTagFontColor = "#0101DF";
-    
+
     /**
      * The main method used to start PeptideShaker
      * 
@@ -203,10 +203,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         statsPanel = new StatsPanel(this);
         ptmPanel = new PtmPanel(this);
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
-        proteinStructurePanel = new ProteinStructurePanel(this);
-        
+//        proteinStructurePanel = new ProteinStructurePanel(this);
+
         initComponents();
-        
+
         setUpPanels();
         repaintPanels();
 
@@ -604,12 +604,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         final JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
         fileChooser.setDialogTitle("Save As...");
         fileChooser.setMultiSelectionEnabled(false);
-        
+
         FileFilter filter = new FileFilter() {
 
             @Override
             public boolean accept(File myFile) {
-                return myFile.getName().toLowerCase().endsWith("cps");
+                return myFile.getName().toLowerCase().endsWith("cps") || myFile.isDirectory();
             }
 
             @Override
@@ -621,7 +621,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         fileChooser.setFileFilter(filter);
 
         int returnVal = fileChooser.showSaveDialog(this);
-        
+
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
             lastSelectedFolder = fileChooser.getCurrentDirectory().getPath();
@@ -926,20 +926,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     progressDialog.setValue(++counter);
                     ptmPanel.displayResults();
                     progressDialog.setValue(++counter);
-                    
+
                     try {
                         overviewPanel.displayResults();
                         progressDialog.setValue(++counter);
 
                         statsPanel.displayResults();
                         progressDialog.setValue(++counter);
-                        
-                        proteinStructurePanel.displayResults();
+
+//                        proteinStructurePanel.displayResults();
                         progressDialog.setValue(++counter);
                     } catch (MzMLUnmarshallerException e) {
                         JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
                     }
-                    
+
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
                 }
@@ -1312,11 +1312,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void selectSpectrum(String spectrumKey) {
         spectrumIdentificationPanel.selectSpectrum(spectrumKey);
     }
-    
+
     /**
      * Opens the Spectrum ID tab.
      */
-    public void openSpectrumIdTab () {
+    public void openSpectrumIdTab() {
         resultsJTabbedPane.setSelectedIndex(2);
     }
 
@@ -1337,16 +1337,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public String getNotSelectedRowHtmlTagFontColor() {
         return notSelectedRowHtmlTagFontColor;
     }
-    
+
     /**
      * Returns the protein table from the overview panel.
      * 
      * @return the protein table from the overview panel
      */
-    public JTable getOverviewProteinTable () {
+    public JTable getOverviewProteinTable() {
         return overviewPanel.getProteinTable();
     }
-    
+
     /**
      * Returns the current protein filter values.
      *
@@ -1382,26 +1382,26 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void setCurrrentProteinFilterRadioButtonSelections(Integer[] currrentProteinFilterRadioButtonSelections) {
         this.currrentProteinFilterRadioButtonSelections = currrentProteinFilterRadioButtonSelections;
     }
-    
+
     /**
      * Update the overview panel to make sure that the currently selected protein 
      * in the protein table is displayed in the other tables.
      * 
      * @param updateProteinSelection if true the protein selection will be updated
      */
-    public void updateProteinTableSelection (boolean updateProteinSelection) {
+    public void updateProteinTableSelection(boolean updateProteinSelection) {
         overviewPanel.updateProteinSelection(updateProteinSelection);
     }
-    
+
     /**
      * Set the selected protein index in the protein structure tab.
      * 
      * @param selectedProteinIndex the selected protein index
      */
     public void setSelectedProteinIndex(Integer selectedProteinIndex) {
-        proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
+//        proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
     }
-    
+
     /**
      * Estimate the sequence coverage for the given protein.
      *
@@ -1415,19 +1415,23 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         int[] coverage = new int[sequence.length() + 1];
         int peptideTempStart, peptideTempEnd;
         String tempSequence, peptideSequence;
+        PSParameter pSParameter = new PSParameter();
 
         // iterate the peptide table and store the coverage for each peptide
         for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-            tempSequence = sequence;
-            peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
-            peptideTempStart = 0;
-            while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                peptideTempStart += tempSequence.lastIndexOf(peptideSequence) + 1;
-                peptideTempEnd = peptideTempStart + peptideSequence.length();
-                for (int j = peptideTempStart; j < peptideTempEnd; j++) {
-                    coverage[j] = 1;
+            pSParameter = (PSParameter) peptideMatch.getUrParam(pSParameter);
+            if (pSParameter.isValidated()) {
+                tempSequence = sequence;
+                peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+                peptideTempStart = 0;
+                while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+                    peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+                    peptideTempEnd = peptideTempStart + peptideSequence.length();
+                    for (int j = peptideTempStart; j < peptideTempEnd; j++) {
+                        coverage[j] = 1;
+                    }
+                    tempSequence = sequence.substring(0, peptideTempStart);
                 }
-                tempSequence = sequence.substring(0, peptideTempStart);
             }
         }
 
@@ -1439,7 +1443,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         return covered / ((double) sequence.length());
     }
-    
+
     /**
      * Transforms the protein accesion number into an html link to the 
      * corresponding database.
@@ -1473,54 +1477,54 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         return accessionNumberWithLink;
     }
-    
+
     /**
      * Clear the data from the previous experiment
      */
-    public void clearData () {
-        
+    public void clearData() {
+
         // reset the filter
-        currentProteinFilterValues = new String[] {"", "", "", "", "", "", "", ""};
-        
+        currentProteinFilterValues = new String[]{"", "", "", "", "", "", "", ""};
+
         // set up the tabs/panels
         setUpPanels();
-        
+
         // repaint the panels
         repaintPanels();
     }
-    
+
     /**
      * Set up the different tabs/panels.
      */
-    private void setUpPanels () {
-        
+    private void setUpPanels() {
+
         overviewPanel = new OverviewPanel(this);
         statsPanel = new StatsPanel(this);
         ptmPanel = new PtmPanel(this);
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
-        proteinStructurePanel = new ProteinStructurePanel(this);
-        
+//        proteinStructurePanel = new ProteinStructurePanel(this);
+
         overviewJPanel.removeAll();
         overviewJPanel.add(overviewPanel);
 
         statsJPanel.removeAll();
         statsJPanel.add(statsPanel);
-        
+
         ptmJPanel.removeAll();
         ptmJPanel.add(ptmPanel);
-        
+
         spectrumJPanel.removeAll();
         spectrumJPanel.add(spectrumIdentificationPanel);
-        
+
         proteinStructureJPanel.removeAll();
-        proteinStructureJPanel.add(proteinStructurePanel);
+//        proteinStructureJPanel.add(proteinStructurePanel);
     }
-    
+
     /**
      * Repaint the tabs/panels.
      */
-    private void repaintPanels () {
-        
+    private void repaintPanels() {
+
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -1530,17 +1534,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 overviewJPanel.repaint();
             }
         });
-        
+
         statsPanel.updatePlotSizes();
         statsJPanel.revalidate();
         statsJPanel.repaint();
-        
+
         ptmJPanel.revalidate();
         ptmJPanel.repaint();
-        
+
         spectrumJPanel.revalidate();
         spectrumJPanel.repaint();
-        
+
         proteinStructureJPanel.revalidate();
         proteinStructureJPanel.repaint();
     }

@@ -116,7 +116,7 @@ public class PeptideShaker {
      */
     public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             File fastaFile, String databaseName, String databaseVersion) {
-        
+
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
 
         if (analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION) == null) {
@@ -497,7 +497,6 @@ public class PeptideShaker {
         ProteinMatch proteinShared;
         double sharedProteinProbabilityScore, uniqueProteinProbabilityScore;
         ArrayList<String> toRemove = new ArrayList<String>();
-        int nLeft = 0;
         for (String proteinSharedKey : identification.getProteinIdentification().keySet()) {
             proteinShared = identification.getProteinIdentification().get(proteinSharedKey);
             psParameter = (PSParameter) proteinShared.getUrParam(psParameter);
@@ -518,8 +517,6 @@ public class PeptideShaker {
                 }
                 if (better) {
                     toRemove.add(proteinSharedKey);
-                } else {
-                    nLeft++;
                 }
             }
         }
@@ -529,8 +526,102 @@ public class PeptideShaker {
             proteinMap.removePoint(psParameter.getProteinProbabilityScore(), proteinShared.isDecoy());
             identification.getProteinIdentification().remove(proteinKey);
         }
-        if (waitingDialog != null) {
-            waitingDialog.appendReport(toRemove.size() + " conflicts resolved. " + nLeft + " protein groups remaining.");
+        int nSolved = toRemove.size();
+        int nLeft = 0;
+        String mainKey = null;
+        boolean similarityFound, allSimilar;
+        ArrayList<String> primaryDescription, secondaryDescription;
+        for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
+            for (String proteinKey : proteinMatch.getTheoreticProteinsAccessions()) {
+                mainKey = proteinKey;
+                break;
+            }
+            if (proteinMatch.getNProteins() > 1) {
+                similarityFound = false;
+                allSimilar = false;
+                psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+                ArrayList<String> primaryKeys = new ArrayList<String>(proteinMatch.getTheoreticProteinsAccessions());
+                ArrayList<String> secondaryKeys = new ArrayList<String>(proteinMatch.getTheoreticProteinsAccessions());
+                for (int i = 0; i < primaryKeys.size() - 1; i++) {
+                    primaryDescription = parseDescription(primaryKeys.get(i));
+                    for (int j = i + 1; j < secondaryKeys.size(); j++) {
+                        secondaryDescription = parseDescription(secondaryKeys.get(j));
+                        if (getSimilarity(primaryDescription, secondaryDescription)) {
+                            similarityFound = true;
+                            mainKey = primaryKeys.get(i);
+                            break;
+                        }
+                    }
+                    if (similarityFound) {
+                        break;
+                    }
+                }
+                if (similarityFound) {
+                    allSimilar = true;
+                    for (String key : primaryKeys) {
+                        if (!mainKey.equals(key)) {
+                        primaryDescription = parseDescription(mainKey);
+                        secondaryDescription = parseDescription(key);
+                        if (!getSimilarity(primaryDescription, secondaryDescription)) {
+                            allSimilar = false;
+                            break;
+                        }
+                        }
+                    }
+                }
+                if (!similarityFound) {
+                    psParameter.setGroupClass(PSParameter.UNRELATED);
+                    nLeft++;
+                } else if (!allSimilar) {
+                    psParameter.setGroupClass(PSParameter.ISOFORMS_UNRELATED);
+                    nSolved++;
+                } else {
+                    psParameter.setGroupClass(PSParameter.ISOFORMS);
+                    nSolved++;
+                }
+            }
+            proteinMatch.setMainMatch(proteinMatch.getTheoreticProtein(mainKey));
         }
+        if (waitingDialog != null) {
+            waitingDialog.appendReport(nSolved + " conflicts resolved. " + nLeft + " protein groups remaining.");
+        }
+    }
+
+    /**
+     * Parses a protein description retaining only words longer than 3 characters
+     * @param proteinAccession the accession of the inspected protein
+     * @return description words longer than 3 characters
+     */
+    private ArrayList<String> parseDescription(String proteinAccession) {
+        SequenceDataBase db = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSequenceDataBase();
+        String description = db.getProteinHeader(proteinAccession).getDescription();
+        ArrayList<String> result = new ArrayList<String>();
+        for (String component : description.split(" ")) {
+            if (component.length() > 3) {
+                result.add(component);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Simplistic method comparing protein descriptions. Returns true if both descriptions are of same length and present more than half similar words.
+     * @param primaryDescription    The parsed description of the first protein
+     * @param secondaryDescription  The parsed description of the second protein
+     * @return  a boolean indicating whether the descriptions are similar
+     */
+    private boolean getSimilarity(ArrayList<String> primaryDescription, ArrayList<String> secondaryDescription) {
+        if (primaryDescription.size() == secondaryDescription.size()) {
+            int nMatch = 0;
+            for (int i = 0; i < primaryDescription.size(); i++) {
+                if (primaryDescription.get(i).equals(secondaryDescription.get(i))) {
+                    nMatch++;
+                }
+            }
+            if (nMatch >= primaryDescription.size()/2) {
+                return true;
+            }
+        }
+        return false;
     }
 }
