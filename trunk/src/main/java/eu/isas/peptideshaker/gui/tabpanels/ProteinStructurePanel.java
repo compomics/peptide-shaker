@@ -1047,6 +1047,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         }
 
         ((TitledBorder) pdbMatchesJPanel.getBorder()).setTitle("PDB Matches (" + pdbMatchesJTable.getRowCount() + ")");
+        pdbMatchesJPanel.repaint();
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
