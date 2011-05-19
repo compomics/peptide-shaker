@@ -1324,15 +1324,17 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void updateSelectedPsmTable() {
 
-
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
                 selectedPsmTable.revalidate();
                 selectedPsmTable.repaint();
                 // TODO: verify that this is at the right place
-                selectedPsmTable.setRowSelectionInterval(0, 0);
-                updateSpectra();
+                
+                if (selectedPsmTable.getRowCount() > 0) {
+                    selectedPsmTable.setRowSelectionInterval(0, 0);
+                    updateSpectra();
+                }
             }
         });
     }

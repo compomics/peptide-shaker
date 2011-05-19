@@ -204,8 +204,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ptmPanel = new PtmPanel(this);
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
         proteinStructurePanel = new ProteinStructurePanel(this);
-
+        
         initComponents();
+        
+        setUpPanels();
+        repaintPanels();
 
         // set the title
         setFrameTitle(null);
@@ -218,40 +221,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         loadEnzymes();
         loadModifications();
         setDefaultPreferences();
-
-        overviewJPanel.removeAll();
-        overviewJPanel.add(overviewPanel);
-
-        // invoke later to give time for components to update
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                overviewPanel.updateSeparators();
-                overviewJPanel.revalidate();
-                overviewJPanel.repaint();
-            }
-        });
-
-        statsJPanel.removeAll();
-        statsJPanel.add(statsPanel);
-        statsPanel.updatePlotSizes();
-        statsJPanel.revalidate();
-        statsJPanel.repaint();
-
-        ptmJPanel.removeAll();
-        ptmJPanel.add(ptmPanel);
-        ptmJPanel.revalidate();
-        ptmJPanel.repaint();
-
-        spectrumJPanel.removeAll();
-        spectrumJPanel.add(spectrumIdentificationPanel);
-        spectrumJPanel.revalidate();
-        spectrumJPanel.repaint();
-        
-        proteinStructureJPanel.removeAll();
-        proteinStructureJPanel.add(proteinStructurePanel);
-        proteinStructureJPanel.revalidate();
-        proteinStructureJPanel.repaint();
 
         setLocationRelativeTo(null);
         setVisible(true);
@@ -1503,5 +1472,76 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         }
 
         return accessionNumberWithLink;
+    }
+    
+    /**
+     * Clear the data from the previous experiment
+     */
+    public void clearData () {
+        
+        // reset the filter
+        currentProteinFilterValues = new String[] {"", "", "", "", "", "", "", ""};
+        
+        // set up the tabs/panels
+        setUpPanels();
+        
+        // repaint the panels
+        repaintPanels();
+    }
+    
+    /**
+     * Set up the different tabs/panels.
+     */
+    private void setUpPanels () {
+        
+        overviewPanel = new OverviewPanel(this);
+        statsPanel = new StatsPanel(this);
+        ptmPanel = new PtmPanel(this);
+        spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
+        proteinStructurePanel = new ProteinStructurePanel(this);
+        
+        overviewJPanel.removeAll();
+        overviewJPanel.add(overviewPanel);
+
+        statsJPanel.removeAll();
+        statsJPanel.add(statsPanel);
+        
+        ptmJPanel.removeAll();
+        ptmJPanel.add(ptmPanel);
+        
+        spectrumJPanel.removeAll();
+        spectrumJPanel.add(spectrumIdentificationPanel);
+        
+        proteinStructureJPanel.removeAll();
+        proteinStructureJPanel.add(proteinStructurePanel);
+    }
+    
+    /**
+     * Repaint the tabs/panels.
+     */
+    private void repaintPanels () {
+        
+        // invoke later to give time for components to update
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                overviewPanel.updateSeparators();
+                overviewJPanel.revalidate();
+                overviewJPanel.repaint();
+            }
+        });
+        
+        statsPanel.updatePlotSizes();
+        statsJPanel.revalidate();
+        statsJPanel.repaint();
+        
+        ptmJPanel.revalidate();
+        ptmJPanel.repaint();
+        
+        spectrumJPanel.revalidate();
+        spectrumJPanel.repaint();
+        
+        proteinStructureJPanel.revalidate();
+        proteinStructureJPanel.repaint();
     }
 }
