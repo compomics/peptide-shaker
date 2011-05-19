@@ -186,6 +186,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
         peptideTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")), new ImageIcon(this.getClass().getResource("/icons/Error_3.png"))));
+        
+        pdbMatchesJTable.getColumn("Blocks").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) pdbMatchesJTable.getColumn("Blocks").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
     }
 
     /** This method is called from within the constructor to
@@ -1024,6 +1027,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             ((DefaultTableModel) pdbMatchesJTable.getModel()).removeRow(0);
         }
 
+        int maxNumberOfBlocks = 1;
+        
         // add the new matches to the pdb table
         for (int i = 0; i < uniProtPdb.getPdbs().size(); i++) {
             PdbParameter lParam = uniProtPdb.getPdbs().get(i);
@@ -1034,6 +1039,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                         lParam.getTitle(),
                         lParam.getExperiment_type(),
                         lParam.getBlocks().length});
+            
+            if (lParam.getBlocks().length > maxNumberOfBlocks) {
+                maxNumberOfBlocks = lParam.getBlocks().length;
+            }
 
             // @TODO: include the block comparisson..?
 
@@ -1045,6 +1054,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 //                        System.out.println("\t\tEnd block " + lBlocks[j].getEnd_block() + " <=> End protein " + lBlocks[j].getEnd_protein());
 //                    }
         }
+        
+        ((JSparklinesBarChartTableCellRenderer) pdbMatchesJTable.getColumn("Blocks").getCellRenderer()).setMaxValue(maxNumberOfBlocks);
 
         ((TitledBorder) pdbMatchesJPanel.getBorder()).setTitle("PDB Matches (" + pdbMatchesJTable.getRowCount() + ")");
         pdbMatchesJPanel.repaint();
@@ -1107,5 +1118,34 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             g.getClipBounds(rectClip);
             viewer.renderScreenImage(g, currentSize, rectClip);
         }
+    }
+    
+    /**
+     * Displays or hide sparklines in the tables.
+     * 
+     * @param showSparkLines    boolean indicating whether sparklines shall be displayed or hidden
+     */
+    public void showSparkLines(boolean showSparkLines) {
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence [%]").getCellRenderer()).showNumbers(!showSparkLines);
+
+        ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("Confidence [%]").getCellRenderer()).showNumbers(!showSparkLines);
+
+        ((JSparklinesBarChartTableCellRenderer) pdbMatchesJTable.getColumn("Blocks").getCellRenderer()).showNumbers(!showSparkLines);
+
+        proteinTable.revalidate();
+        proteinTable.repaint();
+
+        peptideTable.revalidate();
+        peptideTable.repaint();
+
+        pdbMatchesJTable.revalidate();
+        pdbMatchesJTable.repaint();
     }
 }

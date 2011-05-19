@@ -4,14 +4,17 @@ import com.compomics.util.experiment.personalization.UrParameter;
 
 /**
  * Peptide-Shaker compomics utilities experiment customizable parameter.
- * This parameter will be added to spectrum, peptide and protein matches to score them, indicate the estimated posterior error probability associated and flag whether they have been validated or not.
+ * This parameter will be added to spectrum, peptide and protein matches to score 
+ * them, indicate the estimated posterior error probability associated and flag 
+ * whether they have been validated or not.
  *
  * @author Marc Vaudel
  */
 public class PSParameter implements UrParameter {
 
     /**
-     * Posterior error probability estimated for the search engine results (used only in the case of a multiple search engine study)
+     * Posterior error probability estimated for the search engine results (used 
+     * only in the case of a multiple search engine study)
      */
     private double searchEngineProbability;
     /**
@@ -67,7 +70,6 @@ public class PSParameter implements UrParameter {
      */
     public static final int UNRELATED = 3;
 
-
     /**
      * Constructor
      */
@@ -102,7 +104,8 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the peptide score
+     * Returns the peptide score.
+     * 
      * @return the peptide score
      */
     public double getPeptideScore() {
@@ -119,7 +122,8 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the peptide confidence
+     * Returns the peptide confidence.
+     * 
      * @return the peptide confidence
      */
     public double getPeptideConfidence() {
@@ -172,7 +176,8 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the protein score
+     * Returns the protein score.
+     * 
      * @return the protein score
      */
     public double getProteinScore() {
@@ -189,7 +194,8 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the protein confidence
+     * Returns the protein confidence.
+     * 
      * @return the protein confidence
      */
     public double getProteinConfidence() {
@@ -206,7 +212,7 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the protein Probabilistic score
+     * Set the protein Probabilistic score.
      *
      * @param proteinProbabilityScore the new protein Probabilistic score
      */
@@ -233,7 +239,8 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the protein confidence
+     * Returns the protein confidence.
+     * 
      * @return the protein confidence
      */
     public double getSearchEngineConfidence() {
@@ -277,7 +284,7 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Set the PSM Probabilistic score
+     * Set the PSM Probabilistic score.
      *
      * @param psmProbabilityScore the new PSM Probabilistic score
      */
@@ -286,7 +293,8 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the PSM score
+     * Returns the PSM score.
+     * 
      * @return the PSM score
      */
     public double getPsmScore() {
@@ -303,7 +311,8 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the PSM confidence
+     * Returns the PSM confidence.
+     * 
      * @return the PSM confidence
      */
     public double getPsmConfidence() {
@@ -319,9 +328,9 @@ public class PSParameter implements UrParameter {
         return confidence;
     }
 
-
     /**
-     * Un/Validates a match
+     * Un/Validates a match.
+     * 
      * @param validated boolean indicating whether the match should be validated
      */
     public void setValidated(boolean validated) {
@@ -329,7 +338,8 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns whether a match is validated or not
+     * Returns whether a match is validated or not.
+     * 
      * @return boolean indicating whether a match is validated or not
      */
     public boolean isValidated() {
@@ -337,7 +347,8 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the protein group class
+     * Returns the protein group class.
+     * 
      * @return the protein group class
      */
     public int getGroupClass() {
@@ -345,13 +356,13 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Sets the protein group class
+     * Sets the protein group class.
+     * 
      * @param groupClass the protein group class
      */
     public void setGroupClass(int groupClass) {
         this.groupClass = groupClass;
     }
-
 
     @Override
     public String getFamilyName() {
