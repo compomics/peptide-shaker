@@ -92,6 +92,15 @@ public class WaitingDialog extends javax.swing.JDialog {
     public void increaseProgressValue() {
         progressBar.setValue(progressBar.getValue() + 1);
     }
+    
+    /**
+     * Increase the progress bar value by the given amount.
+     * 
+     * @param amount the amount to increase the value by
+     */
+    public void increaseProgressValue(int amount) {
+        progressBar.setValue(progressBar.getValue() + amount);
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
