@@ -77,19 +77,26 @@ public class IdFilter {
                 return false;
             }
         }
+        
         int pepLength = assumption.getPeptide().getSequence().length();
+        
         if ((pepLength > maxPepLength && maxPepLength != 0) || pepLength < minPepLength) {
             return false;
         }
+        
         int searchEngine = assumption.getAdvocate();
         double eValue = assumption.getEValue();
+        
         if (searchEngine == Advocate.MASCOT && eValue > mascotMaxEvalue
                 || searchEngine == Advocate.OMSSA && eValue > omssaMaxEvalue
                 || searchEngine == Advocate.XTANDEM && eValue > xtandemMaxEvalue) {
             return false;
         }
+        
         boolean target = false;
         boolean decoy = false;
+        
+        // @TODO: is this supposed to be a loop??
         for (Protein protein : assumption.getPeptide().getParentProteins()) {
             if (protein.isDecoy()) {
                 decoy = true;
@@ -97,9 +104,11 @@ public class IdFilter {
                 target = true;
             }
         }
+        
         if (target && decoy) {
             return false;
         }
+        
         return true;
     }
 }
