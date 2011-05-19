@@ -1455,13 +1455,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             String modifications = "";
             boolean firstline = true;
             for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
-                            if (modificationMatch.isVariable()) {
-                if (!firstline) {
-                    modifications += ", ";
-                } else {
-                    firstline = false;
-                }
-                modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
+                if (modificationMatch.isVariable()) {
+                    if (!firstline) {
+                        modifications += ", ";
+                    } else {
+                        firstline = false;
+                    }
+                    modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
                 }
             }
             ((DefaultTableModel) peptideShakerJTable.getModel()).addRow(new Object[]{
@@ -1491,12 +1491,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         firstline = true;
                         for (ModificationMatch modificationMatch : currentAssumption.getPeptide().getModificationMatches()) {
                             if (modificationMatch.isVariable()) {
-                            if (!firstline) {
-                                modifications += ", ";
-                            } else {
-                                firstline = false;
-                            }
-                            modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
+                                if (!firstline) {
+                                    modifications += ", ";
+                                } else {
+                                    firstline = false;
+                                }
+                                modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
                             }
                         }
                         ((DefaultTableModel) mascotTable.getModel()).addRow(new Object[]{
@@ -1531,12 +1531,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         firstline = true;
                         for (ModificationMatch modificationMatch : currentAssumption.getPeptide().getModificationMatches()) {
                             if (modificationMatch.isVariable()) {
-                            if (!firstline) {
-                                modifications += ", ";
-                            } else {
-                                firstline = false;
-                            }
-                            modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
+                                if (!firstline) {
+                                    modifications += ", ";
+                                } else {
+                                    firstline = false;
+                                }
+                                modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
                             }
                         }
                         ((DefaultTableModel) omssaTable.getModel()).addRow(new Object[]{
@@ -1571,12 +1571,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         firstline = true;
                         for (ModificationMatch modificationMatch : currentAssumption.getPeptide().getModificationMatches()) {
                             if (modificationMatch.isVariable()) {
-                            if (!firstline) {
-                                modifications += ", ";
-                            } else {
-                                firstline = false;
-                            }
-                            modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
+                                if (!firstline) {
+                                    modifications += ", ";
+                                } else {
+                                    firstline = false;
+                                }
+                                modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
                             }
                         }
                         ((DefaultTableModel) xTandemTable.getModel()).addRow(new Object[]{
@@ -1616,8 +1616,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     omssaTable.revalidate();
                     omssaTable.repaint();
 
-                    //update the spectrum
-                    updateSpectrum();
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        public void run() {
+                            //update the spectrum
+                            updateSpectrum();
+                        }
+                    });
                 }
             });
         }

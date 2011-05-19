@@ -19,6 +19,7 @@ import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.gui.tabpanels.OverviewPanel;
+import eu.isas.peptideshaker.gui.tabpanels.ProteinStructurePanel;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
@@ -152,7 +153,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * The protein structure panel.
      */
-//    private ProteinStructurePanel proteinStructurePanel;
+    private ProteinStructurePanel proteinStructurePanel;
     /**
      * The sequence database used for identification
      */
@@ -787,6 +788,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         overviewPanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
         ptmPanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
         spectrumIdentificationPanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
+        proteinStructurePanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
 }//GEN-LAST:event_sparklinesJCheckBoxMenuItemActionPerformed
 
     /**
@@ -934,7 +936,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         statsPanel.displayResults();
                         progressDialog.setValue(++counter);
 
-//                        proteinStructurePanel.displayResults();
+                        proteinStructurePanel.displayResults();
                         progressDialog.setValue(++counter);
                     } catch (MzMLUnmarshallerException e) {
                         JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
@@ -1317,7 +1319,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Opens the Spectrum ID tab.
      */
     public void openSpectrumIdTab() {
-        resultsJTabbedPane.setSelectedIndex(2);
+        resultsJTabbedPane.setSelectedIndex(1);
     }
 
     /**
@@ -1399,7 +1401,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param selectedProteinIndex the selected protein index
      */
     public void setSelectedProteinIndex(Integer selectedProteinIndex) {
-//        proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
+        proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
     }
 
     /**
@@ -1502,7 +1504,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         statsPanel = new StatsPanel(this);
         ptmPanel = new PtmPanel(this);
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
-//        proteinStructurePanel = new ProteinStructurePanel(this);
+        proteinStructurePanel = new ProteinStructurePanel(this);
 
         overviewJPanel.removeAll();
         overviewJPanel.add(overviewPanel);
@@ -1517,7 +1519,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         spectrumJPanel.add(spectrumIdentificationPanel);
 
         proteinStructureJPanel.removeAll();
-//        proteinStructureJPanel.add(proteinStructurePanel);
+        proteinStructureJPanel.add(proteinStructurePanel);
     }
 
     /**
