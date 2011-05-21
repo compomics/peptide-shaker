@@ -1244,14 +1244,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).setMaxValue(biggestValue);
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).setMaxValue(biggestValue);
 
-
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                searchEngineTable.revalidate();
-                searchEngineTable.repaint();
-            }
-        });
+        searchEngineTable.revalidate();
+        searchEngineTable.repaint();
 
         String fileName;
         for (String key : spectrumCollection.getAllKeys()) {
@@ -1413,13 +1407,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         }
 
-        // invoke later to give time for components to update
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                spectrumSelectionChanged();
-            }
-        });
+        spectrumSelectionChanged();
     }
 
     /**
@@ -1603,28 +1591,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 mascotTable.setRowSelectionInterval(0, 0);
             }
 
+            peptideShakerJTable.revalidate();
+            peptideShakerJTable.repaint();
+            mascotTable.revalidate();
+            mascotTable.repaint();
+            xTandemTable.revalidate();
+            xTandemTable.repaint();
+            omssaTable.revalidate();
+            omssaTable.repaint();
 
-            SwingUtilities.invokeLater(new Runnable() {
-
-                public void run() {
-                    peptideShakerJTable.revalidate();
-                    peptideShakerJTable.repaint();
-                    mascotTable.revalidate();
-                    mascotTable.repaint();
-                    xTandemTable.revalidate();
-                    xTandemTable.repaint();
-                    omssaTable.revalidate();
-                    omssaTable.repaint();
-
-                    SwingUtilities.invokeLater(new Runnable() {
-
-                        public void run() {
-                            //update the spectrum
-                            updateSpectrum();
-                        }
-                    });
-                }
-            });
+            //update the spectrum
+            updateSpectrum();
         }
     }
 
@@ -1735,23 +1712,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
                 }
 
-
                 spectrumChartPanel.add(spectrum);
-
-
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    public void run() {
-                        spectrumChartPanel.revalidate();
-                        spectrumChartPanel.repaint();
-                    }
-                });
 
             } catch (MzMLUnmarshallerException e) {
                 e.printStackTrace();
             }
         }
 
+        spectrumChartPanel.revalidate();
+        spectrumChartPanel.repaint();
     }
 
     /**
