@@ -289,7 +289,7 @@ public class PtmPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -327,7 +327,7 @@ public class PtmPanel extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE)
+                .addComponent(peptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 810, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -366,14 +366,14 @@ public class PtmPanel extends javax.swing.JPanel {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(relatedPeptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE)
+                .addComponent(relatedPeptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 810, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(relatedPeptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                .addComponent(relatedPeptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 149, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -386,12 +386,12 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 838, Short.MAX_VALUE))
+                .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE))
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
+            .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
         );
 
         psmSpectraSplitPane.setBorder(null);
@@ -559,7 +559,7 @@ public class PtmPanel extends javax.swing.JPanel {
         fragmentIonsJPanel.setLayout(fragmentIonsJPanelLayout);
         fragmentIonsJPanelLayout.setHorizontalGroup(
             fragmentIonsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 537, Short.MAX_VALUE)
+            .addGap(0, 541, Short.MAX_VALUE)
         );
         fragmentIonsJPanelLayout.setVerticalGroup(
             fragmentIonsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -732,9 +732,9 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 517, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 521, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE)
         );
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -754,7 +754,7 @@ public class PtmPanel extends javax.swing.JPanel {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
+                .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 546, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
@@ -771,7 +771,7 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(psmSpectraSplitPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1074, Short.MAX_VALUE)
+                    .addComponent(psmSpectraSplitPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1078, Short.MAX_VALUE)
                     .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -1312,7 +1312,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * Update the modified peptides PSM table.
      */
     private void updateSelectedPsmTable() {
-        
+
         selectedPsmTable.revalidate();
         selectedPsmTable.repaint();
 
@@ -1355,52 +1355,55 @@ public class PtmPanel extends javax.swing.JPanel {
                 MSnSpectrum currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(
                         2, spectrumKey);
 
-                Precursor precursor = currentSpectrum.getPrecursor();
-                spectrumA = new SpectrumPanel(
-                        currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
-                        precursor.getMz(), precursor.getCharge().toString(),
-                        "", 40, false, false, false, 2, false);
-                spectrumA.setBorder(null);
+                if (currentSpectrum.getMzValuesAsArray().length > 0) {
 
-                // get the spectrum annotations
-                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumIdentification().get(spectrumKey);
-                Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
-                for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
-                    if (getModificationFamily(peptideAssumption.getPeptide()).equals(familyKey)) {
-                        currentPeptide = peptideAssumption.getPeptide();
-                        break;
-                    }
-                }
-                SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
-                        currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
-                        currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
+                    Precursor precursor = currentSpectrum.getPrecursor();
+                    spectrumA = new SpectrumPanel(
+                            currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
+                            precursor.getMz(), precursor.getCharge().toString(),
+                            "", 40, false, false, false, 2, false);
+                    spectrumA.setBorder(null);
 
-                // add the spectrum annotations
-                currentAnnotations = spectrumAnnotator.getSpectrumAnnotations(annotations);
-                spectrumA.setAnnotations(filterAnnotations(currentAnnotations));
-
-                linkedSpectrumPanels.put(new Integer(0), spectrumA);
-
-                spectrumA.addSpectrumPanelListener(new SpectrumPanelListener() {
-
-                    public void rescaled(RescalingEvent rescalingEvent) {
-                        SpectrumPanel source = (SpectrumPanel) rescalingEvent.getSource();
-                        double minMass = rescalingEvent.getMinMass();
-                        double maxMass = rescalingEvent.getMaxMass();
-
-                        Iterator<Integer> iterator = linkedSpectrumPanels.keySet().iterator();
-
-                        while (iterator.hasNext()) {
-                            SpectrumPanel currentSpectrumPanel = linkedSpectrumPanels.get(iterator.next());
-                            if (currentSpectrumPanel != source) {
-                                currentSpectrumPanel.rescale(minMass, maxMass, false);
-                                currentSpectrumPanel.repaint();
-                            }
+                    // get the spectrum annotations
+                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumIdentification().get(spectrumKey);
+                    Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
+                    for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
+                        if (getModificationFamily(peptideAssumption.getPeptide()).equals(familyKey)) {
+                            currentPeptide = peptideAssumption.getPeptide();
+                            break;
                         }
                     }
-                });
+                    SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
+                            currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
+                            currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
 
-                spectrumChartJPanel.add(spectrumA);
+                    // add the spectrum annotations
+                    currentAnnotations = spectrumAnnotator.getSpectrumAnnotations(annotations);
+                    spectrumA.setAnnotations(filterAnnotations(currentAnnotations));
+
+                    linkedSpectrumPanels.put(new Integer(0), spectrumA);
+
+                    spectrumA.addSpectrumPanelListener(new SpectrumPanelListener() {
+
+                        public void rescaled(RescalingEvent rescalingEvent) {
+                            SpectrumPanel source = (SpectrumPanel) rescalingEvent.getSource();
+                            double minMass = rescalingEvent.getMinMass();
+                            double maxMass = rescalingEvent.getMaxMass();
+
+                            Iterator<Integer> iterator = linkedSpectrumPanels.keySet().iterator();
+
+                            while (iterator.hasNext()) {
+                                SpectrumPanel currentSpectrumPanel = linkedSpectrumPanels.get(iterator.next());
+                                if (currentSpectrumPanel != source) {
+                                    currentSpectrumPanel.rescale(minMass, maxMass, false);
+                                    currentSpectrumPanel.repaint();
+                                }
+                            }
+                        }
+                    });
+
+                    spectrumChartJPanel.add(spectrumA);
+                }
             }
 
             if (relatedPsmTable.getSelectedRow() != -1 && secondarySelectionTable.getSelectedRow() != -1) {
@@ -1410,58 +1413,61 @@ public class PtmPanel extends javax.swing.JPanel {
                 MSnSpectrum currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(
                         2, spectrumKey);
 
-                Precursor precursor = currentSpectrum.getPrecursor();
-                spectrumB = new SpectrumPanel(
-                        currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
-                        precursor.getMz(), precursor.getCharge().toString(),
-                        "", 40, false, false, false, 2, false);
-                spectrumB.setBorder(null);
+                if (currentSpectrum.getMzValuesAsArray().length > 0) {
 
-                // get the spectrum annotations                
-                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumIdentification().get(spectrumKey);
-                Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
-                if (!familyKey.equals("Related Peptide")) {
-                    for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
-                        if (getModificationFamily(peptideAssumption.getPeptide()).equals(familyKey)) {
-                            currentPeptide = peptideAssumption.getPeptide();
-                            break;
-                        }
-                    }
-                }
+                    Precursor precursor = currentSpectrum.getPrecursor();
+                    spectrumB = new SpectrumPanel(
+                            currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
+                            precursor.getMz(), precursor.getCharge().toString(),
+                            "", 40, false, false, false, 2, false);
+                    spectrumB.setBorder(null);
 
-                SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
-                        currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
-                        currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
-
-                // add the spectrum annotations
-                currentAnnotations = spectrumAnnotator.getSpectrumAnnotations(annotations);
-                spectrumB.setAnnotations(filterAnnotations(currentAnnotations));
-
-                linkedSpectrumPanels.put(new Integer(1), spectrumB);
-
-                spectrumB.addSpectrumPanelListener(new SpectrumPanelListener() {
-
-                    public void rescaled(RescalingEvent rescalingEvent) {
-                        SpectrumPanel source = (SpectrumPanel) rescalingEvent.getSource();
-                        double minMass = rescalingEvent.getMinMass();
-                        double maxMass = rescalingEvent.getMaxMass();
-
-                        Iterator<Integer> iterator = linkedSpectrumPanels.keySet().iterator();
-
-                        while (iterator.hasNext()) {
-                            SpectrumPanel currentSpectrumPanel = linkedSpectrumPanels.get(iterator.next());
-                            if (currentSpectrumPanel != source) {
-                                currentSpectrumPanel.rescale(minMass, maxMass, false);
-                                currentSpectrumPanel.repaint();
+                    // get the spectrum annotations                
+                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumIdentification().get(spectrumKey);
+                    Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
+                    if (!familyKey.equals("Related Peptide")) {
+                        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
+                            if (getModificationFamily(peptideAssumption.getPeptide()).equals(familyKey)) {
+                                currentPeptide = peptideAssumption.getPeptide();
+                                break;
                             }
                         }
                     }
-                });
 
-                // make sure that the two spectra have the same x-axis range
-                spectrumA.rescale(0, spectrumB.getMaxXAxisValue());
+                    SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
+                            currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
+                            currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
 
-                spectrumChartJPanel.add(spectrumB);
+                    // add the spectrum annotations
+                    currentAnnotations = spectrumAnnotator.getSpectrumAnnotations(annotations);
+                    spectrumB.setAnnotations(filterAnnotations(currentAnnotations));
+
+                    linkedSpectrumPanels.put(new Integer(1), spectrumB);
+
+                    spectrumB.addSpectrumPanelListener(new SpectrumPanelListener() {
+
+                        public void rescaled(RescalingEvent rescalingEvent) {
+                            SpectrumPanel source = (SpectrumPanel) rescalingEvent.getSource();
+                            double minMass = rescalingEvent.getMinMass();
+                            double maxMass = rescalingEvent.getMaxMass();
+
+                            Iterator<Integer> iterator = linkedSpectrumPanels.keySet().iterator();
+
+                            while (iterator.hasNext()) {
+                                SpectrumPanel currentSpectrumPanel = linkedSpectrumPanels.get(iterator.next());
+                                if (currentSpectrumPanel != source) {
+                                    currentSpectrumPanel.rescale(minMass, maxMass, false);
+                                    currentSpectrumPanel.repaint();
+                                }
+                            }
+                        }
+                    });
+
+                    // make sure that the two spectra have the same x-axis range
+                    spectrumA.rescale(0, spectrumB.getMaxXAxisValue());
+
+                    spectrumChartJPanel.add(spectrumB);
+                }
             }
 
             spectrumChartJPanel.revalidate();

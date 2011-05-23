@@ -1363,7 +1363,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     maxMz = precursor.getMz();
                 }
             }
-            
+
             lLowRT -= 1.0;
             //double widthOfMarker = (lHighRT / lLowRT) * 4; // @TODO: switch this back on later??
 
@@ -1617,102 +1617,105 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 MSnSpectrum currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(spectrumMatch.getKey());
                 Precursor precursor = currentSpectrum.getPrecursor();
 
-                SpectrumPanel spectrum = new SpectrumPanel(
-                        currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
-                        precursor.getMz(), precursor.getCharge().toString(),
-                        "", 40, false, false, false, 2, false);
-                spectrum.setBorder(null);
+                if (currentSpectrum.getMzValuesAsArray().length > 0) {
+
+                    SpectrumPanel spectrum = new SpectrumPanel(
+                            currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
+                            precursor.getMz(), precursor.getCharge().toString(),
+                            "", 40, false, false, false, 2, false);
+                    spectrum.setBorder(null);
 
 
-                // omssa annotation (if any)
-                if (omssaTable.getSelectedRow() != -1) {
+                    // omssa annotation (if any)
+                    if (omssaTable.getSelectedRow() != -1) {
 
-                    ArrayList<Double> omssaEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA).keySet());
-                    Collections.sort(omssaEValues);
-                    Peptide currentPeptide = null;
-                    int cpt = 0;
-                    boolean found = false;
-                    for (double eValue : omssaEValues) {
-                        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValue)) {
-                            if (cpt == omssaTable.getSelectedRow()) {
-                                currentPeptide = peptideAssumption.getPeptide();
-                                found = true;
+                        ArrayList<Double> omssaEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA).keySet());
+                        Collections.sort(omssaEValues);
+                        Peptide currentPeptide = null;
+                        int cpt = 0;
+                        boolean found = false;
+                        for (double eValue : omssaEValues) {
+                            for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValue)) {
+                                if (cpt == omssaTable.getSelectedRow()) {
+                                    currentPeptide = peptideAssumption.getPeptide();
+                                    found = true;
+                                    break;
+                                }
+                                cpt++;
+                            }
+                            if (found) {
                                 break;
                             }
-                            cpt++;
                         }
-                        if (found) {
-                            break;
-                        }
+                        SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
+                                currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
+                                currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
+
+                        // add the spectrum annotations
+                        spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
                     }
-                    SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
-                            currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
-                            currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
 
-                    // add the spectrum annotations
-                    spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
-                }
+                    // xtandem annotation (if any)
+                    if (xTandemTable.getSelectedRow() != -1) {
 
-                // xtandem annotation (if any)
-                if (xTandemTable.getSelectedRow() != -1) {
-
-                    ArrayList<Double> xTandemEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTANDEM).keySet());
-                    Collections.sort(xTandemEValues);
-                    Peptide currentPeptide = null;
-                    int cpt = 0;
-                    boolean found = false;
-                    for (double eValue : xTandemEValues) {
-                        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValue)) {
-                            if (cpt == xTandemTable.getSelectedRow()) {
-                                currentPeptide = peptideAssumption.getPeptide();
-                                found = true;
+                        ArrayList<Double> xTandemEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTANDEM).keySet());
+                        Collections.sort(xTandemEValues);
+                        Peptide currentPeptide = null;
+                        int cpt = 0;
+                        boolean found = false;
+                        for (double eValue : xTandemEValues) {
+                            for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValue)) {
+                                if (cpt == xTandemTable.getSelectedRow()) {
+                                    currentPeptide = peptideAssumption.getPeptide();
+                                    found = true;
+                                    break;
+                                }
+                                cpt++;
+                            }
+                            if (found) {
                                 break;
                             }
-                            cpt++;
                         }
-                        if (found) {
-                            break;
-                        }
+                        SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
+                                currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
+                                currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
+
+                        // add the spectrum annotations
+                        spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
                     }
-                    SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
-                            currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
-                            currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
 
-                    // add the spectrum annotations
-                    spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
-                }
+                    // mascot annotation (if any)
+                    if (mascotTable.getSelectedRow() != -1) {
 
-                // mascot annotation (if any)
-                if (mascotTable.getSelectedRow() != -1) {
-
-                    ArrayList<Double> mascotEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.MASCOT).keySet());
-                    Collections.sort(mascotEValues);
-                    Peptide currentPeptide = null;
-                    int cpt = 0;
-                    boolean found = false;
-                    for (double eValue : mascotEValues) {
-                        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValue)) {
-                            if (cpt == mascotTable.getSelectedRow()) {
-                                currentPeptide = peptideAssumption.getPeptide();
-                                found = true;
+                        ArrayList<Double> mascotEValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.MASCOT).keySet());
+                        Collections.sort(mascotEValues);
+                        Peptide currentPeptide = null;
+                        int cpt = 0;
+                        boolean found = false;
+                        for (double eValue : mascotEValues) {
+                            for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValue)) {
+                                if (cpt == mascotTable.getSelectedRow()) {
+                                    currentPeptide = peptideAssumption.getPeptide();
+                                    found = true;
+                                    break;
+                                }
+                                cpt++;
+                            }
+                            if (found) {
                                 break;
                             }
-                            cpt++;
                         }
-                        if (found) {
-                            break;
-                        }
+                        SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
+                                currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
+                                currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
+
+                        // add the spectrum annotations
+                        //spectrum.setAnnotations(filterAnnotations(currentAnnotations));
+                        spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
                     }
-                    SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
-                            currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
-                            currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
 
-                    // add the spectrum annotations
-                    //spectrum.setAnnotations(filterAnnotations(currentAnnotations));
-                    spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
+                    spectrumChartPanel.add(spectrum);
                 }
-
-                spectrumChartPanel.add(spectrum);
 
             } catch (MzMLUnmarshallerException e) {
                 e.printStackTrace();
