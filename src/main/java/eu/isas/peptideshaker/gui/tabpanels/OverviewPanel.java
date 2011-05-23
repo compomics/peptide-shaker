@@ -202,7 +202,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinInferenceColorMap.put(PSParameter.ISOFORMS, Color.ORANGE); // ISOFORMS
         proteinInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.BLUE); // ISOFORMS_UNRELATED
         proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED); // UNRELATED
-        
+
         // set up the protein inference tooltip map
         HashMap<Integer, String> proteinInferenceTooltipMap = new HashMap<Integer, String>();
         proteinInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Single Protein");
@@ -1849,7 +1849,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                     }
                 }
             }
-
+            
             double sequenceCoverage = ProteinSequencePane.formatProteinSequence(
                     coverageEditorPane, db.getProtein(proteinAccession).getSequence(), selectedPeptideStart, selectedPeptideEnd, coverage);
 
@@ -2082,7 +2082,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             double maxCharge = Double.MIN_VALUE;
 
             maxPsmMzValue = Double.MIN_VALUE;
-            
+
             int validatedPsmCounter = 0;
 
             for (SpectrumMatch spectrumMatch : currentPeptideMatch.getSpectrumMatches().values()) {
@@ -2123,7 +2123,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
                         psmTableMap.put(index, spectrumKey);
                         index++;
-                        
+
                         if (probabilities.isValidated()) {
                             validatedPsmCounter++;
                         }
@@ -2262,9 +2262,9 @@ public class OverviewPanel extends javax.swing.JPanel {
                                 probabilities.getPeptideConfidence(),
                                 probabilities.isValidated()
                             });
-                    
+
                     if (probabilities.isValidated()) {
-                       validatedPeptideCounter++; 
+                        validatedPeptideCounter++;
                     }
 
                     if (maxSpectra < peptideMatch.getSpectrumCount()) {
@@ -2466,7 +2466,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         }
 
         int validatedProteinCounter = 0;
-        
+
         for (int i = 0; i < proteinTable.getRowCount(); i++) {
             if ((Boolean) proteinTable.getValueAt(i, proteinTable.getColumn("").getModelIndex())) {
                 validatedProteinCounter++;

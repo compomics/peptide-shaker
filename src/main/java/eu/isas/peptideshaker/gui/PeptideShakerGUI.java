@@ -204,7 +204,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         statsPanel = new StatsPanel(this);
         ptmPanel = new PtmPanel(this);
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
-//        proteinStructurePanel = new ProteinStructurePanel(this);
+        proteinStructurePanel = new ProteinStructurePanel(this);
 
         initComponents();
 
