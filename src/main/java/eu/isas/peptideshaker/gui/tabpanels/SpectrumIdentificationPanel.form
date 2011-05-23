@@ -65,7 +65,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="searchEnginetableJScrollPane" pref="1097" max="32767" attributes="0"/>
+                  <Component id="searchEnginetableJScrollPane" pref="1101" max="32767" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="vennDiagramButton" min="-2" pref="173" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -154,7 +154,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="peptideShakerJScrollPane" alignment="0" pref="1280" max="32767" attributes="2"/>
+                      <Component id="peptideShakerJScrollPane" alignment="0" pref="1284" max="32767" attributes="2"/>
                       <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Group type="102" alignment="1" attributes="0">
                           <Component id="jPanel5" max="32767" attributes="0"/>
@@ -272,9 +272,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="375" max="32767" attributes="0"/>
+                      <EmptySpace pref="376" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="omssaTableJScrollPane" alignment="0" pref="414" max="32767" attributes="2"/>
+                  <Component id="omssaTableJScrollPane" alignment="0" pref="415" max="32767" attributes="2"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -375,9 +375,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="364" max="32767" attributes="0"/>
+                      <EmptySpace pref="365" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="xTandemTableJScrollPane" alignment="0" pref="416" max="32767" attributes="2"/>
+                  <Component id="xTandemTableJScrollPane" alignment="0" pref="417" max="32767" attributes="2"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -473,9 +473,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="376" max="32767" attributes="0"/>
+                      <EmptySpace pref="378" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="mascotTableJScrollPane" alignment="0" pref="414" max="32767" attributes="2"/>
+                  <Component id="mascotTableJScrollPane" alignment="0" pref="416" max="32767" attributes="2"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -586,7 +586,7 @@
 
       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
       <SubComponents>
-        <Container class="javax.swing.JPanel" name="jPanel2">
+        <Container class="javax.swing.JPanel" name="spectrumSelectionJPanel">
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -607,8 +607,8 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="spectrumTableJScrollPane" alignment="0" pref="564" max="32767" attributes="0"/>
-                          <Component id="fileNamesCmb" alignment="0" pref="564" max="32767" attributes="0"/>
+                          <Component id="spectrumTableJScrollPane" alignment="0" pref="568" max="32767" attributes="0"/>
+                          <Component id="fileNamesCmb" alignment="0" pref="568" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -620,7 +620,7 @@
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="fileNamesCmb" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="spectrumTableJScrollPane" pref="338" max="32767" attributes="0"/>
+                      <Component id="spectrumTableJScrollPane" pref="341" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -718,8 +718,8 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="spectrumChartPanel" alignment="0" pref="680" max="32767" attributes="0"/>
-                          <Component id="spectrumJToolBar" alignment="0" pref="680" max="32767" attributes="0"/>
+                          <Component id="spectrumChartPanel" alignment="0" pref="684" max="32767" attributes="0"/>
+                          <Component id="spectrumJToolBar" alignment="0" pref="684" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -728,7 +728,7 @@
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
-                      <Component id="spectrumChartPanel" pref="344" max="32767" attributes="0"/>
+                      <Component id="spectrumChartPanel" pref="347" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>

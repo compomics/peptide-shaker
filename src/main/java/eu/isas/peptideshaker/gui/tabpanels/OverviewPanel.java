@@ -187,7 +187,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTable.getColumn("").setMinWidth(30);
         peptideTable.getColumn("").setMinWidth(30);
         psmTable.getColumn("").setMinWidth(30);
-        
+
         // the protein inference column
         proteinTable.getColumn("PI").setMaxWidth(30);
         proteinTable.getColumn("PI").setMinWidth(30);
@@ -195,16 +195,23 @@ public class OverviewPanel extends javax.swing.JPanel {
         // the include in bubble plot column
         psmTable.getColumn("  ").setMinWidth(30);
         psmTable.getColumn("  ").setMaxWidth(30);
-        
+
         // set up the protein inference color map
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
         proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor()); // NOT_GROUP
         proteinInferenceColorMap.put(PSParameter.ISOFORMS, Color.ORANGE); // ISOFORMS
         proteinInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.BLUE); // ISOFORMS_UNRELATED
         proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED); // UNRELATED
+        
+        // set up the protein inference tooltip map
+        HashMap<Integer, String> proteinInferenceTooltipMap = new HashMap<Integer, String>();
+        proteinInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Single Protein");
+        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS, "Isoforms");
+        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS_UNRELATED, "Unrelated Isoforms");
+        proteinInferenceTooltipMap.put(PSParameter.UNRELATED, "Unrelated Proteins");
 
         proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
-        proteinTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), proteinInferenceColorMap));
+        proteinTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), proteinInferenceColorMap, proteinInferenceTooltipMap));
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
@@ -242,7 +249,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTableToolTips = new ArrayList<String>();
         proteinTableToolTips.add(null);
         proteinTableToolTips.add("Protein Accession Number");
-        proteinTableToolTips.add("Protein Inference Issues");
+        proteinTableToolTips.add("Protein Inference");
         proteinTableToolTips.add("Protein Description");
         proteinTableToolTips.add("Protein Seqeunce Coverage (%)");
         proteinTableToolTips.add("Protein emPAI Score");
@@ -1846,7 +1853,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             double sequenceCoverage = ProteinSequencePane.formatProteinSequence(
                     coverageEditorPane, db.getProtein(proteinAccession).getSequence(), selectedPeptideStart, selectedPeptideEnd, coverage);
 
-            ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Proten Sequence Coverage (" + Util.roundDouble(sequenceCoverage, 2) + "%)");
+            ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Protein Sequence Coverage (" + Util.roundDouble(sequenceCoverage, 2) + "%)");
             sequenceCoverageJPanel.repaint();
         }
     }
@@ -2075,6 +2082,8 @@ public class OverviewPanel extends javax.swing.JPanel {
             double maxCharge = Double.MIN_VALUE;
 
             maxPsmMzValue = Double.MIN_VALUE;
+            
+            int validatedPsmCounter = 0;
 
             for (SpectrumMatch spectrumMatch : currentPeptideMatch.getSpectrumMatches().values()) {
                 PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
@@ -2114,6 +2123,10 @@ public class OverviewPanel extends javax.swing.JPanel {
 
                         psmTableMap.put(index, spectrumKey);
                         index++;
+                        
+                        if (probabilities.isValidated()) {
+                            validatedPsmCounter++;
+                        }
 
                         if (maxMassError < peptideAssumption.getDeltaMass()) {
                             maxMassError = peptideAssumption.getDeltaMass();
@@ -2133,7 +2146,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 }
             }
 
-            ((TitledBorder) psmJPanel.getBorder()).setTitle("Peptide-Spectrum Matched (" + psmTable.getRowCount() + ")");
+            ((TitledBorder) psmJPanel.getBorder()).setTitle("Peptide-Spectrum Matched (" + validatedPsmCounter + "/" + psmTable.getRowCount() + ")");
             psmJPanel.repaint();
 
             ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).setMaxValue(maxMassError);
@@ -2195,6 +2208,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             double maxSpectra = Double.MIN_VALUE;
 
             int index = 0;
+            int validatedPeptideCounter = 0;
 
             for (double score : scores) {
                 for (PeptideMatch peptideMatch : peptideMap.get(score)) {
@@ -2248,17 +2262,21 @@ public class OverviewPanel extends javax.swing.JPanel {
                                 probabilities.getPeptideConfidence(),
                                 probabilities.isValidated()
                             });
+                    
+                    if (probabilities.isValidated()) {
+                       validatedPeptideCounter++; 
+                    }
 
                     if (maxSpectra < peptideMatch.getSpectrumCount()) {
                         maxSpectra = peptideMatch.getSpectrumCount();
                     }
 
-                    peptideTableMap.put(index+1, peptideMatch.getKey());
+                    peptideTableMap.put(index + 1, peptideMatch.getKey());
                     index++;
                 }
             }
 
-            ((TitledBorder) peptidesJPanel.getBorder()).setTitle("Peptides (" + peptideTable.getRowCount() + ")");
+            ((TitledBorder) peptidesJPanel.getBorder()).setTitle("Peptides (" + validatedPeptideCounter + "/" + peptideTable.getRowCount() + ")");
             peptidesJPanel.repaint();
 
 
@@ -2328,6 +2346,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         ArrayList<Integer> nP, nS;
         ArrayList<String> keys;
 
+        int validatedProteinsCounter = 0;
+
         for (double currentScore : scores) {
 
             nP = new ArrayList(orderMap.get(currentScore).keySet());
@@ -2348,14 +2368,13 @@ public class OverviewPanel extends javax.swing.JPanel {
                         proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
                         probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
 
-                            Protein currentProtein = db.getProtein(proteinMatch.getMainMatch().getAccession());
-                            int nPossible = currentProtein.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
-                            emPAI = (Math.pow(10, ((double) proteinMatch.getPeptideCount()) / ((double) nPossible))) - 1;
-                            description = db.getProteinHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
-                            sequenceCoverage = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
+                        Protein currentProtein = db.getProtein(proteinMatch.getMainMatch().getAccession());
+                        int nPossible = currentProtein.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
+                        emPAI = (Math.pow(10, ((double) proteinMatch.getPeptideCount()) / ((double) nPossible))) - 1;
+                        description = db.getProteinHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
+                        sequenceCoverage = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
 
                         // only add non-decoy matches to the overview
-
                         if (!proteinMatch.isDecoy()) {
                             ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                                         index + 1,
@@ -2370,8 +2389,12 @@ public class OverviewPanel extends javax.swing.JPanel {
                                         probabilities.getProteinConfidence(),
                                         probabilities.isValidated()
                                     });
-                            proteinTableMap.put(index+1, proteinKey);
+                            proteinTableMap.put(index + 1, proteinKey);
                             index++;
+
+                            if (probabilities.isValidated()) {
+                                validatedProteinsCounter++;
+                            }
                         }
 
                         if (maxPeptides < proteinMatch.getPeptideMatches().size()) {
@@ -2390,7 +2413,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             }
         }
 
-        ((TitledBorder) proteinsJPanel.getBorder()).setTitle("Proteins (" + proteinTable.getRowCount() + ")");
+        ((TitledBorder) proteinsJPanel.getBorder()).setTitle("Proteins (" + validatedProteinsCounter + "/" + proteinTable.getRowCount() + ")");
         proteinsJPanel.repaint();
 
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
@@ -2442,7 +2465,15 @@ public class OverviewPanel extends javax.swing.JPanel {
             proteinTableMouseClicked(null);
         }
 
-        ((TitledBorder) proteinsJPanel.getBorder()).setTitle("Proteins (" + proteinTable.getRowCount() + ")");
+        int validatedProteinCounter = 0;
+        
+        for (int i = 0; i < proteinTable.getRowCount(); i++) {
+            if ((Boolean) proteinTable.getValueAt(i, proteinTable.getColumn("").getModelIndex())) {
+                validatedProteinCounter++;
+            }
+        }
+
+        ((TitledBorder) proteinsJPanel.getBorder()).setTitle("Proteins (" + validatedProteinCounter + "/" + proteinTable.getRowCount() + ")");
         proteinsJPanel.repaint();
 
         // if required, clear the peptide and psm tables, and the spectrum and protein sequence displays
@@ -2456,10 +2487,10 @@ public class OverviewPanel extends javax.swing.JPanel {
                 ((DefaultTableModel) psmTable.getModel()).removeRow(0);
             }
 
-            ((TitledBorder) peptidesJPanel.getBorder()).setTitle("Peptides (0)");
+            ((TitledBorder) peptidesJPanel.getBorder()).setTitle("Peptides");
             peptidesJPanel.repaint();
 
-            ((TitledBorder) psmJPanel.getBorder()).setTitle("Peptide-Spectrum Matches (0)");
+            ((TitledBorder) psmJPanel.getBorder()).setTitle("Peptide-Spectrum Matches");
             psmJPanel.repaint();
 
             spectrumPanel.removeAll();

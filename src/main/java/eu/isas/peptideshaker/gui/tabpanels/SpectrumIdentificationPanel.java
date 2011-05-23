@@ -378,7 +378,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         };
         spectrumJSplitPane = new javax.swing.JSplitPane();
-        jPanel2 = new javax.swing.JPanel();
+        spectrumSelectionJPanel = new javax.swing.JPanel();
         fileNamesCmb = new javax.swing.JComboBox();
         spectrumTableJScrollPane = new javax.swing.JScrollPane();
         spectrumTable = new JTable() {
@@ -456,7 +456,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1097, Short.MAX_VALUE)
+                .addComponent(searchEnginetableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1101, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(vennDiagramButton, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -546,8 +546,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jLabel3)
-                .addContainerGap(375, Short.MAX_VALUE))
-            .addComponent(omssaTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+                .addContainerGap(376, Short.MAX_VALUE))
+            .addComponent(omssaTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -603,8 +603,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addComponent(jLabel4)
-                .addContainerGap(364, Short.MAX_VALUE))
-            .addComponent(xTandemTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
+                .addContainerGap(365, Short.MAX_VALUE))
+            .addComponent(xTandemTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -662,8 +662,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addComponent(jLabel2)
-                .addContainerGap(376, Short.MAX_VALUE))
-            .addComponent(mascotTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+                .addContainerGap(378, Short.MAX_VALUE))
+            .addComponent(mascotTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -680,7 +680,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1280, Short.MAX_VALUE)
+                    .addComponent(peptideShakerJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1284, Short.MAX_VALUE)
                     .addComponent(jLabel1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -711,8 +711,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumJSplitPane.setResizeWeight(0.5);
         spectrumJSplitPane.setOpaque(false);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum Selection"));
-        jPanel2.setOpaque(false);
+        spectrumSelectionJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum Selection"));
+        spectrumSelectionJPanel.setOpaque(false);
 
         fileNamesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "File Name" }));
         fileNamesCmb.addActionListener(new java.awt.event.ActionListener() {
@@ -756,20 +756,20 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         });
         spectrumTableJScrollPane.setViewportView(spectrumTable);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout spectrumSelectionJPanelLayout = new javax.swing.GroupLayout(spectrumSelectionJPanel);
+        spectrumSelectionJPanel.setLayout(spectrumSelectionJPanelLayout);
+        spectrumSelectionJPanelLayout.setHorizontalGroup(
+            spectrumSelectionJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(spectrumSelectionJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(spectrumSelectionJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(spectrumTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 568, Short.MAX_VALUE)
                     .addComponent(fileNamesCmb, 0, 568, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        spectrumSelectionJPanelLayout.setVerticalGroup(
+            spectrumSelectionJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(spectrumSelectionJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(fileNamesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -777,7 +777,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        spectrumJSplitPane.setLeftComponent(jPanel2);
+        spectrumJSplitPane.setLeftComponent(spectrumSelectionJPanel);
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum"));
         jPanel3.setOpaque(false);
@@ -945,8 +945,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(spectrumChartPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE)
-                    .addComponent(spectrumJToolBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE))
+                    .addComponent(spectrumChartPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE)
+                    .addComponent(spectrumJToolBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 684, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -969,7 +969,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(spectrumJSplitPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1312, Short.MAX_VALUE))
+                    .addComponent(spectrumJSplitPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1316, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -1125,7 +1125,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
@@ -1146,6 +1145,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private javax.swing.JPanel spectrumChartPanel;
     private javax.swing.JSplitPane spectrumJSplitPane;
     private javax.swing.JToolBar spectrumJToolBar;
+    private javax.swing.JPanel spectrumSelectionJPanel;
     private javax.swing.JTable spectrumTable;
     private javax.swing.JScrollPane spectrumTableJScrollPane;
     private javax.swing.JToggleButton twoChargesToggleButton;
@@ -1363,7 +1363,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     maxMz = precursor.getMz();
                 }
             }
-
+            
             lLowRT -= 1.0;
             //double widthOfMarker = (lHighRT / lLowRT) * 4; // @TODO: switch this back on later??
 
