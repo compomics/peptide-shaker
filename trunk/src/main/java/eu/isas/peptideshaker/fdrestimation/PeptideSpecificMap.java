@@ -17,6 +17,10 @@ import java.util.HashMap;
 public class PeptideSpecificMap implements Serializable {
 
     /**
+     * serial version UID for post-serialization compatibility
+     */
+    static final long serialVersionUID = 1464466551122518117L;
+    /**
      * The peptide target/decoy maps indexed by the modification profile of the peptide.
      */
     private HashMap<String, TargetDecoyMap> peptideMaps = new HashMap<String, TargetDecoyMap>();

@@ -13,6 +13,10 @@ import java.util.HashMap;
 public class TargetDecoyMap implements Serializable {
 
     /**
+     * serial version UID for post-serialization compatibility
+     */
+    static final long serialVersionUID = 7333389442377322662L;
+    /**
      * The hit map containing the indexed target/decoy points
      */
     private HashMap<Double, TargetDecoyPoint> hitMap = new HashMap<Double, TargetDecoyPoint>();

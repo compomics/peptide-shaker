@@ -13,6 +13,10 @@ import com.compomics.util.experiment.personalization.UrParameter;
 public class PSParameter implements UrParameter {
 
     /**
+     * serial version UID for post-serialization compatibility
+     */
+    static final long serialVersionUID = 2846587135366515967L;
+    /**
      * Posterior error probability estimated for the search engine results (used 
      * only in the case of a multiple search engine study)
      */

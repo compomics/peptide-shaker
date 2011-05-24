@@ -10,6 +10,10 @@ import java.io.Serializable;
 public class TargetDecoyPoint implements Serializable {
 
     /**
+     * serial version UID for post-serialization compatibility
+     */
+    static final long serialVersionUID = 1030681250987827768L;
+    /**
      * The number of target hits at this point
      */
     public int nTarget = 0;
