@@ -107,10 +107,6 @@ public class TargetDecoySeries {
             probaFDR[i] = 100 * probaFPTemp / nTemp;
             probaFNR[i] = probaFnrTemp;
             probaBenefit[i] = 100 - probaFnrTemp;
-            decoy[i] = currentPoint.nTarget == 0;
-            if (currentPoint.p == 0) {
-                break;
-            }
         }
     }
 

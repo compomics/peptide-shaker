@@ -197,13 +197,8 @@ public class CsvExporter {
             }
         }
         line += nValidatedPeptides + SEPARATOR + nValidatedPsms + SEPARATOR;
-        if (db != null && proteinMatch.getNProteins() == 1) {
-            String accession = (new ArrayList<String>(proteinMatch.getTheoreticProteinsAccessions())).get(0);
-            line += db.getProtein(accession).getNPossiblePeptides(enzyme) + SEPARATOR;
-            line += db.getProtein(accession).getSequence().length() + SEPARATOR;
-        } else {
-            line += SEPARATOR + SEPARATOR;
-        }
+            line += db.getProtein(proteinMatch.getMainMatch().getAccession()).getNPossiblePeptides(enzyme) + SEPARATOR;
+            line += db.getProtein(proteinMatch.getMainMatch().getAccession()).getSequence().length() + SEPARATOR;
 
         try {
             line += probabilities.getProteinProbabilityScore() + SEPARATOR
@@ -227,11 +222,8 @@ public class CsvExporter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (db != null && proteinMatch.getNProteins() == 1) {
-            String accession = (new ArrayList<String>(proteinMatch.getTheoreticProteinsAccessions())).get(0);
-            line += db.getProteinHeader(accession).getDescription();
-        }
-
+            line += db.getProteinHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
+        
         line += "\n";
 
         return line;
