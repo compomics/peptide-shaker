@@ -13,6 +13,10 @@ import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
 public class PSMaps implements UrParameter {
 
     /**
+     * serial version UID for post-serialization compatibility
+     */
+    static final long serialVersionUID = -7582248988590322280L;
+    /**
      * The protein map
      */
     private ProteinMap proteinMap;

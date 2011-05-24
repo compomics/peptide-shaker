@@ -10,6 +10,10 @@ import java.io.Serializable;
 public class ProteinMap implements Serializable {
 
     /**
+     * serial version UID for post-serialization compatibility
+     */
+    static final long serialVersionUID = -2438674334416191482L;
+    /**
      * The protein target/decoy map
      */
     private TargetDecoyMap proteinMatchMap = new TargetDecoyMap();

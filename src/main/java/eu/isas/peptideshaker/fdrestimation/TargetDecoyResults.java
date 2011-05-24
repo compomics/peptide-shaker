@@ -10,6 +10,10 @@ import java.io.Serializable;
 public class TargetDecoyResults implements Serializable {
 
     /**
+     * serial version UID for post-serialization compatibility
+     */
+    static final long serialVersionUID = -8387463582045627644L;
+    /**
      * Boolean indicating whether a classical validation was used or an a posteriori probabilistic validation
      */
     private boolean classicalValidation;
