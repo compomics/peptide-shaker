@@ -12,6 +12,7 @@ import com.compomics.util.pdbfinder.pdb.PdbParameter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.ProgressDialog;
 import eu.isas.peptideshaker.gui.ProgressDialogParent;
+import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -135,11 +136,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         peptideTableToolTips.add("Validated");
 
         pdbTableToolTips = new ArrayList<String>();
-        peptideTableToolTips.add(null);
-        peptideTableToolTips.add("PDB Accession Number");
-        peptideTableToolTips.add("PDB Title");
-        peptideTableToolTips.add("Type of Structure");
-        peptideTableToolTips.add("Number of Blocks");
+        pdbTableToolTips.add(null);
+        pdbTableToolTips.add("PDB Accession Number");
+        pdbTableToolTips.add("PDB Title");
+        pdbTableToolTips.add("Type of Structure");
+        pdbTableToolTips.add("Number of Blocks");
 
         proteinTable.getColumn(" ").setMaxWidth(50);
         peptideTable.getColumn(" ").setMaxWidth(50);
@@ -536,6 +537,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             // empty the jmol panel
             if (jmolStructureShown) {
                 jmolPanel = new JmolPanel();
+                //jmolPanel.getViewer().setColorBackground("white"); // @TODO: let the user set the background color?
                 pdbPanel.removeAll();
                 pdbPanel.add(jmolPanel);
                 pdbPanel.revalidate();
@@ -560,6 +562,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 BareBonesBrowserLaunch.openURL(link);
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
+            
+            // open the protein inference dialog
+            //if (column == 2 && evt != null && evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+            if (column == 2 && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
+                String proteinKey = proteinTableMap.get(getProteinKey(row));
+                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
+                new ProteinInferenceDialog(peptideShakerGUI, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
+            }
         }
 }//GEN-LAST:event_proteinTableMouseClicked
 
@@ -570,7 +580,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void proteinTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_proteinTableMouseExited
 
     /**
@@ -588,12 +598,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             String tempValue = (String) proteinTable.getValueAt(row, column);
 
             if (tempValue.lastIndexOf("<html>") != -1) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
+        } else if (column == 2 && proteinTable.getValueAt(row, column) != null) {
+            proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
 }//GEN-LAST:event_proteinTableMouseMoved
 

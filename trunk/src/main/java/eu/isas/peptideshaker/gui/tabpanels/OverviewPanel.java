@@ -1146,15 +1146,14 @@ public class OverviewPanel extends javax.swing.JPanel {
                 link = link.substring(link.indexOf("\"") + 1);
                 link = link.substring(0, link.indexOf("\""));
 
-                //System.out.println("Open link: " + link);
-
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                 BareBonesBrowserLaunch.openURL(link);
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
 
             // open the protein inference dialog
-            if (column == 2 && evt != null && evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+            //if (column == 2 && evt != null && evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+            if (column == 2 && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
                 String proteinKey = proteinTableMap.get(getProteinKey(row));
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
                 new ProteinInferenceDialog(peptideShakerGUI, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
@@ -1499,12 +1498,14 @@ public class OverviewPanel extends javax.swing.JPanel {
             String tempValue = (String) proteinTable.getValueAt(row, column);
 
             if (tempValue.lastIndexOf("<html>") != -1) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
+        } else if (column == 2 && proteinTable.getValueAt(row, column) != null) {
+            proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_proteinTableMouseMoved
 
@@ -1514,7 +1515,7 @@ public class OverviewPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void proteinTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinTableMouseExited
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonBubblePlotToggleButton;
@@ -1849,7 +1850,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                     }
                 }
             }
-            
+
             final String tempProteinAccession = proteinAccession;
             final ArrayList<Integer> tempPeptideStarts = selectedPeptideStart;
             final ArrayList<Integer> tempPeptideEnds = selectedPeptideEnd;
