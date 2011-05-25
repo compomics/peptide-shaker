@@ -1803,7 +1803,7 @@ public class OverviewPanel extends javax.swing.JPanel {
      */
     private void updateSequenceCoverage(String proteinAccession) {
 
-        SequenceDataBase db = peptideShakerGUI.getSequenceDataBase();
+        final SequenceDataBase db = peptideShakerGUI.getSequenceDataBase();
 
         if (db != null) {
             ArrayList<Integer> selectedPeptideStart = new ArrayList<Integer>();
@@ -1850,11 +1850,22 @@ public class OverviewPanel extends javax.swing.JPanel {
                 }
             }
             
-            double sequenceCoverage = ProteinSequencePane.formatProteinSequence(
-                    coverageEditorPane, db.getProtein(proteinAccession).getSequence(), selectedPeptideStart, selectedPeptideEnd, coverage);
+            final String tempProteinAccession = proteinAccession;
+            final ArrayList<Integer> tempPeptideStarts = selectedPeptideStart;
+            final ArrayList<Integer> tempPeptideEnds = selectedPeptideEnd;
+            final int[] tempCoverage = coverage;
 
-            ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Protein Sequence Coverage (" + Util.roundDouble(sequenceCoverage, 2) + "%)");
-            sequenceCoverageJPanel.repaint();
+            // invoke later to give time for components to update
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                    double sequenceCoverage = ProteinSequencePane.formatProteinSequence(
+                            coverageEditorPane, db.getProtein(tempProteinAccession).getSequence(), tempPeptideStarts, tempPeptideEnds, tempCoverage);
+
+                    ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Protein Sequence Coverage (" + Util.roundDouble(sequenceCoverage, 2) + "%)");
+                    sequenceCoverageJPanel.repaint();
+                }
+            });
         }
     }
 

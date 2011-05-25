@@ -554,6 +554,7 @@ public class ProteinFilter extends javax.swing.JDialog {
      */
     private void clearJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearJButtonActionPerformed
         proteinAccessionJTextField.setText("");
+        descriptionJTextField.setText("");
         coverageJTextField.setText("");
         emPAIJTextField.setText("");
         peptideJTextField.setText("");
