@@ -56,6 +56,14 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private ArrayList<String> relatedPeptidesTableToolTips;
     /**
+     * The selected psms table column header tooltips.
+     */
+    private ArrayList<String> selectedPsmsTableToolTips;
+    /**
+     * The related psms table column header tooltips.
+     */
+    private ArrayList<String> relatedPsmsTableToolTips;
+    /**
      * A hashmap of both the linked spectra.
      */
     private HashMap<Integer, SpectrumPanel> linkedSpectrumPanels;
@@ -156,11 +164,11 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesTable.getColumn("Confidence [%]").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         
-        selectedPsmTable.getColumn("Precursor Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Precursor Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        selectedPsmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
         
-        relatedPsmTable.getColumn("Precursor Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) relatedPsmTable.getColumn("Precursor Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        relatedPsmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) relatedPsmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
 
         // set up the table header tooltips
         selectedPeptidesTableToolTips = new ArrayList<String>();
@@ -171,7 +179,6 @@ public class PtmPanel extends javax.swing.JPanel {
         selectedPeptidesTableToolTips.add("Peptide Score");
         selectedPeptidesTableToolTips.add("Peptide Confidence");
 
-        // set up the table header tooltips
         relatedPeptidesTableToolTips = new ArrayList<String>();
         relatedPeptidesTableToolTips.add(null);
         relatedPeptidesTableToolTips.add("Mapping Protein(s)");
@@ -179,6 +186,20 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesTableToolTips.add("Peptide Modifications");
         relatedPeptidesTableToolTips.add("Peptide Score");
         relatedPeptidesTableToolTips.add("Peptide Confidence");
+        
+        selectedPsmsTableToolTips = new ArrayList<String>();
+        selectedPsmsTableToolTips.add("Search Engine Ranks");
+        selectedPsmsTableToolTips.add("Peptide Sequence");
+        selectedPsmsTableToolTips.add("Peptide Modifications");
+        selectedPsmsTableToolTips.add("Precursor m/z");
+        selectedPsmsTableToolTips.add("Precursor Charge");
+        
+        relatedPsmsTableToolTips = new ArrayList<String>();
+        relatedPsmsTableToolTips.add("Search Engine Ranks");
+        relatedPsmsTableToolTips.add("Peptide Sequence");
+        relatedPsmsTableToolTips.add("Peptide Modifications");
+        relatedPsmsTableToolTips.add("Precursor m/z");
+        relatedPsmsTableToolTips.add("Precursor Charge");
     }
 
     /** This method is called from within the constructor to
@@ -231,11 +252,37 @@ public class PtmPanel extends javax.swing.JPanel {
         psmSplitPane = new javax.swing.JSplitPane();
         jPanel7 = new javax.swing.JPanel();
         psmsModifiedTableJScrollPane = new javax.swing.JScrollPane();
-        selectedPsmTable = new javax.swing.JTable();
+        selectedPsmTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        String tip = null;
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        tip = (String) selectedPsmsTableToolTips.get(realIndex);
+                        return tip;
+                    }
+                };
+            }
+        };
         primarySelectionJComboBox = new javax.swing.JComboBox();
         jPanel3 = new javax.swing.JPanel();
         psmsRelatedPeptidesTableJScrollPane = new javax.swing.JScrollPane();
-        relatedPsmTable = new javax.swing.JTable();
+        relatedPsmTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        String tip = null;
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        tip = (String) relatedPsmsTableToolTips.get(realIndex);
+                        return tip;
+                    }
+                };
+            }
+        };
         secondarySelectionJComboBox = new javax.swing.JComboBox();
         jPanel5 = new javax.swing.JPanel();
         spectrumTabbedPane = new javax.swing.JTabbedPane();
@@ -981,9 +1028,9 @@ public class PtmPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumbers(!showSparkLines);
         
-        ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Precursor Charge").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
         
-        ((JSparklinesBarChartTableCellRenderer) relatedPsmTable.getColumn("Precursor Charge").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) relatedPsmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
 
         peptidesTable.revalidate();
         peptidesTable.repaint();
@@ -1536,7 +1583,7 @@ public class PtmPanel extends javax.swing.JPanel {
             } else if (column == 1) {
                 return "Protein(s)";
             } else if (column == 2) {
-                return "Peptide Sequence";
+                return "Sequence";
             } else if (column == 3) {
                 return "Modification(s)";
             } else if (column == 4) {
@@ -1625,7 +1672,7 @@ public class PtmPanel extends javax.swing.JPanel {
             } else if (column == 1) {
                 return "Protein(s)";
             } else if (column == 2) {
-                return "Peptide Sequence";
+                return "Sequence";
             } else if (column == 3) {
                 return "Modification(s)";
             } else if (column == 4) {
@@ -1715,13 +1762,13 @@ public class PtmPanel extends javax.swing.JPanel {
             if (column == 0) {
                 return "Rank";
             } else if (column == 1) {
-                return "Peptide Sequence";
+                return "Sequence";
             } else if (column == 2) {
                 return "Modification(s)";
             } else if (column == 3) {
-                return "Precursor m/z";
+                return "m/z";
             } else if (column == 4) {
-                return "Precursor Charge";
+                return "Charge";
             } else {
                 return "";
             }
@@ -1832,13 +1879,13 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
                 return "Rank";
             } else if (column == 1) {
-                return "Peptide Sequence";
+                return "Sequence";
             } else if (column == 2) {
                 return "Modification(s)";
             } else if (column == 3) {
-                return "Precursor m/z";
+                return "m/z";
             } else if (column == 4) {
-                return "Precursor Charge";
+                return "Charge";
             } else {
                 return "";
             }

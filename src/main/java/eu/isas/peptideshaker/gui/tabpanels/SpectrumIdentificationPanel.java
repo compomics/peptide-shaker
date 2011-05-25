@@ -78,10 +78,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private ArrayList<String> mascotTableToolTips;
     /**
-     * The current spectrum annotations.
-     */
-    private Vector<DefaultSpectrumAnnotation> currentAnnotations;
-    /**
      * The spectrum annotator
      */
     private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
@@ -389,7 +385,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        tip = (String) searchEngineTableToolTips.get(realIndex);
+                        tip = (String) spectrumTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
@@ -1711,7 +1707,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
 
                         // add the spectrum annotations
-                        //spectrum.setAnnotations(filterAnnotations(currentAnnotations));
                         spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
                     }
 
