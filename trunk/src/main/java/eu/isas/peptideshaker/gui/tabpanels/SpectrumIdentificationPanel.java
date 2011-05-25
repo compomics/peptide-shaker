@@ -507,14 +507,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Peptide", "Modification(s)", "e-value", "Confidence"
+                " ", "Protein(s)", "Peptide", "Modification(s)", "e-value"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -566,14 +566,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Peptide", "Modification(s)", "e-value", "Confidence"
+                " ", "Protein(s)", "Peptide", "Modification(s)", "e-value"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -625,14 +625,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Peptide(s)", "Modification(s)", "e-value", "Confidence"
+                " ", "Protein(s)", "Peptide(s)", "Modification(s)", "e-value"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1364,7 +1364,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             }
 
-            lLowRT -= 1.0;
+            //lLowRT -= 1.0;
             //double widthOfMarker = (lHighRT / lLowRT) * 4; // @TODO: switch this back on later??
 
             lLowRT = 100;
@@ -1493,7 +1493,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     currentAssumption.getPeptide().getSequence(),
                                     modifications,
                                     currentAssumption.getEValue(),
-                                    0
+                                    //0 //@TODO: temporarily removed
                                 });
 
                         mascotPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
@@ -1533,7 +1533,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     currentAssumption.getPeptide().getSequence(),
                                     modifications,
                                     currentAssumption.getEValue(),
-                                    0
+                                    //0 //@TODO: temporarily removed
                                 });
 
                         omssaPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
@@ -1573,7 +1573,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     currentAssumption.getPeptide().getSequence(),
                                     modifications,
                                     currentAssumption.getEValue(),
-                                    0
+                                    //0 //@TODO: temporarily removed
                                 });
 
                         xtandemPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
