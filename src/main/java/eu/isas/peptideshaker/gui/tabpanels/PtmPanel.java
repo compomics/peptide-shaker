@@ -15,6 +15,7 @@ import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.events.RescalingEvent;
 import com.compomics.util.gui.interfaces.SpectrumPanelListener;
+import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.spectrum.DefaultSpectrumAnnotation;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -28,7 +29,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -118,8 +121,9 @@ public class PtmPanel extends javax.swing.JPanel {
         psmsModifiedTableJScrollPane.getViewport().setOpaque(false);
         peptidesTableJScrollPane.getViewport().setOpaque(false);
         psmsRelatedPeptidesTableJScrollPane.getViewport().setOpaque(false);
-        primarySelectionJScrollPane.getViewport().setOpaque(false);
-        secondarySelectionJScrollPane.getViewport().setOpaque(false);
+
+        primarySelectionJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        secondarySelectionJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         setTableProperties();
 
@@ -132,29 +136,31 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void setTableProperties() {
 
-        peptidesTable.getColumn(" ").setMaxWidth(50);
-        relatedPeptidesTable.getColumn(" ").setMaxWidth(50);
-        selectedPsmTable.getColumn("Rank").setMaxWidth(50);
-        relatedPsmTable.getColumn("Rank").setMaxWidth(50);
+        peptidesTable.getColumn(" ").setMaxWidth(60);
+        relatedPeptidesTable.getColumn(" ").setMaxWidth(60);
+        selectedPsmTable.getColumn("Rank").setMaxWidth(65);
+        relatedPsmTable.getColumn("Rank").setMaxWidth(65);
 
         peptidesTable.getTableHeader().setReorderingAllowed(false);
         relatedPeptidesTable.getTableHeader().setReorderingAllowed(false);
-        primarySelectionTable.getTableHeader().setReorderingAllowed(false);
         selectedPsmTable.getTableHeader().setReorderingAllowed(false);
-        secondarySelectionTable.getTableHeader().setReorderingAllowed(false);
         relatedPsmTable.getTableHeader().setReorderingAllowed(false);
 
         peptidesTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-
         peptidesTable.getColumn("Confidence [%]").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
         relatedPeptidesTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-
         relatedPeptidesTable.getColumn("Confidence [%]").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        
+        selectedPsmTable.getColumn("Precursor Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Precursor Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        
+        relatedPsmTable.getColumn("Precursor Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) relatedPsmTable.getColumn("Precursor Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
 
         // set up the table header tooltips
         selectedPeptidesTableToolTips = new ArrayList<String>();
@@ -226,13 +232,11 @@ public class PtmPanel extends javax.swing.JPanel {
         jPanel7 = new javax.swing.JPanel();
         psmsModifiedTableJScrollPane = new javax.swing.JScrollPane();
         selectedPsmTable = new javax.swing.JTable();
-        primarySelectionJScrollPane = new javax.swing.JScrollPane();
-        primarySelectionTable = new javax.swing.JTable();
+        primarySelectionJComboBox = new javax.swing.JComboBox();
         jPanel3 = new javax.swing.JPanel();
         psmsRelatedPeptidesTableJScrollPane = new javax.swing.JScrollPane();
         relatedPsmTable = new javax.swing.JTable();
-        secondarySelectionJScrollPane = new javax.swing.JScrollPane();
-        secondarySelectionTable = new javax.swing.JTable();
+        secondarySelectionJComboBox = new javax.swing.JComboBox();
         jPanel5 = new javax.swing.JPanel();
         spectrumTabbedPane = new javax.swing.JTabbedPane();
         fragmentIonsJPanel = new javax.swing.JPanel();
@@ -427,33 +431,11 @@ public class PtmPanel extends javax.swing.JPanel {
         });
         psmsModifiedTableJScrollPane.setViewportView(selectedPsmTable);
 
-        primarySelectionTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Peptide", "Confidence"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+        primarySelectionJComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                primarySelectionJComboBoxActionPerformed(evt);
             }
         });
-        primarySelectionTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                primarySelectionTableMouseReleased(evt);
-            }
-        });
-        primarySelectionTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                primarySelectionTableKeyReleased(evt);
-            }
-        });
-        primarySelectionJScrollPane.setViewportView(primarySelectionTable);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -461,17 +443,18 @@ public class PtmPanel extends javax.swing.JPanel {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(primarySelectionJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+                    .addComponent(primarySelectionJComboBox, javax.swing.GroupLayout.Alignment.LEADING, 0, 468, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(primarySelectionJScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE)
-                    .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE))
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(primarySelectionJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -496,51 +479,30 @@ public class PtmPanel extends javax.swing.JPanel {
         });
         psmsRelatedPeptidesTableJScrollPane.setViewportView(relatedPsmTable);
 
-        secondarySelectionTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Peptide", "Confidence"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+        secondarySelectionJComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                secondarySelectionJComboBoxActionPerformed(evt);
             }
         });
-        secondarySelectionTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                secondarySelectionTableMouseReleased(evt);
-            }
-        });
-        secondarySelectionTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                secondarySelectionTableKeyReleased(evt);
-            }
-        });
-        secondarySelectionJScrollPane.setViewportView(secondarySelectionTable);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+            .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(secondarySelectionJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(psmsRelatedPeptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(psmsRelatedPeptidesTableJScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+                    .addComponent(secondarySelectionJComboBox, javax.swing.GroupLayout.Alignment.TRAILING, 0, 468, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(psmsRelatedPeptidesTableJScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE)
-                    .addComponent(secondarySelectionJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 265, Short.MAX_VALUE))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(secondarySelectionJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(psmsRelatedPeptidesTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 227, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -563,7 +525,7 @@ public class PtmPanel extends javax.swing.JPanel {
         );
         fragmentIonsJPanelLayout.setVerticalGroup(
             fragmentIonsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 423, Short.MAX_VALUE)
+            .addGap(0, 422, Short.MAX_VALUE)
         );
 
         spectrumTabbedPane.addTab("Ions", fragmentIonsJPanel);
@@ -739,7 +701,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 398, Short.MAX_VALUE)
+                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 397, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -759,7 +721,7 @@ public class PtmPanel extends javax.swing.JPanel {
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 451, Short.MAX_VALUE)
+            .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
         );
 
         psmSpectraSplitPane.setRightComponent(jPanel5);
@@ -781,7 +743,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(psmSpectraSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                .addComponent(psmSpectraSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 477, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -907,28 +869,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
     }//GEN-LAST:event_formComponentResized
 
-    private void primarySelectionTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_primarySelectionTableMouseReleased
-        updateSelectedPsmTable();
-        updateSpectra();
-    }//GEN-LAST:event_primarySelectionTableMouseReleased
-
-    private void primarySelectionTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_primarySelectionTableKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            primarySelectionTableMouseReleased(null);
-        }
-    }//GEN-LAST:event_primarySelectionTableKeyReleased
-
-    private void secondarySelectionTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_secondarySelectionTableMouseReleased
-        updateRelatedPsmTable();
-        updateSpectra();
-    }//GEN-LAST:event_secondarySelectionTableMouseReleased
-
-    private void secondarySelectionTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_secondarySelectionTableKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            secondarySelectionTableMouseReleased(null);
-        }
-    }//GEN-LAST:event_secondarySelectionTableKeyReleased
-
     private void aIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_aIonToggleButtonActionPerformed
@@ -976,6 +916,16 @@ public class PtmPanel extends javax.swing.JPanel {
     private void moreThanTwoChargesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moreThanTwoChargesToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_moreThanTwoChargesToggleButtonActionPerformed
+
+    private void primarySelectionJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_primarySelectionJComboBoxActionPerformed
+        updateSelectedPsmTable();
+        updateSpectra();
+    }//GEN-LAST:event_primarySelectionJComboBoxActionPerformed
+
+    private void secondarySelectionJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_secondarySelectionJComboBoxActionPerformed
+        updateRelatedPsmTable();
+        updateSpectra();
+    }//GEN-LAST:event_secondarySelectionJComboBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonToggleButton;
     private javax.swing.JToggleButton bIonToggleButton;
@@ -998,8 +948,7 @@ public class PtmPanel extends javax.swing.JPanel {
     private javax.swing.JSplitPane peptideTablesJSplitPane;
     private javax.swing.JTable peptidesTable;
     private javax.swing.JScrollPane peptidesTableJScrollPane;
-    private javax.swing.JScrollPane primarySelectionJScrollPane;
-    private javax.swing.JTable primarySelectionTable;
+    private javax.swing.JComboBox primarySelectionJComboBox;
     private javax.swing.JSplitPane psmSpectraSplitPane;
     private javax.swing.JSplitPane psmSplitPane;
     private javax.swing.JScrollPane psmsModifiedTableJScrollPane;
@@ -1007,8 +956,7 @@ public class PtmPanel extends javax.swing.JPanel {
     private javax.swing.JTable relatedPeptidesTable;
     private javax.swing.JScrollPane relatedPeptidesTableJScrollPane;
     private javax.swing.JTable relatedPsmTable;
-    private javax.swing.JScrollPane secondarySelectionJScrollPane;
-    private javax.swing.JTable secondarySelectionTable;
+    private javax.swing.JComboBox secondarySelectionJComboBox;
     private javax.swing.JTable selectedPsmTable;
     private javax.swing.JPanel spectrumChartJPanel;
     private javax.swing.JPanel spectrumJPanel;
@@ -1032,12 +980,22 @@ public class PtmPanel extends javax.swing.JPanel {
 
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumbers(!showSparkLines);
+        
+        ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Precursor Charge").getCellRenderer()).showNumbers(!showSparkLines);
+        
+        ((JSparklinesBarChartTableCellRenderer) relatedPsmTable.getColumn("Precursor Charge").getCellRenderer()).showNumbers(!showSparkLines);
 
         peptidesTable.revalidate();
         peptidesTable.repaint();
 
         relatedPeptidesTable.revalidate();
         relatedPeptidesTable.repaint();
+        
+        selectedPsmTable.revalidate();
+        selectedPsmTable.repaint();
+        
+        relatedPsmTable.revalidate();
+        relatedPsmTable.repaint();
     }
 
     /**
@@ -1236,36 +1194,30 @@ public class PtmPanel extends javax.swing.JPanel {
             psmsMap.put("Related Peptide", new ArrayList<String>(peptideMatch.getSpectrumMatches().keySet()));
         }
 
-        while (primarySelectionTable.getRowCount() > 0) {
-            ((DefaultTableModel) primarySelectionTable.getModel()).removeRow(0);
-        }
-        while (secondarySelectionTable.getRowCount() > 0) {
-            ((DefaultTableModel) secondarySelectionTable.getModel()).removeRow(0);
-        }
-        if (!relatedPeptides.isEmpty()) {
-            ((DefaultTableModel) secondarySelectionTable.getModel()).addRow(new Object[]{
-                        "Related Peptide",
-                        null
-                    });
-        }
         ArrayList<String> keys = new ArrayList<String>(confidenceMap.keySet()); // Maybe we want it sorted by confidence? Not sure...
         Collections.sort(keys);
+
+        Vector<String> primarySelections = new Vector<String>();
+        Vector<String> secondarySelections = new Vector<String>();
+
+        if (!relatedPeptides.isEmpty()) {
+            secondarySelections.add("Related Peptide");
+        }
+
         for (String key : keys) {
-            ((DefaultTableModel) primarySelectionTable.getModel()).addRow(new Object[]{
-                        key,
-                        confidenceMap.get(key)
-                    });
-            ((DefaultTableModel) secondarySelectionTable.getModel()).addRow(new Object[]{
-                        key,
-                        confidenceMap.get(key)
-                    });
+            
+            String temp = key;
+            
+            if (key.equalsIgnoreCase("")) {
+                temp = "Unmodified";
+            }
+            
+            primarySelections.add(temp + " | " + confidenceMap.get(key) + "%");
+            secondarySelections.add(temp + " | " + confidenceMap.get(key) + "%");
         }
-        primarySelectionTable.setRowSelectionInterval(0, 0);
-        if (!relatedPeptides.isEmpty() || secondarySelectionTable.getRowCount() == 1) {
-            secondarySelectionTable.setRowSelectionInterval(0, 0);
-        } else {
-            secondarySelectionTable.setRowSelectionInterval(0, 1);
-        }
+
+        primarySelectionJComboBox.setModel(new DefaultComboBoxModel(primarySelections));
+        secondarySelectionJComboBox.setModel(new DefaultComboBoxModel(secondarySelections));
     }
 
     /**
@@ -1330,7 +1282,7 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPsmTable.revalidate();
         relatedPsmTable.repaint();
 
-        if (!relatedPeptides.isEmpty() || secondarySelectionTable.getRowCount() > 1) {
+        if (!relatedPeptides.isEmpty() || secondarySelectionJComboBox.getItemCount() > 1) {
             relatedPsmTable.setRowSelectionInterval(0, 0);
             updateSpectra();
         }
@@ -1347,8 +1299,8 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumChartJPanel.repaint();
 
         try {
-            if (selectedPsmTable.getSelectedRow() != -1 && primarySelectionTable.getSelectedRow() != -1) {
-                String familyKey = (String) primarySelectionTable.getValueAt(primarySelectionTable.getSelectedRow(), 0);
+            if (selectedPsmTable.getSelectedRow() != -1 && primarySelectionJComboBox.getSelectedIndex() != -1) {
+                String familyKey = convertComboBoxSelectionToFamilyKey((String) primarySelectionJComboBox.getSelectedItem());
                 String spectrumKey = psmsMap.get(familyKey).get(selectedPsmTable.getSelectedRow());
                 peptideShakerGUI.selectSpectrum(spectrumKey);
 
@@ -1407,9 +1359,8 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
             }
 
-            if (relatedPsmTable.getSelectedRow() != -1 && secondarySelectionTable.getSelectedRow() != -1) {
-                String familyKey = (String) secondarySelectionTable.getValueAt(secondarySelectionTable.getSelectedRow(), 0);
-
+            if (relatedPsmTable.getSelectedRow() != -1 && secondarySelectionJComboBox.getSelectedIndex() != -1) {
+                String familyKey = convertComboBoxSelectionToFamilyKey((String) secondarySelectionJComboBox.getSelectedItem());
                 String spectrumKey = psmsMap.get(familyKey).get(relatedPsmTable.getSelectedRow());
                 MSnSpectrum currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(
                         2, spectrumKey);
@@ -1747,10 +1698,10 @@ public class PtmPanel extends javax.swing.JPanel {
 
         @Override
         public int getRowCount() {
-            if (primarySelectionTable.getRowCount() == 0) {
+            if (primarySelectionJComboBox.getItemCount() == 0) {
                 return 0;
             }
-            String familyKey = (String) primarySelectionTable.getValueAt(primarySelectionTable.getSelectedRow(), 0);
+            String familyKey = convertComboBoxSelectionToFamilyKey((String) primarySelectionJComboBox.getSelectedItem());
             return psmsMap.get(familyKey).size();
         }
 
@@ -1778,8 +1729,11 @@ public class PtmPanel extends javax.swing.JPanel {
 
         @Override
         public Object getValueAt(int row, int column) {
-            String familyKey = (String) primarySelectionTable.getValueAt(primarySelectionTable.getSelectedRow(), 0);
+
+            String familyKey = convertComboBoxSelectionToFamilyKey((String) primarySelectionJComboBox.getSelectedItem());
+            
             SpectrumMatch spectrumMatch = identification.getSpectrumIdentification().get(psmsMap.get(familyKey).get(row));
+            
             if (column == 0) {
                 String result = "";
                 int cpt;
@@ -1813,7 +1767,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
                 return result;
             } else if (column == 1) {
-                // Not sure that it will wlways be the best assumption, might have to iterate assumptions if the wrong sequence is displayed
+                // Not sure that it will always be the best assumption, might have to iterate assumptions if the wrong sequence is displayed
                 return spectrumMatch.getBestAssumption().getPeptide().getSequence();
             } else if (column == 2) {
                 return familyKey;
@@ -1825,7 +1779,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
             } else if (column == 4) {
                 try {
-                    return ((MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(2, spectrumMatch.getKey())).getPrecursor().getCharge().toString();
+                    return ((MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(2, spectrumMatch.getKey())).getPrecursor().getCharge().value;
                 } catch (MzMLUnmarshallerException e) {
                     return "";
                 }
@@ -1857,10 +1811,10 @@ public class PtmPanel extends javax.swing.JPanel {
 
         @Override
         public int getRowCount() {
-            if (secondarySelectionTable.getRowCount() == 0) {
+            if (secondarySelectionJComboBox.getItemCount() == 0) {
                 return 0;
             }
-            String familyKey = (String) secondarySelectionTable.getValueAt(secondarySelectionTable.getSelectedRow(), 0);
+            String familyKey = convertComboBoxSelectionToFamilyKey((String) secondarySelectionJComboBox.getSelectedItem());
             return psmsMap.get(familyKey).size();
         }
 
@@ -1872,8 +1826,8 @@ public class PtmPanel extends javax.swing.JPanel {
         @Override
         public String getColumnName(int column) {
             if (column == 0) {
-                if (secondarySelectionTable.getRowCount() > 0
-                        && ((String) secondarySelectionTable.getValueAt(secondarySelectionTable.getSelectedRow(), 0)).equals("Related Peptide")) {
+                if (secondarySelectionJComboBox.getItemCount() > 0
+                        && ((String) secondarySelectionJComboBox.getSelectedItem()).equals("Related Peptide")) {
                     return " ";
                 }
                 return "Rank";
@@ -1892,7 +1846,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         @Override
         public Object getValueAt(int row, int column) {
-            String familyKey = (String) secondarySelectionTable.getValueAt(secondarySelectionTable.getSelectedRow(), 0);
+            String familyKey = convertComboBoxSelectionToFamilyKey((String) secondarySelectionJComboBox.getSelectedItem());
             SpectrumMatch spectrumMatch = identification.getSpectrumIdentification().get(psmsMap.get(familyKey).get(row));
             if (column == 0) {
                 if (familyKey.equals("Related Peptide")) {
@@ -1946,7 +1900,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
             } else if (column == 4) {
                 try {
-                    return ((MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(2, spectrumMatch.getKey())).getPrecursor().getCharge().toString();
+                    return ((MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(2, spectrumMatch.getKey())).getPrecursor().getCharge().value;
                 } catch (MzMLUnmarshallerException e) {
                     return "";
                 }
@@ -1969,5 +1923,30 @@ public class PtmPanel extends javax.swing.JPanel {
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return false;
         }
+    }
+
+    /**
+     * Converts the item in the comb box to the correct family key.
+     * 
+     * @param itemText  the item text
+     * @return          the family key
+     */
+    private String convertComboBoxSelectionToFamilyKey(String itemText) {
+        
+        String familyKey = itemText;
+        
+        if (familyKey.lastIndexOf("|") != -1) {
+            familyKey = familyKey.substring(0, familyKey.lastIndexOf("|"));
+        }
+
+        if (!familyKey.equalsIgnoreCase("Related Peptide")) {
+            familyKey = familyKey.substring(0, familyKey.length() - 1);
+        }
+        
+        if (familyKey.equalsIgnoreCase("Unmodified")) {
+            familyKey = "";
+        }
+
+        return familyKey;
     }
 }
