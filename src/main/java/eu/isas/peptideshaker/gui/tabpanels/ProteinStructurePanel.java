@@ -580,7 +580,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void proteinTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseExited
-        proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_proteinTableMouseExited
 
     /**
@@ -598,14 +598,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             String tempValue = (String) proteinTable.getValueAt(row, column);
 
             if (tempValue.lastIndexOf("<html>") != -1) {
-                proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
-                proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
         } else if (column == 2 && proteinTable.getValueAt(row, column) != null) {
-            proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else {
-            proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
 }//GEN-LAST:event_proteinTableMouseMoved
 

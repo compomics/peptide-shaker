@@ -1498,14 +1498,14 @@ public class OverviewPanel extends javax.swing.JPanel {
             String tempValue = (String) proteinTable.getValueAt(row, column);
 
             if (tempValue.lastIndexOf("<html>") != -1) {
-                proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
-                proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
         } else if (column == 2 && proteinTable.getValueAt(row, column) != null) {
-            proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else {
-            proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_proteinTableMouseMoved
 
@@ -1515,7 +1515,7 @@ public class OverviewPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void proteinTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseExited
-        proteinTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinTableMouseExited
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonBubblePlotToggleButton;
