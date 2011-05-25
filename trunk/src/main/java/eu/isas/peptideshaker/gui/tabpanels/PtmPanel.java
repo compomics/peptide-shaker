@@ -1362,6 +1362,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                             precursor.getMz(), precursor.getCharge().toString(),
                             "", 40, false, false, false, 2, false);
+                    spectrumA.setDeltaMassWindow(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance());
                     spectrumA.setBorder(null);
 
                     // get the spectrum annotations
@@ -1420,6 +1421,7 @@ public class PtmPanel extends javax.swing.JPanel {
                             currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                             precursor.getMz(), precursor.getCharge().toString(),
                             "", 40, false, false, false, 2, false);
+                    spectrumB.setDeltaMassWindow(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance());
                     spectrumB.setBorder(null);
 
                     // get the spectrum annotations                

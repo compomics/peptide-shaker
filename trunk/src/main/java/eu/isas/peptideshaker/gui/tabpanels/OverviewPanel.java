@@ -1909,6 +1909,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                                 currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                                 precursor.getMz(), precursor.getCharge().toString(),
                                 "", 40, false, false, false, 2, false);
+                        spectrum.setDeltaMassWindow(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance());
                         spectrum.setBorder(null);
 
                         // get the spectrum annotations
