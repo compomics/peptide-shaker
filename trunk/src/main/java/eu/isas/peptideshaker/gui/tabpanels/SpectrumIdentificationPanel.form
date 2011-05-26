@@ -259,7 +259,7 @@
         </Container>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Peptide-Shaker:"/>
+            <Property name="text" type="java.lang.String" value="PeptideShaker:"/>
           </Properties>
         </Component>
         <Container class="javax.swing.JPanel" name="jPanel5">

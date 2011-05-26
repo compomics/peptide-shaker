@@ -9,6 +9,8 @@ import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
@@ -89,7 +91,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     /**
      * A simple progress dialog.
      */
-    private static ProgressDialog progressDialog;
+    private static ProgressDialogX progressDialog;
     /**
      * If set to true the progress stopped and the simple progress dialog
      * disposed.
@@ -748,7 +750,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      */
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
         if (validateInput()) {
-            
+
             // clear the previuos data
             peptideShakerGUI.clearData();
 
@@ -1028,7 +1030,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     minPeplengthTxt.setText("8");
                     massDeviationTxt.setText("10");
                     precMassUnitCmb.setSelectedItem("ppm");
-            fastaFileTxt.setText(fastaFile.getName());
+                    fastaFileTxt.setText(fastaFile.getName());
                 }
                 isPsFile = false;
             }
@@ -1338,7 +1340,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      * Loads the new project information
      */
     private void loadProject() {
-
+        
         projectNameIdTxt.setText(experiment.getReference());
 
         ArrayList<Sample> samples = new ArrayList(experiment.getSamples().values());
@@ -1359,7 +1361,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 }
             }
         }
-
+        
         sampleNameIdtxt.setText(sample.getReference());
 
         ArrayList<Integer> replicates = new ArrayList(experiment.getAnalysisSet(sample).getReplicateNumberList());
@@ -1399,7 +1401,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
         final OpenDialog tempRef = this; // needed due to threading issues
         cancelProgress = false;
-        progressDialog = new ProgressDialog(this, this, true);
+        progressDialog = new ProgressDialogX(this, this, true);
         progressDialog.doNothingOnClose();
 
         new Thread(new Runnable() {

@@ -100,6 +100,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="filterMenu">
           <Properties>
+            <Property name="mnemonic" type="int" value="76"/>
             <Property name="text" type="java.lang.String" value="Filter"/>
           </Properties>
           <SubComponents>

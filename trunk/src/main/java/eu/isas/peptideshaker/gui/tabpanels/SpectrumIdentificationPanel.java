@@ -494,7 +494,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         });
         peptideShakerJScrollPane.setViewportView(peptideShakerJTable);
 
-        jLabel1.setText("Peptide-Shaker:");
+        jLabel1.setText("PeptideShaker:");
 
         jPanel5.setOpaque(false);
 

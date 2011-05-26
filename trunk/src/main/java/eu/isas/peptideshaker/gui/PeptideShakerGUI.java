@@ -15,6 +15,8 @@ import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
@@ -129,7 +131,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * A simple progress dialog.
      */
-    private static ProgressDialog progressDialog;
+    private static ProgressDialogX progressDialog;
     /**
      * The identification to display
      */
@@ -451,6 +453,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         menuBar.add(editMenu);
 
+        filterMenu.setMnemonic('L');
         filterMenu.setText("Filter");
 
         proteinFilterJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
@@ -627,7 +630,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             lastSelectedFolder = fileChooser.getCurrentDirectory().getPath();
 
-            progressDialog = new ProgressDialog(this, this, true);
+            progressDialog = new ProgressDialogX(this, this, true);
             progressDialog.doNothingOnClose();
 
             final PeptideShakerGUI tempRef = this; // needed due to threading issues
@@ -702,7 +705,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             final PeptideShakerGUI tempRef = this; // needed due to threading issues
 
-            progressDialog = new ProgressDialog(this, this, true);
+            progressDialog = new ProgressDialogX(this, this, true);
             progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
@@ -904,7 +907,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             overviewPanel.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displaySequence, displaySpectrum);
             overviewPanel.updateSeparators();
 
-            progressDialog = new ProgressDialog(this, this, true);
+            progressDialog = new ProgressDialogX(this, this, true);
             progressDialog.setMax(resultsJTabbedPane.getComponentCount() + 1);
             progressDialog.doNothingOnClose();
 
@@ -1484,7 +1487,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Clear the data from the previous experiment
      */
     public void clearData() {
-
+  
         // reset the filter
         currentProteinFilterValues = new String[]{"", "", "", "", "", "", "", ""};
 
