@@ -754,12 +754,15 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
             this.setVisible(false);
 
-            if (experiment == null) {
+            if (!idFiles.isEmpty() && !isPsFile) {
                 experiment = new MsExperiment(projectNameIdTxt.getText().trim());
                 sample = new Sample(sampleNameIdtxt.getText().trim());
                 SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(getReplicateNumber()));
                 replicateNumber = getReplicateNumber();
                 experiment.addAnalysisSet(sample, analysisSet);
+            }
+            if (!spectrumFiles.isEmpty()) {
+                experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).clearSpectrumCollection();
             }
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
