@@ -1335,24 +1335,31 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                 MSnSpectrum spectrum = (MSnSpectrum) spectrumCollection.getSpectrum(spectrumKey);
                 Precursor precursor = spectrum.getPrecursor();
+                
+                double retentionTime = precursor.getRt();
+                
+                if (retentionTime == -1) {
+                    retentionTime = 0;
+                }
+                
                 ((DefaultTableModel) spectrumTable.getModel()).addRow(new Object[]{
                             ++counter,
                             spectrum.getSpectrumTitle(),
                             precursor.getMz(),
                             precursor.getCharge().value,
-                            precursor.getRt()
+                            retentionTime
                         });
 
                 if (precursor.getCharge().value > maxCharge) {
                     maxCharge = precursor.getCharge().value;
                 }
 
-                if (lLowRT > precursor.getRt()) {
-                    lLowRT = precursor.getRt();
+                if (lLowRT > retentionTime) {
+                    lLowRT = retentionTime;
                 }
 
-                if (lHighRT < precursor.getRt()) {
-                    lHighRT = precursor.getRt();
+                if (lHighRT < retentionTime) {
+                    lHighRT = retentionTime;
                 }
 
                 if (precursor.getMz() > maxMz) {
