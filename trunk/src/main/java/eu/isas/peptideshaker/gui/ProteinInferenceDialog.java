@@ -6,15 +6,19 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.util.ArrayList;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 
 /**
  * This dialog allows the user to resolve manually some protein inference issues
  *
- * @author vaudel
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class ProteinInferenceDialog extends javax.swing.JDialog {
 
@@ -38,11 +42,35 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * The sequence database
      */
     private SequenceDataBase db;
+    /**
+     * The protein table.
+     */
+    private JTable proteinTable;
+    /**
+     * The selected row.
+     */
+    private int selectedRow;
+    /**
+     * The PeptideShaker parent frame.
+     */
+    private PeptideShakerGUI peptideShakerGUI;
 
-    /** Creates new form ProteinInferenceDialog */
-    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, ProteinMatch inspectedMatch, Identification identification, SequenceDataBase db) {
+    /** 
+     * Creates new form ProteinInferenceDialog
+     * 
+     * @param peptideShakerGUI
+     * @param proteinTable 
+     * @param selectedRow 
+     * @param inspectedMatch 
+     * @param identification
+     * @param db  
+     */
+    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, JTable proteinTable, int selectedRow, ProteinMatch inspectedMatch, Identification identification, SequenceDataBase db) {
         super(peptideShakerGUI, true);
 
+        this.peptideShakerGUI = peptideShakerGUI;
+        this.proteinTable = proteinTable;
+        this.selectedRow = selectedRow;
         this.db = db;
         this.inspectedMatch = inspectedMatch;
         accessions = new ArrayList(inspectedMatch.getTheoreticProteinsAccessions());
@@ -65,6 +93,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         }
 
         initComponents();
+        
+        groupClassJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         PSParameter psParameter = (PSParameter) inspectedMatch.getUrParam(new PSParameter());
         matchInfoLbl.setText(inspectedMatch.getKey() + " (score:"
@@ -75,7 +105,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         setColumnProperies();
 
         // The index should be set in the design according to the PSParameter class static fields!
-        groupClassLbl.setSelectedIndex(psParameter.getGroupClass());
+        groupClassJComboBox.setSelectedIndex(psParameter.getGroupClass());
 
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
@@ -118,7 +148,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         matchInfoLbl = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        groupClassLbl = new javax.swing.JComboBox();
+        groupClassJComboBox = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Unresolved Protein Inference");
@@ -204,16 +234,16 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Group Details"));
 
-        jLabel1.setText("Candidate proteins:");
+        jLabel1.setText("Candidate Proteins:");
 
         matchInfoLbl.setText("protein match information");
 
         jLabel2.setText("Group Class:");
 
-        groupClassLbl.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0: Single protein", "1: Group of isoforms", "2: Group of isoforms with unrelated protein", "3: Group of unrelated proteins" }));
-        groupClassLbl.addActionListener(new java.awt.event.ActionListener() {
+        groupClassJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "0: Single protein", "1: Group of isoforms", "2: Group of isoforms with unrelated protein", "3: Group of unrelated proteins" }));
+        groupClassJComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                groupClassLblActionPerformed(evt);
+                groupClassJComboBoxActionPerformed(evt);
             }
         });
 
@@ -223,14 +253,14 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2))
                 .addGap(18, 18, 18)
-                .addComponent(matchInfoLbl)
-                .addGap(159, 159, 159)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(groupClassLbl, 0, 295, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(groupClassJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(matchInfoLbl))
+                .addContainerGap(357, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -238,9 +268,11 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(matchInfoLbl)
+                    .addComponent(matchInfoLbl))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(groupClassLbl, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(groupClassJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -269,7 +301,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(okButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -279,7 +311,19 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Update the protein table according to the protein inference selection.
+     * 
+     * @param evt 
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
+        
+        Protein mainMatch = inspectedMatch.getMainMatch();
+        proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch.getAccession()), selectedRow, proteinTable.getColumn("Accession").getModelIndex());
+        proteinTable.setValueAt(groupClassJComboBox.getSelectedIndex(), selectedRow, proteinTable.getColumn("PI").getModelIndex());
+        String description = db.getProteinHeader(mainMatch.getAccession()).getDescription();
+        proteinTable.setValueAt(description, selectedRow, proteinTable.getColumn("Description").getModelIndex());
+        
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -290,14 +334,14 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         proteinMatchTable.repaint();
     }//GEN-LAST:event_proteinMatchTableMouseClicked
 
-    private void groupClassLblActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupClassLblActionPerformed
+    private void groupClassJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupClassJComboBoxActionPerformed
         PSParameter pSParameter = new PSParameter();
         pSParameter = (PSParameter) inspectedMatch.getUrParam(pSParameter);
-        pSParameter.setGroupClass(groupClassLbl.getSelectedIndex());
-    }//GEN-LAST:event_groupClassLblActionPerformed
+        pSParameter.setGroupClass(groupClassJComboBox.getSelectedIndex());
+    }//GEN-LAST:event_groupClassJComboBoxActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox groupClassLbl;
+    private javax.swing.JComboBox groupClassJComboBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
