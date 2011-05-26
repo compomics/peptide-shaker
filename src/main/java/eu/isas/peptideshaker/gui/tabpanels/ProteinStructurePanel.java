@@ -7,11 +7,11 @@ import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.pdbfinder.FindPdbForUniprotAccessions;
 import com.compomics.util.pdbfinder.pdb.PdbParameter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.gui.ProgressDialog;
-import eu.isas.peptideshaker.gui.ProgressDialogParent;
 import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
@@ -49,7 +49,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     /**
      * A simple progress dialog.
      */
-    private static ProgressDialog progressDialog;
+    private static ProgressDialogX progressDialog;
     /**
      * The UniProt to PDB finder.
      */
@@ -663,7 +663,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-        progressDialog = new ProgressDialog(peptideShakerGUI, this, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
         progressDialog.setIntermidiate(true);
         progressDialog.doNothingOnClose();
 

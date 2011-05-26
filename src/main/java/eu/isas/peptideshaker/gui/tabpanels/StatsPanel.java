@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fdrestimation.PosteriorValidationMetrics;
@@ -9,7 +10,6 @@ import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyResults;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoySeries;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.gui.ProgressDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -110,7 +110,7 @@ public class StatsPanel extends javax.swing.JPanel {
     /**
      * A simple progress dialog.
      */
-    private static ProgressDialog progressDialog;
+    private static ProgressDialogX progressDialog;
     /**
      * Boolean indicating whether results are displayed
      */
@@ -2127,7 +2127,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void estimatePossibilities() {
 
-        progressDialog = new ProgressDialog(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.setIntermidiate(true);
         progressDialog.doNothingOnClose();
 
