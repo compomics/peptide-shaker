@@ -771,6 +771,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
                 sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
+        statsPanel.updateSeparators();
     }//GEN-LAST:event_formComponentResized
 
     /**
@@ -906,6 +907,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             overviewPanel.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displaySequence, displaySpectrum);
             overviewPanel.updateSeparators();
+            statsPanel.updateSeparators();
 
             progressDialog = new ProgressDialogX(this, this, true);
             progressDialog.setMax(resultsJTabbedPane.getComponentCount() + 1);

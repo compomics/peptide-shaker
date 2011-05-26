@@ -135,8 +135,16 @@ public class PosteriorValidationMetrics {
     /**
      * Creates a map of the result space size depending on the protein score threshold.
      * For protein groups only one protein will be retained, assuming that the sequences are similar (typically isoforms)
+     * 
+     * @param searchParameters
+     * @param sequenceDataBase 
+     * @param identification 
+     * @param peptideSpecificMap
+     * @param psmSpecificMap  
      */
-    public void estimateDatasetPossibilities(SearchParameters searchParameters, SequenceDataBase sequenceDataBase, Identification identification, PeptideSpecificMap peptideSpecificMap, PsmSpecificMap psmSpecificMap) {
+    public void estimateDatasetPossibilities(SearchParameters searchParameters, SequenceDataBase sequenceDataBase, 
+            Identification identification, PeptideSpecificMap peptideSpecificMap, PsmSpecificMap psmSpecificMap) {
+        
         resultMap = new HashMap<Double, PosteriorValidationPoint>();
         PSParameter probabilities = new PSParameter();
         int nProtein;

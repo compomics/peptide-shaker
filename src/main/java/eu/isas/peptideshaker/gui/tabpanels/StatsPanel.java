@@ -1255,7 +1255,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 rightPlotSplitPane.setDividerLocation(rightPlotSplitPane.getWidth() / 2);
             }
         });
-        
+
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
@@ -1348,6 +1348,7 @@ public class StatsPanel extends javax.swing.JPanel {
         updateDisplayedComponents();
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_validationCmbMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JPanel benefitCostChartPanel;
@@ -2130,22 +2131,39 @@ public class StatsPanel extends javax.swing.JPanel {
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.setIntermidiate(true);
         progressDialog.doNothingOnClose();
+        
+        // @TODO: reformat the code so that threading and progress dialog can be used
 
-        new Thread(new Runnable() {
+//        new Thread(new Runnable() {
+//
+//            public void run() {
+//                progressDialog.setTitle("Estimating probabilities. Please Wait...");
+//                progressDialog.setVisible(true);
+//            }
+//        }, "ProgressDialog").start();
+//        
+//        new Thread("EstimationThread") {
+//
+//            @Override
+//            public void run() {
+        
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-            public void run() {
-                progressDialog.setTitle("Estimating probabilities. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+                PSMaps pSMaps = new PSMaps();
+                pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
+                posteriorValidationMetrics.estimateDatasetPossibilities(peptideShakerGUI.getSearchParameters(),
+                        peptideShakerGUI.getSequenceDataBase(), peptideShakerGUI.getIdentification(), pSMaps.getPeptideSpecificMap(), pSMaps.getPsmSpecificMap());
+                posteriorValidationMetrics.estimateDataBasePossibilities(peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceDataBase());
 
-        PSMaps pSMaps = new PSMaps();
-        pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-        posteriorValidationMetrics.estimateDatasetPossibilities(peptideShakerGUI.getSearchParameters(),
-                peptideShakerGUI.getSequenceDataBase(), peptideShakerGUI.getIdentification(), pSMaps.getPeptideSpecificMap(), pSMaps.getPsmSpecificMap());
-        posteriorValidationMetrics.estimateDataBasePossibilities(peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceDataBase());
-
-        progressDialog.setVisible(false);
-        progressDialog.dispose();
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+                
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+//            }
+//        }.start();
+    }
+    
+    public void updateSeparators() {
+        formComponentResized(null);
     }
 }
