@@ -568,7 +568,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             if (column == 2 && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
                 String proteinKey = proteinTableMap.get(getProteinKey(row));
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
-                new ProteinInferenceDialog(peptideShakerGUI, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
+                new ProteinInferenceDialog(peptideShakerGUI, proteinTable, row, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
             }
         }
 }//GEN-LAST:event_proteinTableMouseClicked
