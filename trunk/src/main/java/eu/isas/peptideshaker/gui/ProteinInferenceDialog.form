@@ -252,7 +252,7 @@
                       <Component id="groupClassJComboBox" alignment="0" min="-2" pref="295" max="-2" attributes="0"/>
                       <Component id="matchInfoLbl" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="357" max="32767" attributes="0"/>
+                  <EmptySpace pref="389" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -277,7 +277,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Candidate Proteins:"/>
+            <Property name="text" type="java.lang.String" value="Group Score:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="matchInfoLbl">
@@ -294,10 +294,10 @@
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="4">
-                <StringItem index="0" value="0: Single protein"/>
-                <StringItem index="1" value="1: Group of isoforms"/>
-                <StringItem index="2" value="2: Group of isoforms with unrelated protein"/>
-                <StringItem index="3" value="3: Group of unrelated proteins"/>
+                <StringItem index="0" value="Single Protein"/>
+                <StringItem index="1" value="Group of Isoforms"/>
+                <StringItem index="2" value="Group of Unrelated Isoforms"/>
+                <StringItem index="3" value="Group of Unrelated Proteins"/>
               </StringArray>
             </Property>
           </Properties>
