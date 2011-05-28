@@ -178,7 +178,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         missedCleavagesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         missedCleavagesTxt.setText("1");
 
-        jLabel7.setText("Missed cleavages:");
+        jLabel7.setText("Missed Cleavages:");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -623,7 +623,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             if (column == 0) {
                 return "Modification";
             } else if (column == 1) {
-                return "Max #Number";
+                return "Max Number";
             } else {
                 return "";
             }
