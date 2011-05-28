@@ -689,7 +689,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         }
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
+    /**
+     * Exports the results to text files.
+     * 
+     * @param evt 
+     */
     private void exportMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMenuItemActionPerformed
+
         final CsvExporter exporter = new CsvExporter(experiment, sample, replicateNumber, searchParameters.getEnzyme());
         final JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
         fileChooser.setDialogTitle("Select Result Folder");
@@ -737,7 +743,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_exportMenuItemActionPerformed
 
     /**
-     * Opens the help dialog.
+     * Opens the Help dialog.
      * 
      * @param evt
      */
@@ -945,7 +951,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         proteinStructurePanel.displayResults();
                         progressDialog.setValue(++counter);
                     } catch (MzMLUnmarshallerException e) {
-                        JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML Problem", JOptionPane.ERROR_MESSAGE);
                     }
 
                     progressDialog.setVisible(false);
@@ -1134,6 +1140,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
     /**
      * Set the default preferences.
+     * 
      * TODO: Not sure that this ought to be hard coded
      */
     private void setDefaultPreferences() {
@@ -1263,8 +1270,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
     @Override
     public void cancelProgress() {
-        // @TODO not sure how to implement this
-        throw new UnsupportedOperationException("Not supported yet.");
+        // do nothing
     }
 
     /**
@@ -1453,32 +1459,30 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Transforms the protein accesion number into an html link to the 
-     * corresponding database.
+     * Transforms the protein accesion number into an HTML link to the 
+     * corresponding database. Note that this is a complete HTML with 
+     * HTML and a href tags, where the main use is to include it in the 
+     * protein tables.
      * 
      * @param protein   the protein to get the database link for
      * @return          the transformed accession number
      */
     public String addDatabaseLink(Protein protein) {
 
-        // @TODO: perhaps this method ought to be moved to utilities?
-
         String proteinAccession = protein.getAccession();
         String accessionNumberWithLink = proteinAccession;
 
         // try to find the database from the SequenceDatabase
-        String database = getSequenceDataBase().getProteinHeader(proteinAccession).getDatabaseType(); 
-        
+        String database = getSequenceDataBase().getProteinHeader(proteinAccession).getDatabaseType();
+
         // create the database link
         if (database != null) {
-            
-            // @TODO: split the generation of the link into a separate method!
+
             // @TODO: support more databases
 
             if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
-                accessionNumberWithLink = "<html><a href=\"http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b"
-                        + database + "-AccNumber:" + proteinAccession
-                        + "%5d\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
+                accessionNumberWithLink = "<html><a href=\"" + getAccesionLink(proteinAccession, database) 
+                        + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
                         + proteinAccession + "</font></a></html>";
             } else {
                 // unknown database!
@@ -1486,6 +1490,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         }
 
         return accessionNumberWithLink;
+    }
+    
+    /**
+     * Returns the protein accession number as a web link to the given 
+     * protein at http://srs.ebi.ac.uk.
+     * 
+     * @param proteinAccession  the protein accession number
+     * @param database          the protein database
+     * @return                  the protein accession web link
+     */
+    public String getAccesionLink(String proteinAccession, String database) {
+        return "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b" + database + "-AccNumber:" + proteinAccession + "%5d";
     }
     
     /**
@@ -1558,7 +1574,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         proteinStructureJPanel.revalidate();
         proteinStructureJPanel.repaint();
     }
-    
+
     /**
      * Returns the OverviewPanel.
      * 
@@ -1566,5 +1582,41 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public OverviewPanel getOverviewPanel() {
         return overviewPanel;
+    }
+
+    /**
+     * Returns the StatsPanel.
+     * 
+     * @return the StatsPanel
+     */
+    public StatsPanel getStatsPanel() {
+        return statsPanel;
+    }
+
+    /**
+     * Returns the PtmPanel.
+     * 
+     * @return the PtmPanel
+     */
+    public PtmPanel getPtmPanel() {
+        return ptmPanel;
+    }
+
+    /**
+     * Returns the ProteinStructurePanel.
+     * 
+     * @return the ProteinStructurePanel
+     */
+    public ProteinStructurePanel getProteinStructurePanel() {
+        return proteinStructurePanel;
+    }
+
+    /**
+     * Returns the SpectrumIdentificationPanel.
+     * 
+     * @return the SpectrumIdentificationPanel
+     */
+    public SpectrumIdentificationPanel getSpectrumIdentificationPanel() {
+        return spectrumIdentificationPanel;
     }
 }

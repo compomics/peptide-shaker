@@ -5,18 +5,26 @@ import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * A simple dialog for setting the spectrum annotation preferences.
+ * 
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
+    /**
+     * The annotation preferences.
+     */
     private AnnotationPreferences annotationPreferences;
+    /**
+     * The PeptideShakerGUI parent.
+     */
     private PeptideShakerGUI peptideShakerGUI;
 
     /** 
-     * Creates new form AnnotationPreferencesDialog
+     * Creates a new AnnotationPreferencesDialog.
      * 
-     * @param peptideShakerGUI 
+     * @param peptideShakerGUI the PeptideShaker GUI parent
      */
     public AnnotationPreferencesDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);
@@ -141,19 +149,36 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Close the dialog and update the spectrum annotations.
+     * 
+     * @param evt 
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
             peptideShakerGUI.getSearchParameters().setFragmentIonMZTolerance(new Double(mzToleranceTxt.getText()));
             peptideShakerGUI.setAnnotationPreferences(annotationPreferences);
             peptideShakerGUI.getOverviewPanel().updateSpectrumAnnotation();
+            peptideShakerGUI.getPtmPanel().updateSpectra();
+            peptideShakerGUI.getSpectrumIdentificationPanel().updateSpectrum();
             dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
+    /**
+     * Closes the dialog without saving.
+     * 
+     * @param evt 
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Updates the annotation preferences.
+     * 
+     * @param evt 
+     */
     private void mostIntenseJCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mostIntenseJCheckBoxActionPerformed
         annotationPreferences.annotateMostIntensePeaks(mostIntenseJCheckBox.isSelected());
         refreshSelection();
@@ -169,10 +194,18 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Refresh the selection,
+     */
     private void refreshSelection() {
         mostIntenseJCheckBox.setSelected(annotationPreferences.shallAnnotateMostIntensePeaks());
     }
 
+    /**
+     * Validate the annotation accuracy.
+     * 
+     * @return true if validated
+     */
     private boolean validateInput() {
         try {
             new Double(mzToleranceTxt.getText().trim());
