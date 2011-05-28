@@ -320,7 +320,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         
         Protein mainMatch = inspectedMatch.getMainMatch();
-        proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch.getAccession()), selectedRow, proteinTable.getColumn("Accession").getModelIndex());
+        proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), selectedRow, proteinTable.getColumn("Accession").getModelIndex());
         proteinTable.setValueAt(groupClassJComboBox.getSelectedIndex(), selectedRow, proteinTable.getColumn("PI").getModelIndex());
         String description = db.getProteinHeader(mainMatch.getAccession()).getDescription();
         proteinTable.setValueAt(description, selectedRow, proteinTable.getColumn("Description").getModelIndex());

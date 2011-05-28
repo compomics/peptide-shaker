@@ -2391,7 +2391,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                         if (!proteinMatch.isDecoy()) {
                             ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                                         index + 1,
-                                        peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch().getAccession()),
+                                        peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
                                         probabilities.getGroupClass(),
                                         description,
                                         sequenceCoverage,

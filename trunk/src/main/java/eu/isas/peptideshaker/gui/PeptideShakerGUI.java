@@ -5,6 +5,7 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
@@ -1455,41 +1456,43 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Transforms the protein accesion number into an html link to the 
      * corresponding database.
      * 
-     * @param proteinAccessionNumber    the protein accession number to transform
-     * @return                          the transformed accession number
+     * @param protein   the protein to get the database link for
+     * @return          the transformed accession number
      */
-    public String addDatabaseLink(String proteinAccessionNumber) {
+    public String addDatabaseLink(Protein protein) {
 
-        String accessionNumberWithLink = proteinAccessionNumber;
-        String database = getSequenceDataBase().getName();
+        // @TODO: perhaps this method ought to be moved to utilities?
 
-        if (database.toUpperCase().startsWith("IPI")
-                || proteinAccessionNumber.toUpperCase().startsWith("IPI")) {
-            database = "IPI";
-        } else if (database.toUpperCase().startsWith("SWISS-PROT")
-                || database.toUpperCase().startsWith("SWISSPROT")
-                || database.toUpperCase().startsWith("UNI-PROT")
-                || database.toUpperCase().startsWith("UNIPROT")) {
-            database = "UNIPROT";
-        } else {
-            database = "unknown";
-        }
+        String proteinAccession = protein.getAccession();
+        String accessionNumberWithLink = proteinAccession;
 
-        if (!database.equalsIgnoreCase("unknown")) {
-            accessionNumberWithLink = "<html><a href=\"http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b"
-                    + database + "-AccNumber:" + proteinAccessionNumber
-                    + "%5d\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
-                    + proteinAccessionNumber + "</font></a></html>";
+        // try to find the database from the SequenceDatabase
+        String database = getSequenceDataBase().getProteinHeader(proteinAccession).getDatabaseType(); 
+        
+        // create the database link
+        if (database != null) {
+            
+            // @TODO: split the generation of the link into a separate method!
+            // @TODO: support more databases
+
+            if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
+                accessionNumberWithLink = "<html><a href=\"http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b"
+                        + database + "-AccNumber:" + proteinAccession
+                        + "%5d\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
+                        + proteinAccession + "</font></a></html>";
+            } else {
+                // unknown database!
+            }
         }
 
         return accessionNumberWithLink;
     }
-
+    
     /**
      * Clear the data from the previous experiment
      */
     public void clearData() {
-  
+
         // reset the filter
         currentProteinFilterValues = new String[]{"", "", "", "", "", "", "", ""};
 

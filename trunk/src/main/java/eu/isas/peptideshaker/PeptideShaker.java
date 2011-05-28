@@ -111,17 +111,14 @@ public class PeptideShaker {
      * @param idFiles           The files to import
      * @param spectrumFiles     The corresponding spectra (can be empty: spectra will not be loaded)
      * @param fastaFile         The database file in the fasta format
-     * @param databaseName
-     * @param databaseVersion
      */
-    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
-            File fastaFile, String databaseName, String databaseVersion) {
+    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile) {
 
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
 
         if (analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION) == null) {
             analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification());
-            SequenceDataBase db = new SequenceDataBase(databaseName, databaseVersion);
+            SequenceDataBase db = new SequenceDataBase();
             analysis.setSequenceDataBase(db);
             fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
             fileImporter.importFiles(idFiles, spectrumFiles, fastaFile);

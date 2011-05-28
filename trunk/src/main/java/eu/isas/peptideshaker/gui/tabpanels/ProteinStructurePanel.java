@@ -998,7 +998,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                         if (!proteinMatch.isDecoy()) {
                             ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                                         index + 1,
-                                        peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch().getAccession()),
+                                        peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
                                         probabilities.getGroupClass(),
                                         description,
                                         sequenceCoverage,
