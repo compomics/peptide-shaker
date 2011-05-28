@@ -193,11 +193,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         fastaFileTxt = new javax.swing.JTextField();
         browseDbButton = new javax.swing.JButton();
         clearDbButton = new javax.swing.JButton();
-        jPanel6 = new javax.swing.JPanel();
-        jLabel16 = new javax.swing.JLabel();
-        dbNameTxt = new javax.swing.JTextField();
-        jLabel17 = new javax.swing.JLabel();
-        dbVersionTxt = new javax.swing.JTextField();
         openButton = new javax.swing.JButton();
         exitButton = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
@@ -542,56 +537,13 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Sequences Processing Options"));
-
-        jLabel16.setText("Database Name:");
-
-        dbNameTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        dbNameTxt.setText("UniProtKB/Swiss-prot");
-
-        jLabel17.setText("Database Version:");
-
-        dbVersionTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        dbVersionTxt.setText("2010.11.04");
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(dbVersionTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE)
-                    .addComponent(dbNameTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 646, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel6Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
-                    .addComponent(jLabel16)
-                    .addComponent(dbNameTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
-                    .addComponent(jLabel17)
-                    .addComponent(dbVersionTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -599,9 +551,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(58, Short.MAX_VALUE))
+                .addContainerGap(159, Short.MAX_VALUE))
         );
 
         jTabbedPane.addTab("Sequence File", jPanel2);
@@ -1065,8 +1015,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     private javax.swing.JButton clearId;
     private javax.swing.JButton clearSpectra;
     private javax.swing.JPanel configPanel;
-    private javax.swing.JTextField dbNameTxt;
-    private javax.swing.JTextField dbVersionTxt;
     private javax.swing.JButton editId;
     private javax.swing.JButton editSpectra;
     private javax.swing.JButton exitButton;
@@ -1078,8 +1026,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -1092,7 +1038,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JTabbedPane jTabbedPane;
     private javax.swing.JTextField mascotMaxEvalueTxt;
@@ -1264,7 +1209,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
         boolean precTolUnit = ((String) precMassUnitCmb.getSelectedItem()).equals("ppm");
         IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue(), getMaxMassDeviation(), precTolUnit);
-        peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, dbNameTxt.getText().trim(), dbVersionTxt.getText().trim());
+        peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile);
     }
 
     /**
@@ -1403,8 +1348,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         massDeviationTxt.setText("");
 
         SequenceDataBase db = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSequenceDataBase();
-        dbNameTxt.setText(db.getName());
-        dbVersionTxt.setText(db.getVersion());
     }
 
     /**
