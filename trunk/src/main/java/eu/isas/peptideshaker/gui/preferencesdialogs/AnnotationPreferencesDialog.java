@@ -6,14 +6,18 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author vaudel
+ * @author Marc Vaudel
  */
 public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
     private AnnotationPreferences annotationPreferences;
     private PeptideShakerGUI peptideShakerGUI;
 
-    /** Creates new form AnnotationPreferencesDialog */
+    /** 
+     * Creates new form AnnotationPreferencesDialog
+     * 
+     * @param peptideShakerGUI 
+     */
     public AnnotationPreferencesDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
@@ -40,7 +44,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         mzToleranceTxt = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        mostIntenseButton = new javax.swing.JRadioButton();
+        mostIntenseJCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Spectrum Annotation");
@@ -62,18 +66,18 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Preferences"));
 
-        jLabel2.setText("m/z tolerance:");
+        jLabel2.setText("m/z Accuracy:");
 
         mzToleranceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         mzToleranceTxt.setText("0.5");
 
         jLabel3.setText("Da");
 
-        mostIntenseButton.setText("Annotate most intense peaks");
-        mostIntenseButton.setIconTextGap(15);
-        mostIntenseButton.addActionListener(new java.awt.event.ActionListener() {
+        mostIntenseJCheckBox.setText("Annotate Most Intense Peaks");
+        mostIntenseJCheckBox.setIconTextGap(15);
+        mostIntenseJCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mostIntenseButtonActionPerformed(evt);
+                mostIntenseJCheckBoxActionPerformed(evt);
             }
         });
 
@@ -83,24 +87,24 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(mostIntenseButton)
-                .addGap(30, 30, 30)
+                .addComponent(mostIntenseJCheckBox)
+                .addGap(28, 28, 28)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
                 .addComponent(mzToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(mostIntenseButton)
                     .addComponent(jLabel2)
                     .addComponent(mzToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(jLabel3)
+                    .addComponent(mostIntenseJCheckBox))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -109,14 +113,14 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(298, Short.MAX_VALUE)
-                .addComponent(okButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cancelButton)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(okButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelButton)))
                 .addContainerGap())
         );
 
@@ -141,6 +145,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         if (validateInput()) {
             peptideShakerGUI.getSearchParameters().setFragmentIonMZTolerance(new Double(mzToleranceTxt.getText()));
             peptideShakerGUI.setAnnotationPreferences(annotationPreferences);
+            peptideShakerGUI.getOverviewPanel().updateSpectrumAnnotation();
             dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed
@@ -149,22 +154,23 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
-    private void mostIntenseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mostIntenseButtonActionPerformed
-        annotationPreferences.annotateMostIntensePeaks(mostIntenseButton.isSelected());
+    private void mostIntenseJCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mostIntenseJCheckBoxActionPerformed
+        annotationPreferences.annotateMostIntensePeaks(mostIntenseJCheckBox.isSelected());
         refreshSelection();
-    }//GEN-LAST:event_mostIntenseButtonActionPerformed
+    }//GEN-LAST:event_mostIntenseJCheckBoxActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JRadioButton mostIntenseButton;
+    private javax.swing.JCheckBox mostIntenseJCheckBox;
     private javax.swing.JTextField mzToleranceTxt;
     private javax.swing.JButton okButton;
     // End of variables declaration//GEN-END:variables
 
     private void refreshSelection() {
-        mostIntenseButton.setSelected(annotationPreferences.shallAnnotateMostIntensePeaks());
+        mostIntenseJCheckBox.setSelected(annotationPreferences.shallAnnotateMostIntensePeaks());
     }
 
     private boolean validateInput() {

@@ -1871,6 +1871,14 @@ public class OverviewPanel extends javax.swing.JPanel {
     }
 
     /**
+     * Updates the spectrum annotation. Used when the user updates the annotation 
+     * accuracy.
+     */
+    public void updateSpectrumAnnotation() {
+        updateSpectrum(psmTable.getSelectedRow(), false);
+    }
+    
+    /**
      * Update the spectrum to the currently selected PSM.
      *
      * @param row           the row index of the PSM

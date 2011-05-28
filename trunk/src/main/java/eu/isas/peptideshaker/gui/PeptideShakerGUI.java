@@ -1558,4 +1558,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         proteinStructureJPanel.revalidate();
         proteinStructureJPanel.repaint();
     }
+    
+    /**
+     * Returns the OverviewPanel.
+     * 
+     * @return the OverviewPanel
+     */
+    public OverviewPanel getOverviewPanel() {
+        return overviewPanel;
+    }
 }

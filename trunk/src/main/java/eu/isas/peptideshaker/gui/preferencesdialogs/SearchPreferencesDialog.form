@@ -224,7 +224,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel7">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Missed cleavages:"/>
+            <Property name="text" type="java.lang.String" value="Missed Cleavages:"/>
           </Properties>
         </Component>
       </SubComponents>
