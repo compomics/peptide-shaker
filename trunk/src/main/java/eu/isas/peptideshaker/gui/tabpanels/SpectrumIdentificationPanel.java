@@ -981,18 +981,38 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Updates the spectrum table based on the currently selected mgf file.
+     * 
+     * @param evt 
+     */
     private void fileNamesCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileNamesCmbActionPerformed
         fileSelectionChanged();
     }//GEN-LAST:event_fileNamesCmbActionPerformed
 
+    /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void spectrumTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumTableMouseReleased
         spectrumSelectionChanged();
     }//GEN-LAST:event_spectrumTableMouseReleased
 
+    /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void spectrumTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_spectrumTableKeyReleased
         spectrumSelectionChanged();
     }//GEN-LAST:event_spectrumTableKeyReleased
 
+    /**
+     * Reset the divider between the spectrum table and the spectrum.
+     * 
+     * @param evt 
+     */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
 
         // invoke later to give time for components to update
@@ -1004,6 +1024,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         });
     }//GEN-LAST:event_formComponentResized
 
+    /**
+     * Update the OMSSA psm selection.
+     * 
+     * @param evt 
+     */
     private void omssaTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_omssaTableMouseClicked
 
         if (omssaTable.getSelectedRow() != -1) {
@@ -1021,10 +1046,20 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
     }//GEN-LAST:event_omssaTableMouseClicked
 
+    /**
+     * Update the OMSSA psm selection.
+     * 
+     * @param evt 
+     */
     private void omssaTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_omssaTableKeyReleased
         omssaTableMouseClicked(null);
     }//GEN-LAST:event_omssaTableKeyReleased
 
+    /**
+     * Update the X!Tandem psm selection.
+     * 
+     * @param evt 
+     */
     private void xTandemTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_xTandemTableMouseClicked
         if (xTandemTable.getSelectedRow() != -1) {
 
@@ -1040,14 +1075,29 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_xTandemTableMouseClicked
 
+    /**
+     * Update the X!Tandem psm selection.
+     * 
+     * @param evt 
+     */
     private void xTandemTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_xTandemTableKeyReleased
         xTandemTableMouseClicked(null);
     }//GEN-LAST:event_xTandemTableKeyReleased
 
+    /**
+     * Update the Mascot psm selection.
+     * 
+     * @param evt 
+     */
     private void mascotTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_mascotTableKeyReleased
         mascotTableMouseClicked(null);
     }//GEN-LAST:event_mascotTableKeyReleased
 
+    /**
+     * Update the Mascot psm selection.
+     * 
+     * @param evt 
+     */
     private void mascotTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mascotTableMouseClicked
         if (mascotTable.getSelectedRow() != -1) {
 
@@ -1063,50 +1113,110 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_mascotTableMouseClicked
 
+    /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void aIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonToggleButtonActionPerformed
         updateSpectrum();
 }//GEN-LAST:event_aIonToggleButtonActionPerformed
 
+     /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void bIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonToggleButtonActionPerformed
         updateSpectrum();
 }//GEN-LAST:event_bIonToggleButtonActionPerformed
 
+     /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void cIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonToggleButtonActionPerformed
         updateSpectrum();
 }//GEN-LAST:event_cIonToggleButtonActionPerformed
 
+     /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void xIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonToggleButtonActionPerformed
         updateSpectrum();
 }//GEN-LAST:event_xIonToggleButtonActionPerformed
 
+     /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void yIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonToggleButtonActionPerformed
         updateSpectrum();
 }//GEN-LAST:event_yIonToggleButtonActionPerformed
 
+     /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void zIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonToggleButtonActionPerformed
         updateSpectrum();
 }//GEN-LAST:event_zIonToggleButtonActionPerformed
 
+     /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void h2oToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_h2oToggleButtonActionPerformed
         updateSpectrum();
 }//GEN-LAST:event_h2oToggleButtonActionPerformed
 
+     /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void nh3ToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nh3ToggleButtonActionPerformed
         updateSpectrum();
 }//GEN-LAST:event_nh3ToggleButtonActionPerformed
 
+     /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void otherToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_otherToggleButtonActionPerformed
         updateSpectrum();
 }//GEN-LAST:event_otherToggleButtonActionPerformed
 
+     /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void oneChargeToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oneChargeToggleButtonActionPerformed
         updateSpectrum();
 }//GEN-LAST:event_oneChargeToggleButtonActionPerformed
 
+     /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void twoChargesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_twoChargesToggleButtonActionPerformed
         updateSpectrum();
 }//GEN-LAST:event_twoChargesToggleButtonActionPerformed
 
+     /**
+     * Update the spectrum.
+     * 
+     * @param evt 
+     */
     private void moreThanTwoChargesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moreThanTwoChargesToggleButtonActionPerformed
         updateSpectrum();
 }//GEN-LAST:event_moreThanTwoChargesToggleButtonActionPerformed
@@ -1154,26 +1264,23 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Displays the results on the panel
+     * Displays the results in the panel.
      */
     public void displayResults() {
+        
         spectrumCollection = peptideShakerGUI.getSpectrumCollection();
         identification = peptideShakerGUI.getIdentification();
-        int m = 0;
-        int o = 0;
-        int x = 0;
-        int mo = 0;
-        int mx = 0;
-        int ox = 0;
-        int omx = 0;
+        int m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0;
         boolean mascot, omssa, xTandem;
         PSParameter probabilities = new PSParameter();
 
         for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
+            
             mascot = false;
             omssa = false;
             xTandem = false;
             probabilities = (PSParameter) spectrumMatch.getUrParam(probabilities);
+            
             if (probabilities.isValidated()) {
                 if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
                     if (spectrumMatch.getFirstHit(Advocate.MASCOT).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
@@ -1232,7 +1339,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     nMascot, m, mo + omx, mx + omx, nMascot, omx
                 });
 
-
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).setMaxValue(biggestValue);
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).setMaxValue(biggestValue);
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("OMSSA").getCellRenderer()).setMaxValue(biggestValue);
@@ -1244,6 +1350,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEngineTable.repaint();
 
         String fileName;
+        
         for (String key : spectrumCollection.getAllKeys()) {
             fileName = Spectrum.getSpectrumFile(key);
             if (!filesMap.containsKey(fileName)) {
@@ -1251,12 +1358,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
             filesMap.get(fileName).add(key);
         }
+        
         String[] filesArray = new String[filesMap.keySet().size()];
         int cpt = 0;
+        
         for (String tempName : filesMap.keySet()) {
             filesArray[cpt] = tempName;
             cpt++;
         }
+        
         fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
         fileSelectionChanged();
     }
@@ -1316,6 +1426,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * Method called whenever the file selection changed
      */
     private void fileSelectionChanged() {
+        
         try {
             while (spectrumTable.getRowCount() > 0) {
                 ((DefaultTableModel) spectrumTable.getModel()).removeRow(0);
@@ -1384,6 +1495,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             spectrumTable.setRowSelectionInterval(0, 0);
             spectrumSelectionChanged();
+            
         } catch (MzMLUnmarshallerException e) {
             JOptionPane.showMessageDialog(this, "Error while importing mzML data.", "Peak Lists Error", JOptionPane.INFORMATION_MESSAGE);
             e.printStackTrace();
@@ -1396,6 +1508,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param spectrumKey 
      */
     public void selectSpectrum(String spectrumKey) {
+        
         String fileName = Spectrum.getSpectrumFile(spectrumKey);
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
 
@@ -1425,6 +1538,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             PSParameter probabilities = new PSParameter();
             probabilities = (PSParameter) spectrumMatch.getUrParam(probabilities);
 
+            // empty the tables
             while (peptideShakerJTable.getRowCount() > 0) {
                 ((DefaultTableModel) peptideShakerJTable.getModel()).removeRow(0);
             }
@@ -1467,7 +1581,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     });
 
             // Fill Mascot table
-
             if (spectrumMatch.getAllAssumptions(Advocate.MASCOT) != null) {
                 ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.MASCOT).keySet());
                 Collections.sort(eValues);
@@ -1505,7 +1618,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             // Fill OMSSA table
-
             omssaPeptideKeys = new HashMap<Integer, String>();
 
             if (spectrumMatch.getAllAssumptions(Advocate.OMSSA) != null) {
@@ -1545,7 +1657,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             // Fill X!Tandem table
-
             xtandemPeptideKeys = new HashMap<Integer, String>();
 
             if (spectrumMatch.getAllAssumptions(Advocate.XTANDEM) != null) {
@@ -1584,7 +1695,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 }
             }
 
-
             // select one of the matches
             if (omssaTable.getRowCount() > 0) {
                 omssaTable.setRowSelectionInterval(0, 0);
@@ -1608,7 +1718,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         }
     }
 
-    private void updateSpectrum() {
+    /**
+     * Update the spectrum based on the currently selected PSM.
+     */
+    public void updateSpectrum() {
 
         if (spectrumTable.getSelectedRow() != -1) {
 
@@ -1638,6 +1751,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         Peptide currentPeptide = null;
                         int cpt = 0;
                         boolean found = false;
+                        
                         for (double eValue : omssaEValues) {
                             for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValue)) {
                                 if (cpt == omssaTable.getSelectedRow()) {
@@ -1647,10 +1761,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 }
                                 cpt++;
                             }
+                            
                             if (found) {
                                 break;
                             }
                         }
+                        
                         SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
                                 currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
                                 currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
@@ -1667,6 +1783,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         Peptide currentPeptide = null;
                         int cpt = 0;
                         boolean found = false;
+                        
                         for (double eValue : xTandemEValues) {
                             for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValue)) {
                                 if (cpt == xTandemTable.getSelectedRow()) {
@@ -1676,10 +1793,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 }
                                 cpt++;
                             }
+                            
                             if (found) {
                                 break;
                             }
                         }
+                        
                         SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
                                 currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
                                 currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
@@ -1696,6 +1815,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         Peptide currentPeptide = null;
                         int cpt = 0;
                         boolean found = false;
+                        
                         for (double eValue : mascotEValues) {
                             for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValue)) {
                                 if (cpt == mascotTable.getSelectedRow()) {
@@ -1705,10 +1825,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                 }
                                 cpt++;
                             }
+                            
                             if (found) {
                                 break;
                             }
                         }
+                        
                         SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
                                 currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
                                 currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
@@ -1719,7 +1841,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     spectrumChartPanel.add(spectrum);
                 }
-
             } catch (MzMLUnmarshallerException e) {
                 e.printStackTrace();
             }

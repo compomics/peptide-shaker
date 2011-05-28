@@ -916,59 +916,129 @@ public class PtmPanel extends javax.swing.JPanel {
 
     }//GEN-LAST:event_formComponentResized
 
+    /**
+     * Update the spectra.
+     * 
+     * @param evt 
+     */
     private void aIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_aIonToggleButtonActionPerformed
 
+    /**
+     * Update the spectra.
+     * 
+     * @param evt 
+     */
     private void bIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_bIonToggleButtonActionPerformed
 
+    /**
+     * Update the spectra.
+     * 
+     * @param evt 
+     */
     private void cIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_cIonToggleButtonActionPerformed
 
+    /**
+     * Update the spectra.
+     * 
+     * @param evt 
+     */
     private void xIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_xIonToggleButtonActionPerformed
 
+    /**
+     * Update the spectra.
+     * 
+     * @param evt 
+     */
     private void yIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_yIonToggleButtonActionPerformed
 
+    /**
+     * Update the spectra.
+     * 
+     * @param evt 
+     */
     private void zIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_zIonToggleButtonActionPerformed
 
+    /**
+     * Update the spectra.
+     * 
+     * @param evt 
+     */
     private void h2oToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_h2oToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_h2oToggleButtonActionPerformed
 
+    /**
+     * Update the spectra.
+     * 
+     * @param evt 
+     */
     private void nh3ToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nh3ToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_nh3ToggleButtonActionPerformed
 
+    /**
+     * Update the spectra.
+     * 
+     * @param evt 
+     */
     private void otherToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_otherToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_otherToggleButtonActionPerformed
 
+    /**
+     * Update the spectra.
+     * 
+     * @param evt 
+     */
     private void oneChargeToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oneChargeToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_oneChargeToggleButtonActionPerformed
 
+    /**
+     * Update the spectra.
+     * 
+     * @param evt 
+     */
     private void twoChargesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_twoChargesToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_twoChargesToggleButtonActionPerformed
 
+    /**
+     * Update the spectra.
+     * 
+     * @param evt 
+     */
     private void moreThanTwoChargesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moreThanTwoChargesToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_moreThanTwoChargesToggleButtonActionPerformed
 
+    /**
+     * Update the primary psm table and then update the spectra.
+     * 
+     * @param evt 
+     */
     private void primarySelectionJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_primarySelectionJComboBoxActionPerformed
         updateSelectedPsmTable();
         updateSpectra();
     }//GEN-LAST:event_primarySelectionJComboBoxActionPerformed
 
+    /**
+     * Update the secondary psm table and then update the spectra.
+     * 
+     * @param evt 
+     */
     private void secondarySelectionJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_secondarySelectionJComboBoxActionPerformed
         updateRelatedPsmTable();
         updateSpectra();
@@ -1236,6 +1306,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
             }
         }
+        
         if (!relatedPeptides.isEmpty()) {
             peptideMatch = identification.getPeptideIdentification().get(relatedPeptides.get(relatedPeptidesTable.getSelectedRow()));
             psmsMap.put("Related Peptide", new ArrayList<String>(peptideMatch.getSpectrumMatches().keySet()));
@@ -1338,7 +1409,7 @@ public class PtmPanel extends javax.swing.JPanel {
     /**
      * Update the spectra according to the currently selected psms.
      */
-    private void updateSpectra() {
+    public void updateSpectra() {
 
         linkedSpectrumPanels = new HashMap<Integer, SpectrumPanel>();
         spectrumChartJPanel.removeAll();
