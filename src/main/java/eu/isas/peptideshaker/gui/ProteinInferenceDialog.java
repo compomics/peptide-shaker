@@ -241,7 +241,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Group Class:");
 
-        groupClassJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Single Protein", "Group of Isoforms", "Group of Unrelated Isoforms", "Group of Unrelated Proteins" }));
+        groupClassJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Single Protein", "Isoforms", "Unrelated Isoforms", "Unrelated Proteins" }));
         groupClassJComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 groupClassJComboBoxActionPerformed(evt);

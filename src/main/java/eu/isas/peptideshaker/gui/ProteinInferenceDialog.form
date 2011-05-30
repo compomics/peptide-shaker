@@ -295,9 +295,9 @@
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="4">
                 <StringItem index="0" value="Single Protein"/>
-                <StringItem index="1" value="Group of Isoforms"/>
-                <StringItem index="2" value="Group of Unrelated Isoforms"/>
-                <StringItem index="3" value="Group of Unrelated Proteins"/>
+                <StringItem index="1" value="Isoforms"/>
+                <StringItem index="2" value="Unrelated Isoforms"/>
+                <StringItem index="3" value="Unrelated Proteins"/>
               </StringArray>
             </Property>
           </Properties>
