@@ -293,7 +293,7 @@
                     <Column editable="false" title="PDB" type="java.lang.String"/>
                     <Column editable="false" title="Title" type="java.lang.String"/>
                     <Column editable="false" title="Type" type="java.lang.String"/>
-                    <Column editable="false" title="Blocks" type="java.lang.Integer"/>
+                    <Column editable="false" title="Chains" type="java.lang.Integer"/>
                   </Table>
                 </Property>
               </Properties>
