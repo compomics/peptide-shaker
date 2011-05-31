@@ -2167,7 +2167,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 }
             }
 
-            ((TitledBorder) psmJPanel.getBorder()).setTitle("Peptide-Spectrum Matched (" + validatedPsmCounter + "/" + psmTable.getRowCount() + ")");
+            ((TitledBorder) psmJPanel.getBorder()).setTitle("Peptide-Spectrum Matches (" + validatedPsmCounter + "/" + psmTable.getRowCount() + ")");
             psmJPanel.repaint();
 
             ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).setMaxValue(maxMassError);
