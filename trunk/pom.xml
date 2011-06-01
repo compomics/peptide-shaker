@@ -157,6 +157,7 @@
                                     <directory>./</directory>
                                     <includes>
                                         <include>conf/</include>
+                                        <include>peptide-shaker.ico</include>
                                     </includes>
                                 </resource>
                             </resources>
