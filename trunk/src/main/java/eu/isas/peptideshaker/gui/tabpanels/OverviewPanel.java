@@ -65,6 +65,11 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class OverviewPanel extends javax.swing.JPanel {
 
     /**
+     * If true, the protein selection in the overview tab is mirrored in 
+     * the protein table in the protein structure tab.
+     */
+    private boolean updateProteinStructurePanel = true;
+    /**
      * The maximum mz value in the current list of PSMs. Needed to make sure that
      * the PSMs for the same peptide all use the same mz range.
      */
@@ -189,8 +194,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         psmTable.getColumn("").setMinWidth(30);
 
         // the protein inference column
-        proteinTable.getColumn("PI").setMaxWidth(30);
-        proteinTable.getColumn("PI").setMinWidth(30);
+        proteinTable.getColumn("PI").setMaxWidth(35);
+        proteinTable.getColumn("PI").setMinWidth(35);
 
         // the include in bubble plot column
         psmTable.getColumn("  ").setMinWidth(30);
@@ -656,6 +661,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotJToolBar.setRollover(true);
 
         aIonBubblePlotToggleButton.setText("a");
+        aIonBubblePlotToggleButton.setToolTipText("a-ions");
         aIonBubblePlotToggleButton.setFocusable(false);
         aIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         aIonBubblePlotToggleButton.setMinimumSize(new java.awt.Dimension(25, 21));
@@ -670,6 +676,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         bIonBubblePlotToggleButton.setSelected(true);
         bIonBubblePlotToggleButton.setText("b");
+        bIonBubblePlotToggleButton.setToolTipText("b-ions");
         bIonBubblePlotToggleButton.setFocusable(false);
         bIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -682,6 +689,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotJToolBar.add(bIonBubblePlotToggleButton);
 
         cIonBubblePlotToggleButton.setText("c");
+        cIonBubblePlotToggleButton.setToolTipText("c-ions");
         cIonBubblePlotToggleButton.setFocusable(false);
         cIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         cIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -694,6 +702,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotJToolBar.add(cIonBubblePlotToggleButton);
 
         xIonBubblePlotToggleButton.setText("x");
+        xIonBubblePlotToggleButton.setToolTipText("x-ions");
         xIonBubblePlotToggleButton.setFocusable(false);
         xIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         xIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -707,6 +716,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         yIonBubblePlotToggleButton.setSelected(true);
         yIonBubblePlotToggleButton.setText("y");
+        yIonBubblePlotToggleButton.setToolTipText("y-ions");
         yIonBubblePlotToggleButton.setFocusable(false);
         yIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         yIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -719,6 +729,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotJToolBar.add(yIonBubblePlotToggleButton);
 
         zIonBubblePlotToggleButton.setText("z");
+        zIonBubblePlotToggleButton.setToolTipText("z-ions");
         zIonBubblePlotToggleButton.setFocusable(false);
         zIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         zIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -731,6 +742,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotJToolBar.add(zIonBubblePlotToggleButton);
 
         h2oBubblePlotToggleButton.setText("H2O");
+        h2oBubblePlotToggleButton.setToolTipText("<html>Water Loss</html>");
         h2oBubblePlotToggleButton.setFocusable(false);
         h2oBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         h2oBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -743,6 +755,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotJToolBar.add(h2oBubblePlotToggleButton);
 
         nh3BubblePlotToggleButton.setText("NH3");
+        nh3BubblePlotToggleButton.setToolTipText("Ammonia Loss");
         nh3BubblePlotToggleButton.setFocusable(false);
         nh3BubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         nh3BubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -755,6 +768,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotJToolBar.add(nh3BubblePlotToggleButton);
 
         otherBubblePlotToggleButton.setText("Oth.");
+        otherBubblePlotToggleButton.setToolTipText("Other: Precursor and Immonium Ions");
         otherBubblePlotToggleButton.setFocusable(false);
         otherBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         otherBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -768,6 +782,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         oneChargeBubblePlotToggleButton.setSelected(true);
         oneChargeBubblePlotToggleButton.setText("+");
+        oneChargeBubblePlotToggleButton.setToolTipText("Single Charge");
         oneChargeBubblePlotToggleButton.setFocusable(false);
         oneChargeBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         oneChargeBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -780,6 +795,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotJToolBar.add(oneChargeBubblePlotToggleButton);
 
         twoChargesBubblePlotToggleButton.setText("++");
+        twoChargesBubblePlotToggleButton.setToolTipText("Double Charge");
         twoChargesBubblePlotToggleButton.setFocusable(false);
         twoChargesBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         twoChargesBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -792,6 +808,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotJToolBar.add(twoChargesBubblePlotToggleButton);
 
         moreThanTwoChargesBubblePlotToggleButton.setText(">2 ");
+        moreThanTwoChargesBubblePlotToggleButton.setToolTipText("More Than Two Charges");
         moreThanTwoChargesBubblePlotToggleButton.setFocusable(false);
         moreThanTwoChargesBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         moreThanTwoChargesBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -873,6 +890,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJToolBar.setRollover(true);
 
         aIonToggleButton.setText("a");
+        aIonToggleButton.setToolTipText("a-ions");
         aIonToggleButton.setFocusable(false);
         aIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         aIonToggleButton.setMinimumSize(new java.awt.Dimension(25, 21));
@@ -887,6 +905,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         bIonToggleButton.setSelected(true);
         bIonToggleButton.setText("b");
+        bIonToggleButton.setToolTipText("b-ions");
         bIonToggleButton.setFocusable(false);
         bIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -899,6 +918,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(bIonToggleButton);
 
         cIonToggleButton.setText("c");
+        cIonToggleButton.setToolTipText("c-ions");
         cIonToggleButton.setFocusable(false);
         cIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         cIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -911,6 +931,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(cIonToggleButton);
 
         xIonToggleButton.setText("x");
+        xIonToggleButton.setToolTipText("x-ions");
         xIonToggleButton.setFocusable(false);
         xIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         xIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -924,6 +945,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         yIonToggleButton.setSelected(true);
         yIonToggleButton.setText("y");
+        yIonToggleButton.setToolTipText("y-ions");
         yIonToggleButton.setFocusable(false);
         yIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         yIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -936,6 +958,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(yIonToggleButton);
 
         zIonToggleButton.setText("z");
+        zIonToggleButton.setToolTipText("z-ions");
         zIonToggleButton.setFocusable(false);
         zIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         zIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -948,6 +971,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(zIonToggleButton);
 
         h2oToggleButton.setText("H2O");
+        h2oToggleButton.setToolTipText("Water Loss");
         h2oToggleButton.setFocusable(false);
         h2oToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         h2oToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -960,6 +984,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(h2oToggleButton);
 
         nh3ToggleButton.setText("NH3");
+        nh3ToggleButton.setToolTipText("Ammonia Loss");
         nh3ToggleButton.setFocusable(false);
         nh3ToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         nh3ToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -972,6 +997,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(nh3ToggleButton);
 
         otherToggleButton.setText("Oth.");
+        otherToggleButton.setToolTipText("Other: Precursor and Immonium Ions");
         otherToggleButton.setFocusable(false);
         otherToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         otherToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -985,6 +1011,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         oneChargeToggleButton.setSelected(true);
         oneChargeToggleButton.setText("+");
+        oneChargeToggleButton.setToolTipText("Single Charge");
         oneChargeToggleButton.setFocusable(false);
         oneChargeToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         oneChargeToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -997,6 +1024,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(oneChargeToggleButton);
 
         twoChargesToggleButton.setText("++");
+        twoChargesToggleButton.setToolTipText("Double Charge");
         twoChargesToggleButton.setFocusable(false);
         twoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         twoChargesToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -1009,6 +1037,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(twoChargesToggleButton);
 
         moreThanTwoChargesToggleButton.setText(">2 ");
+        moreThanTwoChargesToggleButton.setToolTipText("More Than Two Charges");
         moreThanTwoChargesToggleButton.setFocusable(false);
         moreThanTwoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         moreThanTwoChargesToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -1128,8 +1157,10 @@ public class OverviewPanel extends javax.swing.JPanel {
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-            peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
-
+            if (updateProteinStructurePanel) {
+                peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0), false);
+            }
+            
             // update the peptide selection
             updatedPeptideSelection(row);
 
@@ -1197,9 +1228,10 @@ public class OverviewPanel extends javax.swing.JPanel {
      */
     private void peptideTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideTableMouseClicked
 
-        int row = peptideTable.rowAtPoint(evt.getPoint());
+        int row = peptideTable.getSelectedRow();
 
         if (row != -1) {
+            
             updatePsmSelection(row);
 
             // invoke later to give time for components to update
@@ -1210,6 +1242,11 @@ public class OverviewPanel extends javax.swing.JPanel {
                     updateSpectrum(row, true);
                 }
             });
+            
+            // select the same peptide in the protein structure tab
+            if (updateProteinStructurePanel) {
+                peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0), false);
+            }
         }
 }//GEN-LAST:event_peptideTableMouseClicked
 
@@ -1234,6 +1271,11 @@ public class OverviewPanel extends javax.swing.JPanel {
                         updateSpectrum(row, true);
                     }
                 });
+                
+                // select the same peptide in the protein structure tab
+                if (updateProteinStructurePanel) {
+                    peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0), false);
+                }
             }
         }
 }//GEN-LAST:event_peptideTableKeyReleased
@@ -1517,6 +1559,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void proteinTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinTableMouseExited
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonBubblePlotToggleButton;
     private javax.swing.JToggleButton aIonToggleButton;
@@ -1576,6 +1619,50 @@ public class OverviewPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     /**
+     * Select the given protein index in the protein table.
+     * 
+     * @param proteinIndex the protein index to select
+     */
+    public void setSelectedProteinIndex(Integer proteinIndex) {
+
+        boolean indexFound = false;
+
+        for (int i = 0; i < proteinTable.getRowCount() && !indexFound; i++) {
+            if ((Integer) proteinTable.getValueAt(i, 0) == proteinIndex) {
+                indexFound = true;
+                proteinTable.setRowSelectionInterval(i, i);
+                proteinTable.scrollRectToVisible(proteinTable.getCellRect(i, 0, false));
+            }
+        }
+
+        updateProteinStructurePanel = false;
+        proteinTableMouseClicked(null);
+        updateProteinStructurePanel = true;
+    }
+    
+    /**
+     * Select the given peptide index in the peptide table.
+     * 
+     * @param peptideIndex the peptide index to select
+     */
+    public void setSelectedPeptideIndex(Integer peptideIndex) {
+
+        boolean indexFound = false;
+
+        for (int i = 0; i < peptideTable.getRowCount() && !indexFound; i++) {
+            if ((Integer) peptideTable.getValueAt(i, 0) == peptideIndex) {
+                indexFound = true;
+                peptideTable.setRowSelectionInterval(i, i);
+                peptideTable.scrollRectToVisible(peptideTable.getCellRect(i, 0, false));
+            }
+        }
+
+        updateProteinStructurePanel = false;
+        peptideTableMouseClicked(null);
+        updateProteinStructurePanel = true;
+    }
+    
+    /**
      * Displays or hide sparklines in the tables.
      * 
      * @param showSparkLines    boolean indicating whether sparklines shall be displayed or hidden
@@ -1626,9 +1713,10 @@ public class OverviewPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Updates the split panel divider location for the protein pane.
+     * Updates the split panel divider location for the protein panel.
      */
     private void updateProteinTableSeparator() {
+        
         if (displayProteins) {
             overviewJSplitPane.setDividerLocation(overviewJSplitPane.getHeight() / 100 * 30);
         } else {
@@ -1651,7 +1739,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Updates the split panel divider location for the peptide/psm and spectrum pane.
+     * Updates the split panel divider location for the peptide/psm and spectrum panel.
      */
     private void updatePeptidesAndPsmsSeparator() {
 
@@ -1707,7 +1795,7 @@ public class OverviewPanel extends javax.swing.JPanel {
      * Method called whenever the component is resized to maintain the look of the GUI
      */
     public void updateSeparators() {
-
+         
         updateProteinTableSeparator();
         updatePeptidesAndPsmsSeparator();
         peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
@@ -1717,8 +1805,8 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             public void run() {
                 updateSequenceCoverageSeparator();
-                overviewJPanel.revalidate();
-                overviewJPanel.repaint();
+                //overviewJPanel.revalidate();
+                //overviewJPanel.repaint();
             }
         });
     }
@@ -1784,7 +1872,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                     allAnnotations, getCurrentFragmentIonTypes(), allSpectra, searchParameters.getFragmentIonMZTolerance(),
                     peptideShakerGUI.getBubbleScale(),
                     oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected(),
-                    moreThanTwoChargesToggleButton.isSelected(), false, barsBubblePlotToggleButton.isSelected());
+                    moreThanTwoChargesToggleButton.isSelected(), selectedIndexes.size() == 1, barsBubblePlotToggleButton.isSelected());
 
             bubbleJPanel.removeAll();
             bubbleJPanel.add(massErrorBubblePlot);
@@ -1948,7 +2036,6 @@ public class OverviewPanel extends javax.swing.JPanel {
                                 new SequenceFragmentationPanel(currentPeptide.getSequence(), annotations, false); // @TODO: what about modified sequences?? -> We first need to assess confidently the position of the PTM
                         sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                         sequenceFragmentationPanel.setOpaque(false);
-                        sequenceFragmentationPanel.setToolTipText("Sequence Fragmentation");
                         sequenceFragmentIonPlotsJPanel.add(sequenceFragmentationPanel);
 
                         // create the intensity histograms
@@ -2306,6 +2393,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             // select the first peptide in the table
             if (peptideTable.getRowCount() > 0) {
                 peptideTable.setRowSelectionInterval(0, 0);
+                peptideTable.scrollRectToVisible(peptideTable.getCellRect(0, 0, false));
                 peptideTableKeyReleased(null);
             }
 
@@ -2390,6 +2478,11 @@ public class OverviewPanel extends javax.swing.JPanel {
                         probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
 
                         Protein currentProtein = db.getProtein(proteinMatch.getMainMatch().getAccession());
+                        
+                        if (peptideShakerGUI.getSearchParameters().getEnzyme() == null) {
+                            throw new IllegalArgumentException("Unknown enzyme!");
+                        }
+                        
                         int nPossible = currentProtein.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
                         emPAI = (Math.pow(10, ((double) proteinMatch.getPeptideCount()) / ((double) nPossible))) - 1;
                         description = db.getProteinHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
@@ -2410,6 +2503,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                                         probabilities.getProteinConfidence(),
                                         probabilities.isValidated()
                                     });
+                            
                             proteinTableMap.put(index + 1, proteinKey);
                             index++;
 

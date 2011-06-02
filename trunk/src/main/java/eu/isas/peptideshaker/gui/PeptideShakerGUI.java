@@ -210,6 +210,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         proteinStructurePanel = new ProteinStructurePanel(this);
 
         initComponents();
+        
+        resultsJTabbedPane.setEnabledAt(5, false);
+        resultsJTabbedPane.setEnabledAt(6, false);
 
         setUpPanels();
         repaintPanels();
@@ -301,6 +304,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ptmJPanel = new javax.swing.JPanel();
         proteinStructureJPanel = new javax.swing.JPanel();
         statsJPanel = new javax.swing.JPanel();
+        annotationJPanel = new javax.swing.JPanel();
+        goAnalysisJPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         openJMenuItem = new javax.swing.JMenuItem();
@@ -319,7 +324,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         overViewTabViewMenu = new javax.swing.JMenu();
         proteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         peptidesAndPsmsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        sequenceFragmentationJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        spectrumJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         sequenceCoverageJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -361,6 +366,32 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         statsJPanel.setOpaque(false);
         statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
         resultsJTabbedPane.addTab("Validation", statsJPanel);
+
+        javax.swing.GroupLayout annotationJPanelLayout = new javax.swing.GroupLayout(annotationJPanel);
+        annotationJPanel.setLayout(annotationJPanelLayout);
+        annotationJPanelLayout.setHorizontalGroup(
+            annotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1173, Short.MAX_VALUE)
+        );
+        annotationJPanelLayout.setVerticalGroup(
+            annotationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 776, Short.MAX_VALUE)
+        );
+
+        resultsJTabbedPane.addTab("Annotation", annotationJPanel);
+
+        javax.swing.GroupLayout goAnalysisJPanelLayout = new javax.swing.GroupLayout(goAnalysisJPanel);
+        goAnalysisJPanel.setLayout(goAnalysisJPanelLayout);
+        goAnalysisJPanelLayout.setHorizontalGroup(
+            goAnalysisJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1173, Short.MAX_VALUE)
+        );
+        goAnalysisJPanelLayout.setVerticalGroup(
+            goAnalysisJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 776, Short.MAX_VALUE)
+        );
+
+        resultsJTabbedPane.addTab("GO Analysis", goAnalysisJPanel);
 
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
@@ -495,16 +526,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         overViewTabViewMenu.add(peptidesAndPsmsJCheckBoxMenuItem);
 
-        sequenceFragmentationJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        sequenceFragmentationJCheckBoxMenuItem.setMnemonic('S');
-        sequenceFragmentationJCheckBoxMenuItem.setSelected(true);
-        sequenceFragmentationJCheckBoxMenuItem.setText("Spectrum");
-        sequenceFragmentationJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        spectrumJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        spectrumJCheckBoxMenuItem.setMnemonic('S');
+        spectrumJCheckBoxMenuItem.setSelected(true);
+        spectrumJCheckBoxMenuItem.setText("Spectrum");
+        spectrumJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sequenceFragmentationJCheckBoxMenuItemActionPerformed(evt);
+                spectrumJCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        overViewTabViewMenu.add(sequenceFragmentationJCheckBoxMenuItem);
+        overViewTabViewMenu.add(spectrumJCheckBoxMenuItem);
 
         sequenceCoverageJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         sequenceCoverageJCheckBoxMenuItem.setMnemonic('C');
@@ -776,7 +807,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
         statsPanel.updateSeparators();
     }//GEN-LAST:event_formComponentResized
@@ -809,7 +840,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void sequenceCoverageJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceCoverageJCheckBoxMenuItemActionPerformed
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
 }//GEN-LAST:event_sequenceCoverageJCheckBoxMenuItemActionPerformed
 
@@ -818,11 +849,41 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      *
      * @param evt
      */
-    private void sequenceFragmentationJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceFragmentationJCheckBoxMenuItemActionPerformed
-        overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
-        overviewPanel.updateSeparators();
-    }//GEN-LAST:event_sequenceFragmentationJCheckBoxMenuItemActionPerformed
+    private void spectrumJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumJCheckBoxMenuItemActionPerformed
+
+        // the below code is a bit more complicated than the other resize panel
+        // options due to the resizing didn't work otherwise...
+
+        final boolean showProteins = proteinsJCheckBoxMenuItem.isSelected();
+        final boolean showPeptidesAndPsms = peptidesAndPsmsJCheckBoxMenuItem.isSelected();
+        final boolean showCoverage = sequenceCoverageJCheckBoxMenuItem.isSelected();
+        final boolean showSpectrum = spectrumJCheckBoxMenuItem.isSelected();
+
+        if (!showPeptidesAndPsms && !showSpectrum) {
+            overviewPanel.setDisplayOptions(showProteins, true, showCoverage, false);
+            overviewPanel.updateSeparators();
+
+            overviewPanel.setDisplayOptions(showProteins, false, showCoverage, false);
+            overviewPanel.updateSeparators();
+        } else if (!showPeptidesAndPsms && showSpectrum) {
+            overviewPanel.setDisplayOptions(showProteins, true, showCoverage, false);
+            overviewPanel.updateSeparators();
+
+            // invoke later to give time for components to update
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                    overviewPanel.setDisplayOptions(showProteins, showPeptidesAndPsms, showCoverage, showSpectrum);
+                    overviewPanel.updateSeparators();
+                }
+            });
+
+        } else {
+            overviewPanel.setDisplayOptions(showProteins, showPeptidesAndPsms, showCoverage, showSpectrum);
+            overviewPanel.updateSeparators();
+        }
+
+    }//GEN-LAST:event_spectrumJCheckBoxMenuItemActionPerformed
 
     /**
      * Resize the overview panel when the frame resizes.
@@ -831,7 +892,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void peptidesAndPsmsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesAndPsmsJCheckBoxMenuItemActionPerformed
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
 }//GEN-LAST:event_peptidesAndPsmsJCheckBoxMenuItemActionPerformed
 
@@ -842,7 +903,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void proteinsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinsJCheckBoxMenuItemActionPerformed
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), sequenceFragmentationJCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
 }//GEN-LAST:event_proteinsJCheckBoxMenuItemActionPerformed
 
@@ -910,14 +971,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
 
             sequenceCoverageJCheckBoxMenuItem.setSelected(displaySequence);
-            sequenceFragmentationJCheckBoxMenuItem.setSelected(displaySpectrum);
+            spectrumJCheckBoxMenuItem.setSelected(displaySpectrum);
 
             overviewPanel.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displaySequence, displaySpectrum);
             overviewPanel.updateSeparators();
             statsPanel.updateSeparators();
 
             progressDialog = new ProgressDialogX(this, this, true);
-            progressDialog.setMax(resultsJTabbedPane.getComponentCount() + 1);
+            progressDialog.setMax(resultsJTabbedPane.getComponentCount() + 1 - 2); // @TODO: Remove the minus two when the other tabs are added
             progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
@@ -934,24 +995,30 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 public void run() {
 
                     int counter = 0;
-
-                    progressDialog.setValue(++counter);
-                    spectrumIdentificationPanel.displayResults();
-                    progressDialog.setValue(++counter);
-                    ptmPanel.displayResults();
-                    progressDialog.setValue(++counter);
-
+                    
                     try {
+                        progressDialog.setValue(++counter);
+                        spectrumIdentificationPanel.displayResults();
+                        
+                        progressDialog.setValue(++counter);
+                        ptmPanel.displayResults();
+                        
+                        progressDialog.setValue(++counter);
                         overviewPanel.displayResults();
+                        
                         progressDialog.setValue(++counter);
-
                         statsPanel.displayResults();
+                        
                         progressDialog.setValue(++counter);
-
                         proteinStructurePanel.displayResults();
+                        
                         progressDialog.setValue(++counter);
                     } catch (MzMLUnmarshallerException e) {
                         JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML Problem", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\nSee /conf/PeptideShakerLog.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
                     }
 
                     progressDialog.setVisible(false);
@@ -993,6 +1060,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutJMenuItem;
+    private javax.swing.JPanel annotationJPanel;
     private javax.swing.JMenuItem annotationPreferencesMenu;
     private javax.swing.JMenuItem bubbleScaleJMenuItem;
     private javax.swing.JMenu editMenu;
@@ -1000,6 +1068,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem exportMenuItem;
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JMenu filterMenu;
+    private javax.swing.JPanel goAnalysisJPanel;
     private javax.swing.JPanel gradientPanel;
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
@@ -1019,8 +1088,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JMenuItem searchParametersMenu;
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
-    private javax.swing.JCheckBoxMenuItem sequenceFragmentationJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem spectrumJCheckBoxMenuItem;
     private javax.swing.JPanel spectrumJPanel;
     private javax.swing.JPanel statsJPanel;
     private javax.swing.JMenu viewJMenu;
@@ -1408,12 +1477,35 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Set the selected protein index in the protein structure tab.
+     * Set the selected protein index in the overview or protein structure tabs. 
+     * Used to make sure that the same protein is selected in both tabs.
      * 
-     * @param selectedProteinIndex the selected protein index
+     * @param selectedProteinIndex      the selected protein index
+     * @param updateOverviewPanel       if true the overview panel will be selected, false updates the protein structure panel instead
      */
-    public void setSelectedProteinIndex(Integer selectedProteinIndex) {
-        proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
+    public void setSelectedProteinIndex(Integer selectedProteinIndex, boolean updateOverviewPanel) {
+        
+        if (updateOverviewPanel) {
+            overviewPanel.setSelectedProteinIndex(selectedProteinIndex);
+        } else {
+            proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
+        }
+    }
+    
+    /**
+     * Set the selected peptide index in the overview or protein structure tabs. 
+     * Used to make sure that the same peptide is selected in both tabs.
+     * 
+     * @param selectedPeptideIndex      the selected peptide index
+     * @param updateOverviewPanel       if true the overview panel will be selected, false updates the protein structure panel instead
+     */
+    public void setSelectedPeptideIndex(Integer selectedPeptideIndex, boolean updateOverviewPanel) {
+        
+        if (updateOverviewPanel) {
+            overviewPanel.setSelectedPeptideIndex(selectedPeptideIndex);
+        } else {
+            proteinStructurePanel.setSelectedPeptideIndex(selectedPeptideIndex);
+        }
     }
 
     /**
@@ -1481,7 +1573,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             // @TODO: support more databases
 
             if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
-                accessionNumberWithLink = "<html><a href=\"" + getAccesionLink(proteinAccession, database) 
+                accessionNumberWithLink = "<html><a href=\"" + getAccesionLink(proteinAccession, database)
                         + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
                         + proteinAccession + "</font></a></html>";
             } else {
@@ -1491,7 +1583,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         return accessionNumberWithLink;
     }
-    
+
     /**
      * Returns the protein accession number as a web link to the given 
      * protein at http://srs.ebi.ac.uk.
@@ -1503,7 +1595,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public String getAccesionLink(String proteinAccession, String database) {
         return "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b" + database + "-AccNumber:" + proteinAccession + "%5d";
     }
-    
+
     /**
      * Clear the data from the previous experiment
      */

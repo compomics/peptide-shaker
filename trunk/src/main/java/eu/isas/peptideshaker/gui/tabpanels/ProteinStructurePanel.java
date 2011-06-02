@@ -48,6 +48,11 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class ProteinStructurePanel extends javax.swing.JPanel implements ProgressDialogParent {
 
     /**
+     * If true, the protein selection in the protein structure tab is mirrored in 
+     * the protein table in the overview tab.
+     */
+    private boolean updateOverviewPanel = true;
+    /**
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
@@ -162,8 +167,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         peptideTable.getColumn("").setMinWidth(30);
 
         // the protein inference column
-        proteinTable.getColumn("PI").setMaxWidth(30);
-        proteinTable.getColumn("PI").setMinWidth(30);
+        proteinTable.getColumn("PI").setMaxWidth(35);
+        proteinTable.getColumn("PI").setMinWidth(35);
 
         // set table properties
         proteinTable.getTableHeader().setReorderingAllowed(false);
@@ -529,9 +534,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-            // @TODO: update the selection in the Overview panel??
-            //peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
-
+            // update the selection in the Overview panel
+            if (updateOverviewPanel) {
+                peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0), true);
+            }
+            
             // update the pdb file table
             updatePdbTable(proteinTableMap.get(getProteinKey(row)));
 
@@ -626,11 +633,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      */
     private void peptideTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideTableMouseClicked
 
-        int row = peptideTable.rowAtPoint(evt.getPoint());
+        int row = peptideTable.getSelectedRow();
 
         if (row != -1) {
             if (pdbMatchesJTable.getSelectedRow() != -1) {
                 pdbMatchesJTableMouseClicked(null);
+            }
+            
+            // select the same peptide in the protein structure tab
+            if (updateOverviewPanel) {
+                peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0), true);
             }
         }
 }//GEN-LAST:event_peptideTableMouseClicked
@@ -649,6 +661,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             if (row != -1) {
                 if (pdbMatchesJTable.getSelectedRow() != -1) {
                     pdbMatchesJTableMouseClicked(null);
+                }
+                
+                // select the same peptide in the protein structure tab
+                if (updateOverviewPanel) {
+                    peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0), true);
                 }
             }
         }
@@ -775,7 +792,31 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             }
         }
 
+        updateOverviewPanel = false;
         proteinTableMouseClicked(null);
+        updateOverviewPanel = true;
+    }
+    
+    /**
+     * Select the given peptide index in the peptide table.
+     * 
+     * @param peptideIndex the peptide index to select
+     */
+    public void setSelectedPeptideIndex(Integer peptideIndex) {
+
+        boolean indexFound = false;
+
+        for (int i = 0; i < peptideTable.getRowCount() && !indexFound; i++) {
+            if ((Integer) peptideTable.getValueAt(i, 0) == peptideIndex) {
+                indexFound = true;
+                peptideTable.setRowSelectionInterval(i, i);
+                peptideTable.scrollRectToVisible(peptideTable.getCellRect(i, 0, false));
+            }
+        }
+
+        updateOverviewPanel = false;
+        peptideTableMouseClicked(null);
+        updateOverviewPanel = true;
     }
 
     /**
@@ -904,6 +945,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             // select the first peptide in the table
             if (peptideTable.getRowCount() > 0) {
                 peptideTable.setRowSelectionInterval(0, 0);
+                peptideTable.scrollRectToVisible(peptideTable.getCellRect(0, 0, false));
                 peptideTableKeyReleased(null);
             }
 

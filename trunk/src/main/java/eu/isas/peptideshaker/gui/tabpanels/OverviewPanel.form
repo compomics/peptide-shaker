@@ -717,6 +717,7 @@
                                     <Component class="javax.swing.JToggleButton" name="aIonBubblePlotToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="a"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="a-ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -735,6 +736,7 @@
                                       <Properties>
                                         <Property name="selected" type="boolean" value="true"/>
                                         <Property name="text" type="java.lang.String" value="b"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="b-ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -749,6 +751,7 @@
                                     <Component class="javax.swing.JToggleButton" name="cIonBubblePlotToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="c"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="c-ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -763,6 +766,7 @@
                                     <Component class="javax.swing.JToggleButton" name="xIonBubblePlotToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="x"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="x-ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -778,6 +782,7 @@
                                       <Properties>
                                         <Property name="selected" type="boolean" value="true"/>
                                         <Property name="text" type="java.lang.String" value="y"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="y-ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -792,6 +797,7 @@
                                     <Component class="javax.swing.JToggleButton" name="zIonBubblePlotToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="z"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="z-ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -806,6 +812,7 @@
                                     <Component class="javax.swing.JToggleButton" name="h2oBubblePlotToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="H2O"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Water Loss&lt;/html&gt;"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -820,6 +827,7 @@
                                     <Component class="javax.swing.JToggleButton" name="nh3BubblePlotToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="NH3"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="Ammonia Loss"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -834,6 +842,7 @@
                                     <Component class="javax.swing.JToggleButton" name="otherBubblePlotToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="Oth."/>
+                                        <Property name="toolTipText" type="java.lang.String" value="Other: Precursor and Immonium Ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -849,6 +858,7 @@
                                       <Properties>
                                         <Property name="selected" type="boolean" value="true"/>
                                         <Property name="text" type="java.lang.String" value="+"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="Single Charge"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -863,6 +873,7 @@
                                     <Component class="javax.swing.JToggleButton" name="twoChargesBubblePlotToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="++"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="Double Charge"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -877,6 +888,7 @@
                                     <Component class="javax.swing.JToggleButton" name="moreThanTwoChargesBubblePlotToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="&gt;2 "/>
+                                        <Property name="toolTipText" type="java.lang.String" value="More Than Two Charges"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1007,6 +1019,7 @@
                                     <Component class="javax.swing.JToggleButton" name="aIonToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="a"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="a-ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1025,6 +1038,7 @@
                                       <Properties>
                                         <Property name="selected" type="boolean" value="true"/>
                                         <Property name="text" type="java.lang.String" value="b"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="b-ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1039,6 +1053,7 @@
                                     <Component class="javax.swing.JToggleButton" name="cIonToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="c"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="c-ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1053,6 +1068,7 @@
                                     <Component class="javax.swing.JToggleButton" name="xIonToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="x"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="x-ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1068,6 +1084,7 @@
                                       <Properties>
                                         <Property name="selected" type="boolean" value="true"/>
                                         <Property name="text" type="java.lang.String" value="y"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="y-ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1082,6 +1099,7 @@
                                     <Component class="javax.swing.JToggleButton" name="zIonToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="z"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="z-ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1096,6 +1114,7 @@
                                     <Component class="javax.swing.JToggleButton" name="h2oToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="H2O"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="Water Loss"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1110,6 +1129,7 @@
                                     <Component class="javax.swing.JToggleButton" name="nh3ToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="NH3"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="Ammonia Loss"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1124,6 +1144,7 @@
                                     <Component class="javax.swing.JToggleButton" name="otherToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="Oth."/>
+                                        <Property name="toolTipText" type="java.lang.String" value="Other: Precursor and Immonium Ions"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1139,6 +1160,7 @@
                                       <Properties>
                                         <Property name="selected" type="boolean" value="true"/>
                                         <Property name="text" type="java.lang.String" value="+"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="Single Charge"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1153,6 +1175,7 @@
                                     <Component class="javax.swing.JToggleButton" name="twoChargesToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="++"/>
+                                        <Property name="toolTipText" type="java.lang.String" value="Double Charge"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -1167,6 +1190,7 @@
                                     <Component class="javax.swing.JToggleButton" name="moreThanTwoChargesToggleButton">
                                       <Properties>
                                         <Property name="text" type="java.lang.String" value="&gt;2 "/>
+                                        <Property name="toolTipText" type="java.lang.String" value="More Than Two Charges"/>
                                         <Property name="focusable" type="boolean" value="false"/>
                                         <Property name="horizontalTextPosition" type="int" value="0"/>
                                         <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
