@@ -585,6 +585,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar.setRollover(true);
 
         aIonToggleButton.setText("a");
+        aIonToggleButton.setToolTipText("a-ions");
         aIonToggleButton.setFocusable(false);
         aIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         aIonToggleButton.setMinimumSize(new java.awt.Dimension(25, 21));
@@ -599,6 +600,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         bIonToggleButton.setSelected(true);
         bIonToggleButton.setText("b");
+        bIonToggleButton.setToolTipText("b-ions");
         bIonToggleButton.setFocusable(false);
         bIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         bIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -611,6 +613,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(bIonToggleButton);
 
         cIonToggleButton.setText("c");
+        cIonToggleButton.setToolTipText("c-ions");
         cIonToggleButton.setFocusable(false);
         cIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         cIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -623,6 +626,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(cIonToggleButton);
 
         xIonToggleButton.setText("x");
+        xIonToggleButton.setToolTipText("x-ions");
         xIonToggleButton.setFocusable(false);
         xIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         xIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -636,6 +640,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         yIonToggleButton.setSelected(true);
         yIonToggleButton.setText("y");
+        yIonToggleButton.setToolTipText("y-ions");
         yIonToggleButton.setFocusable(false);
         yIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         yIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -648,6 +653,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(yIonToggleButton);
 
         zIonToggleButton.setText("z");
+        zIonToggleButton.setToolTipText("z-ions");
         zIonToggleButton.setFocusable(false);
         zIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         zIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -660,6 +666,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(zIonToggleButton);
 
         h2oToggleButton.setText("H2O");
+        h2oToggleButton.setToolTipText("Water Loss");
         h2oToggleButton.setFocusable(false);
         h2oToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         h2oToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -672,6 +679,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(h2oToggleButton);
 
         nh3ToggleButton.setText("NH3");
+        nh3ToggleButton.setToolTipText("Ammonia Loss");
         nh3ToggleButton.setFocusable(false);
         nh3ToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         nh3ToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -684,6 +692,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(nh3ToggleButton);
 
         otherToggleButton.setText("Oth.");
+        otherToggleButton.setToolTipText("Other: Precursor and Immonium Ions");
         otherToggleButton.setFocusable(false);
         otherToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         otherToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -697,6 +706,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         oneChargeToggleButton.setSelected(true);
         oneChargeToggleButton.setText("+");
+        oneChargeToggleButton.setToolTipText("Single Charge");
         oneChargeToggleButton.setFocusable(false);
         oneChargeToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         oneChargeToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -709,6 +719,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(oneChargeToggleButton);
 
         twoChargesToggleButton.setText("++");
+        twoChargesToggleButton.setToolTipText("Double Charge");
         twoChargesToggleButton.setFocusable(false);
         twoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         twoChargesToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
@@ -721,6 +732,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(twoChargesToggleButton);
 
         moreThanTwoChargesToggleButton.setText(">2 ");
+        moreThanTwoChargesToggleButton.setToolTipText("More Than Two Charges");
         moreThanTwoChargesToggleButton.setFocusable(false);
         moreThanTwoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         moreThanTwoChargesToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));

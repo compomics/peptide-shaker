@@ -116,6 +116,7 @@ public class WaitingDialog extends javax.swing.JDialog {
         progressBar = new javax.swing.JProgressBar();
         jScrollPane1 = new javax.swing.JScrollPane();
         reportArea = new javax.swing.JTextArea();
+        intermidateJProgressBar = new javax.swing.JProgressBar();
         okButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
 
@@ -124,6 +125,8 @@ public class WaitingDialog extends javax.swing.JDialog {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Data Import Progress"));
 
+        progressBar.setStringPainted(true);
+
         reportArea.setBackground(new java.awt.Color(254, 254, 254));
         reportArea.setColumns(20);
         reportArea.setEditable(false);
@@ -131,25 +134,36 @@ public class WaitingDialog extends javax.swing.JDialog {
         reportArea.setRows(5);
         jScrollPane1.setViewportView(reportArea);
 
+        intermidateJProgressBar.setIndeterminate(true);
+        intermidateJProgressBar.setString("");
+        intermidateJProgressBar.setStringPainted(true);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+            .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE)
-                    .addComponent(progressBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(intermidateJProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(intermidateJProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {intermidateJProgressBar, progressBar});
 
         okButton.setText("Cancel");
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -176,7 +190,7 @@ public class WaitingDialog extends javax.swing.JDialog {
                         .addContainerGap()
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(406, 406, 406)
+                        .addGap(650, 650, 650)
                         .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -251,6 +265,7 @@ public class WaitingDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JProgressBar intermidateJProgressBar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -270,8 +285,11 @@ public class WaitingDialog extends javax.swing.JDialog {
         progressBar.setIndeterminate(false);
         progressBar.setValue(progressBar.getMaximum());
         progressBar.setStringPainted(true);
-        progressBar.setString("Import Completed.");
         this.setTitle("Importing Data - Completed");
+        
+        intermidateJProgressBar.setIndeterminate(false);
+        intermidateJProgressBar.setValue(intermidateJProgressBar.getMaximum());
+        intermidateJProgressBar.setString("Import Completed");
         
         // change the peptide shaker icon back to the default version
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -292,8 +310,15 @@ public class WaitingDialog extends javax.swing.JDialog {
         progressBar.setIndeterminate(false);
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
-        progressBar.setString("Calculation Canceled!");
+
+        intermidateJProgressBar.setIndeterminate(false);
+        intermidateJProgressBar.setValue(0);
+        intermidateJProgressBar.setString("Import Canceled!");
+        
         this.setTitle("Importing Data - Canceled");
+        
+        // return the peptide shaker icon to the standard version
+        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
     }
 
     /**

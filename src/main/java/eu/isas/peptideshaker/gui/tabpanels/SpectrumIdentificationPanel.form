@@ -197,14 +197,13 @@
             <Component class="javax.swing.JTable" name="peptideShakerJTable">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="8" rowCount="0">
+                  <Table columnCount="7" rowCount="0">
                     <Column editable="false" title=" " type="java.lang.Integer"/>
                     <Column editable="false" title="Protein(s)" type="java.lang.String"/>
                     <Column editable="false" title="Sequence" type="java.lang.String"/>
                     <Column editable="false" title="Modifications" type="java.lang.String"/>
                     <Column editable="false" title="Score" type="java.lang.Double"/>
                     <Column editable="false" title="Confidence" type="java.lang.Double"/>
-                    <Column editable="false" title="delta p" type="java.lang.Double"/>
                     <Column editable="false" title="  " type="java.lang.Boolean"/>
                   </Table>
                 </Property>
@@ -762,6 +761,7 @@
                 <Component class="javax.swing.JToggleButton" name="aIonToggleButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="a"/>
+                    <Property name="toolTipText" type="java.lang.String" value="a-ions"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -780,6 +780,7 @@
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="b"/>
+                    <Property name="toolTipText" type="java.lang.String" value="b-ions"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -794,6 +795,7 @@
                 <Component class="javax.swing.JToggleButton" name="cIonToggleButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="c"/>
+                    <Property name="toolTipText" type="java.lang.String" value="c-ions"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -808,6 +810,7 @@
                 <Component class="javax.swing.JToggleButton" name="xIonToggleButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="x"/>
+                    <Property name="toolTipText" type="java.lang.String" value="x-ions"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -823,6 +826,7 @@
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="y"/>
+                    <Property name="toolTipText" type="java.lang.String" value="y-ions"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -837,6 +841,7 @@
                 <Component class="javax.swing.JToggleButton" name="zIonToggleButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="z"/>
+                    <Property name="toolTipText" type="java.lang.String" value="z-ions"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -851,6 +856,7 @@
                 <Component class="javax.swing.JToggleButton" name="h2oToggleButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="H2O"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Water Loss"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -865,6 +871,7 @@
                 <Component class="javax.swing.JToggleButton" name="nh3ToggleButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="NH3"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Ammonia Loss"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -879,6 +886,7 @@
                 <Component class="javax.swing.JToggleButton" name="otherToggleButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="Oth."/>
+                    <Property name="toolTipText" type="java.lang.String" value="Other: Precursor and Immonium Ions"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -894,6 +902,7 @@
                   <Properties>
                     <Property name="selected" type="boolean" value="true"/>
                     <Property name="text" type="java.lang.String" value="+"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Single Charge"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -908,6 +917,7 @@
                 <Component class="javax.swing.JToggleButton" name="twoChargesToggleButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="++"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Double Charge"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -922,6 +932,7 @@
                 <Component class="javax.swing.JToggleButton" name="moreThanTwoChargesToggleButton">
                   <Properties>
                     <Property name="text" type="java.lang.String" value="&gt;2 "/>
+                    <Property name="toolTipText" type="java.lang.String" value="More Than Two Charges"/>
                     <Property name="focusable" type="boolean" value="false"/>
                     <Property name="horizontalTextPosition" type="int" value="0"/>
                     <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
