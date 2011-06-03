@@ -591,9 +591,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 replicateNumber = getReplicateNumber();
                 experiment.addAnalysisSet(sample, analysisSet);
             }
-            if (!spectrumFiles.isEmpty()) {
                 experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).clearSpectrumCollection();
-            }
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
@@ -1278,7 +1276,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     JOptionPane.showMessageDialog(tempRef,
                             "An error occured while reading" + psFile + ".\\"
                             + "Please verif that the compomics utilities version used to create\n"
-                            + "the file was the same as the one used by your version of Reporter.",
+                            + "the file is compatible with your version of Peptide-Shaker.",
                             "File Input Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }
