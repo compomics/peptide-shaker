@@ -9,10 +9,12 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.util.ArrayList;
+import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
+import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 
 /**
  * This dialog allows the user to resolve manually some protein inference issues
@@ -122,9 +124,22 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         proteinMatchTable.getColumn("Main Match").setMinWidth(80);
         proteinMatchTable.getColumn("Main Match").setMaxWidth(80);
+        
+        // the validated column
+        uniqueHitsTable.getColumn(" ").setMaxWidth(30);
+        relatedHitsTable.getColumn(" ").setMaxWidth(30);
 
         // change the cell renderer to fix a problem in Nimbus and alternating row colors
         proteinMatchTable.getColumn("Main Match").setCellRenderer(new NimbusCheckBoxRenderer());
+        
+        uniqueHitsTable.getColumn(" ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")), 
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")), 
+                "Validated", "Not Validated"));
+        relatedHitsTable.getColumn(" ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")), 
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")), 
+                "Validated", "Not Validated"));
     }
 
     /** This method is called from within the constructor to
@@ -432,7 +447,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0: return "Accession";
                 case 1: return "Score";
                 case 2: return "Confidence";
-                case 3: return "Validated";
+                case 3: return " ";
                 default: return "";
             }
         }
@@ -478,7 +493,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0: return "Accession";
                 case 1: return "Score";
                 case 2: return "Confidence";
-                case 3: return "Validated";
+                case 3: return " ";
                 default: return "";
             }
         }

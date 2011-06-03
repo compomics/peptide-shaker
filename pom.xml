@@ -12,7 +12,7 @@
 
     <!-- Set the version number for the whole project -->
     <properties>
-        <version.number>007.3</version.number>
+        <version.number>007.3.1</version.number>
     </properties>
 
 
@@ -293,7 +293,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.1.16</version>
+            <version>3.1.17</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -351,7 +351,7 @@
         <dependency>
             <groupId>no.uib</groupId>
             <artifactId>jsparklines</artifactId>
-            <version>0.5.10</version>
+            <version>0.5.12</version>
         </dependency>
 
         <dependency>
