@@ -87,6 +87,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     singleProtein = inspectedMatch.getTheoreticProtein(proteinAccession);
                     if (proteinMatch.contains(singleProtein)) {
                         associatedMatches.add(proteinMatch);
+                        break;
                     }
                 }
             }
@@ -422,7 +423,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 3;
+            return 4;
         }
 
         @Override
@@ -468,7 +469,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 3;
+            return 4;
         }
 
         @Override

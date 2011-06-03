@@ -181,6 +181,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The color to use for the HTML tags for the rows that are not selected, in HTML color code.
      */
     private String notSelectedRowHtmlTagFontColor = "#0101DF";
+    /**
+     * Boolean indicating whether spectra should be displayed or not
+     */
+    boolean displaySpectrum;
 
     /**
      * The main method used to start PeptideShaker
@@ -650,7 +654,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             @Override
             public String getDescription() {
-                return "(Compressed Peptide Shaker format) *.cps";
+                return "(Compomics Peptide Shaker format) *.cps";
             }
         };
 
@@ -955,7 +959,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void displayResults() {
 
         try {
-            boolean displaySpectrum = true;
+            displaySpectrum = true;
             boolean displaySequence = true;
             boolean displayProteins = true;
             boolean displayPeptidesAndPSMs = true;
@@ -995,14 +999,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 public void run() {
 
                     int counter = 0;
-                    
-                    try {
-                        progressDialog.setValue(++counter);
+                    progressDialog.setValue(++counter);
+                    if (displaySpectrum) {
                         spectrumIdentificationPanel.displayResults();
-                        
                         progressDialog.setValue(++counter);
                         ptmPanel.displayResults();
-                        
+                    } else {
+                        spectrumJPanel.setEnabled(false);
+                        progressDialog.setValue(++counter);
+                        ptmPanel.setEnabled(false);
+                    }
+                    progressDialog.setValue(++counter);
+
+                    try {
                         progressDialog.setValue(++counter);
                         overviewPanel.displayResults();
                         

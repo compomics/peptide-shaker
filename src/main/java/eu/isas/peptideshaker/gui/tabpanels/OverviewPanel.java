@@ -2244,7 +2244,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                             maxCharge = tempSpectrum.getPrecursor().getCharge().value;
                         }
 
-                        if (maxPsmMzValue < tempSpectrum.getMaxMz()) {
+                        if (tempSpectrum.getPeakList() != null && maxPsmMzValue < tempSpectrum.getMaxMz()) {
                             maxPsmMzValue = tempSpectrum.getMaxMz();
                         }
 

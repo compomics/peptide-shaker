@@ -527,9 +527,11 @@ public class PeptideShaker {
         int nLeft = 0;
         String mainKey = null;
         boolean similarityFound, allSimilar;
-        ArrayList<String> primaryDescription, secondaryDescription;
+        ArrayList<String> primaryDescription, secondaryDescription, accessions;
         for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
-            for (String proteinKey : proteinMatch.getTheoreticProteinsAccessions()) {
+            accessions = new ArrayList<String>(proteinMatch.getTheoreticProteinsAccessions());
+            Collections.sort(accessions);
+            for (String proteinKey : accessions) {
                 mainKey = proteinKey;
                 break;
             }
@@ -538,7 +540,8 @@ public class PeptideShaker {
                 allSimilar = false;
                 psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
                 ArrayList<String> primaryKeys = new ArrayList<String>(proteinMatch.getTheoreticProteinsAccessions());
-                ArrayList<String> secondaryKeys = new ArrayList<String>(proteinMatch.getTheoreticProteinsAccessions());
+                Collections.sort(primaryKeys);
+                ArrayList<String> secondaryKeys = new ArrayList<String>(primaryKeys);
                 for (int i = 0; i < primaryKeys.size() - 1; i++) {
                     primaryDescription = parseDescription(primaryKeys.get(i));
                     for (int j = i + 1; j < secondaryKeys.size(); j++) {
