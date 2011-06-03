@@ -674,7 +674,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             new Thread(new Runnable() {
 
                 public void run() {
-                    progressDialog.setIntermidiate(true);
+                    progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Saving. Please Wait...");
                     progressDialog.setVisible(true);
                 }
@@ -753,7 +753,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             new Thread(new Runnable() {
 
                 public void run() {
-                    progressDialog.setIntermidiate(true);
+                    progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Exporting. Please Wait...");
                     progressDialog.setVisible(true);
                 }

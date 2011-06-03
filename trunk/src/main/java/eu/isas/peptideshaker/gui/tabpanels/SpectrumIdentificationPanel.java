@@ -137,7 +137,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     private void setTableProperties() {
 
         peptideShakerJTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")), new ImageIcon(this.getClass().getResource("/icons/Error_3.png"))));
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")), 
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png"))
+                , "Validated", "Not Validated"));
 
         searchEngineTable.getTableHeader().setReorderingAllowed(false);
         peptideShakerJTable.getTableHeader().setReorderingAllowed(false);

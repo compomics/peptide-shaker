@@ -1231,7 +1231,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         new Thread(new Runnable() {
 
             public void run() {
-                progressDialog.setIntermidiate(true);
+                progressDialog.setIndeterminate(true);
                 progressDialog.setTitle("Importing. Please Wait...");
                 progressDialog.setVisible(true);
             }
