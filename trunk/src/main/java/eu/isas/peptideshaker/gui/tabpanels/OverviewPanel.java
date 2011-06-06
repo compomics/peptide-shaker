@@ -2065,6 +2065,24 @@ public class OverviewPanel extends javax.swing.JPanel {
                     e.printStackTrace();
                 }
             }
+        } else {
+
+            // nothing to display, empty previous results
+            spectrumPanel.removeAll();
+            spectrumPanel.revalidate();
+            spectrumPanel.repaint();
+
+            sequenceFragmentIonPlotsJPanel.removeAll();
+            sequenceFragmentIonPlotsJPanel.revalidate();
+            sequenceFragmentIonPlotsJPanel.repaint();
+
+            fragmentIonsJScrollPane.setViewportView(null);
+            fragmentIonsJScrollPane.revalidate();
+            fragmentIonsJScrollPane.repaint();
+
+            bubbleJPanel.removeAll();
+            bubbleJPanel.revalidate();
+            bubbleJPanel.repaint();
         }
     }
 
@@ -2554,12 +2572,18 @@ public class OverviewPanel extends javax.swing.JPanel {
                 }
             }
         }
-        
-        // set the preferred size of the accession column
-        int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 2);
-        proteinTable.getColumn("Accession").setMinWidth(width);
-        proteinTable.getColumn("Accession").setMaxWidth(width);
-        
+
+        // invoke later to give time for components to update
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                // set the preferred size of the accession column
+                int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 6);
+                proteinTable.getColumn("Accession").setMinWidth(width);
+                proteinTable.getColumn("Accession").setMaxWidth(width);
+            }
+        });
+
         ((TitledBorder) proteinsJPanel.getBorder()).setTitle("Proteins (" + validatedProteinsCounter + "/" + proteinTable.getRowCount() + ")");
         proteinsJPanel.repaint();
 
