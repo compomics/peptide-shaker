@@ -23,6 +23,7 @@ import com.googlecode.charts4j.GCharts;
 import com.googlecode.charts4j.VennDiagram;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import java.awt.MediaTracker;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
@@ -187,9 +188,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-
-        spectrumTable.getColumn("Title").setMinWidth(200);
-        spectrumTable.getColumn("Title").setMaxWidth(200);
 
         spectrumTable.getColumn("m/z").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         spectrumTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
@@ -1405,7 +1403,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         double maxValue = Math.max(Math.max(a, b), c);
 
-        // @TODO: add test of internet is not available
         // @TODO: move this method to utilities?
 
         final VennDiagram chart = GCharts.newVennDiagram(
@@ -1418,9 +1415,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         try {
             diagramButton.setText("");
             ImageIcon icon = new ImageIcon(new URL(chart.toURLString()));
-            diagramButton.setIcon(icon);
+            
+            if (icon.getImageLoadStatus() == MediaTracker.ERRORED) {
+                diagramButton.setText("<html><p align=center><i>Venn Diagram<br>Not Available</i></html>");
+                diagramButton.setToolTipText("Not available in off line mode");
+            } else {
+                diagramButton.setIcon(icon);
 
-            diagramButton.setToolTipText("<html>"
+                diagramButton.setToolTipText("<html>"
                     + titleA + ": " + a + "<br>"
                     + titleB + ": " + b + "<br>"
                     + titleC + ": " + c + "<br><br>"
@@ -1429,10 +1431,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     + titleB + " & " + titleC + ": " + bc + "<br><br>"
                     + titleA + " & " + titleB + " & " + titleC + ": " + abc
                     + "</html>");
-
+            }
         } catch (IOException e) {
             e.printStackTrace();
-            diagramButton.setText("<Not Available>");
+            diagramButton.setText("<html><p align=center><i>Venn Diagram<br>Not Available</i></html>");
+            diagramButton.setToolTipText("Not available due to an error occuring");
         }
     }
 
@@ -1747,7 +1750,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 MSnSpectrum currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(spectrumMatch.getKey());
                 Precursor precursor = currentSpectrum.getPrecursor();
 
-                if (currentSpectrum.getMzValuesAsArray().length > 0) {
+                if (currentSpectrum.getMzValuesAsArray().length > 0 && currentSpectrum.getIntensityValuesAsArray().length > 0) {
 
                     SpectrumPanel spectrum = new SpectrumPanel(
                             currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),

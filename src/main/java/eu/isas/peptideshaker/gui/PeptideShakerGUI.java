@@ -31,6 +31,7 @@ import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.IdentificationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -47,6 +48,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.table.DefaultTableColumnModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -101,6 +105,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The compomics PTM factory
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
+    /**
+     * The compomics enzyme factory.
+     */
+    private EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
     /**
      * The compomics experiment
      */
@@ -252,7 +260,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         } else {
             this.setTitle("PeptideShaker " + getVersion() + " beta");
         }
-
     }
 
     /**
@@ -693,11 +700,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     File newFile = new File(selectedFile);
                     int outcome = JOptionPane.YES_OPTION;
+                    
                     if (newFile.exists()) {
                         outcome = JOptionPane.showConfirmDialog(progressDialog,
                                 "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
                                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                     }
+                    
                     if (outcome != JOptionPane.YES_OPTION) {
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
@@ -705,13 +714,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     }
 
                     try {
+                        // change the peptide shaker icon to a "waiting version"
+                        tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
                         experimentIO.saveIdentifications(newFile, experiment);
 
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
+                        
+                        // return the peptide shaker icon to the standard version
+                        tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                         JOptionPane.showMessageDialog(tempRef, "Identifications were successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
                     } catch (Exception e) {
+                        
+                        // return the peptide shaker icon to the standard version
+                        tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
@@ -945,7 +963,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void loadEnzymes() {
         try {
-            EnzymeFactory enzymeFactory = EnzymeFactory.getInstance();
             enzymeFactory.importEnzymes(new File(ENZYME_FILE));
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Not able to load the enzyme file.", "Wrong enzyme file.", JOptionPane.ERROR_MESSAGE);
@@ -1224,7 +1241,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void setDefaultPreferences() {
         identificationPreferences = new IdentificationPreferences(0.01, 0.01, 0.01, false, false);
         searchParameters = new SearchParameters();
-        searchParameters.setEnzyme(EnzymeFactory.getInstance().getEnzyme("Trypsin"));
+        searchParameters.setEnzyme(enzymeFactory.getEnzyme("Trypsin"));
         searchParameters.setFragmentIonMZTolerance(0.5);
     }
 
@@ -1310,7 +1327,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * updates the search parameters.
+     * Updates the search parameters.
      *
      * @param searchParameters  the new search parameters
      */
@@ -1719,5 +1736,45 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public SpectrumIdentificationPanel getSpectrumIdentificationPanel() {
         return spectrumIdentificationPanel;
+    }
+    
+    /**
+     * Gets the preferred width of the column specified by vColIndex. The column
+     * will be just wide enough to show the column head and the widest cell in the 
+     * column. Margin pixels are added to the left and right (resulting in an additional 
+     * width of 2*margin pixels.
+     * 
+     * @param table         the table
+     * @param colIndex      the colum index
+     * @param margin        the margin to add
+     * @return              the prefereed width of the column 
+     */
+    public int getPreferredColumnWidth(JTable table, int colIndex, int margin) {
+
+        DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();
+        TableColumn col = colModel.getColumn(colIndex);
+        int width = 0;
+
+        // get width of column header
+        TableCellRenderer renderer = col.getHeaderRenderer();
+        if (renderer == null) {
+            renderer = table.getTableHeader().getDefaultRenderer();
+        }
+        
+        Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
+        width = comp.getPreferredSize().width;
+
+        // get maximum width of column data
+        for (int r = 0; r < table.getRowCount(); r++) {
+            renderer = table.getCellRenderer(r, colIndex);
+            comp = renderer.getTableCellRendererComponent(
+                    table, table.getValueAt(r, colIndex), false, false, r, colIndex);
+            width = Math.max(width, comp.getPreferredSize().width);
+        }
+
+        // add margin
+        width += 2 * margin;
+
+        return width;
     }
 }

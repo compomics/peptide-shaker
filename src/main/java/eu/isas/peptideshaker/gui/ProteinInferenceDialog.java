@@ -1,4 +1,3 @@
-
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.Util;
@@ -96,16 +95,16 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         }
 
         initComponents();
-        
+
         groupClassJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         PSParameter psParameter = (PSParameter) inspectedMatch.getUrParam(new PSParameter());
-        matchInfoLbl.setText("Score: "+ Util.roundDouble(psParameter.getProteinScore(), 2)
+        matchInfoLbl.setText("Score: " + Util.roundDouble(psParameter.getProteinScore(), 2)
                 + " Confidence: " + Util.roundDouble(psParameter.getProteinConfidence(), 2));
 
         // set up the table column properties
         setColumnProperies();
-
+        
         // The index should be set in the design according to the PSParameter class static fields!
         groupClassJComboBox.setSelectedIndex(psParameter.getGroupClass());
 
@@ -113,7 +112,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         setVisible(true);
     }
 
-     /**
+    /**
      * Set the properties for the columns in the results tables.
      */
     private void setColumnProperies() {
@@ -125,20 +124,26 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         proteinMatchTable.getColumn("Main Match").setMinWidth(80);
         proteinMatchTable.getColumn("Main Match").setMaxWidth(80);
         
+        // set the preferred size of the accession column
+        int width = peptideShakerGUI.getPreferredColumnWidth(proteinMatchTable, proteinMatchTable.getColumn("Accession").getModelIndex(), 2);
+        proteinMatchTable.getColumn("Accession").setMinWidth(width);
+        proteinMatchTable.getColumn("Accession").setMaxWidth(width);
+
         // the validated column
         uniqueHitsTable.getColumn(" ").setMaxWidth(30);
         relatedHitsTable.getColumn(" ").setMaxWidth(30);
 
         // change the cell renderer to fix a problem in Nimbus and alternating row colors
         proteinMatchTable.getColumn("Main Match").setCellRenderer(new NimbusCheckBoxRenderer());
-        
+
         uniqueHitsTable.getColumn(" ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")), 
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")), 
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
+        
         relatedHitsTable.getColumn(" ").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")), 
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")), 
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
     }
 
@@ -334,13 +339,13 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        
+
         Protein mainMatch = inspectedMatch.getMainMatch();
         proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), selectedRow, proteinTable.getColumn("Accession").getModelIndex());
         proteinTable.setValueAt(groupClassJComboBox.getSelectedIndex(), selectedRow, proteinTable.getColumn("PI").getModelIndex());
         String description = db.getProteinHeader(mainMatch.getAccession()).getDescription();
         proteinTable.setValueAt(description, selectedRow, proteinTable.getColumn("Description").getModelIndex());
-        
+
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -356,7 +361,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         pSParameter = (PSParameter) inspectedMatch.getUrParam(pSParameter);
         pSParameter.setGroupClass(groupClassJComboBox.getSelectedIndex());
     }//GEN-LAST:event_groupClassJComboBoxActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox groupClassJComboBox;
     private javax.swing.JLabel jLabel1;
@@ -392,26 +396,33 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public String getColumnName(int column) {
-            switch(column) {
-                case 0: return "Main Match";
-                case 1: return "Accession";
-                case 2: return "Description";
-                default: return " ";
+            switch (column) {
+                case 0:
+                    return "Main Match";
+                case 1:
+                    return "Accession";
+                case 2:
+                    return "Description";
+                default:
+                    return " ";
             }
         }
 
         @Override
         public Object getValueAt(int row, int column) {
-            switch(column) {
-                case 0: return inspectedMatch.getMainMatch().getAccession().equals(accessions.get(row));
-                case 1: return accessions.get(row);
+            switch (column) {
+                case 0:
+                    return inspectedMatch.getMainMatch().getAccession().equals(accessions.get(row));
+                case 1:
+                    return accessions.get(row);
                 case 2:
                     if (db != null) {
-                            return db.getProteinHeader(inspectedMatch.getTheoreticProtein(accessions.get(row)).getProteinKey()).getDescription();
+                        return db.getProteinHeader(inspectedMatch.getTheoreticProtein(accessions.get(row)).getProteinKey()).getDescription();
                     } else {
                         return "Database not loaded";
                     }
-                default: return " ";
+                default:
+                    return " ";
             }
         }
 
@@ -443,12 +454,17 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public String getColumnName(int column) {
-            switch(column) {
-                case 0: return "Accession";
-                case 1: return "Score";
-                case 2: return "Confidence";
-                case 3: return " ";
-                default: return "";
+            switch (column) {
+                case 0:
+                    return "Accession";
+                case 1:
+                    return "Score";
+                case 2:
+                    return "Confidence";
+                case 3:
+                    return " ";
+                default:
+                    return "";
             }
         }
 
@@ -456,12 +472,17 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         public Object getValueAt(int row, int column) {
             ProteinMatch currentMatch = uniqueMatches.get(row);
             PSParameter pSParameter = (PSParameter) currentMatch.getUrParam(new PSParameter());
-            switch(column) {
-                case 0: return currentMatch.getKey();
-                case 1: return pSParameter.getProteinScore();
-                case 2: return pSParameter.getProteinConfidence();
-                case 3: return pSParameter.isValidated();
-                default: return "";
+            switch (column) {
+                case 0:
+                    return currentMatch.getKey();
+                case 1:
+                    return pSParameter.getProteinScore();
+                case 2:
+                    return pSParameter.getProteinConfidence();
+                case 3:
+                    return pSParameter.isValidated();
+                default:
+                    return "";
             }
 
         }
@@ -489,12 +510,17 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public String getColumnName(int column) {
-            switch(column) {
-                case 0: return "Accession";
-                case 1: return "Score";
-                case 2: return "Confidence";
-                case 3: return " ";
-                default: return "";
+            switch (column) {
+                case 0:
+                    return "Accession";
+                case 1:
+                    return "Score";
+                case 2:
+                    return "Confidence";
+                case 3:
+                    return " ";
+                default:
+                    return "";
             }
         }
 
@@ -502,14 +528,19 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         public Object getValueAt(int row, int column) {
             ProteinMatch currentMatch = associatedMatches.get(row);
             PSParameter pSParameter = (PSParameter) currentMatch.getUrParam(new PSParameter());
-            switch(column) {
-                case 0: return currentMatch.getKey();
-                case 1: return pSParameter.getProteinScore();
-                case 2: return pSParameter.getProteinConfidence();
-                case 3: return pSParameter.isValidated();
-                default: return "";
+            switch (column) {
+                case 0:
+                    return currentMatch.getKey();
+                case 1:
+                    return pSParameter.getProteinScore();
+                case 2:
+                    return pSParameter.getProteinConfidence();
+                case 3:
+                    return pSParameter.isValidated();
+                default:
+                    return "";
             }
-            
+
         }
 
         @Override

@@ -60,6 +60,24 @@ public class IdFilter {
         this.maxMassDeviation = maxMassDeviation;
         this.isPpm = isPpm;
     }
+    
+    /**
+     * Returns the minimum peptide length.
+     * 
+     * @return the minimum peptide length
+     */
+    public int getMinPeptideLength () {
+        return minPepLength;
+    }
+    
+    /**
+     * Returns the maxium peptide length.
+     * 
+     * @return the maxium peptide length
+     */
+    public int getMaxPeptideLength () {
+        return maxPepLength;
+    }
 
     /**
      * Validates a peptide assumption

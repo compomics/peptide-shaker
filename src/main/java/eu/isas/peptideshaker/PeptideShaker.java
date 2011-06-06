@@ -12,6 +12,7 @@ import com.compomics.util.experiment.identification.identifications.Ms2Identific
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.protein.Enzyme;
 import eu.isas.peptideshaker.fdrestimation.InputMap;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.ProteinMap;
@@ -111,8 +112,9 @@ public class PeptideShaker {
      * @param idFiles           The files to import
      * @param spectrumFiles     The corresponding spectra (can be empty: spectra will not be loaded)
      * @param fastaFile         The database file in the fasta format
+     * @param enzyme            The enzyme to use
      */
-    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile) {
+    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, Enzyme enzyme) {
 
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
 
@@ -121,7 +123,7 @@ public class PeptideShaker {
             SequenceDataBase db = new SequenceDataBase();
             analysis.setSequenceDataBase(db);
             fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
-            fileImporter.importFiles(idFiles, spectrumFiles, fastaFile);
+            fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, enzyme);
         } else {
             fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
             fileImporter.importFiles(spectrumFiles);
