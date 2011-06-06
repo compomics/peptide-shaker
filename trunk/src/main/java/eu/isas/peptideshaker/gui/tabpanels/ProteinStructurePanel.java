@@ -10,7 +10,6 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.pdbfinder.FindPdbForUniprotAccessions;
-import com.compomics.util.pdbfinder.pdb.PdbBlock;
 import com.compomics.util.pdbfinder.pdb.PdbParameter;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
@@ -686,7 +685,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
-        progressDialog.setIntermidiate(true);
+        progressDialog.setIndeterminate(true);
         progressDialog.doNothingOnClose();
 
         new Thread(new Runnable() {
@@ -702,7 +701,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             @Override
             public void run() {
 
-                progressDialog.setIntermidiate(true);
+                progressDialog.setIndeterminate(true);
 
                 int selectedPdbIndex = (Integer) pdbMatchesJTable.getValueAt(pdbMatchesJTable.getSelectedRow(), 0);
                 PdbParameter lParam = uniProtPdb.getPdbs().get(selectedPdbIndex - 1);
@@ -1080,6 +1079,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             }
         }
 
+        // set the preferred size of the accession column
+        int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 2);
+        proteinTable.getColumn("Accession").setMinWidth(width);
+        proteinTable.getColumn("Accession").setMaxWidth(width);
+        
         ((TitledBorder) proteinsJPanel.getBorder()).setTitle("Proteins (" + validatedProteinsCounter + "/" + proteinTable.getRowCount() + ")");
         proteinsJPanel.repaint();
 
@@ -1125,7 +1129,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         // find the pdb matches
         uniProtPdb = new FindPdbForUniprotAccessions(tempAccession);
-
+        
         // delete the previous matches
         while (pdbMatchesJTable.getRowCount() > 0) {
             ((DefaultTableModel) pdbMatchesJTable.getModel()).removeRow(0);
@@ -1167,7 +1171,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         ((JSparklinesBarChartTableCellRenderer) pdbMatchesJTable.getColumn("Chains").getCellRenderer()).setMaxValue(maxNumberOfChains);
 
-        ((TitledBorder) pdbMatchesJPanel.getBorder()).setTitle("PDB Matches (" + pdbMatchesJTable.getRowCount() + ")");
+        if (!uniProtPdb.urlWasRead()) {
+            ((TitledBorder) pdbMatchesJPanel.getBorder()).setTitle("PDB Matches - Not Available Without Internet Connection!");
+        } else {
+            ((TitledBorder) pdbMatchesJPanel.getBorder()).setTitle("PDB Matches (" + pdbMatchesJTable.getRowCount() + ")");
+        }
+        
         pdbMatchesJPanel.repaint();
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));

@@ -79,10 +79,6 @@ public class OverviewPanel extends javax.swing.JPanel {
      */
     private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
     /**
-     * Boolean indicating whether the peak list error has already been displayed
-     */
-    private boolean peakListError = false;
-    /**
      * The current spectrum annotations.
      */
     private Vector<DefaultSpectrumAnnotation> currentAnnotations;
@@ -231,8 +227,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).setMinimumChartValue(5d);
         proteinTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")), 
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")), 
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
 
         peptideTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
@@ -242,8 +238,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("Confidence [%]").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
         ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
         peptideTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")), 
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")), 
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
 
         psmTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
@@ -251,8 +247,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         psmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
         psmTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
-                new ImageIcon(this.getClass().getResource("/icons/accept.png")), 
-                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")), 
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
         psmTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
 
@@ -485,6 +481,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         sequenceCoverageJPanel.setOpaque(false);
 
         coverageScrollPane.setBorder(null);
+        coverageScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         coverageScrollPane.setOpaque(false);
 
         coverageEditorPane.setBorder(null);
@@ -1166,12 +1163,12 @@ public class OverviewPanel extends javax.swing.JPanel {
             if (updateProteinStructurePanel) {
                 peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0), false);
             }
-            
+
             // update the peptide selection
             updatedPeptideSelection(row);
 
             // update the sequence coverage map
-            updateSequenceCoverageMap(row, column);
+            updateSequenceCoverageMap(row);
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
@@ -1215,13 +1212,15 @@ public class OverviewPanel extends javax.swing.JPanel {
      */
     private void coverageEditorPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_coverageEditorPaneComponentResized
         int row = proteinTable.getSelectedRow();
-        int column = proteinTable.getSelectedColumn();
 
-        if (row != -1) {
+        if (row != -1 && displayCoverage) {
+
+            // @TODO: make the resizing smarter so that it does not updated as many times during resize...
+
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
             // update the sequence coverage map
-            updateSequenceCoverageMap(row, column);
+            updateSequenceCoverageMap(row);
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
@@ -1237,7 +1236,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         int row = peptideTable.getSelectedRow();
 
         if (row != -1) {
-            
+
             updatePsmSelection(row);
 
             // invoke later to give time for components to update
@@ -1248,7 +1247,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                     updateSpectrum(row, true);
                 }
             });
-            
+
             // select the same peptide in the protein structure tab
             if (updateProteinStructurePanel) {
                 peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0), false);
@@ -1277,7 +1276,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                         updateSpectrum(row, true);
                     }
                 });
-                
+
                 // select the same peptide in the protein structure tab
                 if (updateProteinStructurePanel) {
                     peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0), false);
@@ -1565,7 +1564,6 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void proteinTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinTableMouseExited
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonBubblePlotToggleButton;
     private javax.swing.JToggleButton aIonToggleButton;
@@ -1645,7 +1643,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTableMouseClicked(null);
         updateProteinStructurePanel = true;
     }
-    
+
     /**
      * Select the given peptide index in the peptide table.
      * 
@@ -1667,7 +1665,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         peptideTableMouseClicked(null);
         updateProteinStructurePanel = true;
     }
-    
+
     /**
      * Displays or hide sparklines in the tables.
      * 
@@ -1722,7 +1720,7 @@ public class OverviewPanel extends javax.swing.JPanel {
      * Updates the split panel divider location for the protein panel.
      */
     private void updateProteinTableSeparator() {
-        
+
         if (displayProteins) {
             overviewJSplitPane.setDividerLocation(overviewJSplitPane.getHeight() / 100 * 30);
         } else {
@@ -1801,7 +1799,7 @@ public class OverviewPanel extends javax.swing.JPanel {
      * Method called whenever the component is resized to maintain the look of the GUI
      */
     public void updateSeparators() {
-         
+
         updateProteinTableSeparator();
         updatePeptidesAndPsmsSeparator();
         peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
@@ -1811,8 +1809,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             public void run() {
                 updateSequenceCoverageSeparator();
-                //overviewJPanel.revalidate();
-                //overviewJPanel.repaint();
+                coverageEditorPaneComponentResized(null);
             }
         });
     }
@@ -1971,7 +1968,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     public void updateSpectrumAnnotation() {
         updateSpectrum(psmTable.getSelectedRow(), false);
     }
-    
+
     /**
      * Update the spectrum to the currently selected PSM.
      *
@@ -1992,10 +1989,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                     HashSet<Peak> peaks = currentSpectrum.getPeakList();
 
                     if (peaks == null || peaks.isEmpty()) {
-                        if (!peakListError) {
-                            JOptionPane.showMessageDialog(this, "Peak lists not imported.", "Peak Lists Error", JOptionPane.INFORMATION_MESSAGE);
-                            peakListError = true;
-                        }
+                        // do nothing, peaks list not found
                     } else {
 
                         double lowerMzZoomRange = 0;
@@ -2503,11 +2497,19 @@ public class OverviewPanel extends javax.swing.JPanel {
                         probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
 
                         Protein currentProtein = db.getProtein(proteinMatch.getMainMatch().getAccession());
-                        
+
                         if (peptideShakerGUI.getSearchParameters().getEnzyme() == null) {
+                            JOptionPane.showMessageDialog(this, "Unknown Enzyme!", "The selected enzyme is not recognized by PeptideShaker.", JOptionPane.ERROR_MESSAGE);
                             throw new IllegalArgumentException("Unknown enzyme!");
                         }
-                        
+
+                        if (currentProtein == null) {
+                            JOptionPane.showMessageDialog(this, "Unknown Protein!", "The protein \'"
+                                    + proteinMatch.getMainMatch().getAccession() + "\' is not found.\n"
+                                    + "Verify your FASTA file.", JOptionPane.ERROR_MESSAGE);
+                            throw new IllegalArgumentException("Protein not found! Accession: " + proteinMatch.getMainMatch().getAccession());
+                        }
+
                         int nPossible = currentProtein.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
                         emPAI = (Math.pow(10, ((double) proteinMatch.getPeptideCount()) / ((double) nPossible))) - 1;
                         description = db.getProteinHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
@@ -2528,7 +2530,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                                         probabilities.getProteinConfidence(),
                                         probabilities.isValidated()
                                     });
-                            
+
                             proteinTableMap.put(index + 1, proteinKey);
                             index++;
 
@@ -2552,7 +2554,12 @@ public class OverviewPanel extends javax.swing.JPanel {
                 }
             }
         }
-
+        
+        // set the preferred size of the accession column
+        int width = peptideShakerGUI.getPreferredColumnWidth(proteinTable, proteinTable.getColumn("Accession").getModelIndex(), 2);
+        proteinTable.getColumn("Accession").setMinWidth(width);
+        proteinTable.getColumn("Accession").setMaxWidth(width);
+        
         ((TitledBorder) proteinsJPanel.getBorder()).setTitle("Proteins (" + validatedProteinsCounter + "/" + proteinTable.getRowCount() + ")");
         proteinsJPanel.repaint();
 
@@ -2578,7 +2585,7 @@ public class OverviewPanel extends javax.swing.JPanel {
      * @param row       the row index of the protein
      * @param column    the column index in the protein table
      */
-    private void updateSequenceCoverageMap(int row, int column) {
+    private void updateSequenceCoverageMap(int row) {
         String proteinKey = proteinTableMap.get(getProteinKey(row));
         ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
         updateSequenceCoverage(proteinMatch.getMainMatch().getAccession());

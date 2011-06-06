@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 /*
  * FileSelection.java
@@ -16,10 +12,11 @@ import java.util.HashMap;
 
 /**
  *
- * @author vaudel
+ * @author Marc Vaudel
  */
 public class FileSelection extends javax.swing.JDialog {
 
+    // @TODO: JavaDoc missing...
     /**
      * The parent dialog
      */
