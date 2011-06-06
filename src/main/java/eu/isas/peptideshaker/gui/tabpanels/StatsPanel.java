@@ -41,7 +41,7 @@ import org.jfree.data.xy.DefaultXYDataset;
 public class StatsPanel extends javax.swing.JPanel {
 
     /**
-     * The main peptide shaker gui
+     * The main peptide shaker gui.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
@@ -49,43 +49,43 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private final int LINE_WIDTH = 2;
     /**
-     * the currently displayed Target Decoy map
+     * The currently displayed Target Decoy map.
      */
     private TargetDecoyMap currentTargetDecoyMap;
     /**
-     * The Target Decoy metrics series of the currently displayed map
+     * The Target Decoy metrics series of the currently displayed map.
      */
     private TargetDecoySeries targetDecoySeries;
     /**
-     * the psms map: # in the list -> map key
+     * The psms map: # in the list -> map key.
      */
     private HashMap<Integer, Integer> psmMap = new HashMap<Integer, Integer>();
     /**
-     * The peptide map: # in the list -> map key
+     * The peptide map: # in the list -> map key.
      */
     private HashMap<Integer, String> peptideMap = new HashMap<Integer, String>();
     /**
-     * The confidence plot
+     * The confidence plot.
      */
     private XYPlot confidencePlot = new XYPlot();
     /**
-     * The fdr fnr plot
+     * The fdr fnr plot.
      */
     private XYPlot fdrFnrPlot = new XYPlot();
     /**
-     * The PEP plot
+     * The PEP plot.
      */
     private XYPlot pepPlot = new XYPlot();
     /**
-     * The FDR/FNR plot
+     * The FDR/FNR plot.
      */
     private XYPlot fdrPlot = new XYPlot();
     /**
-     * The Benefit/cost plot
+     * The Benefit/cost plot.
      */
     private XYPlot benefitCostPlot = new XYPlot();
     /**
-     * The last threshold input
+     * The last threshold input.
      */
     private double lastThreshold = 1;
     /**
@@ -96,15 +96,15 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private int lastThresholdType = 1;
     /**
-     * The confidence threshold marker
+     * The confidence threshold marker.
      */
     private ValueMarker confidenceMarker = new ValueMarker(1);
     /**
-     * Map keeping track of probabilities modifications
+     * Map keeping track of probabilities modifications.
      */
     private HashMap<Integer, Boolean> modifiedMaps = new HashMap<Integer, Boolean>();
     /**
-     * Metrics and methods used for posterior validation of PSMs and peptides
+     * Metrics and methods used for posterior validation of PSMs and peptides.
      */
     private PosteriorValidationMetrics posteriorValidationMetrics;
     /**
@@ -112,12 +112,12 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private static ProgressDialogX progressDialog;
     /**
-     * Boolean indicating whether results are displayed
+     * Boolean indicating whether results are displayed.
      */
     private boolean displayingResults = false;
 
     /**
-     * Create a new StatsPanel
+     * Create a new StatsPanel.
      *
      * @param parent the PeptideShaker parent frame.
      */
@@ -129,6 +129,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
         // Initialize confidence plot
         LogAxis scoreAxis = new LogAxis("Probabilistic Score");
+        //scoreAxis.setSmallestValue(0.0003); // @TODO: set this value based in the values plotted!!
         NumberAxis confidenceAxis = new NumberAxis("Confidence [%]");
         confidenceAxis.setAutoRangeIncludesZero(true);
         confidencePlot.setDomainAxis(scoreAxis);
@@ -1287,6 +1288,9 @@ public class StatsPanel extends javax.swing.JPanel {
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
         PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
         miniShaker.validateIdentifications();
+        
+        // @TODO: the validations flags have to be updated for the tabs!!!
+        
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_validateButtonActionPerformed
 
@@ -2129,7 +2133,7 @@ public class StatsPanel extends javax.swing.JPanel {
     private void estimatePossibilities() {
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.setIntermidiate(true);
+        progressDialog.setIndeterminate(true);
         progressDialog.doNothingOnClose();
         
         // @TODO: reformat the code so that threading and progress dialog can be used

@@ -67,9 +67,10 @@ public class FileImporter {
      */
     private HashMap<String, ArrayList<String>> sequences = new HashMap<String, ArrayList<String>>();
     /**
-     * Turns the temporary solution for the X!Tandem bug correction on or off.
+     * If true, all the sequence to protein mapping is redone, i.e., the search 
+     * engines' protein inference is not trusted.
      */
-    private boolean temporaryXTandemFix = true;
+    private boolean redoProteinInference = true;
 
     /**
      * Constructor for the importer
@@ -318,8 +319,8 @@ public class FileImporter {
                         } else {
                             inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
 
-                            // Temporary solution for X!Tandem input waiting for their bug correction
-                            if (temporaryXTandemFix) {
+                            // re-do the sequence to protein mapping
+                            if (redoProteinInference) {
 
                                 Peptide peptide = firstHit.getPeptide();
                                 ArrayList<Protein> proteins = new ArrayList<Protein>();
