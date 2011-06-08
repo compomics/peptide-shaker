@@ -201,6 +201,8 @@ public class FileImporter {
 
             if (temp != null) {
                 result = temp;
+                
+                // @TODO: do the complete search for non-enzymatic peptides??
             }
         } else {
             
