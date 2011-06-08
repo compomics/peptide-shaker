@@ -1017,6 +1017,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     int counter = 0;
                     progressDialog.setValue(++counter);
+                    
                     if (displaySpectrum) {
                         spectrumIdentificationPanel.displayResults();
                         progressDialog.setValue(++counter);
@@ -1026,6 +1027,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         progressDialog.setValue(++counter);
                         ptmPanel.setEnabled(false);
                     }
+                    
                     progressDialog.setValue(++counter);
 
                     try {
