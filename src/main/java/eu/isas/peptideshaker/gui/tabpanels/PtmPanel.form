@@ -200,7 +200,7 @@
                         </Property>
                       </Properties>
                       <Events>
-                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptidesTableMouseClicked"/>
+                        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptidesTableMouseReleased"/>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="peptidesTableKeyReleased"/>
                       </Events>
                       <AuxValues>
@@ -274,7 +274,7 @@
                         </Property>
                       </Properties>
                       <Events>
-                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="relatedPeptidesTableMouseClicked"/>
+                        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="relatedPeptidesTableMouseReleased"/>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="relatedPeptidesTableKeyReleased"/>
                       </Events>
                       <AuxValues>
@@ -389,7 +389,7 @@
                         </Property>
                       </Properties>
                       <Events>
-                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="selectedPsmTableMouseClicked"/>
+                        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="selectedPsmTableMouseReleased"/>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="selectedPsmTableKeyReleased"/>
                       </Events>
                       <AuxValues>
@@ -470,12 +470,15 @@
                           <TableColumnModel selectionModel="0"/>
                         </Property>
                         <Property name="opaque" type="boolean" value="false"/>
+                        <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
+                          <JTableSelectionModel selectionMode="0"/>
+                        </Property>
                         <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                           <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                         </Property>
                       </Properties>
                       <Events>
-                        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="relatedPsmTableMouseClicked"/>
+                        <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="relatedPsmTableMouseReleased"/>
                         <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="relatedPsmTableKeyReleased"/>
                       </Events>
                       <AuxValues>
@@ -660,6 +663,8 @@
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cIonToggleButtonActionPerformed"/>
                           </Events>
                         </Component>
+                        <Component class="javax.swing.JToolBar$Separator" name="jSeparator7">
+                        </Component>
                         <Component class="javax.swing.JToggleButton" name="xIonToggleButton">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="x"/>
@@ -706,6 +711,8 @@
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="zIonToggleButtonActionPerformed"/>
                           </Events>
                         </Component>
+                        <Component class="javax.swing.JToolBar$Separator" name="jSeparator8">
+                        </Component>
                         <Component class="javax.swing.JToggleButton" name="h2oToggleButton">
                           <Properties>
                             <Property name="text" type="java.lang.String" value="H2O"/>
@@ -751,6 +758,8 @@
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="otherToggleButtonActionPerformed"/>
                           </Events>
                         </Component>
+                        <Component class="javax.swing.JToolBar$Separator" name="jSeparator9">
+                        </Component>
                         <Component class="javax.swing.JToggleButton" name="oneChargeToggleButton">
                           <Properties>
                             <Property name="selected" type="boolean" value="true"/>
@@ -795,6 +804,24 @@
                           </Properties>
                           <Events>
                             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="moreThanTwoChargesToggleButtonActionPerformed"/>
+                          </Events>
+                        </Component>
+                        <Component class="javax.swing.JToolBar$Separator" name="jSeparator10">
+                        </Component>
+                        <Component class="javax.swing.JToggleButton" name="allToggleButton">
+                          <Properties>
+                            <Property name="selected" type="boolean" value="true"/>
+                            <Property name="text" type="java.lang.String" value="All"/>
+                            <Property name="toolTipText" type="java.lang.String" value="Display all peaks or just the annotated peaks"/>
+                            <Property name="focusable" type="boolean" value="false"/>
+                            <Property name="horizontalTextPosition" type="int" value="0"/>
+                            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                              <Dimension value="[39, 25]"/>
+                            </Property>
+                            <Property name="verticalTextPosition" type="int" value="3"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="allToggleButtonActionPerformed"/>
                           </Events>
                         </Component>
                       </SubComponents>

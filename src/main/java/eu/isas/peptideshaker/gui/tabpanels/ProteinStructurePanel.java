@@ -341,12 +341,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             }
         });
         proteinTable.setOpaque(false);
+        proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                proteinTableMouseClicked(evt);
-            }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 proteinTableMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                proteinTableMouseReleased(evt);
             }
         });
         proteinTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -407,9 +408,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             }
         });
         peptideTable.setOpaque(false);
+        peptideTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         peptideTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                peptideTableMouseClicked(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                peptideTableMouseReleased(evt);
             }
         });
         peptideTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -462,9 +464,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 return canEdit [columnIndex];
             }
         });
+        pdbMatchesJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         pdbMatchesJTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                pdbMatchesJTableMouseClicked(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                pdbMatchesJTableMouseReleased(evt);
             }
         });
         pdbMatchesJTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -526,12 +529,91 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     }// </editor-fold>//GEN-END:initComponents
 
     /**
+     * Makes sure the cursor changes back to the default cursor when leaving the 
+     * protein accession number column.
+     * 
+     * @param evt 
+     */
+    private void proteinTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_proteinTableMouseExited
+
+    /**
+     * Changes the cursor into a hand cursor if the table cell contains an
+     * html link.
+     *
+     * @param evt
+     */
+    private void proteinTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseMoved
+        int row = proteinTable.rowAtPoint(evt.getPoint());
+        int column = proteinTable.columnAtPoint(evt.getPoint());
+
+        if (column == 1 && proteinTable.getValueAt(row, column) != null) {
+
+            String tempValue = (String) proteinTable.getValueAt(row, column);
+
+            if (tempValue.lastIndexOf("<html>") != -1) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        } else if (column == 2 && proteinTable.getValueAt(row, column) != null) {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        } else {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+}//GEN-LAST:event_proteinTableMouseMoved
+
+    /**
      * Update the protein selection and the corresponding tables.
      * 
      * @param evt 
      */
-    private void proteinTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseClicked
+    private void proteinTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinTableKeyReleased
+        proteinTableMouseReleased(null);
+}//GEN-LAST:event_proteinTableKeyReleased
 
+    /**
+     * Updates the PDB structure.
+     * 
+     * @param evt 
+     */
+    private void peptideTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideTableKeyReleased
+
+        if (evt == null || evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+
+            int row = peptideTable.getSelectedRow();
+
+            if (row != -1) {
+                if (pdbMatchesJTable.getSelectedRow() != -1) {
+                    pdbMatchesJTableMouseReleased(null);
+                }
+
+                // select the same peptide in the protein structure tab
+                if (updateOverviewPanel) {
+                    peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0), true);
+                }
+            }
+        }
+}//GEN-LAST:event_peptideTableKeyReleased
+
+    /**
+     * Update the PDB structure shown in the Jmol panel.
+     * 
+     * @param evt 
+     */
+    private void pdbMatchesJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_pdbMatchesJTableKeyReleased
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            pdbMatchesJTableMouseReleased(null);
+        }
+    }//GEN-LAST:event_pdbMatchesJTableKeyReleased
+
+    /**
+     * Update the protein selection and the corresponding tables.
+     * 
+     * @param evt 
+     */
+    private void proteinTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseReleased
         int row = proteinTable.getSelectedRow();
         int column = proteinTable.getSelectedColumn();
 
@@ -583,65 +665,19 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 new ProteinInferenceDialog(peptideShakerGUI, proteinTable, row, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
             }
         }
-}//GEN-LAST:event_proteinTableMouseClicked
-
-    /**
-     * Makes sure the cursor changes back to the default cursor when leaving the 
-     * protein accession number column.
-     * 
-     * @param evt 
-     */
-    private void proteinTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_proteinTableMouseExited
-
-    /**
-     * Changes the cursor into a hand cursor if the table cell contains an
-     * html link.
-     *
-     * @param evt
-     */
-    private void proteinTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseMoved
-        int row = proteinTable.rowAtPoint(evt.getPoint());
-        int column = proteinTable.columnAtPoint(evt.getPoint());
-
-        if (column == 1 && proteinTable.getValueAt(row, column) != null) {
-
-            String tempValue = (String) proteinTable.getValueAt(row, column);
-
-            if (tempValue.lastIndexOf("<html>") != -1) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-            } else {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-            }
-        } else if (column == 2 && proteinTable.getValueAt(row, column) != null) {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        } else {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        }
-}//GEN-LAST:event_proteinTableMouseMoved
-
-    /**
-     * Update the protein selection and the corresponding tables.
-     * 
-     * @param evt 
-     */
-    private void proteinTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_proteinTableKeyReleased
-        proteinTableMouseClicked(null);
-}//GEN-LAST:event_proteinTableKeyReleased
+    }//GEN-LAST:event_proteinTableMouseReleased
 
     /**
      * Updates the PDB structure.
      * 
      * @param evt 
      */
-    private void peptideTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideTableMouseClicked
-
+    private void peptideTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideTableMouseReleased
         int row = peptideTable.getSelectedRow();
 
         if (row != -1) {
             if (pdbMatchesJTable.getSelectedRow() != -1) {
-                pdbMatchesJTableMouseClicked(null);
+                pdbMatchesJTableMouseReleased(null);
             }
 
             // select the same peptide in the protein structure tab
@@ -649,40 +685,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0), true);
             }
         }
-}//GEN-LAST:event_peptideTableMouseClicked
-
-    /**
-     * Updates the PDB structure.
-     * 
-     * @param evt 
-     */
-    private void peptideTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideTableKeyReleased
-
-        if (evt == null || evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
-
-            int row = peptideTable.getSelectedRow();
-
-            if (row != -1) {
-                if (pdbMatchesJTable.getSelectedRow() != -1) {
-                    pdbMatchesJTableMouseClicked(null);
-                }
-
-                // select the same peptide in the protein structure tab
-                if (updateOverviewPanel) {
-                    peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0), true);
-                }
-            }
-        }
-
-}//GEN-LAST:event_peptideTableKeyReleased
+    }//GEN-LAST:event_peptideTableMouseReleased
 
     /**
      * Update the PDB structure shown in the Jmol panel.
      * 
      * @param evt 
      */
-    private void pdbMatchesJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbMatchesJTableMouseClicked
-
+    private void pdbMatchesJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbMatchesJTableMouseReleased
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
@@ -751,20 +761,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
         }.start();
-    }//GEN-LAST:event_pdbMatchesJTableMouseClicked
+    }//GEN-LAST:event_pdbMatchesJTableMouseReleased
 
-    /**
-     * Update the PDB structure shown in the Jmol panel.
-     * 
-     * @param evt 
-     */
-    private void pdbMatchesJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_pdbMatchesJTableKeyReleased
-
-        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            pdbMatchesJTableMouseClicked(null);
-        }
-
-    }//GEN-LAST:event_pdbMatchesJTableKeyReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane pdbJScrollPane;
@@ -797,7 +795,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         }
 
         updateOverviewPanel = false;
-        proteinTableMouseClicked(null);
+        proteinTableMouseReleased(null);
         updateOverviewPanel = true;
     }
 
@@ -819,7 +817,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         }
 
         updateOverviewPanel = false;
-        peptideTableMouseClicked(null);
+        peptideTableMouseReleased(null);
         updateOverviewPanel = true;
     }
 
@@ -1103,7 +1101,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         // select the first row
         if (proteinTable.getRowCount() > 0) {
             proteinTable.setRowSelectionInterval(0, 0);
-            proteinTableMouseClicked(null);
+            proteinTableMouseReleased(null);
             proteinTable.requestFocus();
         }
 

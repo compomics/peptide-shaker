@@ -115,6 +115,10 @@ public class StatsPanel extends javax.swing.JPanel {
      * Boolean indicating whether results are displayed.
      */
     private boolean displayingResults = false;
+    /**
+     * The log axis.
+     */
+    private LogAxis scoreAxis;
 
     /**
      * Create a new StatsPanel.
@@ -128,8 +132,7 @@ public class StatsPanel extends javax.swing.JPanel {
         initComponents();
 
         // Initialize confidence plot
-        LogAxis scoreAxis = new LogAxis("Probabilistic Score");
-        //scoreAxis.setSmallestValue(0.0003); // @TODO: set this value based in the values plotted!!
+        scoreAxis = new LogAxis("Probabilistic Score");
         NumberAxis confidenceAxis = new NumberAxis("Confidence [%]");
         confidenceAxis.setAutoRangeIncludesZero(true);
         confidencePlot.setDomainAxis(scoreAxis);
@@ -591,7 +594,7 @@ public class StatsPanel extends javax.swing.JPanel {
             .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
         );
 
-        optimizationTabbedPane.addTab("Estimator Optimization", estimatorOptimizationTab);
+        optimizationTabbedPane.addTab("Estimators", estimatorOptimizationTab);
 
         thresholdOptimizationTab.setOpaque(false);
 
@@ -780,7 +783,7 @@ public class StatsPanel extends javax.swing.JPanel {
             .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
         );
 
-        optimizationTabbedPane.addTab("Threshold Optimization", thresholdOptimizationTab);
+        optimizationTabbedPane.addTab("Thresholds", thresholdOptimizationTab);
 
         optimizationTabbedPane.setSelectedIndex(1);
 
@@ -1288,9 +1291,9 @@ public class StatsPanel extends javax.swing.JPanel {
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
         PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
         miniShaker.validateIdentifications();
-        
+
         // @TODO: the validations flags have to be updated for the tabs!!!
-        
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_validateButtonActionPerformed
 
@@ -1352,7 +1355,6 @@ public class StatsPanel extends javax.swing.JPanel {
         updateDisplayedComponents();
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_validationCmbMouseReleased
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JPanel benefitCostChartPanel;
@@ -1760,6 +1762,22 @@ public class StatsPanel extends javax.swing.JPanel {
         updateConfidenceChart();
         updateCostBenefitChart();
         setMarkers();
+
+        // find the smallest x-axis value used
+        double[] scores = targetDecoySeries.getScores();
+        double minScore = targetDecoySeries.getScores()[0];
+
+        // @TODO: check why the first element in the target decoy series is 0..?
+
+        int index = 1;
+
+        while (minScore == 0 && index < scores.length) {
+            minScore = targetDecoySeries.getScores()[index++];
+        }
+
+        // set the lower range for the log axis
+        scoreAxis.setSmallestValue(minScore);
+
         confidencePanel.revalidate();
         confidencePanel.repaint();
         pepPanel.revalidate();
@@ -2135,7 +2153,7 @@ public class StatsPanel extends javax.swing.JPanel {
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.setIndeterminate(true);
         progressDialog.doNothingOnClose();
-        
+
         // @TODO: reformat the code so that threading and progress dialog can be used
 
 //        new Thread(new Runnable() {
@@ -2150,23 +2168,23 @@ public class StatsPanel extends javax.swing.JPanel {
 //
 //            @Override
 //            public void run() {
-        
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-                PSMaps pSMaps = new PSMaps();
-                pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-                posteriorValidationMetrics.estimateDatasetPossibilities(peptideShakerGUI.getSearchParameters(),
-                        peptideShakerGUI.getSequenceDataBase(), peptideShakerGUI.getIdentification(), pSMaps.getPeptideSpecificMap(), pSMaps.getPsmSpecificMap());
-                posteriorValidationMetrics.estimateDataBasePossibilities(peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceDataBase());
+        PSMaps pSMaps = new PSMaps();
+        pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
+        posteriorValidationMetrics.estimateDatasetPossibilities(peptideShakerGUI.getSearchParameters(),
+                peptideShakerGUI.getSequenceDataBase(), peptideShakerGUI.getIdentification(), pSMaps.getPeptideSpecificMap(), pSMaps.getPsmSpecificMap());
+        posteriorValidationMetrics.estimateDataBasePossibilities(peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceDataBase());
 
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                
+        progressDialog.setVisible(false);
+        progressDialog.dispose();
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 //            }
 //        }.start();
     }
-    
+
     public void updateSeparators() {
         formComponentResized(null);
     }

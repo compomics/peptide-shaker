@@ -33,6 +33,7 @@ import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -225,6 +226,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         
         resultsJTabbedPane.setEnabledAt(5, false);
         resultsJTabbedPane.setEnabledAt(6, false);
+        resultsJTabbedPane.setEnabledAt(7, false);
 
         setUpPanels();
         repaintPanels();
@@ -317,6 +319,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         statsJPanel = new javax.swing.JPanel();
         annotationJPanel = new javax.swing.JPanel();
         goAnalysisJPanel = new javax.swing.JPanel();
+        transitionsJPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         openJMenuItem = new javax.swing.JMenuItem();
@@ -346,7 +349,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PeptideShaker");
         setBackground(new java.awt.Color(255, 255, 255));
-        setMinimumSize(new java.awt.Dimension(1280, 700));
+        setMinimumSize(new java.awt.Dimension(1280, 800));
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -403,6 +406,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         );
 
         resultsJTabbedPane.addTab("GO Analysis", goAnalysisJPanel);
+
+        javax.swing.GroupLayout transitionsJPanelLayout = new javax.swing.GroupLayout(transitionsJPanel);
+        transitionsJPanel.setLayout(transitionsJPanelLayout);
+        transitionsJPanelLayout.setHorizontalGroup(
+            transitionsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 1173, Short.MAX_VALUE)
+        );
+        transitionsJPanelLayout.setVerticalGroup(
+            transitionsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 776, Short.MAX_VALUE)
+        );
+
+        resultsJTabbedPane.addTab("Transitions", transitionsJPanel);
 
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
@@ -999,7 +1015,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             statsPanel.updateSeparators();
 
             progressDialog = new ProgressDialogX(this, this, true);
-            progressDialog.setMax(resultsJTabbedPane.getComponentCount() + 1 - 2); // @TODO: Remove the minus two when the other tabs are added
+            progressDialog.setMax(resultsJTabbedPane.getComponentCount() + 1 - 3); // @TODO: Remove the minus when the other tabs are added
             progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
@@ -1120,6 +1136,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JCheckBoxMenuItem spectrumJCheckBoxMenuItem;
     private javax.swing.JPanel spectrumJPanel;
     private javax.swing.JPanel statsJPanel;
+    private javax.swing.JPanel transitionsJPanel;
     private javax.swing.JMenu viewJMenu;
     // End of variables declaration//GEN-END:variables
 

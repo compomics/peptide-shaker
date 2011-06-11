@@ -11,69 +11,73 @@ import java.util.HashMap;
 public class TargetDecoySeries {
 
     /**
-     * The implemented probabilistic score
+     * The implemented probabilistic score.
      */
     private double[] scores;
     /**
-     * The confidence
+     * The confidence.
      */
     private double[] confidence;
     /**
-     * The pep
+     * The pep.
      */
     private double[] pep;
     /**
-     * The classical FDR
+     * The classical FDR.
      */
     private double[] classicalFDR;
     /**
-     * The probabilistic FDR
+     * The probabilistic FDR.
      */
     private double[] probaFDR;
     /**
-     * The probabilistic FNR
+     * The probabilistic FNR.
      */
     private double[] probaFNR;
     /**
-     * The benefit (1-FNR)
+     * The benefit (1-FNR).
      */
     private double[] probaBenefit;
     /**
-     * The amount of validated target hits
+     * The amount of validated target hits.
      */
     private double[] n;
     /**
-     * The classically estimated amount of false positives
+     * The classically estimated amount of false positives.
      */
     private double[] classicalFP;
     /**
-     * The probabilistically estimated amount of false positives
+     * The probabilistically estimated amount of false positives.
      */
     private double[] probaFP;
     /**
-     * indicates whether the current point is only made of decoy hits
+     * indicates whether the current point is only made of decoy hits.
      */
     private boolean[] decoy;
     /**
-     * The probabilistically estimated total amount of false positives
+     * The probabilistically estimated total amount of false positives.
      */
     private double probaNTotal;
 
     /**
-     * Constructor
+     * Constructor.
+     * 
      * @param hitMap A map as present in target decoy maps
      */
     public TargetDecoySeries(HashMap<Double, TargetDecoyPoint> hitMap) {
+
         scores = new double[hitMap.size()];
         probaNTotal = 0;
         int cpt = 0;
         TargetDecoyPoint currentPoint;
+
         for (double score : hitMap.keySet()) {
             currentPoint = hitMap.get(score);
             scores[cpt] = score;
             probaNTotal += (1 - currentPoint.p) * currentPoint.nTarget;
             cpt++;
         }
+
         Arrays.sort(scores);
 
         confidence = new double[scores.length];
@@ -86,11 +90,13 @@ public class TargetDecoySeries {
         probaBenefit = new double[scores.length];
         pep = new double[scores.length];
         decoy = new boolean[scores.length];
+
         double nTemp = 0;
         double classicalFPTemp = 0;
         double probaFPTemp = 0;
         double probaTP = 0;
         double probaFnrTemp;
+
         for (int i = 0; i < scores.length; i++) {
             currentPoint = hitMap.get(scores[i]);
             nTemp += currentPoint.nTarget;
@@ -111,11 +117,14 @@ public class TargetDecoySeries {
     }
 
     /**
-     * Completes the results at the desired FDR threshold
+     * Completes the results at the desired FDR threshold.
+     * 
      * @param targetDecoyResults The results containing the threshold
      */
     public void getFDRResults(TargetDecoyResults targetDecoyResults) {
+
         Double threshold = targetDecoyResults.getFdrLimit();
+
         if (targetDecoyResults.isClassicalEstimators()) {
             for (int i = scores.length - 1; i >= 0; i--) {
                 if (classicalFDR[i] <= threshold && !decoy[i]) {
@@ -150,11 +159,14 @@ public class TargetDecoySeries {
     }
 
     /**
-     * Completes the results at the desired confidence threshold
+     * Completes the results at the desired confidence threshold.
+     * 
      * @param targetDecoyResults The results containing the threshold
      */
     public void getConfidenceResults(TargetDecoyResults targetDecoyResults) {
+
         double threshold = targetDecoyResults.getConfidenceLimit();
+
         if (targetDecoyResults.isClassicalEstimators()) {
             for (int i = 1; i < scores.length; i++) {
                 if (confidence[i] < threshold) {
@@ -193,11 +205,14 @@ public class TargetDecoySeries {
     }
 
     /**
-     * Completes the results at the desired FNR threshold
+     * Completes the results at the desired FNR threshold.
+     * 
      * @param targetDecoyResults The results containing the threshold
      */
     public void getFNRResults(TargetDecoyResults targetDecoyResults) {
+
         double threshold = targetDecoyResults.getFnrLimit();
+
         if (targetDecoyResults.isClassicalEstimators()) {
             for (int i = scores.length - 2; i >= 0; i--) {
                 if (probaFNR[i] > threshold) {
@@ -236,7 +251,8 @@ public class TargetDecoySeries {
     }
 
     /**
-     * Returns the classical FDR series
+     * Returns the classical FDR series.
+     * 
      * @return the classical FDR series
      */
     public double[] getClassicalFDR() {
@@ -244,7 +260,8 @@ public class TargetDecoySeries {
     }
 
     /**
-     * Returns the confidence series
+     * Returns the confidence series.
+     * 
      * @return the confidence series
      */
     public double[] getConfidence() {
@@ -252,7 +269,8 @@ public class TargetDecoySeries {
     }
 
     /**
-     * Returns the probabilistic benefit series
+     * Returns the probabilistic benefit series.
+     * 
      * @return the probabilistic benefit series
      */
     public double[] getProbaBenefit() {
@@ -260,7 +278,8 @@ public class TargetDecoySeries {
     }
 
     /**
-     * Returns the probabilistic FDR series
+     * Returns the probabilistic FDR series.
+     * 
      * @return the probabilistic FDR series
      */
     public double[] getProbaFDR() {
@@ -268,7 +287,8 @@ public class TargetDecoySeries {
     }
 
     /**
-     * Returns the probabilistic FNR series
+     * Returns the probabilistic FNR series.
+     * 
      * @return the probabilistic FNR series
      */
     public double[] getProbaFNR() {
@@ -276,7 +296,8 @@ public class TargetDecoySeries {
     }
 
     /**
-     * Returns the score series
+     * Returns the score series.
+     * 
      * @return the score series
      */
     public double[] getScores() {
@@ -284,7 +305,8 @@ public class TargetDecoySeries {
     }
 
     /**
-     * Returns the score series
+     * Returns the score series.
+     * 
      * @return the score series
      */
     public double[] getPEP() {
