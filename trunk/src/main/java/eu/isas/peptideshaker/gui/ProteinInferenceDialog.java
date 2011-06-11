@@ -308,8 +308,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         proteinMatchTable.setModel(new MatchTable());
         proteinMatchTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                proteinMatchTableMouseClicked(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                proteinMatchTableMouseReleased(evt);
             }
         });
         jScrollPane1.setViewportView(proteinMatchTable);
@@ -419,18 +419,29 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
-    private void proteinMatchTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinMatchTableMouseClicked
-        int row = proteinMatchTable.rowAtPoint(evt.getPoint());
-        inspectedMatch.setMainMatch(inspectedMatch.getTheoreticProtein(accessions.get(row)));
-        proteinMatchTable.revalidate();
-        proteinMatchTable.repaint();
-    }//GEN-LAST:event_proteinMatchTableMouseClicked
-
+    /**
+     * Updates the group type.
+     * 
+     * @param evt 
+     */
     private void groupClassJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupClassJComboBoxActionPerformed
         PSParameter pSParameter = new PSParameter();
         pSParameter = (PSParameter) inspectedMatch.getUrParam(pSParameter);
         pSParameter.setGroupClass(groupClassJComboBox.getSelectedIndex());
     }//GEN-LAST:event_groupClassJComboBoxActionPerformed
+
+    /**
+     * Sets the main match.
+     * 
+     * @param evt 
+     */
+    private void proteinMatchTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinMatchTableMouseReleased
+        int row = proteinMatchTable.rowAtPoint(evt.getPoint());
+        inspectedMatch.setMainMatch(inspectedMatch.getTheoreticProtein(accessions.get(row)));
+        proteinMatchTable.revalidate();
+        proteinMatchTable.repaint();
+    }//GEN-LAST:event_proteinMatchTableMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox groupClassJComboBox;
     private javax.swing.JLabel jLabel2;

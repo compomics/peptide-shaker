@@ -163,10 +163,10 @@ public class PtmPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         relatedPeptidesTable.getColumn("Confidence [%]").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        
+
         selectedPsmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
-        
+
         relatedPsmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) relatedPsmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
 
@@ -186,14 +186,14 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesTableToolTips.add("Peptide Modifications");
         relatedPeptidesTableToolTips.add("Peptide Score");
         relatedPeptidesTableToolTips.add("Peptide Confidence");
-        
+
         selectedPsmsTableToolTips = new ArrayList<String>();
         selectedPsmsTableToolTips.add("Search Engine Ranks");
         selectedPsmsTableToolTips.add("Peptide Sequence");
         selectedPsmsTableToolTips.add("Peptide Modifications");
         selectedPsmsTableToolTips.add("Precursor m/z");
         selectedPsmsTableToolTips.add("Precursor Charge");
-        
+
         relatedPsmsTableToolTips = new ArrayList<String>();
         relatedPsmsTableToolTips.add("Search Engine Ranks");
         relatedPsmsTableToolTips.add("Peptide Sequence");
@@ -292,15 +292,20 @@ public class PtmPanel extends javax.swing.JPanel {
         aIonToggleButton = new javax.swing.JToggleButton();
         bIonToggleButton = new javax.swing.JToggleButton();
         cIonToggleButton = new javax.swing.JToggleButton();
+        jSeparator7 = new javax.swing.JToolBar.Separator();
         xIonToggleButton = new javax.swing.JToggleButton();
         yIonToggleButton = new javax.swing.JToggleButton();
         zIonToggleButton = new javax.swing.JToggleButton();
+        jSeparator8 = new javax.swing.JToolBar.Separator();
         h2oToggleButton = new javax.swing.JToggleButton();
         nh3ToggleButton = new javax.swing.JToggleButton();
         otherToggleButton = new javax.swing.JToggleButton();
+        jSeparator9 = new javax.swing.JToolBar.Separator();
         oneChargeToggleButton = new javax.swing.JToggleButton();
         twoChargesToggleButton = new javax.swing.JToggleButton();
         moreThanTwoChargesToggleButton = new javax.swing.JToggleButton();
+        jSeparator10 = new javax.swing.JToolBar.Separator();
+        allToggleButton = new javax.swing.JToggleButton();
         spectrumChartJPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -361,8 +366,8 @@ public class PtmPanel extends javax.swing.JPanel {
         peptidesTable.setOpaque(false);
         peptidesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         peptidesTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                peptidesTableMouseClicked(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                peptidesTableMouseReleased(evt);
             }
         });
         peptidesTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -400,8 +405,8 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesTable.setOpaque(false);
         relatedPeptidesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         relatedPeptidesTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                relatedPeptidesTableMouseClicked(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                relatedPeptidesTableMouseReleased(evt);
             }
         });
         relatedPeptidesTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -467,8 +472,8 @@ public class PtmPanel extends javax.swing.JPanel {
         selectedPsmTable.setOpaque(false);
         selectedPsmTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         selectedPsmTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                selectedPsmTableMouseClicked(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                selectedPsmTableMouseReleased(evt);
             }
         });
         selectedPsmTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -514,9 +519,10 @@ public class PtmPanel extends javax.swing.JPanel {
 
         relatedPsmTable.setModel(new RelatedPsmsTable());
         relatedPsmTable.setOpaque(false);
+        relatedPsmTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         relatedPsmTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                relatedPsmTableMouseClicked(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                relatedPsmTableMouseReleased(evt);
             }
         });
         relatedPsmTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -624,6 +630,7 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         });
         spectrumJToolBar.add(cIonToggleButton);
+        spectrumJToolBar.add(jSeparator7);
 
         xIonToggleButton.setText("x");
         xIonToggleButton.setToolTipText("x-ions");
@@ -664,6 +671,7 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         });
         spectrumJToolBar.add(zIonToggleButton);
+        spectrumJToolBar.add(jSeparator8);
 
         h2oToggleButton.setText("H2O");
         h2oToggleButton.setToolTipText("Water Loss");
@@ -703,6 +711,7 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         });
         spectrumJToolBar.add(otherToggleButton);
+        spectrumJToolBar.add(jSeparator9);
 
         oneChargeToggleButton.setSelected(true);
         oneChargeToggleButton.setText("+");
@@ -743,6 +752,21 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         });
         spectrumJToolBar.add(moreThanTwoChargesToggleButton);
+        spectrumJToolBar.add(jSeparator10);
+
+        allToggleButton.setSelected(true);
+        allToggleButton.setText("All");
+        allToggleButton.setToolTipText("Display all peaks or just the annotated peaks");
+        allToggleButton.setFocusable(false);
+        allToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        allToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
+        allToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        allToggleButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                allToggleButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(allToggleButton);
 
         spectrumChartJPanel.setOpaque(false);
         spectrumChartJPanel.setLayout(new javax.swing.BoxLayout(spectrumChartJPanel, javax.swing.BoxLayout.Y_AXIS));
@@ -817,28 +841,6 @@ public class PtmPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_modificationsListMouseClicked
 
     /**
-     * Update the related peptides and modified peptide psms tables.
-     *
-     * @param evt
-     */
-    private void peptidesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesTableMouseClicked
-        updateRelatedPeptidesTable();
-        updatePeptideFamilies();
-        updateSelectedPsmTable();
-        updateRelatedPsmTable();
-    }//GEN-LAST:event_peptidesTableMouseClicked
-
-    /**
-     * Update the related peptides psm table.
-     *
-     * @param evt
-     */
-    private void relatedPeptidesTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPeptidesTableMouseClicked
-        updatePeptideFamilies();
-        updateRelatedPsmTable();
-    }//GEN-LAST:event_relatedPeptidesTableMouseClicked
-
-    /**
      * Update the peptide table.
      *
      * @param evt
@@ -851,9 +853,8 @@ public class PtmPanel extends javax.swing.JPanel {
      * @see #peptidesTableMouseClicked(java.awt.event.MouseEvent)
      */
     private void peptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptidesTableKeyReleased
-
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            peptidesTableMouseClicked(null);
+            peptidesTableMouseReleased(null);
         }
     }//GEN-LAST:event_peptidesTableKeyReleased
 
@@ -861,20 +862,10 @@ public class PtmPanel extends javax.swing.JPanel {
      * @see #relatedPeptidesTableMouseClicked(java.awt.event.MouseEvent)
      */
     private void relatedPeptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_relatedPeptidesTableKeyReleased
-
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            relatedPeptidesTableMouseClicked(null);
+            relatedPeptidesTableMouseReleased(null);
         }
     }//GEN-LAST:event_relatedPeptidesTableKeyReleased
-
-    /**
-     * Update the spectra.
-     *
-     * @param evt
-     */
-    private void selectedPsmTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectedPsmTableMouseClicked
-        updateSpectra();
-    }//GEN-LAST:event_selectedPsmTableMouseClicked
 
     /**
      * Update the spectra.
@@ -886,15 +877,6 @@ public class PtmPanel extends javax.swing.JPanel {
             updateSpectra();
         }
     }//GEN-LAST:event_selectedPsmTableKeyReleased
-
-    /**
-     * Update the spectra.
-     *
-     * @param evt
-     */
-    private void relatedPsmTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPsmTableMouseClicked
-        updateSpectra();
-    }//GEN-LAST:event_relatedPsmTableMouseClicked
 
     /**
      * Update the spectra.
@@ -925,7 +907,6 @@ public class PtmPanel extends javax.swing.JPanel {
                 updateUI();
             }
         });
-
     }//GEN-LAST:event_formComponentResized
 
     /**
@@ -1055,8 +1036,58 @@ public class PtmPanel extends javax.swing.JPanel {
         updateRelatedPsmTable();
         updateSpectra();
     }//GEN-LAST:event_secondarySelectionJComboBoxActionPerformed
+
+    /**
+     * Update the related peptides and modified peptide psms tables.
+     *
+     * @param evt
+     */
+    private void peptidesTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesTableMouseReleased
+        updateRelatedPeptidesTable();
+        updatePeptideFamilies();
+        updateSelectedPsmTable();
+        updateRelatedPsmTable();
+    }//GEN-LAST:event_peptidesTableMouseReleased
+
+    /**
+     * Update the related peptides psm table.
+     *
+     * @param evt
+     */
+    private void relatedPeptidesTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPeptidesTableMouseReleased
+        updatePeptideFamilies();
+        updateRelatedPsmTable();
+    }//GEN-LAST:event_relatedPeptidesTableMouseReleased
+
+    /**
+     * Update the spectra.
+     *
+     * @param evt
+     */
+    private void selectedPsmTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectedPsmTableMouseReleased
+        updateSpectra();
+    }//GEN-LAST:event_selectedPsmTableMouseReleased
+
+    /**
+     * Update the spectra.
+     *
+     * @param evt
+     */
+    private void relatedPsmTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPsmTableMouseReleased
+        updateSpectra();
+    }//GEN-LAST:event_relatedPsmTableMouseReleased
+    
+    /**
+     * Update the spectra.
+     *
+     * @param evt
+     */
+    private void allToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allToggleButtonActionPerformed
+        updateSpectra();
+}//GEN-LAST:event_allToggleButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonToggleButton;
+    private javax.swing.JToggleButton allToggleButton;
     private javax.swing.JToggleButton bIonToggleButton;
     private javax.swing.JToggleButton cIonToggleButton;
     private javax.swing.JPanel fragmentIonsJPanel;
@@ -1069,6 +1100,10 @@ public class PtmPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JToolBar.Separator jSeparator10;
+    private javax.swing.JToolBar.Separator jSeparator7;
+    private javax.swing.JToolBar.Separator jSeparator8;
+    private javax.swing.JToolBar.Separator jSeparator9;
     private javax.swing.JList modificationsList;
     private javax.swing.JToggleButton moreThanTwoChargesToggleButton;
     private javax.swing.JToggleButton nh3ToggleButton;
@@ -1109,9 +1144,9 @@ public class PtmPanel extends javax.swing.JPanel {
 
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumbers(!showSparkLines);
-        
+
         ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
-        
+
         ((JSparklinesBarChartTableCellRenderer) relatedPsmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
 
         peptidesTable.revalidate();
@@ -1119,10 +1154,10 @@ public class PtmPanel extends javax.swing.JPanel {
 
         relatedPeptidesTable.revalidate();
         relatedPeptidesTable.repaint();
-        
+
         selectedPsmTable.revalidate();
         selectedPsmTable.repaint();
-        
+
         relatedPsmTable.revalidate();
         relatedPsmTable.repaint();
     }
@@ -1318,7 +1353,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
             }
         }
-        
+
         if (!relatedPeptides.isEmpty()) {
             peptideMatch = identification.getPeptideIdentification().get(relatedPeptides.get(relatedPeptidesTable.getSelectedRow()));
             psmsMap.put("Related Peptide", new ArrayList<String>(peptideMatch.getSpectrumMatches().keySet()));
@@ -1335,13 +1370,13 @@ public class PtmPanel extends javax.swing.JPanel {
         }
 
         for (String key : keys) {
-            
+
             String temp = key;
-            
+
             if (key.equalsIgnoreCase("")) {
                 temp = "Unmodified";
             }
-            
+
             primarySelections.add(temp + " | " + confidenceMap.get(key) + "%");
             secondarySelections.add(temp + " | " + confidenceMap.get(key) + "%");
         }
@@ -1463,6 +1498,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     // add the spectrum annotations
                     currentAnnotations = spectrumAnnotator.getSpectrumAnnotations(annotations);
                     spectrumA.setAnnotations(filterAnnotations(currentAnnotations));
+                    spectrumA.showAnnotatedPeaksOnly(!allToggleButton.isSelected());
 
                     linkedSpectrumPanels.put(new Integer(0), spectrumA);
 
@@ -1524,6 +1560,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     // add the spectrum annotations
                     currentAnnotations = spectrumAnnotator.getSpectrumAnnotations(annotations);
                     spectrumB.setAnnotations(filterAnnotations(currentAnnotations));
+                    spectrumB.showAnnotatedPeaksOnly(!allToggleButton.isSelected());
 
                     linkedSpectrumPanels.put(new Integer(1), spectrumB);
 
@@ -1880,9 +1917,9 @@ public class PtmPanel extends javax.swing.JPanel {
         public Object getValueAt(int row, int column) {
 
             String familyKey = convertComboBoxSelectionToFamilyKey((String) primarySelectionJComboBox.getSelectedItem());
-            
+
             SpectrumMatch spectrumMatch = identification.getSpectrumIdentification().get(psmsMap.get(familyKey).get(row));
-            
+
             if (column == 0) {
                 String result = "";
                 int cpt;
@@ -2081,9 +2118,9 @@ public class PtmPanel extends javax.swing.JPanel {
      * @return          the family key
      */
     private String convertComboBoxSelectionToFamilyKey(String itemText) {
-        
+
         String familyKey = itemText;
-        
+
         if (familyKey.lastIndexOf("|") != -1) {
             familyKey = familyKey.substring(0, familyKey.lastIndexOf("|"));
         }
@@ -2091,7 +2128,7 @@ public class PtmPanel extends javax.swing.JPanel {
         if (!familyKey.equalsIgnoreCase("Related Peptide")) {
             familyKey = familyKey.substring(0, familyKey.length() - 1);
         }
-        
+
         if (familyKey.equalsIgnoreCase("Unmodified")) {
             familyKey = "";
         }
