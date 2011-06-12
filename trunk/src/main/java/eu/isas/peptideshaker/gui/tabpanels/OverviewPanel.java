@@ -179,6 +179,10 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTable.getColumn(" ").setMinWidth(50);
         peptideTable.getColumn(" ").setMinWidth(50);
         psmTable.getColumn(" ").setMinWidth(50);
+        peptideTable.getColumn("Start").setMinWidth(50);
+        peptideTable.getColumn("Start").setMaxWidth(50);
+        peptideTable.getColumn("End").setMinWidth(50);
+        peptideTable.getColumn("End").setMaxWidth(50);
 
         // the validated column
         proteinTable.getColumn("").setMaxWidth(30);
@@ -263,6 +267,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         peptideTableToolTips = new ArrayList<String>();
         peptideTableToolTips.add(null);
         peptideTableToolTips.add("Peptide Sequence");
+        peptideTableToolTips.add("Peptide Start Index");
+        peptideTableToolTips.add("Peptide End Index");
         peptideTableToolTips.add("Peptide Modifications");
         peptideTableToolTips.add("Alternative Protein Mappings for Peptide");
         peptideTableToolTips.add("Number of Spectra");
@@ -558,14 +564,14 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Sequence", "Modifications", "Other Protein(s)", "#Spectra", "Score", "Confidence [%]", ""
+                " ", "Sequence", "Start", "End", "Modifications", "Other Protein(s)", "#Spectra", "Score", "Confidence [%]", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, true
+                false, false, false, false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -2008,9 +2014,9 @@ public class OverviewPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_moreThanTwoChargesTableToggleButtonActionPerformed
 
     private void psmTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmTableMouseClicked
-        
+
         int row = psmTable.rowAtPoint(evt.getPoint());
-        
+
         if (row != -1) {
             updateSpectrum(row, false);
             String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
@@ -2021,7 +2027,6 @@ public class OverviewPanel extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_psmTableMouseClicked
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonBubblePlotToggleButton;
     private javax.swing.JToggleButton aIonTableToggleButton;
@@ -2961,9 +2966,18 @@ public class OverviewPanel extends javax.swing.JPanel {
                         }
                     }
 
+                    // find and add the peptide start and end indexes
+                    String proteinAccession = proteinMatch.getMainMatch().getAccession();
+                    String proteinSequence = peptideShakerGUI.getSequenceDataBase().getProtein(proteinAccession).getSequence();
+                    String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+                    int peptideStart = proteinSequence.lastIndexOf(peptideSequence) + 1;
+                    int peptideEnd = peptideStart + peptideSequence.length() - 1;
+                    
                     ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
                                 index + 1,
-                                peptideMatch.getTheoreticPeptide().getSequence(),
+                                peptideSequence,
+                                peptideStart,
+                                peptideEnd,
                                 modifications,
                                 otherProteins,
                                 peptideMatch.getSpectrumCount(),
@@ -3258,20 +3272,20 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(selectedRows[i], 0));
             MSnSpectrum currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(2, spectrumKey);
-            
+
             // get the spectrum annotations
             String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
             Peptide currentPeptide = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide();
             SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
                     currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
                     currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
-            
+
             allAnnotations.add(annotations);
         }
-        
+
         return allAnnotations;
     }
-    
+
     /**
      * Returns an arraylist of all the selected spectra in the PSM table.
      * 
@@ -3279,16 +3293,16 @@ public class OverviewPanel extends javax.swing.JPanel {
      * @throws MzMLUnmarshallerException 
      */
     private ArrayList<MSnSpectrum> getSelectedSpectra() throws MzMLUnmarshallerException {
-        
+
         ArrayList<MSnSpectrum> allSpectra = new ArrayList<MSnSpectrum>();
-        
+
         int[] selectedRows = psmTable.getSelectedRows();
 
         for (int i = 0; i < selectedRows.length; i++) {
             String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(selectedRows[i], 0));
             allSpectra.add((MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(2, spectrumKey));
         }
-        
+
         return allSpectra;
     }
 }
