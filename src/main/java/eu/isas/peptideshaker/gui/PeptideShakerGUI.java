@@ -33,7 +33,6 @@ import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -193,7 +192,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * Boolean indicating whether spectra should be displayed or not
      */
-    boolean displaySpectrum;
+    private boolean displaySpectrum;
 
     /**
      * The main method used to start PeptideShaker
@@ -223,7 +222,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         proteinStructurePanel = new ProteinStructurePanel(this);
 
         initComponents();
-        
+
         resultsJTabbedPane.setEnabledAt(5, false);
         resultsJTabbedPane.setEnabledAt(6, false);
         resultsJTabbedPane.setEnabledAt(7, false);
@@ -716,13 +715,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     File newFile = new File(selectedFile);
                     int outcome = JOptionPane.YES_OPTION;
-                    
+
                     if (newFile.exists()) {
                         outcome = JOptionPane.showConfirmDialog(progressDialog,
                                 "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
                                 JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                     }
-                    
+
                     if (outcome != JOptionPane.YES_OPTION) {
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
@@ -737,13 +736,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
-                        
+
                         // return the peptide shaker icon to the standard version
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                         JOptionPane.showMessageDialog(tempRef, "Identifications were successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
                     } catch (Exception e) {
-                        
+
                         // return the peptide shaker icon to the standard version
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -1033,7 +1032,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     int counter = 0;
                     progressDialog.setValue(++counter);
-                    
+
                     if (displaySpectrum) {
                         spectrumIdentificationPanel.displayResults();
                         progressDialog.setValue(++counter);
@@ -1043,19 +1042,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         progressDialog.setValue(++counter);
                         ptmPanel.setEnabled(false);
                     }
-                    
+
                     progressDialog.setValue(++counter);
 
                     try {
                         progressDialog.setValue(++counter);
                         overviewPanel.displayResults();
-                        
+
                         progressDialog.setValue(++counter);
                         statsPanel.displayResults();
-                        
+
                         progressDialog.setValue(++counter);
                         proteinStructurePanel.displayResults();
-                        
+
                         progressDialog.setValue(++counter);
                     } catch (MzMLUnmarshallerException e) {
                         JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML Problem", JOptionPane.ERROR_MESSAGE);
@@ -1529,14 +1528,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param updateOverviewPanel       if true the overview panel will be selected, false updates the protein structure panel instead
      */
     public void setSelectedProteinIndex(Integer selectedProteinIndex, boolean updateOverviewPanel) {
-        
+
         if (updateOverviewPanel) {
             overviewPanel.setSelectedProteinIndex(selectedProteinIndex);
         } else {
             proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
         }
     }
-    
+
     /**
      * Set the selected peptide index in the overview or protein structure tabs. 
      * Used to make sure that the same peptide is selected in both tabs.
@@ -1545,7 +1544,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param updateOverviewPanel       if true the overview panel will be selected, false updates the protein structure panel instead
      */
     public void setSelectedPeptideIndex(Integer selectedPeptideIndex, boolean updateOverviewPanel) {
-        
+
         if (updateOverviewPanel) {
             overviewPanel.setSelectedPeptideIndex(selectedPeptideIndex);
         } else {
@@ -1756,7 +1755,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public SpectrumIdentificationPanel getSpectrumIdentificationPanel() {
         return spectrumIdentificationPanel;
     }
-    
+
     /**
      * Gets the preferred width of the column specified by vColIndex. The column
      * will be just wide enough to show the column head and the widest cell in the 
@@ -1779,7 +1778,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         if (renderer == null) {
             renderer = table.getTableHeader().getDefaultRenderer();
         }
-        
+
         Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
         width = comp.getPreferredSize().width;
 
