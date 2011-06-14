@@ -20,6 +20,7 @@ import com.compomics.util.gui.spectrum.DefaultSpectrumAnnotation;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -2134,5 +2135,14 @@ public class PtmPanel extends javax.swing.JPanel {
         }
 
         return familyKey;
+    }
+    
+    /**
+     * Returns the spectrum panel.
+     * 
+     * @return the spectrum panel
+     */
+    public Component getSpectrum() {
+        return (Component) spectrumJPanel.getComponent(1);
     }
 }
