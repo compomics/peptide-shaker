@@ -32,6 +32,7 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
@@ -52,6 +53,7 @@ import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.plot.PlotOrientation;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -2573,8 +2575,9 @@ public class OverviewPanel extends javax.swing.JPanel {
                         // update the bubble plot
                         updateBubblePlot();
 
-                        // disable the spectrum tab is more than one psm is selected
+                        // disable the spectrum tab if more than one psm is selected
                         spectrumJTabbedPane.setEnabledAt(2, psmTable.getSelectedRowCount() == 1);
+                        peptideShakerGUI.enableSpectrumExport(psmTable.getSelectedRowCount() == 1);
 
                         // move to the bubble plot tab if more than one psm is selected and the spectrum tab was selected
                         if (psmTable.getSelectedRowCount() > 1 && spectrumJTabbedPane.getSelectedIndex() == 2) {
@@ -3304,5 +3307,44 @@ public class OverviewPanel extends javax.swing.JPanel {
         }
 
         return allSpectra;
+    }
+    
+    /**
+     * Returns the spectrum panel.
+     * 
+     * @return the spectrum panel
+     */
+    public Component getSpectrum() {
+        
+        if (spectrumJTabbedPane.isEnabledAt(2)) {
+            spectrumJTabbedPane.setSelectedIndex(2); 
+            return (Component) spectrumPanel.getComponent(0);
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Returns the bubble plot.
+     * 
+     * @return the bubble plot
+     */
+    public Component getBubblePlot() {
+        
+        if (spectrumJTabbedPane.isEnabledAt(1)) {
+            spectrumJTabbedPane.setSelectedIndex(1); 
+            return ((MassErrorBubblePlot) bubbleJPanel.getComponent(0)).getChartPanel();
+        }
+        
+        return null;
+    }
+
+    /**
+     * Returns true of the spectrum tab is enabled.
+     * 
+     * @return true of the spectrum tab is enabled
+     */
+    public boolean isSpectrumEnabled () {
+        return spectrumJTabbedPane.isEnabledAt(2);
     }
 }

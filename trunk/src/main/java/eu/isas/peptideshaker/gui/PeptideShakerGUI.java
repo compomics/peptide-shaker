@@ -341,6 +341,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         sequenceCoverageJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        exportMenu = new javax.swing.JMenu();
+        graphicsJMenu = new javax.swing.JMenu();
+        spectrumOverviewJMenuItem = new javax.swing.JMenuItem();
+        bubblePlotJMenuItem = new javax.swing.JMenuItem();
+        spectrumSpectrumIdJMenuItem = new javax.swing.JMenuItem();
+        spectrumModificationsJMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
         aboutJMenuItem = new javax.swing.JMenuItem();
@@ -359,6 +365,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         gradientPanel.setPreferredSize(new java.awt.Dimension(1260, 800));
 
         resultsJTabbedPane.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
+        resultsJTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                resultsJTabbedPaneStateChanged(evt);
+            }
+        });
 
         overviewJPanel.setOpaque(false);
         overviewJPanel.setPreferredSize(new java.awt.Dimension(900, 800));
@@ -589,6 +600,48 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         viewJMenu.add(sparklinesJCheckBoxMenuItem);
 
         menuBar.add(viewJMenu);
+
+        exportMenu.setMnemonic('x');
+        exportMenu.setText("Export");
+
+        graphicsJMenu.setText("Graphics");
+        graphicsJMenu.setEnabled(false);
+
+        spectrumOverviewJMenuItem.setText("Spectrum");
+        spectrumOverviewJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                spectrumOverviewJMenuItemActionPerformed(evt);
+            }
+        });
+        graphicsJMenu.add(spectrumOverviewJMenuItem);
+
+        bubblePlotJMenuItem.setText("Bubble Plot");
+        bubblePlotJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bubblePlotJMenuItemActionPerformed(evt);
+            }
+        });
+        graphicsJMenu.add(bubblePlotJMenuItem);
+
+        spectrumSpectrumIdJMenuItem.setText("Spectrum");
+        spectrumSpectrumIdJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                spectrumSpectrumIdJMenuItemActionPerformed(evt);
+            }
+        });
+        graphicsJMenu.add(spectrumSpectrumIdJMenuItem);
+
+        spectrumModificationsJMenuItem.setText("Spectrum");
+        spectrumModificationsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                spectrumModificationsJMenuItemActionPerformed(evt);
+            }
+        });
+        graphicsJMenu.add(spectrumModificationsJMenuItem);
+
+        exportMenu.add(graphicsJMenu);
+
+        menuBar.add(exportMenu);
 
         helpMenu.setMnemonic('H');
         helpMenu.setText("Help");
@@ -974,6 +1027,90 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_proteinFilterJMenuItemActionPerformed
 
     /**
+     * Export the spectrum in the Overview tab.
+     * 
+     * @param evt 
+     */
+    private void spectrumOverviewJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumOverviewJMenuItemActionPerformed
+        new ExportGraphicsDialog(this, true, (Component) overviewPanel.getSpectrum());
+}//GEN-LAST:event_spectrumOverviewJMenuItemActionPerformed
+
+    /**
+     * Update the menu items available on the export graphics menu to only 
+     * show the ones for the current tab.
+     * 
+     * @param evt 
+     */
+    private void resultsJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_resultsJTabbedPaneStateChanged
+
+        int selectedIndex = resultsJTabbedPane.getSelectedIndex();
+
+        spectrumOverviewJMenuItem.setVisible(false);
+        spectrumOverviewJMenuItem.setEnabled(false);
+        bubblePlotJMenuItem.setVisible(false);
+        bubblePlotJMenuItem.setEnabled(false);
+        spectrumSpectrumIdJMenuItem.setVisible(false);
+        spectrumSpectrumIdJMenuItem.setEnabled(false);
+        spectrumModificationsJMenuItem.setVisible(false);
+        spectrumModificationsJMenuItem.setEnabled(false);
+
+        if (displaySpectrum || experiment != null) {
+            
+            graphicsJMenu.setEnabled(true);
+            
+            switch (selectedIndex) {
+
+                case 0:
+                    if (overviewPanel.isSpectrumEnabled()) {
+                        spectrumOverviewJMenuItem.setVisible(true);
+                        spectrumOverviewJMenuItem.setEnabled(true);
+                    }
+                    bubblePlotJMenuItem.setVisible(true);
+                    bubblePlotJMenuItem.setEnabled(true);
+                    break;
+                case 1:
+                    spectrumSpectrumIdJMenuItem.setVisible(true);
+                    spectrumSpectrumIdJMenuItem.setEnabled(true);
+                    break;
+                case 2:
+                    spectrumModificationsJMenuItem.setVisible(true);
+                    spectrumModificationsJMenuItem.setEnabled(true);
+                    break;
+                default:
+                    graphicsJMenu.setEnabled(false);
+                    break;
+            }
+        }
+    }//GEN-LAST:event_resultsJTabbedPaneStateChanged
+
+    /**
+     * Export the bubble plot.
+     * 
+     * @param evt 
+     */
+    private void bubblePlotJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bubblePlotJMenuItemActionPerformed
+        new ExportGraphicsDialog(this, true, (Component) overviewPanel.getBubblePlot());
+    }//GEN-LAST:event_bubblePlotJMenuItemActionPerformed
+
+    /**
+     * Export the spectrum in the Spectrum ID tab.
+     * 
+     * @param evt 
+     */
+    private void spectrumSpectrumIdJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumSpectrumIdJMenuItemActionPerformed
+        new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
+    }//GEN-LAST:event_spectrumSpectrumIdJMenuItemActionPerformed
+
+    /**
+     * Export the spectrum in the Modifications tab.
+     * 
+     * @param evt 
+     */
+    private void spectrumModificationsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumModificationsJMenuItemActionPerformed
+        new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
+    }//GEN-LAST:event_spectrumModificationsJMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
     private void loadEnzymes() {
@@ -1064,6 +1201,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         e.printStackTrace();
                     }
 
+                    resultsJTabbedPaneStateChanged(null);
+
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
                 }
@@ -1105,14 +1244,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem aboutJMenuItem;
     private javax.swing.JPanel annotationJPanel;
     private javax.swing.JMenuItem annotationPreferencesMenu;
+    private javax.swing.JMenuItem bubblePlotJMenuItem;
     private javax.swing.JMenuItem bubbleScaleJMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitJMenuItem;
+    private javax.swing.JMenu exportMenu;
     private javax.swing.JMenuItem exportMenuItem;
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JMenu filterMenu;
     private javax.swing.JPanel goAnalysisJPanel;
     private javax.swing.JPanel gradientPanel;
+    private javax.swing.JMenu graphicsJMenu;
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
     private javax.swing.JPopupMenu.Separator jSeparator1;
@@ -1134,6 +1276,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem spectrumJCheckBoxMenuItem;
     private javax.swing.JPanel spectrumJPanel;
+    private javax.swing.JMenuItem spectrumModificationsJMenuItem;
+    private javax.swing.JMenuItem spectrumOverviewJMenuItem;
+    private javax.swing.JMenuItem spectrumSpectrumIdJMenuItem;
     private javax.swing.JPanel statsJPanel;
     private javax.swing.JPanel transitionsJPanel;
     private javax.swing.JMenu viewJMenu;
@@ -1794,5 +1939,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         width += 2 * margin;
 
         return width;
+    }
+
+    /**
+     * Enable or disable the spectrum export in the overview panel.
+     * 
+     * @param enable if true the spectrum export in the overview panel will be enabled
+     */
+    public void enableSpectrumExport(boolean enable) {
+        if (spectrumOverviewJMenuItem.isVisible()) {
+            spectrumOverviewJMenuItem.setEnabled(enable);
+        }
     }
 }

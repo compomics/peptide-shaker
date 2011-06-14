@@ -23,6 +23,7 @@ import com.googlecode.charts4j.GCharts;
 import com.googlecode.charts4j.VennDiagram;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import java.awt.Component;
 import java.awt.MediaTracker;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -2025,5 +2026,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         }
 
         return fragmentIontypes;
+    }
+    
+    /**
+     * Returns the spectrum panel.
+     * 
+     * @return the spectrum panel
+     */
+    public Component getSpectrum() {
+        return (Component) spectrumChartPanel.getComponent(0);
     }
 }
