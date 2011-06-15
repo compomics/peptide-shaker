@@ -810,7 +810,6 @@
                         </Component>
                         <Component class="javax.swing.JToggleButton" name="allToggleButton">
                           <Properties>
-                            <Property name="selected" type="boolean" value="true"/>
                             <Property name="text" type="java.lang.String" value="All"/>
                             <Property name="toolTipText" type="java.lang.String" value="Display all peaks or just the annotated peaks"/>
                             <Property name="focusable" type="boolean" value="false"/>
