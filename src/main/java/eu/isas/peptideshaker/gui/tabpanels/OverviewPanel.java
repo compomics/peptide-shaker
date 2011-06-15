@@ -1296,7 +1296,6 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJToolBar.add(moreThanTwoChargesToggleButton);
         spectrumJToolBar.add(jSeparator15);
 
-        allToggleButton.setSelected(true);
         allToggleButton.setText("All");
         allToggleButton.setToolTipText("Display all peaks or just the annotated peaks");
         allToggleButton.setFocusable(false);

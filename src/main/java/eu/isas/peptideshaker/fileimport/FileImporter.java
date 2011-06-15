@@ -201,8 +201,17 @@ public class FileImporter {
 
             if (temp != null) {
                 result = temp;
+            } else {
                 
                 // @TODO: do the complete search for non-enzymatic peptides??
+                
+                // if map is empty do the complete search?
+//                for (String proteinKey : db.getProteinList()) {
+//
+//                    if (db.getProtein(proteinKey).getSequence().contains(sequence)) {
+//                        result.add(proteinKey);
+//                    }
+//                }
             }
         } else {
             
