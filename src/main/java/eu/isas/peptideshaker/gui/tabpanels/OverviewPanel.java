@@ -3355,17 +3355,20 @@ public class OverviewPanel extends javax.swing.JPanel {
     public void showSeparators(boolean showSeparators) {
 
         int dividerSize = 5;
+        
+        // @TODO: the coverage splitter sometimes causes problems and has therefore been disabled!!
+        //        (the reason has to be the redrawing of the coverage panel...)
 
         if (showSeparators) {
-            overviewJSplitPane.setDividerSize(dividerSize);
-            coverageJSplitPane.setDividerSize(dividerSize);
+            //overviewJSplitPane.setDividerSize(dividerSize);
+            //coverageJSplitPane.setDividerSize(dividerSize);
             peptidesPsmSpectrumFragmentIonsJSplitPane.setDividerSize(dividerSize);
-            peptidesPsmJSplitPane.setDividerSize(dividerSize);
+            //peptidesPsmJSplitPane.setDividerSize(dividerSize);
         } else {
-            overviewJSplitPane.setDividerSize(0);
-            coverageJSplitPane.setDividerSize(0);
+            //overviewJSplitPane.setDividerSize(0);
+            //coverageJSplitPane.setDividerSize(0);
             peptidesPsmSpectrumFragmentIonsJSplitPane.setDividerSize(0);
-            peptidesPsmJSplitPane.setDividerSize(0);
+            //peptidesPsmJSplitPane.setDividerSize(0);
         }
     }
 }
