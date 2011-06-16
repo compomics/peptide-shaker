@@ -341,6 +341,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         sequenceCoverageJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        separatorsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         exportMenu = new javax.swing.JMenu();
         graphicsJMenu = new javax.swing.JMenu();
         spectrumOverviewJMenuItem = new javax.swing.JMenuItem();
@@ -598,6 +600,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         viewJMenu.add(sparklinesJCheckBoxMenuItem);
+        viewJMenu.add(jSeparator4);
+
+        separatorsCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        separatorsCheckBoxMenuItem.setText("Separators");
+        separatorsCheckBoxMenuItem.setToolTipText("Enable resizing of the components ");
+        separatorsCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                separatorsCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        viewJMenu.add(separatorsCheckBoxMenuItem);
 
         menuBar.add(viewJMenu);
 
@@ -1111,6 +1124,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_spectrumModificationsJMenuItemActionPerformed
 
     /**
+     * Enable or disable the separators.
+     * 
+     * @param evt 
+     */
+    private void separatorsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_separatorsCheckBoxMenuItemActionPerformed
+        overviewPanel.showSeparators(separatorsCheckBoxMenuItem.isSelected());
+    }//GEN-LAST:event_separatorsCheckBoxMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
     private void loadEnzymes() {
@@ -1260,6 +1282,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JMenu overViewTabViewMenu;
@@ -1272,6 +1295,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JTabbedPane resultsJTabbedPane;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JMenuItem searchParametersMenu;
+    private javax.swing.JCheckBoxMenuItem separatorsCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem spectrumJCheckBoxMenuItem;

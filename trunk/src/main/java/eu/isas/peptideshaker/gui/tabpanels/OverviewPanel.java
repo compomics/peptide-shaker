@@ -2974,7 +2974,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                     String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
                     int peptideStart = proteinSequence.lastIndexOf(peptideSequence) + 1;
                     int peptideEnd = peptideStart + peptideSequence.length() - 1;
-                    
+
                     ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
                                 index + 1,
                                 peptideSequence,
@@ -3307,34 +3307,34 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         return allSpectra;
     }
-    
+
     /**
      * Returns the spectrum panel.
      * 
      * @return the spectrum panel
      */
     public Component getSpectrum() {
-        
+
         if (spectrumJTabbedPane.isEnabledAt(2)) {
-            spectrumJTabbedPane.setSelectedIndex(2); 
+            spectrumJTabbedPane.setSelectedIndex(2);
             return (Component) spectrumPanel.getComponent(0);
         }
-        
+
         return null;
     }
-    
+
     /**
      * Returns the bubble plot.
      * 
      * @return the bubble plot
      */
     public Component getBubblePlot() {
-        
+
         if (spectrumJTabbedPane.isEnabledAt(1)) {
-            spectrumJTabbedPane.setSelectedIndex(1); 
+            spectrumJTabbedPane.setSelectedIndex(1);
             return ((MassErrorBubblePlot) bubbleJPanel.getComponent(0)).getChartPanel();
         }
-        
+
         return null;
     }
 
@@ -3343,7 +3343,29 @@ public class OverviewPanel extends javax.swing.JPanel {
      * 
      * @return true of the spectrum tab is enabled
      */
-    public boolean isSpectrumEnabled () {
+    public boolean isSpectrumEnabled() {
         return spectrumJTabbedPane.isEnabledAt(2);
+    }
+
+    /**
+     * Enable or disable the separators.
+     * 
+     * @param showSeparators if true the separators are enabled
+     */
+    public void showSeparators(boolean showSeparators) {
+
+        int dividerSize = 5;
+
+        if (showSeparators) {
+            overviewJSplitPane.setDividerSize(dividerSize);
+            coverageJSplitPane.setDividerSize(dividerSize);
+            peptidesPsmSpectrumFragmentIonsJSplitPane.setDividerSize(dividerSize);
+            peptidesPsmJSplitPane.setDividerSize(dividerSize);
+        } else {
+            overviewJSplitPane.setDividerSize(0);
+            coverageJSplitPane.setDividerSize(0);
+            peptidesPsmSpectrumFragmentIonsJSplitPane.setDividerSize(0);
+            peptidesPsmJSplitPane.setDividerSize(0);
+        }
     }
 }
