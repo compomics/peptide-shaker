@@ -23,14 +23,20 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.LegendItemCollection;
+import org.jfree.chart.LegendItemSource;
 import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.LogAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.block.BlockFrame;
 import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYDifferenceRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.xy.DefaultXYDataset;
+import org.jfree.ui.RectangleEdge;
 
 /**
  * This panel displays statistical information about the dataset.
@@ -1225,7 +1231,7 @@ public class StatsPanel extends javax.swing.JPanel {
         cancelButton.setEnabled(false);
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        
+
         // reload the data to update the scores
         reloadData();
     }//GEN-LAST:event_applyButtonActionPerformed
@@ -1297,7 +1303,7 @@ public class StatsPanel extends javax.swing.JPanel {
         PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
         miniShaker.validateIdentifications();
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        
+
         // update the other tabs
         reloadData();
     }//GEN-LAST:event_validateButtonActionPerformed
@@ -1862,27 +1868,114 @@ public class StatsPanel extends javax.swing.JPanel {
     private void updateConfidenceChart() {
 
         DefaultXYDataset confidenceData = new DefaultXYDataset();
-        double[][] confidenceSeries = {targetDecoySeries.getScores(), targetDecoySeries.getConfidence()};
-        confidenceData.addSeries("Confidence", confidenceSeries);
-        confidencePlot.setDataset(0, confidenceData);
-        confidencePlot.mapDatasetToRangeAxis(0, 0);
+        
+        // get the x and y values for the plot
+        double[] scores = targetDecoySeries.getScores();
+        double[] confidences = targetDecoySeries.getConfidence();
+        
+        // extend the dataset by two elements to be able to make the vertical drop
+        double[][] confidenceSeries = new double[2][scores.length + 2];
+        double[][] tempSeries = new double[2][scores.length + 2];
+        
+        // get the location of the vertical red line
+        double confidenceValue = confidenceMarker.getValue();
 
-        XYLineAndShapeRenderer confidenceRendrer = new XYLineAndShapeRenderer();
-        confidenceRendrer.setSeriesShapesVisible(0, false);
-        confidenceRendrer.setSeriesLinesVisible(0, true);
+        int index = 0;
+
+        // add all the values up to the red line
+        while (index < scores.length && scores[index] < confidenceValue) {
+            confidenceSeries[0][index] = scores[index];
+            confidenceSeries[1][index] = confidences[index];
+            tempSeries[0][index] = scores[index];
+            tempSeries[1][index] = 100;
+            index++;
+        }
+
+        if (index < scores.length) {
+
+            double minorShift = 0.0000000001;
+            
+            // add the special cases surrounding the red line
+            confidenceSeries[0][index] = confidenceValue - minorShift;
+            confidenceSeries[1][index] = confidences[index];
+            confidenceSeries[0][index+1] = confidenceValue;
+            confidenceSeries[1][index+1] = confidences[index];
+            confidenceSeries[0][index+2] = confidenceValue + minorShift;
+            confidenceSeries[1][index+2] = confidences[index];
+            
+            tempSeries[0][index] = confidenceValue - minorShift;
+            tempSeries[1][index] = 100;
+            index++;
+            tempSeries[0][index] = confidenceValue;
+            tempSeries[1][index] = 50;
+            index++;
+            tempSeries[0][index] = confidenceValue + minorShift;
+            tempSeries[1][index] = 0;
+            index++;
+
+            // add the values after the red line
+            while (index < scores.length+2) {
+                
+                confidenceSeries[0][index] = scores[index-2];
+                confidenceSeries[1][index] = confidences[index-2];
+                
+                tempSeries[0][index] = scores[index-2];
+                tempSeries[1][index] = 0;
+                index++;
+            }
+        }
+
+        // add the series to the dataset
+        confidenceData.addSeries("Confidence", confidenceSeries);
+        confidenceData.addSeries("Area", tempSeries);
+        confidencePlot.setDataset(0, confidenceData);
+
+        // setup the renderer
+        XYDifferenceRenderer confidenceRendrer = new XYDifferenceRenderer(
+                new Color(0, 255, 0, 15), new Color(255, 0, 0, 15), false);
         confidenceRendrer.setSeriesPaint(0, Color.blue);
         confidenceRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
+        confidenceRendrer.setSeriesStroke(1, new BasicStroke(0));
         confidencePlot.setRenderer(0, confidenceRendrer);
+        confidencePlot.setRenderer(1, confidenceRendrer);
 
         JFreeChart confidenceChart = new JFreeChart(confidencePlot);
         ChartPanel chartPanel = new ChartPanel(confidenceChart);
         confidenceChart.setTitle("Confidence");
+        
+        // remove the temp 'Area' dataset from the legend
+        LegendItemCollection legendItemsOld = confidencePlot.getLegendItems();
+        final LegendItemCollection legendItemsNew = new LegendItemCollection();
+        legendItemsNew.add(legendItemsOld.get(0));
+
+        LegendItemSource source = new LegendItemSource() {
+
+            LegendItemCollection lic = new LegendItemCollection(); {
+                lic.addAll(legendItemsNew);
+            }
+
+            public LegendItemCollection getLegendItems() {
+                return lic;
+            }
+        };
+
+        // get the old legend frame
+        BlockFrame tempFrame = confidenceChart.getLegend().getFrame();
+        
+        // remove the old legend
+        confidenceChart.removeLegend();
+        
+        // add the new legend
+        confidenceChart.addLegend(new LegendTitle(source));
+        confidenceChart.getLegend().setFrame(tempFrame);
+        confidenceChart.getLegend().setPosition(RectangleEdge.BOTTOM);
 
         // set background color
         confidenceChart.getPlot().setBackgroundPaint(Color.WHITE);
         confidenceChart.setBackgroundPaint(Color.WHITE);
         chartPanel.setBackground(Color.WHITE);
 
+        // add the chart to the panel
         confidenceChartPanel.removeAll();
         confidenceChartPanel.add(chartPanel);
         confidenceChartPanel.revalidate();
@@ -2196,7 +2289,7 @@ public class StatsPanel extends javax.swing.JPanel {
     public void updateSeparators() {
         formComponentResized(null);
     }
-    
+
     /**
      * Reload the data to update validation status and scores.
      */
