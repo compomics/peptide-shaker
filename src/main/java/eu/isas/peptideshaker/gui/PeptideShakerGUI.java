@@ -227,7 +227,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         resultsJTabbedPane.setEnabledAt(6, false);
         resultsJTabbedPane.setEnabledAt(7, false);
 
-        setUpPanels();
+        setUpPanels(true);
         repaintPanels();
 
         // set the title
@@ -1146,9 +1146,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
     /**
      * This method will display results in all panels
+     * 
+     * @param iUpdateValidationTab if true the validation tab will be updated
      */
-    public void displayResults() {
+    public void displayResults(boolean iUpdateValidationTab) {
 
+        final boolean updateValidationTab = iUpdateValidationTab;
+        
         try {
             displaySpectrum = true;
             boolean displaySequence = true;
@@ -1208,8 +1212,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         progressDialog.setValue(++counter);
                         overviewPanel.displayResults();
 
-                        progressDialog.setValue(++counter);
-                        statsPanel.displayResults();
+                        if (updateValidationTab) {
+                            progressDialog.setValue(++counter);
+                            statsPanel.displayResults();
+                        } else {
+                            progressDialog.setValue(++counter);
+                        }
 
                         progressDialog.setValue(++counter);
                         proteinStructurePanel.displayResults();
@@ -1818,28 +1826,55 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         currentProteinFilterValues = new String[]{"", "", "", "", "", "", "", ""};
 
         // set up the tabs/panels
-        setUpPanels();
+        setUpPanels(true);
 
         // repaint the panels
         repaintPanels();
+    }
+    
+    /**
+     * Reloads the data.
+     */
+    public void reloadData() {
+
+        // set up the tabs/panels
+        setUpPanels(false);
+
+        // repaint the panels
+        repaintPanels();
+        
+        // display the results
+        displayResults(false);
+        
+        // invoke later to give time for components to update
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                overviewPanel.updateSeparators();
+                overviewJPanel.revalidate();
+                overviewJPanel.repaint();
+            }
+        });
     }
 
     /**
      * Set up the different tabs/panels.
      */
-    private void setUpPanels() {
+    private void setUpPanels(boolean setupValidationTab) {
 
+        if (setupValidationTab) {
+            statsPanel = new StatsPanel(this);
+            statsJPanel.removeAll();
+            statsJPanel.add(statsPanel);
+        }
+        
         overviewPanel = new OverviewPanel(this);
-        statsPanel = new StatsPanel(this);
         ptmPanel = new PtmPanel(this);
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
         proteinStructurePanel = new ProteinStructurePanel(this);
 
         overviewJPanel.removeAll();
         overviewJPanel.add(overviewPanel);
-
-        statsJPanel.removeAll();
-        statsJPanel.add(statsPanel);
 
         ptmJPanel.removeAll();
         ptmJPanel.add(ptmPanel);
