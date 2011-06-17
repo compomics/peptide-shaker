@@ -1463,7 +1463,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         final VennDiagram chart = GCharts.newVennDiagram(
                 a / maxValue, b / maxValue, c / maxValue, ab / maxValue, ac / maxValue, bc / maxValue, abc / maxValue);
-        chart.setSize(diagramButton.getWidth(), diagramButton.getHeight());
+
+        // @TODO: remove the hardcoding below!!!
+        
+        if (diagramButton.getWidth() == 0) {
+            chart.setSize(173, 101);
+        } else {
+            chart.setSize(diagramButton.getWidth(), diagramButton.getHeight());
+        }
+        
         chart.setCircleLegends(titleA, titleB, titleC);
         chart.setCircleColors(Color.YELLOW, Color.RED, Color.BLUE);
         chart.setBackgroundFill(Fills.newSolidFill(Color.WHITE));

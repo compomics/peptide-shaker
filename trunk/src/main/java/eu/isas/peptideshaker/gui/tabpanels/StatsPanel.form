@@ -1068,6 +1068,7 @@
         <Component class="javax.swing.JButton" name="validateButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Validate"/>
+            <Property name="toolTipText" type="java.lang.String" value="Reload the data with the current validation settings"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="validateButtonActionPerformed"/>
@@ -1094,6 +1095,7 @@
         <Component class="javax.swing.JButton" name="applyButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Apply"/>
+            <Property name="toolTipText" type="java.lang.String" value="Reload the data with the current validation settings"/>
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <Events>

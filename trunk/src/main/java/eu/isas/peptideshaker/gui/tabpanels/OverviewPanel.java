@@ -2295,7 +2295,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         updateProteinTableSeparator();
         updatePeptidesAndPsmsSeparator();
         peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
-
+        
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -3024,7 +3024,7 @@ public class OverviewPanel extends javax.swing.JPanel {
      * @throws MzMLUnmarshallerException
      */
     public void displayResults() throws MzMLUnmarshallerException {
-
+        
         ProteomicAnalysis proteomicAnalysis = peptideShakerGUI.getProteomicanalysis();
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         int index = 0, maxPeptides = 0, maxSpectra = 0;

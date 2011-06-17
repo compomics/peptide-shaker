@@ -845,6 +845,7 @@ public class StatsPanel extends javax.swing.JPanel {
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
         validateButton.setText("Validate");
+        validateButton.setToolTipText("Reload the data with the current validation settings");
         validateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 validateButtonActionPerformed(evt);
@@ -863,6 +864,7 @@ public class StatsPanel extends javax.swing.JPanel {
         });
 
         applyButton.setText("Apply");
+        applyButton.setToolTipText("Reload the data with the current validation settings");
         applyButton.setEnabled(false);
         applyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1223,6 +1225,9 @@ public class StatsPanel extends javax.swing.JPanel {
         cancelButton.setEnabled(false);
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        
+        // reload the data to update the scores
+        reloadData();
     }//GEN-LAST:event_applyButtonActionPerformed
 
     /**
@@ -1291,10 +1296,10 @@ public class StatsPanel extends javax.swing.JPanel {
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
         PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
         miniShaker.validateIdentifications();
-
-        // @TODO: the validations flags have to be updated for the tabs!!!
-
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        
+        // update the other tabs
+        reloadData();
     }//GEN-LAST:event_validateButtonActionPerformed
 
     /**
@@ -2185,7 +2190,17 @@ public class StatsPanel extends javax.swing.JPanel {
 //        }.start();
     }
 
+    /**
+     * Update the separators if the frame size changes.
+     */
     public void updateSeparators() {
         formComponentResized(null);
+    }
+    
+    /**
+     * Reload the data to update validation status and scores.
+     */
+    private void reloadData() {
+        peptideShakerGUI.reloadData();
     }
 }
