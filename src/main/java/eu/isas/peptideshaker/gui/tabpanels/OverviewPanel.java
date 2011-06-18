@@ -1953,7 +1953,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             if (column == 2 && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
                 String proteinKey = proteinTableMap.get(getProteinKey(row));
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
-                new ProteinInferenceDialog(peptideShakerGUI, proteinTable, row, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
+                new ProteinInferenceDialog(peptideShakerGUI, proteinTable, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
             }
         }
     }//GEN-LAST:event_proteinTableMouseReleased
@@ -2124,7 +2124,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         boolean indexFound = false;
 
         for (int i = 0; i < proteinTable.getRowCount() && !indexFound; i++) {
-            if ((Integer) proteinTable.getValueAt(i, 0) == proteinIndex) {
+            if (((Integer) proteinTable.getValueAt(i, 0)).intValue() == proteinIndex.intValue()) {
                 indexFound = true;
                 proteinTable.setRowSelectionInterval(i, i);
                 proteinTable.scrollRectToVisible(proteinTable.getCellRect(i, 0, false));
@@ -2146,7 +2146,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         boolean indexFound = false;
 
         for (int i = 0; i < peptideTable.getRowCount() && !indexFound; i++) {
-            if ((Integer) peptideTable.getValueAt(i, 0) == peptideIndex) {
+            if (((Integer) peptideTable.getValueAt(i, 0)).intValue() == peptideIndex.intValue()) {
                 indexFound = true;
                 peptideTable.setRowSelectionInterval(i, i);
                 peptideTable.scrollRectToVisible(peptideTable.getCellRect(i, 0, false));
@@ -3370,5 +3370,18 @@ public class OverviewPanel extends javax.swing.JPanel {
             peptidesPsmSpectrumFragmentIonsJSplitPane.setDividerSize(0);
             //peptidesPsmJSplitPane.setDividerSize(0);
         }
+    }
+    
+    /**
+     * Update the main match for the given row in the protein table.
+     * 
+     * @param mainMatch             the protein match to use
+     * @param proteinInferenceType  the protein inference group type
+     */
+    public void updateMainMatch (Protein mainMatch, int proteinInferenceType) {
+        proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex());
+        proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex());
+        String description = peptideShakerGUI.getSequenceDataBase().getProteinHeader(mainMatch.getAccession()).getDescription();
+        proteinTable.setValueAt(description, proteinTable.getSelectedRow(), proteinTable.getColumn("Description").getModelIndex());
     }
 }

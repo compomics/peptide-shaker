@@ -50,10 +50,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      */
     private JTable proteinTable;
     /**
-     * The selected row.
-     */
-    private int selectedRow;
-    /**
      * The PeptideShaker parent frame.
      */
     private PeptideShakerGUI peptideShakerGUI;
@@ -75,17 +71,15 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * 
      * @param peptideShakerGUI
      * @param proteinTable 
-     * @param selectedRow 
      * @param inspectedMatch 
      * @param identification
      * @param db  
      */
-    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, JTable proteinTable, int selectedRow, ProteinMatch inspectedMatch, Identification identification, SequenceDataBase db) {
+    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, JTable proteinTable, ProteinMatch inspectedMatch, Identification identification, SequenceDataBase db) {
         super(peptideShakerGUI, true);
 
         this.peptideShakerGUI = peptideShakerGUI;
         this.proteinTable = proteinTable;
-        this.selectedRow = selectedRow;
         this.db = db;
         this.inspectedMatch = inspectedMatch;
         accessions = new ArrayList(inspectedMatch.getTheoreticProteinsAccessions());
@@ -409,13 +403,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-
         Protein mainMatch = inspectedMatch.getMainMatch();
-        proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), selectedRow, proteinTable.getColumn("Accession").getModelIndex());
-        proteinTable.setValueAt(groupClassJComboBox.getSelectedIndex(), selectedRow, proteinTable.getColumn("PI").getModelIndex());
-        String description = db.getProteinHeader(mainMatch.getAccession()).getDescription();
-        proteinTable.setValueAt(description, selectedRow, proteinTable.getColumn("Description").getModelIndex());
-
+        peptideShakerGUI.updateMainMatch(mainMatch, groupClassJComboBox.getSelectedIndex());
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
