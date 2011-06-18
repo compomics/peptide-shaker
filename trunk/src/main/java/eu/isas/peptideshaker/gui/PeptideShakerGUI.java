@@ -203,7 +203,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // update the look and feel after adding the panels
         UtilitiesGUIDefaults.setLookAndFeel();
-
+        
         new PeptideShakerGUI();
     }
 
@@ -2009,5 +2009,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         if (spectrumOverviewJMenuItem.isVisible()) {
             spectrumOverviewJMenuItem.setEnabled(enable);
         }
+    }
+    
+    /**
+     * Update the main match for the given row in the protein table.
+     * 
+     * @param mainMatch             the protein match to use
+     * @param proteinInferenceType  the protein inference group type
+     */
+    public void updateMainMatch(Protein mainMatch, int proteinInferenceType) {
+        overviewPanel.updateMainMatch(mainMatch, proteinInferenceType);
+        proteinStructurePanel.updateMainMatch(mainMatch, proteinInferenceType);
     }
 }
