@@ -419,7 +419,7 @@
                                         <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
                                         <Column editable="false" title="Score" type="java.lang.Double"/>
                                         <Column editable="false" title="Confidence [%]" type="java.lang.Double"/>
-                                        <Column editable="true" title="" type="java.lang.Boolean"/>
+                                        <Column editable="false" title="" type="java.lang.Boolean"/>
                                       </Table>
                                     </Property>
                                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
