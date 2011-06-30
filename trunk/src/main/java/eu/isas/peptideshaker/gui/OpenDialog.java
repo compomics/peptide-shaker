@@ -11,9 +11,10 @@ import com.compomics.util.experiment.io.identifications.IdentificationParameters
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import com.compomics.util.protein.Enzyme;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
+import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
+import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
@@ -23,7 +24,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -147,16 +147,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
         precMassUnitCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        enzymeJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        
-        String[] enzymes = new String[enzymeFactory.getEnzymes().size()];
-
-        for (int i = 0; i < enzymeFactory.getEnzymes().size(); i++) {
-            enzymes[i] = enzymeFactory.getEnzymes().get(i).getName();
-        }
-        
-        enzymeJComboBox.setModel(new DefaultComboBoxModel(enzymes));
-        enzymeJComboBox.setSelectedItem(peptideShakerGUI.getSearchParameters().getEnzyme().getName());
     }
 
     /** This method is called from within the constructor to
@@ -180,7 +170,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         sampleNameIdtxt = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
         minPepLengthTxt = new javax.swing.JTextField();
         maxPepLengthTxt = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
@@ -193,8 +182,10 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         xtandemMaxEvalueTxt = new javax.swing.JTextField();
         omssaMaxEvalueTxt = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        enzymeJComboBox = new javax.swing.JComboBox();
         jLabel13 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        searchTxt = new javax.swing.JTextField();
+        editSearchButton = new javax.swing.JButton();
         projectDetailsPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         idFilesTxt = new javax.swing.JTextField();
@@ -291,8 +282,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Processing Parameters"));
         jPanel1.setOpaque(false);
 
-        jLabel6.setText("Enzyme:");
-
         minPepLengthTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         minPepLengthTxt.setText("8");
         minPepLengthTxt.setToolTipText("Minimum Peptide Length");
@@ -336,9 +325,19 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
         jLabel3.setText("Mascot Max E-Value:");
 
-        enzymeJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         jLabel13.setText("-");
+
+        jLabel6.setText("Search Parameters:");
+
+        searchTxt.setEditable(false);
+        searchTxt.setText("Default");
+
+        editSearchButton.setText("Edit");
+        editSearchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editSearchButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -361,26 +360,22 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                         .addComponent(mascotMaxEvalueTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)))
                 .addGap(50, 50, 50)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(massDeviationTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(minPepLengthTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel13)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(maxPepLengthTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
-                            .addComponent(precMassUnitCmb, 0, 106, Short.MAX_VALUE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(enzymeJComboBox, 0, 225, Short.MAX_VALUE)))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(searchTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addComponent(massDeviationTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
+                    .addComponent(minPepLengthTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel13)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(precMassUnitCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, 106, Short.MAX_VALUE)
+                    .addComponent(maxPepLengthTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
+                    .addComponent(editSearchButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -390,23 +385,24 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(omssaMaxEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(enzymeJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel7)
+                    .addComponent(maxPepLengthTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13)
+                    .addComponent(minPepLengthTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(xtandemMaxEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5)
-                    .addComponent(jLabel7)
-                    .addComponent(maxPepLengthTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(minPepLengthTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13))
+                    .addComponent(precMassUnitCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(massDeviationTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
                     .addComponent(jLabel3)
                     .addComponent(mascotMaxEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(precMassUnitCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11)
-                    .addComponent(massDeviationTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel6)
+                    .addComponent(searchTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(editSearchButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -620,8 +616,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 replicateNumber = getReplicateNumber();
                 experiment.addAnalysisSet(sample, analysisSet);
             }
-                
-            experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).clearSpectrumCollection();
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
@@ -632,7 +626,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             if (fastaFile != null) {
                 progressCounter++;
             }
-            
+
             // add one more just to not start at 0%
             progressCounter++;
 
@@ -772,7 +766,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         idFiles = new ArrayList<File>();
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         searchParametersFiles = new ArrayList<File>();
-        
+
         openButton.setEnabled(false);
 }//GEN-LAST:event_clearIdActionPerformed
 
@@ -803,7 +797,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
         fileChooser.setFileFilter(filter);
         int returnVal = fileChooser.showDialog(this.getParent(), "Add");
-        
+
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             for (File newFile : fileChooser.getSelectedFiles()) {
                 if (newFile.isDirectory()) {
@@ -861,9 +855,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             if (!idFiles.isEmpty()) {
                 openButton.setEnabled(true);
             }
-            
+
             if (idFiles.size() == 1 && idFiles.get(0).getName().endsWith(".cps")) {
-                
+
                 importPeptideShakerFile(idFiles.get(0));
                 isPsFile = true;
                 projectNameIdTxt.setEditable(false);
@@ -879,7 +873,8 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 fastaFileTxt.setText("");
                 browseDbButton.setEnabled(false);
                 clearDbButton.setEnabled(false);
-                enzymeJComboBox.setEnabled(false);
+                editSearchButton.setEnabled(false);
+                searchTxt.setText("");
             } else {
                 experiment = null;
                 projectNameIdTxt.setEditable(true);
@@ -894,8 +889,8 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 precMassUnitCmb.setEnabled(true);
                 browseDbButton.setEnabled(true);
                 clearDbButton.setEnabled(true);
-                enzymeJComboBox.setEnabled(true);
-                
+                editSearchButton.setEnabled(true);
+
                 if (isPsFile) {
                     projectNameIdTxt.setText("New Project");
                     sampleNameIdtxt.setText("New Sample");
@@ -908,9 +903,8 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     massDeviationTxt.setText("10");
                     precMassUnitCmb.setSelectedItem("ppm");
                     fastaFileTxt.setText(fastaFile.getName());
-                    enzymeJComboBox.setSelectedItem("Trypsin");
                 }
-                
+
                 isPsFile = false;
             }
         }
@@ -919,6 +913,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     private void mascotMaxEvalueTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mascotMaxEvalueTxtActionPerformed
     }//GEN-LAST:event_mascotMaxEvalueTxtActionPerformed
 
+    private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
+        new SearchPreferencesDialog(peptideShakerGUI);
+    }//GEN-LAST:event_editSearchButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
@@ -926,7 +923,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     private javax.swing.JButton clearDbButton;
     private javax.swing.JButton clearId;
     private javax.swing.JButton clearSpectra;
-    private javax.swing.JComboBox enzymeJComboBox;
+    private javax.swing.JButton editSearchButton;
     private javax.swing.JButton exitButton;
     private javax.swing.JTextField fastaFileTxt;
     private javax.swing.JTextField idFilesTxt;
@@ -958,6 +955,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     private javax.swing.JTextField replicateNumberIdtxt;
     private javax.swing.JPanel sampleDetailsPanel;
     private javax.swing.JTextField sampleNameIdtxt;
+    private javax.swing.JTextField searchTxt;
     private javax.swing.JTextField spectrumFilesTxt;
     private javax.swing.JTextField xtandemMaxEvalueTxt;
     // End of variables declaration//GEN-END:variables
@@ -1116,11 +1114,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
         boolean precTolUnit = ((String) precMassUnitCmb.getSelectedItem()).equals("ppm");
         IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue(), getMaxMassDeviation(), precTolUnit);
-        peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, 
-                new Enzyme(peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getSearchParameters().getnMissedCleavages()));
-        
-        // note: using the below line instead of the one above results in using the old code for doing the protein inference 
-        // peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, null);
+        peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters());
     }
 
     /**
@@ -1129,14 +1123,14 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      * @param searchGUIFile    the selected searchGUI file
      */
     public void importSearchParameters(File searchGUIFile) {
-        
+
         SearchParameters searchParameters = new SearchParameters();
-        
+
         try {
             Properties props = IdentificationParametersReader.loadProperties(searchGUIFile);
             ArrayList<String> variableMods = new ArrayList<String>();
             String temp = props.getProperty(IdentificationParametersReader.VARIABLE_MODIFICATIONS);
-            
+
             if (temp != null && !temp.trim().equals("")) {
                 try {
                     variableMods = IdentificationParametersReader.parseModificationLine(temp, ptmFactory);
@@ -1144,66 +1138,67 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     JOptionPane.showMessageDialog(this, e.getMessage(), "Modification Not Found", JOptionPane.WARNING_MESSAGE);
                 }
             }
-            
+
             for (String name : variableMods) {
-                searchParameters.addExpectedModifications(name, 2);
+                searchParameters.addExpectedModifications(name, name);
             }
-            
+
             temp = props.getProperty(IdentificationParametersReader.ENZYME);
-            
+
             if (temp != null && !temp.equals("")) {
                 searchParameters.setEnzyme(enzymeFactory.getEnzyme(temp.trim()));
-                enzymeJComboBox.setSelectedItem(enzymeFactory.getEnzyme(temp.trim()).getName());
             }
-            
+
             temp = props.getProperty(IdentificationParametersReader.FRAGMENT_MASS_TOLERANCE);
-            
+
             if (temp != null) {
                 searchParameters.setFragmentIonMZTolerance(new Double(temp.trim()));
             }
-            
+
             temp = props.getProperty(IdentificationParametersReader.PRECURSOR_MASS_TOLERANCE);
-            
+
             if (temp != null) {
                 massDeviationTxt.setText(temp);
             }
-            
+
             temp = props.getProperty(IdentificationParametersReader.PRECURSOR_MASS_TOLERANCE_UNIT);
-            
+
             if (temp != null) {
                 precMassUnitCmb.setSelectedItem(temp);
             }
-            
+
             temp = props.getProperty(IdentificationParametersReader.MISSED_CLEAVAGES);
-            
+
             if (temp != null) {
                 searchParameters.setnMissedCleavages(new Integer(temp.trim()));
             }
-            
+
             temp = props.getProperty(IdentificationParametersReader.MIN_PEPTIDE_SIZE);
-            
+
             if (temp != null && temp.length() > 0) {
                 minPepLengthTxt.setText(temp);
             }
-            
+
             temp = props.getProperty(IdentificationParametersReader.MAX_PEPTIDE_SIZE);
-            
+
             if (temp != null && temp.length() > 0) {
                 maxPepLengthTxt.setText(temp);
             }
-            
+
             searchParameters.setParametersFile(searchGUIFile);
             temp = props.getProperty(IdentificationParametersReader.DATABASE_FILE);
-            
+
             try {
                 File file = new File(temp);
-                searchParameters.setFastaFile(file);
-                fastaFileTxt.setText(file.getName());
-                fastaFile = file;
+                if (file.exists()) {
+                    searchParameters.setFastaFile(file);
+                    fastaFileTxt.setText(file.getName());
+                    fastaFile = file;
+                }
             } catch (Exception e) {
                 // file not found: use manual input
             }
-
+            searchTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
             peptideShakerGUI.setSearchParameters(searchParameters);
         } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(this, searchGUIFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
@@ -1232,7 +1227,8 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 } else {
                     try {
                         File newFile = new File(line);
-                        if (!names.contains(newFile.getName())) {
+                        if (newFile.exists()
+                                && !names.contains(newFile.getName())) {
                             names.add(newFile.getName());
                             spectrumFiles.add(newFile);
                         }
@@ -1251,8 +1247,32 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      * Loads the new project information
      */
     private void loadProject() {
-        
+
         projectNameIdTxt.setText(experiment.getReference());
+
+        PSSettings experimentSettings = new PSSettings();
+        experimentSettings = (PSSettings) experiment.getUrParam(experimentSettings);
+        peptideShakerGUI.setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
+        peptideShakerGUI.setSearchParameters(experimentSettings.getSearchParameters());
+
+        ArrayList<String> names = new ArrayList<String>();
+        for (File file : spectrumFiles) {
+            names.add(file.getName());
+        }
+        for (String filePath : experimentSettings.getSearchParameters().getSpectrumFiles()) {
+            try {
+                File newFile = new File(filePath);
+                if (newFile.exists()
+                        && !names.contains(newFile.getName())) {
+                    names.add(newFile.getName());
+                    spectrumFiles.add(newFile);
+                }
+            } catch (Exception e) {
+            }
+        }
+        if (spectrumFiles.size()>0) {            
+            spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
+        }        
 
         ArrayList<Sample> samples = new ArrayList(experiment.getSamples().values());
         if (samples.size() == 1) {
@@ -1272,7 +1292,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 }
             }
         }
-        
+
         sampleNameIdtxt.setText(sample.getReference());
 
         ArrayList<Integer> replicates = new ArrayList(experiment.getAnalysisSet(sample).getReplicateNumberList());
@@ -1288,7 +1308,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             Integer choice = new Integer(sampleSelection.getChoice());
             replicateNumber = choice;
         }
-        
+
         replicateNumberIdtxt.setText(replicateNumber + "");
         mascotMaxEvalueTxt.setText("");
         omssaMaxEvalueTxt.setText("");

@@ -24,6 +24,7 @@ import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -112,9 +113,9 @@ public class PeptideShaker {
      * @param idFiles           The files to import
      * @param spectrumFiles     The corresponding spectra (can be empty: spectra will not be loaded)
      * @param fastaFile         The database file in the fasta format
-     * @param enzyme            The enzyme to use
+     * @param searchParameters  The search parameters
      */
-    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, Enzyme enzyme) {
+    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, SearchParameters searchParameters) {
 
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
 
@@ -123,7 +124,7 @@ public class PeptideShaker {
             SequenceDataBase db = new SequenceDataBase();
             analysis.setSequenceDataBase(db);
             fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
-            fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, enzyme);
+            fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters);
         } else {
             fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
             fileImporter.importFiles(spectrumFiles);
@@ -165,7 +166,7 @@ public class PeptideShaker {
             e.printStackTrace();
         }
 
-        waitingDialog.appendReport("Validating identifications at 1% FDR."); //   @TODO: check if 1% ought to be hardcoded here
+        waitingDialog.appendReport("Validating identifications at 1% FDR.");
         fdrValidation();
 
         String report = "Identification processing completed.\n\n";

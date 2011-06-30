@@ -2,6 +2,8 @@ package eu.isas.peptideshaker.preferences;
 
 import com.compomics.util.experiment.biology.Enzyme;
 import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -9,16 +11,16 @@ import java.util.HashMap;
  *
  * @author Marc
  */
-public class SearchParameters {
+public class SearchParameters implements Serializable {
 
     /**
      * The ms2 ion tolerance
      */
     private double fragmentIonMZTolerance = 0;
     /**
-     * The expected modifications
+     * The expected modifications as a map Name -> modification family. Modified peptides will be grouped according to this parameter.
      */
-    private HashMap<String, Integer> expectedModifications = new HashMap<String, Integer>();
+    private HashMap<String, String> expectedModifications = new HashMap<String, String>();
     /**
      * The enzyme used for digestion
      */
@@ -36,26 +38,54 @@ public class SearchParameters {
      */
     private File parametersFile;
     /**
+     * The list of spectrum files
+     */
+    private ArrayList<String> spectrumFiles = new ArrayList<String>();
+    
+    /**
      * Constructor
      */
     public SearchParameters() {
     }
+    
+    /**
+     * Returns a list containing the path of all spectrum files
+     * @return a list containing the path of all spectrum files 
+     */
+    public ArrayList<String> getSpectrumFiles() {
+        return spectrumFiles;
+    }
+    
+    /**
+     * Adds a spectrum file to the list
+     * @param spectrumFile a spectrum file
+     */
+    public void addSpectrumFile(String spectrumFile) {
+        spectrumFiles.add(spectrumFile);
+    }
+    
+    /**
+     * Clears the list of spectrum files
+     */
+    public void clearSpectrumFilesList() {
+        spectrumFiles = new ArrayList<String>();
+    }
 
     /**
-     * Returns the expected modifications map (Name -> maximal number of occurrences)
-     * @return the expected modifications map (Name -> maximal number of occurrences)
+     * Returns the expected modifications map (Name -> modification family)
+     * @return the expected modifications map (Name -> modification family)
      */
-    public HashMap<String, Integer> getExpectedModifications() {
+    public HashMap<String, String> getExpectedModifications() {
         return expectedModifications;
     }
 
     /**
      * Adds a modification to the expected modifications map
      * @param modificationName  The modification name
-     * @param maximalOccurence  The maximal number of occurrences expected for the modification in a peptide
+     * @param modificationFamily  The family of the modification. Modified peptides will be grouped according to this parameter.
      */
-    public void addExpectedModifications(String modificationName, int maximalOccurence) {
-        expectedModifications.put(modificationName, maximalOccurence);
+    public void addExpectedModifications(String modificationName, String modificationFamily) {
+        expectedModifications.put(modificationName, modificationFamily);
     }
 
     /**
