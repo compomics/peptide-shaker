@@ -358,10 +358,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         for (Object selection : availableModifications.getSelectedValues()) {
             name = (String) selection;
-            searchParameters.addExpectedModifications(name, 2);
+            searchParameters.addExpectedModifications(name, name);
             modificationList.add(name);
         }
-
         updateModificationLists();
     }//GEN-LAST:event_addModificationsActionPerformed
 
@@ -480,7 +479,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         }
 
         for (String name : variableMods) {
-            searchParameters.addExpectedModifications(name, 2);
+            searchParameters.addExpectedModifications(name, name);
             modificationList.add(name);
         }
 
@@ -637,11 +636,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         public void setValueAt(Object aValue, int row, int column) {
             try {
                 if (column == 1) {
-                    Integer input = (Integer) aValue;
-                    if (input == null || input.equals("")) {
-                        input = 0;
-                    }
-                    searchParameters.getExpectedModifications().put(modificationList.get(row), new Integer(input));
+                    searchParameters.getExpectedModifications().put(modificationList.get(row), aValue.toString());
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for " + modificationList.get(row) + " occurrence.",

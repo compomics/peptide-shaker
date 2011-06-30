@@ -1,11 +1,9 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.fdrestimation.PosteriorValidationMetrics;
-import eu.isas.peptideshaker.fdrestimation.PosteriorValidationPoint;
+import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyResults;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoySeries;
@@ -15,7 +13,6 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.event.KeyEvent;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
@@ -110,21 +107,13 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private HashMap<Integer, Boolean> modifiedMaps = new HashMap<Integer, Boolean>();
     /**
-     * Metrics and methods used for posterior validation of PSMs and peptides.
-     */
-    private PosteriorValidationMetrics posteriorValidationMetrics;
-    /**
-     * A simple progress dialog.
-     */
-    private static ProgressDialogX progressDialog;
-    /**
-     * Boolean indicating whether results are displayed.
-     */
-    private boolean displayingResults = false;
-    /**
-     * The log axis.
+     * The score log axis.
      */
     private LogAxis scoreAxis;
+    /**
+     * The FDR axis in the FDRs plot
+     */
+    private NumberAxis classicalAxis;
 
     /**
      * Create a new StatsPanel.
@@ -133,7 +122,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     public StatsPanel(PeptideShakerGUI parent) {
 
-        this.peptideShakerGUI = parent;
+        this.peptideShakerGUI = parent; 
 
         initComponents();
 
@@ -161,7 +150,7 @@ public class StatsPanel extends javax.swing.JPanel {
         pepPlot.addDomainMarker(confidenceMarker);
 
         // Initialize FDRs plot
-        NumberAxis classicalAxis = new NumberAxis("Classical FDR [%]");
+        classicalAxis = new NumberAxis("Classical FDR [%]");
         NumberAxis probaAxis = new NumberAxis("Probabilistic FDR [%]");
         classicalAxis.setAutoRangeIncludesZero(true);
         probaAxis.setAutoRangeIncludesZero(true);
@@ -189,7 +178,6 @@ public class StatsPanel extends javax.swing.JPanel {
         benefitCostPlot.setRangeAxisLocation(1, AxisLocation.BOTTOM_OR_RIGHT);
 
         fdrCombo1.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        validationCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         // make the tabs in the spectrum tabbed pane go from right to left
         optimizationTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -219,21 +207,22 @@ public class StatsPanel extends javax.swing.JPanel {
         idSummaryJPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         nTotalTxt = new javax.swing.JTextField();
-        jLabel20 = new javax.swing.JLabel();
-        nMaxTxt = new javax.swing.JTextField();
-        jLabel6 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
-        nValidatedClassicalTxt = new javax.swing.JTextField();
+        nValidatedTxt = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        nTPClassicalTxt = new javax.swing.JTextField();
-        nFPClassicalTxt = new javax.swing.JTextField();
-        jSeparator2 = new javax.swing.JSeparator();
-        jLabel8 = new javax.swing.JLabel();
+        nTPlTxt = new javax.swing.JTextField();
+        nFPTxt = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
+        jLabel36 = new javax.swing.JLabel();
+        fdrTxt = new javax.swing.JTextField();
+        fnrTxt = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        jLabel20 = new javax.swing.JLabel();
+        nMaxTxt = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        nValidatedProbaTxt = new javax.swing.JTextField();
-        confidenceProbaTxt = new javax.swing.JTextField();
-        jLabel11 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        confidenceTxt = new javax.swing.JTextField();
         optimizationJPanel = new javax.swing.JPanel();
         optimizationTabbedPane = new javax.swing.JTabbedPane();
         estimatorOptimizationTab = new javax.swing.JPanel();
@@ -268,13 +257,13 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel33 = new javax.swing.JLabel();
         parametersJPanel = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
-        confidenceClassicalTxt = new javax.swing.JTextField();
+        confidenceInput = new javax.swing.JTextField();
         jLabel18 = new javax.swing.JLabel();
         jLabel12 = new javax.swing.JLabel();
-        fdrClassicalTxt = new javax.swing.JTextField();
+        fdrInput = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
         jLabel24 = new javax.swing.JLabel();
-        fnrClassicalTxt = new javax.swing.JTextField();
+        fnrInput = new javax.swing.JTextField();
         jLabel15 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
@@ -286,8 +275,6 @@ public class StatsPanel extends javax.swing.JPanel {
         cancelButton = new javax.swing.JButton();
         fdrCombo1 = new javax.swing.JComboBox();
         jLabel31 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        validationCmb = new javax.swing.JComboBox();
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -329,53 +316,53 @@ public class StatsPanel extends javax.swing.JPanel {
             groupListJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupListJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(groupListJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
+                .addComponent(groupListJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         idSummaryJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Identification Summary"));
         idSummaryJPanel.setOpaque(false);
 
-        jLabel2.setText("# Total:");
+        jLabel2.setText("Total TP:");
 
         nTotalTxt.setEditable(false);
         nTotalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel1.setText("# Validated Hits:");
+
+        nValidatedTxt.setEditable(false);
+        nValidatedTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel3.setText("# FP:");
+
+        jLabel10.setText("# TP:");
+
+        nTPlTxt.setEditable(false);
+        nTPlTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        nFPTxt.setEditable(false);
+        nFPTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel13.setText("FDR:");
+
+        jLabel36.setText("FNR:");
+
+        fdrTxt.setEditable(false);
+
+        fnrTxt.setEditable(false);
+
+        jLabel6.setText("Dataset properties:");
 
         jLabel20.setText("Nmax:");
 
         nMaxTxt.setEditable(false);
         nMaxTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
-        jLabel6.setText("Threshold Validation:");
+        jLabel7.setText("Validation Results:");
 
-        jLabel1.setText("# Validated Hits:");
+        jLabel23.setText("Lowest confidence:");
 
-        nValidatedClassicalTxt.setEditable(false);
-        nValidatedClassicalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-
-        jLabel3.setText("# FP:");
-
-        jLabel10.setText("# TP:");
-
-        nTPClassicalTxt.setEditable(false);
-        nTPClassicalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-
-        nFPClassicalTxt.setEditable(false);
-        nFPClassicalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-
-        jSeparator2.setOrientation(javax.swing.SwingConstants.VERTICAL);
-
-        jLabel8.setText("Posterior Validation:");
-
-        jLabel7.setText("# Validated Hits:");
-
-        nValidatedProbaTxt.setEditable(false);
-        nValidatedProbaTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-
-        confidenceProbaTxt.setEditable(false);
-        confidenceProbaTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-
-        jLabel11.setText("Confidence:");
+        confidenceTxt.setEditable(false);
 
         javax.swing.GroupLayout idSummaryJPanelLayout = new javax.swing.GroupLayout(idSummaryJPanel);
         idSummaryJPanel.setLayout(idSummaryJPanelLayout);
@@ -384,89 +371,70 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(idSummaryJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(idSummaryJPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(nTotalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel20)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(nMaxTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel6)
                     .addGroup(idSummaryJPanelLayout.createSequentialGroup()
                         .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(idSummaryJPanelLayout.createSequentialGroup()
                                 .addGap(10, 10, 10)
+                                .addComponent(jLabel2))
+                            .addGroup(idSummaryJPanelLayout.createSequentialGroup()
+                                .addGap(10, 10, 10)
                                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(idSummaryJPanelLayout.createSequentialGroup()
-                                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel1)
-                                            .addComponent(jLabel3))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(nValidatedClassicalTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                                            .addComponent(nFPClassicalTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                                            .addComponent(nTPClassicalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addComponent(jLabel10)))
-                            .addComponent(jLabel6))
-                        .addGap(18, 18, 18)
-                        .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 13, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel10))))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(nTotalTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                            .addComponent(nValidatedTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                            .addComponent(nFPTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                            .addComponent(nTPlTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
                         .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(idSummaryJPanelLayout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel7)
-                                    .addComponent(jLabel11))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(confidenceProbaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(nValidatedProbaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jLabel8))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jLabel20)
+                            .addComponent(jLabel36)
+                            .addComponent(jLabel13)
+                            .addComponent(jLabel23))
+                        .addGap(10, 10, 10)
+                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(fdrTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                            .addComponent(fnrTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                            .addComponent(nMaxTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
+                            .addComponent(confidenceTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)))
+                    .addComponent(jLabel7))
+                .addContainerGap())
         );
-
-        idSummaryJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {nMaxTxt, nTotalTxt});
-
-        idSummaryJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {nFPClassicalTxt, nTPClassicalTxt, nValidatedClassicalTxt});
-
-        idSummaryJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {confidenceProbaTxt, nValidatedProbaTxt});
-
         idSummaryJPanelLayout.setVerticalGroup(
             idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(idSummaryJPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, idSummaryJPanelLayout.createSequentialGroup()
                 .addContainerGap()
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(nTotalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel20)
                     .addComponent(nMaxTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, idSummaryJPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(nValidatedClassicalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(nFPClassicalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel10)
-                            .addComponent(nTPClassicalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, idSummaryJPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel7)
-                            .addComponent(nValidatedProbaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(confidenceProbaTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel11)))
-                    .addComponent(jSeparator2, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel7)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(nValidatedTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel23)
+                    .addComponent(confidenceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(nFPTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel13)
+                    .addComponent(fdrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(nTPlTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel36)
+                    .addComponent(fnrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -526,7 +494,7 @@ public class StatsPanel extends javax.swing.JPanel {
             pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pepPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pepChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                .addComponent(pepChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel30)
@@ -578,7 +546,7 @@ public class StatsPanel extends javax.swing.JPanel {
             fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fdrsChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                .addComponent(fdrsChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(sensitivitySlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -597,7 +565,7 @@ public class StatsPanel extends javax.swing.JPanel {
         );
         estimatorOptimizationTabLayout.setVerticalGroup(
             estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
+            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
         );
 
         optimizationTabbedPane.addTab("Estimators", estimatorOptimizationTab);
@@ -652,7 +620,7 @@ public class StatsPanel extends javax.swing.JPanel {
             confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, confidencePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(confidenceChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                .addComponent(confidenceChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(confidenceSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -712,7 +680,7 @@ public class StatsPanel extends javax.swing.JPanel {
             fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrFnrPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fdrFnrChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                .addComponent(fdrFnrChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(fdrSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -765,7 +733,7 @@ public class StatsPanel extends javax.swing.JPanel {
             benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, benefitCostPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(benefitCostChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
+                .addComponent(benefitCostChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel32)
@@ -786,7 +754,7 @@ public class StatsPanel extends javax.swing.JPanel {
         );
         thresholdOptimizationTabLayout.setVerticalGroup(
             thresholdOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 353, Short.MAX_VALUE)
+            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
         );
 
         optimizationTabbedPane.addTab("Thresholds", thresholdOptimizationTab);
@@ -806,7 +774,7 @@ public class StatsPanel extends javax.swing.JPanel {
             optimizationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optimizationJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(optimizationTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+                .addComponent(optimizationTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -815,10 +783,10 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel21.setText("Confidence:");
 
-        confidenceClassicalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        confidenceClassicalTxt.addActionListener(new java.awt.event.ActionListener() {
+        confidenceInput.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        confidenceInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                confidenceClassicalTxtActionPerformed(evt);
+                confidenceInputActionPerformed(evt);
             }
         });
 
@@ -826,10 +794,10 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel12.setText("FDR:");
 
-        fdrClassicalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        fdrClassicalTxt.addActionListener(new java.awt.event.ActionListener() {
+        fdrInput.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        fdrInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fdrClassicalTxtActionPerformed(evt);
+                fdrInputActionPerformed(evt);
             }
         });
 
@@ -837,16 +805,16 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel24.setText("FNR:");
 
-        fnrClassicalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        fnrClassicalTxt.addActionListener(new java.awt.event.ActionListener() {
+        fnrInput.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        fnrInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fnrClassicalTxtActionPerformed(evt);
+                fnrInputActionPerformed(evt);
             }
         });
 
         jLabel15.setText("%");
 
-        jLabel4.setText("Threshold Optimization:");
+        jLabel4.setText("Desired threshold:");
 
         jSeparator1.setOrientation(javax.swing.SwingConstants.VERTICAL);
 
@@ -895,15 +863,6 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel31.setText("Estimator:");
 
-        jLabel9.setText("Validation:");
-
-        validationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Threshold", "Posterior" }));
-        validationCmb.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                validationCmbMouseReleased(evt);
-            }
-        });
-
         javax.swing.GroupLayout parametersJPanelLayout = new javax.swing.GroupLayout(parametersJPanel);
         parametersJPanel.setLayout(parametersJPanelLayout);
         parametersJPanelLayout.setHorizontalGroup(
@@ -921,9 +880,9 @@ public class StatsPanel extends javax.swing.JPanel {
                                 .addComponent(jLabel24))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(fnrClassicalTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                                .addComponent(fdrClassicalTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
-                                .addComponent(confidenceClassicalTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE))
+                                .addComponent(fnrInput, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+                                .addComponent(fdrInput, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE)
+                                .addComponent(confidenceInput, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 80, Short.MAX_VALUE))
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                             .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                 .addComponent(jLabel14)
@@ -933,33 +892,27 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(jLabel5)
                         .addGroup(parametersJPanelLayout.createSequentialGroup()
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 10, Short.MAX_VALUE)
-                            .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel9)
-                                .addComponent(jLabel31))
-                            .addGap(18, 18, 18)
-                            .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(fdrCombo1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(validationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(parametersJPanelLayout.createSequentialGroup()
-                            .addGap(10, 10, 10)
-                            .addComponent(jLabel22)
-                            .addGap(5, 5, 5)
-                            .addComponent(windowTxt)))
+                            .addComponent(applyButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(cancelButton)))
                     .addGroup(parametersJPanelLayout.createSequentialGroup()
-                        .addComponent(applyButton)
+                        .addComponent(jLabel22)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton)))
-                .addContainerGap(77, Short.MAX_VALUE))
+                        .addComponent(windowTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE))
+                    .addGroup(parametersJPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel31)
+                        .addGap(18, 18, 18)
+                        .addComponent(fdrCombo1, 0, 87, Short.MAX_VALUE)))
+                .addGap(91, 91, 91))
         );
 
         parametersJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {applyButton, cancelButton});
 
-        parametersJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {confidenceClassicalTxt, fdrClassicalTxt, fnrClassicalTxt});
+        parametersJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {confidenceInput, fdrInput, fnrInput});
 
         parametersJPanelLayout.setVerticalGroup(
             parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -967,45 +920,41 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parametersJPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(parametersJPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addGap(18, 18, 18)
                                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel18)
-                                    .addComponent(confidenceClassicalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(confidenceInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel21))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel12)
                                     .addComponent(jLabel14)
-                                    .addComponent(fdrClassicalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(fdrInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(fnrClassicalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(fnrInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel24)
                                     .addComponent(jLabel15)))
                             .addGroup(parametersJPanelLayout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addGap(18, 18, 18)
-                                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                                    .addComponent(windowTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel22))
+                                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(jLabel22)
+                                    .addComponent(windowTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                     .addComponent(jLabel31)
-                                    .addComponent(fdrCombo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(validationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel9))))
-                        .addGap(18, 18, 18)
+                                    .addComponent(fdrCombo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(18, 34, Short.MAX_VALUE)
                         .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(cancelButton)
                                 .addComponent(applyButton))
                             .addComponent(validateButton)))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE))
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -1013,26 +962,27 @@ public class StatsPanel extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(optimizationJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(optimizationJPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                         .addComponent(groupListJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(idSummaryJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(parametersJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                        .addComponent(parametersJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(parametersJPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(idSummaryJPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(groupListJPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(idSummaryJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 207, Short.MAX_VALUE)
+                        .addComponent(groupListJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(parametersJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(optimizationJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -1053,9 +1003,9 @@ public class StatsPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void confidenceClassicalTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confidenceClassicalTxtActionPerformed
+    private void confidenceInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confidenceInputActionPerformed
         try {
-            lastThreshold = new Double(confidenceClassicalTxt.getText());
+            lastThreshold = new Double(confidenceInput.getText());
             lastThresholdType = 0;
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
             updateResults();
@@ -1064,16 +1014,16 @@ public class StatsPanel extends javax.swing.JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Please verify the given threshold.", "Import error", JOptionPane.WARNING_MESSAGE);
         }
-    }//GEN-LAST:event_confidenceClassicalTxtActionPerformed
+    }//GEN-LAST:event_confidenceInputActionPerformed
 
     /**
      * Updates the plots.
      *
      * @param evt
      */
-    private void fdrClassicalTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrClassicalTxtActionPerformed
+    private void fdrInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrInputActionPerformed
         try {
-            lastThreshold = new Double(fdrClassicalTxt.getText());
+            lastThreshold = new Double(fdrInput.getText());
             lastThresholdType = 1;
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
             updateResults();
@@ -1082,16 +1032,16 @@ public class StatsPanel extends javax.swing.JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Please verify the given threshold.", "Import error", JOptionPane.WARNING_MESSAGE);
         }
-    }//GEN-LAST:event_fdrClassicalTxtActionPerformed
+    }//GEN-LAST:event_fdrInputActionPerformed
 
     /**
      * Updates the plots.
      *
      * @param evt
      */
-    private void fnrClassicalTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fnrClassicalTxtActionPerformed
+    private void fnrInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fnrInputActionPerformed
         try {
-            lastThreshold = new Double(fnrClassicalTxt.getText());
+            lastThreshold = new Double(fnrInput.getText());
             lastThresholdType = 2;
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
             updateResults();
@@ -1100,7 +1050,7 @@ public class StatsPanel extends javax.swing.JPanel {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Please verify the given threshold.", "Import error", JOptionPane.WARNING_MESSAGE);
         }
-    }//GEN-LAST:event_fnrClassicalTxtActionPerformed
+    }//GEN-LAST:event_fnrInputActionPerformed
 
     /**
      * Updates the plots.
@@ -1142,7 +1092,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void confidenceSliderMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidenceSliderMouseDragged
-        confidenceClassicalTxt.setText(confidenceSlider.getValue() + "");
+        confidenceInput.setText(confidenceSlider.getValue() + "");
     }//GEN-LAST:event_confidenceSliderMouseDragged
 
     /**
@@ -1151,7 +1101,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void fdrSlider1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrSlider1MouseDragged
-        fdrClassicalTxt.setText(fdrSlider1.getValue() + "");
+        fdrInput.setText(fdrSlider1.getValue() + "");
     }//GEN-LAST:event_fdrSlider1MouseDragged
 
     /**
@@ -1346,55 +1296,42 @@ public class StatsPanel extends javax.swing.JPanel {
         sensitivitySlider1.setValue(sensitivitySlider2.getValue());
         sensitivitySlider1MouseDragged(null);
     }//GEN-LAST:event_sensitivitySlider2MouseDragged
-
     /**
      * Updates the plots.
      *
      * @param evt
      */
-    private void validationCmbMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validationCmbMouseReleased
-        TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
-
-        if (validationCmb.getSelectedIndex() == 0) {
-            currentResults.setClassicalValidation(true);
-        } else {
-            currentResults.setClassicalValidation(false);
-        }
-
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        updateResults();
-        updateDisplayedComponents();
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_validationCmbMouseReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JPanel benefitCostChartPanel;
     private javax.swing.JPanel benefitCostPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JPanel confidenceChartPanel;
-    private javax.swing.JTextField confidenceClassicalTxt;
+    private javax.swing.JTextField confidenceInput;
     private javax.swing.JPanel confidencePanel;
-    private javax.swing.JTextField confidenceProbaTxt;
     private javax.swing.JSlider confidenceSlider;
+    private javax.swing.JTextField confidenceTxt;
     private javax.swing.JPanel estimatorOptimizationTab;
     private javax.swing.JSplitPane estimatorsPlotSplitPane;
-    private javax.swing.JTextField fdrClassicalTxt;
     private javax.swing.JComboBox fdrCombo1;
     private javax.swing.JPanel fdrFnrChartPanel;
     private javax.swing.JPanel fdrFnrPanel;
+    private javax.swing.JTextField fdrInput;
     private javax.swing.JSlider fdrSlider1;
     private javax.swing.JSlider fdrSlider2;
+    private javax.swing.JTextField fdrTxt;
     private javax.swing.JPanel fdrsChartPanel;
     private javax.swing.JPanel fdrsPanel;
-    private javax.swing.JTextField fnrClassicalTxt;
+    private javax.swing.JTextField fnrInput;
+    private javax.swing.JTextField fnrTxt;
     private javax.swing.JList groupList;
     private javax.swing.JPanel groupListJPanel;
     private javax.swing.JScrollPane groupListJScrollPane;
     private javax.swing.JPanel idSummaryJPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel18;
@@ -1402,6 +1339,7 @@ public class StatsPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
@@ -1415,21 +1353,18 @@ public class StatsPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel33;
     private javax.swing.JLabel jLabel34;
     private javax.swing.JLabel jLabel35;
+    private javax.swing.JLabel jLabel36;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSplitPane leftPlotSplitPane;
-    private javax.swing.JTextField nFPClassicalTxt;
+    private javax.swing.JTextField nFPTxt;
     private javax.swing.JTextField nMaxTxt;
-    private javax.swing.JTextField nTPClassicalTxt;
+    private javax.swing.JTextField nTPlTxt;
     private javax.swing.JTextField nTotalTxt;
-    private javax.swing.JTextField nValidatedClassicalTxt;
-    private javax.swing.JTextField nValidatedProbaTxt;
+    private javax.swing.JTextField nValidatedTxt;
     private javax.swing.JPanel optimizationJPanel;
     private javax.swing.JTabbedPane optimizationTabbedPane;
     private javax.swing.JPanel parametersJPanel;
@@ -1440,7 +1375,6 @@ public class StatsPanel extends javax.swing.JPanel {
     private javax.swing.JSlider sensitivitySlider2;
     private javax.swing.JPanel thresholdOptimizationTab;
     private javax.swing.JButton validateButton;
-    private javax.swing.JComboBox validationCmb;
     private javax.swing.JTextField windowTxt;
     // End of variables declaration//GEN-END:variables
 
@@ -1450,32 +1384,43 @@ public class StatsPanel extends javax.swing.JPanel {
     public void displayResults() {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        displayingResults = true;
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
         ArrayList<String> peptideKeys = pSMaps.getPeptideSpecificMap().getKeys();
         HashMap<Integer, String> psmKeys = pSMaps.getPsmSpecificMap().getKeys();
 
-        int nMaps = 3 + peptideKeys.size() + psmKeys.size();
+        int nMaps = 1 + peptideKeys.size() + psmKeys.size();
+        int cpt = 0;
         String[] listContent = new String[nMaps];
-        listContent[0] = "Proteins";
-        modifiedMaps.put(0, false);
-        listContent[1] = "Peptides";
-        int cpt = 2;
-
-        for (String pepitdeKey : peptideKeys) {
-            peptideMap.put(cpt, pepitdeKey);
-            listContent[cpt] = "    " + pepitdeKey;
+        listContent[cpt] = "Proteins";
+        modifiedMaps.put(cpt, false);
+        cpt++;
+        if (peptideKeys.size() == 1) {
+            peptideMap.put(cpt, peptideKeys.get(0));
+            listContent[cpt] = "Peptides";
             modifiedMaps.put(cpt, false);
             cpt++;
+        } else {
+            for (String pepitdeKey : peptideKeys) {
+                peptideMap.put(cpt, pepitdeKey);
+                if (pepitdeKey.equals("")) {
+                    listContent[cpt] = "Not modified Peptides";
+                } else if (pepitdeKey.equals(PeptideSpecificMap.DUSTBIN)) {
+                    listContent[cpt] = "Other Peptides";
+                } else {
+                    listContent[cpt] = pepitdeKey + " Peptides";
+                }
+                modifiedMaps.put(cpt, false);
+                cpt++;
+            }
         }
-
-        listContent[cpt] = "PSMs";
-        cpt++;
-
         for (Integer psmKey : psmKeys.keySet()) {
             psmMap.put(cpt, psmKey);
-            listContent[cpt] = "    " + psmKeys.get(psmKey);
+            if (psmKeys.size() > 1) {
+                listContent[cpt] = psmKeys.get(psmKey) + " PSMs";
+            } else {
+                listContent[cpt] = "PSMs";
+            }
             modifiedMaps.put(cpt, false);
             cpt++;
         }
@@ -1498,14 +1443,13 @@ public class StatsPanel extends javax.swing.JPanel {
         if (selectedGroup == 0) {
             currentTargetDecoyMap = pSMaps.getProteinMap().getTargetDecoyMap();
             boolean found = false;
-
+            // Verify that probabilities are up to date
             for (int key : psmMap.keySet()) {
                 if (modifiedMaps.get(key)) {
                     found = true;
                     break;
                 }
             }
-
             if (found) {
                 int outcome = JOptionPane.showConfirmDialog(this,
                         "Probabilities modifications at the PSM level will influence protein results.\n"
@@ -1532,11 +1476,6 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         } else if (peptideMap.containsKey(selectedGroup)) {
 
-            if (posteriorValidationMetrics == null) {
-                posteriorValidationMetrics = new PosteriorValidationMetrics();
-                estimatePossibilities();
-            }
-
             currentTargetDecoyMap = pSMaps.getPeptideSpecificMap().getTargetDecoyMap(peptideMap.get(selectedGroup));
             boolean found = false;
 
@@ -1556,98 +1495,16 @@ public class StatsPanel extends javax.swing.JPanel {
                 }
             }
         } else if (psmMap.containsKey(selectedGroup)) {
-            if (posteriorValidationMetrics == null) {
-                posteriorValidationMetrics = new PosteriorValidationMetrics();
-                estimatePossibilities();
-            }
             currentTargetDecoyMap = pSMaps.getPsmSpecificMap().getTargetDecoyMap(psmMap.get(selectedGroup));
-        } else if (selectedGroup == peptideMap.size()) {
-
-            if (posteriorValidationMetrics == null) {
-                posteriorValidationMetrics = new PosteriorValidationMetrics();
-                estimatePossibilities();
-            }
-
-            clearScreen();
-            int peptideSpaceSize = 0;
-            double nTPTotal = 0;
-
-            for (String peptideSelection : peptideMap.values()) {
-                currentTargetDecoyMap = pSMaps.getPeptideSpecificMap().getTargetDecoyMap(peptideSelection);
-                TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
-
-                if (currentResults.getConfidenceLimit() == -1) {
-                    currentResults.setConfidenceLimit(95);
-                    currentTargetDecoyMap.getTargetDecoySeries().getConfidenceResults(currentResults);
-                }
-
-                double proteinScore = pSMaps.getProteinMap().getTargetDecoyMap().getTargetDecoyResults().getScoreLimit();
-                PosteriorValidationPoint posteriorValidationPoint = posteriorValidationMetrics.getResults(proteinScore);
-                peptideSpaceSize = posteriorValidationPoint.peptideSpaceSize;
-                nTPTotal += currentResults.getnTPTotal();
-            }
-
-            BigDecimal p = BigDecimal.ONE;
-            p = p.divide(new BigDecimal(posteriorValidationMetrics.getSearchSpace()), BigDecimal.ROUND_HALF_DOWN);
-            BigDecimal nFP = new BigDecimal(peptideSpaceSize);
-            nFP = nFP.multiply(p);
-            BigDecimal nTP = new BigDecimal(peptideSpaceSize);
-            nTP = nTP.subtract(nFP);
-
-            nTotalTxt.setText(Util.roundDouble(nTPTotal, 2) + "");
-            nValidatedProbaTxt.setEnabled(true);
-            confidenceProbaTxt.setEnabled(true);
-            nValidatedProbaTxt.setText(Util.roundDouble(peptideSpaceSize, 2) + "");
-            confidenceProbaTxt.setText(p.toEngineeringString());
-
-            applyButton.setEnabled(false);
-            cancelButton.setEnabled(false);
-            return;
         } else {
-
-            if (posteriorValidationMetrics == null) {
-                posteriorValidationMetrics = new PosteriorValidationMetrics();
-                estimatePossibilities();
-            }
-
+            // This should not happen
             clearScreen();
-            int psmSpaceSize = 0;
-            double nTPTotal = 0;
-
-            for (int psmSelection : psmMap.values()) {
-                currentTargetDecoyMap = pSMaps.getPsmSpecificMap().getTargetDecoyMap(psmSelection);
-                TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
-
-                if (currentResults.getConfidenceLimit() == -1) {
-                    currentResults.setConfidenceLimit(95);
-                    currentTargetDecoyMap.getTargetDecoySeries().getConfidenceResults(currentResults);
-                }
-
-                double proteinScore = pSMaps.getProteinMap().getTargetDecoyMap().getTargetDecoyResults().getScoreLimit();
-                PosteriorValidationPoint posteriorValidationPoint = posteriorValidationMetrics.getResults(proteinScore);
-                psmSpaceSize = posteriorValidationPoint.psmSpaceSize;
-                nTPTotal += currentResults.getnTPTotal();
-            }
-
-            BigDecimal p = BigDecimal.ONE;
-            p = p.divide(new BigDecimal(posteriorValidationMetrics.getSearchSpace()), BigDecimal.ROUND_HALF_DOWN);
-
-            nTotalTxt.setText(Util.roundDouble(nTPTotal, 2) + "");
-            nValidatedProbaTxt.setEnabled(true);
-            confidenceProbaTxt.setEnabled(true);
-            nValidatedProbaTxt.setText(Util.roundDouble(psmSpaceSize, 2) + "");
-            confidenceProbaTxt.setText(p.toPlainString());
-
-            applyButton.setEnabled(false);
-            cancelButton.setEnabled(false);
             return;
         }
-
-        applyButton.setEnabled(modifiedMaps.get(groupList.getSelectedIndex()));
-        cancelButton.setEnabled(modifiedMaps.get(groupList.getSelectedIndex()));
+        applyButton.setEnabled(modifiedMaps.get(selectedGroup));
+        cancelButton.setEnabled(modifiedMaps.get(selectedGroup));
         nMaxTxt.setText(currentTargetDecoyMap.getnMax() + "");
         targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
-
         updateDisplayedComponents();
     }
 
@@ -1672,93 +1529,39 @@ public class StatsPanel extends javax.swing.JPanel {
 
     /**
      * Updates the updates the different components of the gui with the new results.
-     * 
-     * @param map boolean indicating whether a map is present
      */
     private void updateDisplayedComponents() {
 
         TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
         nTotalTxt.setText(Util.roundDouble(currentResults.getnTPTotal(), 2) + "");
-        nValidatedClassicalTxt.setText(Util.roundDouble(currentResults.getN(), 2) + "");
-        nFPClassicalTxt.setText(Util.roundDouble(currentResults.getnFP(), 2) + "");
-        nTPClassicalTxt.setText(Util.roundDouble(currentResults.getnTP(), 2) + "");
-        confidenceClassicalTxt.setText(Util.roundDouble(currentResults.getConfidenceLimit(), 2) + "");
-        fdrClassicalTxt.setText(Util.roundDouble(currentResults.getFdrLimit(), 2) + "");
-        fnrClassicalTxt.setText(Util.roundDouble(currentResults.getFnrLimit(), 2) + "");
+        nValidatedTxt.setText(Util.roundDouble(currentResults.getN(), 2) + "");
+        nFPTxt.setText(Util.roundDouble(currentResults.getnFP(), 2) + "");
+        nTPlTxt.setText(Util.roundDouble(currentResults.getnTP(), 2) + "");
+        confidenceTxt.setText(Util.roundDouble(currentResults.getConfidenceLimit(), 2) + " %");
+        fdrTxt.setText(Util.roundDouble(currentResults.getFdrLimit(), 2) + " %");
+        fnrTxt.setText(Util.roundDouble(currentResults.getFnrLimit(), 2) + " %");
         confidenceSlider.setValue(currentResults.getConfidenceLimit().intValue());
         fdrSlider1.setValue(currentResults.getFdrLimit().intValue());
         windowTxt.setText(currentTargetDecoyMap.getWindowSize() + "");
         Double newPosition = 50 * (Math.log10(currentTargetDecoyMap.getWindowSize() / (double) currentTargetDecoyMap.getnMax()) + 1);
         sensitivitySlider1.setValue(newPosition.intValue());
-
-        PSMaps pSMaps = new PSMaps();
-        pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-        double proteinScore = pSMaps.getProteinMap().getTargetDecoyMap().getTargetDecoyResults().getScoreLimit();
-
-        if (groupList.getSelectedIndex() == 0) {
-            //probaValidationCheck.setEnabled(false);
-            nValidatedProbaTxt.setEnabled(false);
-            confidenceProbaTxt.setEnabled(false);
-            nValidatedProbaTxt.setText("");
-            confidenceProbaTxt.setText("");
-        } else if (peptideMap.containsKey(groupList.getSelectedIndex())) {
-            String peptideKey = peptideMap.get(groupList.getSelectedIndex());
-
-            if (posteriorValidationMetrics != null) {
-                BigDecimal p = BigDecimal.ONE;
-                PosteriorValidationPoint posteriorValidationPoint = posteriorValidationMetrics.getResults(proteinScore);
-                p = p.divide(new BigDecimal(posteriorValidationMetrics.getSearchSpace()), BigDecimal.ROUND_HALF_DOWN);
-                nValidatedProbaTxt.setText(posteriorValidationPoint.specificPeptideSpaceSize.get(peptideKey) + "");
-                confidenceProbaTxt.setText(p.toEngineeringString());
-            } else {
-                nValidatedProbaTxt.setText("");
-                confidenceProbaTxt.setText("");
-            }
-
-            nValidatedProbaTxt.setEnabled(true);
-            confidenceProbaTxt.setEnabled(true);
-
-        } else if (psmMap.containsKey(groupList.getSelectedIndex())) {
-
-            int psmKey = psmMap.get(groupList.getSelectedIndex());
-
-            if (posteriorValidationMetrics != null) {
-                BigDecimal p = BigDecimal.ONE;
-                PosteriorValidationPoint posteriorValidationPoint = posteriorValidationMetrics.getResults(proteinScore);
-                p = p.divide(new BigDecimal(posteriorValidationMetrics.getSearchSpace()), BigDecimal.ROUND_HALF_DOWN);
-                nValidatedProbaTxt.setText(posteriorValidationPoint.specificPsmSpaceSize.get(psmKey) + "");
-                confidenceProbaTxt.setText(p.toEngineeringString());
-            } else {
-                nValidatedProbaTxt.setText("");
-                confidenceProbaTxt.setText("");
-            }
-
-            nValidatedProbaTxt.setEnabled(true);
-            confidenceProbaTxt.setEnabled(true);
-
+        if (lastThresholdType==0) {
+            confidenceInput.setText(lastThreshold + "");
+            fdrInput.setText("");
+            fnrInput.setText("");
+        } else if (lastThresholdType==1) {
+            confidenceInput.setText("");
+            fdrInput.setText(lastThreshold + "");
+            fnrInput.setText("");
         } else {
-            nValidatedProbaTxt.setEnabled(true);
-            confidenceProbaTxt.setEnabled(true);
-            nValidatedProbaTxt.setText("");
-            confidenceProbaTxt.setText("");
+            confidenceInput.setText("");
+            fdrInput.setText("");
+            fnrInput.setText(lastThreshold + "");
         }
-
         if (currentResults.isClassicalEstimators()) {
-            nTotalTxt.setEnabled(false);
-            fnrClassicalTxt.setEnabled(false);
             fdrCombo1.setSelectedIndex(0);
         } else {
-            nTotalTxt.setEnabled(true);
-            fnrClassicalTxt.setEnabled(true);
             fdrCombo1.setSelectedIndex(1);
-        }
-
-        if (currentResults.isClassicalValidation()) {
-            confidenceSlider.setEnabled(true);
-            fdrSlider1.setEnabled(true);
-        } else {
-            confidenceSlider.setEnabled(false);
-            fdrSlider1.setEnabled(false);
         }
         updateCharts();
     }
@@ -1776,18 +1579,27 @@ public class StatsPanel extends javax.swing.JPanel {
 
         // find the smallest x-axis value used
         double[] scores = targetDecoySeries.getScores();
-        double minScore = targetDecoySeries.getScores()[0];
+        double[] fdrs = targetDecoySeries.getProbaFDR();
+        double[] pep = targetDecoySeries.getPEP();
+        double minScore = scores[0];
+        double maxFDR = fdrs[fdrs.length-1];
 
-        // @TODO: check why the first element in the target decoy series is 0..?
-
-        int index = 1;
-
-        while (minScore == 0 && index < scores.length) {
-            minScore = targetDecoySeries.getScores()[index++];
+        for (double score : scores) {
+            if (score > 0) {
+                minScore = score;
+                break;
+            }
+        }
+        for (int index = fdrs.length-1 ; index >= 0 ; index--) {
+            if (pep[index] < 1) {
+                maxFDR = fdrs[index];
+                break;
+            }
         }
 
-        // set the lower range for the log axis
+        // set the lower range for the log axis and max for the fdr axis
         scoreAxis.setSmallestValue(minScore);
+        classicalAxis.setRange(0, maxFDR);
 
         confidencePanel.revalidate();
         confidencePanel.repaint();
@@ -1868,15 +1680,15 @@ public class StatsPanel extends javax.swing.JPanel {
     private void updateConfidenceChart() {
 
         DefaultXYDataset confidenceData = new DefaultXYDataset();
-        
+
         // get the x and y values for the plot
         double[] scores = targetDecoySeries.getScores();
         double[] confidences = targetDecoySeries.getConfidence();
-        
+
         // extend the dataset by two elements to be able to make the vertical drop
         double[][] confidenceSeries = new double[2][scores.length + 2];
         double[][] tempSeries = new double[2][scores.length + 2];
-        
+
         // get the location of the vertical red line
         double confidenceValue = confidenceMarker.getValue();
 
@@ -1894,15 +1706,15 @@ public class StatsPanel extends javax.swing.JPanel {
         if (index < scores.length) {
 
             double minorShift = 0.0000000001;
-            
+
             // add the special cases surrounding the red line
             confidenceSeries[0][index] = confidenceValue - minorShift;
             confidenceSeries[1][index] = confidences[index];
-            confidenceSeries[0][index+1] = confidenceValue;
-            confidenceSeries[1][index+1] = confidences[index];
-            confidenceSeries[0][index+2] = confidenceValue + minorShift;
-            confidenceSeries[1][index+2] = confidences[index];
-            
+            confidenceSeries[0][index + 1] = confidenceValue;
+            confidenceSeries[1][index + 1] = confidences[index];
+            confidenceSeries[0][index + 2] = confidenceValue + minorShift;
+            confidenceSeries[1][index + 2] = confidences[index];
+
             tempSeries[0][index] = confidenceValue - minorShift;
             tempSeries[1][index] = 100;
             index++;
@@ -1914,12 +1726,12 @@ public class StatsPanel extends javax.swing.JPanel {
             index++;
 
             // add the values after the red line
-            while (index < scores.length+2) {
-                
-                confidenceSeries[0][index] = scores[index-2];
-                confidenceSeries[1][index] = confidences[index-2];
-                
-                tempSeries[0][index] = scores[index-2];
+            while (index < scores.length + 2) {
+
+                confidenceSeries[0][index] = scores[index - 2];
+                confidenceSeries[1][index] = confidences[index - 2];
+
+                tempSeries[0][index] = scores[index - 2];
                 tempSeries[1][index] = 0;
                 index++;
             }
@@ -1942,7 +1754,7 @@ public class StatsPanel extends javax.swing.JPanel {
         JFreeChart confidenceChart = new JFreeChart(confidencePlot);
         ChartPanel chartPanel = new ChartPanel(confidenceChart);
         confidenceChart.setTitle("Confidence");
-        
+
         // remove the temp 'Area' dataset from the legend
         LegendItemCollection legendItemsOld = confidencePlot.getLegendItems();
         final LegendItemCollection legendItemsNew = new LegendItemCollection();
@@ -1950,7 +1762,9 @@ public class StatsPanel extends javax.swing.JPanel {
 
         LegendItemSource source = new LegendItemSource() {
 
-            LegendItemCollection lic = new LegendItemCollection(); {
+            LegendItemCollection lic = new LegendItemCollection();
+
+            {
                 lic.addAll(legendItemsNew);
             }
 
@@ -1961,10 +1775,10 @@ public class StatsPanel extends javax.swing.JPanel {
 
         // get the old legend frame
         BlockFrame tempFrame = confidenceChart.getLegend().getFrame();
-        
+
         // remove the old legend
         confidenceChart.removeLegend();
-        
+
         // add the new legend
         confidenceChart.addLegend(new LegendTitle(source));
         confidenceChart.getLegend().setFrame(tempFrame);
@@ -2170,14 +1984,15 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void clearScreen() {
         nTotalTxt.setText("");
-        nValidatedClassicalTxt.setText("");
-        nFPClassicalTxt.setText("");
-        nTPClassicalTxt.setText("");
-        confidenceClassicalTxt.setText("");
-        fdrClassicalTxt.setText("");
-        fnrClassicalTxt.setText("");
-        nValidatedProbaTxt.setText("");
-        confidenceProbaTxt.setText("");
+        nValidatedTxt.setText("");
+        nFPTxt.setText("");
+        nTPlTxt.setText("");
+        confidenceInput.setText("");
+        fdrInput.setText("");
+        fnrInput.setText("");
+        confidenceTxt.setText("");
+        fdrTxt.setText("");
+        fnrTxt.setText("");
         nMaxTxt.setText("");
         clearCharts();
     }
@@ -2234,53 +2049,6 @@ public class StatsPanel extends javax.swing.JPanel {
         PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
         miniShaker.proteinMapChanged();
         modifiedMaps.put(0, false);
-    }
-
-    public void probabilitiesChanged() {
-        posteriorValidationMetrics = null;
-        if (displayingResults) {
-            groupSelectionChanged();
-        }
-    }
-
-    /**
-     * Estimates the database and dataset possibilities.
-     */
-    private void estimatePossibilities() {
-
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.setIndeterminate(true);
-        progressDialog.doNothingOnClose();
-
-        // @TODO: reformat the code so that threading and progress dialog can be used
-
-//        new Thread(new Runnable() {
-//
-//            public void run() {
-//                progressDialog.setTitle("Estimating probabilities. Please Wait...");
-//                progressDialog.setVisible(true);
-//            }
-//        }, "ProgressDialog").start();
-//        
-//        new Thread("EstimationThread") {
-//
-//            @Override
-//            public void run() {
-
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-        PSMaps pSMaps = new PSMaps();
-        pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-        posteriorValidationMetrics.estimateDatasetPossibilities(peptideShakerGUI.getSearchParameters(),
-                peptideShakerGUI.getSequenceDataBase(), peptideShakerGUI.getIdentification(), pSMaps.getPeptideSpecificMap(), pSMaps.getPsmSpecificMap());
-        posteriorValidationMetrics.estimateDataBasePossibilities(peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getSequenceDataBase());
-
-        progressDialog.setVisible(false);
-        progressDialog.dispose();
-
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-//            }
-//        }.start();
     }
 
     /**

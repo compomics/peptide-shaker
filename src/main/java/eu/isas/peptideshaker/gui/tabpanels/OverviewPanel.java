@@ -2329,7 +2329,7 @@ public class OverviewPanel extends javax.swing.JPanel {
      */
     public void updateBubblePlot() {
 
-        if (peptideTable.getSelectedRow() != -1) {
+        if (peptideTable.getSelectedRow() != -1 && displaySpectrum) {
 
             ArrayList<String> selectedIndexes = new ArrayList<String>();
 
@@ -2598,7 +2598,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                             ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
                                     "Spectrum & Fragment Ions (" + currentPeptide.getSequence()
                                     + "   " + precursor.getCharge().toString() + "   "
-                                    + Util.roundDouble(precursor.getMz(), 4) + " Da)");
+                                    + Util.roundDouble(precursor.getMz(), 4) + " m/z)");
                         } else {
 
                             // get the current charges

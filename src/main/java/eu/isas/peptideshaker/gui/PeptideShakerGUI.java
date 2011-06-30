@@ -27,8 +27,8 @@ import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
-import eu.isas.peptideshaker.preferences.IdentificationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
 import java.awt.Component;
@@ -121,10 +121,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The replicate number
      */
     private int replicateNumber;
-    /**
-     * The identification preferences
-     */
-    private IdentificationPreferences identificationPreferences;
     /**
      * The annotation preferences
      */
@@ -324,7 +320,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         openJMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         saveMenuItem = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
         exportMenuItem = new javax.swing.JMenuItem();
+        graphicsJMenu = new javax.swing.JMenu();
+        spectrumOverviewJMenuItem = new javax.swing.JMenuItem();
+        bubblePlotJMenuItem = new javax.swing.JMenuItem();
+        spectrumSpectrumIdJMenuItem = new javax.swing.JMenuItem();
+        spectrumModificationsJMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
@@ -343,12 +345,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         separatorsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        exportMenu = new javax.swing.JMenu();
-        graphicsJMenu = new javax.swing.JMenu();
-        spectrumOverviewJMenuItem = new javax.swing.JMenuItem();
-        bubblePlotJMenuItem = new javax.swing.JMenuItem();
-        spectrumSpectrumIdJMenuItem = new javax.swing.JMenuItem();
-        spectrumModificationsJMenuItem = new javax.swing.JMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
         aboutJMenuItem = new javax.swing.JMenuItem();
@@ -473,14 +469,55 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         fileJMenu.add(saveMenuItem);
 
+        jMenu1.setText("Export");
+
         exportMenuItem.setMnemonic('E');
-        exportMenuItem.setText("Export");
+        exportMenuItem.setText("Id summaries");
         exportMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportMenuItemActionPerformed(evt);
             }
         });
-        fileJMenu.add(exportMenuItem);
+        jMenu1.add(exportMenuItem);
+
+        graphicsJMenu.setText("Graphics");
+        graphicsJMenu.setEnabled(false);
+
+        spectrumOverviewJMenuItem.setText("Spectrum");
+        spectrumOverviewJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                spectrumOverviewJMenuItemActionPerformed(evt);
+            }
+        });
+        graphicsJMenu.add(spectrumOverviewJMenuItem);
+
+        bubblePlotJMenuItem.setText("Bubble Plot");
+        bubblePlotJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bubblePlotJMenuItemActionPerformed(evt);
+            }
+        });
+        graphicsJMenu.add(bubblePlotJMenuItem);
+
+        spectrumSpectrumIdJMenuItem.setText("Spectrum");
+        spectrumSpectrumIdJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                spectrumSpectrumIdJMenuItemActionPerformed(evt);
+            }
+        });
+        graphicsJMenu.add(spectrumSpectrumIdJMenuItem);
+
+        spectrumModificationsJMenuItem.setText("Spectrum");
+        spectrumModificationsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                spectrumModificationsJMenuItemActionPerformed(evt);
+            }
+        });
+        graphicsJMenu.add(spectrumModificationsJMenuItem);
+
+        jMenu1.add(graphicsJMenu);
+
+        fileJMenu.add(jMenu1);
         fileJMenu.add(jSeparator1);
 
         exitJMenuItem.setMnemonic('x');
@@ -613,48 +650,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         viewJMenu.add(separatorsCheckBoxMenuItem);
 
         menuBar.add(viewJMenu);
-
-        exportMenu.setMnemonic('x');
-        exportMenu.setText("Export");
-
-        graphicsJMenu.setText("Graphics");
-        graphicsJMenu.setEnabled(false);
-
-        spectrumOverviewJMenuItem.setText("Spectrum");
-        spectrumOverviewJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                spectrumOverviewJMenuItemActionPerformed(evt);
-            }
-        });
-        graphicsJMenu.add(spectrumOverviewJMenuItem);
-
-        bubblePlotJMenuItem.setText("Bubble Plot");
-        bubblePlotJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bubblePlotJMenuItemActionPerformed(evt);
-            }
-        });
-        graphicsJMenu.add(bubblePlotJMenuItem);
-
-        spectrumSpectrumIdJMenuItem.setText("Spectrum");
-        spectrumSpectrumIdJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                spectrumSpectrumIdJMenuItemActionPerformed(evt);
-            }
-        });
-        graphicsJMenu.add(spectrumSpectrumIdJMenuItem);
-
-        spectrumModificationsJMenuItem.setText("Spectrum");
-        spectrumModificationsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                spectrumModificationsJMenuItemActionPerformed(evt);
-            }
-        });
-        graphicsJMenu.add(spectrumModificationsJMenuItem);
-
-        exportMenu.add(graphicsJMenu);
-
-        menuBar.add(exportMenu);
 
         helpMenu.setMnemonic('H');
         helpMenu.setText("Help");
@@ -797,7 +792,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     try {
                         // change the peptide shaker icon to a "waiting version"
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
+                        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences));
                         experimentIO.saveIdentifications(newFile, experiment);
 
                         progressDialog.setVisible(false);
@@ -1262,14 +1257,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         sequenceDataBase = proteomicAnalysis.getSequenceDataBase();
         spectrumCollection = proteomicAnalysis.getSpectrumCollection();
     }
-
-    /**
-     * Sets new identification preferences
-     * @param identificationPreferences the new identification preferences
-     */
-    public void setIdentificationPreferences(IdentificationPreferences identificationPreferences) {
-        this.identificationPreferences = identificationPreferences;
-    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutJMenuItem;
     private javax.swing.JPanel annotationJPanel;
@@ -1278,7 +1266,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem bubbleScaleJMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JMenuItem exitJMenuItem;
-    private javax.swing.JMenu exportMenu;
     private javax.swing.JMenuItem exportMenuItem;
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JMenu filterMenu;
@@ -1287,6 +1274,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenu graphicsJMenu;
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
@@ -1434,7 +1422,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * TODO: Not sure that this ought to be hard coded
      */
     private void setDefaultPreferences() {
-        identificationPreferences = new IdentificationPreferences(0.01, 0.01, 0.01, false, false);
         searchParameters = new SearchParameters();
         searchParameters.setEnzyme(enzymeFactory.getEnzyme("Trypsin"));
         searchParameters.setFragmentIonMZTolerance(0.5);
@@ -1528,7 +1515,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public void setSearchParameters(SearchParameters searchParameters) {
         this.searchParameters = searchParameters;
-        statsPanel.probabilitiesChanged();
     }
 
     /**
