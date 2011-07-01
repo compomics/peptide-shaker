@@ -20,7 +20,7 @@ public class SearchParameters implements Serializable {
     /**
      * The expected modifications as a map Name -> modification family. Modified peptides will be grouped according to this parameter.
      */
-    private HashMap<String, String> expectedModifications = new HashMap<String, String>();
+    private HashMap<String, String> modificationProfile = new HashMap<String, String>();
     /**
      * The enzyme used for digestion
      */
@@ -75,8 +75,8 @@ public class SearchParameters implements Serializable {
      * Returns the expected modifications map (Name -> modification family)
      * @return the expected modifications map (Name -> modification family)
      */
-    public HashMap<String, String> getExpectedModifications() {
-        return expectedModifications;
+    public HashMap<String, String> getModificationProfile() {
+        return modificationProfile;
     }
 
     /**
@@ -84,8 +84,15 @@ public class SearchParameters implements Serializable {
      * @param modificationName  The modification name
      * @param modificationFamily  The family of the modification. Modified peptides will be grouped according to this parameter.
      */
-    public void addExpectedModifications(String modificationName, String modificationFamily) {
-        expectedModifications.put(modificationName, modificationFamily);
+    public void addExpectedModification(String modificationName, String modificationFamily) {
+        modificationProfile.put(modificationName, modificationFamily);
+    }
+    
+    /**
+     * Clears the modification profile
+     */
+    public void clearModificationProfile() {
+        modificationProfile.clear();
     }
 
     /**

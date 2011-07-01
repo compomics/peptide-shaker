@@ -36,13 +36,17 @@ import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -101,6 +105,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * user modification file
      */
     private final String USER_MODIFICATIONS_FILE = "conf/peptideshaker_usermods.xml";
+    /**
+     * File containing the modification profile. By default default.psm in the conf folder.
+     */
+    private File profileFile = new File("conf/default.psm");
     /**
      * The compomics PTM factory
      */
@@ -1418,13 +1426,53 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
     /**
      * Set the default preferences.
-     * 
-     * TODO: Not sure that this ought to be hard coded
      */
     private void setDefaultPreferences() {
         searchParameters = new SearchParameters();
         searchParameters.setEnzyme(enzymeFactory.getEnzyme("Trypsin"));
         searchParameters.setFragmentIonMZTolerance(0.5);
+        loadModificationProfile(profileFile);
+    }
+    
+    /**
+     * Returns the modification profile file
+     * @return the modification profile file 
+     */
+    public File getModificationProfileFile() {
+        return profileFile;
+    }
+    
+    /**
+     * Sets the modification profile file
+     * @param profileFile the modification profile file
+     */
+    public void setModificationProfileFile(File profileFile) {
+        this.profileFile = profileFile;
+    }
+
+    /**
+     * Loads the modification profile from the given file
+     * @param aFile the given file
+     */
+    private void loadModificationProfile(File aFile) {
+        try {
+            FileInputStream fis = new FileInputStream(aFile);
+            ObjectInputStream in = new ObjectInputStream(fis);
+            HashMap<String, String> modificationProfile = (HashMap<String, String>) in.readObject();
+            in.close();
+            for (String modificationName : modificationProfile.keySet()) {
+                searchParameters.addExpectedModification(modificationName, modificationProfile.get(modificationName));
+            }
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+            searchParameters.clearModificationProfile();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
+            searchParameters.clearModificationProfile();
+        } catch (ClassNotFoundException e) {
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
+            searchParameters.clearModificationProfile();
+        }
     }
 
     /**

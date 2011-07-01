@@ -4,12 +4,17 @@ import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,6 +25,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -53,7 +59,15 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     /**
      * The selected ptms
      */
-    private ArrayList<String> modificationList;
+    private ArrayList<String> modificationList = new ArrayList<String>();
+    /**
+     * File containing the modification profile. By default default.psm in the conf folder.
+     */
+    private File profileFile;
+    /**
+     * A simple progress dialog.
+     */
+    private static ProgressDialogX progressDialog;
 
     /**
      * Create a new SearchPreferencesDialog.
@@ -62,12 +76,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     public SearchPreferencesDialog(PeptideShakerGUI parent) {
         super(parent, true);
-        this.searchParameters = parent.getSearchParameters();
-        modificationList = new ArrayList<String>(searchParameters.getExpectedModifications().keySet());
-        Collections.sort(modificationList);
         this.parent = parent;
+        this.searchParameters = parent.getSearchParameters();
+        this.profileFile = parent.getModificationProfileFile();
         loadModifications();
         initComponents();
+        modificationList = new ArrayList<String>(searchParameters.getModificationProfile().keySet());
+        Collections.sort(modificationList);
         enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         loadValues();
         updateModificationLists();
@@ -84,10 +99,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel2 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        fileTxt = new javax.swing.JTextField();
-        loadButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
@@ -106,47 +117,19 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         jScrollPane2 = new javax.swing.JScrollPane();
         availableModifications = new javax.swing.JList();
         jLabel6 = new javax.swing.JLabel();
+        profileTxt = new javax.swing.JTextField();
+        clearProfileBtn = new javax.swing.JButton();
+        saveAsProfileBtn = new javax.swing.JButton();
+        saveProfileBtn = new javax.swing.JButton();
+        loadProfileBtn = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel4 = new javax.swing.JLabel();
+        fileTxt = new javax.swing.JTextField();
+        loadButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Search Preferences");
         setResizable(false);
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Load Parameters from SearchGUI Parameter File"));
-
-        jLabel4.setText("SearchGUI File:");
-
-        fileTxt.setEditable(false);
-
-        loadButton.setText("Load");
-        loadButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadButtonActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(fileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(loadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(fileTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(loadButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -194,7 +177,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(missedCleavagesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(23, 23, 23))
         );
 
         jPanel5Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {enzymesCmb, fragmentIonToleranceTxt});
@@ -202,7 +185,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(enzymesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -215,7 +197,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Modifications"));
+        jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Modification Profile"));
 
         addModifications.setText("<<");
         addModifications.addActionListener(new java.awt.event.ActionListener() {
@@ -245,6 +227,36 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         jLabel6.setText("Available Modifications:");
 
+        profileTxt.setEditable(false);
+
+        clearProfileBtn.setText("Clear");
+        clearProfileBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearProfileBtnActionPerformed(evt);
+            }
+        });
+
+        saveAsProfileBtn.setText("Save As");
+        saveAsProfileBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveAsProfileBtnActionPerformed(evt);
+            }
+        });
+
+        saveProfileBtn.setText("Save");
+        saveProfileBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveProfileBtnActionPerformed(evt);
+            }
+        });
+
+        loadProfileBtn.setText("Load");
+        loadProfileBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadProfileBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -252,12 +264,24 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(removeModification)
-                    .addComponent(addModifications))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                                .addComponent(profileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(loadProfileBtn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(saveProfileBtn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(saveAsProfileBtn)
+                                .addGap(63, 63, 63))
+                            .addComponent(clearProfileBtn, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 379, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(removeModification)
+                            .addComponent(addModifications)))
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel6)
@@ -275,14 +299,60 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(removeModification))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE))
-                    .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 202, Short.MAX_VALUE)))
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(profileTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(saveAsProfileBtn)
+                                        .addComponent(saveProfileBtn)
+                                        .addComponent(loadProfileBtn))
+                                    .addComponent(clearProfileBtn)))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE))))
                 .addContainerGap())
+        );
+
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Load Parameters from SearchGUI Parameter File"));
+
+        jLabel4.setText("SearchGUI File:");
+
+        fileTxt.setEditable(false);
+
+        loadButton.setText("Load");
+        loadButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(fileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(loadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel4)
+                    .addComponent(fileTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(loadButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -292,15 +362,19 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(okButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jPanel5, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addContainerGap())
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                            .addComponent(okButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(cancelButton)
+                            .addContainerGap()))))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
@@ -312,9 +386,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okButton))
@@ -335,6 +409,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             searchParameters.setnMissedCleavages(new Integer(missedCleavagesTxt.getText()));
             searchParameters.setEnzyme(enzymeFactory.getEnzyme((String) enzymesCmb.getSelectedItem()));
             parent.setSearchParameters(searchParameters);
+            parent.setModificationProfileFile(profileFile);
             this.dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed
@@ -358,7 +433,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         for (Object selection : availableModifications.getSelectedValues()) {
             name = (String) selection;
-            searchParameters.addExpectedModifications(name, name);
+            searchParameters.addExpectedModification(name, name);
             modificationList.add(name);
         }
         updateModificationLists();
@@ -378,7 +453,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         for (String name : toRemove) {
             modificationList.remove(name);
-            searchParameters.getExpectedModifications().remove(name);
+            searchParameters.getModificationProfile().remove(name);
         }
 
         updateModificationLists();
@@ -406,10 +481,154 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_loadButtonActionPerformed
+
+    private void clearProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearProfileBtnActionPerformed
+        searchParameters.clearModificationProfile();
+        modificationList.clear();
+        expectedModificationsTable.revalidate();
+        expectedModificationsTable.repaint();
+        profileTxt.setText("");
+    }//GEN-LAST:event_clearProfileBtnActionPerformed
+
+    private void loadProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadProfileBtnActionPerformed
+        JFileChooser fc = new JFileChooser(parent.getLastSelectedFolder());
+        int result = fc.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            loadModificationProfile(file);
+        }
+    }//GEN-LAST:event_loadProfileBtnActionPerformed
+
+    private void saveAsProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsProfileBtnActionPerformed
+
+        final JFileChooser fileChooser = new JFileChooser(parent.getLastSelectedFolder());
+        fileChooser.setDialogTitle("Save As...");
+        fileChooser.setMultiSelectionEnabled(false);
+
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.getName().toLowerCase().endsWith("psm") || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "(Peptide Shake Modifications) *.psm";
+            }
+        };
+
+        fileChooser.setFileFilter(filter);
+
+        int returnVal = fileChooser.showSaveDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+            progressDialog = new ProgressDialogX(parent, parent, true);
+            progressDialog.doNothingOnClose();
+
+            final PeptideShakerGUI tempRef = parent; // needed due to threading issues
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Saving. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("SaveThread") {
+
+                @Override
+                public void run() {
+
+                    String selectedFile = fileChooser.getSelectedFile().getPath();
+
+                    if (!selectedFile.endsWith(".psm")) {
+                        selectedFile += ".psm";
+                    }
+
+                    File newFile = new File(selectedFile);
+                    int outcome = JOptionPane.YES_OPTION;
+
+                    if (newFile.exists()) {
+                        outcome = JOptionPane.showConfirmDialog(progressDialog,
+                                "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
+                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                    }
+
+                    if (outcome != JOptionPane.YES_OPTION) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        return;
+                    }
+
+                    try {
+
+                        FileOutputStream fos = new FileOutputStream(newFile);
+                        ObjectOutputStream oos = new ObjectOutputStream(fos);
+                        oos.writeObject(searchParameters.getModificationProfile());
+                        oos.close();
+                        profileFile = newFile;
+                        profileTxt.setText(newFile.getName().substring(0, newFile.getName().lastIndexOf(".")));
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                    } catch (Exception e) {
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        JOptionPane.showMessageDialog(tempRef, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+    }//GEN-LAST:event_saveAsProfileBtnActionPerformed
+
+    private void saveProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveProfileBtnActionPerformed
+
+        progressDialog = new ProgressDialogX(parent, parent, true);
+        progressDialog.doNothingOnClose();
+
+        final PeptideShakerGUI tempRef = parent; // needed due to threading issues
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Saving. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("SaveThread") {
+
+            @Override
+            public void run() {
+                try {
+                    FileOutputStream fos = new FileOutputStream(profileFile);
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+                    oos.writeObject(searchParameters.getModificationProfile());
+                    oos.close();
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                } catch (Exception e) {
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                    JOptionPane.showMessageDialog(tempRef, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }//GEN-LAST:event_saveProfileBtnActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addModifications;
     private javax.swing.JList availableModifications;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JButton clearProfileBtn;
     private javax.swing.JComboBox enzymesCmb;
     private javax.swing.JTable expectedModificationsTable;
     private javax.swing.JTextField fileTxt;
@@ -426,9 +645,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JButton loadButton;
+    private javax.swing.JButton loadProfileBtn;
     private javax.swing.JTextField missedCleavagesTxt;
     private javax.swing.JButton okButton;
+    private javax.swing.JTextField profileTxt;
     private javax.swing.JButton removeModification;
+    private javax.swing.JButton saveAsProfileBtn;
+    private javax.swing.JButton saveProfileBtn;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -479,8 +702,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         }
 
         for (String name : variableMods) {
-            searchParameters.addExpectedModifications(name, name);
-            modificationList.add(name);
+            if (!modificationList.contains(name)) {
+                searchParameters.addExpectedModification(name, name);
+                modificationList.add(name);
+            }
         }
 
         updateModificationLists();
@@ -502,7 +727,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         if (temp == null) {
             temp = "";
         }
-        
+
         missedCleavagesTxt.setText(temp.trim());
     }
 
@@ -550,6 +775,37 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         if (searchParameters.getParametersFile() != null) {
             fileTxt.setText(searchParameters.getParametersFile().getAbsolutePath());
         }
+    }
+
+    /**
+     * Loads the modification profile from the given file
+     * @param aFile the given file
+     */
+    private void loadModificationProfile(File aFile) {
+        try {
+            FileInputStream fis = new FileInputStream(aFile);
+            ObjectInputStream in = new ObjectInputStream(fis);
+            HashMap<String, String> modificationProfile = (HashMap<String, String>) in.readObject();
+            in.close();
+            for (String modificationName : modificationProfile.keySet()) {
+                searchParameters.addExpectedModification(modificationName, modificationProfile.get(modificationName));
+            }
+            modificationList = new ArrayList<String>(searchParameters.getModificationProfile().keySet());
+            Collections.sort(modificationList);
+            profileFile = aFile;
+            profileTxt.setText(aFile.getName().substring(0, aFile.getName().lastIndexOf(".")));
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+            searchParameters.clearModificationProfile();
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
+            searchParameters.clearModificationProfile();
+        } catch (ClassNotFoundException e) {
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
+            searchParameters.clearModificationProfile();
+        }
+        expectedModificationsTable.revalidate();
+        expectedModificationsTable.repaint();
     }
 
     /**
@@ -615,9 +871,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         @Override
         public String getColumnName(int column) {
             if (column == 0) {
-                return "Modification";
+                return "Modification Name";
             } else if (column == 1) {
-                return "Max Number";
+                return "Modification Family";
             } else {
                 return "";
             }
@@ -628,7 +884,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             if (column == 0) {
                 return modificationList.get(row);
             } else {
-                return searchParameters.getExpectedModifications().get(modificationList.get(row));
+                return searchParameters.getModificationProfile().get(modificationList.get(row));
             }
         }
 
@@ -636,7 +892,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         public void setValueAt(Object aValue, int row, int column) {
             try {
                 if (column == 1) {
-                    searchParameters.getExpectedModifications().put(modificationList.get(row), aValue.toString());
+                    searchParameters.getModificationProfile().put(modificationList.get(row), aValue.toString());
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for " + modificationList.get(row) + " occurrence.",

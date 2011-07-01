@@ -4,6 +4,7 @@ import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import eu.isas.peptideshaker.gui.ModificationDialog;
+import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
