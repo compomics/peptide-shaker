@@ -390,6 +390,7 @@
             <Component class="javax.swing.JTextField" name="searchTxt">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
+                <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="Default"/>
               </Properties>
             </Component>

@@ -330,6 +330,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         jLabel6.setText("Search Parameters:");
 
         searchTxt.setEditable(false);
+        searchTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         searchTxt.setText("Default");
 
         editSearchButton.setText("Edit");
