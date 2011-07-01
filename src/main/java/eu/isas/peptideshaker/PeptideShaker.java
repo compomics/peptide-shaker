@@ -468,7 +468,10 @@ public class PeptideShaker {
                 psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
                 probaScore = probaScore * psParameter.getPeptideProbability();
             }
-            psParameter = new PSParameter();
+            psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+            if (psParameter== null) {
+                psParameter = new PSParameter();
+            }
             psParameter.setProteinProbabilityScore(probaScore);
             proteinMatch.addUrParam(psParameter);
             proteinMap.addPoint(probaScore, proteinMatch.isDecoy());
