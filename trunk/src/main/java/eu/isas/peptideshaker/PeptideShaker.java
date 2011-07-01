@@ -12,7 +12,6 @@ import com.compomics.util.experiment.identification.identifications.Ms2Identific
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.protein.Enzyme;
 import eu.isas.peptideshaker.fdrestimation.InputMap;
 import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.ProteinMap;
@@ -165,6 +164,10 @@ public class PeptideShaker {
             waitingDialog.appendReport("An error occured while trying to resolve protein inference issues.");
             e.printStackTrace();
         }
+        proteinMap = new ProteinMap();
+        fillProteinMap();
+        proteinMap.estimateProbabilities();
+        attachProteinProbabilities();
 
         waitingDialog.appendReport("Validating identifications at 1% FDR.");
         fdrValidation();

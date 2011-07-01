@@ -1016,6 +1016,11 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+        if (fastaFile == null) {
+            JOptionPane.showMessageDialog(null, "Please verify the input for fasta file.",
+                    "Input Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
         return true;
     }
 
@@ -1124,7 +1129,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      */
     public void importSearchParameters(File searchGUIFile) {
 
-        SearchParameters searchParameters = new SearchParameters();
+        SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
 
         try {
             Properties props = IdentificationParametersReader.loadProperties(searchGUIFile);
@@ -1140,7 +1145,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             }
 
             for (String name : variableMods) {
-                searchParameters.addExpectedModifications(name, name);
+                if (!searchParameters.getModificationProfile().containsKey(name)) {
+                    searchParameters.addExpectedModification(name, name);
+                }
             }
 
             temp = props.getProperty(IdentificationParametersReader.ENZYME);
@@ -1270,9 +1277,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             } catch (Exception e) {
             }
         }
-        if (spectrumFiles.size()>0) {            
+        if (spectrumFiles.size() > 0) {
             spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
-        }        
+        }
 
         ArrayList<Sample> samples = new ArrayList(experiment.getSamples().values());
         if (samples.size() == 1) {
