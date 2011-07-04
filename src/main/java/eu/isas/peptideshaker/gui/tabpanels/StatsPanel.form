@@ -274,6 +274,9 @@
         </Component>
         <Component class="javax.swing.JTextField" name="fdrTxt">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="99" green="99" red="ff" type="rgb"/>
+            </Property>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="toolTipText" type="java.lang.String" value="False Discovery Rate"/>
@@ -281,6 +284,9 @@
         </Component>
         <Component class="javax.swing.JTextField" name="fnrTxt">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="99" green="ff" red="99" type="rgb"/>
+            </Property>
             <Property name="editable" type="boolean" value="false"/>
             <Property name="horizontalAlignment" type="int" value="0"/>
             <Property name="toolTipText" type="java.lang.String" value="False Negative Rate"/>
@@ -894,7 +900,6 @@
                                       <Component id="thresholdTypeCmb" linkSize="20" pref="110" max="32767" attributes="1"/>
                                       <Component id="validateButton" linkSize="20" alignment="0" pref="110" max="32767" attributes="1"/>
                                   </Group>
-                                  <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>

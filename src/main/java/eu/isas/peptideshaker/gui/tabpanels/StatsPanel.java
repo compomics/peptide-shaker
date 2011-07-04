@@ -118,6 +118,14 @@ public class StatsPanel extends javax.swing.JPanel {
      * The probabilistic FDR axis in the FDRs plot
      */
     private NumberAxis probaAxis;
+    /**
+     * The highlighting to use for FNR.
+     */
+    private Color fnrHighlighColor = new Color(0, 255, 0, 15);
+    /**
+     * The highlighting to use for FDR.
+     */
+    private Color fdrHighlighColor = new Color(255, 0, 0, 15);
 
     /**
      * Create a new StatsPanel.
@@ -129,6 +137,9 @@ public class StatsPanel extends javax.swing.JPanel {
         this.peptideShakerGUI = parent;
 
         initComponents();
+        
+        fdrTxt.setBackground(fdrHighlighColor);
+        fnrTxt.setBackground(fnrHighlighColor);
 
         // Initialize confidence plot
         scoreAxis = new LogAxis("Probabilistic Score");
@@ -353,10 +364,12 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel36.setText("FNR:");
         jLabel36.setToolTipText("False Negative Rate");
 
+        fdrTxt.setBackground(new java.awt.Color(255, 153, 153));
         fdrTxt.setEditable(false);
         fdrTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         fdrTxt.setToolTipText("False Discovery Rate");
 
+        fnrTxt.setBackground(new java.awt.Color(153, 255, 153));
         fnrTxt.setEditable(false);
         fnrTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         fnrTxt.setToolTipText("False Negative Rate");
@@ -868,8 +881,7 @@ public class StatsPanel extends javax.swing.JPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(thresholdTypeCmb, 0, 110, Short.MAX_VALUE)
-                                    .addComponent(validateButton, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addComponent(validateButton, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))))
                         .addContainerGap())
                     .addGroup(parametersJPanelLayout.createSequentialGroup()
                         .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1654,8 +1666,7 @@ public class StatsPanel extends javax.swing.JPanel {
         confidencePlot.setDataset(0, confidenceData);
 
         // setup the renderer
-        XYDifferenceRenderer confidenceRendrer = new XYDifferenceRenderer(
-                new Color(0, 255, 0, 15), new Color(255, 0, 0, 15), false);
+        XYDifferenceRenderer confidenceRendrer = new XYDifferenceRenderer(fnrHighlighColor, fdrHighlighColor, false);
         confidenceRendrer.setSeriesPaint(0, Color.blue);
         confidenceRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
         confidenceRendrer.setSeriesStroke(1, new BasicStroke(0));
