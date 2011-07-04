@@ -1018,7 +1018,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             return false;
         }
         if (fastaFile == null && !isPsFile) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for fasta file.",
+            JOptionPane.showMessageDialog(null, "Please verify the input for FASTA file.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
