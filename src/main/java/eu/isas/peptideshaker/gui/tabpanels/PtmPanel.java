@@ -133,6 +133,8 @@ public class PtmPanel extends javax.swing.JPanel {
 
         primarySelectionJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         secondarySelectionJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        
+        spectrumTabbedPane.setEnabledAt(0, false);
 
         setTableProperties();
 
