@@ -1454,8 +1454,8 @@ public class StatsPanel extends javax.swing.JPanel {
         try {
             Integer newWindow = new Integer(windowTxt.getText());
 
-            if (newWindow < 0 || newWindow > 100) {
-                JOptionPane.showMessageDialog(this, "Please verify the given window size. Interval: [0, 100].", "Window Error", JOptionPane.WARNING_MESSAGE);
+            if (newWindow < 0) {
+                JOptionPane.showMessageDialog(this, "Please verify the given window size. Has to be a positive value.", "Window Error", JOptionPane.WARNING_MESSAGE);
             } else {
                 currentTargetDecoyMap.setWindowSize(newWindow);
                 currentTargetDecoyMap.estimateProbabilities();
@@ -1484,6 +1484,7 @@ public class StatsPanel extends javax.swing.JPanel {
         if (currentTargetDecoyMap != null) {
             Double newWindow = Math.pow(10, sensitivitySlider1.getValue() / 50.0 - 1) * currentTargetDecoyMap.getnMax();
             windowTxt.setText(newWindow.intValue() + "");
+            sensitivitySlider2.setValue(sensitivitySlider1.getValue());
         }
     }//GEN-LAST:event_sensitivitySlider1MouseDragged
 
@@ -1505,8 +1506,8 @@ public class StatsPanel extends javax.swing.JPanel {
 
         Integer newWindow = new Integer(windowTxt.getText());
 
-        if (newWindow < 0 || newWindow > 100) {
-            JOptionPane.showMessageDialog(this, "Please verify the given window size. Interval: [0, 100].", "Window Error", JOptionPane.WARNING_MESSAGE);
+        if (newWindow < 0) {
+            JOptionPane.showMessageDialog(this, "Please verify the given window size. Has to be a positive value.", "Window Error", JOptionPane.WARNING_MESSAGE);
         } else {
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -2164,8 +2165,8 @@ public class StatsPanel extends javax.swing.JPanel {
         try {
             Integer newWindow = new Integer(windowTxt.getText());
 
-            if (newWindow < 0 || newWindow > 100) {
-                JOptionPane.showMessageDialog(this, "Please verify the given window size. Interval: [0, 100].", "Window Error", JOptionPane.WARNING_MESSAGE);
+            if (newWindow < 0) {
+                JOptionPane.showMessageDialog(this, "Please verify the given window size. Has to be a positive value.", "Window Error", JOptionPane.WARNING_MESSAGE);
             } else {
                 applyButton.setEnabled(true);
                 pepWindowApplied = false;
