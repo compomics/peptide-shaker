@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.net.URL;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import javax.swing.SwingUtilities;
 
 /**
  * A window used to display help text in html format.
@@ -21,6 +22,17 @@ public class HelpWindow extends javax.swing.JFrame {
      * @param fileName the name of the help file
      */
     public HelpWindow(java.awt.Frame parent, URL fileName) {
+        this(parent, fileName, null);
+    }
+
+    /**
+     * Creates a new HelpWindow object with a Frame as a parent.
+     *
+     * @param parent
+     * @param fileName the name of the help file
+     * @param reference a reference in the html file to scroll to, can be null
+     */
+    public HelpWindow(java.awt.Frame parent, URL fileName, String reference) {
 
         // only works for Java 1.6 and newer
         //this.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
@@ -56,6 +68,18 @@ public class HelpWindow extends javax.swing.JFrame {
         }
 
         textJEditorPane.setCaretPosition(0);
+
+        if (reference != null) {
+            final String marker = reference;
+
+            // invoke later to give time for components to update
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                    textJEditorPane.scrollToReference(marker);
+                }
+            });
+        }
 
         setSize(480, 500);
         setLocationRelativeTo(parent);
@@ -69,6 +93,17 @@ public class HelpWindow extends javax.swing.JFrame {
      * @param fileName the name of the help file
      */
     public HelpWindow(javax.swing.JDialog parent, URL fileName) {
+        this(parent, fileName, null);
+    }
+
+    /**
+     * Creates a new HelpWindow object with a Frame as a parent.
+     *
+     * @param parent
+     * @param fileName the name of the help file
+     * @param reference a reference in the html file to scroll to, can be null
+     */
+    public HelpWindow(javax.swing.JDialog parent, URL fileName, String reference) {
 
         // only works for Java 1.6 and newer
         //this.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
@@ -104,6 +139,18 @@ public class HelpWindow extends javax.swing.JFrame {
         }
 
         textJEditorPane.setCaretPosition(0);
+
+        if (reference != null) {
+            final String marker = reference;
+
+            // invoke later to give time for components to update
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                    textJEditorPane.scrollToReference(marker);
+                }
+            });
+        }
 
         setSize(480, 500);
         setLocationRelativeTo(parent);
