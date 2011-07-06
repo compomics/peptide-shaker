@@ -836,10 +836,13 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 new FileSelection(this, searchParametersFiles);
             }
 
-            for (File folder : folders) {
+            boolean importSuccessfull = true;
+            
+            for (int i=0; i<folders.size() && importSuccessfull; i++) {
+                File folder = folders.get(i);
                 File inputFile = new File(folder, SEARCHGUI_INPUT);
                 if (inputFile.exists()) {
-                    importMgfFiles(inputFile);
+                    importSuccessfull = importMgfFiles(inputFile);
                 }
             }
 
@@ -1202,9 +1205,13 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     searchParameters.setFastaFile(file);
                     fastaFileTxt.setText(file.getName());
                     fastaFile = file;
+                } else {
+                    JOptionPane.showMessageDialog(this, "FASTA file \'" + temp + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
                 }
             } catch (Exception e) {
                 // file not found: use manual input
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "FASTA file \'" + temp + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
             }
             searchTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
             peptideShakerGUI.setSearchParameters(searchParameters);
@@ -1217,10 +1224,15 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     }
 
     /**
-     * Imports the mgf files from a searchGUI file
+     * Imports the mgf files from a searchGUI file.
+     * 
      * @param searchGUIFile a searchGUI file
+     * @returns true of the mgf files were imported successfully
      */
-    private void importMgfFiles(File searchGUIFile) {
+    private boolean importMgfFiles(File searchGUIFile) {
+        
+        boolean success = true;
+        
         try {
             BufferedReader br = new BufferedReader(new FileReader(searchGUIFile));
             String line = null;
@@ -1239,16 +1251,26 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                                 && !names.contains(newFile.getName())) {
                             names.add(newFile.getName());
                             spectrumFiles.add(newFile);
+                        } 
+                        
+                        if (!newFile.exists() && !names.contains(newFile.getName())) {
+                            JOptionPane.showMessageDialog(this, "Input file \'" + newFile.getPath() 
+                                + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                            success = false;
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
             br.close();
         } catch (Exception e) {
-            // ignore exception
+            e.printStackTrace();
         }
+        
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
+        
+        return success;
     }
 
     /**
