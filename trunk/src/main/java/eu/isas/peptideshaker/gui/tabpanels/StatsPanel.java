@@ -45,6 +45,14 @@ import org.jfree.ui.RectangleEdge;
 public class StatsPanel extends javax.swing.JPanel {
 
     /**
+     * If true the data has been (re-)loaded with the current thresold setting.
+     */
+    private boolean dataValidated = true;
+    /**
+     * If true the data has been (re-loaded) with the current PEP window size.
+     */
+    private boolean pepWindowApplied = true;
+    /**
      * The main peptide shaker gui.
      */
     private PeptideShakerGUI peptideShakerGUI;
@@ -1134,9 +1142,14 @@ public class StatsPanel extends javax.swing.JPanel {
                 thresholdInputActionPerformed(evt);
             }
         });
+        thresholdInput.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                thresholdInputKeyReleased(evt);
+            }
+        });
 
         jLabel4.setFont(jLabel4.getFont().deriveFont((jLabel4.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel4.setText("Desired Threshold");
+        jLabel4.setText("Threshold Optimization");
 
         validateButton.setText("Validate");
         validateButton.setToolTipText("Reload the data with the current threshold setting");
@@ -1158,6 +1171,11 @@ public class StatsPanel extends javax.swing.JPanel {
         windowTxt.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 windowTxtActionPerformed(evt);
+            }
+        });
+        windowTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                windowTxtKeyReleased(evt);
             }
         });
 
@@ -1344,6 +1362,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 updateResults();
                 updateDisplayedComponents();
                 validateButton.setEnabled(true);
+                dataValidated = false;
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
         } catch (Exception e) {
@@ -1385,6 +1404,8 @@ public class StatsPanel extends javax.swing.JPanel {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         updateResults();
         updateDisplayedComponents();
+        validateButton.setEnabled(true);
+        dataValidated = false;
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_confidenceSliderMouseReleased
 
@@ -1405,7 +1426,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void fdrSlider1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrSlider1MouseDragged
         thresholdTypeCmb.setSelectedIndex(1);
-        thresholdInput.setText(fdrSlider1.getValue() + "");
+        thresholdInput.setText(fdrSlider1.getValue() + "");  
     }//GEN-LAST:event_fdrSlider1MouseDragged
 
     /**
@@ -1419,6 +1440,8 @@ public class StatsPanel extends javax.swing.JPanel {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         updateResults();
         updateDisplayedComponents();
+        validateButton.setEnabled(true);
+        dataValidated = false;
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_fdrSlider1MouseReleased
 
@@ -1443,6 +1466,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 modifiedMaps.put(groupList.getSelectedIndex(), true);
                 applyButton.setEnabled(true);
+                pepWindowApplied = false;
             }
         } catch (Exception e) {
             if (currentTargetDecoyMap != null) {
@@ -1496,6 +1520,7 @@ public class StatsPanel extends javax.swing.JPanel {
             }
 
             applyButton.setEnabled(false);
+            pepWindowApplied = true;
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
@@ -1636,6 +1661,8 @@ public class StatsPanel extends javax.swing.JPanel {
 
             // update the other tabs
             reloadData();
+            validateButton.setEnabled(false);
+            dataValidated = true;
         }
     }//GEN-LAST:event_validateButtonActionPerformed
 
@@ -2107,6 +2134,49 @@ public class StatsPanel extends javax.swing.JPanel {
     private void benefitPlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_benefitPlotHelpJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_benefitPlotHelpJButtonMouseEntered
+
+    /**
+     * Update the threshold setting.
+     * 
+     * @param evt 
+     */
+    private void thresholdInputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_thresholdInputKeyReleased
+         try {
+            lastThreshold = new Double(thresholdInput.getText());
+
+            if (lastThreshold < 0 || lastThreshold > 100) {
+                JOptionPane.showMessageDialog(this, "Please verify the given threshold. Interval: [0, 100].", "Threshold Error", JOptionPane.WARNING_MESSAGE);
+            } else {
+                validateButton.setEnabled(true);
+                dataValidated = false;
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Please verify the given threshold.", "Threshold Error", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_thresholdInputKeyReleased
+
+    /**
+     * Update the PEP window setting.
+     * 
+     * @param evt 
+     */
+    private void windowTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_windowTxtKeyReleased
+        try {
+            Integer newWindow = new Integer(windowTxt.getText());
+
+            if (newWindow < 0 || newWindow > 100) {
+                JOptionPane.showMessageDialog(this, "Please verify the given window size. Interval: [0, 100].", "Window Error", JOptionPane.WARNING_MESSAGE);
+            } else {
+                applyButton.setEnabled(true);
+                pepWindowApplied = false;
+            }
+        } catch (Exception e) {
+            if (currentTargetDecoyMap != null) {
+                JOptionPane.showMessageDialog(this, "Please verify the given window size.", "Window Error", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_windowTxtKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JPanel benefitCostChartPanel;
@@ -2325,7 +2395,10 @@ public class StatsPanel extends javax.swing.JPanel {
             clearScreen();
             return;
         }
+        
         applyButton.setEnabled(modifiedMaps.get(selectedGroup));
+        pepWindowApplied = !modifiedMaps.get(selectedGroup);
+        
         nMaxTxt.setText(currentTargetDecoyMap.getnMax() + "");
         targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
         updateDisplayedComponents();
@@ -2880,4 +2953,36 @@ public class StatsPanel extends javax.swing.JPanel {
     private void reloadData() {
         peptideShakerGUI.reloadData();
     }
+    
+    /**
+     * Returns true of the data has been reloaded with the currently selected threshold.
+     * 
+     * @return true of the data has been reloaded with the currently selected threshold
+     */
+    public boolean thresholdUpdated() {
+        return dataValidated;
+    }
+    
+    /**
+     * Returns true of the data has been reloaded with the currently selected PEP window.
+     * 
+     * @return true of the data has been reloaded with the currently selected PEP window
+     */
+    public boolean pepWindowApplied() {
+        return pepWindowApplied;
+    }
+    
+    /**
+     * Revalidates the data using the currently selected threshold.
+     */
+    public void revalidateData() {
+        validateButtonActionPerformed(null);
+    }
+    
+    /**
+     * Reloads the data using the currently selected PEP window.
+     */
+    public void applyPepWindow() {
+        applyButtonActionPerformed(null);
+    } 
 }
