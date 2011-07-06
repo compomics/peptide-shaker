@@ -7,6 +7,7 @@ import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoyResults;
 import eu.isas.peptideshaker.fdrestimation.TargetDecoySeries;
+import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.BasicStroke;
@@ -137,7 +138,7 @@ public class StatsPanel extends javax.swing.JPanel {
         this.peptideShakerGUI = parent;
 
         initComponents();
-        
+
         fdrTxt.setBackground(fdrHighlighColor);
         fnrTxt.setBackground(fnrHighlighColor);
 
@@ -239,38 +240,56 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel7 = new javax.swing.JLabel();
         jLabel23 = new javax.swing.JLabel();
         confidenceTxt = new javax.swing.JTextField();
+        totalTPHelpJButton = new javax.swing.JButton();
+        validatedHitsHelpJButton = new javax.swing.JButton();
+        falsePositivesHelpJButton = new javax.swing.JButton();
+        truePositivesHelpJButton = new javax.swing.JButton();
+        nMaxHelpJButton = new javax.swing.JButton();
+        confidenceHelpJButton = new javax.swing.JButton();
+        fdrHelpJButton = new javax.swing.JButton();
+        fnrHelpJButton = new javax.swing.JButton();
         optimizationJPanel = new javax.swing.JPanel();
         optimizationTabbedPane = new javax.swing.JTabbedPane();
         estimatorOptimizationTab = new javax.swing.JPanel();
         estimatorsPlotSplitPane = new javax.swing.JSplitPane();
         pepPanel = new javax.swing.JPanel();
-        pepChartPanel = new javax.swing.JPanel();
         jLabel30 = new javax.swing.JLabel();
         jLabel27 = new javax.swing.JLabel();
         sensitivitySlider1 = new javax.swing.JSlider();
+        pepPlotLayeredPane = new javax.swing.JLayeredPane();
+        pepChartPanel = new javax.swing.JPanel();
+        pepPlotHelpJButton = new javax.swing.JButton();
         fdrsPanel = new javax.swing.JPanel();
-        fdrsChartPanel = new javax.swing.JPanel();
         jLabel34 = new javax.swing.JLabel();
         sensitivitySlider2 = new javax.swing.JSlider();
         jLabel35 = new javax.swing.JLabel();
+        fdrsPlotLayeredPane = new javax.swing.JLayeredPane();
+        fdrsChartPanel = new javax.swing.JPanel();
+        fdrsPlotHelpJButton = new javax.swing.JButton();
         thresholdOptimizationTab = new javax.swing.JPanel();
         leftPlotSplitPane = new javax.swing.JSplitPane();
         confidencePanel = new javax.swing.JPanel();
-        confidenceChartPanel = new javax.swing.JPanel();
         jLabel25 = new javax.swing.JLabel();
         confidenceSlider = new javax.swing.JSlider();
         jLabel26 = new javax.swing.JLabel();
+        confidencePlotLayeredPane = new javax.swing.JLayeredPane();
+        confidenceChartPanel = new javax.swing.JPanel();
+        confidencePlotHelpJButton = new javax.swing.JButton();
         rightPlotSplitPane = new javax.swing.JSplitPane();
         fdrFnrPanel = new javax.swing.JPanel();
-        fdrFnrChartPanel = new javax.swing.JPanel();
         jLabel28 = new javax.swing.JLabel();
         fdrSlider1 = new javax.swing.JSlider();
         jLabel29 = new javax.swing.JLabel();
+        fdrPlotLayeredPane = new javax.swing.JLayeredPane();
+        fdrFnrChartPanel = new javax.swing.JPanel();
+        fdrPlotHelpJButton = new javax.swing.JButton();
         benefitCostPanel = new javax.swing.JPanel();
-        benefitCostChartPanel = new javax.swing.JPanel();
         jLabel32 = new javax.swing.JLabel();
         fdrSlider2 = new javax.swing.JSlider();
         jLabel33 = new javax.swing.JLabel();
+        benefitPlotLayeredPane = new javax.swing.JLayeredPane();
+        benefitCostChartPanel = new javax.swing.JPanel();
+        benefitPlotHelpJButton = new javax.swing.JButton();
         parametersJPanel = new javax.swing.JPanel();
         thresholdInput = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -282,6 +301,8 @@ public class StatsPanel extends javax.swing.JPanel {
         fdrCombo1 = new javax.swing.JComboBox();
         thresholdTypeCmb = new javax.swing.JComboBox();
         jLabel8 = new javax.swing.JLabel();
+        thresholdHelpJButton = new javax.swing.JButton();
+        pepHelpJButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -298,6 +319,7 @@ public class StatsPanel extends javax.swing.JPanel {
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
+        groupList.setEnabled(false);
         groupList.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
                 groupListMousePressed(evt);
@@ -333,6 +355,7 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel2.setText("Total TP:");
         jLabel2.setToolTipText("Total number of true positives");
 
+        nTotalTxt.setBackground(new java.awt.Color(245, 245, 245));
         nTotalTxt.setEditable(false);
         nTotalTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nTotalTxt.setToolTipText("Total number of true positives");
@@ -340,6 +363,7 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel1.setText("# Validated Hits:");
         jLabel1.setToolTipText("Number of validated hits");
 
+        nValidatedTxt.setBackground(new java.awt.Color(245, 245, 245));
         nValidatedTxt.setEditable(false);
         nValidatedTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nValidatedTxt.setToolTipText("Number of validated hits");
@@ -350,10 +374,12 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel10.setText("# TP:");
         jLabel10.setToolTipText("Number of true positives");
 
+        nTPlTxt.setBackground(new java.awt.Color(245, 245, 245));
         nTPlTxt.setEditable(false);
         nTPlTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nTPlTxt.setToolTipText("Number of true positives");
 
+        nFPTxt.setBackground(new java.awt.Color(245, 245, 245));
         nFPTxt.setEditable(false);
         nFPTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nFPTxt.setToolTipText("Number of false positives");
@@ -380,6 +406,7 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel20.setText("Nmax:");
         jLabel20.setToolTipText("Maximum number of target hits between two subsequent decoy hits");
 
+        nMaxTxt.setBackground(new java.awt.Color(245, 245, 245));
         nMaxTxt.setEditable(false);
         nMaxTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nMaxTxt.setToolTipText("Maximum number of target hits between two subsequent decoy hits");
@@ -390,9 +417,162 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel23.setText("Confidence:");
         jLabel23.setToolTipText("Minimum Confidence");
 
+        confidenceTxt.setBackground(new java.awt.Color(245, 245, 245));
         confidenceTxt.setEditable(false);
         confidenceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         confidenceTxt.setToolTipText("Minimum Confidence");
+
+        totalTPHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        totalTPHelpJButton.setToolTipText("Help");
+        totalTPHelpJButton.setBorder(null);
+        totalTPHelpJButton.setBorderPainted(false);
+        totalTPHelpJButton.setContentAreaFilled(false);
+        totalTPHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                totalTPHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                totalTPHelpJButtonMouseExited(evt);
+            }
+        });
+        totalTPHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                totalTPHelpJButtonActionPerformed(evt);
+            }
+        });
+
+        validatedHitsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        validatedHitsHelpJButton.setToolTipText("Help");
+        validatedHitsHelpJButton.setBorder(null);
+        validatedHitsHelpJButton.setBorderPainted(false);
+        validatedHitsHelpJButton.setContentAreaFilled(false);
+        validatedHitsHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                validatedHitsHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                validatedHitsHelpJButtonMouseExited(evt);
+            }
+        });
+        validatedHitsHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                validatedHitsHelpJButtonActionPerformed(evt);
+            }
+        });
+
+        falsePositivesHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        falsePositivesHelpJButton.setToolTipText("Help");
+        falsePositivesHelpJButton.setBorder(null);
+        falsePositivesHelpJButton.setBorderPainted(false);
+        falsePositivesHelpJButton.setContentAreaFilled(false);
+        falsePositivesHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                falsePositivesHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                falsePositivesHelpJButtonMouseExited(evt);
+            }
+        });
+        falsePositivesHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                falsePositivesHelpJButtonActionPerformed(evt);
+            }
+        });
+
+        truePositivesHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        truePositivesHelpJButton.setToolTipText("Help");
+        truePositivesHelpJButton.setBorder(null);
+        truePositivesHelpJButton.setBorderPainted(false);
+        truePositivesHelpJButton.setContentAreaFilled(false);
+        truePositivesHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                truePositivesHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                truePositivesHelpJButtonMouseExited(evt);
+            }
+        });
+        truePositivesHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                truePositivesHelpJButtonActionPerformed(evt);
+            }
+        });
+
+        nMaxHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        nMaxHelpJButton.setToolTipText("Help");
+        nMaxHelpJButton.setBorder(null);
+        nMaxHelpJButton.setBorderPainted(false);
+        nMaxHelpJButton.setContentAreaFilled(false);
+        nMaxHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                nMaxHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                nMaxHelpJButtonMouseExited(evt);
+            }
+        });
+        nMaxHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nMaxHelpJButtonActionPerformed(evt);
+            }
+        });
+
+        confidenceHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        confidenceHelpJButton.setToolTipText("Help");
+        confidenceHelpJButton.setBorder(null);
+        confidenceHelpJButton.setBorderPainted(false);
+        confidenceHelpJButton.setContentAreaFilled(false);
+        confidenceHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                confidenceHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                confidenceHelpJButtonMouseExited(evt);
+            }
+        });
+        confidenceHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                confidenceHelpJButtonActionPerformed(evt);
+            }
+        });
+
+        fdrHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        fdrHelpJButton.setToolTipText("Help");
+        fdrHelpJButton.setBorder(null);
+        fdrHelpJButton.setBorderPainted(false);
+        fdrHelpJButton.setContentAreaFilled(false);
+        fdrHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                fdrHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                fdrHelpJButtonMouseExited(evt);
+            }
+        });
+        fdrHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fdrHelpJButtonActionPerformed(evt);
+            }
+        });
+
+        fnrHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        fnrHelpJButton.setToolTipText("Help");
+        fnrHelpJButton.setBorder(null);
+        fnrHelpJButton.setBorderPainted(false);
+        fnrHelpJButton.setContentAreaFilled(false);
+        fnrHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                fnrHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                fnrHelpJButtonMouseExited(evt);
+            }
+        });
+        fnrHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fnrHelpJButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout idSummaryJPanelLayout = new javax.swing.GroupLayout(idSummaryJPanel);
         idSummaryJPanel.setLayout(idSummaryJPanelLayout);
@@ -400,7 +580,7 @@ public class StatsPanel extends javax.swing.JPanel {
             idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(idSummaryJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel6)
                     .addGroup(idSummaryJPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
@@ -410,58 +590,79 @@ public class StatsPanel extends javax.swing.JPanel {
                             .addComponent(jLabel1)
                             .addComponent(jLabel10))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(nTotalTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                            .addComponent(nValidatedTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                            .addComponent(nFPTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                            .addComponent(nTPlTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
+                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(nTPlTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                            .addComponent(nFPTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                            .addComponent(nValidatedTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                            .addComponent(nTotalTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel20)
-                            .addComponent(jLabel36)
+                            .addComponent(totalTPHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(validatedHitsHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(falsePositivesHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(truePositivesHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel13)
-                            .addComponent(jLabel23))
-                        .addGap(10, 10, 10)
-                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(fdrTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                            .addComponent(fnrTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                            .addComponent(nMaxTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                            .addComponent(confidenceTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)))
+                            .addComponent(jLabel23)
+                            .addComponent(jLabel36)
+                            .addComponent(jLabel20))
+                        .addGap(9, 9, 9)
+                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(fnrTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                                .addComponent(fdrTxt)
+                                .addComponent(confidenceTxt))
+                            .addComponent(nMaxTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fnrHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(confidenceHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nMaxHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fdrHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel7))
                 .addContainerGap())
         );
         idSummaryJPanelLayout.setVerticalGroup(
             idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, idSummaryJPanelLayout.createSequentialGroup()
+            .addGroup(idSummaryJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel2)
-                    .addComponent(nTotalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel20)
-                    .addComponent(nMaxTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nTotalTxt)
+                    .addComponent(totalTPHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                    .addComponent(nMaxTxt)
+                    .addComponent(nMaxHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                    .addComponent(jLabel20))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel1)
-                    .addComponent(nValidatedTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel23)
-                    .addComponent(confidenceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(nValidatedTxt)
+                    .addComponent(validatedHitsHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                    .addComponent(confidenceTxt)
+                    .addComponent(confidenceHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                    .addComponent(jLabel23))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
+                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(fdrHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                    .addComponent(fdrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(falsePositivesHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
                     .addComponent(nFPTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13)
-                    .addComponent(fdrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel13))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel10)
                     .addComponent(nTPlTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel36)
-                    .addComponent(fnrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(truePositivesHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                    .addComponent(fnrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fnrHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                    .addComponent(jLabel36))
+                .addContainerGap())
         );
 
         optimizationJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Optimization"));
@@ -479,13 +680,12 @@ public class StatsPanel extends javax.swing.JPanel {
 
         pepPanel.setOpaque(false);
 
-        pepChartPanel.setOpaque(false);
-        pepChartPanel.setLayout(new javax.swing.BoxLayout(pepChartPanel, javax.swing.BoxLayout.LINE_AXIS));
-
         jLabel30.setText("Sensitivity");
 
         jLabel27.setText("Robustness");
 
+        sensitivitySlider1.setToolTipText("" + sensitivitySlider1.getValue());
+        sensitivitySlider1.setEnabled(false);
         sensitivitySlider1.setOpaque(false);
         sensitivitySlider1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -498,30 +698,54 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
+        pepChartPanel.setOpaque(false);
+        pepChartPanel.setLayout(new javax.swing.BoxLayout(pepChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        pepChartPanel.setBounds(0, 90, 587, 168);
+        pepPlotLayeredPane.add(pepChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        pepPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        pepPlotHelpJButton.setToolTipText("Help");
+        pepPlotHelpJButton.setBorder(null);
+        pepPlotHelpJButton.setBorderPainted(false);
+        pepPlotHelpJButton.setContentAreaFilled(false);
+        pepPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                pepPlotHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                pepPlotHelpJButtonMouseExited(evt);
+            }
+        });
+        pepPlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pepPlotHelpJButtonActionPerformed(evt);
+            }
+        });
+        pepPlotHelpJButton.setBounds(560, 10, 17, 17);
+        pepPlotLayeredPane.add(pepPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
         javax.swing.GroupLayout pepPanelLayout = new javax.swing.GroupLayout(pepPanel);
         pepPanel.setLayout(pepPanelLayout);
         pepPanelLayout.setHorizontalGroup(
             pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pepPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pepPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(pepPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
                     .addGroup(pepPanelLayout.createSequentialGroup()
-                        .addComponent(pepChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
-                        .addGap(10, 10, 10))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pepPanelLayout.createSequentialGroup()
                         .addComponent(jLabel30)
                         .addGap(18, 18, 18)
-                        .addComponent(sensitivitySlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
+                        .addComponent(sensitivitySlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel27)
-                        .addContainerGap())))
+                        .addComponent(jLabel27)))
+                .addContainerGap())
         );
         pepPanelLayout.setVerticalGroup(
             pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pepPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pepChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(pepPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel30)
                     .addComponent(sensitivitySlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -533,11 +757,9 @@ public class StatsPanel extends javax.swing.JPanel {
 
         fdrsPanel.setOpaque(false);
 
-        fdrsChartPanel.setOpaque(false);
-        fdrsChartPanel.setLayout(new javax.swing.BoxLayout(fdrsChartPanel, javax.swing.BoxLayout.LINE_AXIS));
-
         jLabel34.setText("Sensitivity");
 
+        sensitivitySlider2.setEnabled(false);
         sensitivitySlider2.setOpaque(false);
         sensitivitySlider2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -552,6 +774,32 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel35.setText("Robustness");
 
+        fdrsChartPanel.setOpaque(false);
+        fdrsChartPanel.setLayout(new javax.swing.BoxLayout(fdrsChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        fdrsChartPanel.setBounds(0, 80, 588, 173);
+        fdrsPlotLayeredPane.add(fdrsChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        fdrsPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        fdrsPlotHelpJButton.setToolTipText("Help");
+        fdrsPlotHelpJButton.setBorder(null);
+        fdrsPlotHelpJButton.setBorderPainted(false);
+        fdrsPlotHelpJButton.setContentAreaFilled(false);
+        fdrsPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                fdrsPlotHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                fdrsPlotHelpJButtonMouseExited(evt);
+            }
+        });
+        fdrsPlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fdrsPlotHelpJButtonActionPerformed(evt);
+            }
+        });
+        fdrsPlotHelpJButton.setBounds(560, 10, 17, 17);
+        fdrsPlotLayeredPane.add(fdrsPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
         javax.swing.GroupLayout fdrsPanelLayout = new javax.swing.GroupLayout(fdrsPanel);
         fdrsPanel.setLayout(fdrsPanelLayout);
         fdrsPanelLayout.setHorizontalGroup(
@@ -559,11 +807,11 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(fdrsChartPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 583, Short.MAX_VALUE)
+                    .addComponent(fdrsPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
                     .addGroup(fdrsPanelLayout.createSequentialGroup()
                         .addComponent(jLabel34)
                         .addGap(18, 18, 18)
-                        .addComponent(sensitivitySlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE)
+                        .addComponent(sensitivitySlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel35)))
                 .addContainerGap())
@@ -572,8 +820,8 @@ public class StatsPanel extends javax.swing.JPanel {
             fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fdrsChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(fdrsPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(sensitivitySlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel35)
@@ -587,11 +835,11 @@ public class StatsPanel extends javax.swing.JPanel {
         estimatorOptimizationTab.setLayout(estimatorOptimizationTabLayout);
         estimatorOptimizationTabLayout.setHorizontalGroup(
             estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1203, Short.MAX_VALUE)
+            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1215, Short.MAX_VALUE)
         );
         estimatorOptimizationTabLayout.setVerticalGroup(
             estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
         );
 
         optimizationTabbedPane.addTab("Estimators", estimatorOptimizationTab);
@@ -606,12 +854,10 @@ public class StatsPanel extends javax.swing.JPanel {
 
         confidencePanel.setOpaque(false);
 
-        confidenceChartPanel.setOpaque(false);
-        confidenceChartPanel.setLayout(new javax.swing.BoxLayout(confidenceChartPanel, javax.swing.BoxLayout.LINE_AXIS));
-
         jLabel25.setText("Quantity");
 
         confidenceSlider.setToolTipText("Confidence Threshold");
+        confidenceSlider.setEnabled(false);
         confidenceSlider.setOpaque(false);
         confidenceSlider.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -626,6 +872,32 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel26.setText("Quality");
 
+        confidenceChartPanel.setOpaque(false);
+        confidenceChartPanel.setLayout(new javax.swing.BoxLayout(confidenceChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        confidenceChartPanel.setBounds(0, 0, 500, 460);
+        confidencePlotLayeredPane.add(confidenceChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        confidencePlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        confidencePlotHelpJButton.setToolTipText("Help");
+        confidencePlotHelpJButton.setBorder(null);
+        confidencePlotHelpJButton.setBorderPainted(false);
+        confidencePlotHelpJButton.setContentAreaFilled(false);
+        confidencePlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                confidencePlotHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                confidencePlotHelpJButtonMouseExited(evt);
+            }
+        });
+        confidencePlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                confidencePlotHelpJButtonActionPerformed(evt);
+            }
+        });
+        confidencePlotHelpJButton.setBounds(480, 0, 17, 17);
+        confidencePlotLayeredPane.add(confidencePlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
         javax.swing.GroupLayout confidencePanelLayout = new javax.swing.GroupLayout(confidencePanel);
         confidencePanel.setLayout(confidencePanelLayout);
         confidencePanelLayout.setHorizontalGroup(
@@ -633,11 +905,11 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(confidencePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(confidenceChartPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 497, Short.MAX_VALUE)
+                    .addComponent(confidencePlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
                     .addGroup(confidencePanelLayout.createSequentialGroup()
                         .addComponent(jLabel25)
                         .addGap(18, 18, 18)
-                        .addComponent(confidenceSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 385, Short.MAX_VALUE)
+                        .addComponent(confidenceSlider, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel26)))
                 .addContainerGap())
@@ -646,8 +918,8 @@ public class StatsPanel extends javax.swing.JPanel {
             confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, confidencePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(confidenceChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(confidencePlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(confidenceSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -666,12 +938,10 @@ public class StatsPanel extends javax.swing.JPanel {
 
         fdrFnrPanel.setOpaque(false);
 
-        fdrFnrChartPanel.setOpaque(false);
-        fdrFnrChartPanel.setLayout(new javax.swing.BoxLayout(fdrFnrChartPanel, javax.swing.BoxLayout.LINE_AXIS));
-
         jLabel28.setText("Quality");
 
         fdrSlider1.setToolTipText("FDR Threshold");
+        fdrSlider1.setEnabled(false);
         fdrSlider1.setOpaque(false);
         fdrSlider1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -686,6 +956,32 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel29.setText("Quantity");
 
+        fdrFnrChartPanel.setOpaque(false);
+        fdrFnrChartPanel.setLayout(new javax.swing.BoxLayout(fdrFnrChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        fdrFnrChartPanel.setBounds(0, 3, 320, 450);
+        fdrPlotLayeredPane.add(fdrFnrChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        fdrPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        fdrPlotHelpJButton.setToolTipText("Help");
+        fdrPlotHelpJButton.setBorder(null);
+        fdrPlotHelpJButton.setBorderPainted(false);
+        fdrPlotHelpJButton.setContentAreaFilled(false);
+        fdrPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                fdrPlotHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                fdrPlotHelpJButtonMouseExited(evt);
+            }
+        });
+        fdrPlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fdrPlotHelpJButtonActionPerformed(evt);
+            }
+        });
+        fdrPlotHelpJButton.setBounds(300, 10, 17, 17);
+        fdrPlotLayeredPane.add(fdrPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
         javax.swing.GroupLayout fdrFnrPanelLayout = new javax.swing.GroupLayout(fdrFnrPanel);
         fdrFnrPanel.setLayout(fdrFnrPanelLayout);
         fdrFnrPanelLayout.setHorizontalGroup(
@@ -693,11 +989,11 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrFnrPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(fdrFnrChartPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                    .addComponent(fdrPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
                     .addGroup(fdrFnrPanelLayout.createSequentialGroup()
                         .addComponent(jLabel28)
                         .addGap(18, 18, 18)
-                        .addComponent(fdrSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                        .addComponent(fdrSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel29)))
                 .addContainerGap())
@@ -706,12 +1002,13 @@ public class StatsPanel extends javax.swing.JPanel {
             fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrFnrPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fdrFnrChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(fdrPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(fdrSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel29)
-                    .addComponent(jLabel28))
+                    .addGroup(fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(jLabel29)
+                        .addComponent(jLabel28)))
                 .addContainerGap())
         );
 
@@ -719,12 +1016,10 @@ public class StatsPanel extends javax.swing.JPanel {
 
         benefitCostPanel.setOpaque(false);
 
-        benefitCostChartPanel.setOpaque(false);
-        benefitCostChartPanel.setLayout(new javax.swing.BoxLayout(benefitCostChartPanel, javax.swing.BoxLayout.LINE_AXIS));
-
         jLabel32.setText("Quality");
 
         fdrSlider2.setToolTipText("FDR Threshold");
+        fdrSlider2.setEnabled(false);
         fdrSlider2.setOpaque(false);
         fdrSlider2.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
@@ -739,6 +1034,32 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel33.setText("Quantity");
 
+        benefitCostChartPanel.setOpaque(false);
+        benefitCostChartPanel.setLayout(new javax.swing.BoxLayout(benefitCostChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        benefitCostChartPanel.setBounds(0, -4, 326, 450);
+        benefitPlotLayeredPane.add(benefitCostChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        benefitPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        benefitPlotHelpJButton.setToolTipText("Help");
+        benefitPlotHelpJButton.setBorder(null);
+        benefitPlotHelpJButton.setBorderPainted(false);
+        benefitPlotHelpJButton.setContentAreaFilled(false);
+        benefitPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                benefitPlotHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                benefitPlotHelpJButtonMouseExited(evt);
+            }
+        });
+        benefitPlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                benefitPlotHelpJButtonActionPerformed(evt);
+            }
+        });
+        benefitPlotHelpJButton.setBounds(300, 10, 17, 17);
+        benefitPlotLayeredPane.add(benefitPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
         javax.swing.GroupLayout benefitCostPanelLayout = new javax.swing.GroupLayout(benefitCostPanel);
         benefitCostPanel.setLayout(benefitCostPanelLayout);
         benefitCostPanelLayout.setHorizontalGroup(
@@ -746,11 +1067,11 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, benefitCostPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(benefitCostChartPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
+                    .addComponent(benefitPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
                     .addGroup(benefitCostPanelLayout.createSequentialGroup()
                         .addComponent(jLabel32)
                         .addGap(18, 18, 18)
-                        .addComponent(fdrSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
+                        .addComponent(fdrSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel33)))
                 .addContainerGap())
@@ -759,8 +1080,8 @@ public class StatsPanel extends javax.swing.JPanel {
             benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, benefitCostPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(benefitCostChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 292, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(benefitPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel32)
                     .addComponent(fdrSlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -776,11 +1097,11 @@ public class StatsPanel extends javax.swing.JPanel {
         thresholdOptimizationTab.setLayout(thresholdOptimizationTabLayout);
         thresholdOptimizationTabLayout.setHorizontalGroup(
             thresholdOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1203, Short.MAX_VALUE)
+            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1215, Short.MAX_VALUE)
         );
         thresholdOptimizationTabLayout.setVerticalGroup(
             thresholdOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 348, Short.MAX_VALUE)
+            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
         );
 
         optimizationTabbedPane.addTab("Thresholds", thresholdOptimizationTab);
@@ -793,14 +1114,13 @@ public class StatsPanel extends javax.swing.JPanel {
             optimizationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optimizationJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(optimizationTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1208, Short.MAX_VALUE)
+                .addComponent(optimizationTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1220, Short.MAX_VALUE)
                 .addContainerGap())
         );
         optimizationJPanelLayout.setVerticalGroup(
             optimizationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(optimizationJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(optimizationTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 376, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optimizationJPanelLayout.createSequentialGroup()
+                .addComponent(optimizationTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -819,7 +1139,8 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel4.setText("Desired Threshold");
 
         validateButton.setText("Validate");
-        validateButton.setToolTipText("Reload the data with the current validation settings");
+        validateButton.setToolTipText("Reload the data with the current threshold setting");
+        validateButton.setEnabled(false);
         validateButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 validateButtonActionPerformed(evt);
@@ -841,7 +1162,7 @@ public class StatsPanel extends javax.swing.JPanel {
         });
 
         applyButton.setText("Apply");
-        applyButton.setToolTipText("Reload the data with the current validation settings");
+        applyButton.setToolTipText("Reload the data with the current PEP window");
         applyButton.setEnabled(false);
         applyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -863,6 +1184,44 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel8.setText("Threshold (%):");
         jLabel8.setToolTipText("Threshold in percent");
 
+        thresholdHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        thresholdHelpJButton.setToolTipText("Help");
+        thresholdHelpJButton.setBorder(null);
+        thresholdHelpJButton.setBorderPainted(false);
+        thresholdHelpJButton.setContentAreaFilled(false);
+        thresholdHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                thresholdHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                thresholdHelpJButtonMouseExited(evt);
+            }
+        });
+        thresholdHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                thresholdHelpJButtonActionPerformed(evt);
+            }
+        });
+
+        pepHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        pepHelpJButton.setToolTipText("Help");
+        pepHelpJButton.setBorder(null);
+        pepHelpJButton.setBorderPainted(false);
+        pepHelpJButton.setContentAreaFilled(false);
+        pepHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                pepHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                pepHelpJButtonMouseExited(evt);
+            }
+        });
+        pepHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pepHelpJButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout parametersJPanelLayout = new javax.swing.GroupLayout(parametersJPanel);
         parametersJPanel.setLayout(parametersJPanelLayout);
         parametersJPanelLayout.setHorizontalGroup(
@@ -870,58 +1229,61 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(parametersJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel4)
                     .addGroup(parametersJPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(thresholdInput, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parametersJPanelLayout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jLabel8)
-                                .addGap(18, 18, 18)
-                                .addComponent(thresholdInput, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(thresholdTypeCmb, 0, 110, Short.MAX_VALUE)
-                                    .addComponent(validateButton, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))))
-                        .addContainerGap())
+                            .addComponent(thresholdTypeCmb, 0, 110, Short.MAX_VALUE)
+                            .addComponent(validateButton, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(thresholdHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel5)
                     .addGroup(parametersJPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel22)
+                        .addGap(18, 18, 18)
+                        .addComponent(windowTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parametersJPanelLayout.createSequentialGroup()
-                                .addGap(10, 10, 10)
-                                .addComponent(jLabel22)
-                                .addGap(26, 26, 26)
-                                .addComponent(windowTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(applyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(fdrCombo1, 0, 110, Short.MAX_VALUE))))
-                        .addContainerGap(219, Short.MAX_VALUE))))
+                            .addComponent(applyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(fdrCombo1, 0, 110, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(pepHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(199, Short.MAX_VALUE))
         );
 
-        parametersJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {applyButton, fdrCombo1, thresholdInput, thresholdTypeCmb, validateButton, windowTxt});
+        parametersJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {applyButton, fdrCombo1, thresholdTypeCmb, validateButton});
 
         parametersJPanelLayout.setVerticalGroup(
             parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(parametersJPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parametersJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(thresholdInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(thresholdTypeCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(thresholdHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(thresholdTypeCmb, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(thresholdInput, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                        .addComponent(jLabel8)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(validateButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(11, 11, 11)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel22)
-                    .addComponent(windowTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fdrCombo1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(windowTxt)
+                        .addComponent(jLabel22))
+                    .addComponent(pepHelpJButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                    .addComponent(fdrCombo1, javax.swing.GroupLayout.Alignment.LEADING))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(applyButton)
-                .addContainerGap(12, Short.MAX_VALUE))
+                .addGap(34, 34, 34))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -945,9 +1307,9 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(parametersJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(groupListJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(idSummaryJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(groupListJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(parametersJPanel, 0, 199, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(optimizationJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -960,7 +1322,9 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void groupListMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_groupListMousePressed
-        groupSelectionChanged();
+        if (peptideShakerGUI.getIdentification() != null) {
+            groupSelectionChanged();
+        }
     }//GEN-LAST:event_groupListMousePressed
 
     /**
@@ -979,6 +1343,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                 updateResults();
                 updateDisplayedComponents();
+                validateButton.setEnabled(true);
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
         } catch (Exception e) {
@@ -1007,7 +1372,6 @@ public class StatsPanel extends javax.swing.JPanel {
             updateDisplayedComponents();
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
-
     }//GEN-LAST:event_fdrCombo1ActionPerformed
 
     /**
@@ -1081,7 +1445,9 @@ public class StatsPanel extends javax.swing.JPanel {
                 applyButton.setEnabled(true);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Please verify the given window size.", "Window Error", JOptionPane.WARNING_MESSAGE);
+            if (currentTargetDecoyMap != null) {
+                JOptionPane.showMessageDialog(this, "Please verify the given window size.", "Window Error", JOptionPane.WARNING_MESSAGE);
+            }
         }
     }//GEN-LAST:event_windowTxtActionPerformed
 
@@ -1091,8 +1457,10 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void sensitivitySlider1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sensitivitySlider1MouseDragged
-        Double newWindow = Math.pow(10, sensitivitySlider1.getValue() / 50.0 - 1) * currentTargetDecoyMap.getnMax();
-        windowTxt.setText(newWindow.intValue() + "");
+        if (currentTargetDecoyMap != null) {
+            Double newWindow = Math.pow(10, sensitivitySlider1.getValue() / 50.0 - 1) * currentTargetDecoyMap.getnMax();
+            windowTxt.setText(newWindow.intValue() + "");
+        }
     }//GEN-LAST:event_sensitivitySlider1MouseDragged
 
     /**
@@ -1163,6 +1531,75 @@ public class StatsPanel extends javax.swing.JPanel {
             public void run() {
                 optimizationJPanel.revalidate();
                 optimizationJPanel.repaint();
+            }
+        });
+
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                // move the help icon
+                confidencePlotLayeredPane.getComponent(0).setBounds(
+                        confidencePlotLayeredPane.getWidth() - confidencePlotLayeredPane.getComponent(0).getWidth() - 10,
+                        confidencePlotLayeredPane.getComponent(0).getHeight() / 2 - 2,
+                        confidencePlotLayeredPane.getComponent(0).getWidth(),
+                        confidencePlotLayeredPane.getComponent(0).getHeight());
+
+                // resize the plot area
+                confidencePlotLayeredPane.getComponent(1).setBounds(0, 0, confidencePlotLayeredPane.getWidth(), confidencePlotLayeredPane.getHeight());
+                confidencePlotLayeredPane.revalidate();
+                confidencePlotLayeredPane.repaint();
+
+
+                // move the help icon
+                fdrPlotLayeredPane.getComponent(0).setBounds(
+                        fdrPlotLayeredPane.getWidth() - fdrPlotLayeredPane.getComponent(0).getWidth() - 10,
+                        fdrPlotLayeredPane.getComponent(0).getHeight() / 2 - 2,
+                        fdrPlotLayeredPane.getComponent(0).getWidth(),
+                        fdrPlotLayeredPane.getComponent(0).getHeight());
+
+                // resize the plot area
+                fdrPlotLayeredPane.getComponent(1).setBounds(0, 0, fdrPlotLayeredPane.getWidth(), fdrPlotLayeredPane.getHeight());
+                fdrPlotLayeredPane.revalidate();
+                fdrPlotLayeredPane.repaint();
+
+
+                // move the help icon
+                benefitPlotLayeredPane.getComponent(0).setBounds(
+                        benefitPlotLayeredPane.getWidth() - benefitPlotLayeredPane.getComponent(0).getWidth() - 10,
+                        benefitPlotLayeredPane.getComponent(0).getHeight() / 2 - 2,
+                        benefitPlotLayeredPane.getComponent(0).getWidth(),
+                        benefitPlotLayeredPane.getComponent(0).getHeight());
+
+                // resize the plot area
+                benefitPlotLayeredPane.getComponent(1).setBounds(0, 0, benefitPlotLayeredPane.getWidth(), benefitPlotLayeredPane.getHeight());
+                benefitPlotLayeredPane.revalidate();
+                benefitPlotLayeredPane.repaint();
+
+
+                // move the help icon
+                pepPlotLayeredPane.getComponent(0).setBounds(
+                        pepPlotLayeredPane.getWidth() - pepPlotLayeredPane.getComponent(0).getWidth() - 10,
+                        pepPlotLayeredPane.getComponent(0).getHeight() / 2 - 2,
+                        pepPlotLayeredPane.getComponent(0).getWidth(),
+                        pepPlotLayeredPane.getComponent(0).getHeight());
+
+                // resize the plot area
+                pepPlotLayeredPane.getComponent(1).setBounds(0, 0, pepPlotLayeredPane.getWidth(), pepPlotLayeredPane.getHeight());
+                pepPlotLayeredPane.revalidate();
+                pepPlotLayeredPane.repaint();
+
+
+                // move the help icon
+                fdrsPlotLayeredPane.getComponent(0).setBounds(
+                        fdrsPlotLayeredPane.getWidth() - fdrsPlotLayeredPane.getComponent(0).getWidth() - 10,
+                        fdrsPlotLayeredPane.getComponent(0).getHeight() / 2 - 2,
+                        fdrsPlotLayeredPane.getComponent(0).getWidth(),
+                        fdrsPlotLayeredPane.getComponent(0).getHeight());
+
+                // resize the plot area
+                fdrsPlotLayeredPane.getComponent(1).setBounds(0, 0, fdrsPlotLayeredPane.getWidth(), fdrsPlotLayeredPane.getHeight());
+                fdrsPlotLayeredPane.revalidate();
+                fdrsPlotLayeredPane.repaint();
             }
         });
     }//GEN-LAST:event_formComponentResized
@@ -1240,29 +1677,466 @@ public class StatsPanel extends javax.swing.JPanel {
         sensitivitySlider1.setValue(sensitivitySlider2.getValue());
         sensitivitySlider1MouseDragged(null);
     }//GEN-LAST:event_sensitivitySlider2MouseDragged
+
     /**
-     * Updates the plots.
-     *
-     * @param evt
+     * Opens a help dialog.
+     * 
+     * @param evt 
      */
+    private void thresholdHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thresholdHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_thresholdHelpJButtonActionPerformed
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void pepHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pepHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_pepHelpJButtonActionPerformed
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void totalTPHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalTPHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_totalTPHelpJButtonActionPerformed
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void validatedHitsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validatedHitsHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_validatedHitsHelpJButtonActionPerformed
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void falsePositivesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_falsePositivesHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_falsePositivesHelpJButtonActionPerformed
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void truePositivesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_truePositivesHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_truePositivesHelpJButtonActionPerformed
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void nMaxHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nMaxHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_nMaxHelpJButtonActionPerformed
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void confidenceHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confidenceHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_confidenceHelpJButtonActionPerformed
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void fdrHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_fdrHelpJButtonActionPerformed
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void fnrHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fnrHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_fnrHelpJButtonActionPerformed
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void benefitPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_benefitPlotHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_benefitPlotHelpJButtonActionPerformed
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void fdrPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrPlotHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_fdrPlotHelpJButtonActionPerformed
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void confidencePlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confidencePlotHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_confidencePlotHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void totalTPHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_totalTPHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_totalTPHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void totalTPHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_totalTPHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_totalTPHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void confidencePlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidencePlotHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_confidencePlotHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void confidencePlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidencePlotHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_confidencePlotHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void pepPlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pepPlotHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_pepPlotHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void pepPlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pepPlotHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_pepPlotHelpJButtonMouseExited
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void pepPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pepPlotHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_pepPlotHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void fdrsPlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrsPlotHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_fdrsPlotHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void fdrsPlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrsPlotHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_fdrsPlotHelpJButtonMouseExited
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void fdrsPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrsPlotHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_fdrsPlotHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void validatedHitsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validatedHitsHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_validatedHitsHelpJButtonMouseEntered
+
+    private void validatedHitsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validatedHitsHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_validatedHitsHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void falsePositivesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_falsePositivesHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_falsePositivesHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void falsePositivesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_falsePositivesHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_falsePositivesHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void truePositivesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_truePositivesHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_truePositivesHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void truePositivesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_truePositivesHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_truePositivesHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void nMaxHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nMaxHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_nMaxHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void nMaxHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nMaxHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_nMaxHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void confidenceHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidenceHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_confidenceHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void confidenceHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidenceHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_confidenceHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void fdrHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_fdrHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void fdrHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_fdrHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void fnrHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fnrHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_fnrHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void fnrHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fnrHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_fnrHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void thresholdHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_thresholdHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_thresholdHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void thresholdHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_thresholdHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_thresholdHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void pepHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pepHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_pepHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void pepHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pepHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_pepHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void fdrPlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrPlotHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_fdrPlotHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void fdrPlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrPlotHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_fdrPlotHelpJButtonMouseExited
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void benefitPlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_benefitPlotHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_benefitPlotHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void benefitPlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_benefitPlotHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_benefitPlotHelpJButtonMouseEntered
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JPanel benefitCostChartPanel;
     private javax.swing.JPanel benefitCostPanel;
+    private javax.swing.JButton benefitPlotHelpJButton;
+    private javax.swing.JLayeredPane benefitPlotLayeredPane;
     private javax.swing.JPanel confidenceChartPanel;
+    private javax.swing.JButton confidenceHelpJButton;
     private javax.swing.JPanel confidencePanel;
+    private javax.swing.JButton confidencePlotHelpJButton;
+    private javax.swing.JLayeredPane confidencePlotLayeredPane;
     private javax.swing.JSlider confidenceSlider;
     private javax.swing.JTextField confidenceTxt;
     private javax.swing.JPanel estimatorOptimizationTab;
     private javax.swing.JSplitPane estimatorsPlotSplitPane;
+    private javax.swing.JButton falsePositivesHelpJButton;
     private javax.swing.JComboBox fdrCombo1;
     private javax.swing.JPanel fdrFnrChartPanel;
     private javax.swing.JPanel fdrFnrPanel;
+    private javax.swing.JButton fdrHelpJButton;
+    private javax.swing.JButton fdrPlotHelpJButton;
+    private javax.swing.JLayeredPane fdrPlotLayeredPane;
     private javax.swing.JSlider fdrSlider1;
     private javax.swing.JSlider fdrSlider2;
     private javax.swing.JTextField fdrTxt;
     private javax.swing.JPanel fdrsChartPanel;
     private javax.swing.JPanel fdrsPanel;
+    private javax.swing.JButton fdrsPlotHelpJButton;
+    private javax.swing.JLayeredPane fdrsPlotLayeredPane;
+    private javax.swing.JButton fnrHelpJButton;
     private javax.swing.JTextField fnrTxt;
     private javax.swing.JList groupList;
     private javax.swing.JPanel groupListJPanel;
@@ -1294,6 +2168,7 @@ public class StatsPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel8;
     private javax.swing.JSplitPane leftPlotSplitPane;
     private javax.swing.JTextField nFPTxt;
+    private javax.swing.JButton nMaxHelpJButton;
     private javax.swing.JTextField nMaxTxt;
     private javax.swing.JTextField nTPlTxt;
     private javax.swing.JTextField nTotalTxt;
@@ -1302,14 +2177,21 @@ public class StatsPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane optimizationTabbedPane;
     private javax.swing.JPanel parametersJPanel;
     private javax.swing.JPanel pepChartPanel;
+    private javax.swing.JButton pepHelpJButton;
     private javax.swing.JPanel pepPanel;
+    private javax.swing.JButton pepPlotHelpJButton;
+    private javax.swing.JLayeredPane pepPlotLayeredPane;
     private javax.swing.JSplitPane rightPlotSplitPane;
     private javax.swing.JSlider sensitivitySlider1;
     private javax.swing.JSlider sensitivitySlider2;
+    private javax.swing.JButton thresholdHelpJButton;
     private javax.swing.JTextField thresholdInput;
     private javax.swing.JPanel thresholdOptimizationTab;
     private javax.swing.JComboBox thresholdTypeCmb;
+    private javax.swing.JButton totalTPHelpJButton;
+    private javax.swing.JButton truePositivesHelpJButton;
     private javax.swing.JButton validateButton;
+    private javax.swing.JButton validatedHitsHelpJButton;
     private javax.swing.JTextField windowTxt;
     // End of variables declaration//GEN-END:variables
 
@@ -1317,6 +2199,13 @@ public class StatsPanel extends javax.swing.JPanel {
      * This method displays results on the panel
      */
     public void displayResults() {
+
+        groupList.setEnabled(true);
+        confidenceSlider.setEnabled(true);
+        fdrSlider1.setEnabled(true);
+        fdrSlider2.setEnabled(true);
+        sensitivitySlider1.setEnabled(true);
+        sensitivitySlider2.setEnabled(true);
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         PSMaps pSMaps = new PSMaps();
@@ -1447,17 +2336,20 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void updateResults() {
 
-        TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
+        if (currentTargetDecoyMap != null) {
 
-        if (lastThresholdType == 0) {
-            currentResults.setConfidenceLimit(lastThreshold);
-            targetDecoySeries.getConfidenceResults(currentResults);
-        } else if (lastThresholdType == 1) {
-            currentResults.setFdrLimit(lastThreshold);
-            targetDecoySeries.getFDRResults(currentResults);
-        } else if (lastThresholdType == 2) {
-            currentResults.setFnrLimit(lastThreshold);
-            targetDecoySeries.getFNRResults(currentResults);
+            TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
+
+            if (lastThresholdType == 0) {
+                currentResults.setConfidenceLimit(lastThreshold);
+                targetDecoySeries.getConfidenceResults(currentResults);
+            } else if (lastThresholdType == 1) {
+                currentResults.setFdrLimit(lastThreshold);
+                targetDecoySeries.getFDRResults(currentResults);
+            } else if (lastThresholdType == 2) {
+                currentResults.setFnrLimit(lastThreshold);
+                targetDecoySeries.getFNRResults(currentResults);
+            }
         }
     }
 
@@ -1466,33 +2358,37 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void updateDisplayedComponents() {
 
-        TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
-        nTotalTxt.setText(Util.roundDouble(currentResults.getnTPTotal(), 2) + "");
-        nValidatedTxt.setText(Util.roundDouble(currentResults.getN(), 2) + "");
-        nFPTxt.setText(Util.roundDouble(currentResults.getnFP(), 2) + "");
-        nTPlTxt.setText(Util.roundDouble(currentResults.getnTP(), 2) + "");
-        confidenceTxt.setText(Util.roundDouble(currentResults.getConfidenceLimit(), 2) + " %");
-        fdrTxt.setText(Util.roundDouble(currentResults.getFdrLimit(), 2) + " %");
-        fnrTxt.setText(Util.roundDouble(currentResults.getFnrLimit(), 2) + " %");
-        confidenceSlider.setValue(currentResults.getConfidenceLimit().intValue());
-        fdrSlider1.setValue(currentResults.getFdrLimit().intValue());
-        windowTxt.setText(currentTargetDecoyMap.getWindowSize() + "");
-        Double newPosition = 50 * (Math.log10(currentTargetDecoyMap.getWindowSize() / (double) currentTargetDecoyMap.getnMax()) + 1);
-        sensitivitySlider1.setValue(newPosition.intValue());
-        thresholdTypeCmb.setSelectedIndex(lastThresholdType);
-        thresholdInput.setText(lastThreshold + "");
-        if (currentResults.isClassicalEstimators()) {
-            fdrCombo1.setSelectedIndex(0);
-        } else {
-            fdrCombo1.setSelectedIndex(1);
+        if (currentTargetDecoyMap != null) {
+
+            TargetDecoyResults currentResults = currentTargetDecoyMap.getTargetDecoyResults();
+            nTotalTxt.setText(Util.roundDouble(currentResults.getnTPTotal(), 2) + "");
+            nValidatedTxt.setText(Util.roundDouble(currentResults.getN(), 2) + "");
+            nFPTxt.setText(Util.roundDouble(currentResults.getnFP(), 2) + "");
+            nTPlTxt.setText(Util.roundDouble(currentResults.getnTP(), 2) + "");
+            confidenceTxt.setText(Util.roundDouble(currentResults.getConfidenceLimit(), 2) + " %");
+            fdrTxt.setText(Util.roundDouble(currentResults.getFdrLimit(), 2) + " %");
+            fnrTxt.setText(Util.roundDouble(currentResults.getFnrLimit(), 2) + " %");
+            confidenceSlider.setValue(currentResults.getConfidenceLimit().intValue());
+            fdrSlider1.setValue(currentResults.getFdrLimit().intValue());
+            windowTxt.setText(currentTargetDecoyMap.getWindowSize() + "");
+            Double newPosition = 50 * (Math.log10(currentTargetDecoyMap.getWindowSize() / (double) currentTargetDecoyMap.getnMax()) + 1);
+            sensitivitySlider1.setValue(newPosition.intValue());
+            thresholdTypeCmb.setSelectedIndex(lastThresholdType);
+            thresholdInput.setText(lastThreshold + "");
+            if (currentResults.isClassicalEstimators()) {
+                fdrCombo1.setSelectedIndex(0);
+            } else {
+                fdrCombo1.setSelectedIndex(1);
+            }
+            updateCharts();
         }
-        updateCharts();
     }
 
     /**
      * Updates the statistical charts.
      */
     private void updateCharts() {
+        
         updatePepChart();
         updateFDRFNRChart();
         updateFDRsChart();

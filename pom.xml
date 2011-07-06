@@ -12,7 +12,7 @@
 
     <!-- Set the version number for the whole project -->
     <properties>
-        <version.number>1.0</version.number>
+        <version.number>0.9</version.number>
     </properties>
 
 
