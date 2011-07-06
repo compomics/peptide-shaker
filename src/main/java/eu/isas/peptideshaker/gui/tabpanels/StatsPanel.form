@@ -1325,6 +1325,7 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="thresholdInputActionPerformed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="thresholdInputKeyReleased"/>
           </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel4">
@@ -1334,7 +1335,7 @@
                 <Font component="jLabel4" italic="true" property="font" relativeSize="true" size="0"/>
               </FontInfo>
             </Property>
-            <Property name="text" type="java.lang.String" value="Desired Threshold"/>
+            <Property name="text" type="java.lang.String" value="Threshold Optimization"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="validateButton">
@@ -1370,6 +1371,7 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="windowTxtActionPerformed"/>
+            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="windowTxtKeyReleased"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="applyButton">

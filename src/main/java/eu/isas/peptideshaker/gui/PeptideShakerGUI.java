@@ -74,6 +74,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         XYBarRenderer.setDefaultBarPainter(new StandardXYBarPainter());
     }
     /**
+     * Ignore or consider the non-applied threshold change.
+     */
+    private boolean ignoreThresholdUpdate = false;
+    /**
+     * Ignore or consider the non-applied PEP window change.
+     */
+    private boolean ignorePepWindowUpdate = false;
+    /**
      * The current protein filter values.
      */
     private String[] currentProteinFilterValues = {"", "", "", "", "", "", "", ""};
@@ -207,7 +215,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // update the look and feel after adding the panels
         UtilitiesGUIDefaults.setLookAndFeel();
-        
+
         new PeptideShakerGUI();
     }
 
@@ -215,7 +223,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Creates a new PeptideShaker frame.
      */
     public PeptideShakerGUI() {
-        
+
         // check for new version
         checkForNewVersion(getVersion());
 
@@ -1019,6 +1027,53 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         int selectedIndex = resultsJTabbedPane.getSelectedIndex();
 
+        // check if we have re-loaded the data using the current threshold and PEP window settings
+        if (selectedIndex != 4) {
+            if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate) {
+                
+                resultsJTabbedPane.setSelectedIndex(4);
+                
+                int value = JOptionPane.showConfirmDialog(
+                        this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results?",
+                        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                if (value == JOptionPane.YES_OPTION) {
+                    statsPanel.revalidateData();
+                    resultsJTabbedPane.setSelectedIndex(selectedIndex);
+                } else if (value == JOptionPane.NO_OPTION) { 
+                    // reset the test, i.e., don't ask twice without changes in between
+                    ignoreThresholdUpdate = true;
+                    resultsJTabbedPane.setSelectedIndex(selectedIndex);
+                } else {
+                    // cancel the move
+                    resultsJTabbedPane.setSelectedIndex(4);
+                }
+            } else if (!statsPanel.pepWindowApplied() && !ignorePepWindowUpdate) {
+                
+                resultsJTabbedPane.setSelectedIndex(4);
+                
+                int value = JOptionPane.showConfirmDialog(
+                        this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes?",
+                        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                if (value == JOptionPane.YES_OPTION) {
+                    statsPanel.applyPepWindow();
+                    resultsJTabbedPane.setSelectedIndex(selectedIndex);
+                } else if (value == JOptionPane.NO_OPTION) { 
+                    // reset the test, i.e., don't ask twice without changes in between
+                    ignorePepWindowUpdate = true;
+                    resultsJTabbedPane.setSelectedIndex(selectedIndex);
+                } else {
+                    // cancel the move
+                    resultsJTabbedPane.setSelectedIndex(4);
+                }
+            }
+        } else {
+            ignoreThresholdUpdate = false;
+            ignorePepWindowUpdate = false;
+        }
+
+        // update the display of the spectra and the bubble plot export menu items
         spectrumOverviewJMenuItem.setVisible(false);
         spectrumOverviewJMenuItem.setEnabled(false);
         bubblePlotJMenuItem.setVisible(false);
@@ -1029,9 +1084,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         spectrumModificationsJMenuItem.setEnabled(false);
 
         if (displaySpectrum || experiment != null) {
-            
+
             graphicsJMenu.setEnabled(true);
-            
+
             switch (selectedIndex) {
 
                 case 0:
@@ -1113,7 +1168,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void displayResults(boolean iUpdateValidationTab) {
 
         final boolean updateValidationTab = iUpdateValidationTab;
-        
+
         try {
             displaySpectrum = true;
             boolean displaySequence = true;
@@ -1223,7 +1278,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         sequenceDataBase = proteomicAnalysis.getSequenceDataBase();
         spectrumCollection = proteomicAnalysis.getSpectrumCollection();
     }
-    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutJMenuItem;
     private javax.swing.JMenuItem annotationPreferencesMenu;
@@ -1386,7 +1440,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         searchParameters.setFragmentIonMZTolerance(0.5);
         loadModificationProfile(profileFile);
     }
-    
+
     /**
      * Returns the modification profile file
      * @return the modification profile file 
@@ -1394,7 +1448,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public File getModificationProfileFile() {
         return profileFile;
     }
-    
+
     /**
      * Sets the modification profile file
      * @param profileFile the modification profile file
@@ -1818,7 +1872,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         // repaint the panels
         repaintPanels();
     }
-    
+
     /**
      * Reloads the data.
      */
@@ -1829,10 +1883,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // repaint the panels
         repaintPanels();
-        
+
         // display the results
         displayResults(false);
-        
+
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -1854,7 +1908,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             statsJPanel.removeAll();
             statsJPanel.add(statsPanel);
         }
-        
+
         overviewPanel = new OverviewPanel(this);
         ptmPanel = new PtmPanel(this);
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
@@ -1997,7 +2051,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             spectrumOverviewJMenuItem.setEnabled(enable);
         }
     }
-    
+
     /**
      * Update the main match for the given row in the protein table.
      * 
