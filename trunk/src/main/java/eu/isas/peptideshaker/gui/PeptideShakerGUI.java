@@ -215,6 +215,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Creates a new PeptideShaker frame.
      */
     public PeptideShakerGUI() {
+        
+        // check for new version
+        checkForNewVersion(getVersion());
 
         // set up the ErrorLog
         setUpLogFile();
@@ -257,9 +260,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void setFrameTitle(String experimentTitle) {
 
         if (experimentTitle != null) {
-            this.setTitle("PeptideShaker " + getVersion() + " beta" + " - " + experimentTitle);
+            this.setTitle("PeptideShaker " + getVersion() + " - " + experimentTitle);
         } else {
-            this.setTitle("PeptideShaker " + getVersion() + " beta");
+            this.setTitle("PeptideShaker " + getVersion());
         }
     }
 
@@ -1270,8 +1273,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param currentVersion the version number of the currently running reporter
      */
     private static void checkForNewVersion(String currentVersion) {
-
-        // @TODO: use this test :)
 
         try {
             boolean deprecatedOrDeleted = false;
