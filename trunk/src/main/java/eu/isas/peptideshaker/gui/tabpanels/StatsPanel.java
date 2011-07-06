@@ -1713,7 +1713,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void thresholdHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thresholdHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "Setting_the_Threshold");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_thresholdHelpJButtonActionPerformed
 
@@ -1724,7 +1724,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void pepHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pepHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "Optimize_Estimator_Accuracy");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pepHelpJButtonActionPerformed
 
