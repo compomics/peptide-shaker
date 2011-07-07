@@ -81,6 +81,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         this.profileFile = parent.getModificationProfileFile();
         loadModifications();
         initComponents();
+        
+        availableModificationsTable.getColumn(" ").setMaxWidth(40);
+        availableModificationsTable.getColumn(" ").setMinWidth(40);
+        
+        expectedModificationsTable.getColumn(" ").setMaxWidth(40);
+        expectedModificationsTable.getColumn(" ").setMinWidth(40);
+        
         modificationList = new ArrayList<String>(searchParameters.getModificationProfile().keySet());
         Collections.sort(modificationList);
         enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
@@ -114,14 +121,14 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         jScrollPane1 = new javax.swing.JScrollPane();
         expectedModificationsTable = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        availableModifications = new javax.swing.JList();
         jLabel6 = new javax.swing.JLabel();
         profileTxt = new javax.swing.JTextField();
         clearProfileBtn = new javax.swing.JButton();
         saveAsProfileBtn = new javax.swing.JButton();
         saveProfileBtn = new javax.swing.JButton();
         loadProfileBtn = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        availableModificationsTable = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         fileTxt = new javax.swing.JTextField();
@@ -177,7 +184,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(missedCleavagesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(13, 13, 13))
+                .addGap(17, 17, 17))
         );
 
         jPanel5Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {enzymesCmb, fragmentIonToleranceTxt});
@@ -220,13 +227,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         jLabel3.setFont(jLabel3.getFont().deriveFont((jLabel3.getFont().getStyle() | java.awt.Font.ITALIC)));
         jLabel3.setText("Expected Variable Modifications");
 
-        availableModifications.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane2.setViewportView(availableModifications);
-
         jLabel6.setFont(jLabel6.getFont().deriveFont((jLabel6.getFont().getStyle() | java.awt.Font.ITALIC)));
         jLabel6.setText("Available Modifications");
 
@@ -260,6 +260,31 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
+        availableModificationsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                " ", "Name"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(availableModificationsTable);
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -270,7 +295,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                                .addComponent(profileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 115, Short.MAX_VALUE)
+                                .addComponent(profileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(loadProfileBtn)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -279,16 +304,16 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                                 .addComponent(saveAsProfileBtn)
                                 .addGap(63, 63, 63))
                             .addComponent(clearProfileBtn, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 379, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(removeModification)
                             .addComponent(addModifications)))
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel6)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                    .addComponent(jLabel6))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -303,21 +328,20 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(removeModification))
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel3))
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel6))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(profileTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(saveAsProfileBtn)
-                                        .addComponent(saveProfileBtn)
-                                        .addComponent(loadProfileBtn))
-                                    .addComponent(clearProfileBtn)))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE))))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(profileTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(saveAsProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(saveProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(loadProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(clearProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
 
@@ -342,7 +366,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(fileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 665, Short.MAX_VALUE)
+                .addComponent(fileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 669, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(loadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -365,20 +389,14 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addContainerGap())
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addContainerGap()))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton)
-                        .addContainerGap())))
+                        .addComponent(cancelButton)))
+                .addContainerGap())
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
@@ -433,13 +451,16 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void addModificationsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addModificationsActionPerformed
-        String name;
 
-        for (Object selection : availableModifications.getSelectedValues()) {
-            name = (String) selection;
+        int[] selectedRows = availableModificationsTable.getSelectedRows();
+        
+        for (int i=selectedRows.length-1; i>=0; i--) {
+            String name = (String) availableModificationsTable.getValueAt(selectedRows[i], 1);
             searchParameters.addExpectedModification(name, name);
             modificationList.add(name);
+            ((DefaultTableModel) availableModificationsTable.getModel()).removeRow(selectedRows[i]);
         }
+
         updateModificationLists();
     }//GEN-LAST:event_addModificationsActionPerformed
 
@@ -449,10 +470,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void removeModificationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeModificationActionPerformed
+        
         ArrayList<String> toRemove = new ArrayList<String>();
 
         for (int selectedRow : expectedModificationsTable.getSelectedRows()) {
-            toRemove.add((String) expectedModificationsTable.getValueAt(selectedRow, 0));
+            toRemove.add((String) expectedModificationsTable.getValueAt(selectedRow, 1));
         }
 
         for (String name : toRemove) {
@@ -486,6 +508,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_loadButtonActionPerformed
 
+    /**
+     * Clears the list of selected proteins.
+     * 
+     * @param evt 
+     */
     private void clearProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearProfileBtnActionPerformed
         searchParameters.clearModificationProfile();
         modificationList.clear();
@@ -494,6 +521,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         profileTxt.setText("");
     }//GEN-LAST:event_clearProfileBtnActionPerformed
 
+    /**
+     * Loads a modification profile.
+     * 
+     * @param evt 
+     */
     private void loadProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadProfileBtnActionPerformed
         JFileChooser fc = new JFileChooser(parent.getLastSelectedFolder());
         int result = fc.showOpenDialog(this);
@@ -503,6 +535,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_loadProfileBtnActionPerformed
 
+    /**
+     * Save a modification profile.
+     * 
+     * @param evt 
+     */
     private void saveAsProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsProfileBtnActionPerformed
 
         final JFileChooser fileChooser = new JFileChooser(parent.getLastSelectedFolder());
@@ -592,6 +629,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_saveAsProfileBtnActionPerformed
 
+    /**
+     * Save a modification profile.
+     * 
+     * @param evt 
+     */
     private void saveProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveProfileBtnActionPerformed
 
         progressDialog = new ProgressDialogX(parent, parent, true);
@@ -630,7 +672,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_saveProfileBtnActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addModifications;
-    private javax.swing.JList availableModifications;
+    private javax.swing.JTable availableModificationsTable;
     private javax.swing.JButton cancelButton;
     private javax.swing.JButton clearProfileBtn;
     private javax.swing.JComboBox enzymesCmb;
@@ -647,7 +689,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JButton loadButton;
     private javax.swing.JButton loadProfileBtn;
     private javax.swing.JTextField missedCleavagesTxt;
@@ -750,7 +792,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Loads the implemented enzymes
+     * Loads the implemented enzymes.
      *
      * @return the list of enzyme names
      */
@@ -766,7 +808,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Loads values from the searchParameters
+     * Loads values from the searchParameters.
      */
     private void loadValues() {
 
@@ -782,7 +824,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Loads the modification profile from the given file
+     * Loads the modification profile from the given file.
+     * 
      * @param aFile the given file
      */
     private void loadModificationProfile(File aFile) {
@@ -791,29 +834,35 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             ObjectInputStream in = new ObjectInputStream(fis);
             HashMap<String, String> modificationProfile = (HashMap<String, String>) in.readObject();
             in.close();
+            
             for (String modificationName : modificationProfile.keySet()) {
                 searchParameters.addExpectedModification(modificationName, modificationProfile.get(modificationName));
             }
+            
             modificationList = new ArrayList<String>(searchParameters.getModificationProfile().keySet());
             Collections.sort(modificationList);
             profileFile = aFile;
             profileTxt.setText(aFile.getName().substring(0, aFile.getName().lastIndexOf(".")));
+            
         } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
             searchParameters.clearModificationProfile();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() 
+                    + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
             searchParameters.clearModificationProfile();
         } catch (ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() 
+                    + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
             searchParameters.clearModificationProfile();
         }
+        
         expectedModificationsTable.revalidate();
         expectedModificationsTable.repaint();
     }
 
     /**
-     * Loads the modifications from the modification file
+     * Loads the modifications from the modification file.
      */
     private void loadModifications() {
         for (PTM ptm : ptmFactory.getPtmMap().values()) {
@@ -822,7 +871,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Updates the modification list (right)
+     * Updates the modification list (right).
      */
     private void updateModificationLists() {
 
@@ -852,13 +901,27 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         }
 
         Arrays.sort(allModificationsAsArray);
-        availableModifications.setListData(allModificationsAsArray);
-        availableModifications.setSelectedIndex(0);
+        
+        while (availableModificationsTable.getRowCount() > 0) {
+            ((DefaultTableModel) availableModificationsTable.getModel()).removeRow(0);
+        }
+        
+        for (int i=0; i<allModificationsAsArray.length; i++) {
+            ((DefaultTableModel) availableModificationsTable.getModel()).addRow(new Object[]{
+                (i + 1),
+                allModificationsAsArray[i]
+            });
+        }
+        
+        if (availableModificationsTable.getRowCount() > 0) {
+            availableModificationsTable.setRowSelectionInterval(0, 0);
+        }
+        
         repaintTable();
     }
 
     /**
-     * Table model for the modification table
+     * Table model for the modification table.
      */
     private class ModificationTable extends DefaultTableModel {
 
@@ -869,15 +932,17 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 2;
+            return 3;
         }
 
         @Override
         public String getColumnName(int column) {
             if (column == 0) {
-                return "Modification Name";
+                return " ";
             } else if (column == 1) {
-                return "Modification Family";
+                return "Name";
+            } else if (column == 2) {
+                return "Family";
             } else {
                 return "";
             }
@@ -886,6 +951,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         @Override
         public Object getValueAt(int row, int column) {
             if (column == 0) {
+                return (row +1);
+            } else if (column == 1) {
                 return modificationList.get(row);
             } else {
                 return searchParameters.getModificationProfile().get(modificationList.get(row));
@@ -913,6 +980,16 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 }
             }
             return (new Double(0.0)).getClass();
+        }
+
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            
+            if (column == 2) {
+                return true;
+            } else {
+                return false;
+            }
         }
     }
 }
