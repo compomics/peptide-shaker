@@ -467,6 +467,7 @@ private class IdProcessorFromFile extends SwingWorker {
             waitingDialog.setRunCanceled();
             e.printStackTrace();
         } catch (OutOfMemoryError error) {
+            System.out.println("Ran out of memory!");
             Runtime.getRuntime().gc();
             waitingDialog.appendReportEndLine();
             waitingDialog.appendReport("Ran out of memory!");
@@ -476,8 +477,6 @@ private class IdProcessorFromFile extends SwingWorker {
                     + "Memory boundaries are set in ../conf/JavaOptions.txt.",
                     "Out Of Memory Error",
                     JOptionPane.ERROR_MESSAGE);
-
-            System.out.println("Ran out of memory!");
             error.printStackTrace();
         }
 

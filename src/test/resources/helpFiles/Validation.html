@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+
+<HTML>
+    <HEAD>
+        <TITLE></TITLE>
+    </HEAD>
+    <BODY>
+        <a name="#top"/>
+        <H2>Validation</H2>
+
+        <h3>General</h3>
+        For every population:
+        <ul>
+            <li>Optimize the estimator's accuracy</li>
+            <li>Set the threshold for the identifications</li>
+        </ul>
+        <br>
+
+        <h3>Population</h3>
+        <p align="justify">
+            The standard populations inspected by <b>PeptideShaker</b> are PSMs, peptides and proteins. However, if statistical significance is ensured PSMs will be separated according to their charge. 
+            Similarly, peptides can be separated based on their modification status.
+        </p>
+        <br><br><br>
+
+        <a name="Optimize_Estimator_Accuracy"></a>
+        <h3>Optimize Estimator Accuracy</h3>
+        <p align="justify">
+            The estimators plot will help you to optimize the estimators. Fluctuations in the PEP illustrate a lack of robustness whereas disagreement of FDR estimators shows a lack of sensitivity. This can 
+            be corrected by optimizing the PEP window (directly or using the slide bars). By default, the PEP window is set to a minimal value Nmax: the maximum amount of target hits comprised between two 
+            subsequent decoy hits.
+            <br><br>
+            Sometimes the PEP cannot be accurately estimated, for small populations for instance. The confidence and probabilistic estimators will then not be reliable anymore. It is adviced to trust only 
+            score and classical FDR.
+        </p>
+        <br><br><br>
+
+        <a name="Setting_the_Threshold"></a>
+        <h3>Setting the Threshold</h3>
+        <p align="justify">
+            The thresholds plots allow you to optimize the thresold. Depending on the experimentalist's aims, a balance can be found between quality and quantity. The thresold can be set manually using a 
+            minimal confidence threshold, a maximal allowed FDR or a minimal allowed FNR.
+        </p>
+
+        <br><br><br>
+        <a href="#top">Go to top of page</a><br><br>
+
+    </BODY>
+</HTML>

@@ -147,22 +147,16 @@ public class PeptideShakerWrapper {
             }
 
             if (error) {
-
+                File logFile = new File("conf", "PeptideShaker.log");
+                FileWriter f = new FileWriter(logFile, true);
+                f.write("\n\n" + temp + "\n\n");
+                f.close();
+                
                 javax.swing.JOptionPane.showMessageDialog(null,
                         "Failed to start PeptideShaker.\n\n" +
-                        "Make sure that PeptideShaker is installed in a path not containing\n" +
-                        "special characters. On Linux it has to be run from a path without spaces.\n\n" +
-                        "The upper memory limit used may be too high for your computer to handle.\n" +
-                        "Try reducing it and see if this helps.\n\n" +
-                        "For more details see:\n" +
-                        "conf/PeptideShakerLog.log\n\n",
-                        "PeptideShaker - Startup Failed", JOptionPane.OK_OPTION);
-
-                File logFile = new File("conf", "PeptideShakerLog.log");
-
-                FileWriter f = new FileWriter(logFile);
-                f.write(temp);
-                f.close();
+                        "Inspect the log file for details: conf/PeptideShaker.log.\n\n" +
+                        "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
+                        "PeptideShaker - Startup Failed", JOptionPane.ERROR_MESSAGE);
 
                 System.exit(0);
             }

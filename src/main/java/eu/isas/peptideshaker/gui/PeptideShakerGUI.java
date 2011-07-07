@@ -1388,7 +1388,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void setUpLogFile() {
         if (useLogFile && !getJarFilePath().equalsIgnoreCase(".")) {
             try {
-                String path = getJarFilePath() + "/conf/PeptideShakerLog.log";
+                String path = getJarFilePath() + "/conf/PeptideShaker.log";
 
                 File file = new File(path);
                 System.setOut(new java.io.PrintStream(new FileOutputStream(file, true)));
@@ -1406,7 +1406,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(
-                        null, "An error occured when trying to create the PeptideShaker Log.",
+                        null, "An error occured when trying to create the PeptideShaker log file.",
                         "Error Creating Log File", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
