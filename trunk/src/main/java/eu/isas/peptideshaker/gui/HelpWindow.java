@@ -16,8 +16,13 @@ import javax.swing.SwingUtilities;
  */
 public class HelpWindow extends javax.swing.JFrame {
 
+   /**
+     * The default width of the frame.
+     */
+    private int windowWidth = 500;
+    
     /**
-     * Creates a new HelpWindow object with a Frame as a parent.
+     * Creates a new HelpWindow with a Frame as a parent.
      *
      * @param parent
      * @param fileName the name of the help file
@@ -27,7 +32,7 @@ public class HelpWindow extends javax.swing.JFrame {
     }
 
     /**
-     * Creates a new HelpWindow object with a Frame as a parent.
+     * Creates a new HelpWindow with a Frame as a parent.
      *
      * @param parent
      * @param fileName the name of the help file
@@ -95,8 +100,8 @@ public class HelpWindow extends javax.swing.JFrame {
                 }
             });
         }
-
-        setSize(480, 500);
+        
+        setSize(windowWidth, parent.getHeight() - 100);
         setLocationRelativeTo(parent);
         setVisible(true);
     }
@@ -112,7 +117,7 @@ public class HelpWindow extends javax.swing.JFrame {
     }
 
     /**
-     * Creates a new HelpWindow object with a Frame as a parent.
+     * Creates a new HelpWindow with a Frame as a parent.
      *
      * @param parent
      * @param fileName the name of the help file
@@ -179,7 +184,7 @@ public class HelpWindow extends javax.swing.JFrame {
             });
         }
 
-        setSize(480, 500);
+        setSize(windowWidth, parent.getParent().getHeight() - 100);
         setLocationRelativeTo(parent);
         setVisible(true);
     }
