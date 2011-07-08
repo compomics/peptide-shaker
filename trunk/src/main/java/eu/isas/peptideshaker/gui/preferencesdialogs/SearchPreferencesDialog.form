@@ -238,12 +238,10 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="profileTxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="saveAsProfileBtn" alignment="1" max="32767" attributes="1"/>
-                                  <Component id="saveProfileBtn" alignment="1" max="32767" attributes="1"/>
-                                  <Component id="loadProfileBtn" alignment="1" max="32767" attributes="1"/>
-                              </Group>
+                              <Component id="saveAsProfileBtn" alignment="1" max="32767" attributes="1"/>
+                              <Component id="saveProfileBtn" alignment="1" max="32767" attributes="1"/>
+                              <Component id="loadProfileBtn" alignment="1" max="32767" attributes="1"/>
+                              <Component id="profileTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="clearProfileBtn" alignment="1" max="32767" attributes="1"/>
                           </Group>
                       </Group>
