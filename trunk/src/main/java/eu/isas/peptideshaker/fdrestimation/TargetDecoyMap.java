@@ -48,7 +48,24 @@ public class TargetDecoyMap implements Serializable {
      */
     public Double getProbability(double score) {
         TargetDecoyPoint point = hitMap.get(score);
-        return point.p;
+        if (point != null) {
+            return point.p;
+        } else if (score >= scores.get(scores.size()-1)) {
+            return hitMap.get(scores.get(scores.size()-1)).p;
+        } else {
+            int indexInf = 0;
+            int indexSup = scores.size() - 1;
+            int indexTemp;
+            while (indexSup - indexInf > 1) {
+                indexTemp = (indexSup - indexInf) / 2 + indexInf;
+                if (scores.get(indexTemp) > score) {
+                    indexSup = indexTemp;
+                } else {
+                    indexInf = indexTemp;
+                }
+            }
+            return (hitMap.get(scores.get(indexSup)).p + hitMap.get(scores.get(indexInf)).p) / 2;
+        }
     }
 
     /**

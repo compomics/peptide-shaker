@@ -138,11 +138,10 @@ public class PeptideShaker {
      */
     public void processIdentifications(InputMap inputMap, WaitingDialog waitingDialog) {
 
-        if (inputMap.isMultipleSearchEngines()) {
-            inputMap.estimateProbabilities();
-        }
-
-        waitingDialog.appendReport("Computing spectrum probabilities.");
+        waitingDialog.appendReport("Computing assumptions probabilities.");
+        inputMap.estimateProbabilities();
+        attachAssumptionsProbabilities(inputMap);
+        waitingDialog.appendReport("Computing PSMs probabilities.");
         fillPsmMap(inputMap);
         psmMap.cure();
         psmMap.estimateProbabilities();
@@ -375,7 +374,8 @@ public class PeptideShaker {
                 double p, pScore = 1;
                 for (int searchEngine : spectrumMatch.getAdvocates()) {
                     peptideAssumption = spectrumMatch.getFirstHit(searchEngine);
-                    p = inputMap.getProbability(searchEngine, peptideAssumption.getEValue());
+                    psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+                    p = psParameter.getSearchEngineProbability();
                     pScore = pScore * p;
                     id = peptideAssumption.getPeptide().getKey();
                     if (identifications.containsKey(id)) {
@@ -405,6 +405,36 @@ public class PeptideShaker {
                     psmMap.addPoint(eValue, spectrumMatch);
                 }
                 spectrumMatch.addUrParam(psParameter);
+            }
+        }
+    }
+
+    /**
+     * Attaches the spectrum posterior error probabilities to the peptide assumptions
+     */
+    private void attachAssumptionsProbabilities(InputMap inputMap) {
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        PSParameter psParameter = new PSParameter();
+        ArrayList<Double> eValues;
+        double previousP, newP;
+        for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
+            for (int searchEngine : spectrumMatch.getAdvocates()) {
+                eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine).keySet());
+                Collections.sort(eValues);
+                previousP = 0;
+                for (double eValue : eValues) {
+                    for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(searchEngine).get(eValue)) {
+                        psParameter = new PSParameter();
+                        newP = inputMap.getProbability(searchEngine, eValue);
+                        if (newP > previousP) {
+                            psParameter.setSearchEngineProbability(newP);
+                            previousP = newP;
+                        } else {
+                            psParameter.setSearchEngineProbability(previousP);
+                        }
+                        peptideAssumption.addUrParam(psParameter);
+                    }
+                }
             }
         }
     }
@@ -469,7 +499,7 @@ public class PeptideShaker {
                 probaScore = probaScore * psParameter.getPeptideProbability();
             }
             psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
-            if (psParameter== null) {
+            if (psParameter == null) {
                 psParameter = new PSParameter();
             }
             psParameter.setProteinProbabilityScore(probaScore);
@@ -569,12 +599,12 @@ public class PeptideShaker {
                     allSimilar = true;
                     for (String key : primaryKeys) {
                         if (!mainKey.equals(key)) {
-                        primaryDescription = parseDescription(mainKey);
-                        secondaryDescription = parseDescription(key);
-                        if (!getSimilarity(primaryDescription, secondaryDescription)) {
-                            allSimilar = false;
-                            break;
-                        }
+                            primaryDescription = parseDescription(mainKey);
+                            secondaryDescription = parseDescription(key);
+                            if (!getSimilarity(primaryDescription, secondaryDescription)) {
+                                allSimilar = false;
+                                break;
+                            }
                         }
                     }
                 }
@@ -627,7 +657,7 @@ public class PeptideShaker {
                     nMatch++;
                 }
             }
-            if (nMatch >= primaryDescription.size()/2) {
+            if (nMatch >= primaryDescription.size() / 2) {
                 return true;
             }
         }
