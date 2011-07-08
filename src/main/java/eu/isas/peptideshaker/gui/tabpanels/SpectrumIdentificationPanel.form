@@ -298,12 +298,13 @@
                 <Component class="javax.swing.JTable" name="omssaTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="5" rowCount="0">
+                      <Table columnCount="6" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Protein(s)" type="java.lang.String"/>
                         <Column editable="false" title="Peptide" type="java.lang.String"/>
                         <Column editable="false" title="Modification(s)" type="java.lang.String"/>
                         <Column editable="false" title="e-value" type="java.lang.Double"/>
+                        <Column editable="false" title="Confidence" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -405,12 +406,13 @@
                 <Component class="javax.swing.JTable" name="xTandemTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="5" rowCount="0">
+                      <Table columnCount="6" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Protein(s)" type="java.lang.String"/>
                         <Column editable="false" title="Peptide" type="java.lang.String"/>
                         <Column editable="false" title="Modification(s)" type="java.lang.String"/>
                         <Column editable="false" title="e-value" type="java.lang.Double"/>
+                        <Column editable="false" title="Confidence" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -507,12 +509,13 @@
                 <Component class="javax.swing.JTable" name="mascotTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="5" rowCount="0">
+                      <Table columnCount="6" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Protein(s)" type="java.lang.String"/>
                         <Column editable="false" title="Peptide(s)" type="java.lang.String"/>
                         <Column editable="false" title="Modification(s)" type="java.lang.String"/>
                         <Column editable="false" title="e-value" type="java.lang.Double"/>
+                        <Column editable="false" title="Confidence" type="java.lang.Object"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

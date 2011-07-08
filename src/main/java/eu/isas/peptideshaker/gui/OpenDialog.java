@@ -824,8 +824,8 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             }
 
             boolean importSuccessfull = true;
-            
-            for (int i=0; i<folders.size() && importSuccessfull; i++) {
+
+            for (int i = 0; i < folders.size() && importSuccessfull; i++) {
                 File folder = folders.get(i);
                 File inputFile = new File(folder, SEARCHGUI_INPUT);
                 if (inputFile.exists()) {
@@ -1217,13 +1217,14 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      * @returns true of the mgf files were imported successfully
      */
     private boolean importMgfFiles(File searchGUIFile) {
-        
+
         boolean success = true;
-        
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(searchGUIFile));
             String line = null;
             ArrayList<String> names = new ArrayList<String>();
+            String missing = "";
             for (File file : spectrumFiles) {
                 names.add(file.getName());
             }
@@ -1234,29 +1235,34 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 } else {
                     try {
                         File newFile = new File(line);
-                        if (newFile.exists()
-                                && !names.contains(newFile.getName())) {
-                            names.add(newFile.getName());
-                            spectrumFiles.add(newFile);
-                        } 
-                        
-                        if (!newFile.exists() && !names.contains(newFile.getName())) {
-                            JOptionPane.showMessageDialog(this, "Input file \'" + newFile.getPath() 
-                                + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
-                            success = false;
+                        if (!names.contains(newFile.getName())) {
+                            if (newFile.exists()) {
+                                names.add(newFile.getName());
+                                spectrumFiles.add(newFile);
+                            } else {
+                                if (!missing.equals("")) {
+                                    missing += ", ";
+                                }
+                                missing += newFile.getName();
+                            }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
+            if (!missing.equals("")) {
+                JOptionPane.showMessageDialog(this, "Input file(s) \'" + missing
+                        + "\' not found.\nPlease locate it manually if needed.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                success = false;
+            }
             br.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
-        
+
         return success;
     }
 
