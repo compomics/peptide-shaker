@@ -150,9 +150,9 @@
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="totalTPHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                              <Component id="validatedHitsHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="falsePositivesHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="truePositivesHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="validatedHitsHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="27" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
@@ -204,10 +204,10 @@
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="jLabel1" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="nValidatedTxt" alignment="2" max="32767" attributes="1"/>
-                      <Component id="validatedHitsHelpJButton" alignment="2" pref="20" max="32767" attributes="1"/>
                       <Component id="confidenceTxt" alignment="2" max="32767" attributes="1"/>
                       <Component id="confidenceHelpJButton" alignment="2" pref="20" max="32767" attributes="1"/>
                       <Component id="jLabel23" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="validatedHitsHelpJButton" alignment="2" pref="20" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">

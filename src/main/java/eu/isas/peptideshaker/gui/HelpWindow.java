@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import java.awt.Dialog.ModalExclusionType;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.net.URL;
@@ -34,8 +35,8 @@ public class HelpWindow extends javax.swing.JFrame {
      */
     public HelpWindow(java.awt.Frame parent, URL fileName, String reference) {
 
-        // only works for Java 1.6 and newer
-        //this.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
+        this.setAlwaysOnTop(true);
+        this.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
         initComponents();
 
         try {
@@ -49,7 +50,19 @@ public class HelpWindow extends javax.swing.JFrame {
                 helpText += s;
                 s = b.readLine();
             }
-
+            
+            String imageTag = "<img src=\"";
+            int index = 0;
+            
+            // replace any relative image tags by their static alternatives
+            while (helpText.indexOf(imageTag, index) != -1) {     
+                int startIndex = helpText.indexOf(imageTag, index) + imageTag.length();
+                String figureName = helpText.substring(startIndex, helpText.indexOf(".", startIndex));
+                String figureType = helpText.substring(helpText.indexOf(".", startIndex) + 1, helpText.indexOf("\"", startIndex));   
+                helpText = helpText.replaceAll(imageTag + figureName + "." + figureType, imageTag + getClass().getResource("/helpFiles/" + figureName + "." + figureType));
+                index = helpText.indexOf(imageTag, index) + 1;
+            }
+            
             textJEditorPane.setText(helpText);
 
             if (fileName.getPath().endsWith("AboutPeptideShaker.html")) {
@@ -60,6 +73,8 @@ public class HelpWindow extends javax.swing.JFrame {
             }
         } catch (Exception e) {
 
+            e.printStackTrace();
+            
             try {
                 textJEditorPane.setPage(getClass().getResource("/helpfiles/DefaultHelpFile.html"));
             } catch (Exception ex) {
@@ -105,8 +120,8 @@ public class HelpWindow extends javax.swing.JFrame {
      */
     public HelpWindow(javax.swing.JDialog parent, URL fileName, String reference) {
 
-        // only works for Java 1.6 and newer
-        //this.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
+        this.setAlwaysOnTop(true);
+        this.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
         initComponents();
 
         try {
@@ -119,6 +134,18 @@ public class HelpWindow extends javax.swing.JFrame {
             while (s != null) {
                 helpText += s;
                 s = b.readLine();
+            }
+            
+            String imageTag = "<img src=\"";
+            int index = 0;
+            
+            // replace any relative image tags by their static alternatives
+            while (helpText.indexOf(imageTag, index) != -1) {     
+                int startIndex = helpText.indexOf(imageTag, index) + imageTag.length();
+                String figureName = helpText.substring(startIndex, helpText.indexOf(".", startIndex));
+                String figureType = helpText.substring(helpText.indexOf(".", startIndex) + 1, helpText.indexOf("\"", startIndex));   
+                helpText = helpText.replaceAll(imageTag + figureName + "." + figureType, imageTag + getClass().getResource("/helpFiles/" + figureName + "." + figureType));
+                index = helpText.indexOf(imageTag, index) + 1;
             }
 
             textJEditorPane.setText(helpText);
