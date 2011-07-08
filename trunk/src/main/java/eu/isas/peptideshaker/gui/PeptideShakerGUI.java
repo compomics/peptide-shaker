@@ -74,6 +74,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         XYBarRenderer.setDefaultBarPainter(new StandardXYBarPainter());
     }
     /**
+     * If true, the latest changes have been saved.
+     */
+    private boolean dataSaved = true;
+    /**
      * Ignore or consider the non-applied threshold change.
      */
     private boolean ignoreThresholdUpdate = false;
@@ -361,10 +365,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         helpJMenuItem = new javax.swing.JMenuItem();
         aboutJMenuItem = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("PeptideShaker");
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(1280, 800));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -721,7 +730,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            lastSelectedFolder = fileChooser.getCurrentDirectory().getPath();
+            lastSelectedFolder = fileChooser.getSelectedFile().getAbsolutePath();
 
             progressDialog = new ProgressDialogX(this, this, true);
             progressDialog.doNothingOnClose();
@@ -776,6 +785,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                         JOptionPane.showMessageDialog(tempRef, "Identifications were successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+                        dataSaved = true;
                     } catch (Exception e) {
 
                         // return the peptide shaker icon to the standard version
@@ -809,7 +819,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            lastSelectedFolder = fileChooser.getCurrentDirectory().getPath();
+            lastSelectedFolder = fileChooser.getSelectedFile().getAbsolutePath();
 
             // @TODO: add check for if a file is about to be overwritten
 
@@ -1149,6 +1159,37 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_separatorsCheckBoxMenuItemActionPerformed
 
     /**
+     * Test if there are unsaved changes and if so asks the user if he/she 
+     * wants to save these. If not closes the tool.
+     * 
+     * @param evt 
+     */
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        
+        if (!dataSaved) {
+            int value = JOptionPane.showConfirmDialog(this, 
+                    "Do you want to save the changes to " + experiment.getReference() + "?", 
+                    "Unsaved Changes", 
+                    JOptionPane.YES_NO_CANCEL_OPTION, 
+                    JOptionPane.QUESTION_MESSAGE);
+            
+            if (value == JOptionPane.YES_OPTION) {
+                saveMenuItemActionPerformed(null);
+            } else if (value == JOptionPane.CANCEL_OPTION) {
+                // do nothing
+            } else { // no option
+                this.setVisible(false);
+                this.dispose();
+                System.exit(0);
+            }  
+        } else {
+            this.setVisible(false);
+            this.dispose();
+            System.exit(0);
+        }
+    }//GEN-LAST:event_formWindowClosing
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
     private void loadEnzymes() {
@@ -1166,7 +1207,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param iUpdateValidationTab if true the validation tab will be updated
      */
     public void displayResults(boolean iUpdateValidationTab) {
-
+        
         final boolean updateValidationTab = iUpdateValidationTab;
 
         try {
@@ -1243,7 +1284,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML Problem", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\nSee /conf/PeptideShakerLog.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\nSee /conf/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
 
@@ -1878,6 +1919,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public void reloadData() {
 
+        dataSaved = false;
+        
         // set up the tabs/panels
         setUpPanels(false);
 
@@ -2061,5 +2104,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void updateMainMatch(Protein mainMatch, int proteinInferenceType) {
         overviewPanel.updateMainMatch(mainMatch, proteinInferenceType);
         proteinStructurePanel.updateMainMatch(mainMatch, proteinInferenceType);
+    }
+    
+    /**
+     * Set whether the current data has been saved to a cps file or not.
+     * 
+     * @param dataSaved whether the current data has been saved to a cps file or not
+     */
+    public void setDataSaved(boolean dataSaved) {
+        this.dataSaved = dataSaved;
     }
 }

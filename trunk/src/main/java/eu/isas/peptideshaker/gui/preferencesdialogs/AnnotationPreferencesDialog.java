@@ -161,6 +161,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             peptideShakerGUI.getOverviewPanel().updateSpectrumAnnotation();
             peptideShakerGUI.getPtmPanel().updateSpectra();
             peptideShakerGUI.getSpectrumIdentificationPanel().updateSpectrum();
+            peptideShakerGUI.setDataSaved(false);
             dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed

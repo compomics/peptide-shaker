@@ -177,8 +177,7 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
         int selection = chooser.showSaveDialog(this);
 
         if (selection == JFileChooser.APPROVE_OPTION) {
-
-            peptideShakerGUI.setLastSelectedFolder(chooser.getCurrentDirectory().getAbsolutePath());
+            peptideShakerGUI.setLastSelectedFolder(chooser.getSelectedFile().getAbsolutePath());
             String selectedFile = chooser.getSelectedFile().getAbsolutePath();
             savePanel(selectedFile, true);
         }

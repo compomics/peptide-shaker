@@ -47,7 +47,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     /**
      * The peptide shaker gui
      */
-    private PeptideShakerGUI parent;
+    private PeptideShakerGUI peptideShakerGUI;
     /**
      * The compomics PTM factory
      */
@@ -76,7 +76,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     public SearchPreferencesDialog(PeptideShakerGUI parent) {
         super(parent, true);
-        this.parent = parent;
+        this.peptideShakerGUI = parent;
         this.searchParameters = parent.getSearchParameters();
         this.profileFile = parent.getModificationProfileFile();
         loadModifications();
@@ -429,8 +429,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             searchParameters.setFragmentIonMZTolerance(new Double(fragmentIonToleranceTxt.getText()));
             searchParameters.setnMissedCleavages(new Integer(missedCleavagesTxt.getText()));
             searchParameters.setEnzyme(enzymeFactory.getEnzyme((String) enzymesCmb.getSelectedItem()));
-            parent.setSearchParameters(searchParameters);
-            parent.setModificationProfileFile(profileFile);
+            peptideShakerGUI.setSearchParameters(searchParameters);
+            peptideShakerGUI.setModificationProfileFile(profileFile);
+            peptideShakerGUI.setDataSaved(false);
             this.dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed
@@ -490,7 +491,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
-        JFileChooser fc = new JFileChooser(parent.getLastSelectedFolder());
+        JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         int result = fc.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
@@ -526,7 +527,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void loadProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadProfileBtnActionPerformed
-        JFileChooser fc = new JFileChooser(parent.getLastSelectedFolder());
+        JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         int result = fc.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
@@ -541,7 +542,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void saveAsProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsProfileBtnActionPerformed
 
-        final JFileChooser fileChooser = new JFileChooser(parent.getLastSelectedFolder());
+        final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         fileChooser.setDialogTitle("Save As...");
         fileChooser.setMultiSelectionEnabled(false);
 
@@ -564,10 +565,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            progressDialog = new ProgressDialogX(parent, parent, true);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
             progressDialog.doNothingOnClose();
 
-            final PeptideShakerGUI tempRef = parent; // needed due to threading issues
+            final PeptideShakerGUI tempRef = peptideShakerGUI; // needed due to threading issues
 
             new Thread(new Runnable() {
 
@@ -635,10 +636,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void saveProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveProfileBtnActionPerformed
 
-        progressDialog = new ProgressDialogX(parent, parent, true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
 
-        final PeptideShakerGUI tempRef = parent; // needed due to threading issues
+        final PeptideShakerGUI tempRef = peptideShakerGUI; // needed due to threading issues
 
         new Thread(new Runnable() {
 
