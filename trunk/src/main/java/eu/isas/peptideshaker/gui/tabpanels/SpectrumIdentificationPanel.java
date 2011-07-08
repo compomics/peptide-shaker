@@ -176,6 +176,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         peptideShakerJTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        
+        omssaTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) omssaTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        xTandemTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) xTandemTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        mascotTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) mascotTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
         searchEngineTable.getColumn("Validated PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         searchEngineTable.getColumn("Unique PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
@@ -269,6 +276,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) peptideShakerJTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
+        
+        ((JSparklinesBarChartTableCellRenderer) omssaTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) xTandemTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) mascotTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
 
         searchEngineTable.revalidate();
         searchEngineTable.repaint();
@@ -278,6 +289,15 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         peptideShakerJTable.revalidate();
         peptideShakerJTable.repaint();
+        
+        omssaTable.revalidate();
+        omssaTable.repaint();
+        
+        xTandemTable.revalidate();
+        xTandemTable.repaint();
+        
+        mascotTable.revalidate();
+        mascotTable.repaint();
     }
 
     /** This method is called from within the constructor to
@@ -472,7 +492,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             .addComponent(vennDiagramButton, javax.swing.GroupLayout.DEFAULT_SIZE, 101, Short.MAX_VALUE)
         );
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide to Spectrum Matches"));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide-Spectrum Matches"));
         jPanel4.setOpaque(false);
 
         peptideShakerJTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -501,7 +521,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         peptideShakerJTable.setFocusable(false);
         peptideShakerJScrollPane.setViewportView(peptideShakerJTable);
 
-        jLabel1.setText("PeptideShaker:");
+        jLabel1.setFont(jLabel1.getFont().deriveFont((jLabel1.getFont().getStyle() | java.awt.Font.ITALIC)));
+        jLabel1.setText("PeptideShaker");
 
         jPanel5.setOpaque(false);
 
@@ -514,7 +535,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
@@ -541,7 +562,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         });
         omssaTableJScrollPane.setViewportView(omssaTable);
 
-        jLabel3.setText("OMSSA:");
+        jLabel3.setFont(jLabel3.getFont().deriveFont((jLabel3.getFont().getStyle() | java.awt.Font.ITALIC)));
+        jLabel3.setText("OMSSA");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -549,7 +571,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addComponent(jLabel3)
-                .addContainerGap(376, Short.MAX_VALUE))
+                .addContainerGap(380, Short.MAX_VALUE))
             .addComponent(omssaTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 415, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
@@ -562,7 +584,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         jPanel7.setOpaque(false);
 
-        jLabel4.setText("X!Tandem:");
+        jLabel4.setFont(jLabel4.getFont().deriveFont((jLabel4.getFont().getStyle() | java.awt.Font.ITALIC)));
+        jLabel4.setText("X!Tandem");
 
         xTandemTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -573,7 +596,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
@@ -606,7 +629,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addComponent(jLabel4)
-                .addContainerGap(365, Short.MAX_VALUE))
+                .addContainerGap(369, Short.MAX_VALUE))
             .addComponent(xTandemTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 417, Short.MAX_VALUE)
         );
         jPanel7Layout.setVerticalGroup(
@@ -619,7 +642,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         jPanel8.setOpaque(false);
 
-        jLabel2.setText("Mascot:");
+        jLabel2.setFont(jLabel2.getFont().deriveFont((jLabel2.getFont().getStyle() | java.awt.Font.ITALIC)));
+        jLabel2.setText("Mascot");
 
         mascotTableJScrollPane.setMinimumSize(new java.awt.Dimension(23, 87));
 
@@ -632,7 +656,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Object.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
@@ -668,7 +692,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addComponent(jLabel2)
-                .addContainerGap(378, Short.MAX_VALUE))
+                .addContainerGap(382, Short.MAX_VALUE))
             .addComponent(mascotTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 416, Short.MAX_VALUE)
         );
         jPanel8Layout.setVerticalGroup(

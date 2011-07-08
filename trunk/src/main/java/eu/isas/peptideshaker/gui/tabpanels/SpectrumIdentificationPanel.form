@@ -142,7 +142,7 @@
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-            <TitledBorder title="Peptide to Spectrum Matches"/>
+            <TitledBorder title="Peptide-Spectrum Matches"/>
           </Border>
         </Property>
         <Property name="opaque" type="boolean" value="false"/>
@@ -259,7 +259,12 @@
         </Container>
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
-            <Property name="text" type="java.lang.String" value="PeptideShaker:"/>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+              <FontInfo relative="true">
+                <Font component="jLabel1" italic="true" property="font" relativeSize="true" size="0"/>
+              </FontInfo>
+            </Property>
+            <Property name="text" type="java.lang.String" value="PeptideShaker"/>
           </Properties>
         </Component>
         <Container class="javax.swing.JPanel" name="jPanel5">
@@ -272,7 +277,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="376" max="32767" attributes="0"/>
+                      <EmptySpace pref="380" max="32767" attributes="0"/>
                   </Group>
                   <Component id="omssaTableJScrollPane" alignment="0" pref="415" max="32767" attributes="2"/>
               </Group>
@@ -304,7 +309,7 @@
                         <Column editable="false" title="Peptide" type="java.lang.String"/>
                         <Column editable="false" title="Modification(s)" type="java.lang.String"/>
                         <Column editable="false" title="e-value" type="java.lang.Double"/>
-                        <Column editable="false" title="Confidence" type="java.lang.Object"/>
+                        <Column editable="false" title="Confidence" type="java.lang.Double"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -360,7 +365,12 @@
             </Container>
             <Component class="javax.swing.JLabel" name="jLabel3">
               <Properties>
-                <Property name="text" type="java.lang.String" value="OMSSA:"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                  <FontInfo relative="true">
+                    <Font component="jLabel3" italic="true" property="font" relativeSize="true" size="0"/>
+                  </FontInfo>
+                </Property>
+                <Property name="text" type="java.lang.String" value="OMSSA"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -375,7 +385,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="365" max="32767" attributes="0"/>
+                      <EmptySpace pref="369" max="32767" attributes="0"/>
                   </Group>
                   <Component id="xTandemTableJScrollPane" alignment="0" pref="417" max="32767" attributes="2"/>
               </Group>
@@ -393,7 +403,12 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel4">
               <Properties>
-                <Property name="text" type="java.lang.String" value="X!Tandem:"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                  <FontInfo relative="true">
+                    <Font component="jLabel4" italic="true" property="font" relativeSize="true" size="0"/>
+                  </FontInfo>
+                </Property>
+                <Property name="text" type="java.lang.String" value="X!Tandem"/>
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="xTandemTableJScrollPane">
@@ -412,7 +427,7 @@
                         <Column editable="false" title="Peptide" type="java.lang.String"/>
                         <Column editable="false" title="Modification(s)" type="java.lang.String"/>
                         <Column editable="false" title="e-value" type="java.lang.Double"/>
-                        <Column editable="false" title="Confidence" type="java.lang.Object"/>
+                        <Column editable="false" title="Confidence" type="java.lang.Double"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -473,7 +488,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="378" max="32767" attributes="0"/>
+                      <EmptySpace pref="382" max="32767" attributes="0"/>
                   </Group>
                   <Component id="mascotTableJScrollPane" alignment="0" pref="416" max="32767" attributes="2"/>
               </Group>
@@ -491,7 +506,12 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel2">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Mascot:"/>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                  <FontInfo relative="true">
+                    <Font component="jLabel2" italic="true" property="font" relativeSize="true" size="0"/>
+                  </FontInfo>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Mascot"/>
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="mascotTableJScrollPane">
@@ -515,7 +535,7 @@
                         <Column editable="false" title="Peptide(s)" type="java.lang.String"/>
                         <Column editable="false" title="Modification(s)" type="java.lang.String"/>
                         <Column editable="false" title="e-value" type="java.lang.Double"/>
-                        <Column editable="false" title="Confidence" type="java.lang.Object"/>
+                        <Column editable="false" title="Confidence" type="java.lang.Double"/>
                       </Table>
                     </Property>
                     <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">

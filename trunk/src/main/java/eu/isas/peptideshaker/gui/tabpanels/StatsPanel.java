@@ -227,8 +227,10 @@ public class StatsPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         groupListJPanel = new javax.swing.JPanel();
+        groupSelectionLayeredPane = new javax.swing.JLayeredPane();
         groupListJScrollPane = new javax.swing.JScrollPane();
         groupList = new javax.swing.JList();
+        groupSelectionHelpJButton = new javax.swing.JButton();
         idSummaryJPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         nTotalTxt = new javax.swing.JTextField();
@@ -322,6 +324,12 @@ public class StatsPanel extends javax.swing.JPanel {
         groupListJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Group Selection"));
         groupListJPanel.setOpaque(false);
 
+        groupSelectionLayeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                groupSelectionLayeredPaneComponentResized(evt);
+            }
+        });
+
         groupList.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Proteins", "Peptides", "PSMs" };
             public int getSize() { return strings.length; }
@@ -340,20 +348,44 @@ public class StatsPanel extends javax.swing.JPanel {
         });
         groupListJScrollPane.setViewportView(groupList);
 
+        groupListJScrollPane.setBounds(0, 0, 198, 150);
+        groupSelectionLayeredPane.add(groupListJScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        groupSelectionHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        groupSelectionHelpJButton.setToolTipText("Help");
+        groupSelectionHelpJButton.setBorder(null);
+        groupSelectionHelpJButton.setBorderPainted(false);
+        groupSelectionHelpJButton.setContentAreaFilled(false);
+        groupSelectionHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                groupSelectionHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                groupSelectionHelpJButtonMouseExited(evt);
+            }
+        });
+        groupSelectionHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                groupSelectionHelpJButtonActionPerformed(evt);
+            }
+        });
+        groupSelectionHelpJButton.setBounds(175, 130, 17, 17);
+        groupSelectionLayeredPane.add(groupSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
         javax.swing.GroupLayout groupListJPanelLayout = new javax.swing.GroupLayout(groupListJPanel);
         groupListJPanel.setLayout(groupListJPanelLayout);
         groupListJPanelLayout.setHorizontalGroup(
             groupListJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupListJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(groupListJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                .addComponent(groupSelectionLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
                 .addContainerGap())
         );
         groupListJPanelLayout.setVerticalGroup(
             groupListJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(groupListJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(groupListJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addComponent(groupSelectionLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1426,7 +1458,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void fdrSlider1MouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrSlider1MouseDragged
         thresholdTypeCmb.setSelectedIndex(1);
-        thresholdInput.setText(fdrSlider1.getValue() + "");  
+        thresholdInput.setText(fdrSlider1.getValue() + "");
     }//GEN-LAST:event_fdrSlider1MouseDragged
 
     /**
@@ -1744,83 +1776,6 @@ public class StatsPanel extends javax.swing.JPanel {
      * 
      * @param evt 
      */
-    private void validatedHitsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validatedHitsHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_validatedHitsHelpJButtonActionPerformed
-
-    /**
-     * Opens a help dialog.
-     * 
-     * @param evt 
-     */
-    private void falsePositivesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_falsePositivesHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_falsePositivesHelpJButtonActionPerformed
-
-    /**
-     * Opens a help dialog.
-     * 
-     * @param evt 
-     */
-    private void truePositivesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_truePositivesHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_truePositivesHelpJButtonActionPerformed
-
-    /**
-     * Opens a help dialog.
-     * 
-     * @param evt 
-     */
-    private void nMaxHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nMaxHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_nMaxHelpJButtonActionPerformed
-
-    /**
-     * Opens a help dialog.
-     * 
-     * @param evt 
-     */
-    private void confidenceHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confidenceHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_confidenceHelpJButtonActionPerformed
-
-    /**
-     * Opens a help dialog.
-     * 
-     * @param evt 
-     */
-    private void fdrHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_fdrHelpJButtonActionPerformed
-
-    /**
-     * Opens a help dialog.
-     * 
-     * @param evt 
-     */
-    private void fnrHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fnrHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_fnrHelpJButtonActionPerformed
-
-    /**
-     * Opens a help dialog.
-     * 
-     * @param evt 
-     */
     private void benefitPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_benefitPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#ROC_plot");
@@ -1948,127 +1903,6 @@ public class StatsPanel extends javax.swing.JPanel {
      * 
      * @param evt 
      */
-    private void validatedHitsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validatedHitsHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_validatedHitsHelpJButtonMouseEntered
-
-    private void validatedHitsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validatedHitsHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_validatedHitsHelpJButtonMouseExited
-
-    /**
-     * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
-     */
-    private void falsePositivesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_falsePositivesHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_falsePositivesHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
-     */
-    private void falsePositivesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_falsePositivesHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_falsePositivesHelpJButtonMouseExited
-
-    /**
-     * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
-     */
-    private void truePositivesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_truePositivesHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_truePositivesHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
-     */
-    private void truePositivesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_truePositivesHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_truePositivesHelpJButtonMouseExited
-
-    /**
-     * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
-     */
-    private void nMaxHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nMaxHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_nMaxHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
-     */
-    private void nMaxHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nMaxHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_nMaxHelpJButtonMouseExited
-
-    /**
-     * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
-     */
-    private void confidenceHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidenceHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_confidenceHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
-     */
-    private void confidenceHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidenceHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_confidenceHelpJButtonMouseExited
-
-    /**
-     * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
-     */
-    private void fdrHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_fdrHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
-     */
-    private void fdrHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_fdrHelpJButtonMouseExited
-
-    /**
-     * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
-     */
-    private void fnrHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fnrHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_fnrHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
-     */
-    private void fnrHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fnrHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_fnrHelpJButtonMouseExited
-
-    /**
-     * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
-     */
     private void thresholdHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_thresholdHelpJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_thresholdHelpJButtonMouseEntered
@@ -2142,7 +1976,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void thresholdInputKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_thresholdInputKeyReleased
-         try {
+        try {
             lastThreshold = new Double(thresholdInput.getText());
 
             if (lastThreshold < 0 || lastThreshold > 100) {
@@ -2178,6 +2012,248 @@ public class StatsPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_windowTxtKeyReleased
 
+    private void nMaxHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nMaxHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_nMaxHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void nMaxHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nMaxHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_nMaxHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void nMaxHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nMaxHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//GEN-LAST:event_nMaxHelpJButtonMouseEntered
+
+    private void confidenceHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confidenceHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_confidenceHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void confidenceHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidenceHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_confidenceHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void confidenceHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_confidenceHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//GEN-LAST:event_confidenceHelpJButtonMouseEntered
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void fdrHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_fdrHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void fdrHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_fdrHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void fdrHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fdrHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//GEN-LAST:event_fdrHelpJButtonMouseEntered
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void fnrHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fnrHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_fnrHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void fnrHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fnrHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_fnrHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void fnrHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fnrHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//GEN-LAST:event_fnrHelpJButtonMouseEntered
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void truePositivesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_truePositivesHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_truePositivesHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void truePositivesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_truePositivesHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_truePositivesHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void truePositivesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_truePositivesHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//GEN-LAST:event_truePositivesHelpJButtonMouseEntered
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void falsePositivesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_falsePositivesHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_falsePositivesHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void falsePositivesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_falsePositivesHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_falsePositivesHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void falsePositivesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_falsePositivesHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//GEN-LAST:event_falsePositivesHelpJButtonMouseEntered
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void validatedHitsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validatedHitsHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_validatedHitsHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void validatedHitsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validatedHitsHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_validatedHitsHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void validatedHitsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_validatedHitsHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//GEN-LAST:event_validatedHitsHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void groupSelectionHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_groupSelectionHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_groupSelectionHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void groupSelectionHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_groupSelectionHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_groupSelectionHelpJButtonMouseExited
+
+    /**
+     * Opens a help dialog.
+     * 
+     * @param evt 
+     */
+    private void groupSelectionHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupSelectionHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Group_Selection");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_groupSelectionHelpJButtonActionPerformed
+
+    /**
+     * Resize the group selection layered pane components.
+     * 
+     * @param evt 
+     */
+    private void groupSelectionLayeredPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_groupSelectionLayeredPaneComponentResized
+
+        // move the help icon
+        groupSelectionLayeredPane.getComponent(0).setBounds(
+                groupSelectionLayeredPane.getWidth() - groupSelectionLayeredPane.getComponent(0).getWidth() - 8,
+                (groupSelectionLayeredPane.getHeight() / 8) * 7,
+                groupSelectionLayeredPane.getComponent(0).getWidth(),
+                groupSelectionLayeredPane.getComponent(0).getHeight());
+
+        // resize the plot area
+        groupSelectionLayeredPane.getComponent(1).setBounds(0, 0, groupSelectionLayeredPane.getWidth(), groupSelectionLayeredPane.getHeight());
+        groupSelectionLayeredPane.revalidate();
+        groupSelectionLayeredPane.repaint();
+
+    }//GEN-LAST:event_groupSelectionLayeredPaneComponentResized
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JPanel benefitCostChartPanel;
@@ -2212,6 +2288,8 @@ public class StatsPanel extends javax.swing.JPanel {
     private javax.swing.JList groupList;
     private javax.swing.JPanel groupListJPanel;
     private javax.swing.JScrollPane groupListJScrollPane;
+    private javax.swing.JButton groupSelectionHelpJButton;
+    private javax.swing.JLayeredPane groupSelectionLayeredPane;
     private javax.swing.JPanel idSummaryJPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -2396,10 +2474,10 @@ public class StatsPanel extends javax.swing.JPanel {
             clearScreen();
             return;
         }
-        
+
         applyButton.setEnabled(modifiedMaps.get(selectedGroup));
         pepWindowApplied = !modifiedMaps.get(selectedGroup);
-        
+
         nMaxTxt.setText(currentTargetDecoyMap.getnMax() + "");
         targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
         updateDisplayedComponents();
@@ -2449,11 +2527,13 @@ public class StatsPanel extends javax.swing.JPanel {
             sensitivitySlider1.setValue(newPosition.intValue());
             thresholdTypeCmb.setSelectedIndex(lastThresholdType);
             thresholdInput.setText(lastThreshold + "");
+            
             if (currentResults.isClassicalEstimators()) {
                 fdrCombo1.setSelectedIndex(0);
             } else {
                 fdrCombo1.setSelectedIndex(1);
             }
+            
             updateCharts();
         }
     }
@@ -2462,7 +2542,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * Updates the statistical charts.
      */
     private void updateCharts() {
-        
+
         updatePepChart();
         updateFDRFNRChart();
         updateFDRsChart();
@@ -2954,7 +3034,7 @@ public class StatsPanel extends javax.swing.JPanel {
     private void reloadData() {
         peptideShakerGUI.reloadData();
     }
-    
+
     /**
      * Returns true of the data has been reloaded with the currently selected threshold.
      * 
@@ -2963,7 +3043,7 @@ public class StatsPanel extends javax.swing.JPanel {
     public boolean thresholdUpdated() {
         return dataValidated;
     }
-    
+
     /**
      * Returns true of the data has been reloaded with the currently selected PEP window.
      * 
@@ -2972,18 +3052,18 @@ public class StatsPanel extends javax.swing.JPanel {
     public boolean pepWindowApplied() {
         return pepWindowApplied;
     }
-    
+
     /**
      * Revalidates the data using the currently selected threshold.
      */
     public void revalidateData() {
         validateButtonActionPerformed(null);
     }
-    
+
     /**
      * Reloads the data using the currently selected PEP window.
      */
     public void applyPepWindow() {
         applyButtonActionPerformed(null);
-    } 
+    }
 }
