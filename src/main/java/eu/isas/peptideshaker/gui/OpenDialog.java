@@ -306,19 +306,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
         mascotMaxEvalueTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         mascotMaxEvalueTxt.setText("10");
-        mascotMaxEvalueTxt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mascotMaxEvalueTxtActionPerformed(evt);
-            }
-        });
 
         xtandemMaxEvalueTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         xtandemMaxEvalueTxt.setText("10");
-        xtandemMaxEvalueTxt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                xtandemMaxEvalueTxtActionPerformed(evt);
-            }
-        });
 
         omssaMaxEvalueTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         omssaMaxEvalueTxt.setText("10");
@@ -704,7 +694,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         int returnVal = fileChooser.showDialog(this.getParent(), "Add");
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             fastaFile = fileChooser.getSelectedFile();
-            peptideShakerGUI.setLastSelectedFolder(fastaFile.getPath());
+            peptideShakerGUI.setLastSelectedFolder(fastaFile.getAbsolutePath());
             fastaFileTxt.setText(fastaFile.getName());
         }
 }//GEN-LAST:event_browseDbButtonActionPerformed
@@ -754,14 +744,11 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 } else {
                     spectrumFiles.add(newFile);
                 }
-                peptideShakerGUI.setLastSelectedFolder(newFile.getPath());
+                peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
             }
             spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         }
 }//GEN-LAST:event_browseSpectraActionPerformed
-
-    private void xtandemMaxEvalueTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xtandemMaxEvalueTxtActionPerformed
-}//GEN-LAST:event_xtandemMaxEvalueTxtActionPerformed
 
     private void clearIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearIdActionPerformed
         idFiles = new ArrayList<File>();
@@ -827,7 +814,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                         }
                     }
                 }
-                peptideShakerGUI.setLastSelectedFolder(newFile.getPath());
+                peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
             }
 
             if (searchParametersFiles.size() == 1) {
@@ -913,9 +900,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             }
         }
 }//GEN-LAST:event_browseIdActionPerformed
-
-    private void mascotMaxEvalueTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mascotMaxEvalueTxtActionPerformed
-    }//GEN-LAST:event_mascotMaxEvalueTxtActionPerformed
 
     private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
         new SearchPreferencesDialog(peptideShakerGUI);
@@ -1025,6 +1009,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
+        
+        peptideShakerGUI.setDataSaved(isPsFile);
+        
         return true;
     }
 

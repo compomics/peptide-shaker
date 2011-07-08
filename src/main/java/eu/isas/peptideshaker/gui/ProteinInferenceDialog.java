@@ -405,6 +405,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         Protein mainMatch = inspectedMatch.getMainMatch();
         peptideShakerGUI.updateMainMatch(mainMatch, groupClassJComboBox.getSelectedIndex());
+        peptideShakerGUI.setDataSaved(false);
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
