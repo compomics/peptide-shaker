@@ -12,6 +12,7 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.pdbfinder.FindPdbForUniprotAccessions;
 import com.compomics.util.pdbfinder.pdb.PdbBlock;
 import com.compomics.util.pdbfinder.pdb.PdbParameter;
+import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -284,7 +285,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     private void initComponents() {
 
         pdbStructureJPanel = new javax.swing.JPanel();
+        pdbStructureLayeredPane = new javax.swing.JLayeredPane();
         pdbPanel = new javax.swing.JPanel();
+        pdbHelpJButton = new javax.swing.JButton();
         proteinsJPanel = new javax.swing.JPanel();
         proteinScrollPane = new javax.swing.JScrollPane();
         proteinTable = new JTable() {
@@ -355,7 +358,39 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         pdbStructureJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PDB Structure"));
         pdbStructureJPanel.setOpaque(false);
 
+        pdbStructureLayeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                pdbStructureLayeredPaneComponentResized(evt);
+            }
+        });
+
         pdbPanel.setLayout(new javax.swing.BoxLayout(pdbPanel, javax.swing.BoxLayout.LINE_AXIS));
+        pdbPanel.setBounds(0, 0, 435, 410);
+        pdbStructureLayeredPane.add(pdbPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        pdbHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        pdbHelpJButton.setToolTipText("Help");
+        pdbHelpJButton.setBorder(null);
+        pdbHelpJButton.setBorderPainted(false);
+        pdbHelpJButton.setContentAreaFilled(false);
+        pdbHelpJButton.setFocusable(false);
+        pdbHelpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        pdbHelpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        pdbHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                pdbHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                pdbHelpJButtonMouseExited(evt);
+            }
+        });
+        pdbHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pdbHelpJButtonActionPerformed(evt);
+            }
+        });
+        pdbHelpJButton.setBounds(0, 0, 17, 17);
+        pdbStructureLayeredPane.add(pdbHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout pdbStructureJPanelLayout = new javax.swing.GroupLayout(pdbStructureJPanel);
         pdbStructureJPanel.setLayout(pdbStructureJPanelLayout);
@@ -363,14 +398,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             pdbStructureJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pdbStructureJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pdbPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+                .addComponent(pdbStructureLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pdbStructureJPanelLayout.setVerticalGroup(
             pdbStructureJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pdbStructureJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pdbPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
+                .addComponent(pdbStructureLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 410, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -923,7 +958,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 pdbChainsJPanel.repaint();
             }
         } else {
-            
+
             // open protein link in web browser
             if (pdbMatchesJTable.getSelectedColumn() == 1 && evt.getButton() == MouseEvent.BUTTON1
                     && ((String) proteinTable.getValueAt(pdbMatchesJTable.getSelectedRow(), pdbMatchesJTable.getSelectedColumn())).lastIndexOf("<html>") != -1) {
@@ -1047,15 +1082,66 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     private void pdbMatchesJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbMatchesJTableMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pdbMatchesJTableMouseExited
+
+    /**
+     * Resizes the components in the PDB Structure layered pane if the layred 
+     * pane is resized.
+     * 
+     * @param evt 
+     */
+    private void pdbStructureLayeredPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_pdbStructureLayeredPaneComponentResized
+        // move the help icon
+        pdbStructureLayeredPane.getComponent(0).setBounds(
+                pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth() - 10,
+                pdbStructureLayeredPane.getComponent(0).getHeight() / 2 - 2,
+                pdbStructureLayeredPane.getComponent(0).getWidth(),
+                pdbStructureLayeredPane.getComponent(0).getHeight());
+
+        // resize the plot area
+        pdbStructureLayeredPane.getComponent(1).setBounds(0, 0, pdbStructureLayeredPane.getWidth(), pdbStructureLayeredPane.getHeight());
+        pdbStructureLayeredPane.revalidate();
+        pdbStructureLayeredPane.repaint();
+    }//GEN-LAST:event_pdbStructureLayeredPaneComponentResized
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void pdbHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//GEN-LAST:event_pdbHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void pdbHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_pdbHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void pdbHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdbHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_pdbHelpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel pdbChainsJPanel;
     private javax.swing.JScrollPane pdbChainsJScrollPane;
     private javax.swing.JTable pdbChainsJTable;
+    private javax.swing.JButton pdbHelpJButton;
     private javax.swing.JScrollPane pdbJScrollPane;
     private javax.swing.JPanel pdbMatchesJPanel;
     private javax.swing.JTable pdbMatchesJTable;
     private javax.swing.JPanel pdbPanel;
     private javax.swing.JPanel pdbStructureJPanel;
+    private javax.swing.JLayeredPane pdbStructureLayeredPane;
     private javax.swing.JScrollPane peptideScrollPane;
     private javax.swing.JTable peptideTable;
     private javax.swing.JPanel peptidesJPanel;
@@ -1072,8 +1158,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     public void setSelectedProteinIndex(Integer proteinIndex) {
 
         boolean indexFound = false;
-        
-        for (int i = 0; i < proteinTable.getRowCount() && !indexFound; i++) {   
+
+        for (int i = 0; i < proteinTable.getRowCount() && !indexFound; i++) {
             if (((Integer) proteinTable.getValueAt(i, 0)).intValue() == proteinIndex.intValue()) {
                 indexFound = true;
                 proteinTable.setRowSelectionInterval(i, i);
@@ -1651,14 +1737,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
-    
+
     /**
      * Update the main match for the given row in the protein table.
      * 
      * @param mainMatch             the protein match to use
      * @param proteinInferenceType  the protein inference group type
      */
-    public void updateMainMatch (Protein mainMatch, int proteinInferenceType) {
+    public void updateMainMatch(Protein mainMatch, int proteinInferenceType) {
         proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex());
         proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex());
         String description = peptideShakerGUI.getSequenceDataBase().getProteinHeader(mainMatch.getAccession()).getDescription();

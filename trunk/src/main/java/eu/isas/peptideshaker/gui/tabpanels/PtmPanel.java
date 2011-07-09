@@ -18,6 +18,7 @@ import com.compomics.util.gui.interfaces.SpectrumPanelListener;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.spectrum.DefaultSpectrumAnnotation;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
+import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Component;
@@ -309,6 +310,8 @@ public class PtmPanel extends javax.swing.JPanel {
         moreThanTwoChargesToggleButton = new javax.swing.JToggleButton();
         jSeparator10 = new javax.swing.JToolBar.Separator();
         allToggleButton = new javax.swing.JToggleButton();
+        jSeparator11 = new javax.swing.JToolBar.Separator();
+        spectrumHelpJButton = new javax.swing.JButton();
         spectrumChartJPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -592,6 +595,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar.setBorder(null);
         spectrumJToolBar.setFloatable(false);
         spectrumJToolBar.setRollover(true);
+        spectrumJToolBar.setBorderPainted(false);
 
         aIonToggleButton.setText("a");
         aIonToggleButton.setToolTipText("a-ions");
@@ -769,6 +773,30 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         });
         spectrumJToolBar.add(allToggleButton);
+        spectrumJToolBar.add(jSeparator11);
+
+        spectrumHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        spectrumHelpJButton.setToolTipText("Help");
+        spectrumHelpJButton.setBorder(null);
+        spectrumHelpJButton.setBorderPainted(false);
+        spectrumHelpJButton.setContentAreaFilled(false);
+        spectrumHelpJButton.setFocusable(false);
+        spectrumHelpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        spectrumHelpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        spectrumHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                spectrumHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                spectrumHelpJButtonMouseExited(evt);
+            }
+        });
+        spectrumHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                spectrumHelpJButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(spectrumHelpJButton);
 
         spectrumChartJPanel.setOpaque(false);
         spectrumChartJPanel.setLayout(new javax.swing.BoxLayout(spectrumChartJPanel, javax.swing.BoxLayout.Y_AXIS));
@@ -1087,6 +1115,36 @@ public class PtmPanel extends javax.swing.JPanel {
     private void allToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allToggleButtonActionPerformed
         updateSpectra();
 }//GEN-LAST:event_allToggleButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void spectrumHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//GEN-LAST:event_spectrumHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void spectrumHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_spectrumHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void spectrumHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/SpectrumPanel.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_spectrumHelpJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonToggleButton;
     private javax.swing.JToggleButton allToggleButton;
@@ -1103,6 +1161,7 @@ public class PtmPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar.Separator jSeparator10;
+    private javax.swing.JToolBar.Separator jSeparator11;
     private javax.swing.JToolBar.Separator jSeparator7;
     private javax.swing.JToolBar.Separator jSeparator8;
     private javax.swing.JToolBar.Separator jSeparator9;
@@ -1125,6 +1184,7 @@ public class PtmPanel extends javax.swing.JPanel {
     private javax.swing.JComboBox secondarySelectionJComboBox;
     private javax.swing.JTable selectedPsmTable;
     private javax.swing.JPanel spectrumChartJPanel;
+    private javax.swing.JButton spectrumHelpJButton;
     private javax.swing.JPanel spectrumJPanel;
     private javax.swing.JToolBar spectrumJToolBar;
     private javax.swing.JTabbedPane spectrumTabbedPane;

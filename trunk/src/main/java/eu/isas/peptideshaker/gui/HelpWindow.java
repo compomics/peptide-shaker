@@ -10,7 +10,7 @@ import java.io.InputStreamReader;
 import javax.swing.SwingUtilities;
 
 /**
- * A window used to display help text in html format.
+ * A window used to display help text in HTML format.
  * 
  * @author Harald Barsnes
  */
@@ -20,6 +20,10 @@ public class HelpWindow extends javax.swing.JFrame {
      * The default width of the frame.
      */
     private int windowWidth = 500;
+    /**
+     * The default height reduction relative to the parent frame.
+     */
+    private int windowHeightReduction = 300;
     
     /**
      * Creates a new HelpWindow with a Frame as a parent.
@@ -101,7 +105,7 @@ public class HelpWindow extends javax.swing.JFrame {
             });
         }
         
-        setSize(windowWidth, parent.getHeight() - 100);
+        setSize(windowWidth, parent.getHeight() - windowHeightReduction);
         setLocationRelativeTo(parent);
         setVisible(true);
     }
@@ -184,7 +188,7 @@ public class HelpWindow extends javax.swing.JFrame {
             });
         }
 
-        setSize(windowWidth, parent.getParent().getHeight() - 100);
+        setSize(windowWidth, parent.getParent().getHeight() - windowHeightReduction);
         setLocationRelativeTo(parent);
         setVisible(true);
     }

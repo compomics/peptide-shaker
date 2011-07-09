@@ -26,6 +26,7 @@ import com.compomics.util.gui.spectrum.MassErrorBubblePlot;
 import com.compomics.util.gui.spectrum.MassErrorPlot;
 import com.compomics.util.gui.spectrum.SequenceFragmentationPanel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
+import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -53,7 +54,6 @@ import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.plot.PlotOrientation;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -357,7 +357,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJTabbedPane = new javax.swing.JTabbedPane();
         fragmentIonJPanel = new javax.swing.JPanel();
         fragmentIonsJScrollPane = new javax.swing.JScrollPane();
-        bubblePlotJToolBar1 = new javax.swing.JToolBar();
+        ionTableJToolBar = new javax.swing.JToolBar();
         aIonTableToggleButton = new javax.swing.JToggleButton();
         bIonTableToggleButton = new javax.swing.JToggleButton();
         cIonTableToggleButton = new javax.swing.JToggleButton();
@@ -376,6 +376,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         jSeparator5 = new javax.swing.JToolBar.Separator();
         barsIonTableToggleButton = new javax.swing.JToggleButton();
         mzValuesIonTableToggleButton = new javax.swing.JToggleButton();
+        jSeparator18 = new javax.swing.JToolBar.Separator();
+        ionTableHelpJButton = new javax.swing.JButton();
         bubblePlotTabJPanel = new javax.swing.JPanel();
         bubbleJPanel = new javax.swing.JPanel();
         bubblePlotJToolBar = new javax.swing.JToolBar();
@@ -396,6 +398,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         moreThanTwoChargesBubblePlotToggleButton = new javax.swing.JToggleButton();
         jSeparator4 = new javax.swing.JToolBar.Separator();
         barsBubblePlotToggleButton = new javax.swing.JToggleButton();
+        jSeparator17 = new javax.swing.JToolBar.Separator();
+        bubblePlotHelpJButton = new javax.swing.JButton();
         spectrumJPanel = new javax.swing.JPanel();
         spectrumJToolBar = new javax.swing.JToolBar();
         aIonToggleButton = new javax.swing.JToggleButton();
@@ -415,6 +419,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         moreThanTwoChargesToggleButton = new javax.swing.JToggleButton();
         jSeparator15 = new javax.swing.JToolBar.Separator();
         allToggleButton = new javax.swing.JToggleButton();
+        jSeparator16 = new javax.swing.JToolBar.Separator();
+        spectrumHelpJButton = new javax.swing.JButton();
         spectrumSplitPane = new javax.swing.JSplitPane();
         sequenceFragmentIonPlotsJPanel = new javax.swing.JPanel();
         spectrumPanel = new javax.swing.JPanel();
@@ -691,11 +697,12 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         fragmentIonsJScrollPane.setOpaque(false);
 
-        bubblePlotJToolBar1.setBackground(new java.awt.Color(255, 255, 255));
-        bubblePlotJToolBar1.setBorder(null);
-        bubblePlotJToolBar1.setFloatable(false);
-        bubblePlotJToolBar1.setRollover(true);
-        bubblePlotJToolBar1.setPreferredSize(new java.awt.Dimension(0, 25));
+        ionTableJToolBar.setBackground(new java.awt.Color(255, 255, 255));
+        ionTableJToolBar.setBorder(null);
+        ionTableJToolBar.setFloatable(false);
+        ionTableJToolBar.setRollover(true);
+        ionTableJToolBar.setBorderPainted(false);
+        ionTableJToolBar.setPreferredSize(new java.awt.Dimension(0, 25));
 
         aIonTableToggleButton.setText("a");
         aIonTableToggleButton.setToolTipText("a-ions");
@@ -709,7 +716,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 aIonTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(aIonTableToggleButton);
+        ionTableJToolBar.add(aIonTableToggleButton);
 
         bIonTableToggleButton.setSelected(true);
         bIonTableToggleButton.setText("b");
@@ -723,7 +730,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 bIonTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(bIonTableToggleButton);
+        ionTableJToolBar.add(bIonTableToggleButton);
 
         cIonTableToggleButton.setText("c");
         cIonTableToggleButton.setToolTipText("c-ions");
@@ -736,8 +743,8 @@ public class OverviewPanel extends javax.swing.JPanel {
                 cIonTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(cIonTableToggleButton);
-        bubblePlotJToolBar1.add(jSeparator6);
+        ionTableJToolBar.add(cIonTableToggleButton);
+        ionTableJToolBar.add(jSeparator6);
 
         xIonTableToggleButton.setText("x");
         xIonTableToggleButton.setToolTipText("x-ions");
@@ -750,7 +757,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 xIonTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(xIonTableToggleButton);
+        ionTableJToolBar.add(xIonTableToggleButton);
 
         yIonTableToggleButton.setSelected(true);
         yIonTableToggleButton.setText("y");
@@ -764,7 +771,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 yIonTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(yIonTableToggleButton);
+        ionTableJToolBar.add(yIonTableToggleButton);
 
         zIonTableToggleButton.setText("z");
         zIonTableToggleButton.setToolTipText("z-ions");
@@ -777,8 +784,8 @@ public class OverviewPanel extends javax.swing.JPanel {
                 zIonTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(zIonTableToggleButton);
-        bubblePlotJToolBar1.add(jSeparator7);
+        ionTableJToolBar.add(zIonTableToggleButton);
+        ionTableJToolBar.add(jSeparator7);
 
         h2oTableToggleButton.setText("H2O");
         h2oTableToggleButton.setToolTipText("<html>Water Loss</html>");
@@ -791,7 +798,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 h2oTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(h2oTableToggleButton);
+        ionTableJToolBar.add(h2oTableToggleButton);
 
         nh3TableToggleButton.setText("NH3");
         nh3TableToggleButton.setToolTipText("Ammonia Loss");
@@ -804,7 +811,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 nh3TableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(nh3TableToggleButton);
+        ionTableJToolBar.add(nh3TableToggleButton);
 
         otherTableToggleButton.setText("Oth.");
         otherTableToggleButton.setToolTipText("Other: Precursor and Immonium Ions");
@@ -818,8 +825,8 @@ public class OverviewPanel extends javax.swing.JPanel {
                 otherTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(otherTableToggleButton);
-        bubblePlotJToolBar1.add(jSeparator14);
+        ionTableJToolBar.add(otherTableToggleButton);
+        ionTableJToolBar.add(jSeparator14);
 
         oneChargeTableToggleButton.setSelected(true);
         oneChargeTableToggleButton.setText("+");
@@ -833,7 +840,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 oneChargeTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(oneChargeTableToggleButton);
+        ionTableJToolBar.add(oneChargeTableToggleButton);
 
         twoChargesTableToggleButton.setText("++");
         twoChargesTableToggleButton.setToolTipText("Double Charge");
@@ -846,7 +853,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 twoChargesTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(twoChargesTableToggleButton);
+        ionTableJToolBar.add(twoChargesTableToggleButton);
 
         moreThanTwoChargesTableToggleButton.setText(">2 ");
         moreThanTwoChargesTableToggleButton.setToolTipText("More Than Two Charges");
@@ -860,8 +867,8 @@ public class OverviewPanel extends javax.swing.JPanel {
                 moreThanTwoChargesTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(moreThanTwoChargesTableToggleButton);
-        bubblePlotJToolBar1.add(jSeparator5);
+        ionTableJToolBar.add(moreThanTwoChargesTableToggleButton);
+        ionTableJToolBar.add(jSeparator5);
 
         barsIonTableToggleButton.setSelected(true);
         barsIonTableToggleButton.setText("Int");
@@ -876,7 +883,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 barsIonTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(barsIonTableToggleButton);
+        ionTableJToolBar.add(barsIonTableToggleButton);
 
         mzValuesIonTableToggleButton.setText("m/z");
         mzValuesIonTableToggleButton.setToolTipText("Traditional ion table with m/z values");
@@ -889,7 +896,31 @@ public class OverviewPanel extends javax.swing.JPanel {
                 mzValuesIonTableToggleButtonActionPerformed(evt);
             }
         });
-        bubblePlotJToolBar1.add(mzValuesIonTableToggleButton);
+        ionTableJToolBar.add(mzValuesIonTableToggleButton);
+        ionTableJToolBar.add(jSeparator18);
+
+        ionTableHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        ionTableHelpJButton.setToolTipText("Help");
+        ionTableHelpJButton.setBorder(null);
+        ionTableHelpJButton.setBorderPainted(false);
+        ionTableHelpJButton.setContentAreaFilled(false);
+        ionTableHelpJButton.setFocusable(false);
+        ionTableHelpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        ionTableHelpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        ionTableHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                ionTableHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                ionTableHelpJButtonMouseExited(evt);
+            }
+        });
+        ionTableHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ionTableHelpJButtonActionPerformed(evt);
+            }
+        });
+        ionTableJToolBar.add(ionTableHelpJButton);
 
         javax.swing.GroupLayout fragmentIonJPanelLayout = new javax.swing.GroupLayout(fragmentIonJPanel);
         fragmentIonJPanel.setLayout(fragmentIonJPanelLayout);
@@ -899,7 +930,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
-                    .addComponent(bubblePlotJToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE))
+                    .addComponent(ionTableJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE))
                 .addContainerGap())
         );
         fragmentIonJPanelLayout.setVerticalGroup(
@@ -908,7 +939,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(bubblePlotJToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(ionTableJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         spectrumJTabbedPane.addTab("Ion Table", fragmentIonJPanel);
@@ -922,6 +953,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotJToolBar.setBorder(null);
         bubblePlotJToolBar.setFloatable(false);
         bubblePlotJToolBar.setRollover(true);
+        bubblePlotJToolBar.setBorderPainted(false);
 
         aIonBubblePlotToggleButton.setText("a");
         aIonBubblePlotToggleButton.setToolTipText("a-ions");
@@ -1100,6 +1132,30 @@ public class OverviewPanel extends javax.swing.JPanel {
             }
         });
         bubblePlotJToolBar.add(barsBubblePlotToggleButton);
+        bubblePlotJToolBar.add(jSeparator17);
+
+        bubblePlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        bubblePlotHelpJButton.setToolTipText("Help");
+        bubblePlotHelpJButton.setBorder(null);
+        bubblePlotHelpJButton.setBorderPainted(false);
+        bubblePlotHelpJButton.setContentAreaFilled(false);
+        bubblePlotHelpJButton.setFocusable(false);
+        bubblePlotHelpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        bubblePlotHelpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        bubblePlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                bubblePlotHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                bubblePlotHelpJButtonMouseExited(evt);
+            }
+        });
+        bubblePlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bubblePlotHelpJButtonActionPerformed(evt);
+            }
+        });
+        bubblePlotJToolBar.add(bubblePlotHelpJButton);
 
         javax.swing.GroupLayout bubblePlotTabJPanelLayout = new javax.swing.GroupLayout(bubblePlotTabJPanel);
         bubblePlotTabJPanel.setLayout(bubblePlotTabJPanelLayout);
@@ -1131,6 +1187,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJToolBar.setBorder(null);
         spectrumJToolBar.setFloatable(false);
         spectrumJToolBar.setRollover(true);
+        spectrumJToolBar.setBorderPainted(false);
 
         aIonToggleButton.setText("a");
         aIonToggleButton.setToolTipText("a-ions");
@@ -1308,6 +1365,30 @@ public class OverviewPanel extends javax.swing.JPanel {
             }
         });
         spectrumJToolBar.add(allToggleButton);
+        spectrumJToolBar.add(jSeparator16);
+
+        spectrumHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        spectrumHelpJButton.setToolTipText("Help");
+        spectrumHelpJButton.setBorder(null);
+        spectrumHelpJButton.setBorderPainted(false);
+        spectrumHelpJButton.setContentAreaFilled(false);
+        spectrumHelpJButton.setFocusable(false);
+        spectrumHelpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        spectrumHelpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        spectrumHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                spectrumHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                spectrumHelpJButtonMouseExited(evt);
+            }
+        });
+        spectrumHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                spectrumHelpJButtonActionPerformed(evt);
+            }
+        });
+        spectrumJToolBar.add(spectrumHelpJButton);
 
         spectrumSplitPane.setBorder(null);
         spectrumSplitPane.setDividerLocation(80);
@@ -2014,6 +2095,11 @@ public class OverviewPanel extends javax.swing.JPanel {
         // @TODO: should this be implemented?
     }//GEN-LAST:event_moreThanTwoChargesTableToggleButtonActionPerformed
 
+    /**
+     * Updates the PSM selection and corresponding plots.
+     * 
+     * @param evt 
+     */
     private void psmTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmTableMouseClicked
 
         int row = psmTable.rowAtPoint(evt.getPoint());
@@ -2028,6 +2114,94 @@ public class OverviewPanel extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_psmTableMouseClicked
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void spectrumHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//GEN-LAST:event_spectrumHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void spectrumHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_spectrumHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void spectrumHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/SpectrumPanel.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_spectrumHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void bubblePlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bubblePlotHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_bubblePlotHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void bubblePlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bubblePlotHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_bubblePlotHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void bubblePlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bubblePlotHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/BubblePlot.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_bubblePlotHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void ionTableHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ionTableHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_ionTableHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void ionTableHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ionTableHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_ionTableHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void ionTableHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ionTableHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/IonTable.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_ionTableHelpJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonBubblePlotToggleButton;
     private javax.swing.JToggleButton aIonTableToggleButton;
@@ -2039,8 +2213,8 @@ public class OverviewPanel extends javax.swing.JPanel {
     private javax.swing.JToggleButton barsBubblePlotToggleButton;
     private javax.swing.JToggleButton barsIonTableToggleButton;
     private javax.swing.JPanel bubbleJPanel;
+    private javax.swing.JButton bubblePlotHelpJButton;
     private javax.swing.JToolBar bubblePlotJToolBar;
-    private javax.swing.JToolBar bubblePlotJToolBar1;
     private javax.swing.JPanel bubblePlotTabJPanel;
     private javax.swing.JToggleButton cIonBubblePlotToggleButton;
     private javax.swing.JToggleButton cIonTableToggleButton;
@@ -2054,12 +2228,17 @@ public class OverviewPanel extends javax.swing.JPanel {
     private javax.swing.JToggleButton h2oTableToggleButton;
     private javax.swing.JToggleButton h2oToggleButton;
     private javax.swing.ButtonGroup ionTableButtonGroup;
+    private javax.swing.JButton ionTableHelpJButton;
+    private javax.swing.JToolBar ionTableJToolBar;
     private javax.swing.JToolBar.Separator jSeparator10;
     private javax.swing.JToolBar.Separator jSeparator11;
     private javax.swing.JToolBar.Separator jSeparator12;
     private javax.swing.JToolBar.Separator jSeparator13;
     private javax.swing.JToolBar.Separator jSeparator14;
     private javax.swing.JToolBar.Separator jSeparator15;
+    private javax.swing.JToolBar.Separator jSeparator16;
+    private javax.swing.JToolBar.Separator jSeparator17;
+    private javax.swing.JToolBar.Separator jSeparator18;
     private javax.swing.JToolBar.Separator jSeparator4;
     private javax.swing.JToolBar.Separator jSeparator5;
     private javax.swing.JToolBar.Separator jSeparator6;
@@ -2094,6 +2273,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     private javax.swing.JPanel sequenceCoverageJPanel;
     private javax.swing.JPanel sequenceFragmentIonPlotsJPanel;
     private javax.swing.JScrollPane spectraScrollPane;
+    private javax.swing.JButton spectrumHelpJButton;
     private javax.swing.JPanel spectrumJPanel;
     private javax.swing.JTabbedPane spectrumJTabbedPane;
     private javax.swing.JToolBar spectrumJToolBar;
