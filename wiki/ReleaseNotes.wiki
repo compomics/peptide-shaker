@@ -1,0 +1,4 @@
+#summary Short summary of changes for each version of PeptideShaker.
+#labels Featured
+
+(no releases yet)
