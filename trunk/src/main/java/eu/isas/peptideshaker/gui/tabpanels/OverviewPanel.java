@@ -66,6 +66,10 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class OverviewPanel extends javax.swing.JPanel {
 
     /**
+     * The maximum sequence length for display in the sequence coverage panel.
+     */
+    private final int MAX_SEQUENCE_LENGTH = 6000;
+    /**
      * If true, the protein selection in the overview tab is mirrored in 
      * the protein table in the protein structure tab.
      */
@@ -2201,7 +2205,6 @@ public class OverviewPanel extends javax.swing.JPanel {
         new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/IonTable.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_ionTableHelpJButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonBubblePlotToggleButton;
     private javax.swing.JToggleButton aIonTableToggleButton;
@@ -2475,7 +2478,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         updateProteinTableSeparator();
         updatePeptidesAndPsmsSeparator();
         peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
-        
+
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -2583,62 +2586,71 @@ public class OverviewPanel extends javax.swing.JPanel {
             ArrayList<Integer> selectedPeptideEnd = new ArrayList<Integer>();
 
             String cleanSequence = db.getProtein(proteinAccession).getSequence();
-            String tempSequence = cleanSequence;
 
-            if (peptideTable.getSelectedRow() != -1) {
+            if (cleanSequence.length() < MAX_SEQUENCE_LENGTH) {
 
-                String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
-                String peptideSequence = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
+                String tempSequence = cleanSequence;
 
-                int startIndex = 0;
-                while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                    startIndex = tempSequence.lastIndexOf(peptideSequence) + 1;
-                    selectedPeptideStart.add(startIndex);
-                    selectedPeptideEnd.add(startIndex + peptideSequence.length());
-                    tempSequence = cleanSequence.substring(0, startIndex);
-                }
-            }
+                if (peptideTable.getSelectedRow() != -1) {
 
-            // an array containing the coverage index for each residue
-            int[] coverage = new int[cleanSequence.length() + 1];
+                    String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
+                    String peptideSequence = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getSequence();
 
-            PSParameter pSParameter = new PSParameter();
-            // iterate the peptide table and store the coverage for each validated peptide
-            for (int i = 0; i < peptideTable.getRowCount(); i++) {
-                String peptideKey = peptideTableMap.get(getPeptideKey(i));
-                PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey);
-                pSParameter = (PSParameter) peptideMatch.getUrParam(pSParameter);
-                if (pSParameter.isValidated()) {
-                    String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
-                    tempSequence = cleanSequence;
-
+                    int startIndex = 0;
                     while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
-                        int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
-                        int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                        for (int j = peptideTempStart; j < peptideTempEnd; j++) {
-                            coverage[j]++;
-                        }
-                        tempSequence = cleanSequence.substring(0, peptideTempStart);
+                        startIndex = tempSequence.lastIndexOf(peptideSequence) + 1;
+                        selectedPeptideStart.add(startIndex);
+                        selectedPeptideEnd.add(startIndex + peptideSequence.length());
+                        tempSequence = cleanSequence.substring(0, startIndex);
                     }
                 }
-            }
 
-            final String tempProteinAccession = proteinAccession;
-            final ArrayList<Integer> tempPeptideStarts = selectedPeptideStart;
-            final ArrayList<Integer> tempPeptideEnds = selectedPeptideEnd;
-            final int[] tempCoverage = coverage;
+                // an array containing the coverage index for each residue
+                int[] coverage = new int[cleanSequence.length() + 1];
 
-            // invoke later to give time for components to update
-            SwingUtilities.invokeLater(new Runnable() {
+                PSParameter pSParameter = new PSParameter();
+                // iterate the peptide table and store the coverage for each validated peptide
+                for (int i = 0; i < peptideTable.getRowCount(); i++) {
+                    String peptideKey = peptideTableMap.get(getPeptideKey(i));
+                    PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey);
+                    pSParameter = (PSParameter) peptideMatch.getUrParam(pSParameter);
+                    if (pSParameter.isValidated()) {
+                        String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+                        tempSequence = cleanSequence;
 
-                public void run() {
-                    double sequenceCoverage = ProteinSequencePane.formatProteinSequence(
-                            coverageEditorPane, db.getProtein(tempProteinAccession).getSequence(), tempPeptideStarts, tempPeptideEnds, tempCoverage);
-
-                    ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Protein Sequence Coverage (" + Util.roundDouble(sequenceCoverage, 2) + "%)");
-                    sequenceCoverageJPanel.repaint();
+                        while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+                            int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+                            int peptideTempEnd = peptideTempStart + peptideSequence.length();
+                            for (int j = peptideTempStart; j < peptideTempEnd; j++) {
+                                coverage[j]++;
+                            }
+                            tempSequence = cleanSequence.substring(0, peptideTempStart);
+                        }
+                    }
                 }
-            });
+
+                final String tempProteinAccession = proteinAccession;
+                final ArrayList<Integer> tempPeptideStarts = selectedPeptideStart;
+                final ArrayList<Integer> tempPeptideEnds = selectedPeptideEnd;
+                final int[] tempCoverage = coverage;
+
+                // invoke later to give time for components to update
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    public void run() {
+                        double sequenceCoverage = ProteinSequencePane.formatProteinSequence(
+                                coverageEditorPane, db.getProtein(tempProteinAccession).getSequence(), tempPeptideStarts, tempPeptideEnds, tempCoverage);
+
+                        ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Protein Sequence Coverage (" + Util.roundDouble(sequenceCoverage, 2) + "%)");
+                        sequenceCoverageJPanel.repaint();
+                    }
+                });
+            } else {
+                coverageEditorPane.setText("<html><i>The sequence is too long to display: " + cleanSequence.length() + " residues...</i></html>");
+                
+                ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Protein Sequence Coverage");
+                sequenceCoverageJPanel.repaint();
+            }
         }
     }
 
@@ -3204,7 +3216,7 @@ public class OverviewPanel extends javax.swing.JPanel {
      * @throws MzMLUnmarshallerException
      */
     public void displayResults() throws MzMLUnmarshallerException {
-        
+
         ProteomicAnalysis proteomicAnalysis = peptideShakerGUI.getProteomicanalysis();
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         int index = 0, maxPeptides = 0, maxSpectra = 0;
@@ -3535,7 +3547,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     public void showSeparators(boolean showSeparators) {
 
         int dividerSize = 5;
-        
+
         // @TODO: the coverage splitter sometimes causes problems and has therefore been disabled!!
         //        (the reason has to be the redrawing of the coverage panel...)
 
@@ -3551,14 +3563,14 @@ public class OverviewPanel extends javax.swing.JPanel {
             //peptidesPsmJSplitPane.setDividerSize(0);
         }
     }
-    
+
     /**
      * Update the main match for the given row in the protein table.
      * 
      * @param mainMatch             the protein match to use
      * @param proteinInferenceType  the protein inference group type
      */
-    public void updateMainMatch (Protein mainMatch, int proteinInferenceType) {
+    public void updateMainMatch(Protein mainMatch, int proteinInferenceType) {
         proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex());
         proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex());
         String description = peptideShakerGUI.getSequenceDataBase().getProteinHeader(mainMatch.getAccession()).getDescription();
