@@ -1,4 +1,9 @@
 #summary Short summary of changes for each version of PeptideShaker.
 #labels Featured
 
-(no releases yet)
+----
+
+*Changes in PeptideShaker 0.9 (July 11. 2011):*
+ * The first public beta release of PeptideShaker.
+
+----
