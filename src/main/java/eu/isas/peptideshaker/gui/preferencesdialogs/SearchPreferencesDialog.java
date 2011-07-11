@@ -138,7 +138,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         searchPreferencesHelpJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Search Preferences");
+        setTitle("Search Parameters");
         setResizable(false);
 
         cancelButton.setText("Cancel");
