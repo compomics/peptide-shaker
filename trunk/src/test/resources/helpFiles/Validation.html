@@ -8,42 +8,216 @@
         <a name="#top"/>
         <H2>Validation</H2>
 
-        <h3>General</h3>
-        For every population:
+        <ul>
+            <li><a href='#Introduction'>Introduction</a></li>
+            <li><a href='#Group_Selection'>Group Selection</a></li>
+            <li><a href='#Optimize_Estimator_Accuracy'>Estimator Optimization</a></li>
+            <li><a href='#Setting_the_Threshold'>Threshold Optimization</a></li>
+            <li><a href='#Identification_summary'>Identification Summary</a></li>
+            <li><a href='#Confidence_plot'>Confidence Plot</a></li>
+            <li><a href='#FDR_FNR_plot'>FDR/FNR Plot</a></li>
+            <li><a href='#ROC_plot'>Benefit/Cost Plot</a></li>
+            <li><a href='#PEP_plot'>PEP Esitmation Plot</a></li>
+            <li><a href='#FDR_plot'>FDR Estimation Plot</a></li>
+        </ul>
+
+
+        <a name="#Introduction"></a>
+        <h3>Introduction</h3>
+        The validation panel gives you a complete overview of <b>PeptideShaker</b>'s scoring metrics. Every identified population was 
+        processed in order to provide accurate and robust confidence estimation.
+        <br><br>
+        For every group you can:
         <ul>
             <li>Optimize the estimator's accuracy</li>
             <li>Set the threshold for the identifications</li>
         </ul>
-        <br>
-
-        <h3>Population</h3>
-        <p align="justify">
-            The standard populations inspected by <b>PeptideShaker</b> are PSMs, peptides and proteins. However, if statistical significance is ensured PSMs will be separated according to their charge. 
-            Similarly, peptides can be separated based on their modification status.
-        </p>
+        <br><br>
+        <a href="#top">More about Validation</a>
         <br><br><br>
 
-        <a name="Optimize_Estimator_Accuracy"></a>
-        <h3>Optimize Estimator Accuracy</h3>
+        <a name="#Group_Selection"></a>
+        <h3>Group Selection</h3>
         <p align="justify">
-            The estimators plot will help you to optimize the estimators. Fluctuations in the PEP illustrate a lack of robustness whereas disagreement of FDR estimators shows a lack of sensitivity. This can 
-            be corrected by optimizing the PEP window (directly or using the slide bars). By default, the PEP window is set to a minimal value Nmax: the maximum amount of target hits comprised between two 
+            The standard groups inspected by <b>PeptideShaker</b> are PSMs, peptides and proteins. However, if statistical 
+            significance is ensured PSMs will be separated according to their charge. Similarly, peptides can be separated 
+            based on their modification status.
+            <br><br>
+            This grouping strategy will allow you to increase the sensitivity of the processing without compromising robustness. 
+            Note however that changes at the PSM level will affect results at the Peptide and Protein level. Similarly changes 
+            at the Peptide level affects the Protein level. 
+            <br><br>
+            <i>It is thus important to apply the upstream changes first!</i>
+            <br><br>
+            For more information about peptide grouping see 
+            <a href="http://www.ncbi.nlm.nih.gov/pubmed/21500347">Vaudel et al: Peptide identification quality control, 
+                Proteomics 2011;11(10):2105-14</a>.
+        </p>
+        <br><br>
+        <a href="#top">More about Validation</a>
+        <br><br><br>
+
+        <a name="#Optimize_Estimator_Accuracy"></a>
+        <h3>Estimator Optimization</h3>
+        <p align="justify">
+            The estimator plots will help you improve the accuracy of confidence estimation. 
+            By default, the PEP window is set to a minimum Nmax value: the maximum amount of target hits comprised between two 
             subsequent decoy hits.
             <br><br>
-            Sometimes the PEP cannot be accurately estimated, for small populations for instance. The confidence and probabilistic estimators will then not be reliable anymore. It is adviced to trust only 
-            score and classical FDR.
+            When the PEP value is confidently estimated, probabilistic estimators can be used. However, sometimes the PEP cannot be 
+            accurately estimated, e.g., for small populations. The confidence and probabilistic estimators will then no longer 
+            be reliable. 
+            <br><br>
+            It is advised to trust only score and classical FDR. By default, the classical estimation is selected.
         </p>
+        <br><br>
+        <a href="#top">More about Validation</a>
         <br><br><br>
 
-        <a name="Setting_the_Threshold"></a>
-        <h3>Setting the Threshold</h3>
+        <a name="#Setting_the_Threshold"></a>
+        <h3>Threshold Optimization</h3>
         <p align="justify">
-            The thresholds plots allow you to optimize the thresold. Depending on the experimentalist's aims, a balance can be found between quality and quantity. The thresold can be set manually using a 
-            minimal confidence threshold, a maximal allowed FDR or a minimal allowed FNR.
+            The score threshold used, illustrated by a red vertical line in the confidence plot, can be changed to meet three kinds of requirements:
         </p>
-        
+
+        <ul>
+            <li>
+                <p align="justify">
+                    <b>Confidence</b>: all hits with a confidence greater than the threshold will be validated.
+                </p>
+            </li>
+            <br>
+            <li>
+                <b>False Discovery Rate (FDR)</b>: <b>PeptideShaker</b> validates the largest set of identifications with 
+                an FDR lower than the threshold. At 1% FDR, a maximum of 1% of the validated identifications will be false 
+                positives. The FDR can be estimated classically or probabilistically. 
+                <br><br>
+                <i>When the confidence estimation is not accurate the probabilistic 
+                    estimator should not be used! 
+                    <br><br>
+                    When Nmax or the number of validated hits are small (typically less than 100) low FDR threshold 
+                    (typically 1%) should not be applied!</i> 
+                <br><br>
+                For more information about the minimum acceptable FDR see 
+                <a href="http://www.ncbi.nlm.nih.gov/pubmed/21500347">Vaudel et al: Peptide identification quality control, 
+                    Proteomics 2011;11(10):2105-14</a>.
+            </li>
+            <br>
+            <li>
+                <b>False Negative Rate (FNR)</b>: <b>PeptideShaker</b> validates the smallest set of identifications with an FNR higher than 
+                the threshold. At 1% FNR, 99% of the potential true positives will be validated. 
+                <br><br>
+                <i>This threshold should not be used when the 
+                    confidence is not accurately estimated!</i>
+            </li>
+        </ul>
+        <br>
+        <p align="justify">
+            By default the threshold is set to 1% FDR.
+        </p>
+        <br><br>
+        <a href="#top">More about Validation</a>
         <br><br><br>
-        <a href="#top">Go to top of page</a><br><br>
+
+        <a name="#Identification_summary"></a>
+        <h3>Identification Summary</h3>
+        <p align="justify">
+            The identification summary provides essential metrics for the selected group:
+        </p>
+        <ul>
+            <li><b>Total TP:</b> the estimated total amount of the true positives which can be found in this dataset without any threshold.</li>
+            <br>
+            <li><b>Nmax:</b> the maximum amount of target hits comprised between two subsequent decoy hits. 
+                <br><br>
+                <i>If this value is lower than 100 the 
+                    accuracy of the confidence estimation should be <a href="#Optimize_Estimator_Accuracy">verified</a>!</i> 
+                <br><br>
+                For more information about Nmax, see 
+                <a href="http://www.ncbi.nlm.nih.gov/pubmed/21500347">Vaudel et al: Peptide identification quality control, 
+                    Proteomics 2011;11(10):2105-14</a>.</li>
+            <br>
+            <li><b>#Validated Hits:</b> the number of identification retained with the selected threshold.</li>
+            <br>
+            <li><b>#TP:</b> the estimated amount of true positives identifications contained in the validated identifications.</li>
+            <br>
+            <li><b>#FP:</b> the estimated amount of false positives identifications contained in the validated identifications.</li>
+            <br>
+            <li><b>Confidence:</b> the lowest confidence found in the validated identifications.</li>
+            <br>
+            <li><b>FDR:</b> the proportion of false positives in the validated hits. At 1% FDR, 100 validated identifications contain 
+                one false positive.</li>
+            <br>
+            <li><b>FNR:</b> the proportion of non validated true positives. At 1% FNR, 99% of the estimated total amount of the true positives 
+                will be validated. </li>
+        </ul>
+
+        <br><br>
+        <a href="#top">More about Validation</a>
+        <br><br><br>
+
+        <a name="#Confidence_plot"></a>
+        <h3>Confidence Plot</h3>
+        <p align="justify">
+            This plot displays the confidence plotted against the score of the selected group's identifications. If the confidence is fluctuating, 
+            the confidence estimation might not be robust enough and should be optimized as described above.
+            <br><br>
+            The red vertical line indicates the chosen threshold. The red area on the left of the threshold illustrates the amount of retained 
+            true positives. The green area on the right of the threshold illustrates the amount of potential true positives not validated, i.e., the 
+            false negatives.
+                <br><br>
+            Tip: It is important to verify that the confidence reaches 0, otherwise the total number of true positives will be under-estimated.
+                <br><br>
+                <i>No red line is displayed? You should <a href="#Setting_the_Threshold">use a less restrictive threshold</a>.</i>
+        </p>
+        <br><br>
+        <a href="#top">More about Validation</a>
+        <br><br><br>
+
+        <a name="#FDR_FNR_plot"></a>
+        <h3>FDR/FNR Plot</h3>
+        <p align="justify">
+            This plot displays the two FDR estimators and the FNR estimator plotted against the score of the selected group identifications. 
+            If the two FDR estimators do not agree, the confidence estimation might not be robust enough and should be <a href="#Optimize_Estimator_Accuracy">optimized</a>.
+            <br><br>
+            Three points indicate the FDR and FNR of the validated identifications.
+        </p>
+        <br><br>
+        <a href="#top">More about Validation</a>
+        <br><br><br>
+
+        <a name="#ROC_plot"></a>
+        <h3>Benefit/Cost Plot</h3>
+        <p align="justify">
+            This plot displays the benefit which can be expected, the proportion of retained true positives (1-FNR), plotted against the cost of 
+            the selected benefit, the proportion of false positive identifications (FDR). In other words it is a <a href="http://en.wikipedia.org/wiki/Receiver_operating_characteristic">ROC curve</a> for the selected group.
+            <br><br>
+            A point indicates the performance at the selected threshold. It is possible to move this point along the curve (by moving the slider 
+            below the plot) in order to optimize the threshold balancing between quality and quantity. If the point diverges away from the curve 
+            the confidence estimation should be <a href="#Optimize_Estimator_Accuracy">optimized</a>.
+        </p>
+        <br><br>
+        <a href="#top">More about Validation</a>
+        <br><br><br>
+
+        <a name="#PEP_plot"></a>
+        <h3>PEP Estimation Plot</h3>
+        <p align="justify">
+            This plot displays the Posterior Error Probability (PEP) plotted against the score of the selected group. If the PEP is fluctuating 
+            the confidence estimation is not robust enough and should be <a href="#Optimize_Estimator_Accuracy">optimized</a>.
+        </p>
+        <br><br>
+        <a href="#top">More about Validation</a>
+        <br><br><br>
+
+        <a name="#FDR_plot"></a>
+        <h3>FDR Estimation Plot</h3>
+        <p align="justify">
+            This plot displays the probabilistic FDR plotted against the classical FDR for identifications with a confidence >0. The curve 
+            should closely follow the black diagonal. If this is not the case the confidence estimation should be <a href="#Optimize_Estimator_Accuracy">optimized</a>.
+        </p>
+
+        <br><br>
+        <a href="#top">More about Validation</a><br><br>
 
     </BODY>
 </HTML>
