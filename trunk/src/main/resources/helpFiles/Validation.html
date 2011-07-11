@@ -24,6 +24,7 @@
 
         <a name="#Introduction"></a>
         <h3>Introduction</h3>
+        The validation panel gives you a complete overview of <b>PeptideShaker</b>'s scoring. Every identified population was processed in order to provide accurate and robust confidence estimation.
         For every group you can:
         <ul>
             <li>Optimize the estimator's accuracy</li>
@@ -46,7 +47,7 @@
             <br><br>
             <i>It is thus important to apply the upstream changes first!</i>
             <br><br>
-            For more information about protein grouping see 
+            For more information about peptide grouping see 
             <a href="http://www.ncbi.nlm.nih.gov/pubmed/21500347">Vaudel et al: Peptide identification quality control, 
                 Proteomics 2011;11(10):2105-14</a>.
         </p>
@@ -127,7 +128,7 @@
             <li><b>Nmax:</b> the maximum amount of target hits comprised between two subsequent decoy hits. 
                 <br><br>
                 <i>If this value is lower than 100 the 
-                    accuracy of the confidence estimation should be verified!</i> 
+                    accuracy of the confidence estimation should be <a href="#Optimize_Estimator_Accuracy">verified</a>!</i> 
                 <br><br>
                 For more information about Nmax, see 
                 <a href="http://www.ncbi.nlm.nih.gov/pubmed/21500347">Vaudel et al: Peptide identification quality control, 
@@ -161,6 +162,10 @@
             The red vertical line indicates the chosen threshold. The red area on the left of the threshold illustrates the amount of retained 
             true positives. The green area on the right of the threshold illustrates the amount of potential true positives not validated, i.e., the 
             false negatives.
+                <br><br>
+            Tip: It is important to verify that the confidence reaches 0, otherwise the total number of true positives will be under-estimated.
+                <br><br>
+                <i>No red line is displayed? You should <a href="#Setting_the_Threshold">use a less restrictive threshold</a>.</i>
         </p>
         <br><br>
         <a href="#top">More about Validation</a>
@@ -170,7 +175,7 @@
         <h3>FDR/FNR Plot</h3>
         <p align="justify">
             This plot displays the two FDR estimators and the FNR estimator plotted against the score of the selected group identifications. 
-            If the two FDR estimators do not agree, the confidence estimation might not be robust enough and should be optimized as described above.
+            If the two FDR estimators do not agree, the confidence estimation might not be robust enough and should be <a href="#Optimize_Estimator_Accuracy">optimized</a>.
             <br><br>
             Three points indicate the FDR and FNR of the validated identifications.
         </p>
@@ -182,11 +187,11 @@
         <h3>Benefit/Cost Plot</h3>
         <p align="justify">
             This plot displays the benefit which can be expected, the proportion of retained true positives (1-FNR), plotted against the cost of 
-            the selected benefit, the proportion of false positive identifications (FDR). In other words it is a ROC curve for the selected group.
+            the selected benefit, the proportion of false positive identifications (FDR). In other words it is a <a href="http://en.wikipedia.org/wiki/Receiver_operating_characteristic">ROC curve</a> for the selected group.
             <br><br>
-            A point indicate the performance at the selected threshold. It is possible to move this point along the curve (by moving the slider 
+            A point indicates the performance at the selected threshold. It is possible to move this point along the curve (by moving the slider 
             below the plot) in order to optimize the threshold balancing between quality and quantity. If the point diverges away from the curve 
-            the confidence estimation should be optimized as described above.
+            the confidence estimation should be <a href="#Optimize_Estimator_Accuracy">optimized</a>.
         </p>
         <br><br>
         <a href="#top">More about Validation</a>
@@ -196,7 +201,7 @@
         <h3>PEP Estimation Plot</h3>
         <p align="justify">
             This plot displays the Posterior Error Probability (PEP) plotted against the score of the selected group. If the PEP is fluctuating 
-            the confidence estimation is not robust enough and should be optimized as described above.
+            the confidence estimation is not robust enough and should be <a href="#Optimize_Estimator_Accuracy">optimized</a>.
         </p>
         <br><br>
         <a href="#top">More about Validation</a>
@@ -206,7 +211,7 @@
         <h3>FDR Estimation Plot</h3>
         <p align="justify">
             This plot displays the probabilistic FDR plotted against the classical FDR for identifications with a confidence >0. The curve 
-            should closely follow the black diagonal. If this is not the case the confidence estimation should be optimized as described above.
+            should closely follow the black diagonal. If this is not the case the confidence estimation should be <a href="#Optimize_Estimator_Accuracy">optimized</a>.
         </p>
 
         <br><br>

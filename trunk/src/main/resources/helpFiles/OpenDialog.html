@@ -7,7 +7,62 @@
     <BODY>
         <a name="#top"/>
         <H2>Open Files</H2>
+        
+        <h3>Introduction</h3>
+        <p align="justify">
+            The Open dialog allows the opening of identification files. After completing each field click on "Open" to start the processing. The progress of the import will then be displayed. From here, it is also possible to open previously saved projects.
+            <br>
+            <br>
+        </p>
 
-        [Help file in development.]
+        <h3>Project details</h3>
+        <p align="justify">
+            The project details will be used to reference the project. It is possible to set the project name, the type of sample and the number of the replicate.
+            <br>
+            <br>
+        </p>
+
+        <h3>Input files</h3>
+        <p align="justify">
+            <b>PeptideShaker</b> requires information which can be found in three different types of files:
+        </p>
+        <ul>
+            <li><b>Identification File(s):</b> Provide here files containing the identification results. It is possible to open Mascot .dat files, OMSSA .omx files and X!Tandem .t.xml files. 
+                <br>
+                From here it is also possible to load a former <b>PeptideShaker</b> project (.cps file).</li>
+            <br>
+            <i>If the identification files were generated using <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a>, <b>PeptideShaker</b> will try to load the other files automatically!</i>
+            <br>
+            <br>
+            <li><b>Spectrum File(s):</b> Provide here files containing the peak lists used for the search in the mgf format.</li>
+            <br>
+            <i>All spectra should be provided and uniquely entitled! In order to generate compatible mgf files we recommend the use of <a href="http://open-ms.sourceforge.net/"><b>OpenMS</b></a>.</i>
+            <br><br>
+            <li><b>FASTA File:</b> Provide here the FASTA file used to identify the spectra.</li>
+            <br>
+            <i>Identification should be conducted using concatenated Target/Decoy databases. The tag for reverse sequences is "REVERSED". It is recommended to use <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a> for the identification of spectra. Peptides common to the Target and the Decoy database will be automatically ignored.</i>
+            <br>
+            <br>
+            Loading the files can require a lot of time and memory. We recommend to try <b>PeptideShaker</b> first with small datasets!
+            <br>
+        </ul>
+
+        <h3>Processing Parameters</h3>
+        <p align="justify">
+            Additional settings can be set for the preprocessing of the identification files (not available for cps files):
+        </p>
+        <ul>
+            <li><b>e-value filtering:</b> In order to reduce the memory consumption it is possible to remove identifications with a high e-value. It is adviced to keep these values as high as possible in order to ensure that PSMs reach a PEP of 1. This can be verified in the validation panel.</li>
+            <br>
+            <li><b>Peptide Length:</b> lower and upper limits can be set for the peptide length.</li>
+            <br>
+            <li><b>Precursor accuracy:</b> The higher precursor mass error allowed can be set here in order to filter out outliers.</li>
+            <br>
+            <li><b>Search Parameters:</b> The search parameters should be set carefully in order to process the data reliably.</li>
+            <br>
+            <i>If the identification files were generated using <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a>, <b>PeptideShaker</b> will try to load the search parameters automatically!</i>
+            <br>
+            <br>
+        </ul>
     </BODY>
 </HTML>
