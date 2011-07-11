@@ -2522,6 +2522,7 @@ public class StatsPanel extends javax.swing.JPanel {
             fnrTxt.setText(Util.roundDouble(currentResults.getFnrLimit(), 2) + " %");
             confidenceSlider.setValue(currentResults.getConfidenceLimit().intValue());
             fdrSlider1.setValue(currentResults.getFdrLimit().intValue());
+            fdrSlider2.setValue(currentResults.getFdrLimit().intValue());
             windowTxt.setText(currentTargetDecoyMap.getWindowSize() + "");
             Double newPosition = 50 * (Math.log10(currentTargetDecoyMap.getWindowSize() / (double) currentTargetDecoyMap.getnMax()) + 1);
             sensitivitySlider1.setValue(newPosition.intValue());
