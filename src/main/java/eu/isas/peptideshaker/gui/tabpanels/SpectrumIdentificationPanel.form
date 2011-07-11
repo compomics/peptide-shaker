@@ -160,11 +160,11 @@
                           <EmptySpace pref="1190" max="32767" attributes="0"/>
                           <Component id="psmHelpJButton" min="-2" pref="25" max="-2" attributes="0"/>
                       </Group>
-                      <Group type="102" alignment="1" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <Component id="jPanel5" max="32767" attributes="0"/>
-                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="jPanel7" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="jPanel8" max="32767" attributes="0"/>
                       </Group>
                   </Group>
@@ -186,9 +186,9 @@
                   <Component id="peptideShakerJScrollPane" min="-2" pref="51" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jPanel5" max="32767" attributes="2"/>
+                      <Component id="jPanel7" max="32767" attributes="2"/>
                       <Component id="jPanel8" max="32767" attributes="2"/>
-                      <Component id="jPanel7" alignment="0" max="32767" attributes="2"/>
+                      <Component id="jPanel5" alignment="0" max="32767" attributes="2"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
               </Group>
@@ -209,8 +209,8 @@
                   <Table columnCount="7" rowCount="0">
                     <Column editable="false" title=" " type="java.lang.Integer"/>
                     <Column editable="false" title="Protein(s)" type="java.lang.String"/>
-                    <Column editable="false" title="Sequence" type="java.lang.String"/>
-                    <Column editable="false" title="Modifications" type="java.lang.String"/>
+                    <Column editable="false" title="Peptide" type="java.lang.String"/>
+                    <Column editable="false" title="Modification(s)" type="java.lang.String"/>
                     <Column editable="false" title="Score" type="java.lang.Double"/>
                     <Column editable="false" title="Confidence" type="java.lang.Double"/>
                     <Column editable="false" title="  " type="java.lang.Boolean"/>
@@ -286,9 +286,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="380" max="32767" attributes="0"/>
+                      <EmptySpace pref="388" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="omssaTableJScrollPane" alignment="0" pref="415" max="32767" attributes="2"/>
+                  <Component id="omssaTableJScrollPane" alignment="0" pref="423" max="32767" attributes="2"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -394,9 +394,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="369" max="32767" attributes="0"/>
+                      <EmptySpace pref="377" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="xTandemTableJScrollPane" alignment="0" pref="417" max="32767" attributes="2"/>
+                  <Component id="xTandemTableJScrollPane" alignment="0" pref="425" max="32767" attributes="2"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -497,9 +497,9 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="382" max="32767" attributes="0"/>
+                      <EmptySpace pref="390" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="mascotTableJScrollPane" alignment="0" pref="416" max="32767" attributes="2"/>
+                  <Component id="mascotTableJScrollPane" alignment="0" pref="424" max="32767" attributes="2"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -541,7 +541,7 @@
                       <Table columnCount="6" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Protein(s)" type="java.lang.String"/>
-                        <Column editable="false" title="Peptide(s)" type="java.lang.String"/>
+                        <Column editable="false" title="Peptide" type="java.lang.String"/>
                         <Column editable="false" title="Modification(s)" type="java.lang.String"/>
                         <Column editable="false" title="e-value" type="java.lang.Double"/>
                         <Column editable="false" title="Confidence" type="java.lang.Double"/>
