@@ -134,6 +134,7 @@ public class ProteinFilter extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         clearJButton = new javax.swing.JButton();
         exitJButton = new javax.swing.JButton();
+        proteinFilteringHelpJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Protein Filter");
@@ -515,14 +516,39 @@ public class ProteinFilter extends javax.swing.JDialog {
             }
         });
 
+        proteinFilteringHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        proteinFilteringHelpJButton.setToolTipText("Help");
+        proteinFilteringHelpJButton.setBorder(null);
+        proteinFilteringHelpJButton.setBorderPainted(false);
+        proteinFilteringHelpJButton.setContentAreaFilled(false);
+        proteinFilteringHelpJButton.setFocusable(false);
+        proteinFilteringHelpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        proteinFilteringHelpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        proteinFilteringHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                proteinFilteringHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                proteinFilteringHelpJButtonMouseExited(evt);
+            }
+        });
+        proteinFilteringHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proteinFilteringHelpJButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(proteinFilteringHelpJButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(clearJButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(exitJButton))
@@ -538,7 +564,8 @@ public class ProteinFilter extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(proteinFilteringHelpJButton)
                     .addComponent(clearJButton)
                     .addComponent(exitJButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -735,6 +762,35 @@ public class ProteinFilter extends javax.swing.JDialog {
     private void descriptionJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_descriptionJTextFieldKeyReleased
         filter();
     }//GEN-LAST:event_descriptionJTextFieldKeyReleased
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void proteinFilteringHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinFilteringHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//GEN-LAST:event_proteinFilteringHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void proteinFilteringHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinFilteringHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_proteinFilteringHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void proteinFilteringHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinFilteringHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/ProteinFiltering.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_proteinFilteringHelpJButtonActionPerformed
 
     /**
      * Filters the protein table according to the current filter settings.
@@ -948,6 +1004,7 @@ public class ProteinFilter extends javax.swing.JDialog {
     private javax.swing.JRadioButton peptideLessThanJRadioButton;
     private javax.swing.ButtonGroup peptidesButtonGroup;
     private javax.swing.JTextField proteinAccessionJTextField;
+    private javax.swing.JButton proteinFilteringHelpJButton;
     private javax.swing.ButtonGroup qValueButtonGroup;
     private javax.swing.JRadioButton scoreEqualJRadioButton;
     private javax.swing.JRadioButton scoreGreaterThanJRadioButton;

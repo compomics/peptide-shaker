@@ -1120,6 +1120,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     break;
             }
         }
+        
+        // disable the protein filter option if a tab other than the overview tab is selected
+        proteinFilterJMenuItem.setEnabled(selectedIndex == 0);
     }//GEN-LAST:event_resultsJTabbedPaneStateChanged
 
     /**
