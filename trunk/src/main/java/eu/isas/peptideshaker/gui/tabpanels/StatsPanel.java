@@ -19,6 +19,7 @@ import java.util.HashMap;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItemCollection;
@@ -130,11 +131,11 @@ public class StatsPanel extends javax.swing.JPanel {
     /**
      * The highlighting to use for FNR.
      */
-    private Color fnrHighlighColor = new Color(0, 255, 0, 15);
+    private Color fnrHighlightColor = new Color(0, 255, 0, 15);
     /**
      * The highlighting to use for FDR.
      */
-    private Color fdrHighlighColor = new Color(255, 0, 0, 15);
+    private Color fdrHighlightColor = new Color(255, 0, 0, 15);
 
     /**
      * Create a new StatsPanel.
@@ -147,9 +148,15 @@ public class StatsPanel extends javax.swing.JPanel {
 
         initComponents();
 
-        fdrTxt.setBackground(fdrHighlighColor);
-        fnrTxt.setBackground(fnrHighlighColor);
-
+        // for some reason background highlighting with alpha values does not work on the backup look and feel...
+        if (UIManager.getLookAndFeel().getName().equalsIgnoreCase("Nimbus")) {
+            fdrTxt.setBackground(fdrHighlightColor);
+            fnrTxt.setBackground(fnrHighlightColor);
+        } else {
+            fdrTxt.setBackground(confidenceTxt.getBackground());
+            fnrTxt.setBackground(confidenceTxt.getBackground());
+        }
+        
         // Initialize confidence plot
         scoreAxis = new LogAxis("Probabilistic Score");
         NumberAxis confidenceAxis = new NumberAxis("Confidence [%]");
@@ -430,12 +437,10 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel36.setText("FNR:");
         jLabel36.setToolTipText("False Negative Rate");
 
-        fdrTxt.setBackground(new java.awt.Color(255, 153, 153));
         fdrTxt.setEditable(false);
         fdrTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         fdrTxt.setToolTipText("False Discovery Rate");
 
-        fnrTxt.setBackground(new java.awt.Color(153, 255, 153));
         fnrTxt.setEditable(false);
         fnrTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         fnrTxt.setToolTipText("False Negative Rate");
@@ -708,9 +713,10 @@ public class StatsPanel extends javax.swing.JPanel {
         optimizationJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Optimization"));
         optimizationJPanel.setOpaque(false);
 
+        optimizationTabbedPane.setBackground(new java.awt.Color(255, 255, 255));
         optimizationTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
 
-        estimatorOptimizationTab.setOpaque(false);
+        estimatorOptimizationTab.setBackground(new java.awt.Color(255, 255, 255));
 
         estimatorsPlotSplitPane.setBorder(null);
         estimatorsPlotSplitPane.setDividerLocation(estimatorsPlotSplitPane.getWidth() / 2);
@@ -884,7 +890,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
         optimizationTabbedPane.addTab("Estimators", estimatorOptimizationTab);
 
-        thresholdOptimizationTab.setOpaque(false);
+        thresholdOptimizationTab.setBackground(new java.awt.Color(255, 255, 255));
 
         leftPlotSplitPane.setBorder(null);
         leftPlotSplitPane.setDividerLocation(leftPlotSplitPane.getWidth() / 3);
@@ -2534,7 +2540,7 @@ public class StatsPanel extends javax.swing.JPanel {
             } else {
                 fdrCombo1.setSelectedIndex(1);
             }
-            
+
             updateCharts();
         }
     }
@@ -2717,7 +2723,7 @@ public class StatsPanel extends javax.swing.JPanel {
         confidencePlot.setDataset(0, confidenceData);
 
         // setup the renderer
-        XYDifferenceRenderer confidenceRendrer = new XYDifferenceRenderer(fnrHighlighColor, fdrHighlighColor, false);
+        XYDifferenceRenderer confidenceRendrer = new XYDifferenceRenderer(fnrHighlightColor, fdrHighlightColor, false);
         confidenceRendrer.setSeriesPaint(0, Color.blue);
         confidenceRendrer.setSeriesStroke(0, new BasicStroke(LINE_WIDTH));
         confidenceRendrer.setSeriesStroke(1, new BasicStroke(0));

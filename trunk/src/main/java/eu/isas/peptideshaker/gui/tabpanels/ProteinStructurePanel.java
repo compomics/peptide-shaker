@@ -538,6 +538,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         pdbMatchesJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PDB Matches"));
         pdbMatchesJPanel.setOpaque(false);
 
+        pdbJScrollPane.setOpaque(false);
+
         pdbMatchesJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -561,6 +563,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 return canEdit [columnIndex];
             }
         });
+        pdbMatchesJTable.setOpaque(false);
         pdbMatchesJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         pdbMatchesJTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
@@ -602,6 +605,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         pdbChainsJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PDB Chains"));
         pdbChainsJPanel.setOpaque(false);
 
+        pdbChainsJScrollPane.setOpaque(false);
+
         pdbChainsJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -625,6 +630,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 return canEdit [columnIndex];
             }
         });
+        pdbChainsJTable.setOpaque(false);
         pdbChainsJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         pdbChainsJTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
