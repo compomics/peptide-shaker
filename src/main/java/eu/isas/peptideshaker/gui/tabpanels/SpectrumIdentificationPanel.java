@@ -449,6 +449,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Search Engine Performance"));
         jPanel1.setOpaque(false);
 
+        searchEnginetableJScrollPane.setOpaque(false);
+
         searchEngineTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -472,6 +474,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        searchEngineTable.setOpaque(false);
         searchEnginetableJScrollPane.setViewportView(searchEngineTable);
 
         vennDiagramButton.setBorderPainted(false);
@@ -501,6 +504,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide-Spectrum Matches"));
         jPanel4.setOpaque(false);
 
+        peptideShakerJScrollPane.setOpaque(false);
+
         peptideShakerJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -525,6 +530,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         });
         peptideShakerJTable.setFocusable(false);
+        peptideShakerJTable.setOpaque(false);
         peptideShakerJTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 peptideShakerJTableMouseExited(evt);
@@ -544,6 +550,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         jLabel1.setText("PeptideShaker");
 
         jPanel5.setOpaque(false);
+
+        omssaTableJScrollPane.setOpaque(false);
 
         omssaTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -568,6 +576,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        omssaTable.setOpaque(false);
         omssaTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         omssaTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
@@ -614,6 +623,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         jLabel4.setFont(jLabel4.getFont().deriveFont((jLabel4.getFont().getStyle() | java.awt.Font.ITALIC)));
         jLabel4.setText("X!Tandem");
 
+        xTandemTableJScrollPane.setOpaque(false);
+
         xTandemTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -637,6 +648,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        xTandemTable.setOpaque(false);
         xTandemTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         xTandemTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
@@ -681,6 +693,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         jLabel2.setText("Mascot");
 
         mascotTableJScrollPane.setMinimumSize(new java.awt.Dimension(23, 87));
+        mascotTableJScrollPane.setOpaque(false);
 
         mascotTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -705,6 +718,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        mascotTable.setOpaque(false);
         mascotTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         mascotTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -845,6 +859,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        spectrumTable.setOpaque(false);
         spectrumTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         spectrumTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {

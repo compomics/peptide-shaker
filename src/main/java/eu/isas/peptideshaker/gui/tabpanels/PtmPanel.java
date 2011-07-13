@@ -572,6 +572,7 @@ public class PtmPanel extends javax.swing.JPanel {
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum & Fragment Ions"));
         jPanel5.setOpaque(false);
 
+        spectrumTabbedPane.setBackground(new java.awt.Color(255, 255, 255));
         spectrumTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
 
         fragmentIonsJPanel.setOpaque(false);
@@ -589,7 +590,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         spectrumTabbedPane.addTab("Ions", fragmentIonsJPanel);
 
-        spectrumJPanel.setOpaque(false);
+        spectrumJPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         spectrumJToolBar.setBackground(new java.awt.Color(255, 255, 255));
         spectrumJToolBar.setBorder(null);

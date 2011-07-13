@@ -85,6 +85,9 @@
       </Layout>
       <SubComponents>
         <Container class="javax.swing.JScrollPane" name="searchEnginetableJScrollPane">
+          <Properties>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
           <AuxValues>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
@@ -119,6 +122,7 @@
                     </Column>
                   </TableColumnModel>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                 </Property>
@@ -197,6 +201,9 @@
       </Layout>
       <SubComponents>
         <Container class="javax.swing.JScrollPane" name="peptideShakerJScrollPane">
+          <Properties>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
           <AuxValues>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
@@ -256,6 +263,7 @@
                   </TableColumnModel>
                 </Property>
                 <Property name="focusable" type="boolean" value="false"/>
+                <Property name="opaque" type="boolean" value="false"/>
                 <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                   <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                 </Property>
@@ -308,6 +316,9 @@
           </Layout>
           <SubComponents>
             <Container class="javax.swing.JScrollPane" name="omssaTableJScrollPane">
+              <Properties>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
               </AuxValues>
@@ -360,6 +371,7 @@
                         </Column>
                       </TableColumnModel>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
                       <JTableSelectionModel selectionMode="0"/>
                     </Property>
@@ -428,6 +440,9 @@
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="xTandemTableJScrollPane">
+              <Properties>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
               </AuxValues>
@@ -475,6 +490,7 @@
                         </Column>
                       </TableColumnModel>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
                       <JTableSelectionModel selectionMode="0"/>
                     </Property>
@@ -537,6 +553,7 @@
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[23, 87]"/>
                 </Property>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
@@ -590,6 +607,7 @@
                         </Column>
                       </TableColumnModel>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
                       <JTableSelectionModel selectionMode="0"/>
                     </Property>
@@ -743,6 +761,7 @@
                         </Column>
                       </TableColumnModel>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
                       <JTableSelectionModel selectionMode="0"/>
                     </Property>

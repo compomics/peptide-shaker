@@ -535,6 +535,9 @@
           <SubComponents>
             <Container class="javax.swing.JTabbedPane" name="spectrumTabbedPane">
               <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                </Property>
                 <Property name="selectedIndex" type="int" value="1"/>
                 <Property name="tabPlacement" type="int" value="3"/>
               </Properties>
@@ -568,7 +571,9 @@
                 </Container>
                 <Container class="javax.swing.JPanel" name="spectrumJPanel">
                   <Properties>
-                    <Property name="opaque" type="boolean" value="false"/>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
