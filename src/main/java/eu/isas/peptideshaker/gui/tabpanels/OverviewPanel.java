@@ -2038,7 +2038,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             if (column == 2 && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
                 String proteinKey = proteinTableMap.get(getProteinKey(row));
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
-                new ProteinInferenceDialog(peptideShakerGUI, proteinTable, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
+                new ProteinInferenceDialog(peptideShakerGUI, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
             }
         }
     }//GEN-LAST:event_proteinTableMouseReleased

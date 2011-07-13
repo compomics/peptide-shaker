@@ -819,7 +819,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             // open the protein inference dialog
             if (column == 2 && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
-                new ProteinInferenceDialog(peptideShakerGUI, proteinTable, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
+                new ProteinInferenceDialog(peptideShakerGUI, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
             }
         }
     }//GEN-LAST:event_proteinTableMouseReleased
@@ -1014,6 +1014,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
                     jmolPanel.getViewer().openFile(link);
                     jmolPanel.getViewer().evalString("ribbon ONLY");
+                    spinModel(peptideShakerGUI.spinModel());
                     jmolStructureShown = true;
 
                     ((TitledBorder) pdbStructureJPanel.getBorder()).setTitle("PDB Structure (" + lParam.getPdbaccession() + ")");
@@ -1615,7 +1616,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
          * @param rasmolScript the command line to execute
          */
         public void executeCmd(String rasmolScript) {
-            viewer.evalString(rasmolScript);
+            viewer.evalString(rasmolScript); 
         }
 
         @Override
@@ -1749,5 +1750,19 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex());
         String description = peptideShakerGUI.getSequenceDataBase().getProteinHeader(mainMatch.getAccession()).getDescription();
         proteinTable.setValueAt(description, proteinTable.getSelectedRow(), proteinTable.getColumn("Description").getModelIndex());
+    }
+    
+    /**
+     * Turns the spinning of the model on or off.
+     * 
+     * @param spin if true the spinning is turned on.
+     */
+    public void spinModel(boolean spin) {
+        
+        if (spin) {
+            jmolPanel.getViewer().evalString("set spin y 20; spin");
+        } else  {
+            jmolPanel.getViewer().evalString("spin off");
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
@@ -14,6 +15,7 @@ import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 
@@ -46,10 +48,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      */
     private SequenceDataBase db;
     /**
-     * The protein table.
-     */
-    private JTable proteinTable;
-    /**
      * The PeptideShaker parent frame.
      */
     private PeptideShakerGUI peptideShakerGUI;
@@ -70,26 +68,27 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * Creates new form ProteinInferenceDialog
      * 
      * @param peptideShakerGUI
-     * @param proteinTable 
      * @param inspectedMatch 
      * @param identification
      * @param db  
      */
-    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, JTable proteinTable, ProteinMatch inspectedMatch, Identification identification, SequenceDataBase db) {
+    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, ProteinMatch inspectedMatch, Identification identification, SequenceDataBase db) {
         super(peptideShakerGUI, true);
 
         this.peptideShakerGUI = peptideShakerGUI;
-        this.proteinTable = proteinTable;
         this.db = db;
         this.inspectedMatch = inspectedMatch;
         accessions = new ArrayList(inspectedMatch.getTheoreticProteinsAccessions());
+        
         for (String proteinAccession : inspectedMatch.getTheoreticProteinsAccessions()) {
             ProteinMatch uniqueProteinMatch = identification.getProteinIdentification().get(inspectedMatch.getTheoreticProtein(proteinAccession).getProteinKey());
             if (uniqueProteinMatch != null) {
                 uniqueMatches.add(uniqueProteinMatch);
             }
         }
+        
         Protein singleProtein;
+        
         for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
             if (proteinMatch.getNProteins() > 1 && !associatedMatches.contains(proteinMatch) && !proteinMatch.getKey().equals(inspectedMatch.getKey())) {
                 for (String proteinAccession : inspectedMatch.getTheoreticProteinsAccessions()) {
@@ -129,8 +128,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         uniqueHitsTable.getTableHeader().setReorderingAllowed(false);
         relatedHitsTable.getTableHeader().setReorderingAllowed(false);
 
-        proteinMatchTable.getColumn("Main Match").setMinWidth(80);
-        proteinMatchTable.getColumn("Main Match").setMaxWidth(80);
+        proteinMatchTable.getColumn("  ").setMinWidth(30);
+        proteinMatchTable.getColumn("  ").setMaxWidth(30);
 
         // set the preferred size of the accession column
         int width = peptideShakerGUI.getPreferredColumnWidth(proteinMatchTable, proteinMatchTable.getColumn("Accession").getModelIndex(), 2);
@@ -146,7 +145,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         relatedHitsTable.getColumn("").setMaxWidth(30);
 
         // change the cell renderer to fix a problem in Nimbus and alternating row colors
-        proteinMatchTable.getColumn("Main Match").setCellRenderer(new NimbusCheckBoxRenderer());
+        proteinMatchTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
+
+        proteinMatchTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(
+                peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
 
         uniqueHitsTable.getColumn(" ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
@@ -303,8 +305,16 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         proteinMatchTable.setModel(new MatchTable());
         proteinMatchTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                proteinMatchTableMouseExited(evt);
+            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 proteinMatchTableMouseReleased(evt);
+            }
+        });
+        proteinMatchTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                proteinMatchTableMouseMoved(evt);
             }
         });
         jScrollPane1.setViewportView(proteinMatchTable);
@@ -450,15 +460,38 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_groupClassJComboBoxActionPerformed
 
     /**
-     * Sets the main match.
+     * Sets the main match if the main match column is selected, or opens 
+     * the protein web link if the accession number column is selcted.
      * 
      * @param evt 
      */
     private void proteinMatchTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinMatchTableMouseReleased
+        
         int row = proteinMatchTable.rowAtPoint(evt.getPoint());
-        inspectedMatch.setMainMatch(inspectedMatch.getTheoreticProtein(accessions.get(row)));
-        proteinMatchTable.revalidate();
-        proteinMatchTable.repaint();
+        int column = proteinMatchTable.columnAtPoint(evt.getPoint());
+
+        if (row != -1) {
+
+            if (column == 1) {
+                inspectedMatch.setMainMatch(inspectedMatch.getTheoreticProtein(accessions.get(row)));
+                proteinMatchTable.revalidate();
+                proteinMatchTable.repaint();
+            } else if (column == 1) {
+                
+                // open protein link in web browser
+                if (evt.getButton() == MouseEvent.BUTTON1
+                        && ((String) proteinMatchTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                    String link = (String) proteinMatchTable.getValueAt(row, column);
+                    link = link.substring(link.indexOf("\"") + 1);
+                    link = link.substring(0, link.indexOf("\""));
+
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    BareBonesBrowserLaunch.openURL(link);
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
+            }
+        }
     }//GEN-LAST:event_proteinMatchTableMouseReleased
 
     /**
@@ -490,6 +523,38 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_ionTableHelpJButtonActionPerformed
 
+    /**
+     * Changes the cursor into a hand cursor if the table cell contains an
+     * HTML link.
+     *
+     * @param evt
+     */
+    private void proteinMatchTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinMatchTableMouseMoved
+        int row = proteinMatchTable.rowAtPoint(evt.getPoint());
+        int column = proteinMatchTable.columnAtPoint(evt.getPoint());
+
+        if (column == 1 && proteinMatchTable.getValueAt(row, column) != null) {
+
+            String tempValue = (String) proteinMatchTable.getValueAt(row, column);
+
+            if (tempValue.lastIndexOf("<html>") != -1) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        } else {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_proteinMatchTableMouseMoved
+
+    /**
+     * Changes the cursor back to the default cursor a hand.
+     *
+     * @param evt
+     */
+    private void proteinMatchTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinMatchTableMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_proteinMatchTableMouseExited
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox groupClassJComboBox;
     private javax.swing.JButton ionTableHelpJButton;
@@ -530,7 +595,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return "";
                 case 1:
-                    return "Main Match";
+                    return "  ";
                 case 2:
                     return "Accession";
                 case 3:
@@ -549,7 +614,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 1:
                     return inspectedMatch.getMainMatch().getAccession().equals(accessions.get(row));
                 case 2:
-                    return accessions.get(row);
+                    return peptideShakerGUI.addDatabaseLink(inspectedMatch.getTheoreticProtein(accessions.get(row)));//accessions.get(row);
                 case 3:
                     if (db != null) {
                         return db.getProteinHeader(inspectedMatch.getTheoreticProtein(accessions.get(row)).getProteinKey()).getDescription();
