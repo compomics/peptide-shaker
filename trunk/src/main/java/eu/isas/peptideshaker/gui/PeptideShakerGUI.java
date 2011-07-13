@@ -46,6 +46,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -357,6 +358,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         peptidesAndPsmsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         spectrumJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         sequenceCoverageJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        structureTabViewMenu = new javax.swing.JMenu();
+        modelSpinJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
@@ -561,7 +564,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         viewJMenu.setMnemonic('V');
         viewJMenu.setText("View");
 
-        overViewTabViewMenu.setText("OverView Tab");
+        overViewTabViewMenu.setText("Overview");
 
         proteinsJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         proteinsJCheckBoxMenuItem.setMnemonic('P');
@@ -608,6 +611,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         overViewTabViewMenu.add(sequenceCoverageJCheckBoxMenuItem);
 
         viewJMenu.add(overViewTabViewMenu);
+
+        structureTabViewMenu.setText("3D Structure");
+
+        modelSpinJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        modelSpinJCheckBoxMenuItem.setMnemonic('R');
+        modelSpinJCheckBoxMenuItem.setSelected(true);
+        modelSpinJCheckBoxMenuItem.setText("Rotate");
+        modelSpinJCheckBoxMenuItem.setToolTipText("Rotate the protein model");
+        modelSpinJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modelSpinJCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        structureTabViewMenu.add(modelSpinJCheckBoxMenuItem);
+
+        viewJMenu.add(structureTabViewMenu);
         viewJMenu.add(jSeparator3);
 
         sparklinesJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
@@ -1040,9 +1059,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         // check if we have re-loaded the data using the current threshold and PEP window settings
         if (selectedIndex != 4) {
             if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate) {
-                
+
                 resultsJTabbedPane.setSelectedIndex(4);
-                
+
                 int value = JOptionPane.showConfirmDialog(
                         this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results?",
                         JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -1050,7 +1069,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 if (value == JOptionPane.YES_OPTION) {
                     statsPanel.revalidateData();
                     resultsJTabbedPane.setSelectedIndex(selectedIndex);
-                } else if (value == JOptionPane.NO_OPTION) { 
+                } else if (value == JOptionPane.NO_OPTION) {
                     // reset the test, i.e., don't ask twice without changes in between
                     ignoreThresholdUpdate = true;
                     resultsJTabbedPane.setSelectedIndex(selectedIndex);
@@ -1059,9 +1078,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     resultsJTabbedPane.setSelectedIndex(4);
                 }
             } else if (!statsPanel.pepWindowApplied() && !ignorePepWindowUpdate) {
-                
+
                 resultsJTabbedPane.setSelectedIndex(4);
-                
+
                 int value = JOptionPane.showConfirmDialog(
                         this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes?",
                         JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -1069,7 +1088,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 if (value == JOptionPane.YES_OPTION) {
                     statsPanel.applyPepWindow();
                     resultsJTabbedPane.setSelectedIndex(selectedIndex);
-                } else if (value == JOptionPane.NO_OPTION) { 
+                } else if (value == JOptionPane.NO_OPTION) {
                     // reset the test, i.e., don't ask twice without changes in between
                     ignorePepWindowUpdate = true;
                     resultsJTabbedPane.setSelectedIndex(selectedIndex);
@@ -1120,7 +1139,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     break;
             }
         }
-        
+
         // disable the protein filter option if a tab other than the overview tab is selected
         proteinFilterJMenuItem.setEnabled(selectedIndex == 0);
     }//GEN-LAST:event_resultsJTabbedPaneStateChanged
@@ -1168,14 +1187,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt 
      */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        
+
         if (!dataSaved) {
-            int value = JOptionPane.showConfirmDialog(this, 
-                    "Do you want to save the changes to " + experiment.getReference() + "?", 
-                    "Unsaved Changes", 
-                    JOptionPane.YES_NO_CANCEL_OPTION, 
+            int value = JOptionPane.showConfirmDialog(this,
+                    "Do you want to save the changes to " + experiment.getReference() + "?",
+                    "Unsaved Changes",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
                     JOptionPane.QUESTION_MESSAGE);
-            
+
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
             } else if (value == JOptionPane.CANCEL_OPTION) {
@@ -1184,13 +1203,31 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 this.setVisible(false);
                 this.dispose();
                 System.exit(0);
-            }  
+            }
         } else {
             this.setVisible(false);
             this.dispose();
             System.exit(0);
         }
     }//GEN-LAST:event_formWindowClosing
+
+    /**
+     * Turn the model spin on or off.
+     * 
+     * @param evt 
+     */
+    private void modelSpinJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelSpinJCheckBoxMenuItemActionPerformed
+        proteinStructurePanel.spinModel(modelSpinJCheckBoxMenuItem.isSelected());
+    }//GEN-LAST:event_modelSpinJCheckBoxMenuItemActionPerformed
+
+    /**
+     * Returns if the 3D model is to be spinning or not.
+     * 
+     * @return true if the 3D model is to be spinning
+     */
+    public boolean spinModel() {
+        return modelSpinJCheckBoxMenuItem.isSelected();
+    }
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
@@ -1210,7 +1247,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param iUpdateValidationTab if true the validation tab will be updated
      */
     public void displayResults(boolean iUpdateValidationTab) {
-        
+
         final boolean updateValidationTab = iUpdateValidationTab;
 
         try {
@@ -1342,6 +1379,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.JCheckBoxMenuItem modelSpinJCheckBoxMenuItem;
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JMenu overViewTabViewMenu;
     private javax.swing.JPanel overviewJPanel;
@@ -1362,6 +1400,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem spectrumOverviewJMenuItem;
     private javax.swing.JMenuItem spectrumSpectrumIdJMenuItem;
     private javax.swing.JPanel statsJPanel;
+    private javax.swing.JMenu structureTabViewMenu;
     private javax.swing.JMenu viewJMenu;
     // End of variables declaration//GEN-END:variables
 
@@ -1879,13 +1918,62 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             // @TODO: support more databases
 
             if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
-                accessionNumberWithLink = "<html><a href=\"" + getAccesionLink(proteinAccession, database)
+                accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(proteinAccession)
                         + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
                         + proteinAccession + "</font></a></html>";
             } else {
                 // unknown database!
             }
         }
+
+        return accessionNumberWithLink;
+    }
+
+    /**
+     * Transforms the protein accesion number into an HTML link to the 
+     * corresponding database. Note that this is a complete HTML with 
+     * HTML and a href tags, where the main use is to include it in the 
+     * protein tables.
+     * 
+     * @param proteins  the list of proteins to get the database links for
+     * @return          the transformed accession number
+     */
+    public String addDatabaseLinks(ArrayList<Protein> proteins) {
+
+        String accessionNumberWithLink = "<html>";
+
+        for (int i = 0; i < proteins.size(); i++) {
+
+            String proteinAccession = proteins.get(i).getAccession();
+            
+            if (!proteins.get(i).isDecoy()) {
+
+                // try to find the database from the SequenceDatabase
+                String database = getSequenceDataBase().getProteinHeader(proteinAccession).getDatabaseType();
+
+                // create the database link
+                if (database != null) {
+
+                    // @TODO: support more databases
+
+                    if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
+                        accessionNumberWithLink += "<a href=\"" + getUniProtAccessionLink(proteinAccession)
+                                + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
+                                + proteinAccession + "</font></a>, ";
+                    } else {
+                        // unknown database!
+                        accessionNumberWithLink += "<font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
+                                + proteinAccession + "</font>" + ", ";
+                    }
+                }
+            } else {
+                 accessionNumberWithLink += proteinAccession + ", ";
+            }
+        }
+
+        // remove the last ', '
+        accessionNumberWithLink = accessionNumberWithLink.substring(0, accessionNumberWithLink.length() - 2);
+        accessionNumberWithLink += "</html>";
 
         return accessionNumberWithLink;
     }
@@ -1898,8 +1986,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param database          the protein database
      * @return                  the protein accession web link
      */
-    public String getAccesionLink(String proteinAccession, String database) {
+    public String getSrsAccessionLink(String proteinAccession, String database) {
         return "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b" + database + "-AccNumber:" + proteinAccession + "%5d";
+    }
+
+    /**
+     * Returns the protein accession number as a web link to the given 
+     * protein at http://www.uniprot.org/uniprot.
+     * 
+     * @param proteinAccession  the protein accession number
+     * @return                  the protein accession web link
+     */
+    public String getUniProtAccessionLink(String proteinAccession) {
+        return "http://www.uniprot.org/uniprot/" + proteinAccession;
     }
 
     /**
@@ -1923,7 +2022,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void reloadData() {
 
         dataSaved = false;
-        
+
         // set up the tabs/panels
         setUpPanels(false);
 
@@ -2108,7 +2207,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         overviewPanel.updateMainMatch(mainMatch, proteinInferenceType);
         proteinStructurePanel.updateMainMatch(mainMatch, proteinInferenceType);
     }
-    
+
     /**
      * Set whether the current data has been saved to a cps file or not.
      * 
@@ -2116,5 +2215,38 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public void setDataSaved(boolean dataSaved) {
         this.dataSaved = dataSaved;
+    }
+    
+    /**
+     * Opens one or more protein links in the default web browser.
+     * 
+     * @param links 
+     */
+    public void openProteinLinks(String links) {
+        
+        links = links.substring("<html><a href=\"".length());
+        String[] allLinks = links.split("<a href=\"");
+
+        int value = JOptionPane.YES_OPTION;
+
+        if (allLinks.length > 5) {
+            value = JOptionPane.showConfirmDialog(this,
+                    "This will open " + allLinks.length + " tabs in your web browser. Continue?",
+                    "Open Tabs?",
+                    JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        }
+
+        if (value == JOptionPane.YES_OPTION) {
+
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+            for (int i = 0; i < allLinks.length; i++) {
+                String link = allLinks[i];
+                link = link.substring(0, link.indexOf("\""));
+                BareBonesBrowserLaunch.openURL(link);
+            }
+
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
     }
 }
