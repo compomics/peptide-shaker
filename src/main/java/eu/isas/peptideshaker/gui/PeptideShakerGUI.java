@@ -1909,20 +1909,23 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         String proteinAccession = protein.getAccession();
         String accessionNumberWithLink = proteinAccession;
 
-        // try to find the database from the SequenceDatabase
-        String database = getSequenceDataBase().getProteinHeader(proteinAccession).getDatabaseType();
+        if (getSequenceDataBase().getProteinHeader(proteinAccession) != null) {
+            
+            // try to find the database from the SequenceDatabase
+            String database = getSequenceDataBase().getProteinHeader(proteinAccession).getDatabaseType();
 
-        // create the database link
-        if (database != null) {
+            // create the database link
+            if (database != null) {
 
-            // @TODO: support more databases
+                // @TODO: support more databases
 
-            if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
-                accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(proteinAccession)
-                        + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
-                        + proteinAccession + "</font></a></html>";
-            } else {
-                // unknown database!
+                if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
+                    accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(proteinAccession)
+                            + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
+                            + proteinAccession + "</font></a></html>";
+                } else {
+                    // unknown database!
+                }
             }
         }
 
@@ -1946,7 +1949,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             String proteinAccession = proteins.get(i).getAccession();
             
-            if (!proteins.get(i).isDecoy()) {
+            if (!proteins.get(i).isDecoy() && getSequenceDataBase().getProteinHeader(proteinAccession) != null) {
 
                 // try to find the database from the SequenceDatabase
                 String database = getSequenceDataBase().getProteinHeader(proteinAccession).getDatabaseType();
