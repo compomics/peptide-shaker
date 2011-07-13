@@ -2577,7 +2577,10 @@ public class StatsPanel extends javax.swing.JPanel {
         }
 
         // set the lower range for the log axis and max for the fdr axis
-        scoreAxis.setSmallestValue(minScore);
+        if (minScore > 0) {
+            scoreAxis.setSmallestValue(minScore);
+        }
+        
         classicalAxis.setRange(0, maxFDR);
         probaAxis.setRange(0, maxFDR);
 
