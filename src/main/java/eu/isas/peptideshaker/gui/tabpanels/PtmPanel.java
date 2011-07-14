@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
@@ -37,6 +36,7 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -134,7 +134,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         primarySelectionJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         secondarySelectionJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        
+
         spectrumTabbedPane.setEnabledAt(0, false);
 
         setTableProperties();
@@ -158,11 +158,13 @@ public class PtmPanel extends javax.swing.JPanel {
         selectedPsmTable.getTableHeader().setReorderingAllowed(false);
         relatedPsmTable.getTableHeader().setReorderingAllowed(false);
 
+        peptidesTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         peptidesTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         peptidesTable.getColumn("Confidence [%]").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
+        relatedPeptidesTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         relatedPeptidesTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         relatedPeptidesTable.getColumn("Confidence [%]").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
@@ -372,8 +374,16 @@ public class PtmPanel extends javax.swing.JPanel {
         peptidesTable.setOpaque(false);
         peptidesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         peptidesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                peptidesTableMouseExited(evt);
+            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 peptidesTableMouseReleased(evt);
+            }
+        });
+        peptidesTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                peptidesTableMouseMoved(evt);
             }
         });
         peptidesTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -411,8 +421,16 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesTable.setOpaque(false);
         relatedPeptidesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         relatedPeptidesTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                relatedPeptidesTableMouseExited(evt);
+            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 relatedPeptidesTableMouseReleased(evt);
+            }
+        });
+        relatedPeptidesTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                relatedPeptidesTableMouseMoved(evt);
             }
         });
         relatedPeptidesTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1078,6 +1096,23 @@ public class PtmPanel extends javax.swing.JPanel {
         updatePeptideFamilies();
         updateSelectedPsmTable();
         updateRelatedPsmTable();
+
+        if (evt != null) {
+
+            int row = peptidesTable.rowAtPoint(evt.getPoint());
+            int column = peptidesTable.columnAtPoint(evt.getPoint());
+
+            if (row != -1) {
+                if (column == 1) {
+
+                    // open protein links in web browser
+                    if (evt.getButton() == MouseEvent.BUTTON1
+                            && ((String) peptidesTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
+                        peptideShakerGUI.openProteinLinks((String) peptidesTable.getValueAt(row, column));
+                    }
+                }
+            }
+        }
     }//GEN-LAST:event_peptidesTableMouseReleased
 
     /**
@@ -1088,6 +1123,23 @@ public class PtmPanel extends javax.swing.JPanel {
     private void relatedPeptidesTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPeptidesTableMouseReleased
         updatePeptideFamilies();
         updateRelatedPsmTable();
+
+        if (evt != null) {
+
+            int row = relatedPeptidesTable.rowAtPoint(evt.getPoint());
+            int column = relatedPeptidesTable.columnAtPoint(evt.getPoint());
+
+            if (row != -1) {
+                if (column == 1) {
+
+                    // open protein links in web browser
+                    if (evt.getButton() == MouseEvent.BUTTON1
+                            && ((String) relatedPeptidesTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
+                        peptideShakerGUI.openProteinLinks((String) relatedPeptidesTable.getValueAt(row, column));
+                    }
+                }
+            }
+        }
     }//GEN-LAST:event_relatedPeptidesTableMouseReleased
 
     /**
@@ -1107,7 +1159,7 @@ public class PtmPanel extends javax.swing.JPanel {
     private void relatedPsmTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPsmTableMouseReleased
         updateSpectra();
     }//GEN-LAST:event_relatedPsmTableMouseReleased
-    
+
     /**
      * Update the spectra.
      *
@@ -1146,6 +1198,71 @@ public class PtmPanel extends javax.swing.JPanel {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_spectrumHelpJButtonActionPerformed
 
+    /**
+     * Changes the cursor into a hand cursor if the table cell contains an
+     * HTML link.
+     *
+     * @param evt
+     */
+    private void peptidesTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesTableMouseMoved
+        int row = peptidesTable.rowAtPoint(evt.getPoint());
+        int column = peptidesTable.columnAtPoint(evt.getPoint());
+
+        if (column == 1 && peptidesTable.getValueAt(row, column) != null) {
+
+            String tempValue = (String) peptidesTable.getValueAt(row, column);
+
+            if (tempValue.lastIndexOf("a href=") != -1) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        } else {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_peptidesTableMouseMoved
+
+    /**
+     * Changes the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void peptidesTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesTableMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_peptidesTableMouseExited
+
+    /**
+     * Changes the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void relatedPeptidesTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPeptidesTableMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_relatedPeptidesTableMouseExited
+
+    /**
+     * Changes the cursor into a hand cursor if the table cell contains an
+     * HTML link.
+     *
+     * @param evt
+     */
+    private void relatedPeptidesTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPeptidesTableMouseMoved
+        int row = relatedPeptidesTable.rowAtPoint(evt.getPoint());
+        int column = relatedPeptidesTable.columnAtPoint(evt.getPoint());
+
+        if (column == 1 && relatedPeptidesTable.getValueAt(row, column) != null) {
+
+            String tempValue = (String) relatedPeptidesTable.getValueAt(row, column);
+
+            if (tempValue.lastIndexOf("a href=") != -1) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        } else {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_relatedPeptidesTableMouseMoved
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonToggleButton;
     private javax.swing.JToggleButton allToggleButton;
@@ -1329,7 +1446,11 @@ public class PtmPanel extends javax.swing.JPanel {
 
         peptidesTable.revalidate();
         peptidesTable.repaint();
-        peptidesTable.setRowSelectionInterval(0, 0);
+
+        if (peptidesTable.getRowCount() > 0) {
+            peptidesTable.setRowSelectionInterval(0, 0);
+        }
+
         updateRelatedPeptidesTable();
         updatePeptideFamilies();
         updateSelectedPsmTable();
@@ -1803,10 +1924,8 @@ public class PtmPanel extends javax.swing.JPanel {
             if (column == 0) {
                 return new Double(row + 1);
             } else if (column == 1) {
-                String result = "";
-                for (Protein protein : identification.getPeptideIdentification().get(displayedPeptides.get(row)).getTheoreticPeptide().getParentProteins()) {
-                    result += protein.getAccession() + " ";
-                }
+                String result = peptideShakerGUI.addDatabaseLinks(
+                        identification.getPeptideIdentification().get(displayedPeptides.get(row)).getTheoreticPeptide().getParentProteins());
                 return result;
             } else if (column == 2) {
                 return identification.getPeptideIdentification().get(displayedPeptides.get(row)).getTheoreticPeptide().getSequence();
@@ -1891,10 +2010,8 @@ public class PtmPanel extends javax.swing.JPanel {
             if (column == 0) {
                 return new Double(row + 1);
             } else if (column == 1) {
-                String result = "";
-                for (Protein protein : identification.getPeptideIdentification().get(relatedPeptides.get(row)).getTheoreticPeptide().getParentProteins()) {
-                    result += protein.getAccession() + " ";
-                }
+                String result = peptideShakerGUI.addDatabaseLinks(
+                        identification.getPeptideIdentification().get(relatedPeptides.get(row)).getTheoreticPeptide().getParentProteins());
                 return result;
             } else if (column == 2) {
                 return identification.getPeptideIdentification().get(relatedPeptides.get(row)).getTheoreticPeptide().getSequence();
@@ -1941,7 +2058,7 @@ public class PtmPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Table model for the modified peptide PSMs table
+     * Table model for the selected peptide PSMs table
      */
     private class SelectedPsmsTable extends DefaultTableModel {
 
@@ -2198,7 +2315,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         return familyKey;
     }
-    
+
     /**
      * Returns the spectrum panel.
      * 

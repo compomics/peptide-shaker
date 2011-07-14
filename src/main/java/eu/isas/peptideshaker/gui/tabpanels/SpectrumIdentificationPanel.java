@@ -1540,7 +1540,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_peptideShakerJTableMouseMoved
 
     /**
-     * Changes the cursor back to the default cursor a hand.
+     * Changes the cursor back to the default cursor.
      *
      * @param evt
      */
@@ -1571,7 +1571,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_peptideShakerJTableMouseReleased
 
     /**
-     * Changes the cursor back to the default cursor a hand.
+     * Changes the cursor back to the default cursor.
      *
      * @param evt
      */
@@ -1580,7 +1580,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_omssaTableMouseExited
 
     /**
-     * Changes the cursor back to the default cursor a hand.
+     * Changes the cursor back to the default cursor.
      *
      * @param evt
      */
@@ -1589,7 +1589,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_xTandemTableMouseExited
 
     /**
-     * Changes the cursor back to the default cursor a hand.
+     * Changes the cursor back to the default cursor.
      *
      * @param evt
      */

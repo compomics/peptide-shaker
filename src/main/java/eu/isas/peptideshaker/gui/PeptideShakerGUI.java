@@ -1943,6 +1943,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public String addDatabaseLinks(ArrayList<Protein> proteins) {
 
+        if (proteins.isEmpty()) {
+            return "";
+        }
+        
         String accessionNumberWithLink = "<html>";
 
         for (int i = 0; i < proteins.size(); i++) {
