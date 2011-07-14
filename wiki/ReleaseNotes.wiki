@@ -3,7 +3,21 @@
 
 ----
 
+*Changes in PeptideShaker 0.9.1 (July 14. 2011):*
+ * NEW FEATURE: Added protein HTML links to all columns displaying protein accession numbers.
+ * NEW FEATURE: Made it possible to include more than one protein HTML link in the same cell in the tables.
+ * NEW FEATURE: The 3D protein model now rotates slowly as a default.
+ * FEATURE IMPROVEMENT: Minor GUI updates to the protein inferences dialog.
+ * FEATURE IMPROVEMENT: Changed all the protein links from pointing the the SRS web page to pointing to UniProt.
+ * FEATURE IMPROVEMENT: Extended the 3D Structure help text.
+ * BUG FIX: Fixed various minor GUI issues related to using the backup look and feel, i.e., not using Nimbus.
+ * LIBRARY UPDATE: Updated utilities to 3.1.29, fixing a bug in the XTandem parsing.
+
+----
+
 *Changes in PeptideShaker 0.9 (July 11. 2011):*
  * The first public beta release of PeptideShaker.
+
+Download Count: 5
 
 ----
