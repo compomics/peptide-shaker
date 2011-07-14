@@ -2396,7 +2396,7 @@ public class StatsPanel extends javax.swing.JPanel {
         for (Integer psmKey : psmKeys.keySet()) {
             psmMap.put(cpt, psmKey);
             if (psmKeys.size() > 1) {
-                listContent[cpt] = psmKeys.get(psmKey) + " PSMs";
+                listContent[cpt] = "Charge " + psmKeys.get(psmKey) + " PSMs";
             } else {
                 listContent[cpt] = "PSMs";
             }

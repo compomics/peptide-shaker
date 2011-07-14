@@ -1847,6 +1847,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             String titleA, String titleB, String titleC) {
 
         double maxValue = Math.max(Math.max(a, b), c);
+        if (maxValue<1) {
+            maxValue = 1;
+        } 
 
         // @TODO: move this method to utilities?
 
