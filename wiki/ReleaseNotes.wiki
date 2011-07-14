@@ -3,6 +3,12 @@
 
 ----
 
+*Changes in PeptideShaker 0.9.2 (July 14. 2011):*
+ * BUG FIX: Corrected a minor bug in the preferences dialog. 
+ * LIBRARY UPDATE: Updated utilities to 3.1.30, for more compatible databases.
+
+----
+
 *Changes in PeptideShaker 0.9.1 (July 14. 2011):*
  * NEW FEATURE: Added protein HTML links to all columns displaying protein accession numbers.
  * NEW FEATURE: Made it possible to include more than one protein HTML link in the same cell in the tables.
@@ -12,6 +18,8 @@
  * FEATURE IMPROVEMENT: Extended the 3D Structure help text.
  * BUG FIX: Fixed various minor GUI issues related to using the backup look and feel, i.e., not using Nimbus.
  * LIBRARY UPDATE: Updated utilities to 3.1.29, fixing a bug in the XTandem parsing.
+
+Download Count: 1
 
 ----
 
