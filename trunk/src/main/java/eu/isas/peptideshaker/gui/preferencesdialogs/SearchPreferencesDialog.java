@@ -1026,7 +1026,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         @Override
         public void setValueAt(Object aValue, int row, int column) {
             try {
-                if (column == 1) {
+                if (column == 2) {
                     searchParameters.getModificationProfile().put(modificationList.get(row), aValue.toString());
                 }
             } catch (Exception e) {

@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -109,7 +108,7 @@ public class CsvExporter {
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
             Writer assumptionWriter = new BufferedWriter(new FileWriter(new File(folder, assumptionFile)));
 
-            String content = "Protein" + SEPARATOR + "Other proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra" + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "nPossibilities" + SEPARATOR + "Protein length" + SEPARATOR + "p score"
+            String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra" + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "nPossibilities" + SEPARATOR + "Protein length" + SEPARATOR + "p score"
                     + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR + "Description" + "\n";
             proteinWriter.write(content);
 
