@@ -1550,9 +1550,9 @@ public class OverviewPanel extends javax.swing.JPanel {
                     }
                 });
 
-                // select the same peptide in the protein structure tab
+                // set the currently selected peptide index
                 if (updateProteinStructurePanel) {
-                    peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0), false);
+                    peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0));
                 }
             }
         }
@@ -2017,9 +2017,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-            if (updateProteinStructurePanel) {
-                peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0), false);
-            }
+            // set the currently selected protein index
+            peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
 
             // update the peptide selection
             updatedPeptideSelection(row);
@@ -2074,11 +2073,11 @@ public class OverviewPanel extends javax.swing.JPanel {
                 }
             });
 
-            // select the same peptide in the protein structure tab
+            // set the currently selected peptide index
             if (updateProteinStructurePanel) {
-                peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0), false);
+                peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0));
             }
-            
+
             if (column == peptideTable.getColumn("Other Protein(s)").getModelIndex()) {
 
                 // open protein links in web browser
@@ -2225,7 +2224,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_ionTableHelpJButtonActionPerformed
 
-     /**
+    /**
      * Changes the cursor back to the default cursor.
      *
      * @param evt
@@ -2244,7 +2243,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         int row = peptideTable.rowAtPoint(evt.getPoint());
         int column = peptideTable.columnAtPoint(evt.getPoint());
 
-        if (column == peptideTable.getColumn("Other Protein(s)").getModelIndex() 
+        if (column == peptideTable.getColumn("Other Protein(s)").getModelIndex()
                 && peptideTable.getValueAt(row, column) != null) {
 
             String tempValue = (String) peptideTable.getValueAt(row, column);
@@ -2258,7 +2257,6 @@ public class OverviewPanel extends javax.swing.JPanel {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_peptideTableMouseMoved
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonBubblePlotToggleButton;
     private javax.swing.JToggleButton aIonTableToggleButton;
@@ -2701,7 +2699,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 });
             } else {
                 coverageEditorPane.setText("<html><i>The sequence is too long to display: " + cleanSequence.length() + " residues...</i></html>");
-                
+
                 ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Protein Sequence Coverage");
                 sequenceCoverageJPanel.repaint();
             }
@@ -3132,7 +3130,9 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void updatedPeptideSelection(int row) {
 
         if (row != -1) {
+            
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            
             while (peptideTable.getRowCount() > 0) {
                 ((DefaultTableModel) peptideTable.getModel()).removeRow(0);
             }
@@ -3347,9 +3347,9 @@ public class OverviewPanel extends javax.swing.JPanel {
                         }
 
                         if (currentProtein == null) {
-                            JOptionPane.showMessageDialog(this, "Unknown Protein!", "The protein \'"
+                            JOptionPane.showMessageDialog(this, "The protein \'"
                                     + proteinMatch.getMainMatch().getAccession() + "\' is not found.\n"
-                                    + "Verify your FASTA file.", JOptionPane.ERROR_MESSAGE);
+                                    + "Verify your FASTA file.", "Unknown Protein!", JOptionPane.ERROR_MESSAGE);
                             throw new IllegalArgumentException("Protein not found! Accession: " + proteinMatch.getMainMatch().getAccession());
                         }
 
@@ -3447,6 +3447,15 @@ public class OverviewPanel extends javax.swing.JPanel {
      */
     public JTable getProteinTable() {
         return proteinTable;
+    }
+
+    /**
+     * Returns the peptide table.
+     * 
+     * @return the peptide table
+     */
+    public JTable getPeptideTable() {
+        return peptideTable;
     }
 
     /**

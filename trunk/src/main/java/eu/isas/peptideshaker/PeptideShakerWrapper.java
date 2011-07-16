@@ -96,6 +96,31 @@ public class PeptideShakerWrapper {
             quote = "\"";
         }
 
+        if (debug) {
+            JOptionPane.showMessageDialog(null, "original java.home: " + javaHome);
+        }
+        
+        // try to force the use of 64 bit Java if available
+        if (javaHome.lastIndexOf(" (x86)") != -1) {
+            
+            // Java 32 bit home looks like this:    C:\Program Files (x86)\Java\jre6\bin\javaw.exe
+            // Java 64 bit home looks like this:    C:\Program Files\Java\jre6\bin\javaw.exe
+            
+            String tempJavaHome = javaHome.replaceAll(" \\(x86\\)", "");
+            
+            if (debug) {
+                JOptionPane.showMessageDialog(null, "temp java.home: " + tempJavaHome);
+            }
+            
+            if (new File(tempJavaHome).exists()) {
+                javaHome = tempJavaHome;
+            }
+        }
+        
+        if (debug) {
+            JOptionPane.showMessageDialog(null, "new java.home: " + javaHome);
+        }
+        
         cmdLine = javaHome + "java " + options + " -cp "
                 + quote + new File(tempFile, jarFileName).getAbsolutePath() + quote
                 + " eu.isas.peptideshaker.gui.PeptideShakerGUI";

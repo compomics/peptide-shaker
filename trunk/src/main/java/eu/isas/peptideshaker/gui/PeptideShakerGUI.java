@@ -75,6 +75,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         XYBarRenderer.setDefaultBarPainter(new StandardXYBarPainter());
     }
     /**
+     * The currently selected protein index.
+     */
+    private int selectedProteinIndex = -1;
+    /**
+     * The currently selected peptide index.
+     */
+    private int selectedPeptideIndex = -1;
+    /**
      * If true, the latest changes have been saved.
      */
     private boolean dataSaved = true;
@@ -1140,6 +1148,92 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         }
 
+        
+
+        // make sure that the same protein and peptide are selected in both 
+        // the overview and protein structure tabs
+        if (selectedIndex == 0) {
+
+            if (selectedProteinIndex != -1) {
+
+                int proteinRow = overviewPanel.getProteinTable().getSelectedRow();
+
+                if (proteinRow != -1) {
+
+                    int currentProteinIndex = (Integer) overviewPanel.getProteinTable().getValueAt(proteinRow, 0);
+
+                    if (currentProteinIndex != selectedProteinIndex) {
+                        overviewPanel.setSelectedProteinIndex(selectedProteinIndex);
+                    }
+                } else {
+                    overviewPanel.setSelectedProteinIndex(selectedProteinIndex);
+                }
+
+                if (selectedPeptideIndex != -1) {
+
+                    // invoke later to give time for components to update
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        public void run() {
+
+                            int peptideRow = overviewPanel.getPeptideTable().getSelectedRow();
+
+                            if (peptideRow != -1) {
+
+                                int currentPeptideIndex = (Integer) overviewPanel.getPeptideTable().getValueAt(peptideRow, 0);
+
+                                if (currentPeptideIndex != selectedPeptideIndex) {
+                                    overviewPanel.setSelectedPeptideIndex(selectedPeptideIndex);
+                                }
+                            } else {
+                                overviewPanel.setSelectedPeptideIndex(selectedPeptideIndex);
+                            }
+                        }
+                    });
+                }
+            }
+        } else if (selectedIndex == 3) {
+            
+            if (selectedProteinIndex != -1) {
+
+                int proteinRow = proteinStructurePanel.getProteinTable().getSelectedRow();
+
+                if (proteinRow != -1) {
+
+                    int currentProteinIndex = (Integer) proteinStructurePanel.getProteinTable().getValueAt(proteinRow, 0);
+
+                    if (currentProteinIndex != selectedProteinIndex) {
+                        proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
+                    }
+                } else {
+                    proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
+                }
+
+                if (selectedPeptideIndex != -1) {
+
+                    // invoke later to give time for components to update
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        public void run() {
+
+                            int peptideRow = proteinStructurePanel.getPeptideTable().getSelectedRow();
+
+                            if (peptideRow != -1) {
+
+                                int currentPeptideIndex = (Integer) proteinStructurePanel.getPeptideTable().getValueAt(peptideRow, 0);
+
+                                if (currentPeptideIndex != selectedPeptideIndex) {
+                                    proteinStructurePanel.setSelectedPeptideIndex(selectedPeptideIndex);
+                                }
+                            } else {
+                                proteinStructurePanel.setSelectedPeptideIndex(selectedPeptideIndex);
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
         // disable the protein filter option if a tab other than the overview tab is selected
         proteinFilterJMenuItem.setEnabled(selectedIndex == 0);
     }//GEN-LAST:event_resultsJTabbedPaneStateChanged
@@ -1826,15 +1920,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Used to make sure that the same protein is selected in both tabs.
      * 
      * @param selectedProteinIndex      the selected protein index
-     * @param updateOverviewPanel       if true the overview panel will be selected, false updates the protein structure panel instead
      */
-    public void setSelectedProteinIndex(Integer selectedProteinIndex, boolean updateOverviewPanel) {
-
-        if (updateOverviewPanel) {
-            overviewPanel.setSelectedProteinIndex(selectedProteinIndex);
-        } else {
-            proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
-        }
+    public void setSelectedProteinIndex(Integer selectedProteinIndex) {
+        this.selectedProteinIndex = selectedProteinIndex;
     }
 
     /**
@@ -1842,15 +1930,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Used to make sure that the same peptide is selected in both tabs.
      * 
      * @param selectedPeptideIndex      the selected peptide index
-     * @param updateOverviewPanel       if true the overview panel will be selected, false updates the protein structure panel instead
      */
-    public void setSelectedPeptideIndex(Integer selectedPeptideIndex, boolean updateOverviewPanel) {
-
-        if (updateOverviewPanel) {
-            overviewPanel.setSelectedPeptideIndex(selectedPeptideIndex);
-        } else {
-            proteinStructurePanel.setSelectedPeptideIndex(selectedPeptideIndex);
-        }
+    public void setSelectedPeptideIndex(Integer selectedPeptideIndex) {
+        this.selectedPeptideIndex = selectedPeptideIndex;
     }
 
     /**
@@ -1910,7 +1992,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         String accessionNumberWithLink = proteinAccession;
 
         if (getSequenceDataBase().getProteinHeader(proteinAccession) != null) {
-            
+
             // try to find the database from the SequenceDatabase
             String database = getSequenceDataBase().getProteinHeader(proteinAccession).getDatabaseType();
 
@@ -1946,13 +2028,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         if (proteins.isEmpty()) {
             return "";
         }
-        
+
         String accessionNumberWithLink = "<html>";
 
         for (int i = 0; i < proteins.size(); i++) {
 
             String proteinAccession = proteins.get(i).getAccession();
-            
+
             if (!proteins.get(i).isDecoy() && getSequenceDataBase().getProteinHeader(proteinAccession) != null) {
 
                 // try to find the database from the SequenceDatabase
@@ -1974,7 +2056,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     }
                 }
             } else {
-                 accessionNumberWithLink += proteinAccession + ", ";
+                accessionNumberWithLink += proteinAccession + ", ";
             }
         }
 
@@ -2223,14 +2305,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void setDataSaved(boolean dataSaved) {
         this.dataSaved = dataSaved;
     }
-    
+
     /**
      * Opens one or more protein links in the default web browser.
      * 
      * @param links 
      */
     public void openProteinLinks(String links) {
-        
+
         links = links.substring("<html><a href=\"".length());
         String[] allLinks = links.split("<a href=\"");
 

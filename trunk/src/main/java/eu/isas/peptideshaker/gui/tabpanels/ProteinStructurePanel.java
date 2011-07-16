@@ -792,10 +792,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             String proteinAccession = proteinMatch.getMainMatch().getAccession();
             proteinSequence = peptideShakerGUI.getSequenceDataBase().getProtein(proteinAccession).getSequence();
 
-            // update the selection in the Overview panel
-            if (updateOverviewPanel) {
-                peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0), true);
-            }
+            // set the currently selected protein index
+            peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
 
             // update the pdb file table
             updatePdbTable(proteinTableMap.get(getProteinKey(row)));
@@ -855,9 +853,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 updatePeptideToPdbMapping();
             }
 
-            // select the same peptide in the protein structure tab
+            // set the currently selected peptide index
             if (updateOverviewPanel) {
-                peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0), true);
+                peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0));
             }
             
             if (column == peptideTable.getColumn("Other Protein(s)").getModelIndex()) {
@@ -1291,7 +1289,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     private void updatedPeptideSelection(int row) {
 
         if (row != -1) {
+            
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            
             while (peptideTable.getRowCount() > 0) {
                 ((DefaultTableModel) peptideTable.getModel()).removeRow(0);
             }
@@ -1823,5 +1823,23 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         } else  {
             jmolPanel.getViewer().evalString("spin off");
         }
+    }
+    
+    /**
+     * Returns the protein table.
+     * 
+     * @return the protein table
+     */
+    public JTable getProteinTable() {
+        return proteinTable;
+    }
+    
+    /**
+     * Returns the peptide table.
+     * 
+     * @return the peptide table
+     */
+    public JTable getPeptideTable() {
+        return peptideTable;
     }
 }

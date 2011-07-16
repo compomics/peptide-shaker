@@ -26,7 +26,12 @@ public class FileSelection extends javax.swing.JDialog {
      */
     private HashMap<String, File> fileMap = new HashMap<String, File>();
 
-    /** Creates new form FileSelection */
+    /** 
+     * Creates new FileSelection dialog.
+     * 
+     * @param parent
+     * @param files  
+     */
     public FileSelection(OpenDialog parent, ArrayList<File> files) {
         super(parent, true);
         this.parent = parent;
@@ -37,6 +42,7 @@ public class FileSelection extends javax.swing.JDialog {
             fileMap.put(files.get(i).getName(), files.get(i));
         }
         fileList.setListData(fileNames);
+        setLocationRelativeTo(parent);
         this.setVisible(true);
     }
 
