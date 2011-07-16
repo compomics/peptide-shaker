@@ -3,9 +3,20 @@
 
 ----
 
+*Changes in PeptideShaker 0.9.3 (July 17. 2011):*
+ * FEATURE IMPROVEMENT: The link between the Overview and the Structure tab is now smarter, and updates less frequently.
+ * FEATURE IMPROVEMENT: The maximum initial Java memory size is now set to 1500M (the magic number for 32 bit Java...).
+ * FEATURE IMPROVEMENT: Improved the wrapper so that it now defaults to using the 64 bit Java version if available.
+ * BUG FIX: Fixed a bug in the dialog displayed when detecting an unknown protein, where the title and the message was interchanged.
+ * BUG FIX: The files selection dialog (for multiple SearchGUI property files) is now located relative to its parent.
+
+----
+
 *Changes in PeptideShaker 0.9.2 (July 14. 2011):*
  * BUG FIX: Corrected a minor bug in the preferences dialog. 
  * LIBRARY UPDATE: Updated utilities to 3.1.30, for more compatible databases.
+
+Download Count: 10
 
 ----
 
@@ -26,6 +37,6 @@ Download Count: 1
 *Changes in PeptideShaker 0.9 (July 11. 2011):*
  * The first public beta release of PeptideShaker.
 
-Download Count: 5
+Download Count: 6
 
 ----
