@@ -3130,9 +3130,9 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void updatedPeptideSelection(int row) {
 
         if (row != -1) {
-            
+
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            
+
             while (peptideTable.getRowCount() > 0) {
                 ((DefaultTableModel) peptideTable.getModel()).removeRow(0);
             }
@@ -3175,74 +3175,77 @@ public class OverviewPanel extends javax.swing.JPanel {
             for (double score : scores) {
                 for (PeptideMatch peptideMatch : peptideMap.get(score)) {
 
-                    ArrayList<String> proteinAccessions = new ArrayList<String>();
+                    if (peptideMatch.getSpectrumCount() > 0) {
 
-                    for (Protein protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
-                        proteinAccessions.add(protein.getAccession());
-                    }
+                        ArrayList<String> proteinAccessions = new ArrayList<String>();
 
-                    String modifications = "";
-
-                    for (ModificationMatch mod : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-                        if (mod.isVariable()) {
-                            modifications += mod.getTheoreticPtm().getName() + ", ";
+                        for (Protein protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                            proteinAccessions.add(protein.getAccession());
                         }
-                    }
 
-                    if (modifications.length() > 0) {
-                        modifications = modifications.substring(0, modifications.length() - 2);
-                    } else {
-                        modifications = null;
-                    }
+                        String modifications = "";
 
-                    probabilities = (PSParameter) peptideMatch.getUrParam(probabilities);
-                    ArrayList<Protein> otherProteins = new ArrayList<Protein>();
-
-                    for (Protein protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
-
-                        boolean newProtein = true;
-
-                        for (String referenceAccession : proteinMatch.getTheoreticProteinsAccessions()) {
-                            if (proteinMatch.getTheoreticProtein(referenceAccession).getAccession().equals(protein.getAccession())) {
-                                newProtein = false;
+                        for (ModificationMatch mod : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
+                            if (mod.isVariable()) {
+                                modifications += mod.getTheoreticPtm().getName() + ", ";
                             }
                         }
 
-                        if (newProtein) {
-                            otherProteins.add(protein);
+                        if (modifications.length() > 0) {
+                            modifications = modifications.substring(0, modifications.length() - 2);
+                        } else {
+                            modifications = null;
                         }
+
+                        probabilities = (PSParameter) peptideMatch.getUrParam(probabilities);
+                        ArrayList<Protein> otherProteins = new ArrayList<Protein>();
+
+                        for (Protein protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+
+                            boolean newProtein = true;
+
+                            for (String referenceAccession : proteinMatch.getTheoreticProteinsAccessions()) {
+                                if (proteinMatch.getTheoreticProtein(referenceAccession).getAccession().equals(protein.getAccession())) {
+                                    newProtein = false;
+                                }
+                            }
+
+                            if (newProtein) {
+                                otherProteins.add(protein);
+                            }
+                        }
+
+                        // find and add the peptide start and end indexes
+                        String proteinAccession = proteinMatch.getMainMatch().getAccession();
+                        String proteinSequence = peptideShakerGUI.getSequenceDataBase().getProtein(proteinAccession).getSequence();
+                        String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+                        int peptideStart = proteinSequence.lastIndexOf(peptideSequence) + 1;
+                        int peptideEnd = peptideStart + peptideSequence.length() - 1;
+
+                        ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
+                                    index + 1,
+                                    peptideSequence,
+                                    peptideStart,
+                                    peptideEnd,
+                                    modifications,
+                                    peptideShakerGUI.addDatabaseLinks(otherProteins),
+                                    peptideMatch.getSpectrumCount(),
+                                    probabilities.getPeptideScore(),
+                                    probabilities.getPeptideConfidence(),
+                                    probabilities.isValidated()
+                                });
+
+                        if (probabilities.isValidated()) {
+                            validatedPeptideCounter++;
+                        }
+
+                        if (maxSpectra < peptideMatch.getSpectrumCount()) {
+                            maxSpectra = peptideMatch.getSpectrumCount();
+                        }
+
+                        peptideTableMap.put(index + 1, peptideMatch.getKey());
+                        index++;
                     }
-
-                    // find and add the peptide start and end indexes
-                    String proteinAccession = proteinMatch.getMainMatch().getAccession();
-                    String proteinSequence = peptideShakerGUI.getSequenceDataBase().getProtein(proteinAccession).getSequence();
-                    String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
-                    int peptideStart = proteinSequence.lastIndexOf(peptideSequence) + 1;
-                    int peptideEnd = peptideStart + peptideSequence.length() - 1;
-
-                    ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
-                                index + 1,
-                                peptideSequence,
-                                peptideStart,
-                                peptideEnd,
-                                modifications,
-                                peptideShakerGUI.addDatabaseLinks(otherProteins),
-                                peptideMatch.getSpectrumCount(),
-                                probabilities.getPeptideScore(),
-                                probabilities.getPeptideConfidence(),
-                                probabilities.isValidated()
-                            });
-
-                    if (probabilities.isValidated()) {
-                        validatedPeptideCounter++;
-                    }
-
-                    if (maxSpectra < peptideMatch.getSpectrumCount()) {
-                        maxSpectra = peptideMatch.getSpectrumCount();
-                    }
-
-                    peptideTableMap.put(index + 1, peptideMatch.getKey());
-                    index++;
                 }
             }
 
