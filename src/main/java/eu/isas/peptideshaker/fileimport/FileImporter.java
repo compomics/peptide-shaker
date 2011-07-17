@@ -206,7 +206,7 @@ public class FileImporter {
     private ArrayList<String> getProteins(String sequence, WaitingDialog waitingDialog) {
         SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
         ArrayList<String> result = sequences.get(sequence);
-        boolean inspectAll = false;
+        boolean inspectAll = true;
         if (result == null) {
             result = new ArrayList<String>();
             if (inspectAll) {
