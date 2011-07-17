@@ -148,6 +148,9 @@ public class FileImporter {
                         sequences.put(peptide, new ArrayList<String>());
                     }
                     sequences.get(peptide).add(proteinKey);
+                    if (waitingDialog.isRunCanceled()) {
+                        return;
+                    }
                 }
             }
             waitingDialog.appendReport("FASTA file import completed.");
@@ -197,16 +200,23 @@ public class FileImporter {
      * Returns the list of proteins which contain in their sequence the given peptide sequence.
      * 
      * @param sequence  the tested peptide sequence
+     * @param waitingDialog the waiting dialog
      * @return          a list of corresponding proteins found in the database
      */
-    private ArrayList<String> getProteins(String sequence) {
+    private ArrayList<String> getProteins(String sequence, WaitingDialog waitingDialog) {
         SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
         ArrayList<String> result = sequences.get(sequence);
+        boolean inspectAll = false;
         if (result == null) {
             result = new ArrayList<String>();
-            for (String proteinKey : db.getProteinList()) {
-                if (db.getProtein(proteinKey).getSequence().contains(sequence)) {
-                    result.add(proteinKey);
+            if (inspectAll) {
+                for (String proteinKey : db.getProteinList()) {
+                    if (db.getProtein(proteinKey).getSequence().contains(sequence)) {
+                        result.add(proteinKey);
+                    }
+                    if (waitingDialog.isRunCanceled()) {
+                        return new ArrayList<String>();
+                    }
                 }
             }
             sequences.put(sequence, result);
@@ -269,11 +279,11 @@ public class FileImporter {
                     for (PTM possPtm : possiblePTMs) {
                         if (possPtm.getType() == PTM.MODAA) {
                             if (modificationSite > 0 && modificationSite <= sequence.length()) {
-                            for (String aa : possPtm.getResiduesArray()) {                                
-                                if (aa.equals(sequence.charAt(modificationSite - 1) + "")) {
-                                    return possPtm;
+                                for (String aa : possPtm.getResiduesArray()) {
+                                    if (aa.equals(sequence.charAt(modificationSite - 1) + "")) {
+                                        return possPtm;
+                                    }
                                 }
-                            }
                             } else {
                                 int xtandemImportError = modificationSite;
                             }
@@ -285,309 +295,309 @@ public class FileImporter {
         }
     }
 
-/**
- * Worker which loads identification from a file and processes them while giving feedback to the user.
- */
-private class IdProcessorFromFile extends SwingWorker {
+    /**
+     * Worker which loads identification from a file and processes them while giving feedback to the user.
+     */
+    private class IdProcessorFromFile extends SwingWorker {
 
-    /**
-     * The identification file reader factory of compomics utilities
-     */
-    private IdfileReaderFactory readerFactory = IdfileReaderFactory.getInstance();
-    /**
-     * The list of identification files
-     */
-    private ArrayList<File> idFiles;
-    /**
-     * The fasta file
-     */
-    private File fastaFile;
-    /**
-     * A list of spectrum files (can be empty, no spectrum will be imported)
-     */
-    private HashMap<String, File> spectrumFiles;
-    /**
-     * The identification filter.
-     */
-    private IdFilter idFilter;
-    /**
-     * The search parameters
-     */
-    private SearchParameters searchParameters;
+        /**
+         * The identification file reader factory of compomics utilities
+         */
+        private IdfileReaderFactory readerFactory = IdfileReaderFactory.getInstance();
+        /**
+         * The list of identification files
+         */
+        private ArrayList<File> idFiles;
+        /**
+         * The fasta file
+         */
+        private File fastaFile;
+        /**
+         * A list of spectrum files (can be empty, no spectrum will be imported)
+         */
+        private HashMap<String, File> spectrumFiles;
+        /**
+         * The identification filter.
+         */
+        private IdFilter idFilter;
+        /**
+         * The search parameters
+         */
+        private SearchParameters searchParameters;
 
-    /**
-     * Constructor of the worker
-     * @param idFiles ArrayList containing the identification files
-     */
-    public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, IdFilter idFilter, SearchParameters searchParameters) {
+        /**
+         * Constructor of the worker
+         * @param idFiles ArrayList containing the identification files
+         */
+        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, IdFilter idFilter, SearchParameters searchParameters) {
 
-        this.idFiles = idFiles;
-        this.spectrumFiles = new HashMap<String, File>();
-        this.fastaFile = fastaFile;
-        this.idFilter = idFilter;
-        this.searchParameters = searchParameters;
+            this.idFiles = idFiles;
+            this.spectrumFiles = new HashMap<String, File>();
+            this.fastaFile = fastaFile;
+            this.idFilter = idFilter;
+            this.searchParameters = searchParameters;
 
-        for (File file : spectrumFiles) {
-            this.spectrumFiles.put(file.getName(), file);
+            for (File file : spectrumFiles) {
+                this.spectrumFiles.put(file.getName(), file);
+            }
+
+            try {
+                ptmFactory.importModifications(new File(MODIFICATION_FILE));
+            } catch (Exception e) {
+                waitingDialog.appendReport("Failed importing modifications from " + MODIFICATION_FILE);
+                waitingDialog.setRunCanceled();
+                e.printStackTrace();
+            }
+
+            try {
+                ptmFactory.importModifications(new File(USER_MODIFICATION_FILE));
+            } catch (Exception e) {
+                waitingDialog.appendReport("Failed importing modifications from " + USER_MODIFICATION_FILE);
+                waitingDialog.setRunCanceled();
+                e.printStackTrace();
+            }
         }
 
-        try {
-            ptmFactory.importModifications(new File(MODIFICATION_FILE));
-        } catch (Exception e) {
-            waitingDialog.appendReport("Failed importing modifications from " + MODIFICATION_FILE);
-            waitingDialog.setRunCanceled();
-            e.printStackTrace();
-        }
+        @Override
+        protected Object doInBackground() throws Exception {
 
-        try {
-            ptmFactory.importModifications(new File(USER_MODIFICATION_FILE));
-        } catch (Exception e) {
-            waitingDialog.appendReport("Failed importing modifications from " + USER_MODIFICATION_FILE);
-            waitingDialog.setRunCanceled();
-            e.printStackTrace();
+            int nTotal = 0;
+            int nRetained = 0;
+
+            Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+            importSequences(waitingDialog, proteomicAnalysis, fastaFile, idFilter, searchParameters);
+
+            try {
+
+                for (String modificationName : searchParameters.getModificationProfile().keySet()) {
+                    ptmFactory.getPTM(modificationName).setName(searchParameters.getModificationProfile().get(modificationName));
+                }
+
+                waitingDialog.appendReport("Reading identification files.");
+                InputMap inputMap = new InputMap();
+
+                ArrayList<String> mgfNeeded = new ArrayList<String>();
+
+                for (File idFile : idFiles) {
+
+                    waitingDialog.appendReport("Reading file: " + idFile.getName());
+
+                    int searchEngine = readerFactory.getSearchEngine(idFile);
+                    IdfileReader fileReader = readerFactory.getFileReader(idFile, proteomicAnalysis.getSpectrumCollection());
+                    HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches();
+
+                    Iterator<SpectrumMatch> matchIt = tempSet.iterator();
+
+                    while (matchIt.hasNext()) {
+
+                        SpectrumMatch match = matchIt.next();
+                        nTotal++;
+
+                        PeptideAssumption firstHit = match.getFirstHit(searchEngine);
+
+                        if (!idFilter.validateId(firstHit)) {
+                            matchIt.remove();
+                        } else {
+                            Peptide peptide;
+                            // use search engine independant PTMs
+                            for (PeptideAssumption assumptions : match.getAllAssumptions()) {
+                                peptide = assumptions.getPeptide();
+                                for (ModificationMatch seMod : peptide.getModificationMatches()) {
+                                    seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), peptide.getSequence(), searchParameters));
+                                }
+                            }
+
+                            inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
+                            peptide = firstHit.getPeptide();
+                            ArrayList<Protein> proteins = new ArrayList<Protein>();
+                            for (String proteinKey : getProteins(peptide.getSequence(), waitingDialog)) {
+                                proteins.add(new Protein(proteinKey, proteinKey.contains("REV")));
+                            }
+                            if (!proteins.isEmpty()) {
+                                peptide.setParentProteins(proteins);
+                            }
+
+                            identification.addSpectrumMatch(match);
+                            String mgfName = Spectrum.getSpectrumFile(match.getKey());
+
+                            if (!mgfNeeded.contains(mgfName)) {
+                                mgfNeeded.add(mgfName);
+                            }
+
+                            nRetained++;
+                        }
+
+                        if (waitingDialog.isRunCanceled()) {
+                            return 1;
+                        }
+                    }
+
+                    waitingDialog.increaseProgressValue();
+                }
+
+                // clear the sequence to protein map as it is no longer needed
+                sequences.clear();
+
+                if (nRetained == 0) {
+                    waitingDialog.appendReport("No identifications retained.");
+                    waitingDialog.setRunFinished();
+                    return 1;
+                }
+
+                waitingDialog.appendReport("Identification file(s) import completed. "
+                        + nTotal + " identifications imported, " + nRetained + " identifications retained.");
+
+                ArrayList<String> mgfMissing = new ArrayList<String>();
+                ArrayList<String> mgfNames = new ArrayList<String>(spectrumFiles.keySet());
+                ArrayList<File> mgfImported = new ArrayList<File>();
+
+                for (String mgfFile : mgfNeeded) {
+                    if (!mgfNames.contains(mgfFile)) {
+                        mgfMissing.add(mgfFile);
+                    } else {
+                        mgfImported.add(spectrumFiles.get(mgfFile));
+                    }
+                }
+
+                if (mgfMissing.isEmpty()) {
+                    for (File file : mgfImported) {
+                        searchParameters.addSpectrumFile(file.getAbsolutePath());
+                    }
+                    waitingDialog.increaseProgressValue(mgfNames.size() - mgfImported.size());
+                    importSpectra(waitingDialog, mgfImported);
+                } else {
+                    waitingDialog.increaseProgressValue(mgfNames.size());
+                }
+
+                peptideShaker.processIdentifications(inputMap, waitingDialog);
+
+            } catch (Exception e) {
+                waitingDialog.appendReport("An error occured while loading the identification files:");
+                waitingDialog.appendReport(e.getLocalizedMessage());
+                waitingDialog.setRunCanceled();
+                e.printStackTrace();
+            } catch (OutOfMemoryError error) {
+                System.out.println("Ran out of memory!");
+                Runtime.getRuntime().gc();
+                waitingDialog.appendReportEndLine();
+                waitingDialog.appendReport("Ran out of memory!");
+                waitingDialog.setRunCanceled();
+                JOptionPane.showMessageDialog(null,
+                        "The task used up all the available memory and had to be stopped.\n"
+                        + "Memory boundaries are set in ../conf/JavaOptions.txt.",
+                        "Out Of Memory Error",
+                        JOptionPane.ERROR_MESSAGE);
+                error.printStackTrace();
+            }
+
+            return 0;
         }
     }
 
-    @Override
-    protected Object doInBackground() throws Exception {
+    /**
+     * Worker which loads spectra from files assuming that ids are already loaded them while giving feedback to the user.
+     */
+    private class SpectrumProcessor extends SwingWorker {
 
-        int nTotal = 0;
-        int nRetained = 0;
+        /**
+         * A list of spectrum files (can be empty, no spectrum will be imported)
+         */
+        private HashMap<String, File> spectrumFiles;
 
-        Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        importSequences(waitingDialog, proteomicAnalysis, fastaFile, idFilter, searchParameters);
+        /**
+         * Constructor of the worker
+         * @param spectrumFiles ArrayList containing the spectrum files
+         */
+        public SpectrumProcessor(ArrayList<File> spectrumFiles) {
 
-        try {
+            this.spectrumFiles = new HashMap<String, File>();
 
-            for (String modificationName : searchParameters.getModificationProfile().keySet()) {
-                ptmFactory.getPTM(modificationName).setName(searchParameters.getModificationProfile().get(modificationName));
+            for (File file : spectrumFiles) {
+                this.spectrumFiles.put(file.getName(), file);
             }
 
-            waitingDialog.appendReport("Reading identification files.");
-            InputMap inputMap = new InputMap();
+            try {
+                ptmFactory.importModifications(new File(MODIFICATION_FILE));
+            } catch (Exception e) {
+                waitingDialog.appendReport("Failed importing modifications from " + MODIFICATION_FILE);
+                waitingDialog.setRunCanceled();
+                e.printStackTrace();
+            }
 
-            ArrayList<String> mgfNeeded = new ArrayList<String>();
+            try {
+                ptmFactory.importModifications(new File(USER_MODIFICATION_FILE));
+            } catch (Exception e) {
+                waitingDialog.appendReport("Failed importing modifications from " + USER_MODIFICATION_FILE);
+                waitingDialog.setRunCanceled();
+                e.printStackTrace();
+            }
+        }
 
-            for (File idFile : idFiles) {
+        @Override
+        protected Object doInBackground() throws Exception {
 
-                waitingDialog.appendReport("Reading file: " + idFile.getName());
+            Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-                int searchEngine = readerFactory.getSearchEngine(idFile);
-                IdfileReader fileReader = readerFactory.getFileReader(idFile, proteomicAnalysis.getSpectrumCollection());
-                HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches();
+            try {
+                ArrayList<String> mgfNeeded = new ArrayList<String>();
+                String newFile;
 
-                Iterator<SpectrumMatch> matchIt = tempSet.iterator();
-
-                while (matchIt.hasNext()) {
-
-                    SpectrumMatch match = matchIt.next();
-                    nTotal++;
-
-                    PeptideAssumption firstHit = match.getFirstHit(searchEngine);
-
-                    if (!idFilter.validateId(firstHit)) {
-                        matchIt.remove();
-                    } else {
-                        Peptide peptide;
-                        // use search engine independant PTMs
-                        for (PeptideAssumption assumptions : match.getAllAssumptions()) {
-                            peptide = assumptions.getPeptide();
-                            for (ModificationMatch seMod : peptide.getModificationMatches()) {
-                                seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), peptide.getSequence(), searchParameters));
-                            }
-                        }
-
-                        inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
-                        peptide = firstHit.getPeptide();
-                        ArrayList<Protein> proteins = new ArrayList<Protein>();
-                        for (String proteinKey : getProteins(peptide.getSequence())) {
-                            proteins.add(new Protein(proteinKey, proteinKey.contains("REV")));
-                        }
-                        if (!proteins.isEmpty()) {
-                            peptide.setParentProteins(proteins);
-                        }
-
-                        identification.addSpectrumMatch(match);
-                        String mgfName = Spectrum.getSpectrumFile(match.getKey());
-
-                        if (!mgfNeeded.contains(mgfName)) {
-                            mgfNeeded.add(mgfName);
-                        }
-
-                        nRetained++;
-                    }
-
-                    if (waitingDialog.isRunCanceled()) {
-                        return 1;
+                for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
+                    newFile = Spectrum.getSpectrumFile(spectrumMatch.getKey());
+                    if (!mgfNeeded.contains(newFile)) {
+                        mgfNeeded.add(newFile);
                     }
                 }
 
                 waitingDialog.increaseProgressValue();
-            }
 
-            // clear the sequence to protein map as it is no longer needed
-            sequences.clear();
+                ArrayList<String> mgfMissing = new ArrayList<String>();
+                ArrayList<String> mgfNames = new ArrayList<String>(spectrumFiles.keySet());
+                ArrayList<File> mgfImported = new ArrayList<File>();
 
-            if (nRetained == 0) {
-                waitingDialog.appendReport("No identifications retained.");
+                for (String mgfFile : mgfNeeded) {
+                    if (!mgfNames.contains(mgfFile)) {
+                        mgfMissing.add(mgfFile);
+                    } else {
+                        mgfImported.add(spectrumFiles.get(mgfFile));
+                    }
+                }
+
+                if (mgfMissing.isEmpty()) {
+                    for (int i = mgfImported.size(); i < mgfNames.size(); i++) {
+                        waitingDialog.increaseProgressValue();
+                    }
+                    importSpectra(waitingDialog, mgfImported);
+                } else {
+                    for (int i = 0; i < mgfNames.size(); i++) {
+                        waitingDialog.increaseProgressValue();
+                    }
+                }
+
+                waitingDialog.appendReport("File import finished.\n\n");
                 waitingDialog.setRunFinished();
-                return 1;
+
+            } catch (Exception e) {
+                waitingDialog.appendReport("An error occured while loading the identification files:");
+                waitingDialog.appendReport(e.getLocalizedMessage());
+                waitingDialog.setRunCanceled();
+                e.printStackTrace();
+            } catch (OutOfMemoryError error) {
+                Runtime.getRuntime().gc();
+                waitingDialog.appendReportEndLine();
+                waitingDialog.appendReport("Ran out of memory!");
+                waitingDialog.setRunCanceled();
+                JOptionPane.showMessageDialog(null,
+                        "The task used up all the available memory and had to be stopped.\n"
+                        + "Memory boundaries are set in ../conf/JavaOptions.txt.",
+                        "Out Of Memory Error",
+                        JOptionPane.ERROR_MESSAGE);
+
+                System.out.println("Ran out of memory!");
+                error.printStackTrace();
             }
 
-            waitingDialog.appendReport("Identification file(s) import completed. "
-                    + nTotal + " identifications imported, " + nRetained + " identifications retained.");
-
-            ArrayList<String> mgfMissing = new ArrayList<String>();
-            ArrayList<String> mgfNames = new ArrayList<String>(spectrumFiles.keySet());
-            ArrayList<File> mgfImported = new ArrayList<File>();
-
-            for (String mgfFile : mgfNeeded) {
-                if (!mgfNames.contains(mgfFile)) {
-                    mgfMissing.add(mgfFile);
-                } else {
-                    mgfImported.add(spectrumFiles.get(mgfFile));
-                }
-            }
-
-            if (mgfMissing.isEmpty()) {
-                for (File file : mgfImported) {
-                    searchParameters.addSpectrumFile(file.getAbsolutePath());
-                }
-                waitingDialog.increaseProgressValue(mgfNames.size() - mgfImported.size());
-                importSpectra(waitingDialog, mgfImported);
-            } else {
-                waitingDialog.increaseProgressValue(mgfNames.size());
-            }
-
-            peptideShaker.processIdentifications(inputMap, waitingDialog);
-
-        } catch (Exception e) {
-            waitingDialog.appendReport("An error occured while loading the identification files:");
-            waitingDialog.appendReport(e.getLocalizedMessage());
-            waitingDialog.setRunCanceled();
-            e.printStackTrace();
-        } catch (OutOfMemoryError error) {
-            System.out.println("Ran out of memory!");
-            Runtime.getRuntime().gc();
-            waitingDialog.appendReportEndLine();
-            waitingDialog.appendReport("Ran out of memory!");
-            waitingDialog.setRunCanceled();
-            JOptionPane.showMessageDialog(null,
-                    "The task used up all the available memory and had to be stopped.\n"
-                    + "Memory boundaries are set in ../conf/JavaOptions.txt.",
-                    "Out Of Memory Error",
-                    JOptionPane.ERROR_MESSAGE);
-            error.printStackTrace();
-        }
-
-        return 0;
-    }
-}
-
-/**
- * Worker which loads spectra from files assuming that ids are already loaded them while giving feedback to the user.
- */
-private class SpectrumProcessor extends SwingWorker {
-
-    /**
-     * A list of spectrum files (can be empty, no spectrum will be imported)
-     */
-    private HashMap<String, File> spectrumFiles;
-
-    /**
-     * Constructor of the worker
-     * @param spectrumFiles ArrayList containing the spectrum files
-     */
-    public SpectrumProcessor(ArrayList<File> spectrumFiles) {
-
-        this.spectrumFiles = new HashMap<String, File>();
-
-        for (File file : spectrumFiles) {
-            this.spectrumFiles.put(file.getName(), file);
-        }
-
-        try {
-            ptmFactory.importModifications(new File(MODIFICATION_FILE));
-        } catch (Exception e) {
-            waitingDialog.appendReport("Failed importing modifications from " + MODIFICATION_FILE);
-            waitingDialog.setRunCanceled();
-            e.printStackTrace();
-        }
-
-        try {
-            ptmFactory.importModifications(new File(USER_MODIFICATION_FILE));
-        } catch (Exception e) {
-            waitingDialog.appendReport("Failed importing modifications from " + USER_MODIFICATION_FILE);
-            waitingDialog.setRunCanceled();
-            e.printStackTrace();
+            return 0;
         }
     }
-
-    @Override
-    protected Object doInBackground() throws Exception {
-
-        Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-
-        try {
-            ArrayList<String> mgfNeeded = new ArrayList<String>();
-            String newFile;
-
-            for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
-                newFile = Spectrum.getSpectrumFile(spectrumMatch.getKey());
-                if (!mgfNeeded.contains(newFile)) {
-                    mgfNeeded.add(newFile);
-                }
-            }
-
-            waitingDialog.increaseProgressValue();
-
-            ArrayList<String> mgfMissing = new ArrayList<String>();
-            ArrayList<String> mgfNames = new ArrayList<String>(spectrumFiles.keySet());
-            ArrayList<File> mgfImported = new ArrayList<File>();
-
-            for (String mgfFile : mgfNeeded) {
-                if (!mgfNames.contains(mgfFile)) {
-                    mgfMissing.add(mgfFile);
-                } else {
-                    mgfImported.add(spectrumFiles.get(mgfFile));
-                }
-            }
-
-            if (mgfMissing.isEmpty()) {
-                for (int i = mgfImported.size(); i < mgfNames.size(); i++) {
-                    waitingDialog.increaseProgressValue();
-                }
-                importSpectra(waitingDialog, mgfImported);
-            } else {
-                for (int i = 0; i < mgfNames.size(); i++) {
-                    waitingDialog.increaseProgressValue();
-                }
-            }
-
-            waitingDialog.appendReport("File import finished.\n\n");
-            waitingDialog.setRunFinished();
-
-        } catch (Exception e) {
-            waitingDialog.appendReport("An error occured while loading the identification files:");
-            waitingDialog.appendReport(e.getLocalizedMessage());
-            waitingDialog.setRunCanceled();
-            e.printStackTrace();
-        } catch (OutOfMemoryError error) {
-            Runtime.getRuntime().gc();
-            waitingDialog.appendReportEndLine();
-            waitingDialog.appendReport("Ran out of memory!");
-            waitingDialog.setRunCanceled();
-            JOptionPane.showMessageDialog(null,
-                    "The task used up all the available memory and had to be stopped.\n"
-                    + "Memory boundaries are set in ../conf/JavaOptions.txt.",
-                    "Out Of Memory Error",
-                    JOptionPane.ERROR_MESSAGE);
-
-            System.out.println("Ran out of memory!");
-            error.printStackTrace();
-        }
-
-        return 0;
-    }
-}
 }
