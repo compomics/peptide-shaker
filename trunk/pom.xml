@@ -293,7 +293,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.1.30</version>
+            <version>3.1.31</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -333,7 +333,7 @@
         <dependency>
             <groupId>de.proteinms.xtandemparser</groupId>
             <artifactId>xtandem-parser</artifactId>
-            <version>1.3.3</version>
+            <version>1.3.4</version>
         </dependency>
 
         <dependency>
