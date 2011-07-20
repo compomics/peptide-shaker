@@ -1,5 +1,6 @@
-package eu.isas.peptideshaker.fdrestimation;
+package eu.isas.peptideshaker.scoring;
 
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
