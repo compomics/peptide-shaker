@@ -23,10 +23,10 @@ public class ExportFeatureDialog extends javax.swing.JDialog {
     /** 
      * Creates a new ExportFeatureDialog.
      * 
-     * @param petideShakerGUI
-     * @param modal
-     * @param features
-     * @param featureType  
+     * @param petideShakerGUI   the PeptideShakerGUI parent
+     * @param modal             modal or not
+     * @param features          the features to export as a string
+     * @param featureType       the fearure type as a string
      */
     public ExportFeatureDialog(PeptideShakerGUI petideShakerGUI, boolean modal, String features, String featureType) {
         super(petideShakerGUI, modal);
@@ -127,11 +127,21 @@ public class ExportFeatureDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Close the dialog.
+     * 
+     * @param evt 
+     */
     private void closeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeJButtonActionPerformed
         setVisible(false);
         dispose();
     }//GEN-LAST:event_closeJButtonActionPerformed
 
+    /**
+     * Save the contents in the dialog to a text file.
+     * 
+     * @param evt 
+     */
     private void saveJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveJButtonActionPerformed
 
         final JFileChooser fileChooser = new JFileChooser(petideShakerGUI.getLastSelectedFolder());
