@@ -50,10 +50,15 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import no.uib.jsparklines.data.JSparklinesDataSeries;
+import no.uib.jsparklines.data.JSparklinesDataset;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
+import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -65,6 +70,8 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class OverviewPanel extends javax.swing.JPanel {
 
+    private String currentCleanSequence;
+    private int currentSequenceLength;
     /**
      * The maximum sequence length for display in the sequence coverage panel.
      */
@@ -157,6 +164,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectraScrollPane.getViewport().setOpaque(false);
         coverageScrollPane.getViewport().setOpaque(false);
         fragmentIonsJScrollPane.getViewport().setOpaque(false);
+        coverageTableScrollPane.getViewport().setOpaque(false);
 
         // make the tabs in the spectrum tabbed pane go from right to left
         spectrumJTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -256,6 +264,8 @@ public class OverviewPanel extends javax.swing.JPanel {
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
+        
+        coverageTable.getColumn(" ").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.stackedPercentBarChart, PlotOrientation.HORIZONTAL, 0.0, 100d));
 
         // set up the table header tooltips
         proteinTableToolTips = new ArrayList<String>();
@@ -324,6 +334,21 @@ public class OverviewPanel extends javax.swing.JPanel {
         sequenceCoverageJPanel = new javax.swing.JPanel();
         coverageScrollPane = new javax.swing.JScrollPane();
         coverageEditorPane = new javax.swing.JEditorPane();
+        coverageTableScrollPane = new javax.swing.JScrollPane();
+        coverageTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        String tip = null;
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        tip = (String) psmTableToolTips.get(realIndex);
+                        return tip;
+                    }
+                };
+            }
+        };
         peptidesPsmSpectrumFragmentIonsJSplitPane = new javax.swing.JSplitPane();
         peptidesPsmJSplitPane = new javax.swing.JSplitPane();
         peptidesJPanel = new javax.swing.JPanel();
@@ -536,19 +561,51 @@ public class OverviewPanel extends javax.swing.JPanel {
         });
         coverageScrollPane.setViewportView(coverageEditorPane);
 
+        coverageTableScrollPane.setOpaque(false);
+
+        coverageTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null}
+            },
+            new String [] {
+                " "
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        coverageTable.setEnabled(false);
+        coverageTable.setOpaque(false);
+        coverageTable.setTableHeader(null);
+        coverageTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                coverageTableMouseMoved(evt);
+            }
+        });
+        coverageTableScrollPane.setViewportView(coverageTable);
+
         javax.swing.GroupLayout sequenceCoverageJPanelLayout = new javax.swing.GroupLayout(sequenceCoverageJPanel);
         sequenceCoverageJPanel.setLayout(sequenceCoverageJPanelLayout);
         sequenceCoverageJPanelLayout.setHorizontalGroup(
             sequenceCoverageJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(sequenceCoverageJPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sequenceCoverageJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 925, Short.MAX_VALUE)
+                .addGroup(sequenceCoverageJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(coverageScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 925, Short.MAX_VALUE)
+                    .addComponent(coverageTableScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 925, Short.MAX_VALUE))
                 .addContainerGap())
         );
         sequenceCoverageJPanelLayout.setVerticalGroup(
             sequenceCoverageJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(sequenceCoverageJPanelLayout.createSequentialGroup()
-                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 125, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sequenceCoverageJPanelLayout.createSequentialGroup()
+                .addComponent(coverageScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(coverageTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -2257,6 +2314,14 @@ public class OverviewPanel extends javax.swing.JPanel {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_peptideTableMouseMoved
+
+    private void coverageTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_coverageTableMouseMoved
+        double width = evt.getPoint().getX() / coverageTable.getWidth();
+        
+
+        coverageTable.setToolTipText("Index: " + width);
+    }//GEN-LAST:event_coverageTableMouseMoved
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonBubblePlotToggleButton;
     private javax.swing.JToggleButton aIonTableToggleButton;
@@ -2277,6 +2342,8 @@ public class OverviewPanel extends javax.swing.JPanel {
     private javax.swing.JEditorPane coverageEditorPane;
     private javax.swing.JSplitPane coverageJSplitPane;
     private javax.swing.JScrollPane coverageScrollPane;
+    private javax.swing.JTable coverageTable;
+    private javax.swing.JScrollPane coverageTableScrollPane;
     private javax.swing.JPanel fragmentIonJPanel;
     private javax.swing.JScrollPane fragmentIonsJScrollPane;
     private javax.swing.JToggleButton h2oBubblePlotToggleButton;
@@ -2610,7 +2677,8 @@ public class OverviewPanel extends javax.swing.JPanel {
                         allAnnotations, getCurrentFragmentIonTypes(), allSpectra, searchParameters.getFragmentIonMZTolerance(),
                         peptideShakerGUI.getBubbleScale(),
                         oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected(),
-                        moreThanTwoChargesToggleButton.isSelected(), selectedIndexes.size() == 1, barsBubblePlotToggleButton.isSelected());
+                        moreThanTwoChargesToggleButton.isSelected(), selectedIndexes.size() == 1, barsBubblePlotToggleButton.isSelected(),
+                        peptideShakerGUI.useRelativeError());
 
                 bubbleJPanel.removeAll();
                 bubbleJPanel.add(massErrorBubblePlot);
@@ -2637,11 +2705,12 @@ public class OverviewPanel extends javax.swing.JPanel {
             ArrayList<Integer> selectedPeptideStart = new ArrayList<Integer>();
             ArrayList<Integer> selectedPeptideEnd = new ArrayList<Integer>();
 
-            String cleanSequence = db.getProtein(proteinAccession).getSequence();
+            currentCleanSequence = db.getProtein(proteinAccession).getSequence();
+            currentSequenceLength = currentCleanSequence.length();
 
-            if (cleanSequence.length() < MAX_SEQUENCE_LENGTH) {
+            if (currentCleanSequence.length() < MAX_SEQUENCE_LENGTH) {
 
-                String tempSequence = cleanSequence;
+                String tempSequence = currentCleanSequence;
 
                 if (peptideTable.getSelectedRow() != -1) {
 
@@ -2653,12 +2722,12 @@ public class OverviewPanel extends javax.swing.JPanel {
                         startIndex = tempSequence.lastIndexOf(peptideSequence) + 1;
                         selectedPeptideStart.add(startIndex);
                         selectedPeptideEnd.add(startIndex + peptideSequence.length());
-                        tempSequence = cleanSequence.substring(0, startIndex);
+                        tempSequence = currentCleanSequence.substring(0, startIndex);
                     }
                 }
-
+                
                 // an array containing the coverage index for each residue
-                int[] coverage = new int[cleanSequence.length() + 1];
+                int[] coverage = new int[currentCleanSequence.length() + 1];
 
                 PSParameter pSParameter = new PSParameter();
                 // iterate the peptide table and store the coverage for each validated peptide
@@ -2668,7 +2737,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                     pSParameter = (PSParameter) peptideMatch.getUrParam(pSParameter);
                     if (pSParameter.isValidated()) {
                         String peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
-                        tempSequence = cleanSequence;
+                        tempSequence = currentCleanSequence;
 
                         while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
                             int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
@@ -2676,10 +2745,57 @@ public class OverviewPanel extends javax.swing.JPanel {
                             for (int j = peptideTempStart; j < peptideTempEnd; j++) {
                                 coverage[j]++;
                             }
-                            tempSequence = cleanSequence.substring(0, peptideTempStart);
+                            tempSequence = currentCleanSequence.substring(0, peptideTempStart);
                         }
                     }
                 }
+                
+                ArrayList<JSparklinesDataSeries> sparkLineDataSeriesAll = new ArrayList<JSparklinesDataSeries>();
+                
+                for (int i=0; i<coverage.length; i++) {
+                    
+                    boolean covered = coverage[i] > 0;
+                    int counter = 1;
+                    
+                    if (covered) {
+                        while(i+1 < coverage.length && coverage[i+1] > 0) {
+                            counter++;
+                            i++;
+                            
+                            // we need to start a new peptide in order to highlight
+                            if (selectedPeptideEnd.contains(new Integer(i+1)) || selectedPeptideStart.contains(new Integer(i+1))) {
+                                break;
+                            }
+                        }
+                    } else {
+                        while(i+1 < coverage.length && coverage[i+1] == 0) {
+                            counter++;
+                            i++;
+                        }
+                    }  
+                    
+                    ArrayList<Double> data = new ArrayList<Double>();
+                    data.add(new Double(counter));
+                    
+                    JSparklinesDataSeries sparklineDataseries;
+                    
+                    if (covered) {
+
+                        if (selectedPeptideEnd.contains(new Integer(i+1))) {
+                            sparklineDataseries = new JSparklinesDataSeries(data, new Color(255, 0, 0), null);
+                        } else {
+                            sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
+                        }
+                        
+                    } else {
+                        sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
+                    }
+                    
+                    sparkLineDataSeriesAll.add(sparklineDataseries);
+                }
+                
+                JSparklinesDataset dataset = new JSparklinesDataset(sparkLineDataSeriesAll);
+                coverageTable.setValueAt(dataset, 0, 0);
 
                 final String tempProteinAccession = proteinAccession;
                 final ArrayList<Integer> tempPeptideStarts = selectedPeptideStart;
@@ -2698,7 +2814,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                     }
                 });
             } else {
-                coverageEditorPane.setText("<html><i>The sequence is too long to display: " + cleanSequence.length() + " residues...</i></html>");
+                coverageEditorPane.setText("<html><i>The sequence is too long to display: " + currentCleanSequence.length() + " residues...</i></html>");
 
                 ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Protein Sequence Coverage");
                 sequenceCoverageJPanel.repaint();
@@ -2805,7 +2921,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                                 annotations, getCurrentFragmentIonTypes(), currentSpectrum,
                                 peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
                                 oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected(),
-                                moreThanTwoChargesToggleButton.isSelected());
+                                moreThanTwoChargesToggleButton.isSelected(), peptideShakerGUI.useRelativeError());
 
                         if (massErrorPlot.getNumberOfDataPointsInPlot() > 0) {
                             sequenceFragmentIonPlotsJPanel.add(massErrorPlot);

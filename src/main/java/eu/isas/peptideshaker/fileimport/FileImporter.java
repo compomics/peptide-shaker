@@ -141,6 +141,15 @@ public class FileImporter {
             int nMissedCleavages = searchParameters.getnMissedCleavages();
             int nMin = idFilter.getMinPeptideLength();
             int nMax = idFilter.getMaxPeptideLength();
+            
+            if (!db.getProtein(db.getProteinList().iterator().next()).getDatabaseType().equalsIgnoreCase("UniProt") ) {
+                JOptionPane.showMessageDialog(waitingDialog, 
+                        "We strongly recommend the use of UniProt accession numbers.\n" +
+                        "Some features will be limited if using other databases.",
+                        "Information", 
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+            
             for (String proteinKey : db.getProteinList()) {
                 sequence = db.getProtein(proteinKey).getSequence();
                 for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {

@@ -9,12 +9,38 @@
         <H2>Protein Inference</H2>
 
         <p align="justify">
-            For an introduction to protein inference see <a href="http://www.ncbi.nlm.nih.gov/pubmed/16009968">Nesvizhskii et al: 
-                Interpretation of shotgun proteomic data: the protein inference problem, Mol Cell Proteomics. 2005 Oct;4(10):1419-40.</a>
+            Inferring proteins from peptides is not as simple as it may seem. Some peptides can map to multiple proteins, 
+            let’s say protein A and protein B. If no unique peptide ensures the presence of A or B, <b>PeptideShaker</b> 
+            cannot say whether protein A or protein B is present.
+            <br><br>
+            The PI column in the Overview tab stands for Protein Inference. Proteins are here flagged depending on the 
+            type of protein inference: 
         </p>
-        <br><br>
+        <ul>
+            <li><b>Green:</b> No Conflict, i.e., a Single Protein unambiguously identified</li>
+            <li><b>Yellow:</b> Isoforms identified</li>
+            <li><b>Blue:</b> Unrelated Isoforms identified</li>
+            <li><b>Red:</b> Unrelated Proteins identified</li>
+        </ul>
+
         <p align="justify">
-            (More details coming soon...)
+            For each type <b>PeptideShaker</b> will provide you with a set of options so that you can manually select the 
+            protein you consider as the correct one. 
+            <br><br>
+            In many cases the protein groups are isoforms of the same protein 
+            and depending on your experiment this small difference may or may not be important.  
+            <br><br>
+            To support your decision you have the list of Unique Hits (of any) of each possible protein, and the 
+            list of Related Hits (if any) to this group.
+            <br><br>
+            To change the currently selected protein for the protein inference group, select the wanted protein in 
+            the Candidate Proteins table and click OK. The selection will be automatically updated in the rest of 
+            <b>PeptideShaker</b>.
+            <br><br>
+            For an introduction to protein inference see:
+            <br>
+            <a href="http://www.ncbi.nlm.nih.gov/pubmed/16009968">Nesvizhskii et al: 
+                Interpretation of shotgun proteomic data: the protein inference problem, Mol Cell Proteomics. 2005 Oct;4(10):1419-40.</a>
         </p>
         <br><br>
     </BODY>

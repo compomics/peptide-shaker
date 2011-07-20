@@ -5,7 +5,7 @@ import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 
 /**
- * This class will be used to save all settings needed in Peptide-Shaker
+ * This class will be used to save all settings needed in PeptideShaker
  *
  * @author vaudel
  */

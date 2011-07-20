@@ -35,69 +35,22 @@
                   <KeyStroke key="Ctrl+S"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="83"/>
-                <Property name="text" type="java.lang.String" value="Save As"/>
+                <Property name="text" type="java.lang.String" value="Save As..."/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <Menu class="javax.swing.JMenu" name="jMenu1">
+            <MenuItem class="javax.swing.JMenuItem" name="exportAllIdsMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Export"/>
+                <Property name="mnemonic" type="int" value="69"/>
+                <Property name="text" type="java.lang.String" value="Save As CSV"/>
+                <Property name="toolTipText" type="java.lang.String" value="Identification summary as csv files"/>
               </Properties>
-              <SubComponents>
-                <MenuItem class="javax.swing.JMenuItem" name="exportMenuItem">
-                  <Properties>
-                    <Property name="mnemonic" type="int" value="69"/>
-                    <Property name="text" type="java.lang.String" value="Identifications"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Identification Summary"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportMenuItemActionPerformed"/>
-                  </Events>
-                </MenuItem>
-                <Menu class="javax.swing.JMenu" name="graphicsJMenu">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Graphics"/>
-                    <Property name="enabled" type="boolean" value="false"/>
-                  </Properties>
-                  <SubComponents>
-                    <MenuItem class="javax.swing.JMenuItem" name="spectrumOverviewJMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Spectrum"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spectrumOverviewJMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="bubblePlotJMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Bubble Plot"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bubblePlotJMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="spectrumSpectrumIdJMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Spectrum"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spectrumSpectrumIdJMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="spectrumModificationsJMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Spectrum"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spectrumModificationsJMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
-                  </SubComponents>
-                </Menu>
-              </SubComponents>
-            </Menu>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportAllIdsMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exitJMenuItem">
@@ -133,6 +86,8 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="annotationPreferencesMenuActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator5">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="bubbleScaleJMenuItem">
               <Properties>
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
@@ -142,6 +97,19 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bubbleScaleJMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="errorPlotTypeCheckBoxMenuItem">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Shift+Ctrl+A"/>
+                </Property>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Absolute Mass Error Plot"/>
+                <Property name="toolTipText" type="java.lang.String" value="Plot the mass error in Da or ppm "/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="errorPlotTypeCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -163,6 +131,130 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinFilterJMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="exportJMenu">
+          <Properties>
+            <Property name="mnemonic" type="int" value="120"/>
+            <Property name="text" type="java.lang.String" value="Export"/>
+          </Properties>
+          <SubComponents>
+            <Menu class="javax.swing.JMenu" name="graphicsJMenu">
+              <Properties>
+                <Property name="mnemonic" type="int" value="103"/>
+                <Property name="text" type="java.lang.String" value="Graphics"/>
+                <Property name="toolTipText" type="java.lang.String" value="Export a graphics element (i.e., spectrum or plot)"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="spectrumOverviewJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Spectrum"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spectrumOverviewJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="bubblePlotJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Bubble Plot"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bubblePlotJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="spectrumSpectrumIdJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Spectrum"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spectrumSpectrumIdJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="spectrumModificationsJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Spectrum"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spectrumModificationsJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
+            <Menu class="javax.swing.JMenu" name="featuresJMenu">
+              <Properties>
+                <Property name="mnemonic" type="int" value="102"/>
+                <Property name="text" type="java.lang.String" value="Features"/>
+                <Property name="toolTipText" type="java.lang.String" value="Export a feature (e.g., protein accession numbers or peptide sequendces)"/>
+              </Properties>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="proteinAccesionsJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Protein Accession Numbers"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Export a list of protein accession numbers"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinAccesionsJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="proteinListJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Protein List"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Export the list of proteins"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinListJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <Menu class="javax.swing.JMenu" name="peptideListJMenu">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Peptide List"/>
+                  </Properties>
+                  <SubComponents>
+                    <MenuItem class="javax.swing.JMenuItem" name="peptideListJMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Current Peptide List"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Export the current list of peptides"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideListJMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="allPeptideListsJMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Complete Peptide List"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Export complete list of peptides"/>
+                        <Property name="enabled" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="allPeptideListsJMenuItemActionPerformed"/>
+                      </Events>
+                    </MenuItem>
+                  </SubComponents>
+                </Menu>
+                <Menu class="javax.swing.JMenu" name="spectrumJMenu">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Spectrum"/>
+                    <Property name="toolTipText" type="java.lang.String" value="Export the spectrum to a file"/>
+                    <Property name="enabled" type="boolean" value="false"/>
+                  </Properties>
+                  <SubComponents>
+                    <MenuItem class="javax.swing.JMenuItem" name="spectrumAsMgfFileJMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="As MGF"/>
+                        <Property name="toolTipText" type="java.lang.String" value="Export as a Mascot Generic File"/>
+                      </Properties>
+                    </MenuItem>
+                    <MenuItem class="javax.swing.JMenuItem" name="spectrumAsPklFileJMenuItem">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="As PKL"/>
+                        <Property name="toolTipText" type="java.lang.String" value="As a PKL peak list file"/>
+                      </Properties>
+                    </MenuItem>
+                  </SubComponents>
+                </Menu>
+              </SubComponents>
+            </Menu>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="viewJMenu">
