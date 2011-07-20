@@ -1461,9 +1461,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     progressDialog.dispose();
 
                     JOptionPane.showMessageDialog(tempRef,
-                            "An error occured while reading" + psFile + ".\\"
-                            + "Please verif that the compomics utilities version used to create\n"
-                            + "the file is compatible with your version of Peptide-Shaker.",
+                            "An error occured while reading" + psFile + ".\n"
+                            + "Please verify that the compomics-utilities version used to create\n"
+                            + "the file is compatible with your version of PeptideShaker.",
                             "File Input Error", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                 }

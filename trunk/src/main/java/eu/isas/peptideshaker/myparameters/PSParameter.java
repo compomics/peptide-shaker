@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.myparameters;
 import com.compomics.util.experiment.personalization.UrParameter;
 
 /**
- * Peptide-Shaker compomics utilities experiment customizable parameter.
+ * PeptideShaker compomics utilities experiment customizable parameter.
  * This parameter will be added to spectrum, peptide and protein matches to score 
  * them, indicate the estimated posterior error probability associated and flag 
  * whether they have been validated or not.
