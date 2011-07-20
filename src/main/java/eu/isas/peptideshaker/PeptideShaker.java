@@ -2,6 +2,7 @@ package eu.isas.peptideshaker;
 
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
+import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.AdvocateFactory;
 import com.compomics.util.experiment.identification.Identification;
@@ -9,20 +10,23 @@ import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceDataBase;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
+import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import eu.isas.peptideshaker.fdrestimation.InputMap;
-import eu.isas.peptideshaker.fdrestimation.PeptideSpecificMap;
-import eu.isas.peptideshaker.fdrestimation.ProteinMap;
-import eu.isas.peptideshaker.fdrestimation.PsmSpecificMap;
-import eu.isas.peptideshaker.fdrestimation.TargetDecoyMap;
-import eu.isas.peptideshaker.fdrestimation.TargetDecoyResults;
+import eu.isas.peptideshaker.scoring.InputMap;
+import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
+import eu.isas.peptideshaker.scoring.ProteinMap;
+import eu.isas.peptideshaker.scoring.PsmSpecificMap;
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.fileimport.FileImporter;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;
 import java.util.ArrayList;
@@ -151,6 +155,9 @@ public class PeptideShaker {
         peptideMap.cure();
         peptideMap.estimateProbabilities();
         attachPeptideProbabilities();
+        waitingDialog.appendReport("Scoring PTMs.");
+        scorePSMPTMs();
+        scorePeptidePTMs();
         waitingDialog.appendReport("Computing protein probabilities.");
         fillProteinMap();
         proteinMap.estimateProbabilities();
@@ -449,6 +456,112 @@ public class PeptideShaker {
             psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
             psParameter.setPsmProbability(psmMap.getProbability(spectrumMatch, psParameter.getPsmProbabilityScore()));
         }
+    }
+
+    /**
+     * Attaches scores to possible PTM locations to spectrum matches 
+     */
+    public void scorePSMPTMs() {
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
+            scorePTMs(spectrumMatch);
+        }
+    }
+
+    /**
+     * Attaches scores to possible PTM locations to peptide matches
+     */
+    public void scorePeptidePTMs() {
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        for (PeptideMatch peptideMatch : identification.getPeptideIdentification().values()) {
+            scorePTMs(peptideMatch);
+        }
+    }
+
+    public void scorePTMs(PeptideMatch peptideMatch) {
+        PSPtmScores psmScores, peptideScores = new PSPtmScores();
+        PtmScoring spectrumScoring;
+        ArrayList<String> variableModifications = new ArrayList<String>();
+        for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
+            if (modificationMatch.isVariable()
+                    && modificationMatch.getTheoreticPtm().getType() == PTM.MODAA
+                    && !variableModifications.contains(modificationMatch.getTheoreticPtm().getName())) {
+                variableModifications.add(modificationMatch.getTheoreticPtm().getName());
+            }
+        }
+        if (variableModifications.size() > 0) {
+            for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
+                for (String modification : variableModifications) {
+                    if (!peptideScores.containsPtm(modification)) {
+                        peptideScores.addPtmScoring(modification, new PtmScoring(modification));
+                    }
+                    psmScores = (PSPtmScores) spectrumMatch.getUrParam(peptideScores);
+                    if (psmScores != null) {
+                        spectrumScoring = psmScores.getPtmScoring(modification);
+                        if (spectrumScoring != null) {
+                            peptideScores.getPtmScoring(modification).addAll(spectrumScoring);
+                        }
+                    }
+                }
+            }
+            peptideMatch.addUrParam(peptideScores);
+        }
+    }
+
+    /**
+     * Scores PTM locations for a desired spectrumMatch
+     * 
+     * @param spectrumMatch The spectrum match of interest
+     */
+    public void scorePTMs(SpectrumMatch spectrumMatch) {
+
+        // Estimate delta score
+        PSParameter psParameter = new PSParameter();
+        double p1, p2;
+        String mainSequence, modificationName;
+        ArrayList<String> modifications;
+        HashMap<String, ArrayList<Integer>> modificationProfiles = new HashMap<String, ArrayList<Integer>>();
+        PSPtmScores ptmScores;
+        PtmScoring ptmScoring;
+        ptmScores = new PSPtmScores();
+        psParameter = (PSParameter) spectrumMatch.getBestAssumption().getUrParam(psParameter);
+        p1 = psParameter.getSearchEngineConfidence();
+        if (p1 < 1) {
+            mainSequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
+            p2 = 1;
+            modifications = new ArrayList<String>();
+            for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
+                if (modificationMatch.isVariable()
+                        && modificationMatch.getTheoreticPtm().getType() == PTM.MODAA) {
+                    modificationName = modificationMatch.getTheoreticPtm().getName();
+                    if (!modifications.contains(modificationName)) {
+                        modifications.add(modificationName);
+                        modificationProfiles.put(modificationName, new ArrayList<Integer>());
+                    }
+                    modificationProfiles.get(modificationName).add(modificationMatch.getModificationSite());
+                }
+            }
+            if (modifications.size() > 0) {
+                for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
+                    if (peptideAssumption.getRank() > 1 && peptideAssumption.getPeptide().getSequence().equals(mainSequence)) {
+                        psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+                        if (psParameter.getSearchEngineProbability() < p2) {
+                            p2 = psParameter.getSearchEngineProbability();
+                        }
+                    }
+                }
+                for (String mod : modifications) {
+                    ptmScoring = new PtmScoring(mod);
+                    ptmScoring.addDeltaScore(modificationProfiles.get(mod), (p2 - p1)*100);
+                    ptmScores.addPtmScoring(mod, ptmScoring);
+                }
+                spectrumMatch.addUrParam(ptmScores);
+            }
+        }
+
+        //@TODO: estimate A-score
+
+
     }
 
     /**

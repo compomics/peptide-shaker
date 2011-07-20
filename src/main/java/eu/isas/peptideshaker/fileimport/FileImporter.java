@@ -17,7 +17,7 @@ import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.fdrestimation.InputMap;
+import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;

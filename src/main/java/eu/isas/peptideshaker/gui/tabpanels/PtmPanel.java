@@ -20,6 +20,8 @@ import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.event.KeyEvent;
@@ -1799,6 +1801,47 @@ public class PtmPanel extends javax.swing.JPanel {
     }
 
     /**
+     * Returns the selected modification name
+     * @return the selected modification name
+     */
+    private String getSelectedModificationName() {
+        return (String) modificationsList.getSelectedValue();
+    }
+
+    /**
+     * Returns the content of a Modification Profile cell for a desired peptide.
+     * @param sequence  The sequence of the peptide
+     * @param scores    The PTM scores
+     * @return          The modification profile
+     */
+    private String getModificationProfile(String sequence, PSPtmScores scores) {
+        String result = "";
+        if (scores != null) {
+            for (String ptmName : scores.getScoredPTMs()) {
+                result += ptmName + " ";
+                PtmScoring locationScoring = scores.getPtmScoring(ptmName);
+                String bestLocation = "";
+                double bestScore = 0;
+                for (String key : locationScoring.getDeltaScorelocations()) {
+                    if (locationScoring.getDeltaScore(key) > bestScore) {
+                        bestLocation = key;
+                        bestScore = locationScoring.getDeltaScore(key);
+                    }
+                }
+                ArrayList<Integer> modificationSites = PtmScoring.getLocations(bestLocation);
+                for (int aa = 1; aa <= sequence.length(); aa++) {
+                    if (modificationSites.contains(aa)) {
+                        result += bestScore + " ";
+                    } else {
+                        result += "0 ";
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * Returns an arraylist of the currently selected fragment ion types.
      *
      * @return an arraylist of the currently selected fragment ion types
@@ -1908,7 +1951,7 @@ public class PtmPanel extends javax.swing.JPanel {
             } else if (column == 2) {
                 return "Sequence";
             } else if (column == 3) {
-                return "Modification(s)";
+                return "Modification Profile";
             } else if (column == 4) {
                 return "Score";
             } else if (column == 5) {
@@ -1930,18 +1973,10 @@ public class PtmPanel extends javax.swing.JPanel {
             } else if (column == 2) {
                 return identification.getPeptideIdentification().get(displayedPeptides.get(row)).getTheoreticPeptide().getSequence();
             } else if (column == 3) {
-                String result = "";
-                for (ModificationMatch modificationMatch : identification.getPeptideIdentification().get(displayedPeptides.get(row)).getTheoreticPeptide().getModificationMatches()) {
-                    if (modificationMatch.isVariable()) {
-                        result += modificationMatch.getTheoreticPtm().getName() + " ";
-                    }
-                }
-
-                if (result.length() == 0) {
-                    result = null;
-                }
-
-                return result;
+                PeptideMatch peptideMatch = identification.getPeptideIdentification().get(displayedPeptides.get(row));
+                PSPtmScores scores = new PSPtmScores();
+                scores = (PSPtmScores) peptideMatch.getUrParam(scores);
+                return getModificationProfile(peptideMatch.getTheoreticPeptide().getSequence(), scores);
             } else if (column == 4) {
                 PSParameter probabilities = new PSParameter();
                 probabilities = (PSParameter) identification.getPeptideIdentification().get(displayedPeptides.get(row)).getUrParam(probabilities);
@@ -1995,7 +2030,7 @@ public class PtmPanel extends javax.swing.JPanel {
             } else if (column == 2) {
                 return "Sequence";
             } else if (column == 3) {
-                return "Modification(s)";
+                return "Modification Profile";
             } else if (column == 4) {
                 return "Score";
             } else if (column == 5) {
@@ -2016,18 +2051,10 @@ public class PtmPanel extends javax.swing.JPanel {
             } else if (column == 2) {
                 return identification.getPeptideIdentification().get(relatedPeptides.get(row)).getTheoreticPeptide().getSequence();
             } else if (column == 3) {
-                String result = "";
-                for (ModificationMatch modificationMatch : identification.getPeptideIdentification().get(relatedPeptides.get(row)).getTheoreticPeptide().getModificationMatches()) {
-                    if (modificationMatch.isVariable()) {
-                        result += modificationMatch.getTheoreticPtm().getName() + " ";
-                    }
-                }
-
-                if (result.length() == 0) {
-                    result = null;
-                }
-
-                return result;
+                PeptideMatch peptideMatch = identification.getPeptideIdentification().get(relatedPeptides.get(row));
+                PSPtmScores scores = new PSPtmScores();
+                scores = (PSPtmScores) peptideMatch.getUrParam(scores);
+                return getModificationProfile(peptideMatch.getTheoreticPeptide().getSequence(), scores);
             } else if (column == 4) {
                 PSParameter probabilities = new PSParameter();
                 probabilities = (PSParameter) identification.getPeptideIdentification().get(relatedPeptides.get(row)).getUrParam(probabilities);
@@ -2083,7 +2110,7 @@ public class PtmPanel extends javax.swing.JPanel {
             } else if (column == 1) {
                 return "Sequence";
             } else if (column == 2) {
-                return "Modification(s)";
+                return "Modification profile";
             } else if (column == 3) {
                 return "m/z";
             } else if (column == 4) {
@@ -2136,7 +2163,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 // Not sure that it will always be the best assumption, might have to iterate assumptions if the wrong sequence is displayed
                 return spectrumMatch.getBestAssumption().getPeptide().getSequence();
             } else if (column == 2) {
-                return familyKey;
+                return "to be changed";
             } else if (column == 3) {
                 try {
                     return ((MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(2, spectrumMatch.getKey())).getPrecursor().getMz();
