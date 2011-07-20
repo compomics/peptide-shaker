@@ -1,5 +1,6 @@
-package eu.isas.peptideshaker.fdrestimation;
+package eu.isas.peptideshaker.scoring;
 
+import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.util.ArrayList;
 import java.util.HashMap;
 

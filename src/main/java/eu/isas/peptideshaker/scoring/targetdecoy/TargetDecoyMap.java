@@ -1,4 +1,4 @@
-package eu.isas.peptideshaker.fdrestimation;
+package eu.isas.peptideshaker.scoring.targetdecoy;
 
 import java.io.Serializable;
 import java.util.ArrayList;
