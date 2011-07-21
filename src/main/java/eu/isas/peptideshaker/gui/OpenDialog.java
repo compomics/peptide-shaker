@@ -1263,10 +1263,12 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             searchTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
             peptideShakerGUI.setSearchParameters(searchParameters);
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(this, searchGUIFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + searchGUIFile.getName()
-                    + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + searchGUIFile.getName() + ".\n"
+                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);            
         }
     }
 
@@ -1461,7 +1463,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     progressDialog.dispose();
 
                     JOptionPane.showMessageDialog(tempRef,
-                            "An error occured while reading" + psFile + ".\n"
+                            "An error occured while reading " + psFile + ".\n"
                             + "Please verify that the compomics-utilities version used to create\n"
                             + "the file is compatible with your version of PeptideShaker.",
                             "File Input Error", JOptionPane.ERROR_MESSAGE);

@@ -533,9 +533,12 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 searchParameters.setParametersFile(file);
                 fileTxt.setText(file.getAbsolutePath());
             } catch (FileNotFoundException e) {
+                e.printStackTrace();
                 JOptionPane.showMessageDialog(this, file.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
             } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "An error occured while reading " + file.getName() + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "An error occured while reading " + file.getName() + ".\n"
+                        + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
             }
         }
     }//GEN-LAST:event_loadButtonActionPerformed
@@ -909,15 +912,18 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             profileTxt.setText(aFile.getName().substring(0, aFile.getName().lastIndexOf(".")));
             
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
             searchParameters.clearModificationProfile();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() 
-                    + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
+                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
             searchParameters.clearModificationProfile();
         } catch (ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() 
-                    + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
+                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
             searchParameters.clearModificationProfile();
         }
         
