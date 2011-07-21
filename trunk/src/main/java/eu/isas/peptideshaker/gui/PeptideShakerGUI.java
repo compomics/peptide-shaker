@@ -1864,6 +1864,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     "http://code.google.com/p/peptide-shaker/downloads/detail?name=PeptideShaker-"
                     + currentVersion + ".zip");
 
+            // @TODO: improve this test!!
+            
             if ((java.net.HttpURLConnection) downloadPage.openConnection() != null) {
 
                 int respons = ((java.net.HttpURLConnection) downloadPage.openConnection()).getResponseCode();
@@ -2008,10 +2010,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
             searchParameters.clearModificationProfile();
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
+                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
             searchParameters.clearModificationProfile();
         } catch (ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ". Please verify the version compatibility.", "File Import error", JOptionPane.WARNING_MESSAGE);
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
+                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
             searchParameters.clearModificationProfile();
         }
     }

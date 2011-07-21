@@ -57,8 +57,6 @@ import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -265,7 +263,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
         
-        coverageTable.getColumn(" ").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.stackedPercentBarChart, PlotOrientation.HORIZONTAL, 0.0, 100d));
+        coverageTable.getColumn(" ").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.proteinSequence, PlotOrientation.HORIZONTAL, 0.0, 100d));
 
         // set up the table header tooltips
         proteinTableToolTips = new ArrayList<String>();
@@ -2315,11 +2313,18 @@ public class OverviewPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_peptideTableMouseMoved
 
+    /**
+     * Try to get the protein sequence index from the protein sequence model.
+     * 
+     * @param evt 
+     */
     private void coverageTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_coverageTableMouseMoved
-        double width = evt.getPoint().getX() / coverageTable.getWidth();
-        
 
-        coverageTable.setToolTipText("Index: " + width);
+        // @TODO: not working yet...
+        
+//        double width = evt.getPoint().getX() / (coverageTable.getWidth() - 20);
+//        
+//        coverageTable.setToolTipText("Index: " + (int) (width*currentSequenceLength));
     }//GEN-LAST:event_coverageTableMouseMoved
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
