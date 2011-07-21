@@ -233,6 +233,14 @@ public class FileImporter {
         return result;
     }
 
+    /**
+     * Returns a search-engine independent PTM based.
+     * @param sePTM             The search engine PTM
+     * @param modificationSite  The modified site according to the search engine
+     * @param sequence          The sequence of the peptide
+     * @param searchParameters  The search parameters used
+     * @return the best PTM candidate
+     */
     private PTM getPTM(PTM sePTM, int modificationSite, String sequence, SearchParameters searchParameters) {
         // If someone has a better idea, would be great.
         PTM psPTM;
@@ -425,10 +433,10 @@ public class FileImporter {
                             if (!proteins.isEmpty()) {
                                 peptide.setParentProteins(proteins);
                             }
-
+                            
                             identification.addSpectrumMatch(match);
-                            String mgfName = Spectrum.getSpectrumFile(match.getKey());
 
+                            String mgfName = Spectrum.getSpectrumFile(match.getKey());
                             if (!mgfNeeded.contains(mgfName)) {
                                 mgfNeeded.add(mgfName);
                             }
