@@ -3,6 +3,8 @@ package eu.isas.peptideshaker;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.AdvocateFactory;
 import com.compomics.util.experiment.identification.Identification;
@@ -146,11 +148,13 @@ public class PeptideShaker {
         inputMap.estimateProbabilities();
         attachAssumptionsProbabilities(inputMap);
         waitingDialog.appendReport("Computing PSMs probabilities.");
+        setFirstHit();
         fillPsmMap(inputMap);
         psmMap.cure();
         psmMap.estimateProbabilities();
         attachSpectrumProbabilities();
         waitingDialog.appendReport("Computing peptide probabilities.");
+        buildPeptidesAndProteins();
         fillPeptideMaps();
         peptideMap.cure();
         peptideMap.estimateProbabilities();
@@ -362,6 +366,64 @@ public class PeptideShaker {
     }
 
     /**
+     * When two different sequences result in the same score for a given search engine, this method will retain the peptide belonging to the protein leading to the most spectra.
+     * This method is typically useful for Isoleucine/Leucine issues.
+     */
+    private void setFirstHit() {
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        ArrayList<String> conflictingPSMs = new ArrayList<String>();
+        HashMap<String, Integer> spectrumCounting = new HashMap<String, Integer>();
+        boolean conflict;
+        String accession;
+        for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
+            conflict = false;
+            for (int se : spectrumMatch.getAdvocates()) {
+                for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(se).get(spectrumMatch.getFirstHit(se).getEValue())) {
+                    if (!peptideAssumption.getPeptide().getSequence().equals(spectrumMatch.getFirstHit(se).getPeptide().getSequence())) {
+                        conflict = true;
+                    }
+                    for (Protein protein : peptideAssumption.getPeptide().getParentProteins()) {
+                        accession = protein.getAccession();
+                        if (!spectrumCounting.containsKey(accession)) {
+                            spectrumCounting.put(accession, 0);
+                        }
+                        spectrumCounting.put(accession, spectrumCounting.get(accession) + 1);
+                    }
+                }
+            }
+            if (conflict) {
+                conflictingPSMs.add(spectrumMatch.getKey());
+            }
+        }
+        SpectrumMatch conflictingPSM;
+        PeptideAssumption bestAssumption;
+        int maxCount;
+        for (String conflictKey : conflictingPSMs) {
+            conflictingPSM = identification.getSpectrumIdentification().get(conflictKey);
+            maxCount = 0;
+            for (int se : conflictingPSM.getAdvocates()) {
+                bestAssumption = conflictingPSM.getFirstHit(se);
+                for (Protein protein : bestAssumption.getPeptide().getParentProteins()) {
+                    if (spectrumCounting.get(protein.getAccession()) > maxCount) {
+                        maxCount = spectrumCounting.get(protein.getAccession());
+                    }
+                }
+                for (PeptideAssumption peptideAssumption : conflictingPSM.getAllAssumptions(se).get(conflictingPSM.getFirstHit(se).getEValue())) {
+                    if (!peptideAssumption.getPeptide().getSequence().equals(conflictingPSM.getFirstHit(se).getPeptide().getSequence())) {
+                        for (Protein protein : peptideAssumption.getPeptide().getParentProteins()) {
+                            if (spectrumCounting.get(protein.getAccession()) > maxCount) {
+                                bestAssumption = peptideAssumption;
+                                maxCount = spectrumCounting.get(protein.getAccession());
+                            }
+                        }
+                        conflictingPSM.setFirstHit(se, bestAssumption);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Fills the psm specific map
      *
      * @param inputMap       The input map
@@ -459,6 +521,14 @@ public class PeptideShaker {
     }
 
     /**
+     * Build peptide and protein objects
+     */
+    private void buildPeptidesAndProteins() {
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        identification.buildPeptidesAndProteins();
+    }
+
+    /**
      * Attaches scores to possible PTM locations to spectrum matches 
      */
     public void scorePSMPTMs() {
@@ -478,6 +548,9 @@ public class PeptideShaker {
         }
     }
 
+    /**
+     * Scores the PTMs for a peptide match
+     */
     public void scorePTMs(PeptideMatch peptideMatch) {
         PSPtmScores psmScores, peptideScores = new PSPtmScores();
         PtmScoring spectrumScoring;
@@ -552,7 +625,7 @@ public class PeptideShaker {
                 }
                 for (String mod : modifications) {
                     ptmScoring = new PtmScoring(mod);
-                    ptmScoring.addDeltaScore(modificationProfiles.get(mod), (p2 - p1)*100);
+                    ptmScoring.addDeltaScore(modificationProfiles.get(mod), (p2 - p1) * 100);
                     ptmScores.addPtmScoring(mod, ptmScoring);
                 }
                 spectrumMatch.addUrParam(ptmScores);
