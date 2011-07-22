@@ -943,7 +943,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         int value = JOptionPane.showConfirmDialog(this,
                 "You are about to save your project as a list of csv text files. Are you sure\n"
                 + "this is what you want to do? Maybe \'Save As\' is what you are looking for?\n"
-                + "Continue?", "Save as CSV?", JOptionPane.YES_NO_CANCEL_OPTION);
+                + "Continue?", "Export as Multiple CSV Files?", JOptionPane.YES_NO_CANCEL_OPTION);
 
         if (value == JOptionPane.YES_OPTION) {
 
