@@ -21,6 +21,7 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
+import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.OverviewPanel;
 import eu.isas.peptideshaker.gui.tabpanels.ProteinStructurePanel;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
@@ -46,6 +47,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -188,6 +190,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private PtmPanel ptmPanel;
     /**
+     * The Annotation panel
+     */
+    private AnnotationPanel annotationPanel;
+    /**
      * The spectrum panel
      */
     private SpectrumIdentificationPanel spectrumIdentificationPanel;
@@ -253,6 +259,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ptmPanel = new PtmPanel(this);
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
         proteinStructurePanel = new ProteinStructurePanel(this);
+        annotationPanel = new AnnotationPanel(this);
 
         initComponents();
 
@@ -345,6 +352,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ptmJPanel = new javax.swing.JPanel();
         proteinStructureJPanel = new javax.swing.JPanel();
         statsJPanel = new javax.swing.JPanel();
+        annotationsJPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         openJMenuItem = new javax.swing.JMenuItem();
@@ -436,6 +444,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         statsJPanel.setOpaque(false);
         statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
         resultsJTabbedPane.addTab("Validation", statsJPanel);
+
+        annotationsJPanel.setOpaque(false);
+        annotationsJPanel.setLayout(new javax.swing.BoxLayout(annotationsJPanel, javax.swing.BoxLayout.LINE_AXIS));
+        resultsJTabbedPane.addTab("Annotation", annotationsJPanel);
 
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
@@ -1799,6 +1811,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem aboutJMenuItem;
     private javax.swing.JMenuItem allPeptideListsJMenuItem;
     private javax.swing.JMenuItem annotationPreferencesMenu;
+    private javax.swing.JPanel annotationsJPanel;
     private javax.swing.JMenuItem bubblePlotJMenuItem;
     private javax.swing.JMenuItem bubbleScaleJMenuItem;
     private javax.swing.JMenu editMenu;
@@ -1864,8 +1877,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     "http://code.google.com/p/peptide-shaker/downloads/detail?name=PeptideShaker-"
                     + currentVersion + ".zip");
 
-            // @TODO: improve this test!!
-            
             if ((java.net.HttpURLConnection) downloadPage.openConnection() != null) {
 
                 int respons = ((java.net.HttpURLConnection) downloadPage.openConnection()).getResponseCode();
@@ -1911,6 +1922,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     }
                 }
             }
+        } catch (UnknownHostException e) {
+            // ignore exception
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -2287,6 +2300,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void setSelectedProteinIndex(Integer selectedProteinIndex) {
         this.selectedProteinIndex = selectedProteinIndex;
     }
+    
+    /**
+     * Set the selected protein accesssion number in the annotation tab.
+     * 
+     * @param selectedProteinAccession      the selected protein accession number
+     */
+    public void setSelectedProteinAccession(String selectedProteinAccession) {
+        annotationPanel.setAccessionNumber(selectedProteinAccession);
+    }
+    
 
     /**
      * Set the selected peptide index in the overview or protein structure tabs. 
@@ -2510,6 +2533,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ptmPanel = new PtmPanel(this);
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
         proteinStructurePanel = new ProteinStructurePanel(this);
+        annotationPanel = new AnnotationPanel(this);
 
         overviewJPanel.removeAll();
         overviewJPanel.add(overviewPanel);
@@ -2522,6 +2546,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         proteinStructureJPanel.removeAll();
         proteinStructureJPanel.add(proteinStructurePanel);
+        
+        annotationsJPanel.removeAll();
+        annotationsJPanel.add(annotationPanel);
     }
 
     /**
@@ -2551,6 +2578,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         proteinStructureJPanel.revalidate();
         proteinStructureJPanel.repaint();
+        
+        annotationsJPanel.revalidate();
+        annotationsJPanel.repaint();
     }
 
     /**

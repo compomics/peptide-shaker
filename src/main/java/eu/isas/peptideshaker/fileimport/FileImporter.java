@@ -150,6 +150,15 @@ public class FileImporter {
                         JOptionPane.INFORMATION_MESSAGE);
             }
             
+            if (!db.includesDecoy()) {
+                JOptionPane.showMessageDialog(waitingDialog, 
+                        "PeptideShaker validation requires the use of a taget-decoy database.\n" +
+                        "Some features will be limited if using other types of databases. See\n" +
+                        "the PeptideShaker home page for details.",
+                        "No Decoys Found", 
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+            
             for (String proteinKey : db.getProteinList()) {
                 sequence = db.getProtein(proteinKey).getSequence();
                 for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
