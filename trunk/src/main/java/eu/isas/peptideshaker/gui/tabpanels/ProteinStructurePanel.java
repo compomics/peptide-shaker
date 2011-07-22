@@ -795,6 +795,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             // set the currently selected protein index
             peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
 
+            // set the accession number in the annotation tab
+            String accessionNumber = (String) proteinTable.getValueAt(row, 1);
+
+            if (accessionNumber.lastIndexOf("a href") != -1) {
+                accessionNumber = accessionNumber.substring(accessionNumber.lastIndexOf("\">") + 2);
+                accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf("<"));
+            }
+
+            peptideShakerGUI.setSelectedProteinAccession(accessionNumber);
+            
             // update the pdb file table
             updatePdbTable(proteinTableMap.get(getProteinKey(row)));
 
