@@ -33,12 +33,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
+import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -51,6 +54,14 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class PtmPanel extends javax.swing.JPanel {
 
+    /**
+     * A reference to the selected peptides score column.
+     */
+    private TableColumn selectedPeptidesScoreColumn;
+    /**
+     * A reference to the related peptides score column.
+     */
+    private TableColumn relatedPeptidesScoreColumn;
     /**
      * The selected peptides table column header tooltips.
      */
@@ -128,6 +139,9 @@ public class PtmPanel extends javax.swing.JPanel {
     public PtmPanel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
+        
+        selectedPeptidesScoreColumn = peptidesTable.getColumn("Score");
+        relatedPeptidesScoreColumn = relatedPeptidesTable.getColumn("Score");
 
         relatedPeptidesTableJScrollPane.getViewport().setOpaque(false);
         psmsModifiedTableJScrollPane.getViewport().setOpaque(false);
@@ -151,9 +165,18 @@ public class PtmPanel extends javax.swing.JPanel {
     private void setTableProperties() {
 
         peptidesTable.getColumn(" ").setMaxWidth(60);
+        peptidesTable.getColumn(" ").setMinWidth(60);
         relatedPeptidesTable.getColumn(" ").setMaxWidth(60);
+        relatedPeptidesTable.getColumn(" ").setMinWidth(60);
+        peptidesTable.getColumn("  ").setMaxWidth(30);
+        peptidesTable.getColumn("  ").setMinWidth(30);
+        relatedPeptidesTable.getColumn("  ").setMaxWidth(30);
+        relatedPeptidesTable.getColumn("  ").setMinWidth(30);
+        
         selectedPsmTable.getColumn("Rank").setMaxWidth(65);
+        selectedPsmTable.getColumn("Rank").setMinWidth(65);
         relatedPsmTable.getColumn("Rank").setMaxWidth(65);
+        relatedPsmTable.getColumn("Rank").setMinWidth(65);
 
         peptidesTable.getTableHeader().setReorderingAllowed(false);
         relatedPeptidesTable.getTableHeader().setReorderingAllowed(false);
@@ -161,16 +184,20 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPsmTable.getTableHeader().setReorderingAllowed(false);
 
         peptidesTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
-        peptidesTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        peptidesTable.getColumn("Confidence [%]").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        peptidesTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        peptidesTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
+                "Validated", "Not Validated"));
 
         relatedPeptidesTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
-        relatedPeptidesTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        relatedPeptidesTable.getColumn("Confidence [%]").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        relatedPeptidesTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        relatedPeptidesTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
+                "Validated", "Not Validated"));
 
         selectedPsmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
@@ -178,6 +205,15 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPsmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) relatedPsmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
 
+        try {
+            peptidesTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+            ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+            relatedPeptidesTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+            ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        } catch(IllegalArgumentException e) {
+            // ignore error
+        }
+        
         // set up the table header tooltips
         selectedPeptidesTableToolTips = new ArrayList<String>();
         selectedPeptidesTableToolTips.add(null);
@@ -186,6 +222,7 @@ public class PtmPanel extends javax.swing.JPanel {
         selectedPeptidesTableToolTips.add("Peptide Modifications");
         selectedPeptidesTableToolTips.add("Peptide Score");
         selectedPeptidesTableToolTips.add("Peptide Confidence");
+        selectedPeptidesTableToolTips.add("Validated");
 
         relatedPeptidesTableToolTips = new ArrayList<String>();
         relatedPeptidesTableToolTips.add(null);
@@ -194,6 +231,7 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesTableToolTips.add("Peptide Modifications");
         relatedPeptidesTableToolTips.add("Peptide Score");
         relatedPeptidesTableToolTips.add("Peptide Confidence");
+        selectedPeptidesTableToolTips.add("Validated");
 
         selectedPsmsTableToolTips = new ArrayList<String>();
         selectedPsmsTableToolTips.add("Search Engine Ranks");
@@ -1321,16 +1359,18 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     public void showSparkLines(boolean showSparkLines) {
 
-        ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumbers(!showSparkLines);
-
-        ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Confidence [%]").getCellRenderer()).showNumbers(!showSparkLines);
-
+        ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
-
         ((JSparklinesBarChartTableCellRenderer) relatedPsmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
 
+        try {
+            ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
+            ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
+        } catch(IllegalArgumentException e) {
+            // ignore error
+        }
+        
         peptidesTable.revalidate();
         peptidesTable.repaint();
 
@@ -1938,7 +1978,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         @Override
         public int getColumnCount() {
-            return 6;
+            return 7;
         }
 
         @Override
@@ -1955,7 +1995,9 @@ public class PtmPanel extends javax.swing.JPanel {
             } else if (column == 4) {
                 return "Score";
             } else if (column == 5) {
-                return "Confidence [%]";
+                return "Confidence";
+            } else if (column == 6) {
+                return "  ";
             } else {
                 return "";
             }
@@ -1985,6 +2027,10 @@ public class PtmPanel extends javax.swing.JPanel {
                 PSParameter probabilities = new PSParameter();
                 probabilities = (PSParameter) identification.getPeptideIdentification().get(displayedPeptides.get(row)).getUrParam(probabilities);
                 return probabilities.getPeptideConfidence();
+            } else if (column == 6) {
+                PSParameter probabilities = new PSParameter();
+                probabilities = (PSParameter) identification.getPeptideIdentification().get(displayedPeptides.get(row)).getUrParam(probabilities);
+                return probabilities.isValidated();
             } else {
                 return "";
             }
@@ -2018,7 +2064,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         @Override
         public int getColumnCount() {
-            return 6;
+            return 7;
         }
 
         @Override
@@ -2034,7 +2080,9 @@ public class PtmPanel extends javax.swing.JPanel {
             } else if (column == 4) {
                 return "Score";
             } else if (column == 5) {
-                return "Confidence [%]";
+                return "Confidence";
+            } else if (column == 6) {
+                return "  ";
             } else {
                 return "";
             }
@@ -2063,6 +2111,10 @@ public class PtmPanel extends javax.swing.JPanel {
                 PSParameter probabilities = new PSParameter();
                 probabilities = (PSParameter) identification.getPeptideIdentification().get(relatedPeptides.get(row)).getUrParam(probabilities);
                 return probabilities.getPeptideConfidence();
+            } else if (column == 6) {
+                PSParameter probabilities = new PSParameter();
+                probabilities = (PSParameter) identification.getPeptideIdentification().get(relatedPeptides.get(row)).getUrParam(probabilities);
+                return probabilities.isValidated();
             } else {
                 return "";
             }
@@ -2350,5 +2402,28 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     public Component getSpectrum() {
         return (Component) spectrumJPanel.getComponent(1);
+    }
+    
+    /**
+     * Hides or displays the score columns in the protein and peptide tables.
+     * 
+     * @param hide if true the score columns are hidden.
+     */
+    public void hideScores(boolean hide) {
+
+        try {
+            if (hide) {
+                peptidesTable.removeColumn(peptidesTable.getColumn("Score"));
+                relatedPeptidesTable.removeColumn(relatedPeptidesTable.getColumn("Score"));
+            } else {
+                peptidesTable.addColumn(selectedPeptidesScoreColumn);
+                peptidesTable.moveColumn(6, 4);
+                
+                relatedPeptidesTable.addColumn(relatedPeptidesScoreColumn);
+                relatedPeptidesTable.moveColumn(6, 4);
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 }
