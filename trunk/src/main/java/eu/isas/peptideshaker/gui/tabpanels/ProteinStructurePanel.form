@@ -195,7 +195,7 @@
                     <Column editable="false" title="#Peptides" type="java.lang.Integer"/>
                     <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
                     <Column editable="false" title="Score" type="java.lang.Double"/>
-                    <Column editable="false" title="Confidence [%]" type="java.lang.Double"/>
+                    <Column editable="false" title="Confidence" type="java.lang.Double"/>
                     <Column editable="false" title="" type="java.lang.Boolean"/>
                   </Table>
                 </Property>

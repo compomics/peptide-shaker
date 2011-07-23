@@ -394,6 +394,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         modelSpinJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         separatorsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
@@ -751,6 +752,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         viewJMenu.add(sparklinesJCheckBoxMenuItem);
+
+        scoresJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        scoresJCheckBoxMenuItem.setMnemonic('c');
+        scoresJCheckBoxMenuItem.setText("Scores");
+        scoresJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                scoresJCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        viewJMenu.add(scoresJCheckBoxMenuItem);
         viewJMenu.add(jSeparator4);
 
         separatorsCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
@@ -1668,6 +1679,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 //        }
     }//GEN-LAST:event_allPeptideListsJMenuItemActionPerformed
 
+    private void scoresJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scoresJCheckBoxMenuItemActionPerformed
+        overviewPanel.hideScores(!scoresJCheckBoxMenuItem.isSelected());
+        proteinStructurePanel.hideScores(!scoresJCheckBoxMenuItem.isSelected());
+        ptmPanel.hideScores(!scoresJCheckBoxMenuItem.isSelected());
+        
+        sparklinesJCheckBoxMenuItemActionPerformed(null);
+    }//GEN-LAST:event_scoresJCheckBoxMenuItemActionPerformed
+
     /**
      * Returns if the 3D model is to be spinning or not.
      * 
@@ -1769,11 +1788,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                         progressDialog.setValue(++counter);
                     } catch (MzMLUnmarshallerException e) {
+                        e.printStackTrace();
                         JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML Problem", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
                     } catch (Exception e) {
-                        JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\nSee /conf/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\nSee /conf/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
                     }
 
                     resultsJTabbedPaneStateChanged(null);
@@ -1784,10 +1803,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }.start();
 
         } catch (MzMLUnmarshallerException e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(this, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "A problem occured while displaying results. Please send the log file to the developers.", "Display problem", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "A problem occured while displaying results. Please send the log file to the developers.", "Display problem", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -1847,6 +1867,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JPanel ptmJPanel;
     private javax.swing.JTabbedPane resultsJTabbedPane;
     private javax.swing.JMenuItem saveMenuItem;
+    private javax.swing.JCheckBoxMenuItem scoresJCheckBoxMenuItem;
     private javax.swing.JMenuItem searchParametersMenu;
     private javax.swing.JCheckBoxMenuItem separatorsCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
@@ -2549,6 +2570,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         
         annotationsJPanel.removeAll();
         annotationsJPanel.add(annotationPanel);
+        
+        // hide/show the score columns
+        scoresJCheckBoxMenuItemActionPerformed(null);
     }
 
     /**

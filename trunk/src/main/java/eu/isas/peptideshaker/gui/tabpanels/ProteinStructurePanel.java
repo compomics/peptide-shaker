@@ -32,6 +32,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
@@ -51,6 +52,10 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class ProteinStructurePanel extends javax.swing.JPanel implements ProgressDialogParent {
 
+    /**
+     * A reference to the protein score column.
+     */
+    private TableColumn proteinScoreColumn;
     /**
      * The currently displayed PDB file.
      */
@@ -124,6 +129,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      */
     public ProteinStructurePanel(PeptideShakerGUI peptideShakerGUI) {
         initComponents();
+        proteinScoreColumn = proteinTable.getColumn("Score");
         this.peptideShakerGUI = peptideShakerGUI;
 
         jmolPanel = new JmolPanel();
@@ -243,10 +249,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("emPAI").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        proteinTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        proteinTable.getColumn("Confidence [%]").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence [%]").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
         proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).setMinimumChartValue(5d);
@@ -264,6 +268,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
+        
+        try {
+            proteinTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        } catch (IllegalArgumentException e) {
+            // ignore error
+        }
 
         pdbMatchesJTable.getColumn("PDB").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         pdbMatchesJTable.getColumn("Chains").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
@@ -420,7 +431,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             },
             new String [] {
-                " ", "Accession", "PI", "Description", "Coverage", "emPAI", "#Peptides", "#Spectra", "Score", "Confidence [%]", ""
+                " ", "Accession", "PI", "Description", "Coverage", "emPAI", "#Peptides", "#Spectra", "Score", "Confidence", ""
             }
         ) {
             Class[] types = new Class [] {
@@ -1551,9 +1562,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).setMaxValue(maxEmPAI);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).setMaxValue(100.0);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence [%]").getCellRenderer()).setMaxValue(100.0);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).setMaxValue(100.0);
 
+        try {
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).setMaxValue(100.0);
+        } catch (IllegalArgumentException e) {
+            // ignore error
+        }
+        
         // select the first row
         if (proteinTable.getRowCount() > 0) {
             proteinTable.setRowSelectionInterval(0, 0);
@@ -1706,9 +1722,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence [%]").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
 
+        try {
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
+        } catch (IllegalArgumentException e) {
+            // ignore error
+        }
+        
         ((JSparklinesBarChartTableCellRenderer) pdbMatchesJTable.getColumn("Chains").getCellRenderer()).showNumbers(!showSparkLines);
 
         ((JSparklinesBarChartTableCellRenderer) pdbChainsJTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
@@ -1851,5 +1872,24 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      */
     public JTable getPeptideTable() {
         return peptideTable;
+    }
+    
+    /**
+     * Hides or displays the score columns in the protein and peptide tables.
+     * 
+     * @param hide if true the score columns are hidden.
+     */
+    public void hideScores(boolean hide) {
+
+        try {
+            if (hide) {
+                proteinTable.removeColumn(proteinTable.getColumn("Score"));
+            } else {
+                proteinTable.addColumn(proteinScoreColumn);
+                proteinTable.moveColumn(10, 8);
+            }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 }

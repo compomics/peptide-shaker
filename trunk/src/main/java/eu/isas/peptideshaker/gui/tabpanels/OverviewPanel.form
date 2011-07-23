@@ -154,7 +154,7 @@
                             <Column editable="false" title="#Peptides" type="java.lang.Integer"/>
                             <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
                             <Column editable="false" title="Score" type="java.lang.Double"/>
-                            <Column editable="false" title="Confidence [%]" type="java.lang.Double"/>
+                            <Column editable="false" title="Confidence" type="java.lang.Double"/>
                             <Column editable="false" title="" type="java.lang.Boolean"/>
                           </Table>
                         </Property>
@@ -453,7 +453,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="peptideScrollPane" pref="127" max="32767" attributes="0"/>
+                                      <Component id="peptideScrollPane" pref="101" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -482,7 +482,7 @@
                                         <Column editable="false" title="Other Protein(s)" type="java.lang.String"/>
                                         <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
                                         <Column editable="false" title="Score" type="java.lang.Double"/>
-                                        <Column editable="false" title="Confidence [%]" type="java.lang.Double"/>
+                                        <Column editable="false" title="Confidence" type="java.lang.Double"/>
                                         <Column editable="false" title="" type="java.lang.Boolean"/>
                                       </Table>
                                     </Property>
@@ -581,7 +581,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="spectraScrollPane" pref="125" max="32767" attributes="0"/>
+                                      <Component id="spectraScrollPane" pref="151" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
