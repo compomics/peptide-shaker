@@ -48,6 +48,7 @@ import java.io.ObjectInputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -70,6 +71,11 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * @author  Marc Vaudel
  */
 public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDialogParent {
+
+    /**
+     * The decimal format use for the score and confidence columns.
+     */
+    private DecimalFormat scoreAndConfidenceDecimalFormat = new DecimalFormat("0");
 
     /**
      * Turns of the gradient painting for the bar charts.
@@ -281,8 +287,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         setLocationRelativeTo(null);
         setVisible(true);
 
-        // open the OpenDialog
-        new OpenDialog(this, true);
+        // open the welcome dialog
+        new WelcomeDialog(this, true);
     }
 
     /**
@@ -355,6 +361,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationsJPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
+        newJMenuItem = new javax.swing.JMenuItem();
         openJMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         saveMenuItem = new javax.swing.JMenuItem();
@@ -470,9 +477,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         fileJMenu.setMnemonic('F');
         fileJMenu.setText("File");
 
+        newJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        newJMenuItem.setMnemonic('N');
+        newJMenuItem.setText("New Project");
+        newJMenuItem.setToolTipText("Create a new PeptideShaker project");
+        newJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                newJMenuItemActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(newJMenuItem);
+
         openJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         openJMenuItem.setMnemonic('O');
-        openJMenuItem.setText("Open");
+        openJMenuItem.setText("Open Project");
+        openJMenuItem.setToolTipText("Open an existing PeptideShaker project");
         openJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openJMenuItemActionPerformed(evt);
@@ -484,6 +503,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveMenuItem.setMnemonic('S');
         saveMenuItem.setText("Save As...");
+        saveMenuItem.setEnabled(false);
         saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveMenuItemActionPerformed(evt);
@@ -494,6 +514,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         exportAllIdsMenuItem.setMnemonic('E');
         exportAllIdsMenuItem.setText("Save As CSV");
         exportAllIdsMenuItem.setToolTipText("Identification summary as csv files");
+        exportAllIdsMenuItem.setEnabled(false);
         exportAllIdsMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportAllIdsMenuItemActionPerformed(evt);
@@ -821,16 +842,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      *
      * @param evt
      */
-    private void openJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJMenuItemActionPerformed
+    private void newJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newJMenuItemActionPerformed
 
-        // @TODO: the code below did not work and had to be removed. but should be fixed and put back in?
+        if (!dataSaved) {
+            int value = JOptionPane.showConfirmDialog(this,
+                    "Do you want to save the changes to " + experiment.getReference() + "?",
+                    "Unsaved Changes",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
 
-        //        if (experiment != null) {
-//            new OpenDialog(this, true, experiment, sample, replicateNumber);
-//        } else {
-        new OpenDialog(this, true);
-//        }
-    }//GEN-LAST:event_openJMenuItemActionPerformed
+            if (value == JOptionPane.YES_OPTION) {
+                saveMenuItemActionPerformed(null);
+                OpenDialog openDialog = new OpenDialog(this, true);
+                openDialog.setVisible(true);
+            } else if (value == JOptionPane.CANCEL_OPTION) {
+                // do nothing
+            } else { // no option
+                OpenDialog openDialog = new OpenDialog(this, true);
+                openDialog.setVisible(true);
+            }
+        }
+    }//GEN-LAST:event_newJMenuItemActionPerformed
 
     /**
      * Closes the PeptideShaker
@@ -1679,13 +1711,96 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 //        }
     }//GEN-LAST:event_allPeptideListsJMenuItemActionPerformed
 
+    /**
+     * Turns the hiding of the scores columns on or off.
+     * 
+     * @param evt 
+     */
     private void scoresJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scoresJCheckBoxMenuItemActionPerformed
         overviewPanel.hideScores(!scoresJCheckBoxMenuItem.isSelected());
         proteinStructurePanel.hideScores(!scoresJCheckBoxMenuItem.isSelected());
         ptmPanel.hideScores(!scoresJCheckBoxMenuItem.isSelected());
-        
+
+        // make sure that the jsparklines are showing correctly
         sparklinesJCheckBoxMenuItemActionPerformed(null);
     }//GEN-LAST:event_scoresJCheckBoxMenuItemActionPerformed
+
+    /**
+     * Open a file chooser to open an existing PeptideShaker project.
+     * 
+     * @param evt 
+     */
+    private void openJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJMenuItemActionPerformed
+
+        boolean openProject = true;
+
+        if (!dataSaved) {
+            int value = JOptionPane.showConfirmDialog(this,
+                    "Do you want to save the changes to " + experiment.getReference() + "?",
+                    "Unsaved Changes",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
+            if (value == JOptionPane.YES_OPTION) {
+                saveMenuItemActionPerformed(null);
+                openProject = true;
+            } else if (value == JOptionPane.CANCEL_OPTION) {
+                openProject = false;
+            } else { // no option
+                // do nothing
+            }
+        }
+
+        if (openProject) {
+
+            JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
+            fileChooser.setDialogTitle("Open PeptideShaker Project");
+
+            FileFilter filter = new FileFilter() {
+
+                @Override
+                public boolean accept(File myFile) {
+                    return myFile.getName().toLowerCase().endsWith("cps")
+                            || myFile.isDirectory();
+                }
+
+                @Override
+                public String getDescription() {
+                    return "Supported formats: Peptide Shaker (.cps)";
+                }
+            };
+
+            fileChooser.setFileFilter(filter);
+            int returnVal = fileChooser.showDialog(this.getParent(), "Open");
+
+            if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+                OpenDialog openDialog = new OpenDialog(this, true);
+
+                openDialog.setSearchParamatersFiles(new ArrayList<File>());
+                File newFile = fileChooser.getSelectedFile();
+                setLastSelectedFolder(newFile.getAbsolutePath());
+
+                if (!newFile.getName().toLowerCase().endsWith("cps")) {
+                    JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
+                            "Wrong File.", JOptionPane.ERROR_MESSAGE);
+                } else {
+
+                    // get the properties files
+                    for (File file : newFile.getParentFile().listFiles()) {
+                        if (file.getName().toLowerCase().endsWith(".properties")) {
+                            if (!openDialog.getSearchParametersFiles().contains(file)) {
+                                openDialog.getSearchParametersFiles().add(file);
+                            }
+                        }
+                    }
+
+                    openDialog.isPsFile(true);
+                    openDialog.importPeptideShakerFile(newFile);
+                }
+            }
+        }
+    }//GEN-LAST:event_openJMenuItemActionPerformed
 
     /**
      * Returns if the 3D model is to be spinning or not.
@@ -1799,6 +1914,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
+
+                    saveMenuItem.setEnabled(true);
+                    exportAllIdsMenuItem.setEnabled(true);
                 }
             }.start();
 
@@ -1853,6 +1971,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JCheckBoxMenuItem modelSpinJCheckBoxMenuItem;
+    private javax.swing.JMenuItem newJMenuItem;
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JMenu overViewTabViewMenu;
     private javax.swing.JPanel overviewJPanel;
@@ -2321,7 +2440,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void setSelectedProteinIndex(Integer selectedProteinIndex) {
         this.selectedProteinIndex = selectedProteinIndex;
     }
-    
+
     /**
      * Set the selected protein accesssion number in the annotation tab.
      * 
@@ -2330,7 +2449,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void setSelectedProteinAccession(String selectedProteinAccession) {
         annotationPanel.setAccessionNumber(selectedProteinAccession);
     }
-    
 
     /**
      * Set the selected peptide index in the overview or protein structure tabs. 
@@ -2567,10 +2685,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         proteinStructureJPanel.removeAll();
         proteinStructureJPanel.add(proteinStructurePanel);
-        
+
         annotationsJPanel.removeAll();
         annotationsJPanel.add(annotationPanel);
-        
+
         // hide/show the score columns
         scoresJCheckBoxMenuItemActionPerformed(null);
     }
@@ -2602,7 +2720,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         proteinStructureJPanel.revalidate();
         proteinStructureJPanel.repaint();
-        
+
         annotationsJPanel.revalidate();
         annotationsJPanel.repaint();
     }
@@ -2763,5 +2881,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public boolean useRelativeError() {
         return useRelativeError;
+    }
+
+    /**
+     * Returns the decimal format used for the score and confidence columns.
+     * 
+     * @return the decimal format used for the score and confidence columns
+     */
+    public DecimalFormat getScoreAndConfidenceDecimalFormat() {
+        return scoreAndConfidenceDecimalFormat;
     }
 }
