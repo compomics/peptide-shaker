@@ -114,7 +114,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         this.peptideShakerGUI = peptideShaker;
         setUpGui();
         this.setLocationRelativeTo(peptideShaker);
-        this.setVisible(true);
     }
 
     /**
@@ -135,7 +134,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         this.replicateNumber = replicateNumber;
         setUpGui();
         this.setLocationRelativeTo(peptideShaker);
-        this.setVisible(true);
     }
 
     /**
@@ -202,12 +200,12 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         openDialogHelpJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("PeptideShaker - Open Files");
+        setTitle("PeptideShaker - New Project");
         setResizable(false);
 
         sampleDetailsPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        openButton.setText("Open");
+        openButton.setText("Create");
         openButton.setEnabled(false);
         openButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -278,7 +276,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         );
 
         jLabel12.setFont(jLabel12.getFont().deriveFont((jLabel12.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel12.setText("Insert the required information and click Open to load and view the results.");
+        jLabel12.setText("Insert the required information and click Create to load and view the results.");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Processing Parameters"));
         jPanel1.setOpaque(false);
@@ -558,7 +556,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 279, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 260, Short.MAX_VALUE)
                         .addComponent(openButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(exitButton)))
@@ -644,9 +642,8 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
             // add one more just to not start at 0%
             progressCounter++;
-
+                   
             waitingDialog.setMaxProgressValue(progressCounter);
-            waitingDialog.increaseProgressValue();
 
             boolean needDialog = false;
 
@@ -860,7 +857,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             if (idFiles.size() > 1) {
                 for (File file : idFiles) {
                     if (file.getName().endsWith(".cps")) {
-                        JOptionPane.showMessageDialog(this, "A PeptideShaker file must be imported alone.", "Wrong identification file.", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "A PeptideShaker file must be imported alone.", "Wrong Identification File.", JOptionPane.ERROR_MESSAGE);
                         idFiles = new ArrayList<File>();
                     }
                 }
@@ -1408,7 +1405,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      *
      * @param aPsFile    the peptide shaker file
      */
-    private void importPeptideShakerFile(File aPsFile) {
+    public void importPeptideShakerFile(File aPsFile) {
 
         final File psFile = aPsFile;
 
@@ -1421,7 +1418,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
             public void run() {
                 progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Importing. Please Wait...");
+                progressDialog.setTitle("Importing Project. Please Wait...");
                 progressDialog.setVisible(true);
             }
         }, "ProgressDialog").start();
@@ -1444,16 +1441,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                    int option = JOptionPane.showConfirmDialog(tempRef,
-                            "Experiment \'" + experiment.getReference()
-                            + "\' imported.\n"
-                            + "View the results?", "Identifications Imported", JOptionPane.YES_NO_OPTION);
-
-                    if (option == JOptionPane.YES_OPTION) {
-                        tempRef.setVisible(false);
-                        tempRef.openButtonActionPerformed(null);
-                    }
-
+                    tempRef.setVisible(false);
+                    tempRef.openButtonActionPerformed(null);
+                    
                 } catch (Exception e) {
 
                     // change the peptide shaker icon back to the default version
@@ -1476,5 +1466,28 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     @Override
     public void cancelProgress() {
         cancelProgress = true;
+    }
+    
+    /**
+     * Get the search paramater files.
+     * 
+     * @return the search paramater files
+     */
+    public ArrayList<File> getSearchParametersFiles() {
+        return searchParametersFiles;
+    }
+    
+    /**
+     * Set the search parameters files.
+     * 
+     * 
+     * @param searchParametersFiles the search parameters files
+     */
+    public void setSearchParamatersFiles(ArrayList<File> searchParametersFiles) {
+        this.searchParametersFiles = searchParametersFiles;
+    }
+    
+    public void isPsFile(boolean isPsFile) {
+        this.isPsFile = isPsFile;
     }
 }
