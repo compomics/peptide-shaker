@@ -156,9 +156,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Description");
         proteinTableToolTips.add("Protein Seqeunce Coverage (%)");
-        proteinTableToolTips.add("Protein emPAI Score");
         proteinTableToolTips.add("Number of Peptides");
         proteinTableToolTips.add("Number of Spectra");
+        proteinTableToolTips.add("Protein emPAI Score");
         proteinTableToolTips.add("Protein Score");
         proteinTableToolTips.add("Protein Confidence");
         proteinTableToolTips.add("Validated");
@@ -450,11 +450,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             },
             new String [] {
-                " ", "PI", "Accession", "Description", "Coverage", "emPAI", "#Peptides", "#Spectra", "Score", "Confidence", ""
+                " ", "PI", "Accession", "Description", "Coverage", "#Peptides", "#Spectra", "emPAI", "Score", "Confidence", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, false, false, false, false
@@ -1562,9 +1562,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                         peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
                                         description,
                                         sequenceCoverage,
-                                        emPAI,
                                         proteinMatch.getPeptideCount(),
                                         proteinMatch.getSpectrumCount(),
+                                        emPAI,
                                         probabilities.getProteinScore(),
                                         probabilities.getProteinConfidence(),
                                         probabilities.isValidated()
