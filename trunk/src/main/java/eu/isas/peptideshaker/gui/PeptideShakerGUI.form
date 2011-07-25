@@ -492,7 +492,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <EmptySpace min="0" pref="1260" max="32767" attributes="0"/>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                  <Component id="resultsJTabbedPane" alignment="0" pref="1260" max="32767" attributes="0"/>
+                  <Component id="allTabsJTabbedPane" alignment="0" pref="1260" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -500,18 +500,18 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <EmptySpace min="0" pref="781" max="32767" attributes="0"/>
               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                  <Component id="resultsJTabbedPane" alignment="0" pref="781" max="32767" attributes="0"/>
+                  <Component id="allTabsJTabbedPane" alignment="0" pref="781" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Container class="javax.swing.JTabbedPane" name="resultsJTabbedPane">
+        <Container class="javax.swing.JTabbedPane" name="allTabsJTabbedPane">
           <Properties>
             <Property name="tabPlacement" type="int" value="4"/>
           </Properties>
           <Events>
-            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="resultsJTabbedPaneStateChanged"/>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="allTabsJTabbedPaneStateChanged"/>
           </Events>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
@@ -572,20 +572,6 @@
 
               <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
             </Container>
-            <Container class="javax.swing.JPanel" name="statsJPanel">
-              <Properties>
-                <Property name="opaque" type="boolean" value="false"/>
-              </Properties>
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Validation">
-                    <Property name="tabTitle" type="java.lang.String" value="Validation"/>
-                  </JTabbedPaneConstraints>
-                </Constraint>
-              </Constraints>
-
-              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-            </Container>
             <Container class="javax.swing.JPanel" name="annotationsJPanel">
               <Properties>
                 <Property name="opaque" type="boolean" value="false"/>
@@ -594,6 +580,20 @@
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
                   <JTabbedPaneConstraints tabName="Annotation">
                     <Property name="tabTitle" type="java.lang.String" value="Annotation"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+            </Container>
+            <Container class="javax.swing.JPanel" name="statsJPanel">
+              <Properties>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Validation">
+                    <Property name="tabTitle" type="java.lang.String" value="Validation"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
