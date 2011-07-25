@@ -57,8 +57,7 @@ public class WaitingDialog extends javax.swing.JDialog {
     /**
      * The tab space to add when using tab.
      */
-    private String tab = "        "; // tab could be used, but is location dependent
-
+    private String tab = "        "; // tab could be used, but lenght is locale dependent
 
     /**
      * Creates a new WaitingDialog.
@@ -70,6 +69,10 @@ public class WaitingDialog extends javax.swing.JDialog {
     public WaitingDialog(PeptideShakerGUI peptideShaker, boolean modal, String experimentReference) {
         super(peptideShaker, modal);
         initComponents();
+        
+        // update the layout in the layered pane
+        formComponentResized(null);
+        
         this.setLocationRelativeTo(peptideShaker);
         this.peptideShakerGUI = peptideShaker;
 
@@ -92,7 +95,7 @@ public class WaitingDialog extends javax.swing.JDialog {
     public void increaseProgressValue() {
         progressBar.setValue(progressBar.getValue() + 1);
     }
-    
+
     /**
      * Increase the progress bar value by the given amount.
      * 
@@ -114,18 +117,29 @@ public class WaitingDialog extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         progressBar = new javax.swing.JProgressBar();
+        intermidateJProgressBar = new javax.swing.JProgressBar();
+        layeredPane = new javax.swing.JLayeredPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         reportArea = new javax.swing.JTextArea();
-        intermidateJProgressBar = new javax.swing.JProgressBar();
+        saveReportLabel = new javax.swing.JLabel();
         okButton = new javax.swing.JButton();
-        saveButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Importing Data - Please Wait...");
+        setMinimumSize(new java.awt.Dimension(500, 500));
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Data Import Progress"));
 
         progressBar.setStringPainted(true);
+
+        intermidateJProgressBar.setIndeterminate(true);
+        intermidateJProgressBar.setString("");
+        intermidateJProgressBar.setStringPainted(true);
 
         reportArea.setBackground(new java.awt.Color(254, 254, 254));
         reportArea.setColumns(20);
@@ -134,22 +148,37 @@ public class WaitingDialog extends javax.swing.JDialog {
         reportArea.setRows(5);
         jScrollPane1.setViewportView(reportArea);
 
-        intermidateJProgressBar.setIndeterminate(true);
-        intermidateJProgressBar.setString("");
-        intermidateJProgressBar.setStringPainted(true);
+        jScrollPane1.setBounds(0, 0, 842, 490);
+        layeredPane.add(jScrollPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        saveReportLabel.setText("<html><a href=\\\"dummy_link\"><i>Save Report</i></a></html>");
+        saveReportLabel.setToolTipText("Save the report to a text file");
+        saveReportLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                saveReportLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                saveReportLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                saveReportLabelMouseReleased(evt);
+            }
+        });
+        saveReportLabel.setBounds(760, 10, 70, 14);
+        layeredPane.add(saveReportLabel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(layeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(intermidateJProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE))
+                        .addComponent(intermidateJProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -159,7 +188,7 @@ public class WaitingDialog extends javax.swing.JDialog {
                     .addComponent(intermidateJProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
+                .addComponent(layeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -172,14 +201,6 @@ public class WaitingDialog extends javax.swing.JDialog {
             }
         });
 
-        saveButton.setText("Save Report");
-        saveButton.setEnabled(false);
-        saveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -189,25 +210,16 @@ public class WaitingDialog extends javax.swing.JDialog {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(650, 650, 650)
-                        .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
-
-        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {okButton, saveButton});
-
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(okButton)
-                    .addComponent(saveButton))
+                .addComponent(okButton)
                 .addContainerGap())
         );
 
@@ -230,28 +242,6 @@ public class WaitingDialog extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        File outputFile = null;
-        JFileChooser fc = new JFileChooser();
-        int result = fc.showSaveDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            outputFile = fc.getSelectedFile();
-            if (outputFile.exists()) {
-                int choice = JOptionPane.showConfirmDialog(this,
-                        new String[]{"The file " + outputFile.getName() + " already exists!", "Overwrite?"},
-                        "File Already Exists", JOptionPane.YES_NO_OPTION);
-                if (choice == JOptionPane.NO_OPTION) {
-                    return;
-                }
-            } else {
-                return;
-            }
-        }
-        if (outputFile != null) {
-            saveReport(outputFile);
-        }
-    }//GEN-LAST:event_saveButtonActionPerformed
-
     /**
      * Cancels the analysis if ongoing or opens the results if finished.
      *
@@ -264,15 +254,83 @@ public class WaitingDialog extends javax.swing.JDialog {
             setRunCanceled();
         }
     }//GEN-LAST:event_okButtonActionPerformed
+
+    /**
+     * Changes the cursor into a hand cursor when hovering above the 
+     * Save Report link.
+     *
+     * @param evt
+     */
+    private void saveReportLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveReportLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+}//GEN-LAST:event_saveReportLabelMouseEntered
+
+    /**
+     * Changing the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void saveReportLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveReportLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_saveReportLabelMouseExited
+
+    /**
+     * Saves the search report to file.
+     *
+     * @param evt
+     */
+    private void saveReportLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveReportLabelMouseReleased
+        File outputFile = null;
+        JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        
+        int result = fc.showSaveDialog(this);
+        
+        if (result == JFileChooser.APPROVE_OPTION) {
+            outputFile = fc.getSelectedFile();
+            if (outputFile.exists()) {
+                int choice = JOptionPane.showConfirmDialog(this,
+                        new String[]{"The file " + outputFile.getName() + " already exists!", "Overwrite?"},
+                        "File Already Exists", JOptionPane.YES_NO_OPTION);
+                if (choice == JOptionPane.NO_OPTION) {
+                    return;
+                }
+            }
+        }
+        
+        if (outputFile != null) {
+            saveReport(outputFile);
+        }
+}//GEN-LAST:event_saveReportLabelMouseReleased
+
+    /**
+     * Update the layout in the layered pane.
+     * 
+     * @param evt 
+     */
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+        // resize the report area
+        layeredPane.getComponent(1).setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
+        layeredPane.revalidate();
+        layeredPane.repaint();
+        
+        // move the save report link
+        layeredPane.getComponent(0).setBounds(
+                layeredPane.getWidth() - layeredPane.getComponent(0).getWidth() - 10,
+                layeredPane.getComponent(0).getHeight() / 2 - 2,
+                layeredPane.getComponent(0).getWidth(),
+                layeredPane.getComponent(0).getHeight());
+    }//GEN-LAST:event_formComponentResized
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JProgressBar intermidateJProgressBar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLayeredPane layeredPane;
     private javax.swing.JButton okButton;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JTextArea reportArea;
-    private javax.swing.JButton saveButton;
+    private javax.swing.JLabel saveReportLabel;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -280,17 +338,16 @@ public class WaitingDialog extends javax.swing.JDialog {
      */
     public void setRunFinished() {
         runFinished = true;
-        saveButton.setEnabled(true);
         okButton.setText("OK");
         progressBar.setIndeterminate(false);
         progressBar.setValue(progressBar.getMaximum());
         progressBar.setStringPainted(true);
         this.setTitle("Importing Data - Completed");
-        
+
         intermidateJProgressBar.setIndeterminate(false);
         intermidateJProgressBar.setValue(intermidateJProgressBar.getMaximum());
         intermidateJProgressBar.setString("Import Completed");
-        
+
         // change the peptide shaker icon back to the default version
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -305,7 +362,6 @@ public class WaitingDialog extends javax.swing.JDialog {
         runCanceled = true;
         appendReportEndLine();
         appendReport("Import canceled.");
-        saveButton.setEnabled(true);
         okButton.setText("OK");
         progressBar.setIndeterminate(false);
         progressBar.setValue(0);
@@ -314,9 +370,9 @@ public class WaitingDialog extends javax.swing.JDialog {
         intermidateJProgressBar.setIndeterminate(false);
         intermidateJProgressBar.setValue(0);
         intermidateJProgressBar.setString("Import Canceled!");
-        
+
         this.setTitle("Importing Data - Canceled");
-        
+
         // return the peptide shaker icon to the standard version
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
     }
@@ -373,7 +429,7 @@ public class WaitingDialog extends javax.swing.JDialog {
 
         // Write the file header.
         output.append("# ------------------------------------------------------------------"
-                + "\n# SearchGUI Report File"
+                + "\n# PeptideShaker Report File"
                 + "\n#"
                 + "\n# Originally saved by: " + System.getProperty("user.name") + host
                 + "\n#                  on: " + sdf.format(new Date())
@@ -385,12 +441,16 @@ public class WaitingDialog extends javax.swing.JDialog {
         BufferedWriter bw = null;
 
         try {
-            bw = new BufferedWriter(new FileWriter(aFile));
+            String filePath = aFile.getAbsolutePath();
+            
+            if (!filePath.endsWith(".txt")) {
+                filePath += ".txt";
+            }
+            
+            bw = new BufferedWriter(new FileWriter(filePath));
             bw.write(output.toString());
             bw.flush();
-            JOptionPane.showMessageDialog(this, "Settings written to file '" + aFile.getAbsolutePath() + "'.", "Settings Saved", JOptionPane.INFORMATION_MESSAGE);
-
-
+            JOptionPane.showMessageDialog(this, "Report written to file '" + filePath + "'.", "Report Saved", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException ioe) {
             JOptionPane.showMessageDialog(this, new String[]{"Error writing report to file:", ioe.getMessage()}, "Save Failed", JOptionPane.ERROR_MESSAGE);
 
@@ -398,7 +458,6 @@ public class WaitingDialog extends javax.swing.JDialog {
             if (bw != null) {
                 try {
                     bw.close();
-
                 } catch (IOException ioe) {
                     JOptionPane.showMessageDialog(this, new String[]{"Error writing report to file:", ioe.getMessage()}, "Save Failed", JOptionPane.ERROR_MESSAGE);
                 }
