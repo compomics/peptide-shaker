@@ -6,7 +6,7 @@
     </HEAD>
     <BODY>
         <a name="#top"/>
-        <H2>Open Files</H2>
+        <H2>New Project</H2>
 
         <ul>
             <li><a href='#Introduction'>Introduction</a></li>
@@ -18,10 +18,11 @@
         <a name="#Introduction"></a>
         <h3>Introduction</h3>
         <p align="justify">
-            The Open dialog allows the opening of identification files. After completing each field click "Open" to start the processing. 
-            While importing the progress of the import will be displayed. 
+            The New Project dialog is where new PeptideShaker projects are created based on identification files. 
+            After completing each field click "Create" to start the processing. During the importing of the files 
+            the progress of the import will be displayed. 
             <br><br>
-            From the open dialog, it is also possible to open previously saved projects.
+            To open previously saved projects use the Open Project option instead.
         </p>
         <br>
         <a href="#top">Go to top of page</a>
@@ -46,17 +47,16 @@
             <li>
                 <b>Identification File(s):</b> the files containing the identification results. Supported formats are Mascot dat files, OMSSA omx files and X!Tandem xml files. 
                 <br><br>
-                It is also possible to load previous <b>PeptideShaker</b> project (cps files) here.
-                <br><br>
                 <i>If the identification files were generated using <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a>, <b>PeptideShaker</b> will 
                     try to load the other files automatically!</i>
             </li>
             <br>
             <li>
-                <b>Spectrum File(s):</b> the files containing the peak lists used for the search in the mgf format.
+                <b>Spectrum File(s):</b> the files containing the peak lists used for the search in the 
+                <a href="http://www.matrixscience.com/help/data_file_help.html#GEN"><b>MGF</b></a> format.
             </li>
             <br>
-            <i>All spectra should be provided and uniquely entitled! To generate compatible mgf files we recommend the use of <a href="http://open-ms.sourceforge.net/"><b>OpenMS</b></a>.</i>
+            <i>All spectra should be provided and uniquely entitled! To generate compatible MGF files we recommend the use of <a href="http://open-ms.sourceforge.net/"><b>OpenMS</b></a>.</i>
             <br><br>
             <li>
                 <b>FASTA File:</b> the FASTA file used to identify the spectra.
@@ -75,7 +75,7 @@
         <a name="#ProcessingParameters"></a>
         <h3>Processing Parameters</h3>
         <p align="justify">
-            Additional settings can be set for the preprocessing of the identification files (note: not available for cps files):
+            Additional settings can be set for the preprocessing of the identification files:
         </p>
         <ul>
             <li>

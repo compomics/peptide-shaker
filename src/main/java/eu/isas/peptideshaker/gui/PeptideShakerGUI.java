@@ -73,6 +73,30 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDialogParent {
 
     /**
+     * The Overview tab index.
+     */
+    private final int OVER_VIEW_TAB_INDEX = 0;
+    /**
+     * The SpectrumID tab index.
+     */
+    private final int SPECTRUM_ID_TAB_INDEX = 1;
+    /**
+     * The Modifications tab index.
+     */
+    private final int MODIFICATIONS_TAB_INDEX = 2;
+    /**
+     * The Structures tab index.
+     */
+    private final int STRUCTURES_TAB_INDEX = 3;
+    /**
+     * The Annotation tab index.
+     */
+    private final int ANNOTATION_TAB_INDEX = 4;
+    /**
+     * The Validation tab index.
+     */
+    private final int VALIDATION_TAB_INDEX = 5;
+    /**
      * The decimal format use for the score and confidence columns.
      */
     private DecimalFormat scoreAndConfidenceDecimalFormat = new DecimalFormat("0");
@@ -268,7 +292,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPanel = new AnnotationPanel(this);
 
         initComponents();
-
+        
         setUpPanels(true);
         repaintPanels();
 
@@ -352,13 +376,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void initComponents() {
 
         gradientPanel = new javax.swing.JPanel();
-        resultsJTabbedPane = new javax.swing.JTabbedPane();
+        allTabsJTabbedPane = new javax.swing.JTabbedPane();
         overviewJPanel = new javax.swing.JPanel();
         spectrumJPanel = new javax.swing.JPanel();
         ptmJPanel = new javax.swing.JPanel();
         proteinStructureJPanel = new javax.swing.JPanel();
-        statsJPanel = new javax.swing.JPanel();
         annotationsJPanel = new javax.swing.JPanel();
+        statsJPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
@@ -426,36 +450,36 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         gradientPanel.setBackground(new java.awt.Color(255, 255, 255));
         gradientPanel.setPreferredSize(new java.awt.Dimension(1260, 800));
 
-        resultsJTabbedPane.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
-        resultsJTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+        allTabsJTabbedPane.setTabPlacement(javax.swing.JTabbedPane.RIGHT);
+        allTabsJTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                resultsJTabbedPaneStateChanged(evt);
+                allTabsJTabbedPaneStateChanged(evt);
             }
         });
 
         overviewJPanel.setOpaque(false);
         overviewJPanel.setPreferredSize(new java.awt.Dimension(900, 800));
         overviewJPanel.setLayout(new javax.swing.BoxLayout(overviewJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        resultsJTabbedPane.addTab("Overview", overviewJPanel);
+        allTabsJTabbedPane.addTab("Overview", overviewJPanel);
 
         spectrumJPanel.setLayout(new javax.swing.BoxLayout(spectrumJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        resultsJTabbedPane.addTab("Spectrum IDs", spectrumJPanel);
+        allTabsJTabbedPane.addTab("Spectrum IDs", spectrumJPanel);
 
         ptmJPanel.setOpaque(false);
         ptmJPanel.setLayout(new javax.swing.BoxLayout(ptmJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        resultsJTabbedPane.addTab("Modifications", ptmJPanel);
+        allTabsJTabbedPane.addTab("Modifications", ptmJPanel);
 
         proteinStructureJPanel.setOpaque(false);
         proteinStructureJPanel.setLayout(new javax.swing.BoxLayout(proteinStructureJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        resultsJTabbedPane.addTab("3D Structures", proteinStructureJPanel);
-
-        statsJPanel.setOpaque(false);
-        statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        resultsJTabbedPane.addTab("Validation", statsJPanel);
+        allTabsJTabbedPane.addTab("3D Structures", proteinStructureJPanel);
 
         annotationsJPanel.setOpaque(false);
         annotationsJPanel.setLayout(new javax.swing.BoxLayout(annotationsJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        resultsJTabbedPane.addTab("Annotation", annotationsJPanel);
+        allTabsJTabbedPane.addTab("Annotation", annotationsJPanel);
+
+        statsJPanel.setOpaque(false);
+        statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
+        allTabsJTabbedPane.addTab("Validation", statsJPanel);
 
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
@@ -463,13 +487,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 1260, Short.MAX_VALUE)
             .addGroup(gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1260, Short.MAX_VALUE))
+                .addComponent(allTabsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1260, Short.MAX_VALUE))
         );
         gradientPanelLayout.setVerticalGroup(
             gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 781, Short.MAX_VALUE)
             .addGroup(gradientPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(resultsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE))
+                .addComponent(allTabsJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 781, Short.MAX_VALUE))
         );
 
         menuBar.setBackground(new java.awt.Color(255, 255, 255));
@@ -1215,15 +1239,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * 
      * @param evt 
      */
-    private void resultsJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_resultsJTabbedPaneStateChanged
+    private void allTabsJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_allTabsJTabbedPaneStateChanged
 
-        int selectedIndex = resultsJTabbedPane.getSelectedIndex();
+        int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
 
         // check if we have re-loaded the data using the current threshold and PEP window settings
-        if (selectedIndex != 4) {
+        if (selectedIndex != VALIDATION_TAB_INDEX) {
             if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate) {
 
-                resultsJTabbedPane.setSelectedIndex(4);
+                allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
 
                 int value = JOptionPane.showConfirmDialog(
                         this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results?",
@@ -1231,18 +1255,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                 if (value == JOptionPane.YES_OPTION) {
                     statsPanel.revalidateData();
-                    resultsJTabbedPane.setSelectedIndex(selectedIndex);
+                    allTabsJTabbedPane.setSelectedIndex(selectedIndex);
                 } else if (value == JOptionPane.NO_OPTION) {
                     // reset the test, i.e., don't ask twice without changes in between
                     ignoreThresholdUpdate = true;
-                    resultsJTabbedPane.setSelectedIndex(selectedIndex);
+                    allTabsJTabbedPane.setSelectedIndex(selectedIndex);
                 } else {
                     // cancel the move
-                    resultsJTabbedPane.setSelectedIndex(4);
+                    allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
                 }
             } else if (!statsPanel.pepWindowApplied() && !ignorePepWindowUpdate) {
 
-                resultsJTabbedPane.setSelectedIndex(4);
+                allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
 
                 int value = JOptionPane.showConfirmDialog(
                         this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes?",
@@ -1250,14 +1274,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                 if (value == JOptionPane.YES_OPTION) {
                     statsPanel.applyPepWindow();
-                    resultsJTabbedPane.setSelectedIndex(selectedIndex);
+                    allTabsJTabbedPane.setSelectedIndex(selectedIndex);
                 } else if (value == JOptionPane.NO_OPTION) {
                     // reset the test, i.e., don't ask twice without changes in between
                     ignorePepWindowUpdate = true;
-                    resultsJTabbedPane.setSelectedIndex(selectedIndex);
+                    allTabsJTabbedPane.setSelectedIndex(selectedIndex);
                 } else {
                     // cancel the move
-                    resultsJTabbedPane.setSelectedIndex(4);
+                    allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
                 }
             }
         } else {
@@ -1390,7 +1414,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // disable the protein filter option if a tab other than the overview tab is selected
         proteinFilterJMenuItem.setEnabled(selectedIndex == 0);
-    }//GEN-LAST:event_resultsJTabbedPaneStateChanged
+    }//GEN-LAST:event_allTabsJTabbedPaneStateChanged
 
     /**
      * Export the bubble plot.
@@ -1487,13 +1511,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void proteinAccesionsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinAccesionsJMenuItemActionPerformed
 
-        int selectedIndex = resultsJTabbedPane.getSelectedIndex();
+        int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
 
-        if (selectedIndex == 0 || selectedIndex == 3) {
+        if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == STRUCTURES_TAB_INDEX) {
 
             JTable tempTable;
 
-            if (selectedIndex == 0) {
+            if (selectedIndex == OVER_VIEW_TAB_INDEX) {
                 tempTable = overviewPanel.getProteinTable();
             } else {
                 tempTable = proteinStructurePanel.getProteinTable();
@@ -1525,11 +1549,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void proteinListJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinListJMenuItemActionPerformed
 
-        final int selectedIndex = resultsJTabbedPane.getSelectedIndex();
+        final int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
 
         final PeptideShakerGUI tempPeptideShakerGUIRef = this;
 
-        if (selectedIndex == 0 || selectedIndex == 3) {
+        if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == SPECTRUM_ID_TAB_INDEX) {
 
             progressDialog = new ProgressDialogX(this, this, true);
 
@@ -1548,7 +1572,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     JTable tempTable;
 
-                    if (selectedIndex == 0) {
+                    if (selectedIndex == OVER_VIEW_TAB_INDEX) {
                         tempTable = overviewPanel.getProteinTable();
                     } else {
                         tempTable = proteinStructurePanel.getProteinTable();
@@ -1625,11 +1649,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt 
      */
     private void peptideListJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideListJMenuItemActionPerformed
-        final int selectedIndex = resultsJTabbedPane.getSelectedIndex();
+        final int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
 
         final PeptideShakerGUI tempPeptideShakerGUIRef = this;
 
-        if (selectedIndex == 0 || selectedIndex == 3) {
+        if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == STRUCTURES_TAB_INDEX) {
 
             progressDialog = new ProgressDialogX(this, this, true);
 
@@ -1648,7 +1672,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                     JTable tempTable;
 
-                    if (selectedIndex == 0) {
+                    if (selectedIndex == OVER_VIEW_TAB_INDEX) {
                         tempTable = overviewPanel.getPeptideTable();
                     } else {
                         tempTable = proteinStructurePanel.getPeptideTable();
@@ -1856,7 +1880,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             statsPanel.updateSeparators();
 
             progressDialog = new ProgressDialogX(this, this, true);
-            progressDialog.setMax(resultsJTabbedPane.getComponentCount() + 1); // @TODO: Remove the minus when the other tabs are added
+            progressDialog.setMax(allTabsJTabbedPane.getComponentCount() + 1); // @TODO: Remove the minus when the other tabs are added
             progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
@@ -1910,7 +1934,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\nSee /conf/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
                     }
 
-                    resultsJTabbedPaneStateChanged(null);
+                    allTabsJTabbedPaneStateChanged(null);
 
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
@@ -1948,6 +1972,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutJMenuItem;
     private javax.swing.JMenuItem allPeptideListsJMenuItem;
+    private javax.swing.JTabbedPane allTabsJTabbedPane;
     private javax.swing.JMenuItem annotationPreferencesMenu;
     private javax.swing.JPanel annotationsJPanel;
     private javax.swing.JMenuItem bubblePlotJMenuItem;
@@ -1984,7 +2009,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JPanel proteinStructureJPanel;
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
     private javax.swing.JPanel ptmJPanel;
-    private javax.swing.JTabbedPane resultsJTabbedPane;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JCheckBoxMenuItem scoresJCheckBoxMenuItem;
     private javax.swing.JMenuItem searchParametersMenu;
@@ -2355,7 +2379,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Opens the Spectrum ID tab.
      */
     public void openSpectrumIdTab() {
-        resultsJTabbedPane.setSelectedIndex(1);
+        allTabsJTabbedPane.setSelectedIndex(SPECTRUM_ID_TAB_INDEX);
     }
 
     /**
