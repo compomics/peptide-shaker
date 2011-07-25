@@ -28,6 +28,7 @@ import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
+import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
@@ -167,6 +168,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         this.displaySpectrum = false;
 
         initComponents();
+        
+        coverageTableScrollPane.setBorder(null);
 
         proteinScoreColumn = proteinTable.getColumn("Score");
         peptideScoreColumn = peptideTable.getColumn("Score");
@@ -223,6 +226,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         // the protein inference column
         proteinTable.getColumn("PI").setMaxWidth(35);
         proteinTable.getColumn("PI").setMinWidth(35);
+        peptideTable.getColumn("PI").setMaxWidth(35);
+        peptideTable.getColumn("PI").setMinWidth(35);
 
         // set up the protein inference color map
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
@@ -237,7 +242,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinInferenceTooltipMap.put(PSParameter.ISOFORMS, "Isoforms");
         proteinInferenceTooltipMap.put(PSParameter.ISOFORMS_UNRELATED, "Unrelated Isoforms");
         proteinInferenceTooltipMap.put(PSParameter.UNRELATED, "Unrelated Proteins");
-        
+
         proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         proteinTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), proteinInferenceColorMap, proteinInferenceTooltipMap));
         proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
@@ -257,7 +262,21 @@ public class OverviewPanel extends javax.swing.JPanel {
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
 
-        peptideTable.getColumn("Other Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        // set up the peptide inference color map
+        HashMap<Integer, Color> peptideInferenceColorMap = new HashMap<Integer, Color>();
+        peptideInferenceColorMap.put(0, peptideShakerGUI.getSparklineColor());
+        peptideInferenceColorMap.put(1, Color.ORANGE);
+        peptideInferenceColorMap.put(2, Color.BLUE);
+        peptideInferenceColorMap.put(3, Color.RED);
+
+        // set up the peptide inference tooltip map
+        HashMap<Integer, String> peptideInferenceTooltipMap = new HashMap<Integer, String>();
+        peptideInferenceTooltipMap.put(0, "Unique to Protein/Protein Group");
+        peptideInferenceTooltipMap.put(1, "Maps to 2 Proteins/Protein Groups");
+        peptideInferenceTooltipMap.put(2, "Maps to 3-5 Proteins/Protein Groups");
+        peptideInferenceTooltipMap.put(3, "Maps to >5 Proteins/Protein Groups");
+
+        peptideTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), peptideInferenceColorMap, peptideInferenceTooltipMap));
         peptideTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         peptideTable.getColumn("#Spectra").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
@@ -290,13 +309,13 @@ public class OverviewPanel extends javax.swing.JPanel {
         } catch (IllegalArgumentException e) {
             // ignore error
         }
-        
-        
+
+
         // set up the table header tooltips
         proteinTableToolTips = new ArrayList<String>();
         proteinTableToolTips.add(null);
-        proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Inference");
+        proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Description");
         proteinTableToolTips.add("Protein Seqeunce Coverage (%)");
         proteinTableToolTips.add("Protein emPAI Score");
@@ -308,11 +327,11 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         peptideTableToolTips = new ArrayList<String>();
         peptideTableToolTips.add(null);
+        peptideTableToolTips.add("Protein Inference");
         peptideTableToolTips.add("Peptide Sequence");
         peptideTableToolTips.add("Peptide Start Index");
         peptideTableToolTips.add("Peptide End Index");
         peptideTableToolTips.add("Peptide Modifications");
-        peptideTableToolTips.add("Alternative Protein Mappings for Peptide");
         peptideTableToolTips.add("Number of Spectra");
         peptideTableToolTips.add("Peptide Score");
         peptideTableToolTips.add("Peptide Confidence");
@@ -488,11 +507,11 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Accession", "PI", "Description", "Coverage", "emPAI", "#Peptides", "#Spectra", "Score", "Confidence", ""
+                " ", "PI", "Accession", "Description", "Coverage", "emPAI", "#Peptides", "#Spectra", "Score", "Confidence", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, false, false, false, false
@@ -628,11 +647,11 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Sequence", "Start", "End", "Modifications", "Other Protein(s)", "#Spectra", "Score", "Confidence", ""
+                " ", "PI", "Sequence", "Start", "End", "Modifications", "#Spectra", "Score", "Confidence", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, false, false, false
@@ -1848,7 +1867,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         int row = proteinTable.rowAtPoint(evt.getPoint());
         int column = proteinTable.columnAtPoint(evt.getPoint());
 
-        if (column == 1 && proteinTable.getValueAt(row, column) != null) {
+        if (column == proteinTable.getColumn("Accession").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
 
             String tempValue = (String) proteinTable.getValueAt(row, column);
 
@@ -1857,7 +1876,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
-        } else if (column == 2 && proteinTable.getValueAt(row, column) != null) {
+        } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -2056,7 +2075,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
 
             // set the accession number in the annotation tab
-            String accessionNumber = (String) proteinTable.getValueAt(row, 1);
+            String accessionNumber = (String) proteinTable.getValueAt(row, proteinTable.getColumn("Accession").getModelIndex());
 
             if (accessionNumber.lastIndexOf("a href") != -1) {
                 accessionNumber = accessionNumber.substring(accessionNumber.lastIndexOf("\">") + 2);
@@ -2074,7 +2093,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
             // open protein link in web browser
-            if (column == 1 && evt != null && evt.getButton() == MouseEvent.BUTTON1
+            if (column == proteinTable.getColumn("Accession").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
                     && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
 
                 String link = (String) proteinTable.getValueAt(row, column);
@@ -2087,8 +2106,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             }
 
             // open the protein inference dialog
-            //if (column == 2 && evt != null && evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
-            if (column == 2 && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
+            if (column == proteinTable.getColumn("PI").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
                 String proteinKey = proteinTableMap.get(getProteinKey(row));
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
                 new ProteinInferenceDialog(peptideShakerGUI, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
@@ -2123,13 +2141,35 @@ public class OverviewPanel extends javax.swing.JPanel {
                 peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0));
             }
 
-            if (column == peptideTable.getColumn("Other Protein(s)").getModelIndex()) {
+            // open the protein inference at the petide level dialog
+            if (column == peptideTable.getColumn("PI").getModelIndex()) {
 
-                // open protein links in web browser
-                if (evt != null && evt.getButton() == MouseEvent.BUTTON1
-                        && ((String) peptideTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
-                    peptideShakerGUI.openProteinLinks((String) peptideTable.getValueAt(row, column));
+                String proteinKey = proteinTableMap.get(getProteinKey(proteinTable.getSelectedRow()));
+                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
+
+                String peptideKey = peptideTableMap.get(getPeptideKey(row));
+                PeptideMatch currentPeptideMatch = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey);
+
+                ArrayList<Protein> allProteins = new ArrayList<Protein>();
+                
+                allProteins.add(proteinMatch.getMainMatch());
+
+                for (Protein protein : currentPeptideMatch.getTheoreticPeptide().getParentProteins()) {
+
+                    boolean newProtein = true;
+
+                    for (String referenceAccession : proteinMatch.getTheoreticProteinsAccessions()) {
+                        if (proteinMatch.getTheoreticProtein(referenceAccession).getAccession().equals(protein.getAccession())) {
+                            newProtein = false;
+                        }
+                    }
+
+                    if (newProtein) {
+                        allProteins.add(protein);
+                    }
                 }
+                
+                new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, currentPeptideMatch.getTheoreticPeptide().getSequence(), allProteins);
             }
         }
     }//GEN-LAST:event_peptideTableMouseReleased
@@ -2288,12 +2328,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         int row = peptideTable.rowAtPoint(evt.getPoint());
         int column = peptideTable.columnAtPoint(evt.getPoint());
 
-        if (column == peptideTable.getColumn("Other Protein(s)").getModelIndex()
-                && peptideTable.getValueAt(row, column) != null) {
-
-            String tempValue = (String) peptideTable.getValueAt(row, column);
-
-            if (tempValue.lastIndexOf("a href=") != -1) {
+        if (peptideTable.getValueAt(row, column) != null) {
+            if (column == peptideTable.getColumn("PI").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -2325,8 +2361,11 @@ public class OverviewPanel extends javax.swing.JPanel {
             String tooltipText = "<html>";
 
             for (int i = 0; i < peptideTable.getRowCount(); i++) {
-                if (residueNumber >= (Integer) peptideTable.getValueAt(i, 2) && residueNumber <= (Integer) peptideTable.getValueAt(i, 3)) {
-                    tooltipText += peptideTable.getValueAt(i, 2) + " - " + peptideTable.getValueAt(i, 1) + " - " + peptideTable.getValueAt(i, 3) + "<br>";
+                if (residueNumber >= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex())
+                        && residueNumber <= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex())) {
+                    tooltipText += peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex()) + " - "
+                            + peptideTable.getValueAt(i, peptideTable.getColumn("Sequence").getModelIndex())
+                            + " - " + peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex()) + "<br>";
                 }
             }
 
@@ -2484,14 +2523,14 @@ public class OverviewPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);  
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
 
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
-        
+
         try {
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
             ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
@@ -3341,13 +3380,23 @@ public class OverviewPanel extends javax.swing.JPanel {
                     int peptideStart = proteinSequence.lastIndexOf(peptideSequence) + 1;
                     int peptideEnd = peptideStart + peptideSequence.length() - 1;
 
+                    int proteinInferenceType = 0;
+
+                    if (otherProteins.size() == 1) {
+                        proteinInferenceType = 1;
+                    } else if (otherProteins.size() > 1 && otherProteins.size() <= 4) {
+                        proteinInferenceType = 2;
+                    } else if (otherProteins.size() > 4) {
+                        proteinInferenceType = 3;
+                    }
+                    
                     ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
                                 index + 1,
+                                proteinInferenceType,
                                 peptideSequence,
                                 peptideStart,
                                 peptideEnd,
                                 modifications,
-                                peptideShakerGUI.addDatabaseLinks(otherProteins),
                                 peptideMatch.getSpectrumCount(),
                                 probabilities.getPeptideScore(),
                                 probabilities.getPeptideConfidence(),
@@ -3484,8 +3533,8 @@ public class OverviewPanel extends javax.swing.JPanel {
                         if (!proteinMatch.isDecoy()) {
                             ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                                         index + 1,
-                                        peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
                                         probabilities.getGroupClass(),
+                                        peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
                                         description,
                                         sequenceCoverage,
                                         emPAI,
@@ -3537,13 +3586,13 @@ public class OverviewPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).setMaxValue(maxEmPAI);
-        
+
         try {
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).setMaxValue(100.0);
         } catch (IllegalArgumentException e) {
             // ignore error
         }
-        
+
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).setMaxValue(100.0);
 
         // select the first row
@@ -3789,7 +3838,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             } else {
                 proteinTable.addColumn(proteinScoreColumn);
                 proteinTable.moveColumn(10, 8);
-                
+
                 peptideTable.addColumn(peptideScoreColumn);
                 peptideTable.moveColumn(9, 7);
             }
