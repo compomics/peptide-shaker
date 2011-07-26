@@ -1527,7 +1527,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             for (int i = 0; i < tempTable.getRowCount(); i++) {
 
-                String link = (String) tempTable.getValueAt(i, 1);
+                String link = (String) tempTable.getValueAt(i, tempTable.getColumn("Accession").getModelIndex());
 
                 if (link.lastIndexOf("a href") != -1) {
                     link = link.substring(link.lastIndexOf("\">") + 2);
@@ -1596,7 +1596,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                         features += tempTable.getValueAt(i, 0) + "\t";
 
-                        String link = (String) tempTable.getValueAt(i, 1);
+                        String link = (String) tempTable.getValueAt(i, tempTable.getColumn("Accession").getModelIndex());
 
                         if (link.lastIndexOf("a href") != -1) {
                             link = link.substring(link.lastIndexOf("\">") + 2);
@@ -1605,7 +1605,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                         features += link + "\t";
 
-                        Integer piAsNumber = (Integer) tempTable.getValueAt(i, 2);
+                        Integer piAsNumber = (Integer) tempTable.getValueAt(i, tempTable.getColumn("PI").getModelIndex());
                         String piAsString = "";
 
                         switch (piAsNumber) {

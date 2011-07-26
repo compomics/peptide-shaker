@@ -946,7 +946,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         if (pdbMatchesJTable.getSelectedRow() != -1 && currentlyDisplayedPdbFile != null) {
 
-            String tempPdbFile = (String) pdbMatchesJTable.getValueAt(pdbMatchesJTable.getSelectedRow(), 1);
+            String tempPdbFile = (String) pdbMatchesJTable.getValueAt(pdbMatchesJTable.getSelectedRow(), pdbMatchesJTable.getColumn("PDB").getModelIndex());
 
             if (currentlyDisplayedPdbFile.equalsIgnoreCase(tempPdbFile)) {
                 loadStructure = false;
@@ -989,7 +989,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             if (pdbMatchesJTable.getSelectedRow() != -1) {
 
-                currentlyDisplayedPdbFile = (String) pdbMatchesJTable.getValueAt(pdbMatchesJTable.getSelectedRow(), 1);
+                currentlyDisplayedPdbFile = (String) pdbMatchesJTable.getValueAt(pdbMatchesJTable.getSelectedRow(), pdbMatchesJTable.getColumn("PDB").getModelIndex());
 
                 // open protein link in web browser
                 if (pdbMatchesJTable.getSelectedColumn() == pdbMatchesJTable.getColumn("PDB").getModelIndex() && evt.getButton() == MouseEvent.BUTTON1
