@@ -72,6 +72,7 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         buttonGroup = new javax.swing.ButtonGroup();
+        backgroundPanel = new javax.swing.JPanel();
         plottingTypeJPanel = new javax.swing.JPanel();
         pngJRadioButton = new javax.swing.JRadioButton();
         tiffJRadioButton = new javax.swing.JRadioButton();
@@ -83,24 +84,31 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
         setTitle("Export Plot");
         setResizable(false);
 
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+
         plottingTypeJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plot Type"));
+        plottingTypeJPanel.setOpaque(false);
 
         buttonGroup.add(pngJRadioButton);
         pngJRadioButton.setSelected(true);
         pngJRadioButton.setText("PNG");
         pngJRadioButton.setIconTextGap(15);
+        pngJRadioButton.setOpaque(false);
 
         buttonGroup.add(tiffJRadioButton);
         tiffJRadioButton.setText("TIFF");
         tiffJRadioButton.setIconTextGap(15);
+        tiffJRadioButton.setOpaque(false);
 
         buttonGroup.add(pdfJRadioButton);
         pdfJRadioButton.setText("PDF");
         pdfJRadioButton.setIconTextGap(15);
+        pdfJRadioButton.setOpaque(false);
 
         buttonGroup.add(svgJRadioButton);
         svgJRadioButton.setText("SVG");
         svgJRadioButton.setIconTextGap(15);
+        svgJRadioButton.setOpaque(false);
 
         javax.swing.GroupLayout plottingTypeJPanelLayout = new javax.swing.GroupLayout(plottingTypeJPanel);
         plottingTypeJPanel.setLayout(plottingTypeJPanelLayout);
@@ -136,25 +144,36 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(exportJButton)
                     .addComponent(plottingTypeJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(plottingTypeJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(exportJButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -187,6 +206,7 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
         this.dispose();
     }//GEN-LAST:event_exportJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel backgroundPanel;
     private javax.swing.ButtonGroup buttonGroup;
     private javax.swing.JButton exportJButton;
     private javax.swing.JRadioButton pdfJRadioButton;

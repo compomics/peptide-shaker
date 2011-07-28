@@ -95,7 +95,8 @@ public class ProteinFilter extends javax.swing.JDialog {
         foldChangeButtonGroup = new javax.swing.ButtonGroup();
         pValueButtonGroup = new javax.swing.ButtonGroup();
         qValueButtonGroup = new javax.swing.ButtonGroup();
-        jPanel4 = new javax.swing.JPanel();
+        backgroundPanel = new javax.swing.JPanel();
+        optionsPanel = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         proteinAccessionJTextField = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
@@ -145,7 +146,10 @@ public class ProteinFilter extends javax.swing.JDialog {
             }
         });
 
-        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder("Fillter Options"));
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+
+        optionsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Fillter Options"));
+        optionsPanel.setOpaque(false);
 
         jLabel9.setText("Accession:");
 
@@ -214,6 +218,7 @@ public class ProteinFilter extends javax.swing.JDialog {
         peptidesButtonGroup.add(coverageGreaterThanJRadioButton);
         coverageGreaterThanJRadioButton.setSelected(true);
         coverageGreaterThanJRadioButton.setText(">");
+        coverageGreaterThanJRadioButton.setOpaque(false);
         coverageGreaterThanJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -222,6 +227,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         peptidesButtonGroup.add(coverageEqualJRadioButton);
         coverageEqualJRadioButton.setText("=");
+        coverageEqualJRadioButton.setOpaque(false);
         coverageEqualJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -230,6 +236,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         peptidesButtonGroup.add(coverageLessThanJRadioButton);
         coverageLessThanJRadioButton.setText("<");
+        coverageLessThanJRadioButton.setOpaque(false);
         coverageLessThanJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -239,6 +246,7 @@ public class ProteinFilter extends javax.swing.JDialog {
         coverageButtonGroup.add(emPAIGreaterThanJRadioButton);
         emPAIGreaterThanJRadioButton.setSelected(true);
         emPAIGreaterThanJRadioButton.setText(">");
+        emPAIGreaterThanJRadioButton.setOpaque(false);
         emPAIGreaterThanJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -247,6 +255,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         coverageButtonGroup.add(emPAIEqualJRadioButton);
         emPAIEqualJRadioButton.setText("=");
+        emPAIEqualJRadioButton.setOpaque(false);
         emPAIEqualJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -255,6 +264,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         coverageButtonGroup.add(emPAILessThanJRadioButton);
         emPAILessThanJRadioButton.setText("<");
+        emPAILessThanJRadioButton.setOpaque(false);
         emPAILessThanJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -264,6 +274,7 @@ public class ProteinFilter extends javax.swing.JDialog {
         expCountButtonGroup.add(peptideGreaterThanJRadioButton);
         peptideGreaterThanJRadioButton.setSelected(true);
         peptideGreaterThanJRadioButton.setText(">");
+        peptideGreaterThanJRadioButton.setOpaque(false);
         peptideGreaterThanJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -272,6 +283,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         expCountButtonGroup.add(peptideEqualJRadioButton);
         peptideEqualJRadioButton.setText("=");
+        peptideEqualJRadioButton.setOpaque(false);
         peptideEqualJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -280,6 +292,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         expCountButtonGroup.add(peptideLessThanJRadioButton);
         peptideLessThanJRadioButton.setText("<");
+        peptideLessThanJRadioButton.setOpaque(false);
         peptideLessThanJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -289,6 +302,7 @@ public class ProteinFilter extends javax.swing.JDialog {
         foldChangeButtonGroup.add(spectraGreaterThanJRadioButton);
         spectraGreaterThanJRadioButton.setSelected(true);
         spectraGreaterThanJRadioButton.setText(">");
+        spectraGreaterThanJRadioButton.setOpaque(false);
         spectraGreaterThanJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -297,6 +311,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         foldChangeButtonGroup.add(spectraEqualJRadioButton);
         spectraEqualJRadioButton.setText("=");
+        spectraEqualJRadioButton.setOpaque(false);
         spectraEqualJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -305,6 +320,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         foldChangeButtonGroup.add(spectraLessThanJRadioButton);
         spectraLessThanJRadioButton.setText("<");
+        spectraLessThanJRadioButton.setOpaque(false);
         spectraLessThanJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -314,6 +330,7 @@ public class ProteinFilter extends javax.swing.JDialog {
         pValueButtonGroup.add(scoreGreaterThanJRadioButton);
         scoreGreaterThanJRadioButton.setSelected(true);
         scoreGreaterThanJRadioButton.setText(">");
+        scoreGreaterThanJRadioButton.setOpaque(false);
         scoreGreaterThanJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -322,6 +339,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         pValueButtonGroup.add(scoreEqualJRadioButton);
         scoreEqualJRadioButton.setText("=");
+        scoreEqualJRadioButton.setOpaque(false);
         scoreEqualJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -330,6 +348,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         pValueButtonGroup.add(scoreLessThanJRadioButton);
         scoreLessThanJRadioButton.setText("<");
+        scoreLessThanJRadioButton.setOpaque(false);
         scoreLessThanJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -339,6 +358,7 @@ public class ProteinFilter extends javax.swing.JDialog {
         qValueButtonGroup.add(confidenceGreaterThanJRadioButton);
         confidenceGreaterThanJRadioButton.setSelected(true);
         confidenceGreaterThanJRadioButton.setText(">");
+        confidenceGreaterThanJRadioButton.setOpaque(false);
         confidenceGreaterThanJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -347,6 +367,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         qValueButtonGroup.add(confidenceEqualJRadioButton);
         confidenceEqualJRadioButton.setText("=");
+        confidenceEqualJRadioButton.setOpaque(false);
         confidenceEqualJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -355,6 +376,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         qValueButtonGroup.add(confidenceLessThanJRadioButton);
         confidenceLessThanJRadioButton.setText("<");
+        confidenceLessThanJRadioButton.setOpaque(false);
         confidenceLessThanJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 radioButtonActionPerformed(evt);
@@ -377,13 +399,13 @@ public class ProteinFilter extends javax.swing.JDialog {
         jLabel2.setText("(contains, RegExp)");
         jLabel2.setToolTipText("<html>\nFind all proteins containing a given accession number.<br>\nRegular expressions are supported.\n</html>");
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout optionsPanelLayout = new javax.swing.GroupLayout(optionsPanel);
+        optionsPanel.setLayout(optionsPanelLayout);
+        optionsPanelLayout.setHorizontalGroup(
+            optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(optionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel13)
                     .addComponent(jLabel15)
                     .addComponent(jLabel14)
@@ -393,7 +415,7 @@ public class ProteinFilter extends javax.swing.JDialog {
                     .addComponent(jLabel9)
                     .addComponent(jLabel16))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(descriptionJTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                     .addComponent(proteinAccessionJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                     .addComponent(coverageJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
@@ -403,38 +425,38 @@ public class ProteinFilter extends javax.swing.JDialog {
                     .addComponent(spectraJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)
                     .addComponent(confidenceJTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
                         .addComponent(coverageGreaterThanJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(coverageEqualJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(coverageLessThanJRadioButton))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
                         .addComponent(emPAIGreaterThanJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(emPAIEqualJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(emPAILessThanJRadioButton))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
                         .addComponent(peptideGreaterThanJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(peptideEqualJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(peptideLessThanJRadioButton))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
                         .addComponent(spectraGreaterThanJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(spectraEqualJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(spectraLessThanJRadioButton))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
                         .addComponent(scoreGreaterThanJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(scoreEqualJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(scoreLessThanJRadioButton))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addGroup(optionsPanelLayout.createSequentialGroup()
                         .addComponent(confidenceGreaterThanJRadioButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(confidenceEqualJRadioButton)
@@ -444,56 +466,56 @@ public class ProteinFilter extends javax.swing.JDialog {
                     .addComponent(jLabel1))
                 .addGap(6, 6, 6))
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        optionsPanelLayout.setVerticalGroup(
+            optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(optionsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(proteinAccessionJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel9)
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(descriptionJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel16)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(coverageJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(coverageGreaterThanJRadioButton)
                     .addComponent(coverageEqualJRadioButton)
                     .addComponent(coverageLessThanJRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
                     .addComponent(emPAIJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(emPAIGreaterThanJRadioButton)
                     .addComponent(emPAIEqualJRadioButton)
                     .addComponent(emPAILessThanJRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(peptideJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12)
                     .addComponent(peptideGreaterThanJRadioButton)
                     .addComponent(peptideEqualJRadioButton)
                     .addComponent(peptideLessThanJRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(spectraJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel13)
                     .addComponent(spectraGreaterThanJRadioButton)
                     .addComponent(spectraEqualJRadioButton)
                     .addComponent(spectraLessThanJRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(scoreJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14)
                     .addComponent(scoreGreaterThanJRadioButton)
                     .addComponent(scoreEqualJRadioButton)
                     .addComponent(scoreLessThanJRadioButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(confidenceJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel15)
                     .addComponent(confidenceGreaterThanJRadioButton)
@@ -538,37 +560,48 @@ public class ProteinFilter extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(layout.createSequentialGroup()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(proteinFilteringHelpJButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(clearJButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(exitJButton))
-                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(optionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {clearJButton, exitJButton});
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {clearJButton, exitJButton});
 
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(optionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(proteinFilteringHelpJButton)
                     .addComponent(clearJButton)
                     .addComponent(exitJButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -968,6 +1001,7 @@ public class ProteinFilter extends javax.swing.JDialog {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton clearJButton;
     private javax.swing.JRadioButton confidenceEqualJRadioButton;
     private javax.swing.JRadioButton confidenceGreaterThanJRadioButton;
@@ -996,7 +1030,7 @@ public class ProteinFilter extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel optionsPanel;
     private javax.swing.ButtonGroup pValueButtonGroup;
     private javax.swing.JRadioButton peptideEqualJRadioButton;
     private javax.swing.JRadioButton peptideGreaterThanJRadioButton;
