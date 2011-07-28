@@ -49,10 +49,11 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
+        backgroundPanel = new javax.swing.JPanel();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         annotationPreferencesHelpJButton = new javax.swing.JButton();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        tabbedPane = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         aBox = new javax.swing.JCheckBox();
@@ -85,6 +86,8 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Spectrum Annotation");
         setResizable(false);
+
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -122,23 +125,34 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
+        jPanel4.setOpaque(false);
+
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Ion Type"));
+        jPanel2.setOpaque(false);
 
         aBox.setText("a");
+        aBox.setOpaque(false);
 
         bBox.setText("b");
+        bBox.setOpaque(false);
 
         cBox.setText("c");
+        cBox.setOpaque(false);
 
         xBox.setText("x");
+        xBox.setOpaque(false);
 
         yBox.setText("y");
+        yBox.setOpaque(false);
 
         zBox.setText("z");
+        zBox.setOpaque(false);
 
         mhBox.setText("MH");
+        mhBox.setOpaque(false);
 
         immoniumBox.setText("Immonium Ions");
+        immoniumBox.setOpaque(false);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -183,6 +197,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         );
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Peak Matching"));
+        jPanel1.setOpaque(false);
 
         jLabel2.setText("m/z Accuracy:");
 
@@ -193,6 +208,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
         mostIntenseJCheckBox.setText("Annotate Most Intense Peaks");
         mostIntenseJCheckBox.setIconTextGap(15);
+        mostIntenseJCheckBox.setOpaque(false);
         mostIntenseJCheckBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 mostIntenseJCheckBoxActionPerformed(evt);
@@ -242,21 +258,30 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(37, Short.MAX_VALUE))
         );
 
-        jTabbedPane1.addTab("Standard Settings", jPanel4);
+        tabbedPane.addTab("Standard Settings", jPanel4);
+
+        jPanel5.setOpaque(false);
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Neutral Losses"));
+        jPanel3.setOpaque(false);
 
         h2oBox.setText("H2O");
+        h2oBox.setOpaque(false);
 
         nh3Box.setText("NH3");
+        nh3Box.setOpaque(false);
 
         h3po4Box.setText("H3PO4");
+        h3po4Box.setOpaque(false);
 
         hpo3Box.setText("HPO3");
+        hpo3Box.setOpaque(false);
 
         ch4osBox.setText("CH4OS");
+        ch4osBox.setOpaque(false);
 
         sequenceLossCheck.setText("Adapt neutral losses to the sequence and modifications");
+        sequenceLossCheck.setOpaque(false);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -295,12 +320,16 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         );
 
         chargePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Fragment Ion Charge"));
+        chargePanel.setOpaque(false);
 
         oneCharge.setText("1+");
+        oneCharge.setOpaque(false);
 
         twoCharges.setText("2+");
+        twoCharges.setOpaque(false);
 
         moreCharges.setText(">2");
+        moreCharges.setOpaque(false);
 
         javax.swing.GroupLayout chargePanelLayout = new javax.swing.GroupLayout(chargePanel);
         chargePanel.setLayout(chargePanelLayout);
@@ -327,6 +356,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         );
 
         allSpectraCheck.setText("Always use these settings for this project");
+        allSpectraCheck.setOpaque(false);
         allSpectraCheck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 allSpectraCheckActionPerformed(evt);
@@ -355,40 +385,51 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addGap(46, 46, 46))
         );
 
-        jTabbedPane1.addTab("Advanced Settings", jPanel5);
+        tabbedPane.addTab("Advanced Settings", jPanel5);
+
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 541, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(annotationPreferencesHelpJButton)
+                        .addGap(380, 380, 380)
+                        .addComponent(okButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelButton)))
+                .addContainerGap())
+        );
+
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                        .addComponent(annotationPreferencesHelpJButton)
+                        .addComponent(okButton))
+                    .addComponent(cancelButton))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 541, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(18, Short.MAX_VALUE)
-                .addComponent(annotationPreferencesHelpJButton)
-                .addGap(380, 380, 380)
-                .addComponent(okButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cancelButton)
-                .addContainerGap())
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
-
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                        .addComponent(annotationPreferencesHelpJButton)
-                        .addComponent(okButton))
-                    .addComponent(cancelButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -525,6 +566,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox allSpectraCheck;
     private javax.swing.JButton annotationPreferencesHelpJButton;
     private javax.swing.JCheckBox bBox;
+    private javax.swing.JPanel backgroundPanel;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JCheckBox cBox;
     private javax.swing.JButton cancelButton;
@@ -541,7 +583,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JCheckBox mhBox;
     private javax.swing.JCheckBox moreCharges;
     private javax.swing.JCheckBox mostIntenseJCheckBox;
@@ -550,6 +591,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton okButton;
     private javax.swing.JCheckBox oneCharge;
     private javax.swing.JCheckBox sequenceLossCheck;
+    private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JCheckBox twoCharges;
     private javax.swing.JCheckBox xBox;
     private javax.swing.JCheckBox yBox;

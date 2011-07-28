@@ -133,7 +133,10 @@ public class WaitingDialog extends javax.swing.JDialog {
             }
         });
 
+        jPanel1.setBackground(new java.awt.Color(230, 230, 230));
+
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Data Import Progress"));
+        jPanel2.setOpaque(false);
 
         progressBar.setStringPainted(true);
 
