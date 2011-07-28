@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -82,13 +83,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         this.profileFile = parent.getModificationProfileFile();
         loadModifications();
         initComponents();
-        
+
         availableModificationsTable.getColumn(" ").setMaxWidth(40);
         availableModificationsTable.getColumn(" ").setMinWidth(40);
-        
+
         expectedModificationsTable.getColumn(" ").setMaxWidth(40);
         expectedModificationsTable.getColumn(" ").setMinWidth(40);
-        
+
         modificationList = new ArrayList<String>(searchParameters.getModificationProfile().keySet());
         Collections.sort(modificationList);
         enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
@@ -116,6 +117,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         jLabel5 = new javax.swing.JLabel();
         missedCleavagesTxt = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        ion1Cmb = new javax.swing.JComboBox();
+        ion2Cmb = new javax.swing.JComboBox();
         jPanel6 = new javax.swing.JPanel();
         addModifications = new javax.swing.JButton();
         removeModification = new javax.swing.JButton();
@@ -170,6 +175,14 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         jLabel7.setText("Missed Cleavages:");
 
+        jLabel2.setText("Fragment ion type 1:");
+
+        jLabel8.setText("Fragment ion type 2:");
+
+        ion1Cmb.setModel(new DefaultComboBoxModel(searchParameters.getIons()));
+
+        ion2Cmb.setModel(new DefaultComboBoxModel(searchParameters.getIons()));
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -184,10 +197,21 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(fragmentIonToleranceTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
                     .addComponent(enzymesCmb, 0, 289, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel7)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(missedCleavagesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 260, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(17, 17, 17))
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(missedCleavagesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 337, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ion1Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(ion2Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(47, 47, 47))))
         );
 
         jPanel5Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {enzymesCmb, fragmentIonToleranceTxt});
@@ -204,7 +228,11 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(fragmentIonToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(fragmentIonToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel8)
+                    .addComponent(ion1Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ion2Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -298,7 +326,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                                .addComponent(profileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 113, Short.MAX_VALUE)
+                                .addComponent(profileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(loadProfileBtn)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -307,7 +335,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                                 .addComponent(saveAsProfileBtn)
                                 .addGap(63, 63, 63))
                             .addComponent(clearProfileBtn, javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 411, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(removeModification)
@@ -315,7 +343,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 377, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 413, Short.MAX_VALUE)
                     .addComponent(jLabel6))
                 .addContainerGap())
         );
@@ -368,7 +396,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(fileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 669, Short.MAX_VALUE)
+                .addComponent(fileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 739, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(loadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -421,7 +449,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(helpLineLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(searchPreferencesHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 316, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 386, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)))
@@ -461,7 +489,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             searchParameters.setFragmentIonMZTolerance(new Double(fragmentIonToleranceTxt.getText()));
             searchParameters.setnMissedCleavages(new Integer(missedCleavagesTxt.getText()));
             searchParameters.setEnzyme(enzymeFactory.getEnzyme((String) enzymesCmb.getSelectedItem()));
+            searchParameters.setIonSearched1((String) ion1Cmb.getSelectedItem());
+            searchParameters.setIonSearched2((String) ion2Cmb.getSelectedItem());
             peptideShakerGUI.setSearchParameters(searchParameters);
+            peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
             peptideShakerGUI.setModificationProfileFile(profileFile);
             peptideShakerGUI.setDataSaved(false);
             this.dispose();
@@ -485,8 +516,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     private void addModificationsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addModificationsActionPerformed
 
         int[] selectedRows = availableModificationsTable.getSelectedRows();
-        
-        for (int i=selectedRows.length-1; i>=0; i--) {
+
+        for (int i = selectedRows.length - 1; i >= 0; i--) {
             String name = (String) availableModificationsTable.getValueAt(selectedRows[i], 1);
             searchParameters.addExpectedModification(name, name);
             modificationList.add(name);
@@ -502,7 +533,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void removeModificationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeModificationActionPerformed
-        
+
         ArrayList<String> toRemove = new ArrayList<String>();
 
         for (int selectedRow : expectedModificationsTable.getSelectedRows()) {
@@ -734,7 +765,6 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/SearchPreferencesDialog.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_searchPreferencesHelpJButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addModifications;
     private javax.swing.JTable availableModificationsTable;
@@ -745,12 +775,16 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JTextField fileTxt;
     private javax.swing.JTextField fragmentIonToleranceTxt;
     private javax.swing.JLabel helpLineLabel;
+    private javax.swing.JComboBox ion1Cmb;
+    private javax.swing.JComboBox ion2Cmb;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
@@ -841,6 +875,18 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             temp = "";
         }
 
+        temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_ION_TYPE_1);
+
+        if (temp != null && temp.length() > 0) {
+            ion1Cmb.setSelectedItem(temp);
+        }
+
+        temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_ION_TYPE_2);
+
+        if (temp != null && temp.length() > 0) {
+            ion2Cmb.setSelectedItem(temp);
+        }
+
         missedCleavagesTxt.setText(temp.trim());
     }
 
@@ -884,9 +930,41 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         enzymesCmb.setSelectedItem(searchParameters.getEnzyme().getName());
         missedCleavagesTxt.setText(searchParameters.getnMissedCleavages() + "");
-
+        setIons();
         if (searchParameters.getParametersFile() != null) {
             fileTxt.setText(searchParameters.getParametersFile().getAbsolutePath());
+        }
+    }
+    
+    /**
+     * Sets the selected ion types
+     */
+    private void setIons() {
+        if (searchParameters.getIonSearched1() == PeptideFragmentIonType.A_ION) {
+            ion1Cmb.setSelectedItem("a");
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIonType.B_ION) {
+            ion1Cmb.setSelectedItem("b");
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIonType.C_ION) {
+            ion1Cmb.setSelectedItem("c");
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIonType.X_ION) {
+            ion1Cmb.setSelectedItem("x");
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIonType.Y_ION) {
+            ion1Cmb.setSelectedItem("y");
+        } else if (searchParameters.getIonSearched1() == PeptideFragmentIonType.Z_ION) {
+            ion1Cmb.setSelectedItem("z");
+        }
+        if (searchParameters.getIonSearched2() == PeptideFragmentIonType.A_ION) {
+            ion2Cmb.setSelectedItem("a");
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIonType.B_ION) {
+            ion2Cmb.setSelectedItem("b");
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIonType.C_ION) {
+            ion2Cmb.setSelectedItem("c");
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIonType.X_ION) {
+            ion2Cmb.setSelectedItem("x");
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIonType.Y_ION) {
+            ion2Cmb.setSelectedItem("y");
+        } else if (searchParameters.getIonSearched2() == PeptideFragmentIonType.Z_ION) {
+            ion2Cmb.setSelectedItem("z");
         }
     }
 
@@ -901,16 +979,16 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             ObjectInputStream in = new ObjectInputStream(fis);
             HashMap<String, String> modificationProfile = (HashMap<String, String>) in.readObject();
             in.close();
-            
+
             for (String modificationName : modificationProfile.keySet()) {
                 searchParameters.addExpectedModification(modificationName, modificationProfile.get(modificationName));
             }
-            
+
             modificationList = new ArrayList<String>(searchParameters.getModificationProfile().keySet());
             Collections.sort(modificationList);
             profileFile = aFile;
             profileTxt.setText(aFile.getName().substring(0, aFile.getName().lastIndexOf(".")));
-            
+
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
@@ -926,7 +1004,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
             searchParameters.clearModificationProfile();
         }
-        
+
         expectedModificationsTable.revalidate();
         expectedModificationsTable.repaint();
     }
@@ -971,22 +1049,22 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         }
 
         Arrays.sort(allModificationsAsArray);
-        
+
         while (availableModificationsTable.getRowCount() > 0) {
             ((DefaultTableModel) availableModificationsTable.getModel()).removeRow(0);
         }
-        
-        for (int i=0; i<allModificationsAsArray.length; i++) {
+
+        for (int i = 0; i < allModificationsAsArray.length; i++) {
             ((DefaultTableModel) availableModificationsTable.getModel()).addRow(new Object[]{
-                (i + 1),
-                allModificationsAsArray[i]
-            });
+                        (i + 1),
+                        allModificationsAsArray[i]
+                    });
         }
-        
+
         if (availableModificationsTable.getRowCount() > 0) {
             availableModificationsTable.setRowSelectionInterval(0, 0);
         }
-        
+
         repaintTable();
     }
 
@@ -1021,7 +1099,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         @Override
         public Object getValueAt(int row, int column) {
             if (column == 0) {
-                return (row +1);
+                return (row + 1);
             } else if (column == 1) {
                 return modificationList.get(row);
             } else {
@@ -1054,7 +1132,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         @Override
         public boolean isCellEditable(int row, int column) {
-            
+
             if (column == 2) {
                 return true;
             } else {
