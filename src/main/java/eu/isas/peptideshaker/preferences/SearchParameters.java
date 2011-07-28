@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.preferences;
 
 import com.compomics.util.experiment.biology.Enzyme;
+import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -41,13 +42,25 @@ public class SearchParameters implements Serializable {
      * The list of spectrum files
      */
     private ArrayList<String> spectrumFiles = new ArrayList<String>();
-    
+    /**
+     * The first kind of ions searched for (typically a, b or c)
+     */
+    private PeptideFragmentIonType ionSearched1;
+    /**
+     * The second kind of ions searched for (typically x, y or z)
+     */
+    private PeptideFragmentIonType ionSearched2;
+    /**
+     * Convenience Array for ion type selection
+     */
+    private String[] ions = {"a", "b", "c", "x", "y", "z"};
+
     /**
      * Constructor
      */
     public SearchParameters() {
     }
-    
+
     /**
      * Returns a list containing the path of all spectrum files
      * @return a list containing the path of all spectrum files 
@@ -55,7 +68,7 @@ public class SearchParameters implements Serializable {
     public ArrayList<String> getSpectrumFiles() {
         return spectrumFiles;
     }
-    
+
     /**
      * Adds a spectrum file to the list
      * @param spectrumFile a spectrum file
@@ -63,7 +76,7 @@ public class SearchParameters implements Serializable {
     public void addSpectrumFile(String spectrumFile) {
         spectrumFiles.add(spectrumFile);
     }
-    
+
     /**
      * Clears the list of spectrum files
      */
@@ -87,7 +100,7 @@ public class SearchParameters implements Serializable {
     public void addExpectedModification(String modificationName, String modificationFamily) {
         modificationProfile.put(modificationName, modificationFamily);
     }
-    
+
     /**
      * Clears the modification profile
      */
@@ -110,7 +123,6 @@ public class SearchParameters implements Serializable {
     public void setFragmentIonMZTolerance(double fragmentIonMZTolerance) {
         this.fragmentIonMZTolerance = fragmentIonMZTolerance;
     }
-
 
     /**
      * Returns the enzyme used for digestion
@@ -176,4 +188,67 @@ public class SearchParameters implements Serializable {
         this.nMissedCleavages = nMissedCleavages;
     }
 
+    /**
+     * Getter for the first kind of ion searched
+     * @return the first kind of ion searched
+     */
+    public PeptideFragmentIonType getIonSearched1() {
+        return ionSearched1;
+    }
+
+    /**
+     * Setter for the first kind of ion searched
+     * @param ionSearched1 the first kind of ion searched 
+     */
+    public void setIonSearched1(String ionSearched1) {
+        if (ionSearched1.equals("a")) {
+            this.ionSearched1 = PeptideFragmentIonType.A_ION;
+        } else if (ionSearched1.equals("b")) {
+            this.ionSearched1 = PeptideFragmentIonType.B_ION;
+        } else if (ionSearched1.equals("c")) {
+            this.ionSearched1 = PeptideFragmentIonType.C_ION;
+        } else if (ionSearched1.equals("x")) {
+            this.ionSearched1 = PeptideFragmentIonType.X_ION;
+        } else if (ionSearched1.equals("y")) {
+            this.ionSearched1 = PeptideFragmentIonType.Y_ION;
+        } else if (ionSearched1.equals("z")) {
+            this.ionSearched1 = PeptideFragmentIonType.Z_ION;
+        }
+    }
+
+    /**
+     * Getter for the second kind of ion searched
+     * @return the second kind of ion searched
+     */
+    public PeptideFragmentIonType getIonSearched2() {
+        return ionSearched2;
+    }
+
+    /**
+     * Setter for the second kind of ion searched
+     * @param ionSearched1 the second kind of ion searched 
+     */
+    public void setIonSearched2(String ionSearched2) {
+        if (ionSearched2.equals("a")) {
+            this.ionSearched2 = PeptideFragmentIonType.A_ION;
+        } else if (ionSearched2.equals("b")) {
+            this.ionSearched2 = PeptideFragmentIonType.B_ION;
+        } else if (ionSearched2.equals("c")) {
+            this.ionSearched2 = PeptideFragmentIonType.C_ION;
+        } else if (ionSearched2.equals("x")) {
+            this.ionSearched2 = PeptideFragmentIonType.X_ION;
+        } else if (ionSearched2.equals("y")) {
+            this.ionSearched2 = PeptideFragmentIonType.Y_ION;
+        } else if (ionSearched2.equals("z")) {
+            this.ionSearched2 = PeptideFragmentIonType.Z_ION;
+        }
+    }
+
+    /**
+     * Getter for the list of ion symbols used
+     * @return the list of ion symbols used
+     */
+    public String[] getIons() {
+        return ions;
+    }
 }

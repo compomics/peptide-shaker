@@ -1240,6 +1240,19 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 maxPepLengthTxt.setText(temp);
             }
 
+            temp = props.getProperty(IdentificationParametersReader.FRAGMENT_ION_TYPE_1);
+
+            if (temp != null && temp.length() > 0) {
+                searchParameters.setIonSearched1(temp);
+            }
+
+            temp = props.getProperty(IdentificationParametersReader.FRAGMENT_ION_TYPE_2);
+
+            if (temp != null && temp.length() > 0) {
+                searchParameters.setIonSearched2(temp);
+            }
+            
+            
             searchParameters.setParametersFile(searchGUIFile);
             temp = props.getProperty(IdentificationParametersReader.DATABASE_FILE);
 
@@ -1259,6 +1272,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             }
             searchTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
             peptideShakerGUI.setSearchParameters(searchParameters);
+            peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, searchGUIFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);

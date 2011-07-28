@@ -6,7 +6,7 @@ import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
-import com.compomics.util.experiment.identification.SpectrumAnnotator.SpectrumAnnotationMap;
+import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
@@ -14,7 +14,6 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import com.compomics.util.gui.spectrum.DefaultSpectrumAnnotation;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.googlecode.charts4j.Color;
 import com.googlecode.charts4j.Fills;
@@ -23,6 +22,7 @@ import com.googlecode.charts4j.VennDiagram;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import java.awt.Component;
 import java.awt.MediaTracker;
 import java.awt.event.MouseEvent;
@@ -81,9 +81,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private ArrayList<String> mascotTableToolTips;
     /**
-     * The spectrum annotator
+     * The spectrum annotator for search engine specific results
      */
-    private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
+    private SpectrumAnnotator specificAnnotator = new SpectrumAnnotator();
     /**
      * The list of OMSSA peptide keys.
      */
@@ -1371,7 +1371,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             updateSpectrum();
-            
+
             // open protein links in web browser
             int row = omssaTable.rowAtPoint(evt.getPoint());
             int column = omssaTable.columnAtPoint(evt.getPoint());
@@ -1404,7 +1404,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             updateSpectrum();
-            
+
             // open protein links in web browser
             int row = xTandemTable.rowAtPoint(evt.getPoint());
             int column = xTandemTable.columnAtPoint(evt.getPoint());
@@ -1437,7 +1437,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
 
             updateSpectrum();
-            
+
             // open protein links in web browser
             int row = mascotTable.rowAtPoint(evt.getPoint());
             int column = mascotTable.columnAtPoint(evt.getPoint());
@@ -1673,7 +1673,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_mascotTableMouseMoved
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonToggleButton;
     private javax.swing.JToggleButton allToggleButton;
@@ -1852,9 +1851,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             String titleA, String titleB, String titleC) {
 
         double maxValue = Math.max(Math.max(a, b), c);
-        if (maxValue<1) {
+        if (maxValue < 1) {
             maxValue = 1;
-        } 
+        }
 
         // @TODO: move this method to utilities?
 
@@ -2213,6 +2212,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     spectrum.setDeltaMassWindow(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance());
                     spectrum.setBorder(null);
 
+                    AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
 
                     // omssa annotation (if any)
                     if (omssaTable.getSelectedRow() != -1) {
@@ -2238,12 +2238,16 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
-                                currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
-                                currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
+                        annotationPreferences.setCurrentSettings(currentPeptide, currentSpectrum.getPrecursor().getCharge().value);
+                        ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
+                                annotationPreferences.getNeutralLosses(),
+                                annotationPreferences.getValidatedCharges(),
+                                currentSpectrum, currentPeptide,
+                                currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                                annotationPreferences.getMzTolerance());
 
                         // add the spectrum annotations
-                        spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
+                        spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                         spectrum.showAnnotatedPeaksOnly(!allToggleButton.isSelected());
                     }
 
@@ -2271,12 +2275,16 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
-                                currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
-                                currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
+                        annotationPreferences.setCurrentSettings(currentPeptide, currentSpectrum.getPrecursor().getCharge().value);
+                        ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
+                                annotationPreferences.getNeutralLosses(),
+                                annotationPreferences.getValidatedCharges(),
+                                currentSpectrum, currentPeptide,
+                                currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                                annotationPreferences.getMzTolerance());
 
                         // add the spectrum annotations
-                        spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
+                        spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                         spectrum.showAnnotatedPeaksOnly(!allToggleButton.isSelected());
                     }
 
@@ -2304,12 +2312,16 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                             }
                         }
 
-                        SpectrumAnnotationMap annotations = spectrumAnnotator.annotateSpectrum(
-                                currentPeptide, currentSpectrum, peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
-                                currentSpectrum.getIntensityLimit(peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks()));
+                        annotationPreferences.setCurrentSettings(currentPeptide, currentSpectrum.getPrecursor().getCharge().value);
+                        ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
+                                annotationPreferences.getNeutralLosses(),
+                                annotationPreferences.getValidatedCharges(),
+                                currentSpectrum, currentPeptide,
+                                currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                                annotationPreferences.getMzTolerance());
 
                         // add the spectrum annotations
-                        spectrum.setAnnotations(filterAnnotations(spectrumAnnotator.getSpectrumAnnotations(annotations)));
+                        spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                         spectrum.showAnnotatedPeaksOnly(!allToggleButton.isSelected());
                     }
 
@@ -2322,107 +2334,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         spectrumChartPanel.revalidate();
         spectrumChartPanel.repaint();
-    }
-
-    /**
-     * Filters the annotations and returns the annotations matching the currently selected list.
-     *
-     * @param annotations the annotations to be filtered
-     * @return the filtered annotations
-     */
-    private Vector<DefaultSpectrumAnnotation> filterAnnotations(Vector<DefaultSpectrumAnnotation> annotations) {
-
-        return SpectrumPanel.filterAnnotations(annotations, getCurrentFragmentIonTypes(),
-                h2oToggleButton.isSelected(),
-                nh3ToggleButton.isSelected(),
-                oneChargeToggleButton.isSelected(),
-                twoChargesToggleButton.isSelected(),
-                moreThanTwoChargesToggleButton.isSelected());
-    }
-
-    /**
-     * Returns an arraylist of the currently selected fragment ion types.
-     *
-     * @return an arraylist of the currently selected fragment ion types
-     */
-    private ArrayList<PeptideFragmentIonType> getCurrentFragmentIonTypes() {
-
-        ArrayList<PeptideFragmentIonType> fragmentIontypes = new ArrayList<PeptideFragmentIonType>();
-
-        if (aIonToggleButton.isSelected()) {
-            fragmentIontypes.add(PeptideFragmentIonType.A_ION);
-            if (h2oToggleButton.isSelected()) {
-                fragmentIontypes.add(PeptideFragmentIonType.AH2O_ION);
-            }
-            if (nh3ToggleButton.isSelected()) {
-                fragmentIontypes.add(PeptideFragmentIonType.ANH3_ION);
-            }
-        }
-
-        if (bIonToggleButton.isSelected()) {
-            fragmentIontypes.add(PeptideFragmentIonType.B_ION);
-            if (h2oToggleButton.isSelected()) {
-                fragmentIontypes.add(PeptideFragmentIonType.BH2O_ION);
-            }
-            if (nh3ToggleButton.isSelected()) {
-                fragmentIontypes.add(PeptideFragmentIonType.BNH3_ION);
-            }
-        }
-
-        if (cIonToggleButton.isSelected()) {
-            fragmentIontypes.add(PeptideFragmentIonType.C_ION);
-        }
-
-        if (xIonToggleButton.isSelected()) {
-            fragmentIontypes.add(PeptideFragmentIonType.X_ION);
-        }
-
-        if (yIonToggleButton.isSelected()) {
-            fragmentIontypes.add(PeptideFragmentIonType.Y_ION);
-            if (h2oToggleButton.isSelected()) {
-                fragmentIontypes.add(PeptideFragmentIonType.YH2O_ION);
-            }
-            if (nh3ToggleButton.isSelected()) {
-                fragmentIontypes.add(PeptideFragmentIonType.YNH3_ION);
-            }
-        }
-
-        if (zIonToggleButton.isSelected()) {
-            fragmentIontypes.add(PeptideFragmentIonType.Z_ION);
-        }
-
-        if (otherToggleButton.isSelected()) {
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_A);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_C);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_D);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_E);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_F);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_G);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_H);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_I);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_K);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_L);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_M);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_N);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_P);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_Q);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_R);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_S);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_T);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_V);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_W);
-            fragmentIontypes.add(PeptideFragmentIonType.IMMONIUM_Y);
-            fragmentIontypes.add(PeptideFragmentIonType.MH_ION);
-
-            if (h2oToggleButton.isSelected()) {
-                fragmentIontypes.add(PeptideFragmentIonType.MHH2O_ION);
-            }
-            if (nh3ToggleButton.isSelected()) {
-                fragmentIontypes.add(PeptideFragmentIonType.MHNH3_ION);
-            }
-        }
-
-        return fragmentIontypes;
     }
 
     /**

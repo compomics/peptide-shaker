@@ -7,12 +7,16 @@ import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
+import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SequenceDataBase;
+import com.compomics.util.experiment.identification.SpectrumAnnotator;
+import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
+import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
@@ -52,6 +56,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -259,6 +264,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * Boolean indicating whether spectra should be displayed or not
      */
     private boolean displaySpectrum;
+    /**
+     * The spectrum annotator
+     */
+    private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
 
     /**
      * The main method used to start PeptideShaker
@@ -1500,7 +1509,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void errorPlotTypeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_errorPlotTypeCheckBoxMenuItemActionPerformed
         useRelativeError = !errorPlotTypeCheckBoxMenuItem.isSelected();
-        overviewPanel.updateSpectrumAnnotation();
+        overviewPanel.updateSpectrum();
     }//GEN-LAST:event_errorPlotTypeCheckBoxMenuItemActionPerformed
 
     /**
@@ -2151,7 +2160,52 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         searchParameters = new SearchParameters();
         searchParameters.setEnzyme(enzymeFactory.getEnzyme("Trypsin"));
         searchParameters.setFragmentIonMZTolerance(0.5);
+        searchParameters.setIonSearched1("b");
+        searchParameters.setIonSearched2("y");
         loadModificationProfile(profileFile);
+        annotationPreferences.annotateMostIntensePeaks(true);
+        annotationPreferences.useDefaultAnnotation(true);
+        updateAnnotationPreferencesFromSearchSettings();
+    }
+
+    /**
+     * Updates the ions used for fragment annotation
+     */
+    public void updateAnnotationPreferencesFromSearchSettings() {
+        annotationPreferences.clearIonTypes();
+        annotationPreferences.addIonType(searchParameters.getIonSearched1());
+        annotationPreferences.addIonType(searchParameters.getIonSearched2());
+        annotationPreferences.addIonType(PeptideFragmentIonType.PRECURSOR_ION);
+        annotationPreferences.addIonType(PeptideFragmentIonType.IMMONIUM);
+        annotationPreferences.setMzTolerance(searchParameters.getFragmentIonMZTolerance());
+    }
+    
+    /**
+     * Returns the spectrum annotator
+     * @return the spectrum annotator 
+     */
+    public SpectrumAnnotator getSpectrumAnnorator() {
+        return spectrumAnnotator;
+    }
+    
+    /**
+     * Convenience method returning the current annotations without requesting the specification of the spectrum and peptide
+     * @return the current annotations without requesting the specification of the spectrum and peptide
+     * @throws MzMLUnmarshallerException exception thrown whenever an error occurred while reading the mzML file
+     */
+    public ArrayList<IonMatch> getIonsCurrentlyMatched() throws MzMLUnmarshallerException {
+        return spectrumAnnotator.getCurrentAnnotation(annotationPreferences.getIonTypes(), 
+                annotationPreferences.getNeutralLosses(), 
+                annotationPreferences.getValidatedCharges());        
+    }
+    
+    /**
+     * Updates the annotations on all panels
+     */
+    public void updateAnnotations() {
+        overviewPanel.updateSpectrum();
+        ptmPanel.updateSpectra();
+        spectrumIdentificationPanel.updateSpectrum();
     }
 
     /**
@@ -2915,4 +2969,5 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public DecimalFormat getScoreAndConfidenceDecimalFormat() {
         return scoreAndConfidenceDecimalFormat;
     }
+    
 }
