@@ -894,6 +894,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 OpenDialog openDialog = new OpenDialog(this, true);
                 openDialog.setVisible(true);
             }
+        } else {
+            OpenDialog openDialog = new OpenDialog(this, true);
+            openDialog.setVisible(true);
         }
     }//GEN-LAST:event_newJMenuItemActionPerformed
 
