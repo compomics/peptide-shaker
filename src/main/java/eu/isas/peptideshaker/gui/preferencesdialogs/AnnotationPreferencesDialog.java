@@ -276,7 +276,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                         .addGap(99, 99, 99)
                         .addComponent(ch4osBox))
                     .addComponent(sequenceLossCheck))
-                .addContainerGap(193, Short.MAX_VALUE))
+                .addContainerGap(203, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -313,7 +313,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(twoCharges)
                 .addGap(18, 18, 18)
                 .addComponent(moreCharges)
-                .addContainerGap(355, Short.MAX_VALUE))
+                .addContainerGap(365, Short.MAX_VALUE))
         );
         chargePanelLayout.setVerticalGroup(
             chargePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -338,13 +338,11 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(chargePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addContainerGap(301, Short.MAX_VALUE)
-                        .addComponent(allSpectraCheck)))
+                .addContainerGap(305, Short.MAX_VALUE)
+                .addComponent(allSpectraCheck)
                 .addContainerGap())
+            .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(chargePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
