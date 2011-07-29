@@ -32,6 +32,7 @@ import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.OverviewPanel;
 import eu.isas.peptideshaker.gui.tabpanels.ProteinStructurePanel;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
+import eu.isas.peptideshaker.gui.tabpanels.QCPanel;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -245,6 +246,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private ProteinStructurePanel proteinStructurePanel;
     /**
+     * The QC panel
+     */
+    private QCPanel qcPanel;
+    /**
      * The sequence database used for identification
      */
     private SequenceDataBase sequenceDataBase;
@@ -309,7 +314,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPanel = new AnnotationPanel(this);
 
         initComponents();
-        
+
         setUpPanels(true);
         repaintPanels();
 
@@ -400,6 +405,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         proteinStructureJPanel = new javax.swing.JPanel();
         annotationsJPanel = new javax.swing.JPanel();
         statsJPanel = new javax.swing.JPanel();
+        qcJPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
@@ -498,6 +504,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         statsJPanel.setOpaque(false);
         statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
         allTabsJTabbedPane.addTab("Validation", statsJPanel);
+
+        qcJPanel.setLayout(new javax.swing.BoxLayout(qcJPanel, javax.swing.BoxLayout.LINE_AXIS));
+        allTabsJTabbedPane.addTab("QC Plots", qcJPanel);
 
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
@@ -1959,6 +1968,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         proteinStructurePanel.displayResults();
 
                         progressDialog.setValue(++counter);
+                        
+                        qcPanel.displayResults();
+                        progressDialog.setValue(++counter);
+                        
+                        
                     } catch (MzMLUnmarshallerException e) {
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML Problem", JOptionPane.ERROR_MESSAGE);
@@ -2043,6 +2057,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JPanel proteinStructureJPanel;
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
     private javax.swing.JPanel ptmJPanel;
+    private javax.swing.JPanel qcJPanel;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JCheckBoxMenuItem scoresJCheckBoxMenuItem;
     private javax.swing.JMenuItem searchParametersMenu;
@@ -2206,7 +2221,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPreferences.addIonType(PeptideFragmentIonType.IMMONIUM);
         annotationPreferences.setMzTolerance(searchParameters.getFragmentIonMZTolerance());
     }
-    
+
     /**
      * Returns the spectrum annotator
      * @return the spectrum annotator 
@@ -2214,18 +2229,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public SpectrumAnnotator getSpectrumAnnorator() {
         return spectrumAnnotator;
     }
-    
+
     /**
      * Convenience method returning the current annotations without requesting the specification of the spectrum and peptide
      * @return the current annotations without requesting the specification of the spectrum and peptide
      * @throws MzMLUnmarshallerException exception thrown whenever an error occurred while reading the mzML file
      */
     public ArrayList<IonMatch> getIonsCurrentlyMatched() throws MzMLUnmarshallerException {
-        return spectrumAnnotator.getCurrentAnnotation(annotationPreferences.getIonTypes(), 
-                annotationPreferences.getNeutralLosses(), 
-                annotationPreferences.getValidatedCharges());        
+        return spectrumAnnotator.getCurrentAnnotation(annotationPreferences.getIonTypes(),
+                annotationPreferences.getNeutralLosses(),
+                annotationPreferences.getValidatedCharges());
     }
-    
+
     /**
      * Updates the annotations on all panels
      */
@@ -2342,7 +2357,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public AnnotationPreferences getAnnotationPreferences() {
         return annotationPreferences;
     }
-    
+
     /**
      * Returns the spectrum counting preferences
      * @return the spectrum counting preferences 
@@ -2350,7 +2365,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public SpectrumCountingPreferences getSpectrumCountingPreferences() {
         return spectrumCountingPreferences;
     }
-    
+
     /**
      * Sets new spectrum counting preferences
      * @param spectrumCountingPreferences new spectrum counting preferences
@@ -2794,6 +2809,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
         proteinStructurePanel = new ProteinStructurePanel(this);
         annotationPanel = new AnnotationPanel(this);
+        qcPanel = new QCPanel(this);
 
         overviewJPanel.removeAll();
         overviewJPanel.add(overviewPanel);
@@ -2810,6 +2826,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationsJPanel.removeAll();
         annotationsJPanel.add(annotationPanel);
 
+        qcJPanel.removeAll();
+        qcJPanel.add(qcPanel);
+        
         // hide/show the score columns
         scoresJCheckBoxMenuItemActionPerformed(null);
     }
@@ -2844,6 +2863,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         annotationsJPanel.revalidate();
         annotationsJPanel.repaint();
+        
+        qcPanel.revalidate();
+        qcPanel.repaint();
+        
     }
 
     /**
@@ -3023,14 +3046,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         Enzyme enyzme = searchParameters.getEnzyme();
         PSParameter pSParameter = new PSParameter();
         Protein currentProtein = null;
-        for (String proteinAccession : proteinMatch.getTheoreticProteinsAccessions()) {
-            currentProtein = sequenceDataBase.getProtein(proteinAccession);
-            if (currentProtein != null) {
-                break;
-            }
-            if (currentProtein == null) {
-                return 0;
-            }
+        currentProtein = sequenceDataBase.getProtein(proteinMatch.getMainMatch().getAccession());
+        if (currentProtein == null) {
+            return 0;
         }
         if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.NSAF) {
             if (spectrumCountingPreferences.isValidatedHits()) {
@@ -3062,5 +3080,4 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             return result = Math.pow(10, result / currentProtein.getNPossiblePeptides(enyzme)) - 1;
         }
     }
-    
 }

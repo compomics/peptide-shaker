@@ -10,6 +10,28 @@
  */
 package eu.isas.peptideshaker.gui.tabpanels;
 
+import com.compomics.util.experiment.biology.Enzyme;
+import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
+import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
+import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.myparameters.PSParameter;
+import java.awt.Color;
+import java.util.ArrayList;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.data.statistics.HistogramDataset;
+import org.jfree.data.statistics.HistogramType;
+import org.jfree.data.xy.DefaultIntervalXYDataset;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
+
 /**
  * This panel will display QC statistics for the current project
  *
@@ -17,9 +39,49 @@ package eu.isas.peptideshaker.gui.tabpanels;
  */
 public class QCPanel extends javax.swing.JPanel {
 
+    /**
+     * The main peptide shaker gui.
+     */
+    private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The protein qc plot.
+     */
+    private XYPlot proteinQCPlot = new XYPlot();
+    /**
+     * The peptide qc plot.
+     */
+    private XYPlot peptideQCPlot = new XYPlot();
+    /**
+     * The PSM qc plot.
+     */
+    private XYPlot psmQCPlot = new XYPlot();
+    /**
+     * color for the plots (validated targets, validated decoy, non validated target, non validated decoy)
+     */
+    public static final Color[] histogramColors = {Color.GREEN, Color.RED, Color.YELLOW, Color.GRAY};
+
     /** Creates new form QCPanel */
-    public QCPanel() {
+    public QCPanel(PeptideShakerGUI parent) {
+        this.peptideShakerGUI = parent;
         initComponents();
+
+        // Initialize protein QC plot
+        NumberAxis proteinYAxis = new NumberAxis("Amount of proteins");
+        NumberAxis proteinMetricAxis = new NumberAxis("protein metric");
+        proteinQCPlot.setDomainAxis(proteinMetricAxis);
+        proteinQCPlot.setRangeAxis(0, proteinYAxis);
+
+        // Initialize peptide QC plot
+        NumberAxis peptideYAxis = new NumberAxis("Amount of peptides");
+        NumberAxis peptideMetricAxis = new NumberAxis("peptide metric");
+        peptideQCPlot.setDomainAxis(peptideMetricAxis);
+        peptideQCPlot.setRangeAxis(0, peptideYAxis);
+
+        // Initialize psm QC plot
+        NumberAxis psmYAxis = new NumberAxis("Amount of PSMs");
+        NumberAxis psmMetricAxis = new NumberAxis("PSM metric");
+        psmQCPlot.setDomainAxis(psmMetricAxis);
+        psmQCPlot.setRangeAxis(0, psmYAxis);
     }
 
     /** This method is called from within the constructor to
@@ -31,17 +93,887 @@ public class QCPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jPanel1 = new javax.swing.JPanel();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        proteinMetricCmb = new javax.swing.JComboBox();
+        proteinQCPlotPanel = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        peptideMetricCmb = new javax.swing.JComboBox();
+        peptideQCPlotPanel = new javax.swing.JPanel();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
+        psmMetricCmb = new javax.swing.JComboBox();
+        psmQCPlotPanel = new javax.swing.JPanel();
+
+        jLabel1.setText("Metric of interest:");
+
+        proteinMetricCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Number of validated peptides", "Spectrum counting score", "Sequence coverage" }));
+        proteinMetricCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proteinMetricCmbActionPerformed(evt);
+            }
+        });
+
+        proteinQCPlotPanel.setLayout(new javax.swing.BoxLayout(proteinQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(proteinQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 681, Short.MAX_VALUE)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(proteinMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(proteinMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(proteinQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Proteins", jPanel2);
+
+        jLabel2.setText("Metric of interest:");
+
+        peptideMetricCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated PSMs", "Missed Cleavages" }));
+        peptideMetricCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptideMetricCmbActionPerformed(evt);
+            }
+        });
+
+        peptideQCPlotPanel.setLayout(new javax.swing.BoxLayout(peptideQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(peptideQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 681, Short.MAX_VALUE)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(peptideMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(peptideMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(peptideQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("Peptides", jPanel3);
+
+        jLabel3.setText("Metric of interest:");
+
+        psmMetricCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Precursor mass deviation", "Precursor charge" }));
+        psmMetricCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                psmMetricCmbActionPerformed(evt);
+            }
+        });
+
+        psmQCPlotPanel.setLayout(new javax.swing.BoxLayout(psmQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(psmQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 681, Short.MAX_VALUE)
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(psmMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(psmMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(psmQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jTabbedPane1.addTab("PSMs", jPanel4);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 706, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 625, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    private void proteinMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinMetricCmbActionPerformed
+        updateProteinQCPlot();
+    }//GEN-LAST:event_proteinMetricCmbActionPerformed
+
+    private void peptideMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideMetricCmbActionPerformed
+        updatePeptideQCPlot();
+    }//GEN-LAST:event_peptideMetricCmbActionPerformed
+
+    private void psmMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmMetricCmbActionPerformed
+        updatePsmQCPlot();
+    }//GEN-LAST:event_psmMetricCmbActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JComboBox peptideMetricCmb;
+    private javax.swing.JPanel peptideQCPlotPanel;
+    private javax.swing.JComboBox proteinMetricCmb;
+    private javax.swing.JPanel proteinQCPlotPanel;
+    private javax.swing.JComboBox psmMetricCmb;
+    private javax.swing.JPanel psmQCPlotPanel;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * This method displays results on the panel
+     */
+    public void displayResults() {
+        updateProteinQCPlot();
+        updatePeptideQCPlot();
+        updatePsmQCPlot();
+    }
+
+    /**
+     * Updates the protein QC plot
+     */
+    private void updateProteinQCPlot() {
+        if (proteinMetricCmb.getSelectedIndex() == 0) {
+            proteinQCPlot.getDomainAxis().setLabel("Number of validated peptides");
+        } else if (proteinMetricCmb.getSelectedIndex() == 1) {
+            proteinQCPlot.getDomainAxis().setLabel("Spectrum couting");
+        } else if (proteinMetricCmb.getSelectedIndex() == 2) {
+            proteinQCPlot.getDomainAxis().setLabel("Sequence coverage");
+        }
+
+        HistogramInput input = getProteinDataset();
+
+        DefaultIntervalXYDataset validated = new DefaultIntervalXYDataset();
+        validated.addSeries("Validated Target Proteins", input.getValidated());
+        proteinQCPlot.setDataset(0, validated);
+        XYBarRenderer validatedRenderer = new XYBarRenderer();
+        validatedRenderer.setShadowVisible(false);
+        validatedRenderer.setSeriesPaint(0, histogramColors[0]);
+        validatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        proteinQCPlot.setRenderer(0, validatedRenderer);
+
+        DefaultIntervalXYDataset decoyValidated = new DefaultIntervalXYDataset();
+        decoyValidated.addSeries("Validated Decoy Proteins", input.getDecoyValidated());
+        proteinQCPlot.setDataset(1, decoyValidated);
+        XYBarRenderer decoyValidatedRenderer = new XYBarRenderer();
+        decoyValidatedRenderer.setShadowVisible(false);
+        decoyValidatedRenderer.setSeriesPaint(0, histogramColors[1]);
+        decoyValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        proteinQCPlot.setRenderer(1, decoyValidatedRenderer);
+
+        DefaultIntervalXYDataset nonValidated = new DefaultIntervalXYDataset();
+        nonValidated.addSeries("Non-Validated Target Proteins", input.getNonValidated());
+        proteinQCPlot.setDataset(2, nonValidated);
+        XYBarRenderer nonValidatedRenderer = new XYBarRenderer();
+        nonValidatedRenderer.setShadowVisible(false);
+        nonValidatedRenderer.setSeriesPaint(0, histogramColors[2]);
+        nonValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        proteinQCPlot.setRenderer(2, nonValidatedRenderer);
+
+        DefaultIntervalXYDataset nonValidatedDecoy = new DefaultIntervalXYDataset();
+        nonValidatedDecoy.addSeries("Non-Validated Decoy Proteins", input.getDecoyNonValidated());
+        proteinQCPlot.setDataset(3, nonValidatedDecoy);
+        XYBarRenderer nonValidatedDecoyRenderer = new XYBarRenderer();
+        nonValidatedDecoyRenderer.setShadowVisible(false);
+        nonValidatedDecoyRenderer.setSeriesPaint(0, histogramColors[3]);
+        nonValidatedDecoyRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        proteinQCPlot.setRenderer(3, nonValidatedDecoyRenderer);
+
+
+        JFreeChart proteinChart = new JFreeChart(proteinQCPlot);
+        ChartPanel chartPanel = new ChartPanel(proteinChart);
+        proteinChart.setTitle("Protein QC Plot");
+
+        // set background color
+        proteinChart.getPlot().setBackgroundPaint(Color.WHITE);
+        proteinChart.setBackgroundPaint(Color.WHITE);
+        chartPanel.setBackground(Color.WHITE);
+
+        proteinQCPlotPanel.removeAll();
+        proteinQCPlotPanel.add(chartPanel);
+        proteinQCPlotPanel.revalidate();
+        proteinQCPlotPanel.repaint();
+
+    }
+
+    /**
+     * Updates the peptide QC plot
+     */
+    private void updatePeptideQCPlot() {
+        if (peptideMetricCmb.getSelectedIndex() == 0) {
+            peptideQCPlot.getDomainAxis().setLabel("Number of validated PSMs");
+        } else if (peptideMetricCmb.getSelectedIndex() == 1) {
+            peptideQCPlot.getDomainAxis().setLabel("Missed Cleavages");
+        }
+
+        HistogramInput input = getPeptideDataset();
+
+        DefaultIntervalXYDataset validated = new DefaultIntervalXYDataset();
+        validated.addSeries("Validated Target Peptides", input.getValidated());
+        peptideQCPlot.setDataset(0, validated);
+        XYBarRenderer validatedRenderer = new XYBarRenderer();
+        validatedRenderer.setShadowVisible(false);
+        validatedRenderer.setSeriesPaint(0, histogramColors[0]);
+        validatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        peptideQCPlot.setRenderer(0, validatedRenderer);
+
+        DefaultIntervalXYDataset decoyValidated = new DefaultIntervalXYDataset();
+        decoyValidated.addSeries("Validated Decoy Peptides", input.getDecoyValidated());
+        peptideQCPlot.setDataset(1, decoyValidated);
+        XYBarRenderer decoyValidatedRenderer = new XYBarRenderer();
+        decoyValidatedRenderer.setShadowVisible(false);
+        decoyValidatedRenderer.setSeriesPaint(0, histogramColors[1]);
+        decoyValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        peptideQCPlot.setRenderer(1, decoyValidatedRenderer);
+
+        DefaultIntervalXYDataset nonValidated = new DefaultIntervalXYDataset();
+        nonValidated.addSeries("Non-Validated Target Peptides", input.getNonValidated());
+        peptideQCPlot.setDataset(2, nonValidated);
+        XYBarRenderer nonValidatedRenderer = new XYBarRenderer();
+        nonValidatedRenderer.setShadowVisible(false);
+        nonValidatedRenderer.setSeriesPaint(0, histogramColors[2]);
+        nonValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        peptideQCPlot.setRenderer(2, nonValidatedRenderer);
+
+        DefaultIntervalXYDataset nonValidatedDecoy = new DefaultIntervalXYDataset();
+        nonValidatedDecoy.addSeries("Non-Validated Decoy Peptides", input.getDecoyNonValidated());
+        peptideQCPlot.setDataset(3, nonValidatedDecoy);
+        XYBarRenderer nonValidatedDecoyRenderer = new XYBarRenderer();
+        nonValidatedDecoyRenderer.setShadowVisible(false);
+        nonValidatedDecoyRenderer.setSeriesPaint(0, histogramColors[3]);
+        nonValidatedDecoyRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        peptideQCPlot.setRenderer(3, nonValidatedDecoyRenderer);
+
+
+        JFreeChart proteinChart = new JFreeChart(peptideQCPlot);
+        ChartPanel chartPanel = new ChartPanel(proteinChart);
+        proteinChart.setTitle("Peptides QC Plot");
+
+        // set background color
+        proteinChart.getPlot().setBackgroundPaint(Color.WHITE);
+        proteinChart.setBackgroundPaint(Color.WHITE);
+        chartPanel.setBackground(Color.WHITE);
+
+        peptideQCPlotPanel.removeAll();
+        peptideQCPlotPanel.add(chartPanel);
+        peptideQCPlotPanel.revalidate();
+        peptideQCPlotPanel.repaint();
+    }
+
+    /**
+     * Updates the PSM QC plot
+     */
+    private void updatePsmQCPlot() {
+        if (psmMetricCmb.getSelectedIndex() == 0) {
+            psmQCPlot.getDomainAxis().setLabel("Precursor Mass Error");
+        } else if (psmMetricCmb.getSelectedIndex() == 1) {
+            psmQCPlot.getDomainAxis().setLabel("Precursor Charge");
+        }
+
+        HistogramInput input = getPsmDataset();
+
+        DefaultIntervalXYDataset validated = new DefaultIntervalXYDataset();
+        validated.addSeries("Validated Target PSMs", input.getValidated());
+        psmQCPlot.setDataset(0, validated);
+        XYBarRenderer validatedRenderer = new XYBarRenderer();
+        validatedRenderer.setShadowVisible(false);
+        validatedRenderer.setSeriesPaint(0, histogramColors[0]);
+        validatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        psmQCPlot.setRenderer(0, validatedRenderer);
+
+        DefaultIntervalXYDataset decoyValidated = new DefaultIntervalXYDataset();
+        decoyValidated.addSeries("Validated Decoy PSMs", input.getDecoyValidated());
+        psmQCPlot.setDataset(1, decoyValidated);
+        XYBarRenderer decoyValidatedRenderer = new XYBarRenderer();
+        decoyValidatedRenderer.setShadowVisible(false);
+        decoyValidatedRenderer.setSeriesPaint(0, histogramColors[1]);
+        decoyValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        psmQCPlot.setRenderer(1, decoyValidatedRenderer);
+
+        DefaultIntervalXYDataset nonValidated = new DefaultIntervalXYDataset();
+        nonValidated.addSeries("Non-Validated Target PSMs", input.getNonValidated());
+        psmQCPlot.setDataset(2, nonValidated);
+        XYBarRenderer nonValidatedRenderer = new XYBarRenderer();
+        nonValidatedRenderer.setShadowVisible(false);
+        nonValidatedRenderer.setSeriesPaint(0, histogramColors[2]);
+        nonValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        psmQCPlot.setRenderer(2, nonValidatedRenderer);
+
+        DefaultIntervalXYDataset nonValidatedDecoy = new DefaultIntervalXYDataset();
+        nonValidatedDecoy.addSeries("Non-Validated Decoy PSMs", input.getDecoyNonValidated());
+        psmQCPlot.setDataset(3, nonValidatedDecoy);
+        XYBarRenderer nonValidatedDecoyRenderer = new XYBarRenderer();
+        nonValidatedDecoyRenderer.setShadowVisible(false);
+        nonValidatedDecoyRenderer.setSeriesPaint(0, histogramColors[3]);
+        nonValidatedDecoyRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+        psmQCPlot.setRenderer(3, nonValidatedDecoyRenderer);
+
+
+        JFreeChart proteinChart = new JFreeChart(psmQCPlot);
+        ChartPanel chartPanel = new ChartPanel(proteinChart);
+        proteinChart.setTitle("PSMs QC Plot");
+
+        // set background color
+        proteinChart.getPlot().setBackgroundPaint(Color.WHITE);
+        proteinChart.setBackgroundPaint(Color.WHITE);
+        chartPanel.setBackground(Color.WHITE);
+
+        psmQCPlotPanel.removeAll();
+        psmQCPlotPanel.add(chartPanel);
+        psmQCPlotPanel.revalidate();
+        psmQCPlotPanel.repaint();
+    }
+
+    /**
+     * Returns the dataset to use for the protein QC plot
+     */
+    private HistogramInput getProteinDataset() {
+        HistogramInput histogramInput = new HistogramInput();
+        PSParameter psParameter = new PSParameter();
+        double value, min = -1, max = -1;
+        if (proteinMetricCmb.getSelectedIndex() == 0) {
+            // Values for the number of validated peptides
+            ArrayList<Double> validatedValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+            min = 0;
+            for (ProteinMatch proteinMatch : peptideShakerGUI.getIdentification().getProteinIdentification().values()) {
+                value = 0;
+                for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
+                    psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+                    if (psParameter.isValidated()) {
+                        value = value + 1;
+                    }
+                }
+                if (value > max || max == -1) {
+                    max = value;
+                }
+                psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+                if (!proteinMatch.isDecoy()) {
+                    if (psParameter.isValidated()) {
+                        validatedValues.add(value);
+                    } else {
+                        nonValidatedValues.add(value);
+                    }
+                } else {
+                    if (psParameter.isValidated()) {
+                        validatedDecoyValues.add(value);
+                    } else {
+                        nonValidatedDecoyValues.add(value);
+                    }
+                }
+            }
+            int maxBin = (int) max + 1;
+            ArrayList<Double> bins = new ArrayList<Double>();
+            for (int i = 0; i < maxBin; i++) {
+                bins.add((double) i);
+            }
+            histogramInput.setBins(bins);
+            histogramInput.setValidatedValues(validatedValues);
+            histogramInput.setNonValidatedValues(nonValidatedValues);
+            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+        } else if (proteinMetricCmb.getSelectedIndex() == 1) {
+            // Values for the spectrum counting
+            ArrayList<Double> validatedValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+            for (ProteinMatch proteinMatch : peptideShakerGUI.getIdentification().getProteinIdentification().values()) {
+                value = peptideShakerGUI.getSpectrumCount(proteinMatch);
+                if (value > 0) {
+                    if (value < min || min == -1) {
+                        min = value;
+                    }
+                    if (value > max || max == -1) {
+                        max = value;
+                    }
+                }
+                psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+                if (!proteinMatch.isDecoy()) {
+                    if (psParameter.isValidated()) {
+                        validatedValues.add(value);
+                    } else {
+                        nonValidatedValues.add(value);
+                    }
+                } else {
+                    if (psParameter.isValidated()) {
+                        validatedDecoyValues.add(value);
+                    } else {
+                        nonValidatedDecoyValues.add(value);
+                    }
+                }
+            }
+            int binMin = (int) Math.log10(min) - 1;
+            int binMax = (int) Math.log10(max) + 1;
+            ArrayList<Double> bins = new ArrayList<Double>();
+            for (int i = binMin; i <= binMax; i++) {
+                bins.add(Math.pow(10, i));
+            }
+            bins.add(0.0);
+            histogramInput.setBins(bins);
+            histogramInput.setValidatedValues(validatedValues);
+            histogramInput.setNonValidatedValues(nonValidatedValues);
+            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+        } else if (proteinMetricCmb.getSelectedIndex() == 2) {
+            // Values for the sequence coverage
+            ArrayList<Double> validatedValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+            Protein currentProtein;
+            min = 0;
+            for (ProteinMatch proteinMatch : peptideShakerGUI.getIdentification().getProteinIdentification().values()) {
+                currentProtein = peptideShakerGUI.getSequenceDataBase().getProtein(proteinMatch.getMainMatch().getAccession());
+                value = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
+                if (value > max || max == -1) {
+                    max = value;
+                }
+                psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+                if (!proteinMatch.isDecoy()) {
+                    if (psParameter.isValidated()) {
+                        validatedValues.add(value);
+                    } else {
+                        nonValidatedValues.add(value);
+                    }
+                } else {
+                    if (psParameter.isValidated()) {
+                        validatedDecoyValues.add(value);
+                    } else {
+                        nonValidatedDecoyValues.add(value);
+                    }
+                }
+            }
+            int maxBin = (int) max + 1;
+            ArrayList<Double> bins = new ArrayList<Double>();
+            for (int i = 0; i < maxBin; i++) {
+                bins.add((double) i);
+            }
+            histogramInput.setBins(bins);
+            histogramInput.setValidatedValues(validatedValues);
+            histogramInput.setNonValidatedValues(nonValidatedValues);
+            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+        }
+        return histogramInput;
+    }
+
+    /**
+     * Returns the dataset to use for the peptide QC plot
+     */
+    private HistogramInput getPeptideDataset() {
+        HistogramInput histogramInput = new HistogramInput();
+        PSParameter psParameter = new PSParameter();
+        double value, min = -1, max = -1;
+        if (peptideMetricCmb.getSelectedIndex() == 0) {
+            // Values for the number of validated PSMs
+            ArrayList<Double> validatedValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+            min = 0;
+            for (PeptideMatch peptideMatch : peptideShakerGUI.getIdentification().getPeptideIdentification().values()) {
+                value = 0;
+                for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
+                    psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
+                    if (psParameter.isValidated()) {
+                        value = value + 1;
+                    }
+                }
+                if (value > max || max == -1) {
+                    max = value;
+                }
+                psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+                if (!peptideMatch.isDecoy()) {
+                    if (psParameter.isValidated()) {
+                        validatedValues.add(value);
+                    } else {
+                        nonValidatedValues.add(value);
+                    }
+                } else {
+                    if (psParameter.isValidated()) {
+                        validatedDecoyValues.add(value);
+                    } else {
+                        nonValidatedDecoyValues.add(value);
+                    }
+                }
+            }
+            int maxBin = (int) max + 1;
+            ArrayList<Double> bins = new ArrayList<Double>();
+            for (int i = 0; i < maxBin; i++) {
+                bins.add((double) i);
+            }
+            histogramInput.setBins(bins);
+            histogramInput.setValidatedValues(validatedValues);
+            histogramInput.setNonValidatedValues(nonValidatedValues);
+            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+        } else if (peptideMetricCmb.getSelectedIndex() == 1) {
+            // Values for the missed cleavages
+            ArrayList<Double> validatedValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+            Enzyme enzyme = peptideShakerGUI.getSearchParameters().getEnzyme();
+            for (PeptideMatch peptideMatch : peptideShakerGUI.getIdentification().getPeptideIdentification().values()) {
+                value = peptideMatch.getTheoreticPeptide().getNMissedCleavages(enzyme);
+                if (value > 0) {
+                    if (value < min || min == -1) {
+                        min = value;
+                    }
+                    if (value > max || max == -1) {
+                        max = value;
+                    }
+                }
+                psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+                if (!peptideMatch.isDecoy()) {
+                    if (psParameter.isValidated()) {
+                        validatedValues.add(value);
+                    } else {
+                        nonValidatedValues.add(value);
+                    }
+                } else {
+                    if (psParameter.isValidated()) {
+                        validatedDecoyValues.add(value);
+                    } else {
+                        nonValidatedDecoyValues.add(value);
+                    }
+                }
+            }
+            int maxBin = (int) max + 1;
+            ArrayList<Double> bins = new ArrayList<Double>();
+            for (int i = 0; i < maxBin; i++) {
+                bins.add((double) i);
+            }
+            histogramInput.setBins(bins);
+            histogramInput.setValidatedValues(validatedValues);
+            histogramInput.setNonValidatedValues(nonValidatedValues);
+            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+        }
+        return histogramInput;
+    }
+
+    /**
+     * Returns the dataset to use for the PSM QC plot
+     */
+    private HistogramInput getPsmDataset() {
+        HistogramInput histogramInput = new HistogramInput();
+        PSParameter psParameter = new PSParameter();
+        double value, min = -1, max = -1;
+        if (psmMetricCmb.getSelectedIndex() == 0) {
+            // Values for the precursor mass deviation
+            ArrayList<Double> validatedValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+            min = 0;
+            for (SpectrumMatch spectrumMatch : peptideShakerGUI.getIdentification().getSpectrumIdentification().values()) {
+                value = spectrumMatch.getBestAssumption().getDeltaMass();
+                if (value > max || max == -1) {
+                    max = value;
+                }
+                psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
+                if (!spectrumMatch.getBestAssumption().isDecoy()) {
+                    if (psParameter.isValidated()) {
+                        validatedValues.add(value);
+                    } else {
+                        nonValidatedValues.add(value);
+                    }
+                } else {
+                    if (psParameter.isValidated()) {
+                        validatedDecoyValues.add(value);
+                    } else {
+                        nonValidatedDecoyValues.add(value);
+                    }
+                }
+            }
+            int maxBin = (int) max + 1;
+            ArrayList<Double> bins = new ArrayList<Double>();
+            for (int i = 0; i < maxBin; i++) {
+                bins.add((double) i);
+            }
+            histogramInput.setBins(bins);
+            histogramInput.setValidatedValues(validatedValues);
+            histogramInput.setNonValidatedValues(nonValidatedValues);
+            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+        } else if (psmMetricCmb.getSelectedIndex() == 1) {
+            // Values for the precursor charge
+            ArrayList<Double> validatedValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+            SpectrumCollection spectrumCollection = peptideShakerGUI.getSpectrumCollection();
+            for (SpectrumMatch spectrumMatch : peptideShakerGUI.getIdentification().getSpectrumIdentification().values()) {
+                try {
+                    value = ((MSnSpectrum) spectrumCollection.getSpectrum(spectrumMatch.getKey())).getPrecursor().getCharge().value;
+                } catch (MzMLUnmarshallerException e) {
+                    value = 0;
+                }
+                if (value < min || min == -1) {
+                    min = value;
+                }
+                if (value > max || max == -1) {
+                    max = value;
+                }
+                psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
+                if (!spectrumMatch.getBestAssumption().isDecoy()) {
+                    if (psParameter.isValidated()) {
+                        validatedValues.add(value);
+                    } else {
+                        nonValidatedValues.add(value);
+                    }
+                } else {
+                    if (psParameter.isValidated()) {
+                        validatedDecoyValues.add(value);
+                    } else {
+                        nonValidatedDecoyValues.add(value);
+                    }
+                }
+            }
+            int maxBin = (int) max + 1;
+            ArrayList<Double> bins = new ArrayList<Double>();
+            for (int i = (int) min; i < maxBin; i++) { 
+                bins.add((double) i);
+            }
+            histogramInput.setBins(bins);
+            histogramInput.setValidatedValues(validatedValues);
+            histogramInput.setNonValidatedValues(nonValidatedValues);
+            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+        }
+        return histogramInput;
+    }
+
+    /**
+     * This class hides the various data structures necessary for a histogram
+     */
+    private class HistogramInput {
+
+        /**
+         * The bins of the histogram
+         */
+        private ArrayList<Double> bins;
+        /**
+         * values of the validated target hits
+         */
+        private ArrayList<Double> validatedValues;
+        /**
+         * values of the non validated target hits
+         */
+        private ArrayList<Double> nonValidatedValues;
+        /**
+         * values of the validated decoy hits
+         */
+        private ArrayList<Double> validatedDecoyValues;
+        /**
+         * values of the non validated decoy hits
+         */
+        private ArrayList<Double> nonValidatedDecoyValues;
+
+        /**
+         * Constructor
+         */
+        public HistogramInput() {
+        }
+
+        /**
+         * Sets the bins to be used for the histogram
+         * @param bins the bins to be used for the histogram
+         */
+        public void setBins(ArrayList<Double> bins) {
+            this.bins = bins;
+        }
+
+        /**
+         * Sets the non validated decoy values
+         * @param nonValidatedDecoyValues the non validated decoy values
+         */
+        public void setNonValidatedDecoyValues(ArrayList<Double> nonValidatedDecoyValues) {
+            this.nonValidatedDecoyValues = nonValidatedDecoyValues;
+        }
+
+        /**
+         * Sets the non validated target values
+         * @param nonValidatedValues the non validated target values
+         */
+        public void setNonValidatedValues(ArrayList<Double> nonValidatedValues) {
+            this.nonValidatedValues = nonValidatedValues;
+        }
+
+        /**
+         * Sets the validated decoy values
+         * @param validatedDecoyValues  the validated decoy values
+         */
+        public void setValidatedDecoyValues(ArrayList<Double> validatedDecoyValues) {
+            this.validatedDecoyValues = validatedDecoyValues;
+        }
+
+        /**
+         * Sets the validated Target values
+         * @param validatedValues 
+         */
+        public void setValidatedValues(ArrayList<Double> validatedValues) {
+            this.validatedValues = validatedValues;
+        }
+
+        /**
+         * Return a jfreechart compatible double[][] containing the validated target frequencies
+         * @return the validated target frequencies
+         */
+        public double[][] getValidated() {
+            double[] begin = new double[bins.size() - 1];
+            double[] bin = new double[bins.size() - 1];
+            double[] end = new double[bins.size() - 1];
+            for (int i = 0; i < bins.size() - 1; i++) {
+                begin[i] = bins.get(i);
+                bin[i] = bins.get(i) + (bins.get(i + 1) - bins.get(i)) / 6;
+                end[i] = bins.get(i) + (bins.get(i + 1) - bins.get(i)) / 3;
+            }
+            double[] result = new double[bins.size() - 1];
+            for (double value : validatedValues) {
+                for (int i = 1; i < bins.size(); i++) {
+                    if (value < bins.get(i)) {
+                        result[i - 1] = result[i - 1] + 1;
+                        break;
+                    }
+                }
+            }
+            return new double[][]{bin, begin, end, result, result, result};
+        }
+
+        /**
+         * Return a jfreechart compatible double[][] containing the non validated target frequencies
+         * @return the non validated target frequencies
+         */
+        public double[][] getNonValidated() {
+            double[] begin = new double[bins.size() - 1];
+            double[] bin = new double[bins.size() - 1];
+            double[] end = new double[bins.size() - 1];
+            for (int i = 0; i < bins.size() - 1; i++) {
+                begin[i] = bins.get(i) + (bins.get(i + 1) - bins.get(i)) / 2;
+                bin[i] = bins.get(i) + 2 * (bins.get(i + 1) - bins.get(i)) / 3;
+                end[i] = bins.get(i) + 5 * (bins.get(i + 1) - bins.get(i)) / 6;
+            }
+            double[] result = new double[bins.size() - 1];
+            for (double value : nonValidatedValues) {
+                for (int i = 1; i < bins.size(); i++) {
+                    if (value < bins.get(i)) {
+                        result[i - 1] = result[i - 1] + 1;
+                        break;
+                    }
+                }
+            }
+            return new double[][]{bin, begin, end, result, result, result};
+        }
+
+        /**
+         * Return a jfreechart compatible double[][] containing the validated decoy frequencies
+         * @return the validated decoy frequencies
+         */
+        public double[][] getDecoyValidated() {
+            double[] begin = new double[bins.size() - 1];
+            double[] bin = new double[bins.size() - 1];
+            double[] end = new double[bins.size() - 1];
+            for (int i = 0; i < bins.size() - 1; i++) {
+                begin[i] = bins.get(i) + (bins.get(i + 1) - bins.get(i)) / 6;
+                bin[i] = bins.get(i) + (bins.get(i + 1) - bins.get(i)) / 3;
+                end[i] = bins.get(i) + (bins.get(i + 1) - bins.get(i)) / 2;
+            }
+            double[] result = new double[bins.size() - 1];
+            for (double value : validatedDecoyValues) {
+                for (int i = 1; i < bins.size(); i++) {
+                    if (value < bins.get(i)) {
+                        result[i - 1] = result[i - 1] + 1;
+                        break;
+                    }
+                }
+            }
+            return new double[][]{bin, begin, end, result, result, result};
+        }
+
+        /**
+         * Return a jfreechart compatible double[][] containing the non validated decoy frequencies
+         * @return the non validated decoy frequencies
+         */
+        public double[][] getDecoyNonValidated() {
+            double[] begin = new double[bins.size() - 1];
+            double[] bin = new double[bins.size() - 1];
+            double[] end = new double[bins.size() - 1];
+            for (int i = 0; i < bins.size() - 1; i++) {
+                begin[i] = bins.get(i) + 2 * (bins.get(i + 1) - bins.get(i)) / 3;
+                bin[i] = bins.get(i) + 5 * (bins.get(i + 1) - bins.get(i)) / 6;
+                end[i] = bins.get(i + 1);
+            }
+            double[] result = new double[bins.size() - 1];
+            for (double value : nonValidatedDecoyValues) {
+                for (int i = 1; i < bins.size(); i++) {
+                    if (value < bins.get(i)) {
+                        result[i - 1] = result[i - 1] + 1;
+                        break;
+                    }
+                }
+            }
+            return new double[][]{bin, begin, end, result, result, result};
+        }
+    }
 }
