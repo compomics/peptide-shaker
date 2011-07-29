@@ -16,6 +16,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * A dialog displaying progress details when the identification files are being
@@ -121,8 +122,8 @@ public class WaitingDialog extends javax.swing.JDialog {
         layeredPane = new javax.swing.JLayeredPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         reportArea = new javax.swing.JTextArea();
-        saveReportLabel = new javax.swing.JLabel();
         okButton = new javax.swing.JButton();
+        saveReportLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Importing Data - Please Wait...");
@@ -153,22 +154,6 @@ public class WaitingDialog extends javax.swing.JDialog {
 
         jScrollPane1.setBounds(0, 0, 842, 490);
         layeredPane.add(jScrollPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        saveReportLabel.setText("<html><a href=\\\"dummy_link\"><i>Save Report</i></a></html>");
-        saveReportLabel.setToolTipText("Save the report to a text file");
-        saveReportLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                saveReportLabelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                saveReportLabelMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                saveReportLabelMouseReleased(evt);
-            }
-        });
-        saveReportLabel.setBounds(760, 10, 70, 14);
-        layeredPane.add(saveReportLabel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -204,16 +189,33 @@ public class WaitingDialog extends javax.swing.JDialog {
             }
         });
 
+        saveReportLabel.setText("<html><a href=\\\"dummy_link\"><i>Save Report</i></a></html>");
+        saveReportLabel.setToolTipText("Save the report to a text file");
+        saveReportLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                saveReportLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                saveReportLabelMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                saveReportLabelMouseReleased(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(saveReportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 710, Short.MAX_VALUE)
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -222,7 +224,9 @@ public class WaitingDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(okButton)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(okButton)
+                    .addComponent(saveReportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -286,6 +290,21 @@ public class WaitingDialog extends javax.swing.JDialog {
         File outputFile = null;
         JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.getName().toLowerCase().endsWith("txt")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Supported formats: Text (.txt)";
+            }
+        };
+
+        fc.setFileFilter(filter);
         int result = fc.showSaveDialog(this);
         
         if (result == JFileChooser.APPROVE_OPTION) {
@@ -312,16 +331,9 @@ public class WaitingDialog extends javax.swing.JDialog {
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
         // resize the report area
-        layeredPane.getComponent(1).setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
+        layeredPane.getComponent(0).setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
         layeredPane.revalidate();
         layeredPane.repaint();
-        
-        // move the save report link
-        layeredPane.getComponent(0).setBounds(
-                layeredPane.getWidth() - layeredPane.getComponent(0).getWidth() - 10,
-                layeredPane.getComponent(0).getHeight() / 2 - 2,
-                layeredPane.getComponent(0).getWidth(),
-                layeredPane.getComponent(0).getHeight());
     }//GEN-LAST:event_formComponentResized
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
