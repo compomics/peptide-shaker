@@ -1350,6 +1350,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         experimentSettings = (PSSettings) experiment.getUrParam(experimentSettings);
         peptideShakerGUI.setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
         peptideShakerGUI.setSearchParameters(experimentSettings.getSearchParameters());
+        peptideShakerGUI.setSpectrumCountingPreferences(experimentSettings.getSpectrumCountingPreferences());
 
         ArrayList<String> names = new ArrayList<String>();
         for (File file : spectrumFiles) {

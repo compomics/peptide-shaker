@@ -292,7 +292,7 @@
                               <Component id="mzToleranceTxt" min="-2" pref="85" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="123" max="32767" attributes="0"/>
+                              <EmptySpace pref="119" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -325,7 +325,7 @@
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel3">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Da"/>
+                        <Property name="text" type="java.lang.String" value="m/z"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="mostIntenseJCheckBox">
