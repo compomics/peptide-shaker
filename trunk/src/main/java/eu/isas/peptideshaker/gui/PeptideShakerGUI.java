@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
+import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Protein;
@@ -15,6 +16,7 @@ import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
@@ -25,6 +27,7 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
+import eu.isas.peptideshaker.gui.preferencesdialogs.SpectrumCountingPreferencesDialog;
 import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.OverviewPanel;
 import eu.isas.peptideshaker.gui.tabpanels.ProteinStructurePanel;
@@ -35,6 +38,7 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -196,6 +200,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The annotation preferences
      */
     private AnnotationPreferences annotationPreferences = new AnnotationPreferences();
+    /**
+     * The spectrum counting preferences
+     */
+    private SpectrumCountingPreferences spectrumCountingPreferences = new SpectrumCountingPreferences();
     /**
      * The parameters of the search
      */
@@ -404,6 +412,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu = new javax.swing.JMenu();
         searchParametersMenu = new javax.swing.JMenuItem();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         bubbleScaleJMenuItem = new javax.swing.JMenuItem();
         errorPlotTypeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -585,6 +594,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         editMenu.add(annotationPreferencesMenu);
+
+        jMenuItem1.setText("Spectrum Counting");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        editMenu.add(jMenuItem1);
         editMenu.add(jSeparator5);
 
         bubbleScaleJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
@@ -985,7 +1002,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     try {
                         // change the peptide shaker icon to a "waiting version"
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences));
+                        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences));
                         experimentIO.saveIdentifications(newFile, experiment);
 
                         progressDialog.setVisible(false);
@@ -1838,6 +1855,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         }
     }//GEN-LAST:event_openJMenuItemActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        new SpectrumCountingPreferencesDialog(this);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     /**
      * Returns if the 3D model is to be spinning or not.
      * 
@@ -2001,6 +2022,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenu graphicsJMenu;
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
@@ -2169,6 +2191,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPreferences.annotateMostIntensePeaks(true);
         annotationPreferences.useDefaultAnnotation(true);
         updateAnnotationPreferencesFromSearchSettings();
+        spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.NSAF);
+        spectrumCountingPreferences.setValidatedHits(true);
     }
 
     /**
@@ -2317,6 +2341,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public AnnotationPreferences getAnnotationPreferences() {
         return annotationPreferences;
+    }
+    
+    /**
+     * Returns the spectrum counting preferences
+     * @return the spectrum counting preferences 
+     */
+    public SpectrumCountingPreferences getSpectrumCountingPreferences() {
+        return spectrumCountingPreferences;
+    }
+    
+    /**
+     * Sets new spectrum counting preferences
+     * @param spectrumCountingPreferences new spectrum counting preferences
+     */
+    public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences) {
+        this.spectrumCountingPreferences = spectrumCountingPreferences;
     }
 
     /**
@@ -2971,6 +3011,56 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public DecimalFormat getScoreAndConfidenceDecimalFormat() {
         return scoreAndConfidenceDecimalFormat;
+    }
+
+    /**
+     * Returns the spectrum counting score based on the user's settings
+     * @param proteinMatch  the inspected protein match
+     * @return the spectrum counting score
+     */
+    public double getSpectrumCount(ProteinMatch proteinMatch) {
+        double result;
+        Enzyme enyzme = searchParameters.getEnzyme();
+        PSParameter pSParameter = new PSParameter();
+        Protein currentProtein = null;
+        for (String proteinAccession : proteinMatch.getTheoreticProteinsAccessions()) {
+            currentProtein = sequenceDataBase.getProtein(proteinAccession);
+            if (currentProtein != null) {
+                break;
+            }
+            if (currentProtein == null) {
+                return 0;
+            }
+        }
+        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.NSAF) {
+            if (spectrumCountingPreferences.isValidatedHits()) {
+                result = 0;
+                for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
+                    for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
+                        pSParameter = (PSParameter) spectrumMatch.getUrParam(pSParameter);
+                        if (pSParameter.isValidated()) {
+                            result = result + 1;
+                        }
+                    }
+                }
+            } else {
+                result = proteinMatch.getSpectrumCount();
+            }
+            return result = result / currentProtein.getSequence().length();
+        } else {
+            if (spectrumCountingPreferences.isValidatedHits()) {
+                result = 0;
+                for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
+                    pSParameter = (PSParameter) peptideMatch.getUrParam(pSParameter);
+                    if (pSParameter.isValidated()) {
+                        result = result + 1;
+                    }
+                }
+            } else {
+                result = proteinMatch.getPeptideCount();
+            }
+            return result = Math.pow(10, result / currentProtein.getNPossiblePeptides(enyzme)) - 1;
+        }
     }
     
 }

@@ -204,7 +204,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         mzToleranceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         mzToleranceTxt.setText("0.5");
 
-        jLabel3.setText("Da");
+        jLabel3.setText("m/z");
 
         mostIntenseJCheckBox.setText("Annotate Most Intense Peaks");
         mostIntenseJCheckBox.setIconTextGap(15);
@@ -228,7 +228,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(mzToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
-                .addContainerGap(123, Short.MAX_VALUE))
+                .addContainerGap(119, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

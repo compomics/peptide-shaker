@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.myparameters;
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 
 /**
  * This class will be used to save all settings needed in PeptideShaker
@@ -19,6 +20,10 @@ public class PSSettings implements UrParameter {
      * The annotation preferences
      */
     private AnnotationPreferences annotationPreferences;
+    /**
+     * The spectrum counting preferences
+     */
+    private SpectrumCountingPreferences spectrumCountingPreferences;
     
     /**
      * Blank constructor
@@ -29,13 +34,17 @@ public class PSSettings implements UrParameter {
     
     /**
      * Constructor for a Peptide Shaker Settings class
-     * @param searchParameters          The parameters linked to the search
-     * @param annotationPreferences     The annotation preferences
-     * @param identificationPreferences The identification preferences
+     * @param searchParameters              The parameters linked to the search
+     * @param annotationPreferences         The annotation preferences
+     * @param identificationPreferences     The identification preferences
+     * @param spectrumCountingPreferences   The spectrum counting preferences
      */
-    public PSSettings(SearchParameters searchParameters, AnnotationPreferences annotationPreferences) {
+    public PSSettings(SearchParameters searchParameters, 
+            AnnotationPreferences annotationPreferences, 
+            SpectrumCountingPreferences spectrumCountingPreferences) {
         this.searchParameters = searchParameters;
         this.annotationPreferences = annotationPreferences;
+        this.spectrumCountingPreferences = spectrumCountingPreferences;
     }
 
     /**
@@ -52,6 +61,14 @@ public class PSSettings implements UrParameter {
      */
     public SearchParameters getSearchParameters() {
         return searchParameters;
+    }
+    
+    /**
+     * Returns the spectrum counting preferences of the project
+     * @return the spectrum counting preferences of the project
+     */
+    public SpectrumCountingPreferences getSpectrumCountingPreferences() {
+        return spectrumCountingPreferences;
     }
 
     @Override
