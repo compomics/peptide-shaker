@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.ProteomicAnalysis;
-import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
@@ -33,7 +32,6 @@ import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
-import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -3393,7 +3391,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         int index = 0, maxPeptides = 0, maxSpectra = 0;
         double sequenceCoverage = 0;
-        double emPAI = 0, maxEmPAI = 0;
+        double spectrumCounting = 0, maxSpectrumCounting = 0;
         String description = "";
         SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
 
@@ -3472,7 +3470,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                             throw new IllegalArgumentException("Protein not found! Accession: " + proteinMatch.getMainMatch().getAccession());
                         }
 
-                        emPAI = peptideShakerGUI.getSpectrumCount(proteinMatch);
+                        spectrumCounting = peptideShakerGUI.getSpectrumCount(proteinMatch);
                         description = db.getProteinHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
                         sequenceCoverage = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
 
@@ -3486,7 +3484,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                                         sequenceCoverage,
                                         proteinMatch.getPeptideCount(),
                                         proteinMatch.getSpectrumCount(),
-                                        emPAI,
+                                        spectrumCounting,
                                         probabilities.getProteinScore(),
                                         probabilities.getProteinConfidence(),
                                         probabilities.isValidated()
@@ -3508,8 +3506,8 @@ public class OverviewPanel extends javax.swing.JPanel {
                             maxSpectra = proteinMatch.getSpectrumCount();
                         }
 
-                        if (maxEmPAI < emPAI) {
-                            maxEmPAI = emPAI;
+                        if (maxSpectrumCounting < spectrumCounting) {
+                            maxSpectrumCounting = spectrumCounting;
                         }
                     }
                 }
@@ -3532,7 +3530,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Spectrum Counting").getCellRenderer()).setMaxValue(maxEmPAI);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Spectrum Counting").getCellRenderer()).setMaxValue(maxSpectrumCounting);
 
         try {
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).setMaxValue(100.0);
