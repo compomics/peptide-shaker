@@ -1,13 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * QCPanel.java
- *
- * Created on Jul 28, 2011, 5:05:38 PM
- */
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.experiment.biology.Enzyme;
@@ -17,25 +7,27 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
+import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
+import java.awt.ComponentOrientation;
 import java.util.ArrayList;
+import javax.swing.SwingConstants;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
-import org.jfree.data.statistics.HistogramDataset;
-import org.jfree.data.statistics.HistogramType;
 import org.jfree.data.xy.DefaultIntervalXYDataset;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This panel will display QC statistics for the current project
  *
- * @author Marc
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class QCPanel extends javax.swing.JPanel {
 
@@ -58,21 +50,39 @@ public class QCPanel extends javax.swing.JPanel {
     /**
      * color for the plots (validated targets, validated decoy, non validated target, non validated decoy)
      */
-    public static final Color[] histogramColors = {Color.GREEN, Color.RED, Color.YELLOW, Color.GRAY};
+    public static Color[] histogramColors;
 
-    /** Creates new form QCPanel */
+    /** 
+     * Creates a new QCPanel
+     * 
+     * @param parent 
+     */
     public QCPanel(PeptideShakerGUI parent) {
         this.peptideShakerGUI = parent;
         initComponents();
 
+        // set the histogram colors
+        histogramColors = new Color[4];
+        histogramColors[0] = peptideShakerGUI.getSparklineColor();
+        histogramColors[1] = new Color(255, 51, 51);
+        histogramColors[2] = new Color(255, 255, 51);
+        histogramColors[3] = Color.lightGray;
+
+        // make the tabs in the spectrum tabbed pane go from right to left
+        tabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+
+        proteinMetricCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        peptideMetricCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        psmMetricCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+
         // Initialize protein QC plot
-        NumberAxis proteinYAxis = new NumberAxis("Amount of proteins");
+        NumberAxis proteinYAxis = new NumberAxis("Amount of Proteins");
         NumberAxis proteinMetricAxis = new NumberAxis("protein metric");
         proteinQCPlot.setDomainAxis(proteinMetricAxis);
         proteinQCPlot.setRangeAxis(0, proteinYAxis);
 
         // Initialize peptide QC plot
-        NumberAxis peptideYAxis = new NumberAxis("Amount of peptides");
+        NumberAxis peptideYAxis = new NumberAxis("Amount of Peptides");
         NumberAxis peptideMetricAxis = new NumberAxis("peptide metric");
         peptideQCPlot.setDomainAxis(peptideMetricAxis);
         peptideQCPlot.setRangeAxis(0, peptideYAxis);
@@ -93,61 +103,73 @@ public class QCPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel2 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        proteinMetricCmb = new javax.swing.JComboBox();
-        proteinQCPlotPanel = new javax.swing.JPanel();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        peptideMetricCmb = new javax.swing.JComboBox();
-        peptideQCPlotPanel = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
+        qcPanel = new javax.swing.JPanel();
+        tabbedPane = new javax.swing.JTabbedPane();
+        psmPanel = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         psmMetricCmb = new javax.swing.JComboBox();
         psmQCPlotPanel = new javax.swing.JPanel();
+        peptidePanel = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        peptideMetricCmb = new javax.swing.JComboBox();
+        peptideQCPlotPanel = new javax.swing.JPanel();
+        proteinPanel = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        proteinMetricCmb = new javax.swing.JComboBox();
+        proteinQCPlotPanel = new javax.swing.JPanel();
 
-        jLabel1.setText("Metric of interest:");
+        setBackground(new java.awt.Color(255, 255, 255));
 
-        proteinMetricCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Number of validated peptides", "Spectrum counting score", "Sequence coverage" }));
-        proteinMetricCmb.addActionListener(new java.awt.event.ActionListener() {
+        qcPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Quality Control Plots"));
+        qcPanel.setOpaque(false);
+
+        tabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+
+        psmPanel.setOpaque(false);
+
+        jLabel3.setText("Metric of Interest:");
+
+        psmMetricCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Precursor Mass Deviation", "Precursor Charge" }));
+        psmMetricCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                proteinMetricCmbActionPerformed(evt);
+                psmMetricCmbActionPerformed(evt);
             }
         });
 
-        proteinQCPlotPanel.setLayout(new javax.swing.BoxLayout(proteinQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+        psmQCPlotPanel.setOpaque(false);
+        psmQCPlotPanel.setLayout(new javax.swing.BoxLayout(psmQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout psmPanelLayout = new javax.swing.GroupLayout(psmPanel);
+        psmPanel.setLayout(psmPanelLayout);
+        psmPanelLayout.setHorizontalGroup(
+            psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(psmPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(proteinQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 681, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(proteinMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(psmQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
+                    .addGroup(psmPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel3)
+                        .addGap(18, 18, 18)
+                        .addComponent(psmMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        psmPanelLayout.setVerticalGroup(
+            psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(psmPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(proteinMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(psmMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(proteinQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+                .addComponent(psmQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Proteins", jPanel2);
+        tabbedPane.addTab("PSMs", psmPanel);
 
-        jLabel2.setText("Metric of interest:");
+        peptidePanel.setOpaque(false);
+
+        jLabel2.setText("Metric of Interest:");
 
         peptideMetricCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated PSMs", "Missed Cleavages" }));
         peptideMetricCmb.addActionListener(new java.awt.event.ActionListener() {
@@ -156,106 +178,139 @@ public class QCPanel extends javax.swing.JPanel {
             }
         });
 
+        peptideQCPlotPanel.setOpaque(false);
         peptideQCPlotPanel.setLayout(new javax.swing.BoxLayout(peptideQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout peptidePanelLayout = new javax.swing.GroupLayout(peptidePanel);
+        peptidePanel.setLayout(peptidePanelLayout);
+        peptidePanelLayout.setHorizontalGroup(
+            peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peptidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(peptideQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 681, Short.MAX_VALUE)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(peptideQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
+                    .addGroup(peptidePanelLayout.createSequentialGroup()
                         .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(peptideMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addComponent(peptideMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        peptidePanelLayout.setVerticalGroup(
+            peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peptidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(peptideMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(peptideQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+                .addComponent(peptideQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("Peptides", jPanel3);
+        tabbedPane.addTab("Peptides", peptidePanel);
 
-        jLabel3.setText("Metric of interest:");
+        proteinPanel.setOpaque(false);
 
-        psmMetricCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Precursor mass deviation", "Precursor charge" }));
-        psmMetricCmb.addActionListener(new java.awt.event.ActionListener() {
+        jLabel1.setText("Metric of Interest:");
+
+        proteinMetricCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Number of Validated Peptides", "Spectrum Counting Score", "Sequence Coverage" }));
+        proteinMetricCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                psmMetricCmbActionPerformed(evt);
+                proteinMetricCmbActionPerformed(evt);
             }
         });
 
-        psmQCPlotPanel.setLayout(new javax.swing.BoxLayout(psmQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+        proteinQCPlotPanel.setOpaque(false);
+        proteinQCPlotPanel.setLayout(new javax.swing.BoxLayout(proteinQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        javax.swing.GroupLayout proteinPanelLayout = new javax.swing.GroupLayout(proteinPanel);
+        proteinPanel.setLayout(proteinPanelLayout);
+        proteinPanelLayout.setHorizontalGroup(
+            proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proteinPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(psmQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 681, Short.MAX_VALUE)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(psmMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(proteinQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
+                    .addGroup(proteinPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(proteinMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
+        proteinPanelLayout.setVerticalGroup(
+            proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proteinPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(psmMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(proteinMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(psmQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 537, Short.MAX_VALUE)
+                .addComponent(proteinQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
-        jTabbedPane1.addTab("PSMs", jPanel4);
+        tabbedPane.addTab("Proteins", proteinPanel);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 706, Short.MAX_VALUE)
+        tabbedPane.setSelectedIndex(2);
+
+        javax.swing.GroupLayout qcPanelLayout = new javax.swing.GroupLayout(qcPanel);
+        qcPanel.setLayout(qcPanelLayout);
+        qcPanelLayout.setHorizontalGroup(
+            qcPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(qcPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE)
+                .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 625, Short.MAX_VALUE)
+        qcPanelLayout.setVerticalGroup(
+            qcPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(qcPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 554, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(qcPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(qcPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Update the protein qc plot.
+     * 
+     * @param evt 
+     */
     private void proteinMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinMetricCmbActionPerformed
         updateProteinQCPlot();
     }//GEN-LAST:event_proteinMetricCmbActionPerformed
 
+    /**
+     * Update the peptide qc plot.
+     * 
+     * @param evt 
+     */
     private void peptideMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideMetricCmbActionPerformed
         updatePeptideQCPlot();
     }//GEN-LAST:event_peptideMetricCmbActionPerformed
 
+    /**
+     * Update the psm qc plot.
+     * 
+     * @param evt 
+     */
     private void psmMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmMetricCmbActionPerformed
         updatePsmQCPlot();
     }//GEN-LAST:event_psmMetricCmbActionPerformed
@@ -263,17 +318,17 @@ public class QCPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
-    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JComboBox peptideMetricCmb;
+    private javax.swing.JPanel peptidePanel;
     private javax.swing.JPanel peptideQCPlotPanel;
     private javax.swing.JComboBox proteinMetricCmb;
+    private javax.swing.JPanel proteinPanel;
     private javax.swing.JPanel proteinQCPlotPanel;
     private javax.swing.JComboBox psmMetricCmb;
+    private javax.swing.JPanel psmPanel;
     private javax.swing.JPanel psmQCPlotPanel;
+    private javax.swing.JPanel qcPanel;
+    private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -290,11 +345,11 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void updateProteinQCPlot() {
         if (proteinMetricCmb.getSelectedIndex() == 0) {
-            proteinQCPlot.getDomainAxis().setLabel("Number of validated peptides");
+            proteinQCPlot.getDomainAxis().setLabel("Number of Validated Peptides");
         } else if (proteinMetricCmb.getSelectedIndex() == 1) {
-            proteinQCPlot.getDomainAxis().setLabel("Spectrum couting");
+            proteinQCPlot.getDomainAxis().setLabel("Spectrum Counting");
         } else if (proteinMetricCmb.getSelectedIndex() == 2) {
-            proteinQCPlot.getDomainAxis().setLabel("Sequence coverage");
+            proteinQCPlot.getDomainAxis().setLabel("Sequence Coverage");
         }
 
         HistogramInput input = getProteinDataset();
@@ -349,7 +404,6 @@ public class QCPanel extends javax.swing.JPanel {
         proteinQCPlotPanel.add(chartPanel);
         proteinQCPlotPanel.revalidate();
         proteinQCPlotPanel.repaint();
-
     }
 
     /**
@@ -357,7 +411,7 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void updatePeptideQCPlot() {
         if (peptideMetricCmb.getSelectedIndex() == 0) {
-            peptideQCPlot.getDomainAxis().setLabel("Number of validated PSMs");
+            peptideQCPlot.getDomainAxis().setLabel("Number of Validated PSMs");
         } else if (peptideMetricCmb.getSelectedIndex() == 1) {
             peptideQCPlot.getDomainAxis().setLabel("Missed Cleavages");
         }
@@ -792,7 +846,7 @@ public class QCPanel extends javax.swing.JPanel {
             }
             int maxBin = (int) max + 1;
             ArrayList<Double> bins = new ArrayList<Double>();
-            for (int i = (int) min; i < maxBin; i++) { 
+            for (int i = (int) min; i < maxBin; i++) {
                 bins.add((double) i);
             }
             histogramInput.setBins(bins);
