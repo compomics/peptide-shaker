@@ -3,7 +3,8 @@ package eu.isas.peptideshaker.scoring;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,16 +30,15 @@ public class PsmSpecificMap implements Serializable {
      */
     private HashMap<Integer, Integer> grouping = new HashMap<Integer, Integer>();
     /**
-     * The spectrum collection where spectra are stored
+     * The spectrum factory
      */
-    private SpectrumCollection spectrumCollection;
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
     /**
      * Constructor
      * @param spectrumCollection the spectrum collection where spectra are stored
      */
-    public PsmSpecificMap(SpectrumCollection spectrumCollection) {
-        this.spectrumCollection = spectrumCollection;
+    public PsmSpecificMap() {
     }
 
     /**
@@ -164,9 +164,9 @@ public class PsmSpecificMap implements Serializable {
      */
     public Integer getKey(SpectrumMatch spectrumMatch) {
         try {
-            return ((MSnSpectrum) spectrumCollection.getSpectrum(2, spectrumMatch.getKey())).getPrecursor().getCharge().value;
+            String spectrumKey = spectrumMatch.getKey();
+            return spectrumFactory.getPrecursor(Spectrum.getSpectrumFile(spectrumKey), Spectrum.getSpectrumTitle(spectrumKey)).getCharge().value;
         } catch (Exception e) {
-            // At this point no mzML file should be loaded
             return 0;
         }
     }

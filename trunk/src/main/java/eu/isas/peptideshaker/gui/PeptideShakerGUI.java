@@ -19,8 +19,9 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
+import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
@@ -254,9 +255,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private SequenceDataBase sequenceDataBase;
     /**
-     * The spectrum collection loaded
+     * The spectrum factory
      */
-    private SpectrumCollection spectrumCollection;
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * The label with for the numbers in the jsparklines columns.
      */
@@ -276,7 +277,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * Boolean indicating whether spectra should be displayed or not
      */
-    private boolean displaySpectrum;
+    private boolean displaySpectrum = true;
     /**
      * The spectrum annotator
      */
@@ -932,6 +933,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void exitJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitJMenuItemActionPerformed
+        try {
+            spectrumFactory.closeFiles();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.exit(0);
     }//GEN-LAST:event_exitJMenuItemActionPerformed
 
@@ -1903,12 +1909,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             boolean displaySequence = true;
             boolean displayProteins = true;
             boolean displayPeptidesAndPSMs = true;
-            String tempSpectrumKey = spectrumCollection.getAllKeys(2).get(0);
-            Spectrum tempSpectrum = spectrumCollection.getSpectrum(2, tempSpectrumKey);
-
-            if (tempSpectrum.getPeakList() == null || tempSpectrum.getPeakList().isEmpty()) {
-                displaySpectrum = false;
-            }
 
             if (sequenceDataBase == null) {
                 displaySequence = false;
@@ -1968,11 +1968,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         proteinStructurePanel.displayResults();
 
                         progressDialog.setValue(++counter);
-                        
+
                         qcPanel.displayResults();
                         progressDialog.setValue(++counter);
-                        
-                        
+
+
                     } catch (MzMLUnmarshallerException e) {
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML Problem", JOptionPane.ERROR_MESSAGE);
@@ -1991,13 +1991,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 }
             }.start();
 
-        } catch (MzMLUnmarshallerException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "A problem occured while reading the mzML file.", "mzML problem", JOptionPane.ERROR_MESSAGE);
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "A problem occured while displaying results. Please send the log file to the developers.", "Display problem", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    /**
+     * Method called to disable the spectrum display
+     */
+    public void disableSpectrumDisplay() {
+        spectrumJPanel.setEnabled(false);
+        ptmPanel.setEnabled(false);
+        overviewPanel.updateSeparators();
     }
 
     /**
@@ -2014,7 +2020,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         sequenceDataBase = proteomicAnalysis.getSequenceDataBase();
-        spectrumCollection = proteomicAnalysis.getSpectrumCollection();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutJMenuItem;
@@ -2341,12 +2346,49 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
-     * Returns the spectrum collection loaded.
-     *
-     * @return the spectrum collection loaded
+     * Returns the desired spectrum
+     * @param spectrumKey   the key of the spectrum
+     * @return the desired spectrum
      */
-    public SpectrumCollection getSpectrumCollection() {
-        return spectrumCollection;
+    public MSnSpectrum getSpectrum(String spectrumKey) {
+        String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
+        String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
+        try {
+            return (MSnSpectrum) spectrumFactory.getSpectrum(spectrumFile, spectrumTitle);
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (displaySpectrum) {
+                JOptionPane.showMessageDialog(this,
+                        "An error occured while reading " + spectrumFile
+                        + " spectrum display will be disabled.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+            return null;
+        }
+    }
+    
+    /**
+     * Returns the precursor of a given spectrum
+     * @param spectrumKey   the key of the given spectrum
+     * @return  the precursor
+     */
+    public Precursor getPrecursor(String spectrumKey) {
+        String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
+        String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
+        try {
+            return spectrumFactory.getPrecursor(spectrumFile, spectrumTitle);
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (displaySpectrum) {
+                JOptionPane.showMessageDialog(this,
+                        "An error occured while reading " + spectrumFile
+                        + " spectrum display will be disabled.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+            return null;
+        }
     }
 
     /**
@@ -2828,7 +2870,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         qcJPanel.removeAll();
         qcJPanel.add(qcPanel);
-        
+
         // hide/show the score columns
         scoresJCheckBoxMenuItemActionPerformed(null);
     }
@@ -2863,10 +2905,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         annotationsJPanel.revalidate();
         annotationsJPanel.repaint();
-        
+
         qcPanel.revalidate();
         qcPanel.repaint();
-        
+
     }
 
     /**

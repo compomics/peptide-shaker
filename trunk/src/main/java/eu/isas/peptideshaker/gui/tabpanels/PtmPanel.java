@@ -1697,16 +1697,14 @@ public class PtmPanel extends javax.swing.JPanel {
 
         AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
 
-        try {
             if (selectedPsmTable.getSelectedRow() != -1 && primarySelectionJComboBox.getSelectedIndex() != -1) {
                 String familyKey = convertComboBoxSelectionToFamilyKey((String) primarySelectionJComboBox.getSelectedItem());
                 String spectrumKey = psmsMap.get(familyKey).get(selectedPsmTable.getSelectedRow());
                 peptideShakerGUI.selectSpectrum(spectrumKey);
 
-                MSnSpectrum currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(
-                        2, spectrumKey);
+                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
 
-                if (currentSpectrum.getMzValuesAsArray().length > 0) {
+                if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
 
                     Precursor precursor = currentSpectrum.getPrecursor();
                     spectrumA = new SpectrumPanel(
@@ -1766,10 +1764,9 @@ public class PtmPanel extends javax.swing.JPanel {
             if (relatedPsmTable.getSelectedRow() != -1 && secondarySelectionJComboBox.getSelectedIndex() != -1) {
                 String familyKey = convertComboBoxSelectionToFamilyKey((String) secondarySelectionJComboBox.getSelectedItem());
                 String spectrumKey = psmsMap.get(familyKey).get(relatedPsmTable.getSelectedRow());
-                MSnSpectrum currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(
-                        2, spectrumKey);
+                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
 
-                if (currentSpectrum.getMzValuesAsArray().length > 0) {
+                if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
 
                     Precursor precursor = currentSpectrum.getPrecursor();
                     spectrumB = new SpectrumPanel(
@@ -1833,9 +1830,6 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumChartJPanel.revalidate();
             spectrumChartJPanel.repaint();
 
-        } catch (MzMLUnmarshallerException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -2123,14 +2117,14 @@ public class PtmPanel extends javax.swing.JPanel {
                 return "to be changed";
             } else if (column == 3) {
                 try {
-                    return ((MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(2, spectrumMatch.getKey())).getPrecursor().getMz();
-                } catch (MzMLUnmarshallerException e) {
+                    return peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getMz();
+                } catch (Exception e) {
                     return "";
                 }
             } else if (column == 4) {
                 try {
-                    return ((MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(2, spectrumMatch.getKey())).getPrecursor().getCharge().value;
-                } catch (MzMLUnmarshallerException e) {
+                    return peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getCharge().value;
+                } catch (Exception e) {
                     return "";
                 }
             } else {
@@ -2244,14 +2238,14 @@ public class PtmPanel extends javax.swing.JPanel {
                 return familyKey;
             } else if (column == 3) {
                 try {
-                    return ((MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(2, spectrumMatch.getKey())).getPrecursor().getMz();
-                } catch (MzMLUnmarshallerException e) {
+                    return peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getMz();
+                } catch (Exception e) {
                     return "";
                 }
             } else if (column == 4) {
                 try {
-                    return ((MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(2, spectrumMatch.getKey())).getPrecursor().getCharge().value;
-                } catch (MzMLUnmarshallerException e) {
+                    return peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getCharge().value;
+                } catch (Exception e) {
                     return "";
                 }
             } else {

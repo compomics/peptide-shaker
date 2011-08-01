@@ -88,7 +88,7 @@ public class PeptideShaker {
         this.experiment = experiment;
         this.sample = sample;
         this.replicateNumber = replicateNumber;
-        psmMap = new PsmSpecificMap(experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSpectrumCollection());
+        psmMap = new PsmSpecificMap();
         peptideMap = new PeptideSpecificMap();
         proteinMap = new ProteinMap();
     }

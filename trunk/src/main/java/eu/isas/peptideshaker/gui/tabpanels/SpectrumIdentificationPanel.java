@@ -11,7 +11,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.googlecode.charts4j.Color;
@@ -33,7 +32,6 @@ import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -98,10 +96,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * The main GUI
      */
     private PeptideShakerGUI peptideShakerGUI;
-    /**
-     * The spectrum collection
-     */
-    private SpectrumCollection spectrumCollection;
     /**
      * The identification
      */
@@ -1727,7 +1721,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     public void displayResults() {
 
-        spectrumCollection = peptideShakerGUI.getSpectrumCollection();
         identification = peptideShakerGUI.getIdentification();
         int m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0;
         boolean mascot, omssa, xTandem;
@@ -1810,13 +1803,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         String fileName;
 
-        for (String key : spectrumCollection.getAllKeys()) {
-            fileName = Spectrum.getSpectrumFile(key);
+        for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification().keySet()) {
+            fileName = Spectrum.getSpectrumFile(spectrumKey);
             if (!filesMap.containsKey(fileName)) {
                 filesMap.put(fileName, new ArrayList<String>());
             }
-            filesMap.get(fileName).add(key);
+            filesMap.get(fileName).add(spectrumKey);
         }
+
 
         String[] filesArray = new String[filesMap.keySet().size()];
         int cpt = 0;
@@ -1902,7 +1896,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private void fileSelectionChanged() {
 
-        try {
             while (spectrumTable.getRowCount() > 0) {
                 ((DefaultTableModel) spectrumTable.getModel()).removeRow(0);
             }
@@ -1919,37 +1912,38 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             for (String spectrumKey : filesMap.get(fileSelected)) {
 
-                MSnSpectrum spectrum = (MSnSpectrum) spectrumCollection.getSpectrum(spectrumKey);
-                Precursor precursor = spectrum.getPrecursor();
+                    Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey);
+                if (precursor != null) {
 
-                double retentionTime = precursor.getRt();
+                    double retentionTime = precursor.getRt();
 
-                if (retentionTime == -1) {
-                    retentionTime = 0;
-                }
+                    if (retentionTime == -1) {
+                        retentionTime = 0;
+                    }
 
-                ((DefaultTableModel) spectrumTable.getModel()).addRow(new Object[]{
-                            ++counter,
-                            spectrum.getSpectrumTitle(),
-                            precursor.getMz(),
-                            precursor.getCharge().value,
-                            retentionTime
-                        });
+                    ((DefaultTableModel) spectrumTable.getModel()).addRow(new Object[]{
+                                ++counter,
+                                Spectrum.getSpectrumTitle(spectrumKey),
+                                precursor.getMz(),
+                                precursor.getCharge().value,
+                                retentionTime
+                            });
 
-                if (precursor.getCharge().value > maxCharge) {
-                    maxCharge = precursor.getCharge().value;
-                }
+                    if (precursor.getCharge().value > maxCharge) {
+                        maxCharge = precursor.getCharge().value;
+                    }
 
-                if (lLowRT > retentionTime) {
-                    lLowRT = retentionTime;
-                }
+                    if (lLowRT > retentionTime) {
+                        lLowRT = retentionTime;
+                    }
 
-                if (lHighRT < retentionTime) {
-                    lHighRT = retentionTime;
-                }
+                    if (lHighRT < retentionTime) {
+                        lHighRT = retentionTime;
+                    }
 
-                if (precursor.getMz() > maxMz) {
-                    maxMz = precursor.getMz();
+                    if (precursor.getMz() > maxMz) {
+                        maxMz = precursor.getMz();
+                    }
                 }
             }
 
@@ -1970,11 +1964,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             spectrumTable.setRowSelectionInterval(0, 0);
             spectrumSelectionChanged();
-
-        } catch (MzMLUnmarshallerException e) {
-            JOptionPane.showMessageDialog(this, "Error while importing mzML data.", "Peak Lists Error", JOptionPane.INFORMATION_MESSAGE);
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -2195,10 +2184,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             spectrumChartPanel.removeAll();
 
-            try {
                 String key = Spectrum.getSpectrumKey((String) fileNamesCmb.getSelectedItem(), (String) spectrumTable.getValueAt(spectrumTable.getSelectedRow(), 1));
                 SpectrumMatch spectrumMatch = identification.getSpectrumIdentification().get(key);
-                MSnSpectrum currentSpectrum = (MSnSpectrum) peptideShakerGUI.getSpectrumCollection().getSpectrum(spectrumMatch.getKey());
+                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumMatch.getKey());
+                if (currentSpectrum != null) {
                 Precursor precursor = currentSpectrum.getPrecursor();
 
                 if (currentSpectrum.getMzValuesAsArray().length > 0 && currentSpectrum.getIntensityValuesAsArray().length > 0) {
@@ -2325,8 +2314,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     spectrumChartPanel.add(spectrum);
                 }
-            } catch (MzMLUnmarshallerException e) {
-                e.printStackTrace();
             }
         }
 
