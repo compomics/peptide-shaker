@@ -15,6 +15,9 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
+import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.BufferedWriter;
@@ -73,6 +76,10 @@ public class CsvExporter {
      * The enzyme used for digestion
      */
     private Enzyme enzyme;
+    /**
+     * The spectrum factory
+     */
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
     /**
      * Creates a CsvExporter object.
@@ -158,6 +165,9 @@ public class CsvExporter {
         } catch (MzMLUnmarshallerException e) {
             e.printStackTrace();
             return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -196,8 +206,8 @@ public class CsvExporter {
             }
         }
         line += nValidatedPeptides + SEPARATOR + nValidatedPsms + SEPARATOR;
-            line += db.getProtein(proteinMatch.getMainMatch().getAccession()).getNPossiblePeptides(enzyme) + SEPARATOR;
-            line += db.getProtein(proteinMatch.getMainMatch().getAccession()).getSequence().length() + SEPARATOR;
+        line += db.getProtein(proteinMatch.getMainMatch().getAccession()).getNPossiblePeptides(enzyme) + SEPARATOR;
+        line += db.getProtein(proteinMatch.getMainMatch().getAccession()).getSequence().length() + SEPARATOR;
 
         try {
             line += probabilities.getProteinProbabilityScore() + SEPARATOR
@@ -221,8 +231,8 @@ public class CsvExporter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-            line += db.getProteinHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
-        
+        line += db.getProteinHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
+
         line += "\n";
 
         return line;
@@ -306,8 +316,7 @@ public class CsvExporter {
      * @param spectrumMatch the spectrum match to export
      * @return the spectrum match as a line of text
      */
-    private String getLine(SpectrumMatch spectrumMatch) throws MzMLUnmarshallerException {
-        MSnSpectrum spectrum = (MSnSpectrum) experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSpectrumCollection().getSpectrum(spectrumMatch.getKey());
+    private String getLine(SpectrumMatch spectrumMatch) throws MzMLUnmarshallerException, IOException, Exception {
 
         String line = "";
 
@@ -327,9 +336,11 @@ public class CsvExporter {
         }
 
         line += SEPARATOR;
-        line += spectrum.getPrecursor().getCharge() + SEPARATOR;
-        line += spectrum.getSpectrumTitle() + SEPARATOR;
-        line += spectrum.getFileName() + SEPARATOR;
+        String fileName = Spectrum.getSpectrumFile(spectrumMatch.getKey());
+        String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getKey());
+        line += spectrumFactory.getPrecursor(fileName, spectrumTitle).getCharge() + SEPARATOR;
+        line += fileName + SEPARATOR;
+        line += spectrumTitle + SEPARATOR;
 
         for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions()) {
             if (assumption.getPeptide().isSameAs(bestAssumption)) {
@@ -413,13 +424,15 @@ public class CsvExporter {
      * @param spectrumMatch the spectrum match to export
      * @return the peptide assumptions from a peptide spectrum match as lines of text
      */
-    private String getLines(SpectrumMatch spectrumMatch) throws MzMLUnmarshallerException {
-        MSnSpectrum spectrum = (MSnSpectrum) experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSpectrumCollection().getSpectrum(spectrumMatch.getKey());
+    private String getLines(SpectrumMatch spectrumMatch) throws MzMLUnmarshallerException, IOException, Exception {
 
         String line = "";
         ArrayList<Integer> searchEngines = spectrumMatch.getAdvocates();
         Collections.sort(searchEngines);
         ArrayList<Double> eValues;
+        String fileName = Spectrum.getSpectrumFile(spectrumMatch.getKey());
+        String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getKey());
+        Precursor precursor = spectrumFactory.getPrecursor(fileName, spectrumTitle);
         int rank;
         for (int se : searchEngines) {
             eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(se).keySet());
@@ -449,9 +462,9 @@ public class CsvExporter {
                     }
 
                     line += SEPARATOR;
-                    line += spectrum.getPrecursor().getCharge() + SEPARATOR;
-                    line += spectrum.getSpectrumTitle() + SEPARATOR;
-                    line += spectrum.getFileName() + SEPARATOR;
+                    line += precursor.getCharge() + SEPARATOR;
+                    line += spectrumTitle + SEPARATOR;
+                    line += fileName + SEPARATOR;
 
                     line += assumption.getFile() + SEPARATOR;
 

@@ -6,7 +6,6 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.SpectrumCollection;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -816,11 +815,10 @@ public class QCPanel extends javax.swing.JPanel {
             ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
             ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
             ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-            SpectrumCollection spectrumCollection = peptideShakerGUI.getSpectrumCollection();
             for (SpectrumMatch spectrumMatch : peptideShakerGUI.getIdentification().getSpectrumIdentification().values()) {
                 try {
-                    value = ((MSnSpectrum) spectrumCollection.getSpectrum(spectrumMatch.getKey())).getPrecursor().getCharge().value;
-                } catch (MzMLUnmarshallerException e) {
+                    value = peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getCharge().value;
+                } catch (Exception e) {
                     value = 0;
                 }
                 if (value < min || min == -1) {

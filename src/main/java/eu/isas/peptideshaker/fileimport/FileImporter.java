@@ -10,12 +10,14 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceDataBase;
-import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
+import com.compomics.util.experiment.io.massspectrometry.MgfIndex;
+import com.compomics.util.experiment.io.massspectrometry.MgfReader;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.gui.WaitingDialog;
@@ -65,6 +67,10 @@ public class FileImporter {
      * The modification factory
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
+    /**
+     * The spectrum factory
+     */
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
      * Peptide to protein map: peptide sequence -> protein accession
      */
@@ -141,24 +147,24 @@ public class FileImporter {
             int nMissedCleavages = searchParameters.getnMissedCleavages();
             int nMin = idFilter.getMinPeptideLength();
             int nMax = idFilter.getMaxPeptideLength();
-            
-            if (!db.getProtein(db.getProteinList().iterator().next()).getDatabaseType().equalsIgnoreCase("UniProt") ) {
-                JOptionPane.showMessageDialog(waitingDialog, 
-                        "We strongly recommend the use of UniProt accession numbers.\n" +
-                        "Some features will be limited if using other databases.",
-                        "Information", 
+
+            if (!db.getProtein(db.getProteinList().iterator().next()).getDatabaseType().equalsIgnoreCase("UniProt")) {
+                JOptionPane.showMessageDialog(waitingDialog,
+                        "We strongly recommend the use of UniProt accession numbers.\n"
+                        + "Some features will be limited if using other databases.",
+                        "Information",
                         JOptionPane.INFORMATION_MESSAGE);
             }
-            
+
             if (!db.includesDecoy()) {
-                JOptionPane.showMessageDialog(waitingDialog, 
-                        "PeptideShaker validation requires the use of a taget-decoy database.\n" +
-                        "Some features will be limited if using other types of databases. See\n" +
-                        "the PeptideShaker home page for details.",
-                        "No Decoys Found", 
+                JOptionPane.showMessageDialog(waitingDialog,
+                        "PeptideShaker validation requires the use of a taget-decoy database.\n"
+                        + "Some features will be limited if using other types of databases. See\n"
+                        + "the PeptideShaker home page for details.",
+                        "No Decoys Found",
                         JOptionPane.INFORMATION_MESSAGE);
             }
-            
+
             for (String proteinKey : db.getProteinList()) {
                 sequence = db.getProtein(proteinKey).getSequence();
                 for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
@@ -192,24 +198,18 @@ public class FileImporter {
 
         String fileName = "";
 
-        try {
-            waitingDialog.appendReport("Importing spectra.");
-            proteomicAnalysis.clearSpectrumCollection();
+        waitingDialog.appendReport("Importing spectra.");
 
-            for (File spectrumFile : spectrumFiles) {
+        for (File spectrumFile : spectrumFiles) {
+            try {
                 fileName = spectrumFile.getName();
-                waitingDialog.appendReport("Loading " + fileName);
-                proteomicAnalysis.getSpectrumCollection().addIdentifiedSpectra(spectrumFile, (Ms2Identification) proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION));
-                waitingDialog.increaseProgressValue();
+                        waitingDialog.appendReport("Importing " + fileName);
+                    spectrumFactory.addSpectra(spectrumFile);
+                    waitingDialog.increaseProgressValue();
+            } catch (Exception e) {
+                waitingDialog.appendReport("Spectrum files import failed when trying to import " + fileName + ".");
+                e.printStackTrace();
             }
-        } catch (InterruptedException e) {
-            waitingDialog.appendReport("Synchronization issue between identification and spectra import. Import failed.");
-            waitingDialog.setRunCanceled();
-            e.printStackTrace();
-        } catch (Exception e) {
-            waitingDialog.appendReport("Spectrum files import failed when trying to import " + fileName + ".");
-            proteomicAnalysis.clearSpectrumCollection();
-            e.printStackTrace();
         }
         waitingDialog.appendReport("Spectra import completed.");
     }
@@ -409,7 +409,7 @@ public class FileImporter {
                     waitingDialog.appendReport("Reading file: " + idFile.getName());
 
                     int searchEngine = readerFactory.getSearchEngine(idFile);
-                    IdfileReader fileReader = readerFactory.getFileReader(idFile, proteomicAnalysis.getSpectrumCollection());
+                    IdfileReader fileReader = readerFactory.getFileReader(idFile);
                     HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches();
 
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();
@@ -442,7 +442,7 @@ public class FileImporter {
                             if (!proteins.isEmpty()) {
                                 peptide.setParentProteins(proteins);
                             }
-                            
+
                             identification.addSpectrumMatch(match);
 
                             String mgfName = Spectrum.getSpectrumFile(match.getKey());
