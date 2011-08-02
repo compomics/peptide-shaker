@@ -398,6 +398,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        modelButtonGroup = new javax.swing.ButtonGroup();
         gradientPanel = new javax.swing.JPanel();
         allTabsJTabbedPane = new javax.swing.JTabbedPane();
         overviewJPanel = new javax.swing.JPanel();
@@ -419,7 +420,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu = new javax.swing.JMenu();
         searchParametersMenu = new javax.swing.JMenuItem();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        spectrumCountingMenuItem = new javax.swing.JMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
         bubbleScaleJMenuItem = new javax.swing.JMenuItem();
         errorPlotTypeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -448,6 +449,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         sequenceCoverageJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         structureTabViewMenu = new javax.swing.JMenu();
         modelSpinJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        modelTypeMenu = new javax.swing.JMenu();
+        ribbonJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        backboneJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -605,13 +609,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         editMenu.add(annotationPreferencesMenu);
 
-        jMenuItem1.setText("Spectrum Counting");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        spectrumCountingMenuItem.setText("Spectrum Counting");
+        spectrumCountingMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                spectrumCountingMenuItemActionPerformed(evt);
             }
         });
-        editMenu.add(jMenuItem1);
+        editMenu.add(spectrumCountingMenuItem);
         editMenu.add(jSeparator5);
 
         bubbleScaleJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
@@ -819,6 +823,29 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         structureTabViewMenu.add(modelSpinJCheckBoxMenuItem);
+
+        modelTypeMenu.setText("Model");
+
+        modelButtonGroup.add(ribbonJRadioButtonMenuItem);
+        ribbonJRadioButtonMenuItem.setSelected(true);
+        ribbonJRadioButtonMenuItem.setText("Ribbon");
+        ribbonJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ribbonJRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        modelTypeMenu.add(ribbonJRadioButtonMenuItem);
+
+        modelButtonGroup.add(backboneJRadioButtonMenuItem);
+        backboneJRadioButtonMenuItem.setText("Backbone");
+        backboneJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backboneJRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        modelTypeMenu.add(backboneJRadioButtonMenuItem);
+
+        structureTabViewMenu.add(modelTypeMenu);
 
         viewJMenu.add(structureTabViewMenu);
         viewJMenu.add(jSeparator3);
@@ -1425,10 +1452,23 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     int currentProteinIndex = (Integer) proteinStructurePanel.getProteinTable().getValueAt(proteinRow, 0);
 
                     if (currentProteinIndex != selectedProteinIndex) {
-                        proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
+
+                        // invoke later to give time for components to update
+                        SwingUtilities.invokeLater(new Runnable() {
+
+                            public void run() {
+                                proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
+                            }
+                        });
                     }
                 } else {
-                    proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
+                    // invoke later to give time for components to update
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        public void run() {
+                            proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
+                        }
+                    });
                 }
 
                 if (selectedPeptideIndex != -1) {
@@ -1870,9 +1910,36 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         }
     }//GEN-LAST:event_openJMenuItemActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    /**
+     * Open the spectrum counting preferences dialog.
+     * 
+     * @param evt 
+     */
+    private void spectrumCountingMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumCountingMenuItemActionPerformed
         new SpectrumCountingPreferencesDialog(this);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_spectrumCountingMenuItemActionPerformed
+
+    /**
+     * Set the 3d structure model type to ribbon.
+     * 
+     * @param evt 
+     */
+    private void ribbonJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ribbonJRadioButtonMenuItemActionPerformed
+        proteinStructurePanel.setRibbonModel(ribbonJRadioButtonMenuItem.isSelected());
+        proteinStructurePanel.setBackboneModel(backboneJRadioButtonMenuItem.isSelected());
+        proteinStructurePanel.updateModelType();
+    }//GEN-LAST:event_ribbonJRadioButtonMenuItemActionPerformed
+
+    /**
+     * Set the 3d structure model type to backbone.
+     * 
+     * @param evt 
+     */
+    private void backboneJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backboneJRadioButtonMenuItemActionPerformed
+        proteinStructurePanel.setRibbonModel(ribbonJRadioButtonMenuItem.isSelected());
+        proteinStructurePanel.setBackboneModel(backboneJRadioButtonMenuItem.isSelected());
+        proteinStructurePanel.updateModelType();
+    }//GEN-LAST:event_backboneJRadioButtonMenuItemActionPerformed
 
     /**
      * Returns if the 3D model is to be spinning or not.
@@ -2027,6 +2094,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JTabbedPane allTabsJTabbedPane;
     private javax.swing.JMenuItem annotationPreferencesMenu;
     private javax.swing.JPanel annotationsJPanel;
+    private javax.swing.JRadioButtonMenuItem backboneJRadioButtonMenuItem;
     private javax.swing.JMenuItem bubblePlotJMenuItem;
     private javax.swing.JMenuItem bubbleScaleJMenuItem;
     private javax.swing.JMenu editMenu;
@@ -2041,14 +2109,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenu graphicsJMenu;
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JMenuBar menuBar;
+    private javax.swing.ButtonGroup modelButtonGroup;
     private javax.swing.JCheckBoxMenuItem modelSpinJCheckBoxMenuItem;
+    private javax.swing.JMenu modelTypeMenu;
     private javax.swing.JMenuItem newJMenuItem;
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JMenu overViewTabViewMenu;
@@ -2063,6 +2132,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
     private javax.swing.JPanel ptmJPanel;
     private javax.swing.JPanel qcJPanel;
+    private javax.swing.JRadioButtonMenuItem ribbonJRadioButtonMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JCheckBoxMenuItem scoresJCheckBoxMenuItem;
     private javax.swing.JMenuItem searchParametersMenu;
@@ -2071,6 +2141,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
     private javax.swing.JMenuItem spectrumAsMgfFileJMenuItem;
     private javax.swing.JMenuItem spectrumAsPklFileJMenuItem;
+    private javax.swing.JMenuItem spectrumCountingMenuItem;
     private javax.swing.JCheckBoxMenuItem spectrumJCheckBoxMenuItem;
     private javax.swing.JMenu spectrumJMenu;
     private javax.swing.JPanel spectrumJPanel;
@@ -2367,7 +2438,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             return null;
         }
     }
-    
+
     /**
      * Returns the precursor of a given spectrum
      * @param spectrumKey   the key of the given spectrum
