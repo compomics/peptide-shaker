@@ -187,7 +187,7 @@
                                       <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="immoniumBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="mhBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="precursorBox" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                               </Group>
@@ -202,7 +202,7 @@
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="aBox" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="xBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="mhBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="precursorBox" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
@@ -256,9 +256,9 @@
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JCheckBox" name="mhBox">
+                    <Component class="javax.swing.JCheckBox" name="precursorBox">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="MH"/>
+                        <Property name="text" type="java.lang.String" value="Precursor"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>

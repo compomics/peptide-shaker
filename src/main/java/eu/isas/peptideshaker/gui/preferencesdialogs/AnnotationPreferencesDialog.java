@@ -62,7 +62,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         xBox = new javax.swing.JCheckBox();
         yBox = new javax.swing.JCheckBox();
         zBox = new javax.swing.JCheckBox();
-        mhBox = new javax.swing.JCheckBox();
+        precursorBox = new javax.swing.JCheckBox();
         immoniumBox = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -148,8 +148,8 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         zBox.setText("z");
         zBox.setOpaque(false);
 
-        mhBox.setText("MH");
-        mhBox.setOpaque(false);
+        precursorBox.setText("Precursor");
+        precursorBox.setOpaque(false);
 
         immoniumBox.setText("Immonium Ions");
         immoniumBox.setOpaque(false);
@@ -174,7 +174,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                         .addGap(71, 71, 71)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(immoniumBox)
-                            .addComponent(mhBox))))
+                            .addComponent(precursorBox))))
                 .addContainerGap(225, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -184,7 +184,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(aBox)
                     .addComponent(xBox)
-                    .addComponent(mhBox))
+                    .addComponent(precursorBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(bBox)
@@ -461,7 +461,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             if (zBox.isSelected()) {
                 annotationPreferences.addIonType(PeptideFragmentIonType.Z_ION);
             }
-            if (mhBox.isSelected()) {
+            if (precursorBox.isSelected()) {
                 annotationPreferences.addIonType(PeptideFragmentIonType.PRECURSOR_ION);
             }
             if (immoniumBox.isSelected()) {
@@ -583,13 +583,13 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JCheckBox mhBox;
     private javax.swing.JCheckBox moreCharges;
     private javax.swing.JCheckBox mostIntenseJCheckBox;
     private javax.swing.JTextField mzToleranceTxt;
     private javax.swing.JCheckBox nh3Box;
     private javax.swing.JButton okButton;
     private javax.swing.JCheckBox oneCharge;
+    private javax.swing.JCheckBox precursorBox;
     private javax.swing.JCheckBox sequenceLossCheck;
     private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JCheckBox twoCharges;
@@ -610,7 +610,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         xBox.setSelected(false);
         yBox.setSelected(false);
         zBox.setSelected(false);
-        mhBox.setSelected(false);
+        precursorBox.setSelected(false);
         immoniumBox.setSelected(false);
         for (PeptideFragmentIonType ionType : annotationPreferences.getIonTypes()) {
             if (ionType == PeptideFragmentIonType.A_ION) {
@@ -626,7 +626,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             } else if (ionType == PeptideFragmentIonType.Z_ION) {
                 zBox.setSelected(true);
             } else if (ionType == PeptideFragmentIonType.PRECURSOR_ION) {
-                mhBox.setSelected(true);
+                precursorBox.setSelected(true);
             } else if (ionType == PeptideFragmentIonType.IMMONIUM) {
                 immoniumBox.setSelected(true);
             }
