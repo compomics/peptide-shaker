@@ -2330,7 +2330,7 @@ public class OverviewPanel extends javax.swing.JPanel {
      */
     private void coverageTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_coverageTableMouseMoved
 
-        // @TODO: not working yet...
+        // @TODO: not working perfectly yet...
 
         double paddingInPercent = 0.0115; // best so far: 0.012
         double xValue = evt.getPoint().getX();
@@ -2347,9 +2347,18 @@ public class OverviewPanel extends javax.swing.JPanel {
             for (int i = 0; i < peptideTable.getRowCount(); i++) {
                 if (residueNumber >= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex())
                         && residueNumber <= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex())) {
+                    
+                    String modifications = (String) peptideTable.getValueAt(i, peptideTable.getColumn("Modifications").getModelIndex());
+                    
+                    if (modifications == null) {
+                        modifications = "";
+                    } else {
+                        modifications = " (" + modifications + ")";
+                    }
+                    
                     tooltipText += peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex()) + " - "
                             + peptideTable.getValueAt(i, peptideTable.getColumn("Sequence").getModelIndex())
-                            + " - " + peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex()) + "<br>";
+                            + " - " + peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex()) + modifications + "<br>";
                 }
             }
 
