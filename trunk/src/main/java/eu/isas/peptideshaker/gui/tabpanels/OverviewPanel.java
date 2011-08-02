@@ -2036,14 +2036,23 @@ public class OverviewPanel extends javax.swing.JPanel {
         aIonToggleButtonActionPerformed(null);
     }//GEN-LAST:event_twoChargesTableToggleButtonActionPerformed
     
+    /**
+     * Updates the spectrum, bubble plot and ion table.
+     * 
+     * @param evt 
+     */
     private void psmTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmTableMouseReleased
         int row = psmTable.getSelectedRow();
         
         if (row != -1) {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            
             updateSpectrum(row, false);
             
             String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
             peptideShakerGUI.selectSpectrum(spectrumKey);
+            
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_psmTableMouseReleased
 
@@ -2728,19 +2737,21 @@ public class OverviewPanel extends javax.swing.JPanel {
                 }
             }
             
+            // @TODO: rewrite the charge selection below when the new ion selection gui has been implemented!
+            
             MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                     selectedIndexes,
                     allAnnotations, annotationPreferences.getIonTypes(), allSpectra, searchParameters.getFragmentIonMZTolerance(),
                     peptideShakerGUI.getBubbleScale(),
-                    oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected(),
-                    moreThanTwoChargesToggleButton.isSelected(), selectedIndexes.size() == 1, barsBubblePlotToggleButton.isSelected(),
+                    annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
+                    annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4)), 
+                    selectedIndexes.size() == 1, barsBubblePlotToggleButton.isSelected(),
                     peptideShakerGUI.useRelativeError());
             
             bubbleJPanel.removeAll();
             bubbleJPanel.add(massErrorBubblePlot);
             bubbleJPanel.revalidate();
             bubbleJPanel.repaint();
-            
         }
     }
 
@@ -2881,6 +2892,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         
         if (row != -1) {
             
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            
             String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
             
             if (displaySpectrum) {
@@ -2958,15 +2971,18 @@ public class OverviewPanel extends javax.swing.JPanel {
                             sequenceFragmentIonPlotsJPanel.add(new IntensityHistogram(
                                     annotations, annotationPreferences.getIonTypes(), currentSpectrum,
                                     peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks(),
-                                    oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected(),
-                                    moreThanTwoChargesToggleButton.isSelected()));
+                                    annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
+                                    annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4))));
 
+                            // @TODO: rewrite the charge selection above and below when the new ion selection gui has been implemented!
+                            
                             // create the miniature mass error plot
                             MassErrorPlot massErrorPlot = new MassErrorPlot(
                                     annotations, annotationPreferences.getIonTypes(), currentSpectrum,
                                     peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
-                                    oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected(),
-                                    moreThanTwoChargesToggleButton.isSelected(), peptideShakerGUI.useRelativeError());
+                                    annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
+                                    annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4)), 
+                                    peptideShakerGUI.useRelativeError());
                             
                             if (massErrorPlot.getNumberOfDataPointsInPlot() > 0) {
                                 sequenceFragmentIonPlotsJPanel.add(massErrorPlot);
@@ -3040,6 +3056,9 @@ public class OverviewPanel extends javax.swing.JPanel {
                     e.printStackTrace();
                 }
             }
+            
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            
         } else {
 
             // nothing to display, empty previous results
