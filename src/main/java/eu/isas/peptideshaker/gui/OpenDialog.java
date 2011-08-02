@@ -6,6 +6,7 @@ import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
@@ -636,9 +637,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
             int progressCounter = idFiles.size() + spectrumFiles.size();
 
-            if (fastaFile != null) {
-                progressCounter++;
-            }
 
             // add one more just to not start at 0%
             progressCounter++;
@@ -669,11 +667,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         }
 }//GEN-LAST:event_openButtonActionPerformed
 
-    /**
-     * @TODO: implement me
-     * 
-     * @param evt 
-     */
     /**
      * Clear the database field.
      * 
@@ -1351,7 +1344,16 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         peptideShakerGUI.setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
         peptideShakerGUI.setSearchParameters(experimentSettings.getSearchParameters());
         peptideShakerGUI.setSpectrumCountingPreferences(experimentSettings.getSpectrumCountingPreferences());
-
+        
+        try {
+            SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile());
+        }catch (Exception e) {
+            JOptionPane.showMessageDialog(this,
+                            "An error occured while reading " + experimentSettings.getSearchParameters().getFastaFile() + ".\n" ,
+                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+        }
+        
         ArrayList<String> names = new ArrayList<String>();
         for (File file : spectrumFiles) {
             names.add(file.getName());

@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui;
 import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.SequenceDataBase;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -46,9 +46,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      */
     private ArrayList<ProteinMatch> associatedMatches = new ArrayList<ProteinMatch>();
     /**
-     * The sequence database
+     * The sequence factory
      */
-    private SequenceDataBase db;
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The PeptideShaker parent frame.
      */
@@ -74,11 +74,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * @param identification
      * @param db  
      */
-    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, ProteinMatch inspectedMatch, Identification identification, SequenceDataBase db) {
+    public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, ProteinMatch inspectedMatch, Identification identification) {
         super(peptideShakerGUI, true);
 
         this.peptideShakerGUI = peptideShakerGUI;
-        this.db = db;
         this.inspectedMatch = inspectedMatch;
         accessions = new ArrayList(inspectedMatch.getTheoreticProteinsAccessions());
         
@@ -792,10 +791,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 2:
                     return peptideShakerGUI.addDatabaseLink(inspectedMatch.getTheoreticProtein(accessions.get(row)));//accessions.get(row);
                 case 3:
-                    if (db != null) {
-                        return db.getProteinHeader(inspectedMatch.getTheoreticProtein(accessions.get(row)).getProteinKey()).getDescription();
-                    } else {
-                        return "Database not loaded";
+                    try {
+                        return sequenceFactory.getHeader(inspectedMatch.getTheoreticProtein(accessions.get(row)).getProteinKey()).getDescription();
+                    } catch (Exception e) {
+                        return "Database Error";
                     }
                 default:
                     return " ";

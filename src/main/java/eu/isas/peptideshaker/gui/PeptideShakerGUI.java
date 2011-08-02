@@ -11,7 +11,7 @@ import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
-import com.compomics.util.experiment.identification.SequenceDataBase;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -251,13 +251,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private QCPanel qcPanel;
     /**
-     * The sequence database used for identification
-     */
-    private SequenceDataBase sequenceDataBase;
-    /**
      * The spectrum factory
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    /**
+     * The sequence factory
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The label with for the numbers in the jsparklines columns.
      */
@@ -962,6 +962,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void exitJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitJMenuItemActionPerformed
         try {
             spectrumFactory.closeFiles();
+            sequenceFactory.closeFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1977,10 +1978,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             boolean displayProteins = true;
             boolean displayPeptidesAndPSMs = true;
 
-            if (sequenceDataBase == null) {
-                displaySequence = false;
-            }
-
             sequenceCoverageJCheckBoxMenuItem.setSelected(displaySequence);
             spectrumJCheckBoxMenuItem.setSelected(displaySpectrum);
 
@@ -2086,7 +2083,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         this.replicateNumber = replicateNumber;
         ProteomicAnalysis proteomicAnalysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        sequenceDataBase = proteomicAnalysis.getSequenceDataBase();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutJMenuItem;
@@ -2405,15 +2401,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public Identification getIdentification() {
         return identification;
-    }
-
-    /**
-     * Returns the sequence database used for identification.
-     * 
-     * @return the sequence database used for identification
-     */
-    public SequenceDataBase getSequenceDataBase() {
-        return sequenceDataBase;
     }
 
     /**
@@ -2764,25 +2751,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         String proteinAccession = protein.getAccession();
         String accessionNumberWithLink = proteinAccession;
+        try {
+            if (sequenceFactory.getHeader(proteinAccession) != null) {
 
-        if (getSequenceDataBase().getProteinHeader(proteinAccession) != null) {
+                // try to find the database from the SequenceDatabase
+                String database = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
 
-            // try to find the database from the SequenceDatabase
-            String database = getSequenceDataBase().getProteinHeader(proteinAccession).getDatabaseType();
+                // create the database link
+                if (database != null) {
 
-            // create the database link
-            if (database != null) {
+                    // @TODO: support more databases
 
-                // @TODO: support more databases
-
-                if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
-                    accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(proteinAccession)
-                            + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
-                            + proteinAccession + "</font></a></html>";
-                } else {
-                    // unknown database!
+                    if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
+                        accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(proteinAccession)
+                                + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
+                                + proteinAccession + "</font></a></html>";
+                    } else {
+                        // unknown database!
+                    }
                 }
             }
+        } catch (Exception e) {
         }
 
         return accessionNumberWithLink;
@@ -2808,28 +2797,31 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         for (int i = 0; i < proteins.size(); i++) {
 
             String proteinAccession = proteins.get(i).getAccession();
+            try {
+                if (!proteins.get(i).isDecoy() && sequenceFactory.getHeader(proteinAccession) != null) {
 
-            if (!proteins.get(i).isDecoy() && getSequenceDataBase().getProteinHeader(proteinAccession) != null) {
+                    // try to find the database from the SequenceDatabase
+                    String database = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
 
-                // try to find the database from the SequenceDatabase
-                String database = getSequenceDataBase().getProteinHeader(proteinAccession).getDatabaseType();
+                    // create the database link
+                    if (database != null) {
 
-                // create the database link
-                if (database != null) {
+                        // @TODO: support more databases
 
-                    // @TODO: support more databases
-
-                    if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
-                        accessionNumberWithLink += "<a href=\"" + getUniProtAccessionLink(proteinAccession)
-                                + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
-                                + proteinAccession + "</font></a>, ";
-                    } else {
-                        // unknown database!
-                        accessionNumberWithLink += "<font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
-                                + proteinAccession + "</font>" + ", ";
+                        if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
+                            accessionNumberWithLink += "<a href=\"" + getUniProtAccessionLink(proteinAccession)
+                                    + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
+                                    + proteinAccession + "</font></a>, ";
+                        } else {
+                            // unknown database!
+                            accessionNumberWithLink += "<font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
+                                    + proteinAccession + "</font>" + ", ";
+                        }
                     }
+                } else {
+                    accessionNumberWithLink += proteinAccession + ", ";
                 }
-            } else {
+            } catch (Exception e) {
                 accessionNumberWithLink += proteinAccession + ", ";
             }
         }
@@ -3159,38 +3151,42 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         Enzyme enyzme = searchParameters.getEnzyme();
         PSParameter pSParameter = new PSParameter();
         Protein currentProtein = null;
-        currentProtein = sequenceDataBase.getProtein(proteinMatch.getMainMatch().getAccession());
-        if (currentProtein == null) {
-            return 0;
-        }
-        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.NSAF) {
-            if (spectrumCountingPreferences.isValidatedHits()) {
-                result = 0;
-                for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-                    for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
-                        pSParameter = (PSParameter) spectrumMatch.getUrParam(pSParameter);
+        try {
+            currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession());
+            if (currentProtein == null) {
+                return 0.0;
+            }
+            if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.NSAF) {
+                if (spectrumCountingPreferences.isValidatedHits()) {
+                    result = 0;
+                    for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
+                        for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
+                            pSParameter = (PSParameter) spectrumMatch.getUrParam(pSParameter);
+                            if (pSParameter.isValidated()) {
+                                result = result + 1;
+                            }
+                        }
+                    }
+                } else {
+                    result = proteinMatch.getSpectrumCount();
+                }
+                return result = result / currentProtein.getSequence().length();
+            } else {
+                if (spectrumCountingPreferences.isValidatedHits()) {
+                    result = 0;
+                    for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
+                        pSParameter = (PSParameter) peptideMatch.getUrParam(pSParameter);
                         if (pSParameter.isValidated()) {
                             result = result + 1;
                         }
                     }
+                } else {
+                    result = proteinMatch.getPeptideCount();
                 }
-            } else {
-                result = proteinMatch.getSpectrumCount();
+                return result = Math.pow(10, result / currentProtein.getNPossiblePeptides(enyzme)) - 1;
             }
-            return result = result / currentProtein.getSequence().length();
-        } else {
-            if (spectrumCountingPreferences.isValidatedHits()) {
-                result = 0;
-                for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-                    pSParameter = (PSParameter) peptideMatch.getUrParam(pSParameter);
-                    if (pSParameter.isValidated()) {
-                        result = result + 1;
-                    }
-                }
-            } else {
-                result = proteinMatch.getPeptideCount();
-            }
-            return result = Math.pow(10, result / currentProtein.getNPossiblePeptides(enyzme)) - 1;
+        } catch (Exception e) {
+            return 0.0;
         }
     }
 }
