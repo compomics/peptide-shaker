@@ -9,7 +9,7 @@ import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
-import com.compomics.util.experiment.identification.SequenceDataBase;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -69,10 +69,6 @@ public class CsvExporter {
      */
     private String assumptionFile;
     /**
-     * The sequence database
-     */
-    private SequenceDataBase db;
-    /**
      * The enzyme used for digestion
      */
     private Enzyme enzyme;
@@ -80,6 +76,10 @@ public class CsvExporter {
      * The spectrum factory
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    /**
+     * The sequence factory
+     */
+    private SequenceFactory sequenceFactory;
 
     /**
      * Creates a CsvExporter object.
@@ -93,7 +93,6 @@ public class CsvExporter {
         this.sample = sample;
         this.replicateNumber = replicateNumber;
         this.enzyme = enzyme;
-        db = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSequenceDataBase();
 
         proteinFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_proteins.txt";
         peptideFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_peptides.txt";
@@ -206,9 +205,14 @@ public class CsvExporter {
             }
         }
         line += nValidatedPeptides + SEPARATOR + nValidatedPsms + SEPARATOR;
-        line += db.getProtein(proteinMatch.getMainMatch().getAccession()).getNPossiblePeptides(enzyme) + SEPARATOR;
-        line += db.getProtein(proteinMatch.getMainMatch().getAccession()).getSequence().length() + SEPARATOR;
+        try {
+        line += sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession()).getNPossiblePeptides(enzyme) + SEPARATOR;
+        line += sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession()).getSequence().length() + SEPARATOR;
+        } catch (Exception e) {
+            line += SEPARATOR + SEPARATOR;
+        }
 
+        
         try {
             line += probabilities.getProteinProbabilityScore() + SEPARATOR
                     + probabilities.getProteinProbability() + SEPARATOR;
@@ -231,7 +235,11 @@ public class CsvExporter {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        line += db.getProteinHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
+        try {
+        line += sequenceFactory.getHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
+        } catch (Exception e) {
+            
+        }
 
         line += "\n";
 

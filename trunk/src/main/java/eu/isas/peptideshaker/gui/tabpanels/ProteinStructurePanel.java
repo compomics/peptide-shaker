@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Protein;
-import com.compomics.util.experiment.identification.SequenceDataBase;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -130,6 +130,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * The current protein sequence.
      */
     private String proteinSequence;
+    /**
+     * The sequence factory
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /** 
      * Creates a new ProteinPanel.
@@ -166,7 +170,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         proteinTableToolTips.add("Protein Seqeunce Coverage (%)");
         proteinTableToolTips.add("Number of Peptides");
         proteinTableToolTips.add("Number of Spectra");
-        proteinTableToolTips.add("Protein emPAI Score");
+        proteinTableToolTips.add("Protein Spectrum Counting Score");
         proteinTableToolTips.add("Protein Score");
         proteinTableToolTips.add("Protein Confidence");
         proteinTableToolTips.add("Validated");
@@ -258,8 +262,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        proteinTable.getColumn("emPAI").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        proteinTable.getColumn("Spectrum Counting").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Spectrum Counting").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth() + 5, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
@@ -458,7 +462,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             },
             new String [] {
-                " ", "PI", "Accession", "Description", "Coverage", "#Peptides", "#Spectra", "emPAI", "Score", "Confidence", ""
+                " ", "PI", "Accession", "Description", "Coverage", "#Peptides", "#Spectra", "Spectrum Counting", "Score", "Confidence", ""
             }
         ) {
             Class[] types = new Class [] {
@@ -828,7 +832,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             String proteinKey = proteinTableMap.get(getProteinKey(proteinTable.getSelectedRow()));
             ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
             String proteinAccession = proteinMatch.getMainMatch().getAccession();
-            proteinSequence = peptideShakerGUI.getSequenceDataBase().getProtein(proteinAccession).getSequence();
+            try {
+            proteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
+            }catch (Exception e) {
+                proteinSequence = "";
+            }
 
             // set the currently selected protein index
             peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
@@ -880,7 +888,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             // open the protein inference dialog
             if (column == proteinTable.getColumn("PI").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
-                new ProteinInferenceDialog(peptideShakerGUI, proteinMatch, peptideShakerGUI.getIdentification(), peptideShakerGUI.getSequenceDataBase());
+                new ProteinInferenceDialog(peptideShakerGUI, proteinMatch, peptideShakerGUI.getIdentification());
             }
         }
     }//GEN-LAST:event_proteinTableMouseReleased
@@ -1481,9 +1489,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         int index = 0, maxPeptides = 0, maxSpectra = 0;
         double sequenceCoverage = 0;
-        double emPAI = 0, maxEmPAI = 0;
+        double spectrumCount = 0, maxSpectrumCount = 0;
         String description = "";
-        SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
 
         // sort the proteins according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
         HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap =
@@ -1547,12 +1554,19 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                         proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
                         probabilities = (PSParameter) proteinMatch.getUrParam(probabilities);
 
-                        Protein currentProtein = db.getProtein(proteinMatch.getMainMatch().getAccession());
-                        int nPossible = currentProtein.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
-                        emPAI = (Math.pow(10, ((double) proteinMatch.getPeptideCount()) / ((double) nPossible))) - 1;
-                        description = db.getProteinHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
+                        int nPossible = 0;
+                        description = "";
+                        sequenceCoverage = 0;
+                        spectrumCount = 0;
+                        try {
+                        Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession());
+                        nPossible = currentProtein.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
+                        spectrumCount = peptideShakerGUI.getSpectrumCount(proteinMatch);
+                        description = sequenceFactory.getHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
                         sequenceCoverage = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
-
+                        } catch (Exception e) {
+                            
+                        }
                         // only add non-decoy matches to the overview
                         if (!proteinMatch.isDecoy()) {
                             ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
@@ -1563,7 +1577,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                         sequenceCoverage,
                                         proteinMatch.getPeptideCount(),
                                         proteinMatch.getSpectrumCount(),
-                                        emPAI,
+                                        spectrumCount,
                                         probabilities.getProteinScore(),
                                         probabilities.getProteinConfidence(),
                                         probabilities.isValidated()
@@ -1584,8 +1598,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                             maxSpectra = proteinMatch.getSpectrumCount();
                         }
 
-                        if (maxEmPAI < emPAI) {
-                            maxEmPAI = emPAI;
+                        if (maxSpectrumCount < spectrumCount) {
+                            maxSpectrumCount = spectrumCount;
                         }
                     }
                 }
@@ -1608,7 +1622,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).setMaxValue(maxEmPAI);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Spectrum Counting").getCellRenderer()).setMaxValue(maxSpectrumCount);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).setMaxValue(100.0);
 
         try {
@@ -1834,7 +1848,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      */
     public void showSparkLines(boolean showSparkLines) {
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("emPAI").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Spectrum Counting").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
@@ -1953,7 +1967,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     public void updateMainMatch(Protein mainMatch, int proteinInferenceType) {
         proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex());
         proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex());
-        String description = peptideShakerGUI.getSequenceDataBase().getProteinHeader(mainMatch.getAccession()).getDescription();
+        String description = "";
+        try {
+            description = sequenceFactory.getHeader(mainMatch.getAccession()).getDescription();            
+        } catch (Exception e) {
+            
+        }
         proteinTable.setValueAt(description, proteinTable.getSelectedRow(), proteinTable.getColumn("Description").getModelIndex());
     }
 

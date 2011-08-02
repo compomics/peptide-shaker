@@ -2,7 +2,7 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.biology.Protein;
-import com.compomics.util.experiment.identification.SequenceDataBase;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.SwingUtilities;
@@ -20,6 +20,10 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      * The PeptideShakerGUI parent.
      */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The sequence factory
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     
     /**
      * Create a new ProteinInferencePeptideLevelDialog.
@@ -47,16 +51,21 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         // insert the values
         peptideSequenceJTextField.setText(peptideSequence);
         
-        SequenceDataBase db = peptideShakerGUI.getSequenceDataBase();
         
         for (int i=0; i<proteins.size(); i++) {
             
             String accession = proteins.get(i).getAccession();
+            String description;
+            try {
+                description = sequenceFactory.getHeader(accession).getDescription();
+            } catch (Exception e) {
+                description = "Fasta file Error";
+            }
             
             ((DefaultTableModel) proteinJTable.getModel()).addRow(new Object[] {
                 (i+1),
                 peptideShakerGUI.addDatabaseLink(proteins.get(i)),
-                db.getProteinHeader(accession).getDescription()
+                description
             });
         }
         

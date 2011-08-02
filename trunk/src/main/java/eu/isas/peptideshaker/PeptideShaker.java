@@ -3,14 +3,13 @@ package eu.isas.peptideshaker;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.PTM;
-import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.AdvocateFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
-import com.compomics.util.experiment.identification.SequenceDataBase;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -75,6 +74,10 @@ public class PeptideShaker {
      * The id importer will import and process the identifications
      */
     private FileImporter fileImporter = null;
+    /**
+     * The sequence factory
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
      * Constructor without mass specification. Calculation will be done on new maps
@@ -126,8 +129,6 @@ public class PeptideShaker {
 
         if (analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION) == null) {
             analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification());
-            SequenceDataBase db = new SequenceDataBase();
-            analysis.setSequenceDataBase(db);
             fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
             fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters);
         } else {
@@ -818,8 +819,12 @@ public class PeptideShaker {
      * @return description words longer than 3 characters
      */
     private ArrayList<String> parseDescription(String proteinAccession) {
-        SequenceDataBase db = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getSequenceDataBase();
-        String description = db.getProteinHeader(proteinAccession).getDescription();
+        String description = "";
+        try {
+            sequenceFactory.getHeader(proteinAccession).getDescription();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         ArrayList<String> result = new ArrayList<String>();
         for (String component : description.split(" ")) {
             if (component.length() > 3) {

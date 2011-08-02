@@ -9,13 +9,11 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
-import com.compomics.util.experiment.identification.SequenceDataBase;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
-import com.compomics.util.experiment.io.massspectrometry.MgfIndex;
-import com.compomics.util.experiment.io.massspectrometry.MgfReader;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.PeptideShaker;
@@ -24,6 +22,7 @@ import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -70,7 +69,11 @@ public class FileImporter {
     /**
      * The spectrum factory
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(1000);
+    /**
+     * The sequence factory
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(10000);
     /**
      * Peptide to protein map: peptide sequence -> protein accession
      */
@@ -139,8 +142,7 @@ public class FileImporter {
 
         try {
             waitingDialog.appendReport("Importing sequences from " + fastaFile.getName() + ".");
-            SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
-            db.importDataBase(fastaFile);
+            sequenceFactory.loadFastaFile(fastaFile);
             // Load the sequences likely to be encountered in the sequence map
             String sequence;
             Enzyme enzyme = searchParameters.getEnzyme();
@@ -148,7 +150,8 @@ public class FileImporter {
             int nMin = idFilter.getMinPeptideLength();
             int nMax = idFilter.getMaxPeptideLength();
 
-            if (!db.getProtein(db.getProteinList().iterator().next()).getDatabaseType().equalsIgnoreCase("UniProt")) {
+            String firstAccession = sequenceFactory.getAccessions().get(0);
+            if (!sequenceFactory.getHeader(firstAccession).getDatabaseType().equalsIgnoreCase("UniProt")) {
                 JOptionPane.showMessageDialog(waitingDialog,
                         "We strongly recommend the use of UniProt accession numbers.\n"
                         + "Some features will be limited if using other databases.",
@@ -156,7 +159,7 @@ public class FileImporter {
                         JOptionPane.INFORMATION_MESSAGE);
             }
 
-            if (!db.includesDecoy()) {
+            if (!sequenceFactory.concatenatedTargetDecoy()) {
                 JOptionPane.showMessageDialog(waitingDialog,
                         "PeptideShaker validation requires the use of a taget-decoy database.\n"
                         + "Some features will be limited if using other types of databases. See\n"
@@ -165,8 +168,9 @@ public class FileImporter {
                         JOptionPane.INFORMATION_MESSAGE);
             }
 
-            for (String proteinKey : db.getProteinList()) {
-                sequence = db.getProtein(proteinKey).getSequence();
+            waitingDialog.appendReport("Inferring peptides from proteins.");
+            for (String proteinKey : sequenceFactory.getAccessions()) {
+                sequence = sequenceFactory.getProtein(proteinKey).getSequence();
                 for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
                     if (!sequences.containsKey(peptide)) {
                         sequences.put(peptide, new ArrayList<String>());
@@ -221,15 +225,14 @@ public class FileImporter {
      * @param waitingDialog the waiting dialog
      * @return          a list of corresponding proteins found in the database
      */
-    private ArrayList<String> getProteins(String sequence, WaitingDialog waitingDialog) {
-        SequenceDataBase db = proteomicAnalysis.getSequenceDataBase();
+    private ArrayList<String> getProteins(String sequence, WaitingDialog waitingDialog) throws IOException {
         ArrayList<String> result = sequences.get(sequence);
-        boolean inspectAll = true;
+        boolean inspectAll = 2*sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache();
         if (result == null) {
             result = new ArrayList<String>();
             if (inspectAll) {
-                for (String proteinKey : db.getProteinList()) {
-                    if (db.getProtein(proteinKey).getSequence().contains(sequence)) {
+                for (String proteinKey : sequenceFactory.getAccessions()) {
+                    if (sequenceFactory.getProtein(proteinKey).getSequence().contains(sequence)) {
                         result.add(proteinKey);
                     }
                     if (waitingDialog.isRunCanceled()) {

@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -50,6 +51,10 @@ public class QCPanel extends javax.swing.JPanel {
      * color for the plots (validated targets, validated decoy, non validated target, non validated decoy)
      */
     public static Color[] histogramColors;
+    /**
+     * The sequence factory
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /** 
      * Creates a new QCPanel
@@ -589,30 +594,34 @@ public class QCPanel extends javax.swing.JPanel {
             ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
             ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
             ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-            for (ProteinMatch proteinMatch : peptideShakerGUI.getIdentification().getProteinIdentification().values()) {
-                value = peptideShakerGUI.getSpectrumCount(proteinMatch);
-                if (value > 0) {
-                    if (value < min || min == -1) {
-                        min = value;
+            try {
+                for (ProteinMatch proteinMatch : peptideShakerGUI.getIdentification().getProteinIdentification().values()) {
+                    value = peptideShakerGUI.getSpectrumCount(proteinMatch);
+                    if (value > 0) {
+                        if (value < min || min == -1) {
+                            min = value;
+                        }
+                        if (value > max || max == -1) {
+                            max = value;
+                        }
                     }
-                    if (value > max || max == -1) {
-                        max = value;
+                    psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+                    if (!proteinMatch.isDecoy()) {
+                        if (psParameter.isValidated()) {
+                            validatedValues.add(value);
+                        } else {
+                            nonValidatedValues.add(value);
+                        }
+                    } else {
+                        if (psParameter.isValidated()) {
+                            validatedDecoyValues.add(value);
+                        } else {
+                            nonValidatedDecoyValues.add(value);
+                        }
                     }
                 }
-                psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
-                if (!proteinMatch.isDecoy()) {
-                    if (psParameter.isValidated()) {
-                        validatedValues.add(value);
-                    } else {
-                        nonValidatedValues.add(value);
-                    }
-                } else {
-                    if (psParameter.isValidated()) {
-                        validatedDecoyValues.add(value);
-                    } else {
-                        nonValidatedDecoyValues.add(value);
-                    }
-                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             int binMin = (int) Math.log10(min) - 1;
             int binMax = (int) Math.log10(max) + 1;
@@ -632,28 +641,32 @@ public class QCPanel extends javax.swing.JPanel {
             ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
             ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
             ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-            Protein currentProtein;
-            min = 0;
-            for (ProteinMatch proteinMatch : peptideShakerGUI.getIdentification().getProteinIdentification().values()) {
-                currentProtein = peptideShakerGUI.getSequenceDataBase().getProtein(proteinMatch.getMainMatch().getAccession());
-                value = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
-                if (value > max || max == -1) {
-                    max = value;
-                }
-                psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
-                if (!proteinMatch.isDecoy()) {
-                    if (psParameter.isValidated()) {
-                        validatedValues.add(value);
-                    } else {
-                        nonValidatedValues.add(value);
+            try {
+                Protein currentProtein;
+                min = 0;
+                for (ProteinMatch proteinMatch : peptideShakerGUI.getIdentification().getProteinIdentification().values()) {
+                    currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession());
+                    value = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
+                    if (value > max || max == -1) {
+                        max = value;
                     }
-                } else {
-                    if (psParameter.isValidated()) {
-                        validatedDecoyValues.add(value);
+                    psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+                    if (!proteinMatch.isDecoy()) {
+                        if (psParameter.isValidated()) {
+                            validatedValues.add(value);
+                        } else {
+                            nonValidatedValues.add(value);
+                        }
                     } else {
-                        nonValidatedDecoyValues.add(value);
+                        if (psParameter.isValidated()) {
+                            validatedDecoyValues.add(value);
+                        } else {
+                            nonValidatedDecoyValues.add(value);
+                        }
                     }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             int maxBin = (int) max + 1;
             ArrayList<Double> bins = new ArrayList<Double>();
