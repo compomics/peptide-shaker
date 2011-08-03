@@ -168,16 +168,19 @@ public class FileImporter {
                         JOptionPane.INFORMATION_MESSAGE);
             }
 
-            waitingDialog.appendReport("Inferring peptides from proteins.");
-            for (String proteinKey : sequenceFactory.getAccessions()) {
-                sequence = sequenceFactory.getProtein(proteinKey).getSequence();
-                for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
-                    if (!sequences.containsKey(peptide)) {
-                        sequences.put(peptide, new ArrayList<String>());
-                    }
-                    sequences.get(peptide).add(proteinKey);
-                    if (waitingDialog.isRunCanceled()) {
-                        return;
+            boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache();
+            if (inspectAll) {
+                waitingDialog.appendReport("Inferring peptides from proteins.");
+                for (String proteinKey : sequenceFactory.getAccessions()) {
+                    sequence = sequenceFactory.getProtein(proteinKey).getSequence();
+                    for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
+                        if (!sequences.containsKey(peptide)) {
+                            sequences.put(peptide, new ArrayList<String>());
+                        }
+                        sequences.get(peptide).add(proteinKey);
+                        if (waitingDialog.isRunCanceled()) {
+                            return;
+                        }
                     }
                 }
             }
@@ -207,9 +210,9 @@ public class FileImporter {
         for (File spectrumFile : spectrumFiles) {
             try {
                 fileName = spectrumFile.getName();
-                        waitingDialog.appendReport("Importing " + fileName);
-                    spectrumFactory.addSpectra(spectrumFile);
-                    waitingDialog.increaseProgressValue();
+                waitingDialog.appendReport("Importing " + fileName);
+                spectrumFactory.addSpectra(spectrumFile);
+                waitingDialog.increaseProgressValue();
             } catch (Exception e) {
                 waitingDialog.appendReport("Spectrum files import failed when trying to import " + fileName + ".");
                 e.printStackTrace();
@@ -227,7 +230,7 @@ public class FileImporter {
      */
     private ArrayList<String> getProteins(String sequence, WaitingDialog waitingDialog) throws IOException {
         ArrayList<String> result = sequences.get(sequence);
-        boolean inspectAll = 2*sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache();
+        boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache();
         if (result == null) {
             result = new ArrayList<String>();
             if (inspectAll) {
