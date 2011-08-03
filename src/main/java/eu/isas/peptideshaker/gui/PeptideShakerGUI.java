@@ -1598,11 +1598,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
 
-        if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == STRUCTURES_TAB_INDEX) {
+        if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == STRUCTURES_TAB_INDEX || selectedIndex == ANNOTATION_TAB_INDEX) {
 
             JTable tempTable;
 
-            if (selectedIndex == OVER_VIEW_TAB_INDEX) {
+            if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == ANNOTATION_TAB_INDEX) {
                 tempTable = overviewPanel.getProteinTable();
             } else {
                 tempTable = proteinStructurePanel.getProteinTable();
