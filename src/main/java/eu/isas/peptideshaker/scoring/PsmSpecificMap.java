@@ -29,10 +29,6 @@ public class PsmSpecificMap implements Serializable {
      * Map used to group charges together in order to ensure statistical relevance
      */
     private HashMap<Integer, Integer> grouping = new HashMap<Integer, Integer>();
-    /**
-     * The spectrum factory
-     */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
     /**
      * Constructor
@@ -165,7 +161,7 @@ public class PsmSpecificMap implements Serializable {
     public Integer getKey(SpectrumMatch spectrumMatch) {
         try {
             String spectrumKey = spectrumMatch.getKey();
-            return spectrumFactory.getPrecursor(Spectrum.getSpectrumFile(spectrumKey), Spectrum.getSpectrumTitle(spectrumKey)).getCharge().value;
+            return SpectrumFactory.getInstance().getPrecursor(Spectrum.getSpectrumFile(spectrumKey), Spectrum.getSpectrumTitle(spectrumKey)).getCharge().value;
         } catch (Exception e) {
             return 0;
         }

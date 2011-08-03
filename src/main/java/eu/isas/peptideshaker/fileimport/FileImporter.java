@@ -69,11 +69,11 @@ public class FileImporter {
     /**
      * The spectrum factory
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(1000);
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(100);
     /**
      * The sequence factory
      */
-    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(10000);
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance(100000);
     /**
      * Peptide to protein map: peptide sequence -> protein accession
      */
