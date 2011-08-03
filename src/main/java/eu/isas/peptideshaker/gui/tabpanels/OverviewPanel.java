@@ -2379,7 +2379,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 coverageTable.setToolTipText(tooltipText);
             } else {
                 if (residueNumber > 0 && residueNumber <= currentProteinSequence.length()) {
-                    coverageTable.setToolTipText("Residue: " + (int) (width * currentProteinSequence.length()));
+                    coverageTable.setToolTipText(residueNumber + ": " + currentProteinSequence.substring(residueNumber, residueNumber + 1));
                 }
             }
         }
@@ -3016,8 +3016,30 @@ public class OverviewPanel extends javax.swing.JPanel {
 
                             // update the panel border title
                             if (psmTable.getSelectedRowCount() == 1) {
+                                
+                                int selectedRow = peptideTable.getSelectedRow();
+                                int start = (Integer) peptideTable.getValueAt(selectedRow, peptideTable.getColumn("Start").getModelIndex()) - 1;
+                                int end = (Integer) peptideTable.getValueAt(selectedRow, peptideTable.getColumn("End").getModelIndex());
+                                
+                                String before = "";
+                                String after = "";
+                                
+                                // @TODO: make the number of residues before/after up to the user?
+                                
+                                if (start - 2 >= 0) {
+                                    before = currentProteinSequence.substring(start - 2, start) + " - ";
+                                } else if (start - 1 >= 0) {
+                                    before = currentProteinSequence.substring(start - 1, start) + " - ";
+                                }
+                                
+                                if (end + 2 <= currentProteinSequence.length()) {
+                                    after = " - " + currentProteinSequence.substring(end, end + 2);
+                                } else if (end + 1 <= currentProteinSequence.length()) {
+                                    after = " - " + currentProteinSequence.substring(end, end + 1);
+                                }
+  
                                 ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
-                                        "Spectrum & Fragment Ions (" + currentPeptide.getSequence()
+                                        "Spectrum & Fragment Ions (" + before + currentPeptide.getSequence() + after
                                         + "   " + precursor.getCharge().toString() + "   "
                                         + Util.roundDouble(precursor.getMz(), 4) + " m/z)");
                             } else {
