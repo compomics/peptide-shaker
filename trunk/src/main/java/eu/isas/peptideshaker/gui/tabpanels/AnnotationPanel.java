@@ -1,7 +1,9 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
+import com.compomics.util.experiment.identification.SequenceFactory;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
+import java.io.IOException;
 
 /**
  * This tab contains the basic protein annotation and links to other 
@@ -11,18 +13,22 @@ import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
  */
 public class AnnotationPanel extends javax.swing.JPanel {
 
+    /**
+     * The PeptideShakerGUI parent.
+     */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The sequence factory
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /** 
      * Creates a new AnnotationPanel.
      * 
      * @param peptideShakerGUI
-     * @param coverage  
      */
     public AnnotationPanel(PeptideShakerGUI peptideShakerGUI) {
         initComponents();
-
-
         this.peptideShakerGUI = peptideShakerGUI;
     }
 
@@ -39,13 +45,15 @@ public class AnnotationPanel extends javax.swing.JPanel {
         jLabel1 = new javax.swing.JLabel();
         accessionNumberJTextField = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        accessionNumberJTextField1 = new javax.swing.JTextField();
+        proteinNameJTextField = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        accessionNumberJTextField2 = new javax.swing.JTextField();
+        geneNameJTextField = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        accessionNumberJTextField5 = new javax.swing.JTextField();
+        taxonomyJTextField = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        descriptionJTextArea = new javax.swing.JTextArea();
+        jLabel16 = new javax.swing.JLabel();
+        databaseJTextField = new javax.swing.JTextField();
         annotationLinksJPanel1 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         loadUniProtJButton = new javax.swing.JButton();
@@ -63,17 +71,15 @@ public class AnnotationPanel extends javax.swing.JPanel {
         loadDavidJButton = new javax.swing.JButton();
         annotationLinksJPanel6 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
-        loadDavidJButton1 = new javax.swing.JButton();
+        loadIntActJButton = new javax.swing.JButton();
         annotationLinksJPanel7 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
-        loadDavidJButton2 = new javax.swing.JButton();
+        loadQuickGOJButton = new javax.swing.JButton();
         annotationLinksJPanel8 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
-        loadDavidJButton3 = new javax.swing.JButton();
+        loadInterProJButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -88,29 +94,35 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
         jLabel3.setText("Protein Name:");
 
-        accessionNumberJTextField1.setEditable(false);
-        accessionNumberJTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        accessionNumberJTextField1.setText("(not yet implemented)");
+        proteinNameJTextField.setEditable(false);
+        proteinNameJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        proteinNameJTextField.setText("(not yet implemented)");
 
         jLabel4.setText("Gene Name(s):");
 
-        accessionNumberJTextField2.setEditable(false);
-        accessionNumberJTextField2.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        accessionNumberJTextField2.setText("(not yet implemented)");
+        geneNameJTextField.setEditable(false);
+        geneNameJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        geneNameJTextField.setText("(not yet implemented)");
 
         jLabel8.setText("Taxonomy:");
 
-        accessionNumberJTextField5.setEditable(false);
-        accessionNumberJTextField5.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        accessionNumberJTextField5.setText("(not yet implemented)");
+        taxonomyJTextField.setEditable(false);
+        taxonomyJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        taxonomyJTextField.setText("(not yet implemented)");
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setEditable(false);
-        jTextArea1.setLineWrap(true);
-        jTextArea1.setRows(5);
-        jTextArea1.setText("(not yet implemented)");
-        jTextArea1.setWrapStyleWord(true);
-        jScrollPane1.setViewportView(jTextArea1);
+        descriptionJTextArea.setColumns(20);
+        descriptionJTextArea.setEditable(false);
+        descriptionJTextArea.setLineWrap(true);
+        descriptionJTextArea.setRows(5);
+        descriptionJTextArea.setText("(not yet implemented)");
+        descriptionJTextArea.setWrapStyleWord(true);
+        jScrollPane1.setViewportView(descriptionJTextArea);
+
+        jLabel16.setText("Database:");
+
+        databaseJTextField.setEditable(false);
+        databaseJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        databaseJTextField.setText("(not yet implemented)");
 
         javax.swing.GroupLayout annotationLinksJPanelLayout = new javax.swing.GroupLayout(annotationLinksJPanel);
         annotationLinksJPanel.setLayout(annotationLinksJPanelLayout);
@@ -122,40 +134,46 @@ public class AnnotationPanel extends javax.swing.JPanel {
                     .addComponent(jLabel1)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
-                    .addComponent(jLabel8))
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel16))
                 .addGap(18, 18, 18)
                 .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(accessionNumberJTextField5, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
-                    .addComponent(accessionNumberJTextField2, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
-                    .addComponent(accessionNumberJTextField1, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE)
-                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 183, Short.MAX_VALUE))
+                    .addComponent(databaseJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+                    .addComponent(taxonomyJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+                    .addComponent(geneNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+                    .addComponent(proteinNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
+                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE))
                 .addGap(31, 31, 31)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
                 .addContainerGap())
         );
         annotationLinksJPanelLayout.setVerticalGroup(
             annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(annotationLinksJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
-                    .addGroup(annotationLinksJPanelLayout.createSequentialGroup()
+                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, annotationLinksJPanelLayout.createSequentialGroup()
                         .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel1)
                             .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
-                            .addComponent(accessionNumberJTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(proteinNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel4)
-                            .addComponent(accessionNumberJTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(geneNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(accessionNumberJTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8))))
-                .addContainerGap())
+                            .addComponent(taxonomyJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(databaseJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel16))))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         annotationLinksJPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("UniProt - protein knowledgebase"));
@@ -179,7 +197,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addComponent(loadUniProtJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
-                .addContainerGap(136, Short.MAX_VALUE))
+                .addContainerGap(341, Short.MAX_VALUE))
         );
         annotationLinksJPanel1Layout.setVerticalGroup(
             annotationLinksJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -212,7 +230,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addComponent(loadDastyJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel7)
-                .addContainerGap(107, Short.MAX_VALUE))
+                .addContainerGap(312, Short.MAX_VALUE))
         );
         annotationLinksJPanel2Layout.setVerticalGroup(
             annotationLinksJPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -245,7 +263,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addComponent(loadReactomeJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel9)
-                .addContainerGap(138, Short.MAX_VALUE))
+                .addContainerGap(343, Short.MAX_VALUE))
         );
         annotationLinksJPanel3Layout.setVerticalGroup(
             annotationLinksJPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -278,7 +296,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addComponent(loadStringJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel10)
-                .addContainerGap(170, Short.MAX_VALUE))
+                .addContainerGap(375, Short.MAX_VALUE))
         );
         annotationLinksJPanel4Layout.setVerticalGroup(
             annotationLinksJPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -311,7 +329,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addComponent(loadDavidJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel11)
-                .addContainerGap(97, Short.MAX_VALUE))
+                .addContainerGap(302, Short.MAX_VALUE))
         );
         annotationLinksJPanel5Layout.setVerticalGroup(
             annotationLinksJPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -328,10 +346,10 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
         jLabel12.setText("Analysis tools for protein interaction data.");
 
-        loadDavidJButton1.setText("Search IntAct");
-        loadDavidJButton1.addActionListener(new java.awt.event.ActionListener() {
+        loadIntActJButton.setText("Search IntAct");
+        loadIntActJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadDavidJButton1ActionPerformed(evt);
+                loadIntActJButtonActionPerformed(evt);
             }
         });
 
@@ -341,10 +359,10 @@ public class AnnotationPanel extends javax.swing.JPanel {
             annotationLinksJPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(annotationLinksJPanel6Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(loadDavidJButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(loadIntActJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel12)
-                .addContainerGap(209, Short.MAX_VALUE))
+                .addContainerGap(414, Short.MAX_VALUE))
         );
         annotationLinksJPanel6Layout.setVerticalGroup(
             annotationLinksJPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -352,7 +370,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(annotationLinksJPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
-                    .addComponent(loadDavidJButton1))
+                    .addComponent(loadIntActJButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -361,10 +379,10 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
         jLabel13.setText("Web-based browser for Gene Ontology terms.");
 
-        loadDavidJButton2.setText("Search QuickGO");
-        loadDavidJButton2.addActionListener(new java.awt.event.ActionListener() {
+        loadQuickGOJButton.setText("Search QuickGO");
+        loadQuickGOJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadDavidJButton2ActionPerformed(evt);
+                loadQuickGOJButtonActionPerformed(evt);
             }
         });
 
@@ -374,10 +392,10 @@ public class AnnotationPanel extends javax.swing.JPanel {
             annotationLinksJPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(annotationLinksJPanel7Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(loadDavidJButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(loadQuickGOJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel13)
-                .addContainerGap(188, Short.MAX_VALUE))
+                .addContainerGap(393, Short.MAX_VALUE))
         );
         annotationLinksJPanel7Layout.setVerticalGroup(
             annotationLinksJPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -385,7 +403,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(annotationLinksJPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13)
-                    .addComponent(loadDavidJButton2))
+                    .addComponent(loadQuickGOJButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -394,10 +412,10 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
         jLabel14.setText("Integrated database of predictive protein signatures.");
 
-        loadDavidJButton3.setText("Search InterPro");
-        loadDavidJButton3.addActionListener(new java.awt.event.ActionListener() {
+        loadInterProJButton.setText("Search InterPro");
+        loadInterProJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadDavidJButton3ActionPerformed(evt);
+                loadInterProJButtonActionPerformed(evt);
             }
         });
 
@@ -407,10 +425,10 @@ public class AnnotationPanel extends javax.swing.JPanel {
             annotationLinksJPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(annotationLinksJPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(loadDavidJButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(loadInterProJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel14)
-                .addContainerGap(154, Short.MAX_VALUE))
+                .addContainerGap(359, Short.MAX_VALUE))
         );
         annotationLinksJPanel8Layout.setVerticalGroup(
             annotationLinksJPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -418,22 +436,14 @@ public class AnnotationPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(annotationLinksJPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
-                    .addComponent(loadDavidJButton3))
+                    .addComponent(loadInterProJButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Annotation Help"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Annotation - Help"));
         jPanel1.setOpaque(false);
 
-        jLabel2.setFont(jLabel2.getFont().deriveFont((jLabel2.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel2.setText("Get further protein annotations by querying the various resources below.");
-
-        jLabel15.setFont(jLabel15.getFont().deriveFont((jLabel15.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel15.setText("(more details to come)");
-
-        jLabel17.setFont(jLabel17.getFont().deriveFont((jLabel17.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel17.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel17.setText("This tab is still in development...");
+        jLabel2.setText("<html>\nThere are numerous sources of protein information, each covering different aspects of protein properties.<br>\nSome of the most common resources are listed below.\n<br><br>\nTo access the annotations of your protein simply click the button corresponding to the wanted resource.\n<br><br>\nSome resources also allow you to search with a set of proteins. To get the list of all proteins in your project,<br> \ngo to the Export menu and select Features > Protein Accession Numbers. This will provide you with the<br>\nlist of accession numbers that you can copy and paste into any tool. \n<br><br>\nTo querry a resource using multiple proteins, open the wanted resource in your web browser and follow the<br>\nresource's instructions for how to perform the search.\n</html>");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -441,22 +451,15 @@ public class AnnotationPanel extends javax.swing.JPanel {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(jLabel15)
-                    .addComponent(jLabel17))
-                .addContainerGap(206, Short.MAX_VALUE))
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(247, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 66, Short.MAX_VALUE)
-                .addComponent(jLabel17)
-                .addContainerGap())
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -465,18 +468,19 @@ public class AnnotationPanel extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(annotationLinksJPanel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(annotationLinksJPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(annotationLinksJPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(annotationLinksJPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(annotationLinksJPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(annotationLinksJPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(annotationLinksJPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(annotationLinksJPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(annotationLinksJPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -506,59 +510,96 @@ public class AnnotationPanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Open the protein accession in Dasty3.
+     * 
+     * @param evt 
+     */
     private void loadDastyJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDastyJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/dasty/client/index.html?q=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadDastyJButtonActionPerformed
 
+    /**
+     * Open the protein accession in UniProt.
+     * 
+     * @param evt 
+     */
     private void loadUniProtJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadUniProtJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://www.uniprot.org/uniprot/" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR)); 
     }//GEN-LAST:event_loadUniProtJButtonActionPerformed
 
+    /**
+     * Open the protein accession in Reactome.
+     * 
+     * @param evt 
+     */
     private void loadReactomeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadReactomeJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://www.reactome.org/cgi-bin/link?SOURCE=UNIPROT&ID=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR)); 
     }//GEN-LAST:event_loadReactomeJButtonActionPerformed
 
+    /**
+     * Open the protein accession in STRING.
+     * 
+     * @param evt 
+     */
     private void loadStringJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadStringJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://string-db.org/newstring_cgi/show_input_page.pl?identifier=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadStringJButtonActionPerformed
 
+    /**
+     * Open the protein accession in DAVID.
+     * 
+     * @param evt 
+     */
     private void loadDavidJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDavidJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://david.abcc.ncifcrf.gov/api.jsp?type=UNIPROT_ACCESSION&ids=" + accessionNumberJTextField.getText() + "&tool=summary");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadDavidJButtonActionPerformed
 
-    private void loadDavidJButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDavidJButton1ActionPerformed
+    /**
+     * Open the protein accession in IntAct.
+     * 
+     * @param evt 
+     */
+    private void loadIntActJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadIntActJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/intact/pages/interactions/interactions.xhtml?query=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_loadDavidJButton1ActionPerformed
+    }//GEN-LAST:event_loadIntActJButtonActionPerformed
 
-    private void loadDavidJButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDavidJButton2ActionPerformed
+    /**
+     * Open the protein accession in QuickGO.
+     * 
+     * @param evt 
+     */
+    private void loadQuickGOJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadQuickGOJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/QuickGO/GSearch?q=" + accessionNumberJTextField.getText() + "&what=Protein");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_loadDavidJButton2ActionPerformed
+    }//GEN-LAST:event_loadQuickGOJButtonActionPerformed
 
-    private void loadDavidJButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadDavidJButton3ActionPerformed
+    /**
+     * Open the protein accession in InterPro.
+     * 
+     * @param evt 
+     */
+    private void loadInterProJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadInterProJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/interpro/ISearch?query=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_loadDavidJButton3ActionPerformed
+    }//GEN-LAST:event_loadInterProJButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField accessionNumberJTextField;
-    private javax.swing.JTextField accessionNumberJTextField1;
-    private javax.swing.JTextField accessionNumberJTextField2;
-    private javax.swing.JTextField accessionNumberJTextField5;
     private javax.swing.JPanel annotationLinksJPanel;
     private javax.swing.JPanel annotationLinksJPanel1;
     private javax.swing.JPanel annotationLinksJPanel2;
@@ -568,14 +609,16 @@ public class AnnotationPanel extends javax.swing.JPanel {
     private javax.swing.JPanel annotationLinksJPanel6;
     private javax.swing.JPanel annotationLinksJPanel7;
     private javax.swing.JPanel annotationLinksJPanel8;
+    private javax.swing.JTextField databaseJTextField;
+    private javax.swing.JTextArea descriptionJTextArea;
+    private javax.swing.JTextField geneNameJTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -585,18 +628,30 @@ public class AnnotationPanel extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JButton loadDastyJButton;
     private javax.swing.JButton loadDavidJButton;
-    private javax.swing.JButton loadDavidJButton1;
-    private javax.swing.JButton loadDavidJButton2;
-    private javax.swing.JButton loadDavidJButton3;
+    private javax.swing.JButton loadIntActJButton;
+    private javax.swing.JButton loadInterProJButton;
+    private javax.swing.JButton loadQuickGOJButton;
     private javax.swing.JButton loadReactomeJButton;
     private javax.swing.JButton loadStringJButton;
     private javax.swing.JButton loadUniProtJButton;
+    private javax.swing.JTextField proteinNameJTextField;
+    private javax.swing.JTextField taxonomyJTextField;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Set the current accession number.
+     * 
+     * @param accessionNumber the current accession number
+     */
     public void setAccessionNumber(String accessionNumber) {
         accessionNumberJTextField.setText(accessionNumber);
+        
+        try {
+            databaseJTextField.setText(sequenceFactory.getProtein(accessionNumber).getDatabaseType());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
