@@ -1,9 +1,4 @@
 
-/*
- * FollowupPreferencesDialog.java
- *
- * Created on Aug 10, 2011, 6:07:10 PM
- */
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.experiment.biology.Peptide;
@@ -16,6 +11,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SearchParameters;
@@ -26,12 +22,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 
 /**
  * This class will allow the user to generate spectrum information for follow up analysis
  *
- * @author Marc
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
@@ -48,11 +46,20 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private static ProgressDialogX progressDialog;
 
-    /** Creates new form FollowupPreferencesDialog */
+    /** 
+     * Creates a new FollowupPreferencesDialog.
+     * 
+     * @param peptideShakerGUI 
+     */
     public FollowupPreferencesDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
+        
+        spectrumValidationCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        idSelectionCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        vendorCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        
         this.setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
@@ -66,11 +73,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        backgroundPanel = new javax.swing.JPanel();
+        spectraPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         spectrumValidationCmb = new javax.swing.JComboBox();
         exportMgfButton = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
+        inclusionListPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         miscleavedCheck = new javax.swing.JCheckBox();
         reactiveCheck = new javax.swing.JCheckBox();
@@ -79,7 +87,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
         vendorCmb = new javax.swing.JComboBox();
         inclusionListButton = new javax.swing.JButton();
-        mrmButton = new javax.swing.JButton();
+        srmButton = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         isoformsCheck = new javax.swing.JCheckBox();
         isoformsUnrelatedCheck = new javax.swing.JCheckBox();
@@ -88,58 +96,67 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         jLabel6 = new javax.swing.JLabel();
         rtWindow = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        exitButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Export");
+        setResizable(false);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Unassigned spectra"));
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        jLabel1.setText("Spectra matching to:");
+        spectraPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Unassigned Spectra"));
+        spectraPanel.setOpaque(false);
+
+        jLabel1.setText("Spectra Matching To:");
 
         spectrumValidationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Non-validated PSMs", "Non-validated peptides", "Non-validated proteins" }));
 
-        exportMgfButton.setText("Export as mgf");
+        exportMgfButton.setText("Export as MGF");
         exportMgfButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportMgfButtonActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout spectraPanelLayout = new javax.swing.GroupLayout(spectraPanel);
+        spectraPanel.setLayout(spectraPanelLayout);
+        spectraPanelLayout.setHorizontalGroup(
+            spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(spectraPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spectrumValidationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 297, Short.MAX_VALUE)
+                .addGap(31, 31, 31)
+                .addComponent(spectrumValidationCmb, 0, 419, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(exportMgfButton)
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        spectraPanelLayout.setVerticalGroup(
+            spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(spectraPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(spectraPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(spectrumValidationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportMgfButton))
+                    .addComponent(exportMgfButton)
+                    .addComponent(spectrumValidationCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Inclusion lists"));
+        inclusionListPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Inclusion Lists"));
+        inclusionListPanel.setOpaque(false);
 
-        jLabel2.setText("Ignored peptides:");
+        jLabel2.setText("Ignored Peptides:");
 
         miscleavedCheck.setSelected(true);
         miscleavedCheck.setText("miscleaved peptides");
+        miscleavedCheck.setIconTextGap(10);
+        miscleavedCheck.setOpaque(false);
 
         reactiveCheck.setSelected(true);
         reactiveCheck.setText("reactive peptides");
+        reactiveCheck.setIconTextGap(10);
+        reactiveCheck.setOpaque(false);
 
-        jLabel3.setText("Include validated PSMs:");
+        jLabel3.setText("Include Validated PSMs:");
 
         idSelectionCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "of all validated PSMs", "of validated PSMs of all validated peptides", "of validated PSMs of validated peptides of all validated proteins", "of validated PSMs of currently displayed peptides", "of validated PSMs of currently displayed proteins" }));
 
@@ -154,148 +171,157 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        mrmButton.setText("Generate MRM transitions");
-        mrmButton.setEnabled(false);
+        srmButton.setText("Generate SRM Transitions");
+        srmButton.setEnabled(false);
 
-        jLabel5.setText("Ignored proteins:");
+        jLabel5.setText("Ignored Proteins:");
 
-        isoformsCheck.setText("Isoforms");
+        isoformsCheck.setText("isoforms");
+        isoformsCheck.setIconTextGap(10);
+        isoformsCheck.setOpaque(false);
 
-        isoformsUnrelatedCheck.setText("Isoforms with unrelated proteins");
+        isoformsUnrelatedCheck.setText("isoforms - unrelated proteins");
+        isoformsUnrelatedCheck.setIconTextGap(10);
+        isoformsUnrelatedCheck.setOpaque(false);
 
         unrelatedCheck.setSelected(true);
         unrelatedCheck.setText("unrelated proteins");
+        unrelatedCheck.setIconTextGap(10);
+        unrelatedCheck.setOpaque(false);
 
         degeneratedCheck.setSelected(true);
         degeneratedCheck.setText("degenerated peptides");
+        degeneratedCheck.setIconTextGap(10);
+        degeneratedCheck.setOpaque(false);
 
-        jLabel6.setText("minimal RT window:");
+        jLabel6.setText("Minimum RT Window:");
 
         rtWindow.setText("20");
 
         jLabel7.setText("s");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout inclusionListPanelLayout = new javax.swing.GroupLayout(inclusionListPanel);
+        inclusionListPanel.setLayout(inclusionListPanelLayout);
+        inclusionListPanelLayout.setHorizontalGroup(
+            inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(inclusionListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
+                .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(inclusionListPanelLayout.createSequentialGroup()
+                        .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel5))
                         .addGap(18, 18, 18)
-                        .addComponent(miscleavedCheck)
-                        .addGap(18, 18, 18)
-                        .addComponent(reactiveCheck)
-                        .addGap(18, 18, 18)
-                        .addComponent(degeneratedCheck))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(isoformsCheck)
-                        .addGap(18, 18, 18)
-                        .addComponent(isoformsUnrelatedCheck)
-                        .addGap(18, 18, 18)
-                        .addComponent(unrelatedCheck))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(111, 111, 111)
-                        .addComponent(rtWindow, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel7))
-                    .addComponent(jLabel6)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18)
-                                .addComponent(idSelectionCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
+                        .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(inclusionListPanelLayout.createSequentialGroup()
+                                .addComponent(rtWindow, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(vendorCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 347, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(145, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(342, Short.MAX_VALUE)
-                .addComponent(mrmButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(inclusionListButton)
+                                .addComponent(jLabel7)
+                                .addGap(470, 470, 470))
+                            .addGroup(inclusionListPanelLayout.createSequentialGroup()
+                                .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(idSelectionCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, inclusionListPanelLayout.createSequentialGroup()
+                                        .addComponent(isoformsCheck)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(isoformsUnrelatedCheck))
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, inclusionListPanelLayout.createSequentialGroup()
+                                        .addComponent(miscleavedCheck)
+                                        .addGap(11, 11, 11)
+                                        .addComponent(reactiveCheck)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                                .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(degeneratedCheck)
+                                        .addComponent(unrelatedCheck))
+                                    .addGroup(inclusionListPanelLayout.createSequentialGroup()
+                                        .addComponent(jLabel4)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(vendorCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, inclusionListPanelLayout.createSequentialGroup()
+                        .addComponent(srmButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(inclusionListButton)))
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+
+        inclusionListPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {inclusionListButton, srmButton});
+
+        inclusionListPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {degeneratedCheck, isoformsCheck, isoformsUnrelatedCheck, miscleavedCheck, reactiveCheck, unrelatedCheck});
+
+        inclusionListPanelLayout.setVerticalGroup(
+            inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(inclusionListPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(miscleavedCheck)
-                    .addComponent(reactiveCheck)
-                    .addComponent(degeneratedCheck))
+                .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(inclusionListPanelLayout.createSequentialGroup()
+                        .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(reactiveCheck)
+                            .addComponent(miscleavedCheck)
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(isoformsCheck)
+                            .addComponent(isoformsUnrelatedCheck)
+                            .addComponent(jLabel5))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(rtWindow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel6)))
+                    .addGroup(inclusionListPanelLayout.createSequentialGroup()
+                        .addComponent(degeneratedCheck)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(unrelatedCheck)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(isoformsCheck)
-                    .addComponent(isoformsUnrelatedCheck)
-                    .addComponent(unrelatedCheck))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(rtWindow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(idSelectionCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(vendorCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
-                    .addComponent(vendorCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel3))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(mrmButton)
+                .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(srmButton)
                     .addComponent(inclusionListButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        exitButton.setText("Exit");
-        exitButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitButtonActionPerformed(evt);
-            }
-        });
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(spectraPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(inclusionListPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(spectraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(inclusionListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(exitButton, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(exitButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
-        dispose();
-    }//GEN-LAST:event_exitButtonActionPerformed
 
     private void exportMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMgfButtonActionPerformed
 
@@ -699,11 +725,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel backgroundPanel;
     private javax.swing.JCheckBox degeneratedCheck;
-    private javax.swing.JButton exitButton;
     private javax.swing.JButton exportMgfButton;
     private javax.swing.JComboBox idSelectionCmb;
     private javax.swing.JButton inclusionListButton;
+    private javax.swing.JPanel inclusionListPanel;
     private javax.swing.JCheckBox isoformsCheck;
     private javax.swing.JCheckBox isoformsUnrelatedCheck;
     private javax.swing.JLabel jLabel1;
@@ -713,13 +740,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JCheckBox miscleavedCheck;
-    private javax.swing.JButton mrmButton;
     private javax.swing.JCheckBox reactiveCheck;
     private javax.swing.JTextField rtWindow;
+    private javax.swing.JPanel spectraPanel;
     private javax.swing.JComboBox spectrumValidationCmb;
+    private javax.swing.JButton srmButton;
     private javax.swing.JCheckBox unrelatedCheck;
     private javax.swing.JComboBox vendorCmb;
     // End of variables declaration//GEN-END:variables
