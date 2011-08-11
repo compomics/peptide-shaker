@@ -1335,6 +1335,22 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
+    
+    /**
+     * Returns a list of keys of the displayed proteins
+     * @return a list of keys of the displayed proteins 
+     */
+    public ArrayList<String> getDisplayedProteins() {
+        return new ArrayList<String>(proteinTableMap.values());
+    }
+    
+    /**
+     * Returns a list of keys of the displayed peptides
+     * @return a list of keys of the displayed peptides 
+     */
+    public ArrayList<String> getDisplayedPeptides() {
+        return new ArrayList<String>(peptideTableMap.values());
+    }
 
     /**
      * Returns the peptide key for the given row.

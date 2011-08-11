@@ -635,7 +635,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
             WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI, true, experiment.getReference());
 
-            int progressCounter = idFiles.size() + spectrumFiles.size();
+            int progressCounter = idFiles.size() + spectrumFiles.size() + 1;
 
 
             // add one more just to not start at 0%
@@ -1159,6 +1159,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
         boolean precTolUnit = ((String) precMassUnitCmb.getSelectedItem()).equals("ppm");
+        peptideShakerGUI.getSearchParameters().setPrecursorTolerance(getMaxMassDeviation());
         IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue(), getMaxMassDeviation(), precTolUnit);
         peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters());
     }
@@ -1207,12 +1208,23 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
             if (temp != null) {
                 massDeviationTxt.setText(temp);
+                try {
+                    searchParameters.setPrecursorTolerance(new Double(temp.trim()));
+                } catch (Exception e) {
+                    
+                }
             }
 
             temp = props.getProperty(IdentificationParametersReader.PRECURSOR_MASS_TOLERANCE_UNIT);
 
             if (temp != null) {
                 precMassUnitCmb.setSelectedItem(temp);
+                int unit = 0;
+            try {
+                unit = new Integer(temp.trim());
+            } catch (Exception e) {
+            }
+        searchParameters.setPrecursorToleranceUnit(unit);
             }
 
             temp = props.getProperty(IdentificationParametersReader.MISSED_CLEAVAGES);

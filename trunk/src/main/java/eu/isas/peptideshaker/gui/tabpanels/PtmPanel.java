@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
@@ -8,6 +9,7 @@ import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -1356,6 +1358,47 @@ public class PtmPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     /**
+     * Returns a list of the keys of the proteins of the currently displayed peptides
+     * @return a list of the keys of the proteins of the currently displayed peptides
+     */
+    public ArrayList<String> getDisplayedProteins() {
+        ArrayList<String> result = new ArrayList<String>();
+        for (String peptideKey : getDisplayedPeptides()) {
+            ArrayList<Protein> proteins = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey).getTheoreticPeptide().getParentProteins();
+            for (Protein protein : proteins) {
+                for (ProteinMatch proteinMatch : peptideShakerGUI.getIdentification().getProteinMap().get(protein.getProteinKey())) {
+                    if (!result.contains(proteinMatch.getKey())) {
+                        result.add(proteinMatch.getKey());
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns a list of the keys of the currently displayed peptides
+     * @return a list of the keys of the currently displayed peptides
+     */
+    public ArrayList<String> getDisplayedPeptides() {
+        ArrayList<String> result = new ArrayList<String>(displayedPeptides);
+        result.addAll(relatedPeptides);
+        return result;
+    }
+
+    /**
+     * Returns a list of the psms keys of the currently displayed assumptions
+     * @return a list of the psms keys of the currently displayed assumptions
+     */
+    public ArrayList<String> getDisplayedAssumptions() {
+        ArrayList<String> result = new ArrayList<String>();
+        for (ArrayList<String> psmList : psmsMap.values()) {
+            result.addAll(psmList);
+        }
+        return result;
+    }
+
+    /**
      * Displays or hide sparklines in tables.
      * 
      * @param showSparkLines    boolean indicating whether sparklines shall be displayed or hidden
@@ -1697,138 +1740,138 @@ public class PtmPanel extends javax.swing.JPanel {
 
         AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
 
-            if (selectedPsmTable.getSelectedRow() != -1 && primarySelectionJComboBox.getSelectedIndex() != -1) {
-                String familyKey = convertComboBoxSelectionToFamilyKey((String) primarySelectionJComboBox.getSelectedItem());
-                String spectrumKey = psmsMap.get(familyKey).get(selectedPsmTable.getSelectedRow());
-                peptideShakerGUI.selectSpectrum(spectrumKey);
+        if (selectedPsmTable.getSelectedRow() != -1 && primarySelectionJComboBox.getSelectedIndex() != -1) {
+            String familyKey = convertComboBoxSelectionToFamilyKey((String) primarySelectionJComboBox.getSelectedItem());
+            String spectrumKey = psmsMap.get(familyKey).get(selectedPsmTable.getSelectedRow());
+            peptideShakerGUI.selectSpectrum(spectrumKey);
 
-                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+            MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
 
-                if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
+            if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
 
-                    Precursor precursor = currentSpectrum.getPrecursor();
-                    spectrumA = new SpectrumPanel(
-                            currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
-                            precursor.getMz(), precursor.getCharge().toString(),
-                            "", 40, false, false, false, 2, false);
-                    spectrumA.setDeltaMassWindow(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance());
-                    spectrumA.setBorder(null);
+                Precursor precursor = currentSpectrum.getPrecursor();
+                spectrumA = new SpectrumPanel(
+                        currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
+                        precursor.getMz(), precursor.getCharge().toString(),
+                        "", 40, false, false, false, 2, false);
+                spectrumA.setDeltaMassWindow(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance());
+                spectrumA.setBorder(null);
 
-                    // get the spectrum annotations
-                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumIdentification().get(spectrumKey);
-                    Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
+                // get the spectrum annotations
+                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumIdentification().get(spectrumKey);
+                Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
+                for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
+                    if (getModificationFamily(peptideAssumption.getPeptide()).equals(familyKey)) {
+                        currentPeptide = peptideAssumption.getPeptide();
+                        break;
+                    }
+                }
+
+                annotationPreferences.setCurrentSettings(currentPeptide, currentSpectrum.getPrecursor().getCharge().value);
+                ArrayList<IonMatch> annotations = annotatorA.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
+                        annotationPreferences.getNeutralLosses(),
+                        annotationPreferences.getValidatedCharges(),
+                        currentSpectrum, currentPeptide,
+                        currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                        annotationPreferences.getMzTolerance());
+
+                // add the spectrum annotations
+                spectrumA.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
+                spectrumA.showAnnotatedPeaksOnly(!allToggleButton.isSelected());
+
+                linkedSpectrumPanels.put(new Integer(0), spectrumA);
+
+                spectrumA.addSpectrumPanelListener(new SpectrumPanelListener() {
+
+                    public void rescaled(RescalingEvent rescalingEvent) {
+                        SpectrumPanel source = (SpectrumPanel) rescalingEvent.getSource();
+                        double minMass = rescalingEvent.getMinMass();
+                        double maxMass = rescalingEvent.getMaxMass();
+
+                        Iterator<Integer> iterator = linkedSpectrumPanels.keySet().iterator();
+
+                        while (iterator.hasNext()) {
+                            SpectrumPanel currentSpectrumPanel = linkedSpectrumPanels.get(iterator.next());
+                            if (currentSpectrumPanel != source) {
+                                currentSpectrumPanel.rescale(minMass, maxMass, false);
+                                currentSpectrumPanel.repaint();
+                            }
+                        }
+                    }
+                });
+
+                spectrumChartJPanel.add(spectrumA);
+            }
+        }
+
+        if (relatedPsmTable.getSelectedRow() != -1 && secondarySelectionJComboBox.getSelectedIndex() != -1) {
+            String familyKey = convertComboBoxSelectionToFamilyKey((String) secondarySelectionJComboBox.getSelectedItem());
+            String spectrumKey = psmsMap.get(familyKey).get(relatedPsmTable.getSelectedRow());
+            MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+
+            if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
+
+                Precursor precursor = currentSpectrum.getPrecursor();
+                spectrumB = new SpectrumPanel(
+                        currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
+                        precursor.getMz(), precursor.getCharge().toString(),
+                        "", 40, false, false, false, 2, false);
+                spectrumB.setDeltaMassWindow(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance());
+                spectrumB.setBorder(null);
+
+                // get the spectrum annotations                
+                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumIdentification().get(spectrumKey);
+                Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
+                if (!familyKey.equals("Related Peptide")) {
                     for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
                         if (getModificationFamily(peptideAssumption.getPeptide()).equals(familyKey)) {
                             currentPeptide = peptideAssumption.getPeptide();
                             break;
                         }
                     }
-
-                    annotationPreferences.setCurrentSettings(currentPeptide, currentSpectrum.getPrecursor().getCharge().value);
-                    ArrayList<IonMatch> annotations = annotatorA.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                            annotationPreferences.getNeutralLosses(),
-                            annotationPreferences.getValidatedCharges(),
-                            currentSpectrum, currentPeptide,
-                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
-                            annotationPreferences.getMzTolerance());
-
-                    // add the spectrum annotations
-                    spectrumA.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
-                    spectrumA.showAnnotatedPeaksOnly(!allToggleButton.isSelected());
-
-                    linkedSpectrumPanels.put(new Integer(0), spectrumA);
-
-                    spectrumA.addSpectrumPanelListener(new SpectrumPanelListener() {
-
-                        public void rescaled(RescalingEvent rescalingEvent) {
-                            SpectrumPanel source = (SpectrumPanel) rescalingEvent.getSource();
-                            double minMass = rescalingEvent.getMinMass();
-                            double maxMass = rescalingEvent.getMaxMass();
-
-                            Iterator<Integer> iterator = linkedSpectrumPanels.keySet().iterator();
-
-                            while (iterator.hasNext()) {
-                                SpectrumPanel currentSpectrumPanel = linkedSpectrumPanels.get(iterator.next());
-                                if (currentSpectrumPanel != source) {
-                                    currentSpectrumPanel.rescale(minMass, maxMass, false);
-                                    currentSpectrumPanel.repaint();
-                                }
-                            }
-                        }
-                    });
-
-                    spectrumChartJPanel.add(spectrumA);
                 }
-            }
+                annotationPreferences.setCurrentSettings(currentPeptide, currentSpectrum.getPrecursor().getCharge().value);
+                ArrayList<IonMatch> annotations = annotatorB.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
+                        annotationPreferences.getNeutralLosses(),
+                        annotationPreferences.getValidatedCharges(),
+                        currentSpectrum, currentPeptide,
+                        currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                        annotationPreferences.getMzTolerance());
 
-            if (relatedPsmTable.getSelectedRow() != -1 && secondarySelectionJComboBox.getSelectedIndex() != -1) {
-                String familyKey = convertComboBoxSelectionToFamilyKey((String) secondarySelectionJComboBox.getSelectedItem());
-                String spectrumKey = psmsMap.get(familyKey).get(relatedPsmTable.getSelectedRow());
-                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+                // add the spectrum annotations
+                spectrumB.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
+                spectrumB.showAnnotatedPeaksOnly(!allToggleButton.isSelected());
 
-                if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
+                linkedSpectrumPanels.put(new Integer(1), spectrumB);
 
-                    Precursor precursor = currentSpectrum.getPrecursor();
-                    spectrumB = new SpectrumPanel(
-                            currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
-                            precursor.getMz(), precursor.getCharge().toString(),
-                            "", 40, false, false, false, 2, false);
-                    spectrumB.setDeltaMassWindow(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance());
-                    spectrumB.setBorder(null);
+                spectrumB.addSpectrumPanelListener(new SpectrumPanelListener() {
 
-                    // get the spectrum annotations                
-                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumIdentification().get(spectrumKey);
-                    Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
-                    if (!familyKey.equals("Related Peptide")) {
-                        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
-                            if (getModificationFamily(peptideAssumption.getPeptide()).equals(familyKey)) {
-                                currentPeptide = peptideAssumption.getPeptide();
-                                break;
+                    public void rescaled(RescalingEvent rescalingEvent) {
+                        SpectrumPanel source = (SpectrumPanel) rescalingEvent.getSource();
+                        double minMass = rescalingEvent.getMinMass();
+                        double maxMass = rescalingEvent.getMaxMass();
+
+                        Iterator<Integer> iterator = linkedSpectrumPanels.keySet().iterator();
+
+                        while (iterator.hasNext()) {
+                            SpectrumPanel currentSpectrumPanel = linkedSpectrumPanels.get(iterator.next());
+                            if (currentSpectrumPanel != source) {
+                                currentSpectrumPanel.rescale(minMass, maxMass, false);
+                                currentSpectrumPanel.repaint();
                             }
                         }
                     }
-                    annotationPreferences.setCurrentSettings(currentPeptide, currentSpectrum.getPrecursor().getCharge().value);
-                    ArrayList<IonMatch> annotations = annotatorB.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                            annotationPreferences.getNeutralLosses(),
-                            annotationPreferences.getValidatedCharges(),
-                            currentSpectrum, currentPeptide,
-                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
-                            annotationPreferences.getMzTolerance());
+                });
 
-                    // add the spectrum annotations
-                    spectrumB.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
-                    spectrumB.showAnnotatedPeaksOnly(!allToggleButton.isSelected());
+                // make sure that the two spectra have the same x-axis range
+                spectrumA.rescale(0, spectrumB.getMaxXAxisValue());
 
-                    linkedSpectrumPanels.put(new Integer(1), spectrumB);
-
-                    spectrumB.addSpectrumPanelListener(new SpectrumPanelListener() {
-
-                        public void rescaled(RescalingEvent rescalingEvent) {
-                            SpectrumPanel source = (SpectrumPanel) rescalingEvent.getSource();
-                            double minMass = rescalingEvent.getMinMass();
-                            double maxMass = rescalingEvent.getMaxMass();
-
-                            Iterator<Integer> iterator = linkedSpectrumPanels.keySet().iterator();
-
-                            while (iterator.hasNext()) {
-                                SpectrumPanel currentSpectrumPanel = linkedSpectrumPanels.get(iterator.next());
-                                if (currentSpectrumPanel != source) {
-                                    currentSpectrumPanel.rescale(minMass, maxMass, false);
-                                    currentSpectrumPanel.repaint();
-                                }
-                            }
-                        }
-                    });
-
-                    // make sure that the two spectra have the same x-axis range
-                    spectrumA.rescale(0, spectrumB.getMaxXAxisValue());
-
-                    spectrumChartJPanel.add(spectrumB);
-                }
+                spectrumChartJPanel.add(spectrumB);
             }
+        }
 
-            spectrumChartJPanel.revalidate();
-            spectrumChartJPanel.repaint();
+        spectrumChartJPanel.revalidate();
+        spectrumChartJPanel.repaint();
 
     }
 

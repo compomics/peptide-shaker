@@ -1,0 +1,838 @@
+<?xml version="1.1" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="2"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Container class="javax.swing.JPanel" name="jPanel1">
+
+      <Layout>
+        <DimensionLayout dim="0">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Component id="jPanel4" alignment="0" max="32767" attributes="0"/>
+                      <Component id="exitButton" alignment="1" min="-2" max="-2" attributes="0"/>
+                      <Component id="jTabbedPane2" alignment="1" pref="761" max="32767" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+        <DimensionLayout dim="1">
+          <Group type="103" groupAlignment="0" attributes="0">
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Component id="jTabbedPane2" pref="168" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="exitButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" max="-2" attributes="0"/>
+              </Group>
+          </Group>
+        </DimensionLayout>
+      </Layout>
+      <SubComponents>
+        <Component class="javax.swing.JButton" name="exitButton">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Exit"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exitButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Container class="javax.swing.JPanel" name="jPanel4">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                <TitledBorder title="Project"/>
+              </Border>
+            </Property>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="458" max="32767" attributes="0"/>
+                      <Component id="exportAll" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="jLabel1">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Export all identification results:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="exportAll">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Export as text files"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportAllActionPerformed"/>
+              </Events>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JTabbedPane" name="jTabbedPane2">
+
+          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+          <SubComponents>
+            <Container class="javax.swing.JPanel" name="jPanel5">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Proteins">
+                    <Property name="tabTitle" type="java.lang.String" value="Proteins"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="proteinAccession" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="proteinPI" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="proteinDescription" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="44" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="proteinNPeptides" min="-2" max="-2" attributes="0"/>
+                                      <Component id="proteinEmpai" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="83" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="proteinNSpectra" min="-2" max="-2" attributes="0"/>
+                                      <Component id="proteinNsaf" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace pref="92" max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="proteinScore" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="proteinConfidence" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace pref="63" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="proteinSelectAll" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="proteinUnselectAll" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="253" max="32767" attributes="0"/>
+                                  <Component id="proteinExportDisplayed" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="proteinExportValidated" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="proteinExportAll" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="proteinAccession" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="proteinNPeptides" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="proteinNSpectra" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="proteinScore" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="proteinPI" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="proteinConfidence" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="proteinEmpai" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="proteinNsaf" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="proteinDescription" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="30" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="proteinSelectAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="proteinUnselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="proteinExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="proteinExportValidated" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="proteinExportDisplayed" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JCheckBox" name="proteinAccession">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Accession"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="proteinPI">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Protein inference details"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="proteinNPeptides">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="# validated peptides"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="proteinNSpectra">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="# validated spectra"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="proteinDescription">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Protein description"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="proteinEmpai">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="emPAI"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="proteinNsaf">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="NSAF"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="proteinScore">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Score"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="proteinConfidence">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Confidence"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="proteinExportAll">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Export All"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinExportAllActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="proteinSelectAll">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Select all"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinSelectAllActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="proteinUnselectAll">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Unselect all"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinUnselectAllActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="proteinExportValidated">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Export Validated"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinExportValidatedActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="proteinExportDisplayed">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Export Displayed"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinExportDisplayedActionPerformed"/>
+                  </Events>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="jPanel6">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Peptides">
+                    <Property name="tabTitle" type="java.lang.String" value="Peptides"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="peptideAccession" min="-2" max="-2" attributes="0"/>
+                                      <Component id="peptideSequence" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="77" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" attributes="0">
+                                          <Component id="peptideModification" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="136" max="-2" attributes="0"/>
+                                          <Component id="peptideNSpectra" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="peptideLocation" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace pref="70" max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="peptideScore" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="peptideConfidence" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace pref="39" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="peptideSelectAll" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="peptideUnselectAll" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="253" max="32767" attributes="0"/>
+                                  <Component id="peptideExportDisplayed" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="peptideExportValidated" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="peptideExportAll" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="peptideAccession" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="peptideNSpectra" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="peptideScore" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="peptideModification" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="peptideConfidence" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="peptideSequence" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="peptideLocation" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace pref="53" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="peptideSelectAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="peptideUnselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="peptideExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="peptideExportValidated" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="peptideExportDisplayed" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JCheckBox" name="peptideAccession">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Protein accession"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="peptideSequence">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Peptide Sequence"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="peptideModification">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Modification status"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="peptideNSpectra">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="# validated spectra"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="peptideScore">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Score"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="peptideConfidence">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Confidence"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="peptideLocation">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Location scores"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="peptideSelectAll">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Select all"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideSelectAllActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="peptideUnselectAll">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Unselect all"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideUnselectAllActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="peptideExportAll">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Export All"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideExportAllActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="peptideExportValidated">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Export Validated"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideExportValidatedActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="peptideExportDisplayed">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Export Displayed"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideExportDisplayedActionPerformed"/>
+                  </Events>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="jPanel7">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="PSMs">
+                    <Property name="tabTitle" type="java.lang.String" value="PSMs"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="psmSelectAll" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="psmUnselectAll" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="253" max="32767" attributes="0"/>
+                                  <Component id="psmExportDisplayed" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="psmExportValidated" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="psmExportAll" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="psmAccession" min="-2" max="-2" attributes="0"/>
+                                      <Component id="psmSequence" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="64" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="psmModification" min="-2" max="-2" attributes="0"/>
+                                      <Component id="psmLocation" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace pref="106" max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="psmFile" min="-2" max="-2" attributes="0"/>
+                                      <Component id="psmTitle" min="-2" max="-2" attributes="0"/>
+                                      <Component id="psmPrecursor" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="101" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="psmScore" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="psmConfidence" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="65" max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="psmFile" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="psmTitle" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="psmPrecursor" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="psmAccession" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="psmModification" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="3" attributes="0">
+                                              <Component id="psmSequence" alignment="3" min="-2" max="-2" attributes="0"/>
+                                              <Component id="psmLocation" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                      </Group>
+                                      <Group type="102" attributes="0">
+                                          <Component id="psmScore" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="psmConfidence" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <EmptySpace pref="53" max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="3" attributes="0">
+                                      <Component id="psmSelectAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="psmUnselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="psmExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="psmExportValidated" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="psmExportDisplayed" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JCheckBox" name="psmAccession">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Protein accession"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="psmSequence">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Peptide Sequence"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="psmFile">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Spectrum File"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="psmTitle">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Spectrum Title"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="psmPrecursor">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Precursor details"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="psmLocation">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Location Scores"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="psmModification">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Modification status"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="psmScore">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Score"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="psmConfidence">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Confidence"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="psmSelectAll">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Select all"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmSelectAllActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="psmUnselectAll">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Unselect all"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmUnselectAllActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="psmExportAll">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Export All"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmExportAllActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="psmExportValidated">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Export Validated"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmExportValidatedActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="psmExportDisplayed">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Export Displayed"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmExportDisplayedActionPerformed"/>
+                  </Events>
+                </Component>
+              </SubComponents>
+            </Container>
+            <Container class="javax.swing.JPanel" name="jPanel8">
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                  <JTabbedPaneConstraints tabName="Search Engine Results">
+                    <Property name="tabTitle" type="java.lang.String" value="Search Engine Results"/>
+                  </JTabbedPaneConstraints>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="assumptionAccession" min="-2" max="-2" attributes="0"/>
+                                      <Component id="assumptionSequence" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="73" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="assumptionModification" min="-2" max="-2" attributes="0"/>
+                                      <Component id="assumptionLocation" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="89" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="assumptionFile" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="assumptionPrecursor" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="assumptionTitle" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace pref="111" max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="assumptionScores" min="-2" max="-2" attributes="0"/>
+                                      <Component id="assumptionConfidence" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace pref="13" max="32767" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="assumptionsExportAll" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="assumptionUnselectAll" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace pref="253" max="32767" attributes="0"/>
+                                  <Component id="assumptionsExportDisplayed" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="assumptionsExportValidated" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="assumptionExportAll" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                              </Group>
+                          </Group>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="assumptionAccession" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="assumptionFile" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="assumptionScores" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="assumptionModification" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="assumptionTitle" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="assumptionConfidence" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="assumptionSequence" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="assumptionLocation" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="assumptionPrecursor" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="30" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="3" attributes="0">
+                              <Component id="assumptionsExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="assumptionUnselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="assumptionExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="assumptionsExportValidated" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="assumptionsExportDisplayed" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <EmptySpace max="-2" attributes="0"/>
+                      </Group>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+              <SubComponents>
+                <Component class="javax.swing.JCheckBox" name="assumptionAccession">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Accession"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="assumptionSequence">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Peptide Sequence"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="assumptionModification">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Modification status"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="assumptionLocation">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Location Scores"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="assumptionFile">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Spectrum File"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="assumptionTitle">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Spectrum Title"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="assumptionPrecursor">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Precursor Details"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="assumptionScores">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Search engine scores"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JCheckBox" name="assumptionConfidence">
+                  <Properties>
+                    <Property name="selected" type="boolean" value="true"/>
+                    <Property name="text" type="java.lang.String" value="Confidence"/>
+                  </Properties>
+                </Component>
+                <Component class="javax.swing.JButton" name="assumptionsExportAll">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Select all"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionsExportAllActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="assumptionUnselectAll">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Unselect all"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionUnselectAllActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="assumptionExportAll">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Export All"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionExportAllActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="assumptionsExportDisplayed">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Export Displayed"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionsExportDisplayedActionPerformed"/>
+                  </Events>
+                </Component>
+                <Component class="javax.swing.JButton" name="assumptionsExportValidated">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Export Validated"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionsExportValidatedActionPerformed"/>
+                  </Events>
+                </Component>
+              </SubComponents>
+            </Container>
+          </SubComponents>
+        </Container>
+      </SubComponents>
+    </Container>
+  </SubComponents>
+</Form>

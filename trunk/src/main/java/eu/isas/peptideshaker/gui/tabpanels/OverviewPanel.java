@@ -2572,6 +2572,34 @@ public class OverviewPanel extends javax.swing.JPanel {
     private Integer getProteinKey(int row) {
         return (Integer) proteinTable.getValueAt(row, 0);
     }
+    
+    /**
+     * Returns a list of keys of the displayed proteins
+     * @return a list of keys of the displayed proteins 
+     */
+    public ArrayList<String> getDisplayedProteins() {
+        ArrayList<String> result = new  ArrayList<String>();
+        for (int i = 0 ; i < proteinTable.getRowCount() ; i++) {
+            result.add(proteinTableMap.get(getProteinKey(i)));
+        }
+        return new ArrayList<String>(proteinTableMap.values());
+    }
+    
+    /**
+     * Returns a list of keys of the displayed peptides
+     * @return a list of keys of the displayed peptides 
+     */
+    public ArrayList<String> getDisplayedPeptides() {
+        return new ArrayList<String>(peptideTableMap.values());
+    }
+    
+    /**
+     * Returns a list of keys of the displayed PSMs
+     * @return a list of keys of the displayed PSMs
+     */
+    public ArrayList<String> getDisplayedPsms() {
+        return new ArrayList<String>(psmTableMap.values());
+    }
 
     /**
      * Updates the split panel divider location for the protein panel.

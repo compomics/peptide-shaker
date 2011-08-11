@@ -15,6 +15,14 @@ import java.util.HashMap;
 public class SearchParameters implements Serializable {
 
     /**
+     * static index for a precursor tolerance unit in ppm
+     */
+    public static final int PPM = 0;
+    /**
+     * static index for a precursor tolerance unit in Da
+     */
+    public static final int DA = 1;
+    /**
      * The ms2 ion tolerance
      */
     private double fragmentIonMZTolerance = 0;
@@ -54,6 +62,14 @@ public class SearchParameters implements Serializable {
      * Convenience Array for ion type selection
      */
     private String[] ions = {"a", "b", "c", "x", "y", "z"};
+    /**
+     * The precursor tolerance unit
+     */
+    private int precursorToleranceUnit;
+    /**
+     * The precursor tolerance
+     */
+    private double precursorTolerance;
 
     /**
      * Constructor
@@ -250,5 +266,37 @@ public class SearchParameters implements Serializable {
      */
     public String[] getIons() {
         return ions;
+    }
+
+    /**
+     * Returns the precursor tolerance
+     * @return the precursor tolerance 
+     */
+    public double getPrecursorTolerance() {
+        return precursorTolerance;
+    }
+
+    /**
+     * Sets the precursor tolerance
+     * @param precursorTolerance the precursor tolerance
+     */
+    public void setPrecursorTolerance(double precursorTolerance) {
+        this.precursorTolerance = precursorTolerance;
+    }
+
+    /**
+     * Returns the precursor tolerance unit as defined in the static fields
+     * @return the precursor tolerance unit 
+     */
+    public int getPrecursorToleranceUnit() {
+        return precursorToleranceUnit;
+    }
+
+    /**
+     * Setts the precursor tolerance unit as defined in the static fields
+     * @param precursorToleranceUnit the precursor tolerance unit 
+     */
+    public void setPrecursorToleranceUnit(int precursorToleranceUnit) {
+        this.precursorToleranceUnit = precursorToleranceUnit;
     }
 }

@@ -1,0 +1,677 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package eu.isas.peptideshaker.export;
+
+import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.Advocate;
+import com.compomics.util.experiment.identification.AdvocateFactory;
+import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.matches.ModificationMatch;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
+import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+
+/**
+ * This class will generate the output as requested by the user
+ *
+ * @author marc
+ */
+public class FeaturesGenerator {
+
+    private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The separator (tab by default)
+     */
+    public static final String SEPARATOR = "\t";
+    /**
+     * The sequence factory
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * The spectrum factory
+     */
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+
+    /**
+     * Constructor
+     * @param identification the identification to get the data from
+     */
+    public FeaturesGenerator(PeptideShakerGUI peptideShakerGUI) {
+        this.peptideShakerGUI = peptideShakerGUI;
+    }
+
+    /**
+     * Returns the desired protein output based on the elements needed as provided in arguments
+     * 
+     * @param progressDialog the progress dialog (can be null)
+     * @param onlyValidated
+     * @param accession
+     * @param piDetails
+     * @param description
+     * @param nPeptides
+     * @param emPAI
+     * @param nSpectra
+     * @param nsaf
+     * @param score
+     * @param confidence
+     * @return
+     * @throws IOException 
+     */
+    public String getProteinsOutput(ProgressDialogX progressDialog, ArrayList<String> proteinKeys, boolean onlyValidated, boolean accession, boolean piDetails,
+            boolean description, boolean nPeptides, boolean emPAI, boolean nSpectra, boolean nsaf,
+            boolean score, boolean confidence) throws IOException {
+
+        HashMap<String, ProteinMatch> proteinIdentification = peptideShakerGUI.getIdentification().getProteinIdentification();
+        if (proteinKeys == null) {
+            proteinKeys = new ArrayList<String>(proteinIdentification.keySet());
+        }
+        if (progressDialog != null) {
+            progressDialog.setIndeterminate(false);
+            progressDialog.setMax(proteinKeys.size());
+        }
+
+        String result = "";
+        if (accession) {
+            result += "Accession" + SEPARATOR;
+        }
+        if (piDetails) {
+            result += "Protein Inference Class" + SEPARATOR;
+            result += "Other Protein(s)" + SEPARATOR;
+        }
+        if (description) {
+            result += "Description" + SEPARATOR;
+        }
+        if (nPeptides) {
+            result += "# validated peptides" + SEPARATOR;
+        }
+        if (emPAI) {
+            result += "emPAI" + SEPARATOR;
+        }
+        if (nSpectra) {
+            result += "# validated spectra" + SEPARATOR;
+        }
+        if (nsaf) {
+            result += "NSAF" + SEPARATOR;
+        }
+        if (score) {
+            result += "Score" + SEPARATOR;
+        }
+        if (confidence) {
+            result += "Confidence" + SEPARATOR;
+        }
+        if (!onlyValidated) {
+            result += "Validated" + SEPARATOR;
+            result += "Decoy" + SEPARATOR;
+        }
+        result += "\n";
+
+        PSParameter proteinPSParameter = new PSParameter();
+        PSParameter secondaryPSParameter = new PSParameter();
+        String proteinAccession;
+        int cpt, progress = 0;
+        ProteinMatch proteinMatch;
+        for (String proteinKey : proteinKeys) {
+            proteinMatch = proteinIdentification.get(proteinKey);
+            if (proteinMatch != null) {
+                proteinPSParameter = (PSParameter) proteinMatch.getUrParam(proteinPSParameter);
+                proteinAccession = proteinMatch.getMainMatch().getAccession();
+                if (!onlyValidated || proteinPSParameter.isValidated() && !proteinMatch.isDecoy()) {
+                    if (accession) {
+                        result += proteinAccession + SEPARATOR;
+                    }
+                    if (piDetails) {
+                        result += proteinPSParameter.getGroupName() + SEPARATOR;
+                        for (String otherProtein : proteinMatch.getTheoreticProteinsAccessions()) {
+                            boolean first = true;
+                            if (!otherProtein.equals(proteinAccession)) {
+                                if (first) {
+                                    first = false;
+                                } else {
+                                    result += ", ";
+                                }
+                                result += otherProtein;
+                            }
+                        }
+                        result += SEPARATOR;
+                    }
+                    if (description) {
+                        result += sequenceFactory.getHeader(proteinAccession).getDescription() + SEPARATOR;
+                    }
+                    if (nPeptides || emPAI) {
+                        Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession());
+                        cpt = 0;
+                        for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
+                            secondaryPSParameter = (PSParameter) peptideMatch.getUrParam(secondaryPSParameter);
+                            if (secondaryPSParameter.isValidated()) {
+                                cpt++;
+                            }
+                        }
+                        if (nPeptides) {
+                            result += cpt + SEPARATOR;
+                        }
+                        if (emPAI) {
+                            double pai = cpt;
+                            pai = pai / mainMatch.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
+                            double empai = Math.pow(10, pai) - 1;
+                            result += empai + SEPARATOR;
+                        }
+                    }
+                    if (nSpectra || nsaf) {
+                        Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession());
+                        cpt = 0;
+                        for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
+                            for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
+                                secondaryPSParameter = (PSParameter) spectrumMatch.getUrParam(secondaryPSParameter);
+                                if (secondaryPSParameter.isValidated()) {
+                                    cpt++;
+                                }
+                            }
+                        }
+                        if (nSpectra) {
+                            result += cpt + SEPARATOR;
+                        }
+                        if (nsaf) {
+                            double index = cpt;
+                            index = index / mainMatch.getSequence().length();
+                            result += index + SEPARATOR;
+                        }
+                    }
+                    if (score) {
+                        result += proteinPSParameter.getProteinScore() + SEPARATOR;
+                    }
+                    if (confidence) {
+                        result += proteinPSParameter.getProteinConfidence() + SEPARATOR;
+                    }
+                    if (!onlyValidated) {
+                        if (proteinPSParameter.isValidated()) {
+                            result += 1 + SEPARATOR;
+                        } else {
+                            result += 0 + SEPARATOR;
+                        }
+                        if (proteinMatch.isDecoy()) {
+                            result += 1 + SEPARATOR;
+                        } else {
+                            result += 0 + SEPARATOR;
+                        }
+                    }
+                    result += "\n";
+                }
+            }
+            progress++;
+            if (progressDialog != null) {
+                progressDialog.setValue(progress);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns the peptide output based on the given arguments.
+     * 
+     * @param progressDialog the progress dialog (can be null)
+     * @param peptideKeys
+     * @param onlyValidated
+     * @param accession
+     * @param sequence
+     * @param modifications
+     * @param locations
+     * @param nSpectra
+     * @param score
+     * @param confidence
+     * @return 
+     */
+    public String getPeptidesOutput(ProgressDialogX progressDialog, ArrayList<String> peptideKeys, boolean onlyValidated, boolean accession, boolean sequence, boolean modifications, boolean locations,
+            boolean nSpectra, boolean score, boolean confidence) {
+
+        HashMap<String, PeptideMatch> peptideIdentification = peptideShakerGUI.getIdentification().getPeptideIdentification();
+        if (peptideKeys == null) {
+            peptideKeys = new ArrayList<String>(peptideIdentification.keySet());
+        }
+        if (progressDialog != null) {
+            progressDialog.setIndeterminate(false);
+            progressDialog.setMax(peptideKeys.size());
+        }
+
+
+        String result = "";
+        if (accession) {
+            result += "Protein(s)" + SEPARATOR;
+        }
+        if (sequence) {
+            result += "Sequence" + SEPARATOR;
+        }
+        if (modifications || locations) {
+            result += "Variable Modification" + SEPARATOR;
+            result += "Modification location" + SEPARATOR;
+        }
+        if (nSpectra) {
+            result += "# validated spectra" + SEPARATOR;
+        }
+        if (score) {
+            result += "Score" + SEPARATOR;
+        }
+        if (confidence) {
+            result += "Confidence" + SEPARATOR;
+        }
+        if (!onlyValidated) {
+            result += "Validated" + SEPARATOR;
+            result += "Decoy" + SEPARATOR;
+        }
+        result += "\n";
+
+        PSParameter peptidePSParameter = new PSParameter();
+        PSParameter secondaryPSParameter = new PSParameter();
+        PSPtmScores ptmScores = new PSPtmScores();
+        Peptide peptide;
+        PeptideMatch peptideMatch;
+        int progress = 0;
+        for (String peptideKey : peptideKeys) {
+            peptideMatch = peptideIdentification.get(peptideKey);
+            peptidePSParameter = (PSParameter) peptideMatch.getUrParam(peptidePSParameter);
+            if (!onlyValidated || peptidePSParameter.isValidated() && !peptideMatch.isDecoy()) {
+                peptide = peptideMatch.getTheoreticPeptide();
+                if (accession) {
+                    boolean first = true;
+                    for (Protein protein : peptide.getParentProteins()) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            result += ", ";
+                        }
+                        result += protein.getAccession();
+                    }
+                    result += SEPARATOR;
+                }
+                if (sequence) {
+                    result += peptide.getSequence() + SEPARATOR;
+                }
+                if (modifications || locations) {
+                    ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+                    boolean first = true;
+                    for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                        if (modificationMatch.isVariable()) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                result += ", ";
+                            }
+                            String modName = modificationMatch.getTheoreticPtm().getName();
+                            result += modName + "(" + modificationMatch + ")";
+                        }
+                    }
+                    result += SEPARATOR;
+                    result += "Not implemented" + SEPARATOR;
+                }
+                if (nSpectra) {
+                    int cpt = 0;
+                    for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
+                        secondaryPSParameter = (PSParameter) spectrumMatch.getUrParam(secondaryPSParameter);
+                        if (secondaryPSParameter.isValidated()) {
+                            cpt++;
+                        }
+                    }
+                    result += cpt + SEPARATOR;
+                }
+                if (score) {
+                    result += peptidePSParameter.getPeptideScore() + SEPARATOR;
+                }
+                if (confidence) {
+                    result += peptidePSParameter.getPeptideConfidence() + SEPARATOR;
+                }
+                if (!onlyValidated) {
+                    if (peptidePSParameter.isValidated()) {
+                        result += 1 + SEPARATOR;
+                    } else {
+                        result += 0 + SEPARATOR;
+                    }
+                    if (peptideMatch.isDecoy()) {
+                        result += 1 + SEPARATOR;
+                    } else {
+                        result += 0 + SEPARATOR;
+                    }
+                }
+                result += "\n";
+            }
+            progress++;
+            if (progressDialog != null) {
+                progressDialog.setValue(progress);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * returns the PSM output based on the given argument
+     * 
+     * @param progressDialog the progress dialog (can be null)
+     * @param psmKeys
+     * @param onlyValidated
+     * @param accessions
+     * @param sequence
+     * @param modification
+     * @param location
+     * @param file
+     * @param title
+     * @param precursor
+     * @param score
+     * @param confidence
+     * @return
+     * @throws IOException
+     * @throws Exception 
+     */
+    public String getPSMsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean onlyValidated, boolean accessions, boolean sequence, boolean modification,
+            boolean location, boolean file, boolean title, boolean precursor, boolean score, boolean confidence) throws IOException, Exception {
+
+        HashMap<String, SpectrumMatch> psmIdentification = peptideShakerGUI.getIdentification().getSpectrumIdentification();
+        if (psmKeys == null) {
+            psmKeys = new ArrayList<String>(psmIdentification.keySet());
+        }
+        if (progressDialog != null) {
+            progressDialog.setIndeterminate(false);
+            progressDialog.setMax(psmKeys.size());
+        }
+
+
+        String result = "";
+        if (accessions) {
+            result += "Protein(s)" + SEPARATOR;
+        }
+        if (sequence) {
+            result += "Sequence" + SEPARATOR;
+        }
+        if (modification || location) {
+            result += "Variable Modification(s)" + SEPARATOR;
+            result += "Modification location" + SEPARATOR;
+        }
+        if (file) {
+            result += "Spectrum file" + SEPARATOR;
+        }
+        if (title) {
+            result += "Spectrum Title" + SEPARATOR;
+        }
+        if (precursor) {
+            result += "Precursor m/z" + SEPARATOR;
+            result += "Precursor Charge" + SEPARATOR;
+            result += "Precursor Retention Time" + SEPARATOR;
+            result += "Peptide Theoretic Mass" + SEPARATOR;
+            result += "Mass Error [ppm]";
+        }
+        if (score) {
+            result += "score" + SEPARATOR;
+        }
+        if (confidence) {
+            result += "Confidence" + SEPARATOR;
+        }
+        if (!onlyValidated) {
+            result += "Validated" + SEPARATOR;
+            result += "Decoy" + SEPARATOR;
+        }
+        result += "\n";
+
+        PSParameter psParameter = new PSParameter();
+        PeptideAssumption bestAssumption;
+        SpectrumMatch spectrumMatch;
+        int progress = 0;
+        for (String psmKey : psmKeys) {
+            spectrumMatch = psmIdentification.get(psmKey);
+            psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
+            bestAssumption = spectrumMatch.getBestAssumption();
+            if (!onlyValidated || psParameter.isValidated() && !bestAssumption.isDecoy()) {
+                if (accessions) {
+                    boolean first = true;
+                    for (Protein protein : bestAssumption.getPeptide().getParentProteins()) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            result += ", ";
+                        }
+                        result += protein.getAccession();
+                    }
+                    result += SEPARATOR;
+                }
+                if (sequence) {
+                    result += bestAssumption.getPeptide().getSequence() + SEPARATOR;
+                }
+                if (modification || location) {
+                    boolean first = true;
+                    for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
+                        if (modificationMatch.isVariable()) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                result += ", ";
+                            }
+                            String modName = modificationMatch.getTheoreticPtm().getName();
+                            result += modName + "(" + modificationMatch + ")";
+                        }
+                    }
+                    result += SEPARATOR;
+                    result += "Not implemented" + SEPARATOR;
+                }
+                if (file) {
+                    result += Spectrum.getSpectrumFile(spectrumMatch.getKey()) + SEPARATOR;
+                }
+                if (title) {
+                    result += Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR;
+                }
+                if (precursor) {
+                    Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());
+                    result += prec.getMz() + SEPARATOR;
+                    result += prec.getCharge() + SEPARATOR;
+                    result += prec.getRt() + SEPARATOR;
+                    result += bestAssumption.getPeptide().getMass() + SEPARATOR;
+                    result += bestAssumption.getDeltaMass() + SEPARATOR;
+                }
+                if (score) {
+                    result += psParameter.getPsmScore() + SEPARATOR;
+                }
+                if (confidence) {
+                    result += psParameter.getPsmConfidence() + SEPARATOR;
+                }
+                if (!onlyValidated) {
+                    if (psParameter.isValidated()) {
+                        result += 1 + SEPARATOR;
+                    } else {
+                        result += 0 + SEPARATOR;
+                    }
+                    if (bestAssumption.isDecoy()) {
+                        result += 1 + SEPARATOR;
+                    } else {
+                        result += 0 + SEPARATOR;
+                    }
+                }
+                result += "\n";
+            }
+            progress++;
+            if (progressDialog != null) {
+                progressDialog.setValue(progress);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns the assumption output based on the given arguments
+     * 
+     * @param progressDialog the progress dialog (can be null)
+     * @param accession
+     * @param sequence
+     * @param modifications
+     * @param locations
+     * @param file
+     * @param title
+     * @param precursor
+     * @param scores
+     * @param confidence
+     * @return
+     * @throws IOException
+     * @throws Exception 
+     */
+    public String getAssumptionsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean onlyValidated, boolean accession, boolean sequence, boolean modifications, boolean locations,
+            boolean file, boolean title, boolean precursor, boolean scores, boolean confidence) throws IOException, Exception {
+
+        HashMap<String, SpectrumMatch> psmIdentification = peptideShakerGUI.getIdentification().getSpectrumIdentification();
+        if (psmKeys == null) {
+            psmKeys = new ArrayList<String>(psmIdentification.keySet());
+        }
+        if (progressDialog != null) {
+            progressDialog.setIndeterminate(false);
+            progressDialog.setMax(psmKeys.size());
+        }
+
+        String result = "";
+        result += "Search engine" + SEPARATOR;
+        result += "Rank" + SEPARATOR;
+        if (accession) {
+            result += "Accession" + SEPARATOR;
+        }
+        if (sequence) {
+            result += "Sequence" + SEPARATOR;
+        }
+        if (modifications || locations) {
+            result += "Variable modifications" + SEPARATOR;
+            result += "Not implemented" + SEPARATOR;
+        }
+        if (file) {
+            result += "Spectrum File" + SEPARATOR;
+        }
+        if (title) {
+            result += "Spectrum Title" + SEPARATOR;
+        }
+        if (precursor) {
+            result += "Prectursor m/z" + SEPARATOR;
+            result += "Precursor charge" + SEPARATOR;
+            result += "Precursor RT" + SEPARATOR;
+            result += "Peptide theoretic mass" + SEPARATOR;
+            result += "Mass error [ppm]" + SEPARATOR;
+        }
+        if (scores) {
+            result += "Mascot e-value" + SEPARATOR;
+            result += "OMSSA e-value" + SEPARATOR;
+            result += "X!Tandem e-value" + SEPARATOR;
+        }
+        if (confidence) {
+            result += "Confidence" + SEPARATOR;
+        }
+        result += "Retained as main PSM" + SEPARATOR;
+        result += "Decoy" + SEPARATOR;
+        result += "\n";
+
+        PSParameter psParameter = new PSParameter();
+        int rank, progress = 0;
+        SpectrumMatch spectrumMatch;
+        for (String spectrumKey : psmKeys) {
+            spectrumMatch = psmIdentification.get(spectrumKey);
+            psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
+            if (!onlyValidated || psParameter.isValidated()) {
+                for (int se : spectrumMatch.getAdvocates()) {
+                    ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(se).keySet());
+                    Collections.sort(eValues);
+                    rank = 1;
+                    for (double eValue : eValues) {
+                        for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                            result += AdvocateFactory.getInstance().getAdvocate(se).getName() + SEPARATOR;
+                            result += rank + SEPARATOR;
+                            if (accession) {
+                                boolean first = true;
+                                for (Protein protein : peptideAssumption.getPeptide().getParentProteins()) {
+                                    if (first) {
+                                        first = false;
+                                    } else {
+                                        result += ", ";
+                                    }
+                                    result += protein.getAccession();
+                                }
+                                result += SEPARATOR;
+                            }
+                            if (sequence) {
+                                result += peptideAssumption.getPeptide().getSequence() + SEPARATOR;
+                            }
+                            if (modifications || locations) {
+                                boolean first = true;
+                                for (ModificationMatch modificationMatch : peptideAssumption.getPeptide().getModificationMatches()) {
+                                    if (modificationMatch.isVariable()) {
+                                        if (first) {
+                                            first = false;
+                                        } else {
+                                            result += ", ";
+                                        }
+                                        String modName = modificationMatch.getTheoreticPtm().getName();
+                                        result += modName + "(" + modificationMatch + ")";
+                                    }
+                                }
+                                result += SEPARATOR;
+                                result += "Not implemented" + SEPARATOR;
+                            }
+                            if (file) {
+                                result += Spectrum.getSpectrumFile(spectrumMatch.getKey()) + SEPARATOR;
+                            }
+                            if (title) {
+                                result += Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR;
+                            }
+                            if (precursor) {
+                                Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());
+                                result += prec.getMz() + SEPARATOR;
+                                result += prec.getCharge() + SEPARATOR;
+                                result += prec.getRt() + SEPARATOR;
+                                result += peptideAssumption.getPeptide().getMass() + SEPARATOR;
+                                result += peptideAssumption.getDeltaMass() + SEPARATOR;
+                            }
+                            if (scores) {
+                                if (se == Advocate.MASCOT) {
+                                    result += eValue;
+                                }
+                                result += SEPARATOR;
+                                if (se == Advocate.OMSSA) {
+                                    result += eValue;
+                                }
+                                result += SEPARATOR;
+                                if (se == Advocate.XTANDEM) {
+                                    result += eValue;
+                                }
+                                result += SEPARATOR;
+                            }
+                            if (confidence) {
+                                psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+                                result += psParameter.getSearchEngineConfidence() + SEPARATOR;
+                            }
+                            if (peptideAssumption.getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                result += 1 + SEPARATOR;
+                            } else {
+                                result += 0 + SEPARATOR;
+                            }
+                            if (peptideAssumption.isDecoy()) {
+                                result += 1 + SEPARATOR;
+                            } else {
+                                result += 0 + SEPARATOR;
+                            }
+                            result += "\n";
+                            rank++;
+                        }
+                    }
+                }
+            }
+            progress++;
+            if (progressDialog != null) {
+                progressDialog.setValue(progress);
+            }
+        }
+        return result;
+    }
+}
