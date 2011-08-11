@@ -357,6 +357,23 @@ public class PSParameter implements UrParameter {
     public int getGroupClass() {
         return groupClass;
     }
+    
+    /**
+     * Returns the group class description
+     * @return the group class description 
+     */
+    public String getGroupName() {
+        switch (groupClass) {
+            case ISOFORMS:
+                return "Isoforms";
+            case ISOFORMS_UNRELATED:
+                return "Isoforms and Unrelated protein(s)";
+            case UNRELATED:
+                return "Unrelated proteins";
+            default:
+                return "";
+        }
+    }
 
     /**
      * Sets the protein group class.

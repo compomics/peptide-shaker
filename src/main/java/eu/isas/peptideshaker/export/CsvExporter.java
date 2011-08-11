@@ -19,6 +19,7 @@ import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -103,10 +104,11 @@ public class CsvExporter {
     /**
      * Exports the results to csv files.
      *
+     * @param progressDialog a progress dialog, can be null
      * @param folder the folder to store the results in.
      * @return true if the export was sucessfull
      */
-    public boolean exportResults(File folder) {
+    public boolean exportResults(ProgressDialogX progressDialog, File folder) {
 
         try {
             Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
@@ -136,20 +138,36 @@ public class CsvExporter {
 
             Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
+            if (progressDialog != null) {
+                progressDialog.setIndeterminate(false);
+                progressDialog.setMax(identification.getProteinIdentification().size()
+                        + identification.getPeptideIdentification().size()
+                        + 2 * identification.getSpectrumIdentification().size());
+            }
+
+            int progress = 0;
             for (ProteinMatch proteinMatch : identification.getProteinIdentification().values()) {
                 proteinWriter.write(getLine(proteinMatch));
+                progress++;
+                progressDialog.setValue(progress);
             }
 
             for (PeptideMatch peptideMatch : identification.getPeptideIdentification().values()) {
                 peptideWriter.write(getLine(peptideMatch));
+                progress++;
+                progressDialog.setValue(progress);
             }
 
             for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
                 spectrumWriter.write(getLine(spectrumMatch));
+                progress++;
+                progressDialog.setValue(progress);
             }
 
             for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
                 assumptionWriter.write(getLines(spectrumMatch));
+                progress++;
+                progressDialog.setValue(progress);
             }
 
             proteinWriter.close();
@@ -206,13 +224,13 @@ public class CsvExporter {
         }
         line += nValidatedPeptides + SEPARATOR + nValidatedPsms + SEPARATOR;
         try {
-        line += sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession()).getNPossiblePeptides(enzyme) + SEPARATOR;
-        line += sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession()).getSequence().length() + SEPARATOR;
+            line += sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession()).getNPossiblePeptides(enzyme) + SEPARATOR;
+            line += sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession()).getSequence().length() + SEPARATOR;
         } catch (Exception e) {
             line += SEPARATOR + SEPARATOR;
         }
 
-        
+
         try {
             line += probabilities.getProteinProbabilityScore() + SEPARATOR
                     + probabilities.getProteinProbability() + SEPARATOR;
@@ -236,9 +254,8 @@ public class CsvExporter {
             e.printStackTrace();
         }
         try {
-        line += sequenceFactory.getHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
+            line += sequenceFactory.getHeader(proteinMatch.getMainMatch().getAccession()).getDescription();
         } catch (Exception e) {
-            
         }
 
         line += "\n";

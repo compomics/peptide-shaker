@@ -25,8 +25,9 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
-import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
+import eu.isas.peptideshaker.gui.preferencesdialogs.FeaturesPreferencesDialog;
+import eu.isas.peptideshaker.gui.preferencesdialogs.FollowupPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SpectrumCountingPreferencesDialog;
 import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
@@ -414,7 +415,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         openJMenuItem = new javax.swing.JMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         saveMenuItem = new javax.swing.JMenuItem();
-        exportAllIdsMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
@@ -432,15 +432,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         bubblePlotJMenuItem = new javax.swing.JMenuItem();
         spectrumSpectrumIdJMenuItem = new javax.swing.JMenuItem();
         spectrumModificationsJMenuItem = new javax.swing.JMenuItem();
-        featuresJMenu = new javax.swing.JMenu();
-        proteinAccesionsJMenuItem = new javax.swing.JMenuItem();
-        proteinListJMenuItem = new javax.swing.JMenuItem();
-        peptideListJMenu = new javax.swing.JMenu();
-        peptideListJMenuItem = new javax.swing.JMenuItem();
-        allPeptideListsJMenuItem = new javax.swing.JMenuItem();
-        spectrumJMenu = new javax.swing.JMenu();
-        spectrumAsMgfFileJMenuItem = new javax.swing.JMenuItem();
-        spectrumAsPklFileJMenuItem = new javax.swing.JMenuItem();
+        identificationFeaturesMenu = new javax.swing.JMenuItem();
+        followUpAnalysisMenu = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         overViewTabViewMenu = new javax.swing.JMenu();
         proteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -566,17 +559,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         fileJMenu.add(saveMenuItem);
-
-        exportAllIdsMenuItem.setMnemonic('E');
-        exportAllIdsMenuItem.setText("Save As CSV");
-        exportAllIdsMenuItem.setToolTipText("Identification summary as csv files");
-        exportAllIdsMenuItem.setEnabled(false);
-        exportAllIdsMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportAllIdsMenuItemActionPerformed(evt);
-            }
-        });
-        fileJMenu.add(exportAllIdsMenuItem);
         fileJMenu.add(jSeparator1);
 
         exitJMenuItem.setMnemonic('x');
@@ -696,66 +678,21 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         exportJMenu.add(graphicsJMenu);
 
-        featuresJMenu.setMnemonic('f');
-        featuresJMenu.setText("Features");
-        featuresJMenu.setToolTipText("Export a feature (e.g., protein accession numbers or peptide sequendces)");
-
-        proteinAccesionsJMenuItem.setText("Protein Accession Numbers");
-        proteinAccesionsJMenuItem.setToolTipText("Export a list of protein accession numbers");
-        proteinAccesionsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        identificationFeaturesMenu.setText("Identification Features");
+        identificationFeaturesMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                proteinAccesionsJMenuItemActionPerformed(evt);
+                identificationFeaturesMenuActionPerformed(evt);
             }
         });
-        featuresJMenu.add(proteinAccesionsJMenuItem);
+        exportJMenu.add(identificationFeaturesMenu);
 
-        proteinListJMenuItem.setText("Protein List");
-        proteinListJMenuItem.setToolTipText("Export the list of proteins");
-        proteinListJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        followUpAnalysisMenu.setText("Follow-up Analysis");
+        followUpAnalysisMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                proteinListJMenuItemActionPerformed(evt);
+                followUpAnalysisMenuActionPerformed(evt);
             }
         });
-        featuresJMenu.add(proteinListJMenuItem);
-
-        peptideListJMenu.setText("Peptide List");
-
-        peptideListJMenuItem.setText("Current Peptide List");
-        peptideListJMenuItem.setToolTipText("Export the current list of peptides");
-        peptideListJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                peptideListJMenuItemActionPerformed(evt);
-            }
-        });
-        peptideListJMenu.add(peptideListJMenuItem);
-
-        allPeptideListsJMenuItem.setText("Complete Peptide List");
-        allPeptideListsJMenuItem.setToolTipText("Export complete list of peptides");
-        allPeptideListsJMenuItem.setEnabled(false);
-        allPeptideListsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                allPeptideListsJMenuItemActionPerformed(evt);
-            }
-        });
-        peptideListJMenu.add(allPeptideListsJMenuItem);
-
-        featuresJMenu.add(peptideListJMenu);
-
-        spectrumJMenu.setText("Spectrum");
-        spectrumJMenu.setToolTipText("Export the spectrum to a file");
-        spectrumJMenu.setEnabled(false);
-
-        spectrumAsMgfFileJMenuItem.setText("As MGF");
-        spectrumAsMgfFileJMenuItem.setToolTipText("Export as a Mascot Generic File");
-        spectrumJMenu.add(spectrumAsMgfFileJMenuItem);
-
-        spectrumAsPklFileJMenuItem.setText("As PKL");
-        spectrumAsPklFileJMenuItem.setToolTipText("As a PKL peak list file");
-        spectrumJMenu.add(spectrumAsPklFileJMenuItem);
-
-        featuresJMenu.add(spectrumJMenu);
-
-        exportJMenu.add(featuresJMenu);
+        exportJMenu.add(followUpAnalysisMenu);
 
         menuBar.add(exportJMenu);
 
@@ -1071,67 +1008,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }.start();
         }
     }//GEN-LAST:event_saveMenuItemActionPerformed
-
-    /**
-     * Exports the results to text files.
-     * 
-     * @param evt 
-     */
-    private void exportAllIdsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportAllIdsMenuItemActionPerformed
-
-        int value = JOptionPane.showConfirmDialog(this,
-                "You are about to save your project as a list of csv text files. Are you sure\n"
-                + "this is what you want to do? Maybe \'Save As\' is what you are looking for?\n"
-                + "Continue?", "Export as Multiple CSV Files?", JOptionPane.YES_NO_CANCEL_OPTION);
-
-        if (value == JOptionPane.YES_OPTION) {
-
-            final CsvExporter exporter = new CsvExporter(experiment, sample, replicateNumber, searchParameters.getEnzyme());
-            final JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
-            fileChooser.setDialogTitle("Select Result Folder");
-            fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            fileChooser.setMultiSelectionEnabled(false);
-
-            int returnVal = fileChooser.showDialog(this, "Save");
-
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-                lastSelectedFolder = fileChooser.getSelectedFile().getAbsolutePath();
-
-                // @TODO: add check for if a file is about to be overwritten
-
-                final PeptideShakerGUI tempRef = this; // needed due to threading issues
-
-                progressDialog = new ProgressDialogX(this, this, true);
-                progressDialog.doNothingOnClose();
-
-                new Thread(new Runnable() {
-
-                    public void run() {
-                        progressDialog.setIndeterminate(true);
-                        progressDialog.setTitle("Exporting. Please Wait...");
-                        progressDialog.setVisible(true);
-                    }
-                }, "ProgressDialog").start();
-
-                new Thread("ExportThread") {
-
-                    @Override
-                    public void run() {
-                        boolean exported = exporter.exportResults(fileChooser.getSelectedFile());
-                        progressDialog.setVisible(false);
-                        progressDialog.dispose();
-
-                        if (exported) {
-                            JOptionPane.showMessageDialog(tempRef, "Identifications were successfully exported.", "Export Successful", JOptionPane.INFORMATION_MESSAGE);
-                        } else {
-                            JOptionPane.showMessageDialog(tempRef, "Writing of spectrum file failed.", "Error", JOptionPane.ERROR_MESSAGE);
-                        }
-                    }
-                }.start();
-            }
-        }
-    }//GEN-LAST:event_exportAllIdsMenuItemActionPerformed
 
     /**
      * Opens the Help dialog.
@@ -1594,232 +1470,23 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * 
      * @param evt 
      */
-    private void proteinAccesionsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinAccesionsJMenuItemActionPerformed
-
-        int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
-
-        if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == STRUCTURES_TAB_INDEX || selectedIndex == ANNOTATION_TAB_INDEX) {
-
-            JTable tempTable;
-
-            if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == ANNOTATION_TAB_INDEX) {
-                tempTable = overviewPanel.getProteinTable();
-            } else {
-                tempTable = proteinStructurePanel.getProteinTable();
-            }
-
-            String features = "";
-
-            for (int i = 0; i < tempTable.getRowCount(); i++) {
-
-                String link = (String) tempTable.getValueAt(i, tempTable.getColumn("Accession").getModelIndex());
-
-                if (link.lastIndexOf("a href") != -1) {
-                    link = link.substring(link.lastIndexOf("\">") + 2);
-                    link = link.substring(0, link.indexOf("<"));
-                }
-
-                features += link + "\n";
-            }
-
-            new ExportFeatureDialog(this, true, features, "Accession Numbers");
-        }
-    }//GEN-LAST:event_proteinAccesionsJMenuItemActionPerformed
-
     /**
      * Extracts the list of proteins from the Overview or Structure 
      * tab and opens a dialog for exporting them to file.
      * 
      * @param evt 
      */
-    private void proteinListJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinListJMenuItemActionPerformed
-
-        final int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
-
-        final PeptideShakerGUI tempPeptideShakerGUIRef = this;
-
-        if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == SPECTRUM_ID_TAB_INDEX) {
-
-            progressDialog = new ProgressDialogX(this, this, true);
-
-            new Thread(new Runnable() {
-
-                public void run() {
-                    progressDialog.setTitle("Extracting Data. Please Wait...");
-                    progressDialog.setVisible(true);
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("ExtractThread") {
-
-                @Override
-                public void run() {
-
-                    JTable tempTable;
-
-                    if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-                        tempTable = overviewPanel.getProteinTable();
-                    } else {
-                        tempTable = proteinStructurePanel.getProteinTable();
-                    }
-
-                    progressDialog.setMax(tempTable.getRowCount());
-
-                    String features = "";
-
-                    Enumeration<TableColumn> enumerator = tempTable.getTableHeader().getColumnModel().getColumns();
-
-                    while (enumerator.hasMoreElements()) {
-                        features += enumerator.nextElement().getHeaderValue() + "\t";
-                    }
-
-                    features += "\n";
-
-                    for (int i = 0; i < tempTable.getRowCount(); i++) {
-
-                        progressDialog.setValue(i);
-
-                        features += tempTable.getValueAt(i, 0) + "\t";
-
-                        String link = (String) tempTable.getValueAt(i, tempTable.getColumn("Accession").getModelIndex());
-
-                        if (link.lastIndexOf("a href") != -1) {
-                            link = link.substring(link.lastIndexOf("\">") + 2);
-                            link = link.substring(0, link.indexOf("<"));
-                        }
-
-                        features += link + "\t";
-
-                        Integer piAsNumber = (Integer) tempTable.getValueAt(i, tempTable.getColumn("PI").getModelIndex());
-                        String piAsString = "";
-
-                        switch (piAsNumber) {
-
-                            case PSParameter.NOT_GROUP:
-                                piAsString = "Single Protein";
-                                break;
-                            case PSParameter.ISOFORMS:
-                                piAsString = "Isoforms";
-                                break;
-                            case PSParameter.ISOFORMS_UNRELATED:
-                                piAsString = "Unrelated Isoforms";
-                                break;
-                            case PSParameter.UNRELATED:
-                                piAsString = "Unrelated Proteins";
-                                break;
-                        }
-
-                        features += piAsString + "\t";
-
-                        for (int j = 3; j < tempTable.getColumnCount(); j++) {
-                            features += tempTable.getValueAt(i, j) + "\t";
-                        }
-
-                        features += "\n";
-                    }
-
-                    progressDialog.setVisible(false);
-                    progressDialog.dispose();
-
-                    new ExportFeatureDialog(tempPeptideShakerGUIRef, true, features, "Protein List");
-                }
-            }.start();
-        }
-    }//GEN-LAST:event_proteinListJMenuItemActionPerformed
-
     /**
      * Extracts the list of peptides from the Overview or Structure 
      * tab and opens a dialog for exporting them to file.
      * 
      * @param evt 
      */
-    private void peptideListJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideListJMenuItemActionPerformed
-        final int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
-
-        final PeptideShakerGUI tempPeptideShakerGUIRef = this;
-
-        if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == STRUCTURES_TAB_INDEX) {
-
-            progressDialog = new ProgressDialogX(this, this, true);
-
-            new Thread(new Runnable() {
-
-                public void run() {
-                    progressDialog.setTitle("Extracting Data. Please Wait...");
-                    progressDialog.setVisible(true);
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("ExtractThread") {
-
-                @Override
-                public void run() {
-
-                    JTable tempTable;
-
-                    if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-                        tempTable = overviewPanel.getPeptideTable();
-                    } else {
-                        tempTable = proteinStructurePanel.getPeptideTable();
-                    }
-
-                    progressDialog.setMax(tempTable.getRowCount());
-
-                    String features = "";
-
-                    Enumeration<TableColumn> enumerator = tempTable.getTableHeader().getColumnModel().getColumns();
-
-                    while (enumerator.hasMoreElements()) {
-                        features += enumerator.nextElement().getHeaderValue() + "\t";
-                    }
-
-                    features += "\n";
-
-                    for (int i = 0; i < tempTable.getRowCount(); i++) {
-
-                        progressDialog.setValue(i);
-
-                        for (int j = 0; j < tempTable.getColumnCount(); j++) {
-                            features += tempTable.getValueAt(i, j) + "\t";
-                        }
-
-                        features += "\n";
-                    }
-
-                    progressDialog.setVisible(false);
-                    progressDialog.dispose();
-
-                    new ExportFeatureDialog(tempPeptideShakerGUIRef, true, features, "Peptide List");
-                }
-            }.start();
-        }
-    }//GEN-LAST:event_peptideListJMenuItemActionPerformed
-
     /**
      * Export all peptide lists and add protein accession number to each line.
      * 
      * @param evt 
      */
-    private void allPeptideListsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allPeptideListsJMenuItemActionPerformed
-        // not yet implemented
-//        int selectedIndex = resultsJTabbedPane.getSelectedIndex();
-//
-//        if (selectedIndex == 0 || selectedIndex == 3) {
-//
-//            JTable tempTable;
-//
-//            if (selectedIndex == 0) {
-//                tempTable = overviewPanel.getProteinTable();
-//            } else {
-//                tempTable = proteinStructurePanel.getProteinTable();
-//            }
-//            
-//            for (int i = 0; i < tempTable.getRowCount(); i++) {
-//                  
-//            }
-//        }
-    }//GEN-LAST:event_allPeptideListsJMenuItemActionPerformed
-
     /**
      * Turns the hiding of the scores columns on or off.
      * 
@@ -1942,6 +1609,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         proteinStructurePanel.updateModelType();
     }//GEN-LAST:event_backboneJRadioButtonMenuItemActionPerformed
 
+    private void identificationFeaturesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificationFeaturesMenuActionPerformed
+        new FeaturesPreferencesDialog(this);
+    }//GEN-LAST:event_identificationFeaturesMenuActionPerformed
+
+    private void followUpAnalysisMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followUpAnalysisMenuActionPerformed
+        new FollowupPreferencesDialog(this);
+    }//GEN-LAST:event_followUpAnalysisMenuActionPerformed
+
     /**
      * Returns if the 3D model is to be spinning or not.
      * 
@@ -2051,7 +1726,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     progressDialog.dispose();
 
                     saveMenuItem.setEnabled(true);
-                    exportAllIdsMenuItem.setEnabled(true);
                 }
             }.start();
 
@@ -2086,7 +1760,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem aboutJMenuItem;
-    private javax.swing.JMenuItem allPeptideListsJMenuItem;
     private javax.swing.JTabbedPane allTabsJTabbedPane;
     private javax.swing.JMenuItem annotationPreferencesMenu;
     private javax.swing.JPanel annotationsJPanel;
@@ -2096,15 +1769,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenu editMenu;
     private javax.swing.JCheckBoxMenuItem errorPlotTypeCheckBoxMenuItem;
     private javax.swing.JMenuItem exitJMenuItem;
-    private javax.swing.JMenuItem exportAllIdsMenuItem;
     private javax.swing.JMenu exportJMenu;
-    private javax.swing.JMenu featuresJMenu;
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JMenu filterMenu;
+    private javax.swing.JMenuItem followUpAnalysisMenu;
     private javax.swing.JPanel gradientPanel;
     private javax.swing.JMenu graphicsJMenu;
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenuItem identificationFeaturesMenu;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
@@ -2118,12 +1791,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem openJMenuItem;
     private javax.swing.JMenu overViewTabViewMenu;
     private javax.swing.JPanel overviewJPanel;
-    private javax.swing.JMenu peptideListJMenu;
-    private javax.swing.JMenuItem peptideListJMenuItem;
     private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
-    private javax.swing.JMenuItem proteinAccesionsJMenuItem;
     private javax.swing.JMenuItem proteinFilterJMenuItem;
-    private javax.swing.JMenuItem proteinListJMenuItem;
     private javax.swing.JPanel proteinStructureJPanel;
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
     private javax.swing.JPanel ptmJPanel;
@@ -2135,11 +1804,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JCheckBoxMenuItem separatorsCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
-    private javax.swing.JMenuItem spectrumAsMgfFileJMenuItem;
-    private javax.swing.JMenuItem spectrumAsPklFileJMenuItem;
     private javax.swing.JMenuItem spectrumCountingMenuItem;
     private javax.swing.JCheckBoxMenuItem spectrumJCheckBoxMenuItem;
-    private javax.swing.JMenu spectrumJMenu;
     private javax.swing.JPanel spectrumJPanel;
     private javax.swing.JMenuItem spectrumModificationsJMenuItem;
     private javax.swing.JMenuItem spectrumOverviewJMenuItem;
@@ -2272,6 +1938,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         searchParameters = new SearchParameters();
         searchParameters.setEnzyme(enzymeFactory.getEnzyme("Trypsin"));
         searchParameters.setFragmentIonMZTolerance(0.5);
+        searchParameters.setPrecursorToleranceUnit(0);
+        searchParameters.setPrecursorTolerance(10);
         searchParameters.setIonSearched1("b");
         searchParameters.setIonSearched2("y");
         loadModificationProfile(profileFile);
@@ -3088,6 +2756,82 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public void setDataSaved(boolean dataSaved) {
         this.dataSaved = dataSaved;
+    }
+
+    /**
+     * Returns the selected tab as indexed by the static fields
+     * @return 
+     */
+    public int getSelectedTab() {
+        return allTabsJTabbedPane.getSelectedIndex();
+    }
+
+    /**
+     * Returns a list of keys of the currently displayed proteins
+     * @return a list of keys of the currently displayed proteins
+     */
+    public ArrayList<String> getDisplayedProteins() {
+        int selectedTab = getSelectedTab();
+        switch (selectedTab) {
+            case OVER_VIEW_TAB_INDEX:
+                return overviewPanel.getDisplayedProteins();
+            case STRUCTURES_TAB_INDEX:
+                return proteinStructurePanel.getDisplayedProteins();
+            case MODIFICATIONS_TAB_INDEX:
+                return ptmPanel.getDisplayedProteins();
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Returns a list of keys of the currently displayed peptides
+     * @return a list of keys of the currently displayed peptides
+     */
+    public ArrayList<String> getDisplayedPeptides() {
+        int selectedTab = getSelectedTab();
+        switch (selectedTab) {
+            case OVER_VIEW_TAB_INDEX:
+                return overviewPanel.getDisplayedPeptides();
+            case STRUCTURES_TAB_INDEX:
+                return proteinStructurePanel.getDisplayedPeptides();
+            case MODIFICATIONS_TAB_INDEX:
+                return ptmPanel.getDisplayedPeptides();
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Returns a list of keys of the currently displayed psms
+     * @return a list of keys of the currently displayed psms
+     */
+    public ArrayList<String> getDisplayedPSMs() {
+        int selectedTab = getSelectedTab();
+        switch (selectedTab) {
+            case OVER_VIEW_TAB_INDEX:
+                return overviewPanel.getDisplayedPsms();
+            case MODIFICATIONS_TAB_INDEX:
+                return ptmPanel.getDisplayedAssumptions();
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Returns a list of keys of the currently displayed assumptions
+     * @return a list of keys of the currently displayed assumptions
+     */
+    public ArrayList<String> getDisplayedAssumptions() {
+        int selectedTab = getSelectedTab();
+        switch (selectedTab) {
+            case OVER_VIEW_TAB_INDEX:
+                return overviewPanel.getDisplayedPsms();
+            case MODIFICATIONS_TAB_INDEX:
+                return ptmPanel.getDisplayedAssumptions();
+            default:
+                return null;
+        }
     }
 
     /**

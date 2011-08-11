@@ -58,17 +58,6 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="exportAllIdsMenuItem">
-              <Properties>
-                <Property name="mnemonic" type="int" value="69"/>
-                <Property name="text" type="java.lang.String" value="Save As CSV"/>
-                <Property name="toolTipText" type="java.lang.String" value="Identification summary as csv files"/>
-                <Property name="enabled" type="boolean" value="false"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportAllIdsMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exitJMenuItem">
@@ -207,80 +196,22 @@
                 </MenuItem>
               </SubComponents>
             </Menu>
-            <Menu class="javax.swing.JMenu" name="featuresJMenu">
+            <MenuItem class="javax.swing.JMenuItem" name="identificationFeaturesMenu">
               <Properties>
-                <Property name="mnemonic" type="int" value="102"/>
-                <Property name="text" type="java.lang.String" value="Features"/>
-                <Property name="toolTipText" type="java.lang.String" value="Export a feature (e.g., protein accession numbers or peptide sequendces)"/>
+                <Property name="text" type="java.lang.String" value="Identification Features"/>
               </Properties>
-              <SubComponents>
-                <MenuItem class="javax.swing.JMenuItem" name="proteinAccesionsJMenuItem">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Protein Accession Numbers"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Export a list of protein accession numbers"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinAccesionsJMenuItemActionPerformed"/>
-                  </Events>
-                </MenuItem>
-                <MenuItem class="javax.swing.JMenuItem" name="proteinListJMenuItem">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Protein List"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Export the list of proteins"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinListJMenuItemActionPerformed"/>
-                  </Events>
-                </MenuItem>
-                <Menu class="javax.swing.JMenu" name="peptideListJMenu">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Peptide List"/>
-                  </Properties>
-                  <SubComponents>
-                    <MenuItem class="javax.swing.JMenuItem" name="peptideListJMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Current Peptide List"/>
-                        <Property name="toolTipText" type="java.lang.String" value="Export the current list of peptides"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideListJMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="allPeptideListsJMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Complete Peptide List"/>
-                        <Property name="toolTipText" type="java.lang.String" value="Export complete list of peptides"/>
-                        <Property name="enabled" type="boolean" value="false"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="allPeptideListsJMenuItemActionPerformed"/>
-                      </Events>
-                    </MenuItem>
-                  </SubComponents>
-                </Menu>
-                <Menu class="javax.swing.JMenu" name="spectrumJMenu">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Spectrum"/>
-                    <Property name="toolTipText" type="java.lang.String" value="Export the spectrum to a file"/>
-                    <Property name="enabled" type="boolean" value="false"/>
-                  </Properties>
-                  <SubComponents>
-                    <MenuItem class="javax.swing.JMenuItem" name="spectrumAsMgfFileJMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="As MGF"/>
-                        <Property name="toolTipText" type="java.lang.String" value="Export as a Mascot Generic File"/>
-                      </Properties>
-                    </MenuItem>
-                    <MenuItem class="javax.swing.JMenuItem" name="spectrumAsPklFileJMenuItem">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="As PKL"/>
-                        <Property name="toolTipText" type="java.lang.String" value="As a PKL peak list file"/>
-                      </Properties>
-                    </MenuItem>
-                  </SubComponents>
-                </Menu>
-              </SubComponents>
-            </Menu>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="identificationFeaturesMenuActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="followUpAnalysisMenu">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Follow-up Analysis"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="followUpAnalysisMenuActionPerformed"/>
+              </Events>
+            </MenuItem>
           </SubComponents>
         </Menu>
         <Menu class="javax.swing.JMenu" name="viewJMenu">

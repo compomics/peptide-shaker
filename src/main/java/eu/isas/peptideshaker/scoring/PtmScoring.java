@@ -99,6 +99,20 @@ public class PtmScoring implements Serializable {
     public ArrayList<String> getDeltaScorelocations() {
         return new ArrayList<String>(deltaScores.keySet());
     }
+    
+    /**
+     * Returns the best scoring modification profile based on the delta score
+     * @return the best scoring modification profile based on the delta score
+     */
+    public String getBestDeltaScoreLocations() {
+        String bestKey = null;
+        for (String key : deltaScores.keySet()) {
+            if (bestKey == null || deltaScores.get(bestKey) < deltaScores.get(key)) {
+                bestKey = key;
+            }
+        }
+        return bestKey;
+    }
 
     /**
      * Returns the implemented locations for the A-score
