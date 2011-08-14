@@ -2,7 +2,6 @@ package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
@@ -30,7 +29,6 @@ import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
-import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -2743,7 +2741,6 @@ public class OverviewPanel extends javax.swing.JPanel {
             String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
             PeptideMatch selectedPeptideMatch = peptideShakerGUI.getIdentification().getPeptideIdentification().get(peptideKey);
             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
-            SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
             
             for (SpectrumMatch spectrumMatch : selectedPeptideMatch.getSpectrumMatches().values()) {
                 
@@ -2767,10 +2764,16 @@ public class OverviewPanel extends javax.swing.JPanel {
             
             // @TODO: rewrite the charge selection below when the new ion selection gui has been implemented!
             
+            double bubbleScale = annotationPreferences.getMzTolerance()*10*peptideShakerGUI.getBubbleScale();
+ 
+            if (peptideShakerGUI.useRelativeError()) {
+                bubbleScale = annotationPreferences.getMzTolerance()*10000*peptideShakerGUI.getBubbleScale();
+            }
+            
             MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                     selectedIndexes,
-                    allAnnotations, annotationPreferences.getIonTypes(), allSpectra, searchParameters.getFragmentIonMZTolerance(),
-                    peptideShakerGUI.getBubbleScale(),
+                    allAnnotations, annotationPreferences.getIonTypes(), allSpectra, annotationPreferences.getMzTolerance(),
+                    bubbleScale,
                     annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
                     annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4)), 
                     selectedIndexes.size() == 1, barsBubblePlotToggleButton.isSelected(),
@@ -2949,7 +2952,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                                     currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                                     precursor.getMz(), precursor.getCharge().toString(),
                                     "", 40, false, false, false, 2, false);
-                            spectrum.setDeltaMassWindow(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance());
+                            spectrum.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getMzTolerance());
                             spectrum.setBorder(null);
 
                             // get the spectrum annotations
@@ -3007,7 +3010,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                             // create the miniature mass error plot
                             MassErrorPlot massErrorPlot = new MassErrorPlot(
                                     annotations, annotationPreferences.getIonTypes(), currentSpectrum,
-                                    peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance(),
+                                    annotationPreferences.getMzTolerance(),
                                     annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
                                     annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4)), 
                                     peptideShakerGUI.useRelativeError());

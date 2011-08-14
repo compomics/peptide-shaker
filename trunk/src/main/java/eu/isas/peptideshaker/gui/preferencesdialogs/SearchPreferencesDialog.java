@@ -194,6 +194,8 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         jLabel9.setText("Precursor tolerance:");
 
+        precursorTolerance.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
         precursorUnit.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "ppm", "Da" }));
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);

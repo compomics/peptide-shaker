@@ -263,6 +263,9 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="precursorTolerance">
+              <Properties>
+                <Property name="horizontalAlignment" type="int" value="0"/>
+              </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="precursorUnit">
               <Properties>
