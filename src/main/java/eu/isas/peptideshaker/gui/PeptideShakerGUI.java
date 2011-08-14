@@ -154,7 +154,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * The scaling value for the bubbles.
      */
-    private int bubbleScale = 5;
+    private double bubbleScale = 1;
     /**
      * If set to true all messages will be sent to a log file.
      */
@@ -1154,10 +1154,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         if (input != null) {
             try {
-                bubbleScale = new Integer(input);
+                bubbleScale = new Double(input);
                 overviewPanel.updateBubblePlot();
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Bubble scale has to be an integer.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Bubble scale has to be a number.", "Input Error", JOptionPane.ERROR_MESSAGE);
             }
         }
 
@@ -2242,7 +2242,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      *
      * @return the bubble plot scale value
      */
-    public int getBubbleScale() {
+    public double getBubbleScale() {
         return bubbleScale;
     }
 

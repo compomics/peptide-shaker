@@ -42,7 +42,6 @@ import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * The Spectrum ID panel.
@@ -2192,14 +2191,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                 if (currentSpectrum.getMzValuesAsArray().length > 0 && currentSpectrum.getIntensityValuesAsArray().length > 0) {
 
+                    AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
+                    
                     SpectrumPanel spectrum = new SpectrumPanel(
                             currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                             precursor.getMz(), precursor.getCharge().toString(),
                             "", 40, false, false, false, 2, false);
-                    spectrum.setDeltaMassWindow(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance());
+                    spectrum.setDeltaMassWindow(annotationPreferences.getMzTolerance());
                     spectrum.setBorder(null);
-
-                    AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
 
                     // omssa annotation (if any)
                     if (omssaTable.getSelectedRow() != -1) {

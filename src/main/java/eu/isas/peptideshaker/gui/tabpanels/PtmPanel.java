@@ -45,7 +45,6 @@ import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * The PTM tab.
@@ -1754,7 +1753,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                         precursor.getMz(), precursor.getCharge().toString(),
                         "", 40, false, false, false, 2, false);
-                spectrumA.setDeltaMassWindow(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance());
+                spectrumA.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getMzTolerance());
                 spectrumA.setBorder(null);
 
                 // get the spectrum annotations
@@ -1816,7 +1815,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                         precursor.getMz(), precursor.getCharge().toString(),
                         "", 40, false, false, false, 2, false);
-                spectrumB.setDeltaMassWindow(peptideShakerGUI.getSearchParameters().getFragmentIonMZTolerance());
+                spectrumB.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getMzTolerance());
                 spectrumB.setBorder(null);
 
                 // get the spectrum annotations                

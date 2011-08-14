@@ -10,6 +10,7 @@
 
          <ul>
             <li><a href='#Introduction'>Introduction</a></li>
+            <li><a href='#Scaling'>Bubble Scaling</a></li>
             <li><a href='#Annotation'>Annotation</a></li>
             <li><a href='#BarHighlighting'>Bar Highlighting</a></li>
             <li><a href='#MultipleSpectra'>Multiple Spectra</a></li>
@@ -29,6 +30,25 @@
             This way of looking at spectra takes a bit of getting used to, but once 
             one is comfortable with the setup, it becomes very easy to pick up details that 
             would have been very difficult to see by a manual inspection of individual spectra.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+        
+        <a name="#Scaling"></a>
+        <h3>Bubble Scaling</h3>
+        <p align="justify">
+            The size of the bubbles represent the relative intensity of the given peak. The bubbles 
+            are automatically scaled to try to find the optimal bubble size, i.e., so that the bubbles 
+            are neither too small nor too big. When using mass accuray in Dalton the scale factor 
+            is 10 times the maxium mass tolerance (in Dalton), while when using relative accuracy, i.e., ppm, 
+            the scaling factor is 1000 times the maxium mass tolerance (still in Dalton). 
+            <br><br>
+            If the automatic scaling is not optimal, the scaling factor can be changed via the 
+            Edit menu > 'Bubble Plot Scale'. <i>Note that the value inserted here is 
+            relative to the automatic scales above, i.e., entering a value of 2 will double 
+            the size of the bubble (relative to the automatic scale), while a value of 0.5 
+            will reduce the size by half (again relative to the automatic scale).</i>
         </p>
         <br>
         <a href="#top">Go to top of page</a>
