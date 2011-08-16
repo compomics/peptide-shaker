@@ -654,7 +654,16 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             }
 
             if (needDialog) {
-                waitingDialog.setVisible(true);
+                
+                // @TODO: there's something strange going on here!!
+                //          The try-catch should not be needed, but if not there the tools sometimes crashes when opening an existing project...
+                //          With the try-catch the tool just starts opening the results in the background instead. 
+                
+                try {
+                    waitingDialog.setVisible(true);
+                } catch(IndexOutOfBoundsException e) {
+                    // ignore
+                }
                 this.dispose();
             }
 
