@@ -1,4 +1,3 @@
-
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.gui.dialogs.ProgressDialogX;
@@ -6,7 +5,6 @@ import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.ExportFeatureDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import java.awt.ComponentOrientation;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
@@ -825,14 +823,16 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
+        new Thread("ExportThread") {
 
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getProteinsOutput(progressDialog, null, false, proteinAccession.isSelected(), proteinPI.isSelected(), proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected());
+                    feature = outputGenerator.getProteinsOutput(progressDialog, null, false, proteinAccession.isSelected(), proteinPI.isSelected(),
+                            proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinNSpectra.isSelected(),
+                            proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output error.", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     feature = "";
                 }
@@ -951,15 +951,16 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
+        new Thread("ExportThread") {
 
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getProteinsOutput(progressDialog, null, true, proteinAccession.isSelected(), proteinPI.isSelected(), proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected());
-
+                    feature = outputGenerator.getProteinsOutput(progressDialog, null, true, proteinAccession.isSelected(), proteinPI.isSelected(),
+                            proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinNSpectra.isSelected(),
+                            proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output error.", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     feature = "";
                 }
@@ -986,15 +987,16 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
+        new Thread("ExportThread") {
 
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getPeptidesOutput(progressDialog, null, true, peptideAccession.isSelected(), peptideSequence.isSelected(), peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(), peptideScore.isSelected(), peptideConfidence.isSelected());
-
+                    feature = outputGenerator.getPeptidesOutput(progressDialog, null, true, peptideAccession.isSelected(), peptideSequence.isSelected(),
+                            peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(), peptideScore.isSelected(),
+                            peptideConfidence.isSelected());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output error.", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     feature = "";
                 }
@@ -1021,15 +1023,16 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
+        new Thread("ExportThread") {
 
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getPeptidesOutput(progressDialog, null, false, peptideAccession.isSelected(), peptideSequence.isSelected(), peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(), peptideScore.isSelected(), peptideConfidence.isSelected());
-
+                    feature = outputGenerator.getPeptidesOutput(progressDialog, null, false, peptideAccession.isSelected(), peptideSequence.isSelected(),
+                            peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
+                            peptideScore.isSelected(), peptideConfidence.isSelected());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output error.", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     feature = "";
                 }
@@ -1056,15 +1059,16 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
+        new Thread("ExportThread") {
 
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getPSMsOutput(progressDialog, null, true, psmAccession.isSelected(), psmSequence.isSelected(), psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(), psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected());
-
+                    feature = outputGenerator.getPSMsOutput(progressDialog, null, true, psmAccession.isSelected(), psmSequence.isSelected(),
+                            psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
+                            psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output error.", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     feature = "";
                 }
@@ -1091,15 +1095,16 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
+        new Thread("ExportThread") {
 
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getPSMsOutput(progressDialog, null, false, psmAccession.isSelected(), psmSequence.isSelected(), psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(), psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected());
-
+                    feature = outputGenerator.getPSMsOutput(progressDialog, null, false, psmAccession.isSelected(), psmSequence.isSelected(),
+                            psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
+                            psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output error.", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     feature = "";
                 }
@@ -1126,15 +1131,16 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
+        new Thread("ExportThread") {
 
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getAssumptionsOutput(progressDialog, null, false, assumptionAccession.isSelected(), assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionLocation.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(), assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected());
-
+                    feature = outputGenerator.getAssumptionsOutput(progressDialog, null, false, assumptionAccession.isSelected(), assumptionSequence.isSelected(),
+                            assumptionModification.isSelected(), assumptionLocation.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
+                            assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output error.", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     feature = "";
                 }
@@ -1191,7 +1197,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
                     peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
 
-                    CsvExporter exporter = new CsvExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getSearchParameters().getEnzyme());
+                    CsvExporter exporter = new CsvExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), 
+                            peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getSearchParameters().getEnzyme());
                     exporter.exportResults(progressDialog, fileChooser.getSelectedFile());
                     JOptionPane.showMessageDialog(tempRef, "Identification results saved to " + fileChooser.getSelectedFile().getName() + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
 
@@ -1218,16 +1225,17 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
+        new Thread("ExportThread") {
 
             @Override
             public void run() {
                 try {
                     ArrayList<String> selectedProteins = peptideShakerGUI.getDisplayedProteins();
-                    feature = outputGenerator.getProteinsOutput(progressDialog, selectedProteins, true, proteinAccession.isSelected(), proteinPI.isSelected(), proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected());
-
+                    feature = outputGenerator.getProteinsOutput(progressDialog, selectedProteins, true, proteinAccession.isSelected(),
+                            proteinPI.isSelected(), proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(),
+                            proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output error.", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     feature = "";
                 }
@@ -1254,17 +1262,17 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
+        new Thread("ExportThread") {
 
             @Override
             public void run() {
                 try {
                     ArrayList<String> selectedPeptides = peptideShakerGUI.getDisplayedPeptides();
-                    String feature = "";
-                    feature = outputGenerator.getPeptidesOutput(progressDialog, selectedPeptides, true, peptideAccession.isSelected(), peptideSequence.isSelected(), peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(), peptideScore.isSelected(), peptideConfidence.isSelected());
-
+                    feature = outputGenerator.getPeptidesOutput(progressDialog, selectedPeptides, true, peptideAccession.isSelected(),
+                            peptideSequence.isSelected(), peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
+                            peptideScore.isSelected(), peptideConfidence.isSelected());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output error.", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     feature = "";
                 }
@@ -1291,17 +1299,17 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
+        new Thread("ExportThread") {
 
             @Override
             public void run() {
                 try {
                     ArrayList<String> selectedPsms = peptideShakerGUI.getDisplayedPSMs();
-                    String feature = "";
-                    feature = outputGenerator.getPSMsOutput(progressDialog, selectedPsms, false, psmAccession.isSelected(), psmSequence.isSelected(), psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(), psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected());
-
+                    feature = outputGenerator.getPSMsOutput(progressDialog, selectedPsms, false, psmAccession.isSelected(),
+                            psmSequence.isSelected(), psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(),
+                            psmTitle.isSelected(), psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output error.", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     feature = "";
                 }
@@ -1328,15 +1336,17 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
+        new Thread("ExportThread") {
 
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getAssumptionsOutput(progressDialog, null, true, assumptionAccession.isSelected(), assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionLocation.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(), assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected());
-
+                    feature = outputGenerator.getAssumptionsOutput(progressDialog, null, true, assumptionAccession.isSelected(),
+                            assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionLocation.isSelected(),
+                            assumptionFile.isSelected(), assumptionTitle.isSelected(), assumptionPrecursor.isSelected(),
+                            assumptionScores.isSelected(), assumptionConfidence.isSelected());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output error.", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     feature = "";
                 }
@@ -1363,17 +1373,18 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }, "ProgressDialog").start();
 
-        new Thread("SaveThread") {
+        new Thread("ExportThread") {
 
             @Override
             public void run() {
                 try {
                     ArrayList<String> psmKeys = peptideShakerGUI.getDisplayedAssumptions();
-                    String feature = "";
-                    feature = outputGenerator.getAssumptionsOutput(progressDialog, psmKeys, false, assumptionAccession.isSelected(), assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionLocation.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(), assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected());
-
+                    feature = outputGenerator.getAssumptionsOutput(progressDialog, psmKeys, false, assumptionAccession.isSelected(),
+                            assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionLocation.isSelected(),
+                            assumptionFile.isSelected(), assumptionTitle.isSelected(), assumptionPrecursor.isSelected(),
+                            assumptionScores.isSelected(), assumptionConfidence.isSelected());
                 } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output error.", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
                     feature = "";
                 }
