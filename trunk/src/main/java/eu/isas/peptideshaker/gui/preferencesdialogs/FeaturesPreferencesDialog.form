@@ -390,7 +390,6 @@
                                           <Component id="peptideConfidence" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="peptideScore" linkSize="2" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="1" attributes="0">
                                       <Component id="peptideSelectAll" linkSize="9" min="-2" max="-2" attributes="0"/>
@@ -402,9 +401,9 @@
                                       <Component id="peptideExportValidated" linkSize="8" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="peptideExportAll" linkSize="8" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -573,7 +572,6 @@
                                           <Component id="psmConfidence" linkSize="3" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="psmScore" linkSize="3" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="psmSelectAll" linkSize="10" min="-2" max="-2" attributes="0"/>
@@ -585,9 +583,9 @@
                                       <Component id="psmExportValidated" linkSize="7" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="psmExportAll" linkSize="7" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -774,7 +772,6 @@
                                           <Component id="assumptionConfidence" linkSize="5" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="assumptionScores" min="-2" pref="158" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="assumptionsExportAll" linkSize="11" min="-2" max="-2" attributes="0"/>
@@ -786,9 +783,9 @@
                                       <Component id="assumptionsExportValidated" linkSize="6" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="assumptionExportAll" linkSize="6" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
