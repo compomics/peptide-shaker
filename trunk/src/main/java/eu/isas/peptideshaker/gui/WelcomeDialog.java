@@ -197,6 +197,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void openJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJButtonActionPerformed
+        this.setVisible(false);
         JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         fileChooser.setDialogTitle("Open PeptideShaker Project");
 
