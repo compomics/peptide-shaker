@@ -61,9 +61,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Vector;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
@@ -151,6 +149,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The current settings for the radio buttons for the protein filters.
      */
     private Integer[] currrentProteinFilterRadioButtonSelections = {0, 0, 0, 0, 0, 0};
+    /**
+     * The current protein inference filter selection.
+     */
+    private int currentProteinInferenceFilterSelection = 5;
     /**
      * The scaling value for the bubbles.
      */
@@ -1169,7 +1171,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt 
      */
     private void proteinFilterJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinFilterJMenuItemActionPerformed
-        new ProteinFilter(this, true, currentProteinFilterValues, currrentProteinFilterRadioButtonSelections, true);
+        new ProteinFilter(this, true, currentProteinFilterValues, currrentProteinFilterRadioButtonSelections, currentProteinInferenceFilterSelection, true);
     }//GEN-LAST:event_proteinFilterJMenuItemActionPerformed
 
     /**
@@ -2323,6 +2325,24 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     public void setCurrrentProteinFilterRadioButtonSelections(Integer[] currrentProteinFilterRadioButtonSelections) {
         this.currrentProteinFilterRadioButtonSelections = currrentProteinFilterRadioButtonSelections;
+    }
+    
+    /**
+     * Set the current protein inference filer selection.
+     * 
+     * @param currentProteinInferenceFilterSelection the protein inference filer selection to set
+     */
+    public void setCurrrentProteinInferenceFilterSelection(int currentProteinInferenceFilterSelection) {
+        this.currentProteinInferenceFilterSelection = currentProteinInferenceFilterSelection;
+    }
+    
+    /**
+     * Returns the current protein inference selection as an int.
+     * 
+     * @return the current protein inference selection as an int (0-5)
+     */
+    public int getCurrrentProteinInferenceFilterSelection() {
+        return currentProteinInferenceFilterSelection;
     }
 
     /**
