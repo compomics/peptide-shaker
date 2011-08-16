@@ -2799,7 +2799,6 @@ public class OverviewPanel extends javax.swing.JPanel {
         try {
             currentProteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
             
-            
             ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Protein Sequence Coverage ("
                     + Util.roundDouble((Double) proteinTable.getValueAt(proteinTable.getSelectedRow(), proteinTable.getColumn("Coverage").getModelIndex()), 2)
                     + "%, " + currentProteinSequence.length() + " AA)");
@@ -2901,7 +2900,8 @@ public class OverviewPanel extends javax.swing.JPanel {
                 sequenceCoverageJPanel.repaint();
             }
         } catch (Exception e) {
-            
+            // ignore error
+            e.printStackTrace();
         }
     }
 
@@ -3676,7 +3676,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         int validatedProteinCounter = 0;
         
         for (int i = 0; i < proteinTable.getRowCount(); i++) {
-            if ((Boolean) proteinTable.getValueAt(i, proteinTable.getColumn("").getModelIndex())) {
+            if ((Boolean) proteinTable.getValueAt(i, proteinTable.getColumnCount() - 1)) {
                 validatedProteinCounter++;
             }
         }
@@ -3709,6 +3709,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             spectrumJTabbedPane.revalidate();
             spectrumJTabbedPane.repaint();
             
+            coverageTable.setValueAt(null, 0, 0);
             ((TitledBorder) sequenceCoverageJPanel.getBorder()).setTitle("Protein Sequence Coverage");
             sequenceCoverageJPanel.repaint();
         }
