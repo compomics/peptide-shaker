@@ -5,7 +5,6 @@ import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
@@ -24,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -363,7 +363,16 @@ public class FileImporter {
          */
         public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, IdFilter idFilter, SearchParameters searchParameters) {
 
-            this.idFiles = idFiles;
+            this.idFiles = new ArrayList<File>();
+            HashMap<String, File> filesMap = new HashMap<String, File>();
+            for (File file : idFiles) {
+                filesMap.put(file.getName(), file);
+            }
+            ArrayList<String> names = new ArrayList<String>(filesMap.keySet());
+            Collections.sort(names);
+            for (String name : names) {
+                this.idFiles.add(filesMap.get(name));
+            }
             this.spectrumFiles = new HashMap<String, File>();
             this.fastaFile = fastaFile;
             this.idFilter = idFilter;
@@ -441,10 +450,7 @@ public class FileImporter {
 
                             inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
                             peptide = firstHit.getPeptide();
-                            ArrayList<Protein> proteins = new ArrayList<Protein>();
-                            for (String proteinKey : getProteins(peptide.getSequence(), waitingDialog)) {
-                                proteins.add(new Protein(proteinKey, proteinKey.contains("REV")));
-                            }
+                            ArrayList<String> proteins = getProteins(peptide.getSequence(), waitingDialog);
                             if (!proteins.isEmpty()) {
                                 peptide.setParentProteins(proteins);
                             }
@@ -574,8 +580,8 @@ public class FileImporter {
                 ArrayList<String> mgfNeeded = new ArrayList<String>();
                 String newFile;
 
-                for (SpectrumMatch spectrumMatch : identification.getSpectrumIdentification().values()) {
-                    newFile = Spectrum.getSpectrumFile(spectrumMatch.getKey());
+                for (String spectrumKey : identification.getSpectrumIdentification()) {
+                    newFile = Spectrum.getSpectrumFile(spectrumKey);
                     if (!mgfNeeded.contains(newFile)) {
                         mgfNeeded.add(newFile);
                     }

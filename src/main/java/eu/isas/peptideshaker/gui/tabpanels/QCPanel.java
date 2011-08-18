@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.experiment.biology.Enzyme;
+import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -543,60 +544,64 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private HistogramInput getProteinDataset() {
         HistogramInput histogramInput = new HistogramInput();
-        PSParameter psParameter = new PSParameter();
-        double value, min = -1, max = -1;
-        if (proteinMetricCmb.getSelectedIndex() == 0) {
-            // Values for the number of validated peptides
-            ArrayList<Double> validatedValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-            min = 0;
-            for (ProteinMatch proteinMatch : peptideShakerGUI.getIdentification().getProteinIdentification().values()) {
-                value = 0;
-                for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-                    psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
-                    if (psParameter.isValidated()) {
-                        value = value + 1;
+        try {
+            PSParameter psParameter = new PSParameter();
+            double value, min = -1, max = -1;
+            if (proteinMetricCmb.getSelectedIndex() == 0) {
+                // Values for the number of validated peptides
+                ArrayList<Double> validatedValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+                min = 0;
+                ProteinMatch proteinMatch;
+                for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                    value = 0;
+                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                        if (psParameter.isValidated()) {
+                            value = value + 1;
+                        }
                     }
-                }
-                if (value > max || max == -1) {
-                    max = value;
-                }
-                psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
-                if (!proteinMatch.isDecoy()) {
-                    if (psParameter.isValidated()) {
-                        validatedValues.add(value);
+                    if (value > max || max == -1) {
+                        max = value;
+                    }
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
+                    if (!proteinMatch.isDecoy()) {
+                        if (psParameter.isValidated()) {
+                            validatedValues.add(value);
+                        } else {
+                            nonValidatedValues.add(value);
+                        }
                     } else {
-                        nonValidatedValues.add(value);
-                    }
-                } else {
-                    if (psParameter.isValidated()) {
-                        validatedDecoyValues.add(value);
-                    } else {
-                        nonValidatedDecoyValues.add(value);
+                        if (psParameter.isValidated()) {
+                            validatedDecoyValues.add(value);
+                        } else {
+                            nonValidatedDecoyValues.add(value);
+                        }
                     }
                 }
-            }
-            int maxBin = (int) max + 1;
-            ArrayList<Double> bins = new ArrayList<Double>();
-            for (int i = 0; i < maxBin; i++) {
-                bins.add((double) i);
-            }
-            histogramInput.setBins(bins);
-            histogramInput.setValidatedValues(validatedValues);
-            histogramInput.setNonValidatedValues(nonValidatedValues);
-            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
-        } else if (proteinMetricCmb.getSelectedIndex() == 1) {
-            // Values for the spectrum counting
-            ArrayList<Double> validatedValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-            try {
-                for (ProteinMatch proteinMatch : peptideShakerGUI.getIdentification().getProteinIdentification().values()) {
-                    value = peptideShakerGUI.getSpectrumCount(proteinMatch);
+                int maxBin = (int) max + 1;
+                ArrayList<Double> bins = new ArrayList<Double>();
+                for (int i = 0; i < maxBin; i++) {
+                    bins.add((double) i);
+                }
+                histogramInput.setBins(bins);
+                histogramInput.setValidatedValues(validatedValues);
+                histogramInput.setNonValidatedValues(nonValidatedValues);
+                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+            } else if (proteinMetricCmb.getSelectedIndex() == 1) {
+                // Values for the spectrum counting
+                ArrayList<Double> validatedValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+                ProteinMatch proteinMatch;
+                for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                    value = peptideShakerGUI.getSpectrumCounting(proteinMatch);
                     if (value > 0) {
                         if (value < min || min == -1) {
                             min = value;
@@ -605,7 +610,7 @@ public class QCPanel extends javax.swing.JPanel {
                             max = value;
                         }
                     }
-                    psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
                     if (!proteinMatch.isDecoy()) {
                         if (psParameter.isValidated()) {
                             validatedValues.add(value);
@@ -620,37 +625,35 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            int binMin = (int) Math.log10(min) - 1;
-            int binMax = (int) Math.log10(max) + 1;
-            ArrayList<Double> bins = new ArrayList<Double>();
-            for (int i = binMin; i <= binMax; i++) {
-                bins.add(Math.pow(10, i));
-            }
-            bins.add(0.0);
-            histogramInput.setBins(bins);
-            histogramInput.setValidatedValues(validatedValues);
-            histogramInput.setNonValidatedValues(nonValidatedValues);
-            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
-        } else if (proteinMetricCmb.getSelectedIndex() == 2) {
-            // Values for the sequence coverage
-            ArrayList<Double> validatedValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-            try {
+                int binMin = (int) Math.log10(min) - 1;
+                int binMax = (int) Math.log10(max) + 1;
+                ArrayList<Double> bins = new ArrayList<Double>();
+                for (int i = binMin; i <= binMax; i++) {
+                    bins.add(Math.pow(10, i));
+                }
+                bins.add(0.0);
+                histogramInput.setBins(bins);
+                histogramInput.setValidatedValues(validatedValues);
+                histogramInput.setNonValidatedValues(nonValidatedValues);
+                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+            } else if (proteinMetricCmb.getSelectedIndex() == 2) {
+                // Values for the sequence coverage
+                ArrayList<Double> validatedValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
                 Protein currentProtein;
                 min = 0;
-                for (ProteinMatch proteinMatch : peptideShakerGUI.getIdentification().getProteinIdentification().values()) {
-                    currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession());
+                ProteinMatch proteinMatch;
+                for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                    currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                     value = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
                     if (value > max || max == -1) {
                         max = value;
                     }
-                    psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
                     if (!proteinMatch.isDecoy()) {
                         if (psParameter.isValidated()) {
                             validatedValues.add(value);
@@ -665,19 +668,19 @@ public class QCPanel extends javax.swing.JPanel {
                         }
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+                int maxBin = (int) max + 1;
+                ArrayList<Double> bins = new ArrayList<Double>();
+                for (int i = 0; i < maxBin; i++) {
+                    bins.add((double) i);
+                }
+                histogramInput.setBins(bins);
+                histogramInput.setValidatedValues(validatedValues);
+                histogramInput.setNonValidatedValues(nonValidatedValues);
+                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
             }
-            int maxBin = (int) max + 1;
-            ArrayList<Double> bins = new ArrayList<Double>();
-            for (int i = 0; i < maxBin; i++) {
-                bins.add((double) i);
-            }
-            histogramInput.setBins(bins);
-            histogramInput.setValidatedValues(validatedValues);
-            histogramInput.setNonValidatedValues(nonValidatedValues);
-            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
         return histogramInput;
     }
@@ -687,93 +690,101 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private HistogramInput getPeptideDataset() {
         HistogramInput histogramInput = new HistogramInput();
-        PSParameter psParameter = new PSParameter();
-        double value, min = -1, max = -1;
-        if (peptideMetricCmb.getSelectedIndex() == 0) {
-            // Values for the number of validated PSMs
-            ArrayList<Double> validatedValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-            min = 0;
-            for (PeptideMatch peptideMatch : peptideShakerGUI.getIdentification().getPeptideIdentification().values()) {
-                value = 0;
-                for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
-                    psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
-                    if (psParameter.isValidated()) {
-                        value = value + 1;
-                    }
-                }
-                if (value > max || max == -1) {
-                    max = value;
-                }
-                psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
-                if (!peptideMatch.isDecoy()) {
-                    if (psParameter.isValidated()) {
-                        validatedValues.add(value);
-                    } else {
-                        nonValidatedValues.add(value);
-                    }
-                } else {
-                    if (psParameter.isValidated()) {
-                        validatedDecoyValues.add(value);
-                    } else {
-                        nonValidatedDecoyValues.add(value);
-                    }
-                }
-            }
-            int maxBin = (int) max + 1;
-            ArrayList<Double> bins = new ArrayList<Double>();
-            for (int i = 0; i < maxBin; i++) {
-                bins.add((double) i);
-            }
-            histogramInput.setBins(bins);
-            histogramInput.setValidatedValues(validatedValues);
-            histogramInput.setNonValidatedValues(nonValidatedValues);
-            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
-        } else if (peptideMetricCmb.getSelectedIndex() == 1) {
-            // Values for the missed cleavages
-            ArrayList<Double> validatedValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-            Enzyme enzyme = peptideShakerGUI.getSearchParameters().getEnzyme();
-            for (PeptideMatch peptideMatch : peptideShakerGUI.getIdentification().getPeptideIdentification().values()) {
-                value = peptideMatch.getTheoreticPeptide().getNMissedCleavages(enzyme);
-                if (value > 0) {
-                    if (value < min || min == -1) {
-                        min = value;
+        try {
+            PSParameter psParameter = new PSParameter();
+            double value, min = -1, max = -1;
+            if (peptideMetricCmb.getSelectedIndex() == 0) {
+                // Values for the number of validated PSMs
+                ArrayList<Double> validatedValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+                min = 0;
+                PeptideMatch peptideMatch;
+                for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
+                    value = 0;
+                    peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                    for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
+                        if (psParameter.isValidated()) {
+                            value = value + 1;
+                        }
                     }
                     if (value > max || max == -1) {
                         max = value;
                     }
-                }
-                psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
-                if (!peptideMatch.isDecoy()) {
-                    if (psParameter.isValidated()) {
-                        validatedValues.add(value);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                    if (!peptideMatch.isDecoy()) {
+                        if (psParameter.isValidated()) {
+                            validatedValues.add(value);
+                        } else {
+                            nonValidatedValues.add(value);
+                        }
                     } else {
-                        nonValidatedValues.add(value);
-                    }
-                } else {
-                    if (psParameter.isValidated()) {
-                        validatedDecoyValues.add(value);
-                    } else {
-                        nonValidatedDecoyValues.add(value);
+                        if (psParameter.isValidated()) {
+                            validatedDecoyValues.add(value);
+                        } else {
+                            nonValidatedDecoyValues.add(value);
+                        }
                     }
                 }
+                int maxBin = (int) max + 1;
+                ArrayList<Double> bins = new ArrayList<Double>();
+                for (int i = 0; i < maxBin; i++) {
+                    bins.add((double) i);
+                }
+                histogramInput.setBins(bins);
+                histogramInput.setValidatedValues(validatedValues);
+                histogramInput.setNonValidatedValues(nonValidatedValues);
+                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+            } else if (peptideMetricCmb.getSelectedIndex() == 1) {
+                // Values for the missed cleavages
+                ArrayList<Double> validatedValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+                Enzyme enzyme = peptideShakerGUI.getSearchParameters().getEnzyme();
+                PeptideMatch peptideMatch;
+                for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
+                    peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                    value = Peptide.getNMissedCleavages(Peptide.getSequence(peptideKey), enzyme);
+                    if (value > 0) {
+                        if (value < min || min == -1) {
+                            min = value;
+                        }
+                        if (value > max || max == -1) {
+                            max = value;
+                        }
+                    }
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                    if (!peptideMatch.isDecoy()) {
+                        if (psParameter.isValidated()) {
+                            validatedValues.add(value);
+                        } else {
+                            nonValidatedValues.add(value);
+                        }
+                    } else {
+                        if (psParameter.isValidated()) {
+                            validatedDecoyValues.add(value);
+                        } else {
+                            nonValidatedDecoyValues.add(value);
+                        }
+                    }
+                }
+                int maxBin = (int) max + 1;
+                ArrayList<Double> bins = new ArrayList<Double>();
+                for (int i = 0; i < maxBin; i++) {
+                    bins.add((double) i);
+                }
+                histogramInput.setBins(bins);
+                histogramInput.setValidatedValues(validatedValues);
+                histogramInput.setNonValidatedValues(nonValidatedValues);
+                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
             }
-            int maxBin = (int) max + 1;
-            ArrayList<Double> bins = new ArrayList<Double>();
-            for (int i = 0; i < maxBin; i++) {
-                bins.add((double) i);
-            }
-            histogramInput.setBins(bins);
-            histogramInput.setValidatedValues(validatedValues);
-            histogramInput.setNonValidatedValues(nonValidatedValues);
-            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
         return histogramInput;
     }
@@ -783,88 +794,92 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private HistogramInput getPsmDataset() {
         HistogramInput histogramInput = new HistogramInput();
-        PSParameter psParameter = new PSParameter();
-        double value, min = -1, max = -1;
-        if (psmMetricCmb.getSelectedIndex() == 0) {
-            // Values for the precursor mass deviation
-            ArrayList<Double> validatedValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-            min = 0;
-            for (SpectrumMatch spectrumMatch : peptideShakerGUI.getIdentification().getSpectrumIdentification().values()) {
-                value = spectrumMatch.getBestAssumption().getDeltaMass();
-                if (value > max || max == -1) {
-                    max = value;
-                }
-                psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
-                if (!spectrumMatch.getBestAssumption().isDecoy()) {
-                    if (psParameter.isValidated()) {
-                        validatedValues.add(value);
-                    } else {
-                        nonValidatedValues.add(value);
+        try {
+            PSParameter psParameter = new PSParameter();
+            double value, min = -1, max = -1;
+            if (psmMetricCmb.getSelectedIndex() == 0) {
+                // Values for the precursor mass deviation
+                ArrayList<Double> validatedValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+                min = 0;
+                SpectrumMatch spectrumMatch;
+                for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
+                    spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                    value = spectrumMatch.getBestAssumption().getDeltaMass();
+                    if (value > max || max == -1) {
+                        max = value;
                     }
-                } else {
-                    if (psParameter.isValidated()) {
-                        validatedDecoyValues.add(value);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
+                    if (!spectrumMatch.getBestAssumption().isDecoy()) {
+                        if (psParameter.isValidated()) {
+                            validatedValues.add(value);
+                        } else {
+                            nonValidatedValues.add(value);
+                        }
                     } else {
-                        nonValidatedDecoyValues.add(value);
-                    }
-                }
-            }
-            int maxBin = (int) max + 1;
-            ArrayList<Double> bins = new ArrayList<Double>();
-            for (int i = 0; i < maxBin; i++) {
-                bins.add((double) i);
-            }
-            histogramInput.setBins(bins);
-            histogramInput.setValidatedValues(validatedValues);
-            histogramInput.setNonValidatedValues(nonValidatedValues);
-            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
-        } else if (psmMetricCmb.getSelectedIndex() == 1) {
-            // Values for the precursor charge
-            ArrayList<Double> validatedValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-            ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-            ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-            for (SpectrumMatch spectrumMatch : peptideShakerGUI.getIdentification().getSpectrumIdentification().values()) {
-                try {
-                    value = peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getCharge().value;
-                } catch (Exception e) {
-                    value = 0;
-                }
-                if (value < min || min == -1) {
-                    min = value;
-                }
-                if (value > max || max == -1) {
-                    max = value;
-                }
-                psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
-                if (!spectrumMatch.getBestAssumption().isDecoy()) {
-                    if (psParameter.isValidated()) {
-                        validatedValues.add(value);
-                    } else {
-                        nonValidatedValues.add(value);
-                    }
-                } else {
-                    if (psParameter.isValidated()) {
-                        validatedDecoyValues.add(value);
-                    } else {
-                        nonValidatedDecoyValues.add(value);
+                        if (psParameter.isValidated()) {
+                            validatedDecoyValues.add(value);
+                        } else {
+                            nonValidatedDecoyValues.add(value);
+                        }
                     }
                 }
+                int maxBin = (int) max + 1;
+                ArrayList<Double> bins = new ArrayList<Double>();
+                for (int i = 0; i < maxBin; i++) {
+                    bins.add((double) i);
+                }
+                histogramInput.setBins(bins);
+                histogramInput.setValidatedValues(validatedValues);
+                histogramInput.setNonValidatedValues(nonValidatedValues);
+                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+            } else if (psmMetricCmb.getSelectedIndex() == 1) {
+                // Values for the precursor charge
+                ArrayList<Double> validatedValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
+                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
+                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+                SpectrumMatch spectrumMatch;
+                for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
+                    spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                    value = peptideShakerGUI.getPrecursor(spectrumKey).getCharge().value;
+                    if (value < min || min == -1) {
+                        min = value;
+                    }
+                    if (value > max || max == -1) {
+                        max = value;
+                    }
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
+                    if (!spectrumMatch.getBestAssumption().isDecoy()) {
+                        if (psParameter.isValidated()) {
+                            validatedValues.add(value);
+                        } else {
+                            nonValidatedValues.add(value);
+                        }
+                    } else {
+                        if (psParameter.isValidated()) {
+                            validatedDecoyValues.add(value);
+                        } else {
+                            nonValidatedDecoyValues.add(value);
+                        }
+                    }
+                }
+                int maxBin = (int) max + 1;
+                ArrayList<Double> bins = new ArrayList<Double>();
+                for (int i = (int) min; i < maxBin; i++) {
+                    bins.add((double) i);
+                }
+                histogramInput.setBins(bins);
+                histogramInput.setValidatedValues(validatedValues);
+                histogramInput.setNonValidatedValues(nonValidatedValues);
+                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
+                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
             }
-            int maxBin = (int) max + 1;
-            ArrayList<Double> bins = new ArrayList<Double>();
-            for (int i = (int) min; i < maxBin; i++) {
-                bins.add((double) i);
-            }
-            histogramInput.setBins(bins);
-            histogramInput.setValidatedValues(validatedValues);
-            histogramInput.setNonValidatedValues(nonValidatedValues);
-            histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-            histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
         return histogramInput;
     }

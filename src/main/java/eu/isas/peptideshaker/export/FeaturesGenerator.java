@@ -8,6 +8,7 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.AdvocateFactory;
+import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
@@ -34,7 +35,14 @@ import java.util.HashMap;
  */
 public class FeaturesGenerator {
 
+    /**
+     * The main gui
+     */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The corresponding identification
+     */
+    private Identification identification;
     /**
      * The separator (tab by default)
      */
@@ -54,6 +62,7 @@ public class FeaturesGenerator {
      */
     public FeaturesGenerator(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
+        identification = peptideShakerGUI.getIdentification();
     }
 
     /**
@@ -75,11 +84,10 @@ public class FeaturesGenerator {
      */
     public String getProteinsOutput(ProgressDialogX progressDialog, ArrayList<String> proteinKeys, boolean onlyValidated, boolean accession, boolean piDetails,
             boolean description, boolean nPeptides, boolean emPAI, boolean nSpectra, boolean nsaf,
-            boolean score, boolean confidence) throws IOException {
+            boolean score, boolean confidence) throws Exception {
 
-        HashMap<String, ProteinMatch> proteinIdentification = peptideShakerGUI.getIdentification().getProteinIdentification();
         if (proteinKeys == null) {
-            proteinKeys = new ArrayList<String>(proteinIdentification.keySet());
+            proteinKeys = identification.getProteinIdentification();
         }
         if (progressDialog != null) {
             progressDialog.setIndeterminate(false);
@@ -123,23 +131,20 @@ public class FeaturesGenerator {
 
         PSParameter proteinPSParameter = new PSParameter();
         PSParameter secondaryPSParameter = new PSParameter();
-        String proteinAccession;
         int cpt, progress = 0;
         ProteinMatch proteinMatch;
         for (String proteinKey : proteinKeys) {
-            proteinMatch = proteinIdentification.get(proteinKey);
-            if (proteinMatch != null) {
-                proteinPSParameter = (PSParameter) proteinMatch.getUrParam(proteinPSParameter);
-                proteinAccession = proteinMatch.getMainMatch().getAccession();
-                if (!onlyValidated || proteinPSParameter.isValidated() && !proteinMatch.isDecoy()) {
+                proteinPSParameter = (PSParameter) identification.getMatchParameter(proteinKey, proteinPSParameter);
+                if (!onlyValidated || proteinPSParameter.isValidated() && !ProteinMatch.isDecoy(proteinKey)) {
+                    proteinMatch = identification.getProteinMatch(proteinKey);
                     if (accession) {
-                        result += proteinAccession + SEPARATOR;
+                        result += proteinMatch.getMainMatch() + SEPARATOR;
                     }
                     if (piDetails) {
                         result += proteinPSParameter.getGroupName() + SEPARATOR;
                         for (String otherProtein : proteinMatch.getTheoreticProteinsAccessions()) {
                             boolean first = true;
-                            if (!otherProtein.equals(proteinAccession)) {
+                            if (!otherProtein.equals(proteinMatch.getMainMatch())) {
                                 if (first) {
                                     first = false;
                                 } else {
@@ -151,13 +156,13 @@ public class FeaturesGenerator {
                         result += SEPARATOR;
                     }
                     if (description) {
-                        result += sequenceFactory.getHeader(proteinAccession).getDescription() + SEPARATOR;
+                        result += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR;
                     }
                     if (nPeptides || emPAI) {
-                        Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession());
+                        Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                         cpt = 0;
-                        for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-                            secondaryPSParameter = (PSParameter) peptideMatch.getUrParam(secondaryPSParameter);
+                        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                            secondaryPSParameter = (PSParameter) identification.getMatchParameter(peptideKey, secondaryPSParameter);
                             if (secondaryPSParameter.isValidated()) {
                                 cpt++;
                             }
@@ -173,11 +178,13 @@ public class FeaturesGenerator {
                         }
                     }
                     if (nSpectra || nsaf) {
-                        Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession());
+                        Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                         cpt = 0;
-                        for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-                            for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
-                                secondaryPSParameter = (PSParameter) spectrumMatch.getUrParam(secondaryPSParameter);
+                        PeptideMatch peptideMatch;
+                        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                            peptideMatch = identification.getPeptideMatch(peptideKey);
+                            for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                                secondaryPSParameter = (PSParameter) identification.getMatchParameter(spectrumKey, secondaryPSParameter);
                                 if (secondaryPSParameter.isValidated()) {
                                     cpt++;
                                 }
@@ -217,7 +224,6 @@ public class FeaturesGenerator {
             if (progressDialog != null) {
                 progressDialog.setValue(progress);
             }
-        }
         return result;
     }
 
@@ -237,11 +243,10 @@ public class FeaturesGenerator {
      * @return 
      */
     public String getPeptidesOutput(ProgressDialogX progressDialog, ArrayList<String> peptideKeys, boolean onlyValidated, boolean accession, boolean sequence, boolean modifications, boolean locations,
-            boolean nSpectra, boolean score, boolean confidence) {
+            boolean nSpectra, boolean score, boolean confidence) throws Exception {
 
-        HashMap<String, PeptideMatch> peptideIdentification = peptideShakerGUI.getIdentification().getPeptideIdentification();
         if (peptideKeys == null) {
-            peptideKeys = new ArrayList<String>(peptideIdentification.keySet());
+            peptideKeys = identification.getPeptideIdentification();
         }
         if (progressDialog != null) {
             progressDialog.setIndeterminate(false);
@@ -282,19 +287,19 @@ public class FeaturesGenerator {
         PeptideMatch peptideMatch;
         int progress = 0;
         for (String peptideKey : peptideKeys) {
-            peptideMatch = peptideIdentification.get(peptideKey);
-            peptidePSParameter = (PSParameter) peptideMatch.getUrParam(peptidePSParameter);
+            peptideMatch = identification.getPeptideMatch(peptideKey);
+            peptidePSParameter = (PSParameter) identification.getMatchParameter(peptideKey, peptidePSParameter);
             if (!onlyValidated || peptidePSParameter.isValidated() && !peptideMatch.isDecoy()) {
                 peptide = peptideMatch.getTheoreticPeptide();
                 if (accession) {
                     boolean first = true;
-                    for (Protein protein : peptide.getParentProteins()) {
+                    for (String protein : peptide.getParentProteins()) {
                         if (first) {
                             first = false;
                         } else {
                             result += ", ";
                         }
-                        result += protein.getAccession();
+                        result += protein;
                     }
                     result += SEPARATOR;
                 }
@@ -320,8 +325,8 @@ public class FeaturesGenerator {
                 }
                 if (nSpectra) {
                     int cpt = 0;
-                    for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
-                        secondaryPSParameter = (PSParameter) spectrumMatch.getUrParam(secondaryPSParameter);
+                    for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                        secondaryPSParameter = (PSParameter) identification.getMatchParameter(spectrumKey, secondaryPSParameter);
                         if (secondaryPSParameter.isValidated()) {
                             cpt++;
                         }
@@ -376,11 +381,10 @@ public class FeaturesGenerator {
      * @throws Exception 
      */
     public String getPSMsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean onlyValidated, boolean accessions, boolean sequence, boolean modification,
-            boolean location, boolean file, boolean title, boolean precursor, boolean score, boolean confidence) throws IOException, Exception {
+            boolean location, boolean file, boolean title, boolean precursor, boolean score, boolean confidence) throws Exception {
 
-        HashMap<String, SpectrumMatch> psmIdentification = peptideShakerGUI.getIdentification().getSpectrumIdentification();
         if (psmKeys == null) {
-            psmKeys = new ArrayList<String>(psmIdentification.keySet());
+            psmKeys = identification.getSpectrumIdentification();
         }
         if (progressDialog != null) {
             progressDialog.setIndeterminate(false);
@@ -429,19 +433,19 @@ public class FeaturesGenerator {
         SpectrumMatch spectrumMatch;
         int progress = 0;
         for (String psmKey : psmKeys) {
-            spectrumMatch = psmIdentification.get(psmKey);
-            psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
+            spectrumMatch = identification.getSpectrumMatch(psmKey);
+            psParameter = (PSParameter) identification.getMatchParameter(psmKey, psParameter);
             bestAssumption = spectrumMatch.getBestAssumption();
             if (!onlyValidated || psParameter.isValidated() && !bestAssumption.isDecoy()) {
                 if (accessions) {
                     boolean first = true;
-                    for (Protein protein : bestAssumption.getPeptide().getParentProteins()) {
+                    for (String protein : bestAssumption.getPeptide().getParentProteins()) {
                         if (first) {
                             first = false;
                         } else {
                             result += ", ";
                         }
-                        result += protein.getAccession();
+                        result += protein;
                     }
                     result += SEPARATOR;
                 }
@@ -524,11 +528,10 @@ public class FeaturesGenerator {
      * @throws Exception 
      */
     public String getAssumptionsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean onlyValidated, boolean accession, boolean sequence, boolean modifications, boolean locations,
-            boolean file, boolean title, boolean precursor, boolean scores, boolean confidence) throws IOException, Exception {
+            boolean file, boolean title, boolean precursor, boolean scores, boolean confidence) throws Exception {
 
-        HashMap<String, SpectrumMatch> psmIdentification = peptideShakerGUI.getIdentification().getSpectrumIdentification();
         if (psmKeys == null) {
-            psmKeys = new ArrayList<String>(psmIdentification.keySet());
+            psmKeys = identification.getSpectrumIdentification();
         }
         if (progressDialog != null) {
             progressDialog.setIndeterminate(false);
@@ -577,8 +580,8 @@ public class FeaturesGenerator {
         int rank, progress = 0;
         SpectrumMatch spectrumMatch;
         for (String spectrumKey : psmKeys) {
-            spectrumMatch = psmIdentification.get(spectrumKey);
-            psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
+            spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+            psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
             if (!onlyValidated || psParameter.isValidated()) {
                 for (int se : spectrumMatch.getAdvocates()) {
                     ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(se).keySet());
@@ -590,13 +593,13 @@ public class FeaturesGenerator {
                             result += rank + SEPARATOR;
                             if (accession) {
                                 boolean first = true;
-                                for (Protein protein : peptideAssumption.getPeptide().getParentProteins()) {
+                                for (String protein : peptideAssumption.getPeptide().getParentProteins()) {
                                     if (first) {
                                         first = false;
                                     } else {
                                         result += ", ";
                                     }
-                                    result += protein.getAccession();
+                                    result += protein;
                                 }
                                 result += SEPARATOR;
                             }

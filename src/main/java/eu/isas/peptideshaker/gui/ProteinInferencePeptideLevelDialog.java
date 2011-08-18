@@ -33,7 +33,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      * @param peptideSequence       the peptide sequence
      * @param proteins              the list of proteins the peptide maps to
      */
-    public ProteinInferencePeptideLevelDialog(PeptideShakerGUI aPeptideShakerGUI, boolean modal, String peptideSequence, ArrayList<Protein> proteins) {
+    public ProteinInferencePeptideLevelDialog(PeptideShakerGUI aPeptideShakerGUI, boolean modal, String peptideSequence, ArrayList<String> proteins) {
         super(aPeptideShakerGUI, modal);
         initComponents();
         
@@ -54,7 +54,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         
         for (int i=0; i<proteins.size(); i++) {
             
-            String accession = proteins.get(i).getAccession();
+            String accession = proteins.get(i);
             String description;
             try {
                 description = sequenceFactory.getHeader(accession).getDescription();

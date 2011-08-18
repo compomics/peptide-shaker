@@ -6,6 +6,7 @@ import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
+import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
@@ -25,6 +26,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FollowupPreferencesDialog;
@@ -285,6 +287,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The spectrum annotator
      */
     private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
+    /**
+     * List of caught exceptions
+     */
+    private ArrayList<String> exceptionCaught = new ArrayList<String>();
 
     /**
      * The main method used to start PeptideShaker
@@ -899,13 +905,45 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void exitJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitJMenuItemActionPerformed
-        try {
-            spectrumFactory.closeFiles();
-            sequenceFactory.closeFile();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.exit(0);
+
+        progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Closing. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("ExportThread") {
+
+            @Override
+            public void run() {
+                try {
+                    File serializationFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
+                    String[] files = serializationFolder.list();
+                    progressDialog.setMax(files.length);
+                    int cpt = 0;
+                    for (String matchFile : files) {
+                        if (matchFile.endsWith(Identification.EXTENTION)) {
+                            File newFile = new File(serializationFolder.getPath(), matchFile);
+                            newFile.delete();
+                        }
+                        progressDialog.setValue(++cpt);
+                    }
+                    spectrumFactory.closeFiles();
+                    sequenceFactory.closeFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+                System.exit(0);
+            }
+        }.start();
     }//GEN-LAST:event_exitJMenuItemActionPerformed
 
     /**
@@ -985,7 +1023,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         // change the peptide shaker icon to a "waiting version"
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
                         experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences));
-                        experimentIO.saveIdentifications(newFile, experiment);
+
+                        String folderPath = selectedFile.substring(0, selectedFile.lastIndexOf("."));
+                        File newFolder = new File(folderPath + "_cps");
+                        newFolder.mkdir();
+
+                        identification.save(newFolder, progressDialog);
+                        identification.emptyCache();
+
+                        progressDialog.setValue(99);
+                        progressDialog.setMax(100);
+                        experimentIO.save(newFile, experiment);
 
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
@@ -1714,9 +1762,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         progressDialog.setValue(++counter);
 
 
-                    } catch (MzMLUnmarshallerException e) {
-                        e.printStackTrace();
-                        JOptionPane.showMessageDialog(null, "A problem occured while reading the mzML file.", "mzML Problem", JOptionPane.ERROR_MESSAGE);
                     } catch (Exception e) {
                         e.printStackTrace();
                         JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\nSee /conf/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
@@ -2084,14 +2129,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         try {
             return (MSnSpectrum) spectrumFactory.getSpectrum(spectrumFile, spectrumTitle);
         } catch (Exception e) {
-            e.printStackTrace();
-            if (displaySpectrum) {
-                JOptionPane.showMessageDialog(this,
-                        "An error occured while reading " + spectrumFile
-                        + " spectrum display will be disabled.",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
+            catchException(e);
             return null;
         }
     }
@@ -2107,14 +2145,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         try {
             return spectrumFactory.getPrecursor(spectrumFile, spectrumTitle);
         } catch (Exception e) {
-            e.printStackTrace();
-            if (displaySpectrum) {
-                JOptionPane.showMessageDialog(this,
-                        "An error occured while reading " + spectrumFile
-                        + " spectrum display will be disabled.",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
+            catchException(e);
             return null;
         }
     }
@@ -2326,7 +2357,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void setCurrrentProteinFilterRadioButtonSelections(Integer[] currrentProteinFilterRadioButtonSelections) {
         this.currrentProteinFilterRadioButtonSelections = currrentProteinFilterRadioButtonSelections;
     }
-    
+
     /**
      * Set the current protein inference filer selection.
      * 
@@ -2335,7 +2366,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     public void setCurrrentProteinInferenceFilterSelection(int currentProteinInferenceFilterSelection) {
         this.currentProteinInferenceFilterSelection = currentProteinInferenceFilterSelection;
     }
-    
+
     /**
      * Returns the current protein inference selection as an int.
      * 
@@ -2398,13 +2429,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         int peptideTempStart, peptideTempEnd;
         String tempSequence, peptideSequence;
         PSParameter pSParameter = new PSParameter();
-
+        PeptideMatch peptideMatch;
         // iterate the peptide table and store the coverage for each peptide
-        for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-            pSParameter = (PSParameter) peptideMatch.getUrParam(pSParameter);
+        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+            pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
             if (pSParameter.isValidated()) {
                 tempSequence = sequence;
-                peptideSequence = peptideMatch.getTheoreticPeptide().getSequence();
+                peptideSequence = Peptide.getSequence(peptideKey);
                 peptideTempStart = 0;
                 while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
                     peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
@@ -2435,9 +2466,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param protein   the protein to get the database link for
      * @return          the transformed accession number
      */
-    public String addDatabaseLink(Protein protein) {
+    public String addDatabaseLink(String proteinAccession) {
 
-        String proteinAccession = protein.getAccession();
         String accessionNumberWithLink = proteinAccession;
         try {
             if (sequenceFactory.getHeader(proteinAccession) != null) {
@@ -2474,7 +2504,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param proteins  the list of proteins to get the database links for
      * @return          the transformed accession number
      */
-    public String addDatabaseLinks(ArrayList<Protein> proteins) {
+    public String addDatabaseLinks(ArrayList<String> proteins) {
 
         if (proteins.isEmpty()) {
             return "";
@@ -2484,9 +2514,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         for (int i = 0; i < proteins.size(); i++) {
 
-            String proteinAccession = proteins.get(i).getAccession();
+            String proteinAccession = proteins.get(i);
             try {
-                if (!proteins.get(i).isDecoy() && sequenceFactory.getHeader(proteinAccession) != null) {
+                if (!SequenceFactory.isDecoy(proteins.get(i)) && sequenceFactory.getHeader(proteinAccession) != null) {
 
                     // try to find the database from the SequenceDatabase
                     String database = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
@@ -2764,7 +2794,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param mainMatch             the protein match to use
      * @param proteinInferenceType  the protein inference group type
      */
-    public void updateMainMatch(Protein mainMatch, int proteinInferenceType) {
+    public void updateMainMatch(String mainMatch, int proteinInferenceType) {
         overviewPanel.updateMainMatch(mainMatch, proteinInferenceType);
         proteinStructurePanel.updateMainMatch(mainMatch, proteinInferenceType);
     }
@@ -2798,7 +2828,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             case STRUCTURES_TAB_INDEX:
                 return proteinStructurePanel.getDisplayedProteins();
             case MODIFICATIONS_TAB_INDEX:
-                return ptmPanel.getDisplayedProteins();
+                return ptmPanel.getDisplayedProteinMatches();
             default:
                 return null;
         }
@@ -2906,40 +2936,57 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }
 
     /**
+     * Returns the number of spectra where this protein was found independantly from the validation process.
+     * @param proteinMatch the protein match of interest
+     * @return the number of spectra where this protein was found
+     */
+    public int getNSpectra(ProteinMatch proteinMatch) {
+        int result = 0;
+        try {
+            PeptideMatch peptideMatch;
+            for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                peptideMatch = identification.getPeptideMatch(peptideKey);
+                result += peptideMatch.getSpectrumCount();
+            }
+        } catch (Exception e) {
+            catchException(e);
+        }
+        return result;
+    }
+
+    /**
      * Returns the spectrum counting score based on the user's settings
      * @param proteinMatch  the inspected protein match
      * @return the spectrum counting score
      */
-    public double getSpectrumCount(ProteinMatch proteinMatch) {
+    public double getSpectrumCounting(ProteinMatch proteinMatch) {
         double result;
         Enzyme enyzme = searchParameters.getEnzyme();
         PSParameter pSParameter = new PSParameter();
         Protein currentProtein = null;
         try {
-            currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch().getAccession());
-            if (currentProtein == null) {
-                return 0.0;
-            }
             if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.NSAF) {
-                if (spectrumCountingPreferences.isValidatedHits()) {
-                    result = 0;
-                    for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-                        for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
-                            pSParameter = (PSParameter) spectrumMatch.getUrParam(pSParameter);
-                            if (pSParameter.isValidated()) {
-                                result = result + 1;
-                            }
+                currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                if (currentProtein == null) {
+                    return 0.0;
+                }
+                result = 0;
+                PeptideMatch peptideMatch;
+                for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                    peptideMatch = identification.getPeptideMatch(peptideKey);
+                    for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
+                        pSParameter = (PSParameter) identification.getMatchParameter(spectrumMatchKey, pSParameter);
+                        if (!spectrumCountingPreferences.isValidatedHits() || pSParameter.isValidated()) {
+                            result = result + 1;
                         }
                     }
-                } else {
-                    result = proteinMatch.getSpectrumCount();
                 }
                 return result = result / currentProtein.getSequence().length();
             } else {
                 if (spectrumCountingPreferences.isValidatedHits()) {
                     result = 0;
-                    for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-                        pSParameter = (PSParameter) peptideMatch.getUrParam(pSParameter);
+                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                        pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
                         if (pSParameter.isValidated()) {
                             result = result + 1;
                         }
@@ -2951,6 +2998,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         } catch (Exception e) {
             return 0.0;
+        }
+    }
+
+    /**
+     * Method called whenever an exception is caught
+     * @param e the exception caught
+     */
+    public void catchException(Exception e) {
+        e.printStackTrace();
+        if (!exceptionCaught.contains(e.getLocalizedMessage())) {
+            exceptionCaught.add(e.getLocalizedMessage());
+            JOptionPane.showMessageDialog(this,
+                    "An error occured while reading "
+                    + e.getLocalizedMessage(),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }

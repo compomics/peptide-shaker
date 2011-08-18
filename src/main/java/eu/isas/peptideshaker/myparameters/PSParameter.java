@@ -49,6 +49,10 @@ public class PSParameter implements UrParameter {
      */
     private boolean validated = false;
     /**
+     * the key in the corresponding specific map
+     */
+    private String secificMapKey;
+    /**
      * Protein groups can belong to the following groups according to the static field indexing.
      */
     private int groupClass = NOT_GROUP;
@@ -384,6 +388,23 @@ public class PSParameter implements UrParameter {
         this.groupClass = groupClass;
     }
 
+    /**
+     * Returns the match key in the corresponding specific map
+     * @return the match key in the corresponding specific map
+     */
+    public String getSecificMapKey() {
+        return secificMapKey;
+    }
+
+    /**
+     * Sets the match key in the corresponding specific map
+     * @param secificMapKey the match key in the corresponding specific map
+     */
+    public void setSecificMapKey(String secificMapKey) {
+        this.secificMapKey = secificMapKey;
+    }
+    
+    
     @Override
     public String getFamilyName() {
         return "PeptideShaker";

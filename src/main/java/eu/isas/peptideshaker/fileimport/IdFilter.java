@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.fileimport;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.PeptideAssumption;
+import com.compomics.util.experiment.identification.SequenceFactory;
 
 /**
  * This class achieves a pre-filtering of the identifications
@@ -114,9 +115,8 @@ public class IdFilter {
         boolean target = false;
         boolean decoy = false;
         
-        // @TODO: is this supposed to be a loop??
-        for (Protein protein : assumption.getPeptide().getParentProteins()) {
-            if (protein.isDecoy()) {
+        for (String protein : assumption.getPeptide().getParentProteins()) {
+            if (SequenceFactory.isDecoy(protein)) {
                 decoy = true;
             } else {
                 target = true;

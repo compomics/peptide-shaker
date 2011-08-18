@@ -1,4 +1,3 @@
-
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.experiment.biology.Peptide;
@@ -55,11 +54,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
-        
+
         spectrumValidationCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         idSelectionCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         vendorCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        
+
         this.setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
@@ -507,7 +506,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 if (idSelectionCmb.getSelectedIndex() == 4) {
                                     inspectedProteins = peptideShakerGUI.getDisplayedProteins();
                                 } else {
-                                    inspectedProteins = new ArrayList<String>(peptideShakerGUI.getIdentification().getProteinIdentification().keySet());
+                                    inspectedProteins = new ArrayList<String>(peptideShakerGUI.getIdentification().getProteinIdentification());
                                 }
                                 progressDialog.setIndeterminate(false);
                                 progressDialog.setMax(inspectedProteins.size());
@@ -516,30 +515,32 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 BufferedWriter b = new BufferedWriter(f);
                                 PSParameter psParameter = new PSParameter();
                                 ProteinMatch proteinMatch;
+                                PeptideMatch peptideMatch;
                                 int cpt = 0;
                                 for (String proteinKey : inspectedProteins) {
-                                    proteinMatch = peptideShakerGUI.getIdentification().getProteinIdentification().get(proteinKey);
-                                    psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
+                                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
                                     if (idSelectionCmb.getSelectedIndex() == 0
                                             || idSelectionCmb.getSelectedIndex() == 1
                                             || idSelectionCmb.getSelectedIndex() == 3
                                             || idSelectionCmb.getSelectedIndex() == 2 && psParameter.isValidated()) {
-                                        for (PeptideMatch peptideMatch : proteinMatch.getPeptideMatches().values()) {
-                                            psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
+                                        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
                                             if (idSelectionCmb.getSelectedIndex() == 0
                                                     || idSelectionCmb.getSelectedIndex() == 1 && psParameter.isValidated()
                                                     || idSelectionCmb.getSelectedIndex() == 2 && psParameter.isValidated()
-                                                    || idSelectionCmb.getSelectedIndex() == 3 && displayedPeptides.contains(peptideMatch.getKey())) {
-                                                if (!shallExclude(proteinMatch, peptideMatch.getTheoreticPeptide())) {
+                                                    || idSelectionCmb.getSelectedIndex() == 3 && displayedPeptides.contains(peptideKey)) {
+                                                peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                                                if (!shallExclude(proteinKey, peptideMatch.getTheoreticPeptide())) {
                                                     ArrayList<Double> retentionTimes = new ArrayList<Double>();
-                                                    for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
-                                                        Precursor precursor = spectrumFactory.getPrecursor(spectrumMatch.getKey());
+                                                    for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                                                        Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
                                                         retentionTimes.add(precursor.getRt());
                                                     }
-                                                    for (SpectrumMatch spectrumMatch : peptideMatch.getSpectrumMatches().values()) {
-                                                        psParameter = (PSParameter) spectrumMatch.getUrParam(psParameter);
+                                                    for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                                                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
                                                         if (psParameter.isValidated()) {
-                                                            b.write(getInclusionListLine(spectrumMatch.getKey(), retentionTimes));
+                                                            b.write(getInclusionListLine(spectrumKey, retentionTimes));
                                                         }
                                                     }
                                                 }
@@ -573,11 +574,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private boolean isValidated(String spectrumKey) {
         PSParameter psParameter = new PSParameter();
-        SpectrumMatch match = peptideShakerGUI.getIdentification().getSpectrumIdentification().get(spectrumKey);
-        if (match == null) {
-            return false;
-        }
-        psParameter = (PSParameter) match.getUrParam(psParameter);
+        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
         switch (spectrumValidationCmb.getSelectedIndex()) {
             case 0:
                 return psParameter.isValidated();
@@ -585,21 +582,30 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 if (!psParameter.isValidated()) {
                     return false;
                 }
-                PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideIdentification().get(
-                        match.getBestAssumption().getPeptide().getKey());
-                psParameter = (PSParameter) peptideMatch.getUrParam(psParameter);
-                return psParameter.isValidated();
+                try {
+                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumMatch.getBestAssumption().getPeptide().getKey(), psParameter);
+                    return psParameter.isValidated();
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                }
+                return false;
             case 2:
                 if (!psParameter.isValidated()) {
                     return false;
                 }
-                for (Protein protein : match.getBestAssumption().getPeptide().getParentProteins()) {
-                    for (ProteinMatch proteinMatch : peptideShakerGUI.getIdentification().getProteinMap().get(protein.getProteinKey())) {
-                        psParameter = (PSParameter) proteinMatch.getUrParam(psParameter);
-                        if (psParameter.isValidated()) {
-                            return true;
+                try {
+                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                    for (String protein : spectrumMatch.getBestAssumption().getPeptide().getParentProteins()) {
+                        for (String proteinMatch : peptideShakerGUI.getIdentification().getProteinMap().get(protein)) {
+                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinMatch, psParameter);
+                            if (psParameter.isValidated()) {
+                                return true;
+                            }
                         }
                     }
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                 }
                 return false;
             default:
@@ -614,7 +620,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      * @param peptide       the peptide of interest
      * @return a boolean indicating whether this peptide should be excluded
      */
-    private boolean shallExclude(ProteinMatch proteinMatch, Peptide peptide) {
+    private boolean shallExclude(String proteinKey, Peptide peptide) {
         if (miscleavedCheck.isSelected()
                 && peptide.getNMissedCleavages(peptideShakerGUI.getSearchParameters().getEnzyme()) > 0) {
             return true;
@@ -634,7 +640,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         }
         if (isoformsCheck.isSelected() || isoformsUnrelatedCheck.isSelected() || unrelatedCheck.isSelected()) {
             PSParameter pSParameter = new PSParameter();
-            pSParameter = (PSParameter) proteinMatch.getUrParam(pSParameter);
+            pSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, pSParameter);
             if (isoformsCheck.isSelected() && pSParameter.getGroupClass() == PSParameter.ISOFORMS) {
                 return true;
             }
@@ -646,8 +652,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         }
         if (degeneratedCheck.isSelected()) {
-            for (Protein protein : peptide.getParentProteins()) {
-                if (!proteinMatch.contains(protein)) {
+            for (String protein : peptide.getParentProteins()) {
+                if (!proteinKey.contains(protein)) {
                     return true;
                 }
             }

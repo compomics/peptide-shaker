@@ -63,12 +63,9 @@ public class PeptideSpecificMap implements Serializable {
      * @param score        the score of the match
      * @return the posterior error probability
      */
-    public double getProbability(PeptideMatch peptideMatch, double score) {
-        String key = getKey(peptideMatch);
-        if (groupedMaps.contains(key)) {
-            return peptideMaps.get(DUSTBIN).getProbability(score);
-        }
-        return peptideMaps.get(key).getProbability(score);
+    public double getProbability(String peptideMatchKey, double score) {
+        peptideMatchKey = getCorrectedKey(peptideMatchKey);
+        return peptideMaps.get(peptideMatchKey).getProbability(score);
     }
 
     /**
@@ -124,12 +121,11 @@ public class PeptideSpecificMap implements Serializable {
      * @param peptideMatch  the considered peptide match
      * @return the corresponding key
      */
-    public String getCorrectedKey(PeptideMatch peptideMatch) {
-        String key = getKey(peptideMatch);
-        if (groupedMaps.contains(key)) {
+    public String getCorrectedKey(String specificKey) {
+        if (groupedMaps.contains(specificKey)) {
             return DUSTBIN;
         }
-        return key;
+        return specificKey;
     }
 
     /**
