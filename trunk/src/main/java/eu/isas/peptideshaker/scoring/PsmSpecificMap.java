@@ -54,12 +54,19 @@ public class PsmSpecificMap implements Serializable {
      * @param score         the corresponding score
      * @return the probability of the given spectrum match at the given score
      */
-    public double getProbability(SpectrumMatch spectrumMatch, double score) {
-        int key = getKey(spectrumMatch);
-        if (grouping.containsKey(key)) {
-            key = grouping.get(key);
-        }
-        return psmsMaps.get(key).getProbability(score);
+    public double getProbability(int specificKey, double score) {
+        specificKey = getCorrectedKey(specificKey);
+        return psmsMaps.get(specificKey).getProbability(score);
+    }
+
+    /**
+     * Returns the probability of the given spectrum match at the given score
+     * @param spectrumMatch the spectrum match of interest
+     * @param score         the corresponding score
+     * @return the probability of the given spectrum match at the given score
+     */
+    public double getProbability(String specificKey, double score) {
+        return getProbability(new Integer(specificKey), score);
     }
 
     /**
@@ -145,12 +152,20 @@ public class PsmSpecificMap implements Serializable {
      * @param spectrumMatch the spectrum match of interest
      * @return the corresponding key
      */
-    public Integer getCorrectedKey(SpectrumMatch spectrumMatch) {
-        Integer key = getKey(spectrumMatch);
-        if (grouping.containsKey(key)) {
-            return grouping.get(key);
+    public Integer getCorrectedKey(int specificKey) {
+        if (grouping.containsKey(specificKey)) {
+            return grouping.get(specificKey);
         }
-        return key;
+        return specificKey;
+    }
+
+    /**
+     * Returns the key (here the charge) associated to the corresponding spectrum match after curation
+     * @param spectrumMatch the spectrum match of interest
+     * @return the corresponding key
+     */
+    public Integer getCorrectedKey(String specificKey) {
+        return getCorrectedKey(new Integer(specificKey));
     }
 
     /**
