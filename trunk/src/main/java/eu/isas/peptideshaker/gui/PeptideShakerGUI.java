@@ -905,45 +905,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void exitJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitJMenuItemActionPerformed
-
-        progressDialog = new ProgressDialogX(this, this, true);
-        progressDialog.doNothingOnClose();
-
-        new Thread(new Runnable() {
-
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Closing. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
-
-        new Thread("ExportThread") {
-
-            @Override
-            public void run() {
-                try {
-                    File serializationFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
-                    String[] files = serializationFolder.list();
-                    progressDialog.setMax(files.length);
-                    int cpt = 0;
-                    for (String matchFile : files) {
-                        if (matchFile.endsWith(Identification.EXTENTION)) {
-                            File newFile = new File(serializationFolder.getPath(), matchFile);
-                            newFile.delete();
-                        }
-                        progressDialog.setValue(++cpt);
-                    }
-                    spectrumFactory.closeFiles();
-                    sequenceFactory.closeFile();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                System.exit(0);
-            }
-        }.start();
+        close();
     }//GEN-LAST:event_exitJMenuItemActionPerformed
 
     /**
@@ -1470,28 +1432,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt 
      */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-
-        if (!dataSaved && experiment != null) {
-            int value = JOptionPane.showConfirmDialog(this,
-                    "Do you want to save the changes to " + experiment.getReference() + "?",
-                    "Unsaved Changes",
-                    JOptionPane.YES_NO_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE);
-
-            if (value == JOptionPane.YES_OPTION) {
-                saveMenuItemActionPerformed(null);
-            } else if (value == JOptionPane.CANCEL_OPTION) {
-                // do nothing
-            } else { // no option
-                this.setVisible(false);
-                this.dispose();
-                System.exit(0);
-            }
-        } else {
-            this.setVisible(false);
-            this.dispose();
-            System.exit(0);
-        }
+        close();
     }//GEN-LAST:event_formWindowClosing
 
     /**
@@ -3015,5 +2956,61 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     "Error",
                     JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void close() {
+        if (!dataSaved && experiment != null) {
+            int value = JOptionPane.showConfirmDialog(this,
+                    "Do you want to save the changes to " + experiment.getReference() + "?",
+                    "Unsaved Changes",
+                    JOptionPane.YES_NO_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE);
+
+            if (value == JOptionPane.YES_OPTION) {
+                saveMenuItemActionPerformed(null);
+            } else if (value == JOptionPane.CANCEL_OPTION) {
+                return;
+            }
+        }
+
+        progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Closing. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("ExportThread") {
+
+            @Override
+            public void run() {
+                try {
+                    File serializationFolder = new File(PeptideShaker.SERIALIZATION_DIRECTORY);
+                    String[] files = serializationFolder.list();
+                    progressDialog.setIndeterminate(false);
+                    progressDialog.setMax(files.length);
+                    int cpt = 0;
+                    for (String matchFile : files) {
+                        if (matchFile.endsWith(Identification.EXTENTION)) {
+                            File newFile = new File(serializationFolder.getPath(), matchFile);
+                            newFile.delete();
+                        }
+                        progressDialog.setValue(++cpt);
+                    }
+                    spectrumFactory.closeFiles();
+                    sequenceFactory.closeFile();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+                System.exit(0);
+            }
+        }.start();
     }
 }
