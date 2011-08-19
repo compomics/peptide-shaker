@@ -991,7 +991,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         newFolder.mkdir();
 
                         identification.save(newFolder, progressDialog);
-                        identification.emptyCache();
 
                         progressDialog.setValue(99);
                         progressDialog.setMax(100);
