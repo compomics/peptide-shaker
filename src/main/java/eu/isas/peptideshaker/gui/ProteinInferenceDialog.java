@@ -539,6 +539,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 try {
                 ProteinMatch proteinMatch = identification.getProteinMatch(inspectedMatch);
                 proteinMatch.setMainMatch(accessions.get(row));
+                identification.setMatchChanged(proteinMatch);
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
