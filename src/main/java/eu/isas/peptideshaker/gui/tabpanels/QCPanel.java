@@ -304,7 +304,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void proteinMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinMetricCmbActionPerformed
-        
+
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
 
@@ -321,7 +321,8 @@ public class QCPanel extends javax.swing.JPanel {
 
             @Override
             public void run() {
-        updateProteinQCPlot(progressDialog);
+                progressDialog.setMax(peptideShakerGUI.getIdentification().getProteinIdentification().size());
+                updateProteinQCPlot(progressDialog);
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
             }
@@ -334,7 +335,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void peptideMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideMetricCmbActionPerformed
-       
+
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
 
@@ -351,7 +352,8 @@ public class QCPanel extends javax.swing.JPanel {
 
             @Override
             public void run() {
-        updatePeptideQCPlot(progressDialog);
+                progressDialog.setMax(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+                updatePeptideQCPlot(progressDialog);
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
             }
@@ -364,7 +366,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void psmMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmMetricCmbActionPerformed
-      
+
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
 
@@ -381,7 +383,8 @@ public class QCPanel extends javax.swing.JPanel {
 
             @Override
             public void run() {
-        updatePsmQCPlot(progressDialog);
+                progressDialog.setMax(peptideShakerGUI.getIdentification().getSpectrumIdentification().size());
+                updatePsmQCPlot(progressDialog);
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
             }
