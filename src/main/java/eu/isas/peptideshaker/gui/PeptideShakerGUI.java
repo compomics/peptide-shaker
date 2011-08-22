@@ -1664,13 +1664,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             statsPanel.updateSeparators();
 
             progressDialog = new ProgressDialogX(this, this, true);
-            progressDialog.setMax(allTabsJTabbedPane.getComponentCount() + 1); // @TODO: Remove the minus when the other tabs are added
+            int max = 3*identification.getProteinIdentification().size()
+                    + 2*identification.getPeptideIdentification().size()
+                    + 2*identification.getSpectrumIdentification().size()
+                    +1;
+            progressDialog.setMax(max);
             progressDialog.doNothingOnClose();
 
             new Thread(new Runnable() {
 
                 public void run() {
-                    progressDialog.setTitle("Loading Data. Please Wait...");
+                    progressDialog.setTitle("Loading Data. Please wait...");
                     progressDialog.setVisible(true);
                 }
             }, "ProgressDialog").start();
@@ -1680,39 +1684,33 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 @Override
                 public void run() {
 
-                    int counter = 0;
-                    progressDialog.setValue(++counter);
-
                     if (displaySpectrum) {
-                        spectrumIdentificationPanel.displayResults();
-                        progressDialog.setValue(++counter);
-                        ptmPanel.displayResults();
+                        progressDialog.setTitle("Loading spectrum identifications tab. Please wait...");
+                        spectrumIdentificationPanel.displayResults(progressDialog);
+                        progressDialog.setTitle("Loading PTM tab. Please wait...");
+                        ptmPanel.displayResults(progressDialog);
                     } else {
                         spectrumJPanel.setEnabled(false);
-                        progressDialog.setValue(++counter);
                         ptmPanel.setEnabled(false);
+                        progressDialog.setValue(identification.getPeptideIdentification().size() + identification.getSpectrumIdentification().size());
                     }
 
-                    progressDialog.setValue(++counter);
 
                     try {
-                        progressDialog.setValue(++counter);
-                        overviewPanel.displayResults();
+                        progressDialog.setTitle("Loading overview tab. Please wait...");
+                        overviewPanel.displayResults(progressDialog);
 
                         if (updateValidationTab) {
-                            progressDialog.setValue(++counter);
+                        progressDialog.setTitle("Loading validation tab. Please wait...");
                             statsPanel.displayResults();
-                        } else {
-                            progressDialog.setValue(++counter);
                         }
+                        progressDialog.incrementValue();
 
-                        progressDialog.setValue(++counter);
-                        proteinStructurePanel.displayResults();
+                        progressDialog.setTitle("Loading structure tab. Please wait...");
+                        proteinStructurePanel.displayResults(progressDialog);
 
-                        progressDialog.setValue(++counter);
-
-                        qcPanel.displayResults();
-                        progressDialog.setValue(++counter);
+                        progressDialog.setTitle("Loading QC tab. Please wait...");
+                        qcPanel.displayResults(progressDialog);
 
 
                     } catch (Exception e) {

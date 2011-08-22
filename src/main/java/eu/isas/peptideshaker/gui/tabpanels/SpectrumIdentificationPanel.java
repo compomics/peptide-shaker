@@ -11,6 +11,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.googlecode.charts4j.Color;
@@ -1717,8 +1718,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
     /**
      * Displays the results in the panel.
+     * 
+     * @param progressDialog a progress dialog. Can be null.
      */
-    public void displayResults() {
+    public void displayResults(ProgressDialogX progressDialog) {
         try {
             identification = peptideShakerGUI.getIdentification();
             int m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0;
@@ -1764,6 +1767,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                     o++;
                 } else if (xTandem) {
                     x++;
+                }
+                if (progressDialog != null) {
+                    progressDialog.incrementValue();
                 }
             }
 

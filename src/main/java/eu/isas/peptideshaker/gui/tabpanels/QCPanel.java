@@ -8,6 +8,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -56,6 +57,10 @@ public class QCPanel extends javax.swing.JPanel {
      * The sequence factory
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * A simple progress dialog.
+     */
+    private static ProgressDialogX progressDialog;
 
     /** 
      * Creates a new QCPanel
@@ -299,7 +304,28 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void proteinMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinMetricCmbActionPerformed
-        updateProteinQCPlot();
+        
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Loading. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("ExportThread") {
+
+            @Override
+            public void run() {
+        updateProteinQCPlot(progressDialog);
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+            }
+        }.start();
     }//GEN-LAST:event_proteinMetricCmbActionPerformed
 
     /**
@@ -308,7 +334,28 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void peptideMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideMetricCmbActionPerformed
-        updatePeptideQCPlot();
+       
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Loading. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("ExportThread") {
+
+            @Override
+            public void run() {
+        updatePeptideQCPlot(progressDialog);
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+            }
+        }.start();
     }//GEN-LAST:event_peptideMetricCmbActionPerformed
 
     /**
@@ -317,7 +364,28 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void psmMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmMetricCmbActionPerformed
-        updatePsmQCPlot();
+      
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Loading. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("ExportThread") {
+
+            @Override
+            public void run() {
+        updatePsmQCPlot(progressDialog);
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+            }
+        }.start();
     }//GEN-LAST:event_psmMetricCmbActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
@@ -338,17 +406,21 @@ public class QCPanel extends javax.swing.JPanel {
 
     /**
      * This method displays results on the panel
+     * 
+     * @param progressDialog a progress dialog. Can be null.
      */
-    public void displayResults() {
-        updateProteinQCPlot();
-        updatePeptideQCPlot();
-        updatePsmQCPlot();
+    public void displayResults(ProgressDialogX progressDialog) {
+        updateProteinQCPlot(progressDialog);
+        updatePeptideQCPlot(progressDialog);
+        updatePsmQCPlot(progressDialog);
     }
 
     /**
      * Updates the protein QC plot
+     * 
+     * @param progressDialog a progress dialog. Can be null.
      */
-    private void updateProteinQCPlot() {
+    private void updateProteinQCPlot(ProgressDialogX progressDialog) {
         if (proteinMetricCmb.getSelectedIndex() == 0) {
             proteinQCPlot.getDomainAxis().setLabel("Number of Validated Peptides");
         } else if (proteinMetricCmb.getSelectedIndex() == 1) {
@@ -357,7 +429,7 @@ public class QCPanel extends javax.swing.JPanel {
             proteinQCPlot.getDomainAxis().setLabel("Sequence Coverage");
         }
 
-        HistogramInput input = getProteinDataset();
+        HistogramInput input = getProteinDataset(progressDialog);
 
         DefaultIntervalXYDataset validated = new DefaultIntervalXYDataset();
         validated.addSeries("Validated Target Proteins", input.getValidated());
@@ -413,15 +485,17 @@ public class QCPanel extends javax.swing.JPanel {
 
     /**
      * Updates the peptide QC plot
+     * 
+     * @param progressDialog a progress dialog. Can be null.
      */
-    private void updatePeptideQCPlot() {
+    private void updatePeptideQCPlot(ProgressDialogX progressDialog) {
         if (peptideMetricCmb.getSelectedIndex() == 0) {
             peptideQCPlot.getDomainAxis().setLabel("Number of Validated PSMs");
         } else if (peptideMetricCmb.getSelectedIndex() == 1) {
             peptideQCPlot.getDomainAxis().setLabel("Missed Cleavages");
         }
 
-        HistogramInput input = getPeptideDataset();
+        HistogramInput input = getPeptideDataset(progressDialog);
 
         DefaultIntervalXYDataset validated = new DefaultIntervalXYDataset();
         validated.addSeries("Validated Target Peptides", input.getValidated());
@@ -477,15 +551,17 @@ public class QCPanel extends javax.swing.JPanel {
 
     /**
      * Updates the PSM QC plot
+     * 
+     * @param progressDialog a progress dialog. Can be null.
      */
-    private void updatePsmQCPlot() {
+    private void updatePsmQCPlot(ProgressDialogX progressDialog) {
         if (psmMetricCmb.getSelectedIndex() == 0) {
             psmQCPlot.getDomainAxis().setLabel("Precursor Mass Error");
         } else if (psmMetricCmb.getSelectedIndex() == 1) {
             psmQCPlot.getDomainAxis().setLabel("Precursor Charge");
         }
 
-        HistogramInput input = getPsmDataset();
+        HistogramInput input = getPsmDataset(progressDialog);
 
         DefaultIntervalXYDataset validated = new DefaultIntervalXYDataset();
         validated.addSeries("Validated Target PSMs", input.getValidated());
@@ -541,8 +617,10 @@ public class QCPanel extends javax.swing.JPanel {
 
     /**
      * Returns the dataset to use for the protein QC plot
+     * 
+     * @param progressDialog a progress dialog. Can be null.
      */
-    private HistogramInput getProteinDataset() {
+    private HistogramInput getProteinDataset(ProgressDialogX progressDialog) {
         HistogramInput histogramInput = new HistogramInput();
         try {
             PSParameter psParameter = new PSParameter();
@@ -580,6 +658,9 @@ public class QCPanel extends javax.swing.JPanel {
                         } else {
                             nonValidatedDecoyValues.add(value);
                         }
+                    }
+                    if (progressDialog != null) {
+                        progressDialog.incrementValue();
                     }
                 }
                 int maxBin = (int) max + 1;
@@ -624,6 +705,9 @@ public class QCPanel extends javax.swing.JPanel {
                             nonValidatedDecoyValues.add(value);
                         }
                     }
+                    if (progressDialog != null) {
+                        progressDialog.incrementValue();
+                    }
                 }
                 int binMin = (int) Math.log10(min) - 1;
                 int binMax = (int) Math.log10(max) + 1;
@@ -667,6 +751,9 @@ public class QCPanel extends javax.swing.JPanel {
                             nonValidatedDecoyValues.add(value);
                         }
                     }
+                    if (progressDialog != null) {
+                        progressDialog.incrementValue();
+                    }
                 }
                 int maxBin = (int) max + 1;
                 ArrayList<Double> bins = new ArrayList<Double>();
@@ -687,8 +774,10 @@ public class QCPanel extends javax.swing.JPanel {
 
     /**
      * Returns the dataset to use for the peptide QC plot
+     * 
+     * @param progressDialog a progress dialog. Can be null.
      */
-    private HistogramInput getPeptideDataset() {
+    private HistogramInput getPeptideDataset(ProgressDialogX progressDialog) {
         HistogramInput histogramInput = new HistogramInput();
         try {
             PSParameter psParameter = new PSParameter();
@@ -726,6 +815,9 @@ public class QCPanel extends javax.swing.JPanel {
                         } else {
                             nonValidatedDecoyValues.add(value);
                         }
+                    }
+                    if (progressDialog != null) {
+                        progressDialog.incrementValue();
                     }
                 }
                 int maxBin = (int) max + 1;
@@ -771,6 +863,9 @@ public class QCPanel extends javax.swing.JPanel {
                             nonValidatedDecoyValues.add(value);
                         }
                     }
+                    if (progressDialog != null) {
+                        progressDialog.incrementValue();
+                    }
                 }
                 int maxBin = (int) max + 1;
                 ArrayList<Double> bins = new ArrayList<Double>();
@@ -791,8 +886,10 @@ public class QCPanel extends javax.swing.JPanel {
 
     /**
      * Returns the dataset to use for the PSM QC plot
+     * 
+     * @param progressDialog a progress dialog. Can be null.
      */
-    private HistogramInput getPsmDataset() {
+    private HistogramInput getPsmDataset(ProgressDialogX progressDialog) {
         HistogramInput histogramInput = new HistogramInput();
         try {
             PSParameter psParameter = new PSParameter();
@@ -824,6 +921,9 @@ public class QCPanel extends javax.swing.JPanel {
                         } else {
                             nonValidatedDecoyValues.add(value);
                         }
+                    }
+                    if (progressDialog != null) {
+                        progressDialog.incrementValue();
                     }
                 }
                 int maxBin = (int) max + 1;
@@ -865,6 +965,9 @@ public class QCPanel extends javax.swing.JPanel {
                         } else {
                             nonValidatedDecoyValues.add(value);
                         }
+                    }
+                    if (progressDialog != null) {
+                        progressDialog.incrementValue();
                     }
                 }
                 int maxBin = (int) max + 1;

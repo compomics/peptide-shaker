@@ -17,6 +17,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Peak;
 import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.spectrum.FragmentIonTable;
 import com.compomics.util.gui.spectrum.IntensityHistogram;
 import com.compomics.util.gui.spectrum.MassErrorBubblePlot;
@@ -3442,8 +3443,9 @@ public class OverviewPanel extends javax.swing.JPanel {
     /**
      * Displays the results in the result tables.
      * 
+     * @param progressDialog a progress dialog. Can be null.
      */
-    public void displayResults() {
+    public void displayResults(ProgressDialogX progressDialogX) {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         try {
@@ -3462,7 +3464,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             int nPeptides, nSpectra;
 
             for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-
+                if (!SequenceFactory.isDecoy(proteinKey)) {
                 proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                 probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
                 score = probabilities.getProteinProbabilityScore();
@@ -3483,6 +3485,9 @@ public class OverviewPanel extends javax.swing.JPanel {
                 }
 
                 orderMap.get(score).get(nPeptides).get(nSpectra).add(proteinKey);
+                } else if (progressDialogX != null) {
+                    progressDialogX.incrementValue();
+                }
             }
 
             Collections.sort(scores);
@@ -3530,8 +3535,6 @@ public class OverviewPanel extends javax.swing.JPanel {
                                 peptideShakerGUI.catchException(e);
                                 e.printStackTrace();
                             }
-                            // only add non-decoy matches to the overview
-                            if (!proteinMatch.isDecoy()) {
                                 ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                                             index + 1,
                                             probabilities.getGroupClass(),
@@ -3552,9 +3555,11 @@ public class OverviewPanel extends javax.swing.JPanel {
                                 if (probabilities.isValidated()) {
                                     validatedProteinsCounter++;
                                 }
-                            }
                             if (maxSpectrumCounting < spectrumCounting) {
                                 maxSpectrumCounting = spectrumCounting;
+                            }
+                            if (progressDialogX != null) {
+                                progressDialogX.incrementValue();
                             }
                         }
                         if (maxSpectra < -currentNS) {

@@ -13,6 +13,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.events.RescalingEvent;
 import com.compomics.util.gui.interfaces.SpectrumPanelListener;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
@@ -1435,8 +1436,10 @@ public class PtmPanel extends javax.swing.JPanel {
 
     /**
      * Creates the peptide map.
+     * 
+     * @param progressDialog a progress dialog. Can be null.
      */
-    private void createPeptideMap() {
+    private void createPeptideMap(ProgressDialogX progressDialogX) {
 
         boolean modified;
         ArrayList<String> accountedModifications;
@@ -1466,18 +1469,23 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
                 peptideMap.get(NO_MODIFICATION).add(peptideKey);
             }
+            if (progressDialogX != null) {
+                progressDialogX.incrementValue();
+            }
         }
     }
 
     /**
      * Displays the results.
+     * 
+     * @param progressDialog a progress dialog. Can be null.
      */
-    public void displayResults() {
+    public void displayResults(ProgressDialogX progressDialog) {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         this.identification = peptideShakerGUI.getIdentification();
-        createPeptideMap();
+        createPeptideMap(progressDialog);
         String[] modifications = new String[peptideMap.size()];
         int cpt = 0;
 
