@@ -13,6 +13,7 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.pdbfinder.FindPdbForUniprotAccessions;
 import com.compomics.util.pdbfinder.pdb.PdbBlock;
 import com.compomics.util.pdbfinder.pdb.PdbParameter;
+import com.sun.org.apache.xml.internal.dtm.ref.IncrementalSAXSource;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
@@ -1481,10 +1482,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     /**
      * Displays the results in the result tables.
      * 
+     * @param progressDialog a progress dialog. Can be null.
      */
-    public void displayResults() {
+    public void displayResults(ProgressDialogX progressDialogX) {
 
-        // @TODO: Merge with the similar method in the OverviewPanel class...
+        // @TODO: Merge with the similar method in the OverviewPanel class... 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         try {
             int index = 0, maxPeptides = 0, maxSpectra = 0;
@@ -1502,27 +1504,31 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             int nPeptides, nSpectra;
 
             for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                if (!SequenceFactory.isDecoy(proteinKey)) {
+                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
+                    score = probabilities.getProteinProbabilityScore();
+                    nPeptides = -proteinMatch.getPeptideMatches().size();
+                    nSpectra = -peptideShakerGUI.getNSpectra(proteinMatch);
 
-                proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
-                score = probabilities.getProteinProbabilityScore();
-                nPeptides = -proteinMatch.getPeptideMatches().size();
-                nSpectra = -peptideShakerGUI.getNSpectra(proteinMatch);
+                    if (!orderMap.containsKey(score)) {
+                        orderMap.put(score, new HashMap<Integer, HashMap<Integer, ArrayList<String>>>());
+                        scores.add(score);
+                    }
 
-                if (!orderMap.containsKey(score)) {
-                    orderMap.put(score, new HashMap<Integer, HashMap<Integer, ArrayList<String>>>());
-                    scores.add(score);
+                    if (!orderMap.get(score).containsKey(nPeptides)) {
+                        orderMap.get(score).put(nPeptides, new HashMap<Integer, ArrayList<String>>());
+                    }
+
+                    if (!orderMap.get(score).get(nPeptides).containsKey(nSpectra)) {
+                        orderMap.get(score).get(nPeptides).put(nSpectra, new ArrayList<String>());
+                    }
+
+                    orderMap.get(score).get(nPeptides).get(nSpectra).add(proteinKey);
+
+                } else if (progressDialogX != null) {
+                    progressDialogX.incrementValue();
                 }
-
-                if (!orderMap.get(score).containsKey(nPeptides)) {
-                    orderMap.get(score).put(nPeptides, new HashMap<Integer, ArrayList<String>>());
-                }
-
-                if (!orderMap.get(score).get(nPeptides).containsKey(nSpectra)) {
-                    orderMap.get(score).get(nPeptides).put(nSpectra, new ArrayList<String>());
-                }
-
-                orderMap.get(score).get(nPeptides).get(nSpectra).add(proteinKey);
             }
 
             Collections.sort(scores);
@@ -1570,31 +1576,31 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                 peptideShakerGUI.catchException(e);
                                 e.printStackTrace();
                             }
-                            // only add non-decoy matches to the overview
-                            if (!proteinMatch.isDecoy()) {
-                                ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
-                                            index + 1,
-                                            probabilities.getGroupClass(),
-                                            peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
-                                            description,
-                                            sequenceCoverage,
-                                            currentNP,
-                                            currentNS,
-                                            spectrumCounting,
-                                            probabilities.getProteinScore(),
-                                            probabilities.getProteinConfidence(),
-                                            probabilities.isValidated()
-                                        });
+                            ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
+                                        index + 1,
+                                        probabilities.getGroupClass(),
+                                        peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
+                                        description,
+                                        sequenceCoverage,
+                                        currentNP,
+                                        currentNS,
+                                        spectrumCounting,
+                                        probabilities.getProteinScore(),
+                                        probabilities.getProteinConfidence(),
+                                        probabilities.isValidated()
+                                    });
 
-                                proteinTableMap.put(index + 1, proteinKey);
-                                index++;
+                            proteinTableMap.put(index + 1, proteinKey);
+                            index++;
 
-                                if (probabilities.isValidated()) {
-                                    validatedProteinsCounter++;
-                                }
+                            if (probabilities.isValidated()) {
+                                validatedProteinsCounter++;
                             }
                             if (maxSpectrumCounting < spectrumCounting) {
                                 maxSpectrumCounting = spectrumCounting;
+                            }
+                            if (progressDialogX != null) {
+                                progressDialogX.incrementValue();
                             }
                         }
                         if (maxSpectra < currentNS) {

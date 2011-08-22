@@ -630,11 +630,21 @@ public class PeptideShaker {
      * Scores PTM locations for a desired spectrumMatch
      * 
      * @param spectrumMatch The spectrum match of interest
+     * @throws Exception    exception thrown whenever an error occurred while reading/writing the an identification match
      */
     public void scorePTMs(SpectrumMatch spectrumMatch) throws Exception {
+        attachDeltaScore(spectrumMatch);
+        attachAScore(spectrumMatch);
+    }
+    
+    /**
+     * Scores the PTM locations using the delta score
+     * @param spectrumMatch the spectrum match of interest
+     * @throws Exception    exception thrown whenever an error occurred while reading/writing the an identification match
+     */
+    private void attachDeltaScore(SpectrumMatch spectrumMatch) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
-        // Estimate delta score
         PSParameter psParameter = new PSParameter();
         double p1, p2;
         String mainSequence, modificationName;
@@ -644,7 +654,7 @@ public class PeptideShaker {
         PtmScoring ptmScoring;
         ptmScores = new PSPtmScores();
         psParameter = (PSParameter) spectrumMatch.getBestAssumption().getUrParam(psParameter);
-        p1 = psParameter.getSearchEngineConfidence();
+        p1 = psParameter.getSearchEngineProbability();
         if (p1 < 1) {
             mainSequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
             p2 = 1;
@@ -678,10 +688,15 @@ public class PeptideShaker {
                 identification.setMatchChanged(spectrumMatch);
             }
         }
-
-        //@TODO: estimate A-score
-
-
+    }
+    
+    /**
+     * Scores the PTM locations using the delta score
+     * @param spectrumMatch the spectrum match of interest
+     * @throws Exception    exception thrown whenever an error occurred while reading/writing the an identification match
+     */
+    private void attachAScore(SpectrumMatch spectrumMatch) throws Exception {
+        
     }
 
     /**
