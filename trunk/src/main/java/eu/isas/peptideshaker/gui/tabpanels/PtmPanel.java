@@ -2176,7 +2176,9 @@ public class PtmPanel extends javax.swing.JPanel {
                     // Not sure that it will always be the best assumption, might have to iterate assumptions if the wrong sequence is displayed
                     return spectrumMatch.getBestAssumption().getPeptide().getSequence();
                 } else if (column == 2) {
-                    return "to be changed";
+                    PSPtmScores scores = new PSPtmScores();
+                    scores = (PSPtmScores) spectrumMatch.getUrParam(scores);
+                    return getModificationProfile(spectrumMatch.getBestAssumption().getPeptide().getSequence(), scores);
                 } else if (column == 3) {
                     try {
                         return peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getMz();
