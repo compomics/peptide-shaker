@@ -172,6 +172,7 @@ public class PtmScoring implements Serializable {
                     break;
                 }
             }
+            result.add(new Integer(tempKey));
         }
         return result;
     }

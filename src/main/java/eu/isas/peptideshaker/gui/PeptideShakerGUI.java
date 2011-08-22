@@ -988,6 +988,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                         String folderPath = selectedFile.substring(0, selectedFile.lastIndexOf("."));
                         File newFolder = new File(folderPath + "_cps");
+                        if (newFolder.exists()) {
+                            String[] fileList = newFolder.list();
+                            progressDialog.setMax(fileList.length);
+                            progressDialog.setTitle("Deleting old matches.");
+                            File toDelete;
+                            int cpt = 0;
+                            for (String fileName : fileList) {
+                                toDelete = new File(newFolder.getPath(), fileName);
+                                toDelete.delete();
+                                progressDialog.setValue(++cpt);
+                            }
+                            progressDialog.setIndeterminate(true);
+                        }
                         newFolder.mkdir();
 
                         identification.save(newFolder, progressDialog);
