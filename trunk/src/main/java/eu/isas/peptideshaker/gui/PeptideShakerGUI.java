@@ -2380,7 +2380,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         int peptideTempStart, peptideTempEnd;
         String tempSequence, peptideSequence;
         PSParameter pSParameter = new PSParameter();
-        PeptideMatch peptideMatch;
         // iterate the peptide table and store the coverage for each peptide
         for (String peptideKey : proteinMatch.getPeptideMatches()) {
             pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
