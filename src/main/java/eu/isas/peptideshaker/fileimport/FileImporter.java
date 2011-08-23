@@ -20,8 +20,12 @@ import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -77,7 +81,7 @@ public class FileImporter {
     /**
      * Peptide to protein map: peptide sequence -> protein accession
      */
-    private HashMap<String, ArrayList<String>> sequences = new HashMap<String, ArrayList<String>>();
+    private HashMap<String, ArrayList<String>> sequences;
 
     /**
      * Constructor for the importer
@@ -143,12 +147,6 @@ public class FileImporter {
         try {
             waitingDialog.appendReport("Importing sequences from " + fastaFile.getName() + ".");
             sequenceFactory.loadFastaFile(fastaFile);
-            // Load the sequences likely to be encountered in the sequence map
-            String sequence;
-            Enzyme enzyme = searchParameters.getEnzyme();
-            int nMissedCleavages = searchParameters.getnMissedCleavages();
-            int nMin = idFilter.getMinPeptideLength();
-            int nMax = idFilter.getMaxPeptideLength();
 
             String firstAccession = sequenceFactory.getAccessions().get(0);
             if (!sequenceFactory.getHeader(firstAccession).getDatabaseType().equalsIgnoreCase("UniProt")) {
@@ -167,10 +165,14 @@ public class FileImporter {
                         "No Decoys Found",
                         JOptionPane.INFORMATION_MESSAGE);
             }
-
-            boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache();
-            if (inspectAll) {
+            if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache()) {
                 waitingDialog.appendReport("Inferring peptides from proteins.");
+                String sequence;
+                Enzyme enzyme = searchParameters.getEnzyme();
+                int nMissedCleavages = searchParameters.getnMissedCleavages();
+                int nMin = idFilter.getMinPeptideLength();
+                int nMax = idFilter.getMaxPeptideLength();
+                sequences = new HashMap<String, ArrayList<String>>();
                 for (String proteinKey : sequenceFactory.getAccessions()) {
                     sequence = sequenceFactory.getProtein(proteinKey).getSequence();
                     for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
@@ -189,9 +191,11 @@ public class FileImporter {
         } catch (FileNotFoundException e) {
             waitingDialog.appendReport("File " + fastaFile + " was not found. Please select a different FASTA file.");
             e.printStackTrace();
+            waitingDialog.setRunCanceled();
         } catch (Exception e) {
-            waitingDialog.appendReport("An error occured while loading " + fastaFile + ". Please select a different FASTA file.");
+            waitingDialog.appendReport("An error occured while loading " + fastaFile + ".");
             e.printStackTrace();
+            waitingDialog.setRunCanceled();
         }
     }
 
@@ -324,6 +328,10 @@ public class FileImporter {
                 }
             }
             return ptmFactory.getPTM(sePTM.getMass(), sePTM.getResiduesArray()[0], sequence);
+
+
+
+
         }
     }
 
