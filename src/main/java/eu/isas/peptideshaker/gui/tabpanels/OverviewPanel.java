@@ -43,7 +43,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
@@ -2988,7 +2987,8 @@ public class OverviewPanel extends javax.swing.JPanel {
                             // create the sequence fragment ion view
                             sequenceFragmentIonPlotsJPanel.removeAll();
                             SequenceFragmentationPanel sequenceFragmentationPanel =
-                                    new SequenceFragmentationPanel(currentPeptide.getSequence(), annotations, false); // @TODO: what about modified sequences?? -> We first need to assess confidently the position of the PTM
+                                    new SequenceFragmentationPanel(currentPeptide.getNTerminal() + "-" + currentPeptide.getSequence() + "-" + currentPeptide.getCTerminal(), 
+                                            annotations, true);
                             sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                             sequenceFragmentationPanel.setOpaque(false);
                             sequenceFragmentIonPlotsJPanel.add(sequenceFragmentationPanel);

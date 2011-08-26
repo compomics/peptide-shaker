@@ -420,6 +420,7 @@ public class FileImporter {
 
                 for (String modificationName : searchParameters.getModificationProfile().keySet()) {
                     ptmFactory.getPTM(modificationName).setName(searchParameters.getModificationProfile().get(modificationName));
+                    //ptmFactory.getPTM(modificationName).setShortName(searchParameters.getShortName(modificationName)); // @TODO: implement short name!
                 }
 
                 waitingDialog.appendReport("Reading identification files.");
@@ -452,7 +453,7 @@ public class FileImporter {
                             for (PeptideAssumption assumptions : match.getAllAssumptions()) {
                                 peptide = assumptions.getPeptide();
                                 for (ModificationMatch seMod : peptide.getModificationMatches()) {
-                                    seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), peptide.getSequence(), searchParameters));
+                                    seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), peptide.getSequence(), searchParameters)); // add shortname
                                 }
                             }
 
