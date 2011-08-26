@@ -1685,9 +1685,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 public void run() {
 
                     if (displaySpectrum) {
-                        progressDialog.setTitle("Loading spectrum identifications tab. Please wait...");
+                        progressDialog.setTitle("Loading Spectrum ID Tab. Please Wait...");
                         spectrumIdentificationPanel.displayResults(progressDialog);
-                        progressDialog.setTitle("Loading PTM tab. Please wait...");
+                        progressDialog.setTitle("Loading Modifications Tab. Please Wait...");
                         ptmPanel.displayResults(progressDialog);
                     } else {
                         spectrumJPanel.setEnabled(false);
@@ -1697,19 +1697,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
 
                     try {
-                        progressDialog.setTitle("Loading overview tab. Please wait...");
+                        progressDialog.setTitle("Loading Overview Tab. Please Wait...");
                         overviewPanel.displayResults(progressDialog);
 
                         if (updateValidationTab) {
-                        progressDialog.setTitle("Loading validation tab. Please wait...");
+                        progressDialog.setTitle("Loading Validation Tab. Please Wait...");
                             statsPanel.displayResults();
                         }
                         progressDialog.incrementValue();
 
-                        progressDialog.setTitle("Loading structure tab. Please wait...");
+                        progressDialog.setTitle("Loading Structure Tab. Please Wait...");
                         proteinStructurePanel.displayResults(progressDialog);
 
-                        progressDialog.setTitle("Loading QC tab. Please wait...");
+                        progressDialog.setTitle("Loading QC Plots Tab. Please Wait...");
                         qcPanel.displayResults(progressDialog);
 
 
