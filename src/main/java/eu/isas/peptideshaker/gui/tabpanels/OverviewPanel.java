@@ -3443,7 +3443,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     /**
      * Displays the results in the result tables.
      * 
-     * @param progressDialog a progress dialog. Can be null.
+     * @param progressDialogX a progress dialog. Can be null.
      */
     public void displayResults(ProgressDialogX progressDialogX) {
 

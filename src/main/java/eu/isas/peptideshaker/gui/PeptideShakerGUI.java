@@ -1664,10 +1664,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             statsPanel.updateSeparators();
 
             progressDialog = new ProgressDialogX(this, this, true);
-            int max = 3*identification.getProteinIdentification().size()
-                    + 2*identification.getPeptideIdentification().size()
-                    + 2*identification.getSpectrumIdentification().size()
-                    +1;
+            int max = 3 * identification.getProteinIdentification().size()
+                    + 2 * identification.getPeptideIdentification().size()
+                    + 2 * identification.getSpectrumIdentification().size()
+                    + 1;
             progressDialog.setMax(max);
             progressDialog.doNothingOnClose();
 

@@ -160,51 +160,56 @@ public class PeptideShaker {
         }
         try {
             waitingDialog.appendReport("Computing assumptions probabilities.");
-            inputMap.estimateProbabilities();
-            attachAssumptionsProbabilities(inputMap);
+            inputMap.estimateProbabilities(waitingDialog);
+            waitingDialog.appendReport("Adding assumptions probabilities.");
+            attachAssumptionsProbabilities(inputMap, waitingDialog);
             waitingDialog.appendReport("Computing PSMs probabilities.");
             setFirstHit();
             ArrayList<String> modifiedPsms = fillPsmMap(inputMap);
             psmMap.cure();
-            psmMap.estimateProbabilities();
+            psmMap.estimateProbabilities(waitingDialog);
             attachSpectrumProbabilities();
             waitingDialog.appendReport("Computing peptide probabilities.");
             identification.buildPeptidesAndProteins();
             fillPeptideMaps();
             peptideMap.cure();
-            peptideMap.estimateProbabilities();
+            peptideMap.estimateProbabilities(waitingDialog);
             attachPeptideProbabilities();
             waitingDialog.appendReport("Scoring PTMs.");
-            scorePSMPTMs(modifiedPsms);
-            scorePeptidePTMs();
+            scorePSMPTMs(modifiedPsms, waitingDialog);
+            waitingDialog.appendReport("Scoring Peptide PTMs.");
+            scorePeptidePTMs(waitingDialog);
             waitingDialog.appendReport("Computing protein probabilities.");
-            fillProteinMap();
+            fillProteinMap(waitingDialog);
             proteinMap.estimateProbabilities();
-            attachProteinProbabilities();
-            waitingDialog.appendReport("Trying to resolve protein inference issues.");
+            attachProteinProbabilities();   
         } catch (Exception e) {
             e.printStackTrace();
             waitingDialog.appendReport("An error occurred while working on the identification. See the log file for more details.");
         }
 
         try {
+            waitingDialog.appendReport("Trying to resolve protein inference issues.");
             cleanProteinGroups(waitingDialog);
         } catch (Exception e) {
             waitingDialog.appendReport("An error occured while trying to resolve protein inference issues.");
             e.printStackTrace();
         }
+        
         proteinMap = new ProteinMap();
+        
         try {
-            fillProteinMap();
+            fillProteinMap(waitingDialog);
         } catch (Exception e) {
             e.printStackTrace();
             waitingDialog.appendReport("An error occurred while working on the identification. See the log file for more details.");
         }
+        
         proteinMap.estimateProbabilities();
         attachProteinProbabilities();
 
         waitingDialog.appendReport("Validating identifications at 1% FDR.");
-        fdrValidation();
+        fdrValidation(waitingDialog);
 
         String report = "Identification processing completed.\n\n";
         ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();
@@ -277,8 +282,11 @@ public class PeptideShaker {
 
     /**
      * Makes a preliminary validation of hits. By default a 1% FDR is used for all maps
+     * 
+     * @param waitingDialog a reference to the waiting dialog
      */
-    public void fdrValidation() {
+    public void fdrValidation(WaitingDialog waitingDialog) {
+        
         TargetDecoyMap currentMap = proteinMap.getTargetDecoyMap();
         TargetDecoyResults currentResults = currentMap.getTargetDecoyResults();
         currentResults.setClassicalEstimators(true);
@@ -286,7 +294,12 @@ public class PeptideShaker {
         currentResults.setFdrLimit(1.0);
         currentMap.getTargetDecoySeries().getFDRResults(currentResults);
 
+        int max = peptideMap.getKeys().size() + psmMap.getKeys().keySet().size();
+        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+        waitingDialog.setMaxSecondaryProgressValue(max);
+        
         for (String mapKey : peptideMap.getKeys()) {
+            waitingDialog.increaseSecondaryProgressValue();
             currentMap = peptideMap.getTargetDecoyMap(mapKey);
             currentResults = currentMap.getTargetDecoyResults();
             currentResults.setClassicalEstimators(true);
@@ -296,6 +309,7 @@ public class PeptideShaker {
         }
 
         for (int mapKey : psmMap.getKeys().keySet()) {
+            waitingDialog.increaseSecondaryProgressValue();
             currentMap = psmMap.getTargetDecoyMap(mapKey);
             currentResults = currentMap.getTargetDecoyResults();
             currentResults.setClassicalEstimators(true);
@@ -303,6 +317,8 @@ public class PeptideShaker {
             currentResults.setFdrLimit(1.0);
             currentMap.getTargetDecoySeries().getFDRResults(currentResults);
         }
+        
+        waitingDialog.setSecondaryProgressDialogIntermediate(true);
 
         validateIdentifications();
     }
@@ -314,14 +330,17 @@ public class PeptideShaker {
      *                      than one identification per search engine per spectrum
      */
     public void spectrumMapChanged() throws Exception {
+        
+        // @TODO: add progress bars?
+        
         peptideMap = new PeptideSpecificMap();
         proteinMap = new ProteinMap();
         attachSpectrumProbabilities();
         fillPeptideMaps();
         peptideMap.cure();
-        peptideMap.estimateProbabilities();
+        peptideMap.estimateProbabilities(null);
         attachPeptideProbabilities();
-        fillProteinMap();
+        fillProteinMap(null);
         proteinMap.estimateProbabilities();
         attachProteinProbabilities();
         cleanProteinGroups(null);
@@ -333,9 +352,12 @@ public class PeptideShaker {
      *                      more than one identification per search engine per spectrum
      */
     public void peptideMapChanged() throws Exception {
+        
+        // @TODO: add progress bars?
+        
         proteinMap = new ProteinMap();
         attachPeptideProbabilities();
-        fillProteinMap();
+        fillProteinMap(null);
         proteinMap.estimateProbabilities();
         attachProteinProbabilities();
         cleanProteinGroups(null);
@@ -345,13 +367,19 @@ public class PeptideShaker {
      * Processes the identifications if a change occured in the protein map
      */
     public void proteinMapChanged() {
+        
+        // @TODO: add progress bar?
+        
         attachProteinProbabilities();
     }
 
     /**
      * This method will flag validated identifications
+     * 
+     * @param waitingDialog a reference to the waiting dialog
      */
     public void validateIdentifications() {
+
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
 
@@ -520,14 +548,25 @@ public class PeptideShaker {
 
     /**
      * Attaches the spectrum posterior error probabilities to the peptide assumptions
+     * 
+     * @param inputMap 
+     * @param waitingDialog a reference to the waiting dialog
      */
-    private void attachAssumptionsProbabilities(InputMap inputMap) throws Exception {
+    private void attachAssumptionsProbabilities(InputMap inputMap, WaitingDialog waitingDialog) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
         ArrayList<Double> eValues;
         double previousP, newP;
         SpectrumMatch spectrumMatch;
+        
+        int max = identification.getSpectrumIdentification().size();
+        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+        waitingDialog.setMaxSecondaryProgressValue(max);
+        
         for (String spectrumKey : identification.getSpectrumIdentification()) {
+            
+            waitingDialog.increaseSecondaryProgressValue();
+            
             spectrumMatch = identification.getSpectrumMatch(spectrumKey);
             for (int searchEngine : spectrumMatch.getAdvocates()) {
                 eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine).keySet());
@@ -549,6 +588,8 @@ public class PeptideShaker {
             }
             identification.setMatchChanged(spectrumMatch);
         }
+        
+        waitingDialog.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
@@ -565,32 +606,60 @@ public class PeptideShaker {
 
     /**
      * Attaches scores to possible PTM locations to spectrum matches 
+     * 
+     * @param inspectedSpectra
+     * @param waitingDialog a reference to the waiting dialog
+     * @throws Exception  
      */
-    public void scorePSMPTMs(ArrayList<String> inspectedSpectra) throws Exception {
+    public void scorePSMPTMs(ArrayList<String> inspectedSpectra, WaitingDialog waitingDialog) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         SpectrumMatch spectrumMatch;
+        
+        int max = inspectedSpectra.size();
+        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+        waitingDialog.setMaxSecondaryProgressValue(max);
+        
         for (String spectrumKey : inspectedSpectra) {
+            waitingDialog.increaseSecondaryProgressValue();
             spectrumMatch = identification.getSpectrumMatch(spectrumKey);
             scorePTMs(spectrumMatch);
         }
+        
+        waitingDialog.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
      * Attaches scores to possible PTM locations to peptide matches
+     * 
+     * @param waitingDialog a reference to the waiting dialog
+     * @throws Exception 
      */
-    public void scorePeptidePTMs() throws Exception {
+    public void scorePeptidePTMs(WaitingDialog waitingDialog) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PeptideMatch peptideMatch;
+        
+        int max = identification.getPeptideIdentification().size();
+        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+        waitingDialog.setMaxSecondaryProgressValue(max);
+        
         for (String peptideKey : identification.getPeptideIdentification()) {
+            
+            waitingDialog.increaseSecondaryProgressValue();
+            
             if (Peptide.isModified(peptideKey)) {
                 peptideMatch = identification.getPeptideMatch(peptideKey);
                 scorePTMs(peptideMatch);
             }
         }
+        
+        waitingDialog.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
      * Scores the PTMs for a peptide match
+     * 
+     * @param peptideMatch
+     * @throws Exception  
      */
     public void scorePTMs(PeptideMatch peptideMatch) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
@@ -736,13 +805,28 @@ public class PeptideShaker {
 
     /**
      * Fills the protein map
+     * 
+     * @param waitingDialog a reference to the waiting dialog
      */
-    private void fillProteinMap() throws Exception {
+    private void fillProteinMap(WaitingDialog waitingDialog) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         double probaScore;
         PSParameter psParameter = new PSParameter();
         ProteinMatch proteinMatch;
+        
+        int max = identification.getProteinIdentification().size();
+        
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+            waitingDialog.setMaxSecondaryProgressValue(max);
+        }
+        
         for (String proteinKey : identification.getProteinIdentification()) {
+            
+            if (waitingDialog != null) {
+                waitingDialog.increaseSecondaryProgressValue();
+            }
+            
             probaScore = 1;
             proteinMatch = identification.getProteinMatch(proteinKey);
             for (String peptideKey : proteinMatch.getPeptideMatches()) {
@@ -753,6 +837,10 @@ public class PeptideShaker {
             psParameter.setProteinProbabilityScore(probaScore);
             identification.addMatchParameter(proteinKey, psParameter);
             proteinMap.addPoint(probaScore, proteinMatch.isDecoy());
+        }
+        
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(true);
         }
     }
 
@@ -775,13 +863,27 @@ public class PeptideShaker {
      * @throws Exception    exception thrown whenever it is attempted to attach two different spectrum matches to the same spectrum from the same search engine.
      */
     private void cleanProteinGroups(WaitingDialog waitingDialog) throws Exception {
+        
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
         boolean better;
         ProteinMatch proteinShared, proteinUnique;
         double sharedProteinProbabilityScore, uniqueProteinProbabilityScore;
         ArrayList<String> toRemove = new ArrayList<String>();
+
+        int max = identification.getProteinIdentification().size();
+        
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+            waitingDialog.setMaxSecondaryProgressValue(max);
+        }
+        
         for (String proteinSharedKey : identification.getProteinIdentification()) {
+            
+            if (waitingDialog != null) {
+                waitingDialog.increaseSecondaryProgressValue();
+            }
+            
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
                 psParameter = (PSParameter) identification.getMatchParameter(proteinSharedKey, psParameter);
                 sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
@@ -808,16 +910,21 @@ public class PeptideShaker {
                 }
             }
         }
+        
+        waitingDialog.setSecondaryProgressDialogIntermediate(true);
+           
         for (String proteinKey : toRemove) {
             psParameter = (PSParameter) identification.getMatchParameter(proteinKey, psParameter);
             proteinMap.removePoint(psParameter.getProteinProbabilityScore(), ProteinMatch.isDecoy(proteinKey));
             identification.removeMatch(proteinKey);
         }
+  
         int nSolved = toRemove.size();
         int nLeft = 0;
         String mainKey = null;
         boolean similarityFound, allSimilar;
         ArrayList<String> primaryDescription, secondaryDescription, accessions;
+        
         for (String proteinKey : identification.getProteinIdentification()) {
             accessions = new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(proteinKey)));
             Collections.sort(accessions);
@@ -872,6 +979,7 @@ public class PeptideShaker {
                 }
             }
         }
+        
         if (waitingDialog != null) {
             waitingDialog.appendReport(nSolved + " conflicts resolved. " + nLeft + " protein groups remaining.");
         }
