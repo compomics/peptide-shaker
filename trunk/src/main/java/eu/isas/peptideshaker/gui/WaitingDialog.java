@@ -460,6 +460,7 @@ public class WaitingDialog extends javax.swing.JDialog {
     public void appendReport(String report) {
         Date date = new Date();
         reportArea.append(date + tab + report + "\n");
+        reportArea.setCaretPosition(reportArea.getText().length());
     }
 
     /**
@@ -467,6 +468,7 @@ public class WaitingDialog extends javax.swing.JDialog {
      */
     public void appendReportNewLineNoDate() {
         reportArea.append(tab);
+        reportArea.setCaretPosition(reportArea.getText().length());
     }
 
     /**
@@ -474,6 +476,7 @@ public class WaitingDialog extends javax.swing.JDialog {
      */
     public void appendReportEndLine() {
         reportArea.append("\n");
+        reportArea.setCaretPosition(reportArea.getText().length());
     }
 
     /**
