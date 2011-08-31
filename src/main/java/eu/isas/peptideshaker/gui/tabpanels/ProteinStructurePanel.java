@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -13,7 +12,6 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.pdbfinder.FindPdbForUniprotAccessions;
 import com.compomics.util.pdbfinder.pdb.PdbBlock;
 import com.compomics.util.pdbfinder.pdb.PdbParameter;
-import com.sun.org.apache.xml.internal.dtm.ref.IncrementalSAXSource;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
@@ -48,7 +46,6 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jmol.adapter.smarter.SmarterJmolAdapter;
 import org.jmol.api.JmolAdapter;
 import org.jmol.api.JmolViewer;
-import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * The Protein Structures tab.
@@ -1482,7 +1479,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     /**
      * Displays the results in the result tables.
      * 
-     * @param progressDialog a progress dialog. Can be null.
+     * @param progressDialogX a progress dialog. Can be null.
      */
     public void displayResults(ProgressDialogX progressDialogX) {
 

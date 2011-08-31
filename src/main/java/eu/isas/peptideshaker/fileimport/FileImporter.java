@@ -169,7 +169,16 @@ public class FileImporter {
                 int nMin = idFilter.getMinPeptideLength();
                 int nMax = idFilter.getMaxPeptideLength();
                 sequences = new HashMap<String, ArrayList<String>>();
+                
+                int numberOfSequences = sequenceFactory.getAccessions().size();
+                
+                waitingDialog.setSecondaryProgressDialogIntermediate(false);
+                waitingDialog.setMaxSecondaryProgressValue(numberOfSequences);
+                
                 for (String proteinKey : sequenceFactory.getAccessions()) {
+                    
+                    waitingDialog.increaseSecondaryProgressValue();
+                    
                     sequence = sequenceFactory.getProtein(proteinKey).getSequence();
                     for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
                         if (!sequences.containsKey(peptide)) {
@@ -181,6 +190,8 @@ public class FileImporter {
                         }
                     }
                 }
+                
+                waitingDialog.setSecondaryProgressDialogIntermediate(true);
             }
             waitingDialog.appendReport("FASTA file import completed.");
             waitingDialog.increaseProgressValue();
@@ -323,11 +334,8 @@ public class FileImporter {
                     }
                 }
             }
+            
             return ptmFactory.getPTM(sePTM.getMass(), sePTM.getResiduesArray()[0], sequence);
-
-
-
-
         }
     }
 
@@ -434,7 +442,13 @@ public class FileImporter {
 
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();
 
+                    int numberOfMatches = tempSet.size();
+                    waitingDialog.setSecondaryProgressDialogIntermediate(false);
+                    waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
+                    
                     while (matchIt.hasNext()) {
+                        
+                        waitingDialog.increaseSecondaryProgressValue();
 
                         SpectrumMatch match = matchIt.next();
                         nTotal++;
@@ -474,7 +488,8 @@ public class FileImporter {
                             return 1;
                         }
                     }
-
+                    
+                    waitingDialog.setSecondaryProgressDialogIntermediate(true);
                     waitingDialog.increaseProgressValue();
                 }
 

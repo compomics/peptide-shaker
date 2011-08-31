@@ -59,7 +59,7 @@ public class WaitingDialog extends javax.swing.JDialog {
      * The tab space to add when using tab.
      */
     private String tab = "        "; // tab could be used, but lenght is locale dependent
-
+ 
     /**
      * Creates a new WaitingDialog.
      *
@@ -70,6 +70,8 @@ public class WaitingDialog extends javax.swing.JDialog {
     public WaitingDialog(PeptideShakerGUI peptideShaker, boolean modal, String experimentReference) {
         super(peptideShaker, modal);
         initComponents();
+        
+        setSecondaryProgressDialogIntermediate(true);
         
         // update the layout in the layered pane
         formComponentResized(null);
@@ -105,6 +107,50 @@ public class WaitingDialog extends javax.swing.JDialog {
     public void increaseProgressValue(int amount) {
         progressBar.setValue(progressBar.getValue() + amount);
     }
+    
+    /**
+     * Set the maximum value of the secondary progress bar. And resets the value 
+     * to 0.
+     *
+     * @param maxProgressValue the max value
+     */
+    public void setMaxSecondaryProgressValue(int maxProgressValue) {
+        secondaryJProgressBar.setValue(0);
+        secondaryJProgressBar.setMaximum(maxProgressValue);
+    }
+
+    /**
+     * Increase the secondary progress bar value by one "counter".
+     */
+    public void increaseSecondaryProgressValue() {
+        secondaryJProgressBar.setValue(secondaryJProgressBar.getValue() + 1);
+    }
+
+    /**
+     * Increase the secondary progress bar value by the given amount.
+     * 
+     * @param amount the amount to increase the value by
+     */
+    public void increaseSecondaryProgressValue(int amount) {
+        secondaryJProgressBar.setValue(secondaryJProgressBar.getValue() + amount);
+    }
+    
+    /**
+     * Sets the secondary progress bar to intermediate or not.
+     * 
+     * @param intermediate if true, set to intermediate
+     */
+    public void setSecondaryProgressDialogIntermediate(boolean intermediate) {
+        
+        // this split pane trick should not be needed, but if not used the look and feel of the
+        // intermediate progress bar changes when moving back and forth between the two...
+        
+        if (intermediate) {
+            secondaryProgressBarSplitPane.setDividerLocation(secondaryProgressBarSplitPane.getWidth()); 
+        } else {
+            secondaryProgressBarSplitPane.setDividerLocation(0);   
+        }    
+    }
 
     /** This method is called from within the constructor to
      * initialize the form.
@@ -118,10 +164,12 @@ public class WaitingDialog extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         progressBar = new javax.swing.JProgressBar();
-        intermidateJProgressBar = new javax.swing.JProgressBar();
         layeredPane = new javax.swing.JLayeredPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         reportArea = new javax.swing.JTextArea();
+        secondaryProgressBarSplitPane = new javax.swing.JSplitPane();
+        secondaryJProgressBar = new javax.swing.JProgressBar();
+        tempJProgressBar = new javax.swing.JProgressBar();
         okButton = new javax.swing.JButton();
         saveReportLabel = new javax.swing.JLabel();
 
@@ -139,11 +187,8 @@ public class WaitingDialog extends javax.swing.JDialog {
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Data Import Progress"));
         jPanel2.setOpaque(false);
 
+        progressBar.setToolTipText("Total Progress");
         progressBar.setStringPainted(true);
-
-        intermidateJProgressBar.setIndeterminate(true);
-        intermidateJProgressBar.setString("");
-        intermidateJProgressBar.setStringPainted(true);
 
         reportArea.setBackground(new java.awt.Color(254, 254, 254));
         reportArea.setColumns(20);
@@ -155,6 +200,19 @@ public class WaitingDialog extends javax.swing.JDialog {
         jScrollPane1.setBounds(0, 0, 842, 490);
         layeredPane.add(jScrollPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
+        secondaryProgressBarSplitPane.setBorder(null);
+        secondaryProgressBarSplitPane.setDividerLocation(0);
+        secondaryProgressBarSplitPane.setDividerSize(0);
+
+        secondaryJProgressBar.setToolTipText("Current Process Progress");
+        secondaryJProgressBar.setStringPainted(true);
+        secondaryProgressBarSplitPane.setRightComponent(secondaryJProgressBar);
+
+        tempJProgressBar.setToolTipText("Current Process Progress");
+        tempJProgressBar.setIndeterminate(true);
+        tempJProgressBar.setString("");
+        secondaryProgressBarSplitPane.setLeftComponent(tempJProgressBar);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -164,23 +222,21 @@ public class WaitingDialog extends javax.swing.JDialog {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(layeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 842, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 643, Short.MAX_VALUE)
+                        .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(intermidateJProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(secondaryProgressBarSplitPane, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(intermidateJProgressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(secondaryProgressBarSplitPane)
+                    .addComponent(progressBar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(layeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
                 .addContainerGap())
         );
-
-        jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {intermidateJProgressBar, progressBar});
 
         okButton.setText("Cancel");
         okButton.addActionListener(new java.awt.event.ActionListener() {
@@ -337,7 +393,6 @@ public class WaitingDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_formComponentResized
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JProgressBar intermidateJProgressBar;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -346,6 +401,9 @@ public class WaitingDialog extends javax.swing.JDialog {
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JTextArea reportArea;
     private javax.swing.JLabel saveReportLabel;
+    private javax.swing.JProgressBar secondaryJProgressBar;
+    private javax.swing.JSplitPane secondaryProgressBarSplitPane;
+    private javax.swing.JProgressBar tempJProgressBar;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -359,9 +417,10 @@ public class WaitingDialog extends javax.swing.JDialog {
         progressBar.setStringPainted(true);
         this.setTitle("Importing Data - Completed");
 
-        intermidateJProgressBar.setIndeterminate(false);
-        intermidateJProgressBar.setValue(intermidateJProgressBar.getMaximum());
-        intermidateJProgressBar.setString("Import Completed");
+        secondaryProgressBarSplitPane.setDividerLocation(0);
+        secondaryJProgressBar.setIndeterminate(false);
+        secondaryJProgressBar.setValue(secondaryJProgressBar.getMaximum());
+        secondaryJProgressBar.setString("Import Completed");
 
         // change the peptide shaker icon back to the default version
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -382,9 +441,10 @@ public class WaitingDialog extends javax.swing.JDialog {
         progressBar.setValue(0);
         progressBar.setStringPainted(true);
 
-        intermidateJProgressBar.setIndeterminate(false);
-        intermidateJProgressBar.setValue(0);
-        intermidateJProgressBar.setString("Import Canceled!");
+        secondaryProgressBarSplitPane.setDividerLocation(0);
+        secondaryJProgressBar.setIndeterminate(false);
+        secondaryJProgressBar.setValue(0);
+        secondaryJProgressBar.setString("Import Canceled!");
 
         this.setTitle("Importing Data - Canceled");
 
