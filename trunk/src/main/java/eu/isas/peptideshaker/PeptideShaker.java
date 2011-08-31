@@ -156,7 +156,7 @@ public class PeptideShaker {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         if (!identification.memoryCheck()) {
-            waitingDialog.appendReport("Peptide-Shaker is encountering memory issues! The processing will be very slow. You should consider increasing the memory limit. See http://peptide-shaker.googlecode.com/ for more details.");
+            waitingDialog.appendReport("PeptideShaker is encountering memory issues! See http://peptide-shaker.googlecode.com for help.");
         }
         try {
             waitingDialog.appendReport("Computing assumptions probabilities.");
