@@ -5,7 +5,7 @@ import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import eu.isas.peptideshaker.gui.ModificationDialog;
-import eu.isas.peptideshaker.preferences.SearchParameters;
+import eu.isas.peptideshaker.gui.WaitingDialog;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,22 +46,42 @@ public class PeptideSpecificMap implements Serializable {
     }
 
     /**
-     * estimate the posterior error probabilities
+     * Estimate the posterior error probabilities.
+     * 
+     * @param waitingDialog a reference to the waiting dialog
      */
-    public void estimateProbabilities() {
+    public void estimateProbabilities(WaitingDialog waitingDialog) {
+        
+        int max = peptideMaps.keySet().size();
+        
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+            waitingDialog.setMaxSecondaryProgressValue(max);
+        }
+        
+        
         for (String modifications : peptideMaps.keySet()) {
+            
+            if (waitingDialog != null) {
+                waitingDialog.increaseSecondaryProgressValue();
+            }
+            
             if (!groupedMaps.contains(modifications)) {
                 peptideMaps.get(modifications).estimateProbabilities();
             }
+        }
+        
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(true);
         }
     }
 
     /**
      * Returns the posterior error probability of a peptide match at the given score
      *
-     * @param peptideMatch the peptide match
-     * @param score        the score of the match
-     * @return the posterior error probability
+     * @param peptideMatchKey   the peptide match
+     * @param score             the score of the match
+     * @return                  the posterior error probability
      */
     public double getProbability(String peptideMatchKey, double score) {
         peptideMatchKey = getCorrectedKey(peptideMatchKey);
@@ -118,8 +138,8 @@ public class PeptideSpecificMap implements Serializable {
     /**
      * This method returns the indexing key of a peptide match after curation
      *
-     * @param peptideMatch  the considered peptide match
-     * @return the corresponding key
+     * @param specificKey   the considered peptide match
+     * @return              the corresponding key
      */
     public String getCorrectedKey(String specificKey) {
         if (groupedMaps.contains(specificKey)) {

@@ -2,9 +2,9 @@ package eu.isas.peptideshaker.scoring;
 
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
-import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import eu.isas.peptideshaker.gui.WaitingDialog;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,20 +39,32 @@ public class PsmSpecificMap implements Serializable {
 
     /**
      * estimate the posterior error probabilities of the psms
+     * 
+     * @param waitingDialog a reference to the waiting dialog
      */
-    public void estimateProbabilities() {
+    public void estimateProbabilities(WaitingDialog waitingDialog) {
+        
+        int max = psmsMaps.keySet().size();
+        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+        waitingDialog.setMaxSecondaryProgressValue(max);
+        
         for (int charge : psmsMaps.keySet()) {
+            
+            waitingDialog.increaseSecondaryProgressValue();
+            
             if (!grouping.keySet().contains(charge)) {
                 psmsMaps.get(charge).estimateProbabilities();
             }
         }
+        
+        waitingDialog.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
      * Returns the probability of the given spectrum match at the given score
-     * @param spectrumMatch the spectrum match of interest
+     * @param specificKey   the spectrum match of interest
      * @param score         the corresponding score
-     * @return the probability of the given spectrum match at the given score
+     * @return              the probability of the given spectrum match at the given score
      */
     public double getProbability(int specificKey, double score) {
         specificKey = getCorrectedKey(specificKey);
@@ -61,9 +73,9 @@ public class PsmSpecificMap implements Serializable {
 
     /**
      * Returns the probability of the given spectrum match at the given score
-     * @param spectrumMatch the spectrum match of interest
+     * @param specificKey   the spectrum match of interest
      * @param score         the corresponding score
-     * @return the probability of the given spectrum match at the given score
+     * @return              the probability of the given spectrum match at the given score
      */
     public double getProbability(String specificKey, double score) {
         return getProbability(new Integer(specificKey), score);

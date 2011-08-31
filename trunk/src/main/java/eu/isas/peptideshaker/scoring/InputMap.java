@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring;
 
+import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,11 +40,21 @@ public class InputMap {
 
     /**
      * Estimates the posterior error probability for each search engine
+     * 
+     * @param waitingDialog a reference to the waiting dialog
      */
-    public void estimateProbabilities() {
+    public void estimateProbabilities(WaitingDialog waitingDialog) {
+        
+        int max = inputMap.values().size();
+        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+        waitingDialog.setMaxSecondaryProgressValue(max);
+        
         for (TargetDecoyMap hitmap : inputMap.values()) {
+            waitingDialog.increaseSecondaryProgressValue();
             hitmap.estimateProbabilities();
         }
+        
+        waitingDialog.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
