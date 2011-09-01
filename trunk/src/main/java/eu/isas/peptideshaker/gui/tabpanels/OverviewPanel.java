@@ -3244,7 +3244,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                         MSnSpectrum tempSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
                         if (tempSpectrum != null) {
                             PSParameter probabilities = new PSParameter();
-                            peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, probabilities);
+                            probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, probabilities);
 
                             ((DefaultTableModel) psmTable.getModel()).addRow(new Object[]{
                                         index,

@@ -705,7 +705,7 @@ public class PeptideShaker {
         attachDeltaScore(spectrumMatch);
         attachAScore(spectrumMatch);
     }
-    
+
     /**
      * Scores the PTM locations using the delta score
      * @param spectrumMatch the spectrum match of interest
@@ -739,16 +739,27 @@ public class PeptideShaker {
                     modificationProfiles.get(modificationName).add(modificationMatch.getModificationSite());
                 }
             }
-            if (modifications.size() > 0) {
-                for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
-                    if (peptideAssumption.getRank() > 1 && peptideAssumption.getPeptide().getSequence().equals(mainSequence)) {
-                        psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
-                        if (psParameter.getSearchEngineProbability() < p2) {
-                            p2 = psParameter.getSearchEngineProbability();
+            if (!modifications.isEmpty()) {
+                for (String mod : modifications) {
+                    for (PeptideAssumption peptideAssumption : spectrumMatch.getAllAssumptions()) {
+                        if (peptideAssumption.getRank() > 1
+                                && peptideAssumption.getPeptide().getSequence().equals(mainSequence)) {
+                            boolean newLocation = false;
+                            for (ModificationMatch modMatch : peptideAssumption.getPeptide().getModificationMatches()) {
+                                if (modMatch.getTheoreticPtm().getName().equals(mod)
+                                        && !modificationProfiles.get(mod).contains(modMatch.getModificationSite())) {
+                                    newLocation = true;
+                                    break;
+                                }
+                            }
+                            if (newLocation) {
+                                psParameter = (PSParameter) peptideAssumption.getUrParam(psParameter);
+                                if (psParameter.getSearchEngineProbability() < p2) {
+                                    p2 = psParameter.getSearchEngineProbability();
+                                }
+                            }
                         }
                     }
-                }
-                for (String mod : modifications) {
                     ptmScoring = new PtmScoring(mod);
                     ptmScoring.addDeltaScore(modificationProfiles.get(mod), (p2 - p1) * 100);
                     ptmScores.addPtmScoring(mod, ptmScoring);
@@ -758,7 +769,7 @@ public class PeptideShaker {
             }
         }
     }
-    
+
     /**
      * Scores the PTM locations using the delta score
      * @param spectrumMatch the spectrum match of interest
