@@ -2243,7 +2243,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
                                     currentSpectrum, currentPeptide,
-                                    currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                                    currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getMzTolerance());
 
                             // add the spectrum annotations
@@ -2280,7 +2280,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
                                     currentSpectrum, currentPeptide,
-                                    currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                                    currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getMzTolerance());
 
                             // add the spectrum annotations
@@ -2317,7 +2317,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
                                     currentSpectrum, currentPeptide,
-                                    currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                                    currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getMzTolerance());
 
                             // add the spectrum annotations

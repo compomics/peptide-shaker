@@ -2008,7 +2008,7 @@ private void ptmJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:even
                             annotationPreferences.getNeutralLosses(),
                             annotationPreferences.getValidatedCharges(),
                             currentSpectrum, currentPeptide,
-                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
                             annotationPreferences.getMzTolerance());
 
                     // add the spectrum annotations
@@ -2071,7 +2071,7 @@ private void ptmJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:even
                             annotationPreferences.getNeutralLosses(),
                             annotationPreferences.getValidatedCharges(),
                             currentSpectrum, currentPeptide,
-                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
                             annotationPreferences.getMzTolerance());
 
                     // add the spectrum annotations
