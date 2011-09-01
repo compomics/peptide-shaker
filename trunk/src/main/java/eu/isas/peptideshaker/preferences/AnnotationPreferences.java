@@ -16,6 +16,11 @@ import java.util.HashMap;
 public class AnnotationPreferences implements Serializable {
 
     /**
+     * The intensity limit used when only the most intense peaks are to be 
+     * annotated.
+     */
+    private double intensityLimit = 0.75;
+    /**
      * boolean indicating whether only most intense peaks should be annotated
      */
     private boolean mostIntensePeaks;
@@ -229,5 +234,23 @@ public class AnnotationPreferences implements Serializable {
      */
     public int getCurrentPrecursorCharge() {
         return currentPrecursorCharge;
+    }
+
+    /**
+     * Returns the intensity limit.
+     * 
+     * @return the intensityLimit
+     */
+    public double getAnnotationIntensityLimit() {
+        return intensityLimit;
+    }
+
+    /**
+     * Sets the intensity limit.
+     * 
+     * @param intensityLimit the intensityLimit to set
+     */
+    public void setAnnotationIntensityLimit(double intensityLimit) {
+        this.intensityLimit = intensityLimit;
     }
 }

@@ -704,16 +704,24 @@
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
+                              <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="spectrumJTabbedPane" pref="475" max="32767" attributes="0"/>
+                                  <Component id="spectrumJTabbedPane" pref="453" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="intensitySlider" min="-2" pref="26" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="spectrumJTabbedPane" alignment="1" pref="323" max="32767" attributes="0"/>
+                              <Group type="102" attributes="0">
+                                  <Component id="intensitySlider" pref="312" max="32767" attributes="0"/>
+                                  <EmptySpace min="11" pref="11" max="11" attributes="0"/>
+                              </Group>
+                              <Group type="102" attributes="0">
+                                  <EmptySpace min="11" pref="11" max="11" attributes="0"/>
+                                  <Component id="spectrumJTabbedPane" pref="312" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
                         </DimensionLayout>
                       </Layout>
@@ -746,8 +754,8 @@
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="fragmentIonsJScrollPane" alignment="0" pref="450" max="32767" attributes="0"/>
-                                              <Component id="ionTableJToolBar" alignment="0" pref="450" max="32767" attributes="0"/>
+                                              <Component id="fragmentIonsJScrollPane" alignment="0" pref="428" max="32767" attributes="0"/>
+                                              <Component id="ionTableJToolBar" alignment="0" pref="428" max="32767" attributes="0"/>
                                           </Group>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
@@ -757,7 +765,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="fragmentIonsJScrollPane" pref="253" max="32767" attributes="0"/>
+                                          <Component id="fragmentIonsJScrollPane" pref="242" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="ionTableJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -1066,23 +1074,23 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="bubblePlotJToolBar" pref="450" max="32767" attributes="0"/>
+                                          <Component id="bubblePlotJToolBar" pref="428" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                          <Component id="bubbleJPanel" alignment="0" pref="470" max="32767" attributes="0"/>
+                                          <Component id="bubbleJPanel" alignment="0" pref="448" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                                 </DimensionLayout>
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace pref="270" max="32767" attributes="0"/>
+                                          <EmptySpace pref="259" max="32767" attributes="0"/>
                                           <Component id="bubblePlotJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
-                                              <Component id="bubbleJPanel" pref="262" max="32767" attributes="0"/>
+                                              <Component id="bubbleJPanel" pref="251" max="32767" attributes="0"/>
                                               <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -1368,16 +1376,16 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="spectrumJToolBar" pref="450" max="32767" attributes="0"/>
+                                          <Component id="spectrumJToolBar" pref="428" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="spectrumSplitPane" alignment="0" pref="470" max="32767" attributes="0"/>
+                                      <Component id="spectrumSplitPane" alignment="0" pref="448" max="32767" attributes="0"/>
                                   </Group>
                                 </DimensionLayout>
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="spectrumSplitPane" pref="270" max="32767" attributes="0"/>
+                                          <Component id="spectrumSplitPane" pref="259" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                                           <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -1675,6 +1683,19 @@
                             </Container>
                           </SubComponents>
                         </Container>
+                        <Component class="javax.swing.JSlider" name="intensitySlider">
+                          <Properties>
+                            <Property name="maximum" type="int" value="99"/>
+                            <Property name="orientation" type="int" value="1"/>
+                            <Property name="paintTicks" type="boolean" value="true"/>
+                            <Property name="toolTipText" type="java.lang.String" value="Annotation Intensity Level"/>
+                            <Property name="value" type="int" value="75"/>
+                            <Property name="opaque" type="boolean" value="false"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="intensitySliderStateChanged"/>
+                          </Events>
+                        </Component>
                       </SubComponents>
                     </Container>
                   </SubComponents>

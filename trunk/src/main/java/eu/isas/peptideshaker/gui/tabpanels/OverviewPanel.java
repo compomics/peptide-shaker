@@ -161,6 +161,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         this.displayCoverage = false;
 
         initComponents();
+        
+        intensitySlider.setValue((int) (peptideShakerGUI.getAnnotationPreferences().getAnnotationIntensityLimit()*100));
 
         coverageTableScrollPane.setBorder(null);
 
@@ -475,6 +477,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumSplitPane = new javax.swing.JSplitPane();
         sequenceFragmentIonPlotsJPanel = new javax.swing.JPanel();
         spectrumPanel = new javax.swing.JPanel();
+        intensitySlider = new javax.swing.JSlider();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1003,15 +1006,15 @@ public class OverviewPanel extends javax.swing.JPanel {
             .addGroup(fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
-                    .addComponent(ionTableJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE))
+                    .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+                    .addComponent(ionTableJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
                 .addContainerGap())
         );
         fragmentIonJPanelLayout.setVerticalGroup(
             fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ionTableJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1237,19 +1240,19 @@ public class OverviewPanel extends javax.swing.JPanel {
             bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(bubblePlotJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
+                .addComponent(bubblePlotJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE))
+                .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE))
         );
         bubblePlotTabJPanelLayout.setVerticalGroup(
             bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
-                .addContainerGap(270, Short.MAX_VALUE)
+                .addContainerGap(259, Short.MAX_VALUE)
                 .addComponent(bubblePlotJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
-                    .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 262, Short.MAX_VALUE)
+                    .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
                     .addGap(33, 33, 33)))
         );
 
@@ -1483,14 +1486,14 @@ public class OverviewPanel extends javax.swing.JPanel {
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 450, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 470, Short.MAX_VALUE)
+            .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
         );
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1499,18 +1502,36 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         spectrumJTabbedPane.setSelectedIndex(2);
 
+        intensitySlider.setMaximum(99);
+        intensitySlider.setOrientation(javax.swing.JSlider.VERTICAL);
+        intensitySlider.setPaintTicks(true);
+        intensitySlider.setToolTipText("Annotation Intensity Level");
+        intensitySlider.setValue(75);
+        intensitySlider.setOpaque(false);
+        intensitySlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                intensitySliderStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout spectrumMainPanelLayout = new javax.swing.GroupLayout(spectrumMainPanel);
         spectrumMainPanel.setLayout(spectrumMainPanelLayout);
         spectrumMainPanelLayout.setHorizontalGroup(
             spectrumMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(spectrumMainPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumMainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(intensitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         spectrumMainPanelLayout.setVerticalGroup(
             spectrumMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 323, Short.MAX_VALUE)
+            .addGroup(spectrumMainPanelLayout.createSequentialGroup()
+                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
+                .addGap(11, 11, 11))
+            .addGroup(spectrumMainPanelLayout.createSequentialGroup()
+                .addGap(11, 11, 11)
+                .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE))
         );
 
         peptidesPsmSpectrumFragmentIonsJSplitPane.setRightComponent(spectrumMainPanel);
@@ -2374,6 +2395,13 @@ public class OverviewPanel extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_coverageTableMouseMoved
+
+private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
+    peptideShakerGUI.getAnnotationPreferences().setAnnotationIntensityLimit(((Integer) intensitySlider.getValue()) / 100.0);
+    peptideShakerGUI.updateAnnotations();
+    peptideShakerGUI.setDataSaved(false);
+}//GEN-LAST:event_intensitySliderStateChanged
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton aIonBubblePlotToggleButton;
     private javax.swing.JToggleButton aIonTableToggleButton;
@@ -2399,6 +2427,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     private javax.swing.JToggleButton h2oBubblePlotToggleButton;
     private javax.swing.JToggleButton h2oTableToggleButton;
     private javax.swing.JToggleButton h2oToggleButton;
+    private javax.swing.JSlider intensitySlider;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JButton ionTableHelpJButton;
     private javax.swing.JToolBar ionTableJToolBar;
@@ -2746,7 +2775,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                                     annotationPreferences.getValidatedCharges(),
                                     currentSpectrum,
                                     selectedPeptideMatch.getTheoreticPeptide(),
-                                    currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                                    currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getMzTolerance());
                             allAnnotations.add(annotations);
                             allSpectra.add(currentSpectrum);
@@ -2959,7 +2988,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
                                     currentSpectrum, currentPeptide,
-                                    currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                                    currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getMzTolerance());
                             spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                             spectrum.rescale(lowerMzZoomRange, upperMzZoomRange);
@@ -2997,6 +3026,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                             sequenceFragmentIonPlotsJPanel.add(new IntensityHistogram(
                                     annotations, annotationPreferences.getIonTypes(), currentSpectrum,
                                     peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks(),
+                                    peptideShakerGUI.getAnnotationPreferences().getAnnotationIntensityLimit(),
                                     annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
                                     annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4))));
 
@@ -3727,7 +3757,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                             annotationPreferences.getNeutralLosses(),
                             annotationPreferences.getValidatedCharges(),
                             currentSpectrum, currentPeptide,
-                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks()),
+                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
                             annotationPreferences.getMzTolerance());
                     allAnnotations.add(annotations);
                 }
