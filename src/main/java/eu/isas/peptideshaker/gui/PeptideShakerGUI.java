@@ -5,6 +5,7 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
+import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
@@ -17,7 +18,6 @@ import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -65,6 +65,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JFileChooser;
+import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -408,6 +409,45 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void initComponents() {
 
         modelButtonGroup = new javax.swing.ButtonGroup();
+        annotationMenuBar = new javax.swing.JMenuBar();
+        splitterMenu5 = new javax.swing.JMenu();
+        ionsMenu = new javax.swing.JMenu();
+        aIonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        bIonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        cIonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        jSeparator6 = new javax.swing.JPopupMenu.Separator();
+        xIonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        yIonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        zIonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        splitterMenu = new javax.swing.JMenu();
+        lossMenu = new javax.swing.JMenu();
+        h2oIonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        nh3IonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        h3po4IonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        hpo3IonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        ch4osIonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        jSeparator7 = new javax.swing.JPopupMenu.Separator();
+        adaptJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        splitterMenu1 = new javax.swing.JMenu();
+        otherMenu = new javax.swing.JMenu();
+        precursorCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        immoniumCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        splitterMenu2 = new javax.swing.JMenu();
+        chargeMenu = new javax.swing.JMenu();
+        singleChargeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        doubleChargeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        moreThanTwoChargesCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        splitterMenu3 = new javax.swing.JMenu();
+        settingsMenu = new javax.swing.JMenu();
+        allCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        barsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        intensityIonTableRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        mzIonTableRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        splitterMenu4 = new javax.swing.JMenu();
+        helpJMenu = new javax.swing.JMenu();
+        helpMenuItem = new javax.swing.JMenuItem();
+        splitterMenu6 = new javax.swing.JMenu();
+        ionTableButtonGroup = new javax.swing.ButtonGroup();
         gradientPanel = new javax.swing.JPanel();
         allTabsJTabbedPane = new javax.swing.JTabbedPane();
         overviewJPanel = new javax.swing.JPanel();
@@ -461,6 +501,245 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
         aboutJMenuItem = new javax.swing.JMenuItem();
+
+        annotationMenuBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        annotationMenuBar.setOpaque(false);
+
+        splitterMenu5.setText("|");
+        splitterMenu5.setEnabled(false);
+        annotationMenuBar.add(splitterMenu5);
+
+        ionsMenu.setText("Ions");
+
+        aIonCheckBoxMenuItem.setText("a");
+        aIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aIonCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        ionsMenu.add(aIonCheckBoxMenuItem);
+
+        bIonCheckBoxMenuItem.setText("b");
+        bIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bIonCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        ionsMenu.add(bIonCheckBoxMenuItem);
+
+        cIonCheckBoxMenuItem.setText("c");
+        cIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cIonCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        ionsMenu.add(cIonCheckBoxMenuItem);
+        ionsMenu.add(jSeparator6);
+
+        xIonCheckBoxMenuItem.setText("x");
+        xIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                xIonCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        ionsMenu.add(xIonCheckBoxMenuItem);
+
+        yIonCheckBoxMenuItem.setText("y");
+        yIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                yIonCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        ionsMenu.add(yIonCheckBoxMenuItem);
+
+        zIonCheckBoxMenuItem.setText("z");
+        zIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                zIonCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        ionsMenu.add(zIonCheckBoxMenuItem);
+
+        annotationMenuBar.add(ionsMenu);
+
+        splitterMenu.setText("|");
+        splitterMenu.setEnabled(false);
+        annotationMenuBar.add(splitterMenu);
+
+        lossMenu.setText("Loss");
+
+        h2oIonCheckBoxMenuItem.setText("H2O");
+        h2oIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                h2oIonCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        lossMenu.add(h2oIonCheckBoxMenuItem);
+
+        nh3IonCheckBoxMenuItem.setText("NH3");
+        nh3IonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nh3IonCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        lossMenu.add(nh3IonCheckBoxMenuItem);
+
+        h3po4IonCheckBoxMenuItem.setText("H3PO4");
+        h3po4IonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                h3po4IonCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        lossMenu.add(h3po4IonCheckBoxMenuItem);
+
+        hpo3IonCheckBoxMenuItem.setText("HPO3");
+        hpo3IonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                hpo3IonCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        lossMenu.add(hpo3IonCheckBoxMenuItem);
+
+        ch4osIonCheckBoxMenuItem.setText("CH4OS");
+        ch4osIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ch4osIonCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        lossMenu.add(ch4osIonCheckBoxMenuItem);
+        lossMenu.add(jSeparator7);
+
+        adaptJCheckBoxMenuItem.setText("Adapt");
+        adaptJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                adaptJCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        lossMenu.add(adaptJCheckBoxMenuItem);
+
+        annotationMenuBar.add(lossMenu);
+
+        splitterMenu1.setText("|");
+        splitterMenu1.setEnabled(false);
+        annotationMenuBar.add(splitterMenu1);
+
+        otherMenu.setText("Other");
+
+        precursorCheckBoxMenuItem.setText("Precursor");
+        precursorCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                precursorCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        otherMenu.add(precursorCheckBoxMenuItem);
+
+        immoniumCheckBoxMenuItem.setText("Immonium Ion");
+        immoniumCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                immoniumCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        otherMenu.add(immoniumCheckBoxMenuItem);
+
+        annotationMenuBar.add(otherMenu);
+
+        splitterMenu2.setText("|");
+        splitterMenu2.setEnabled(false);
+        annotationMenuBar.add(splitterMenu2);
+
+        chargeMenu.setText("Charge");
+
+        singleChargeCheckBoxMenuItem.setText("+");
+        singleChargeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                singleChargeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        chargeMenu.add(singleChargeCheckBoxMenuItem);
+
+        doubleChargeCheckBoxMenuItem.setText("++");
+        doubleChargeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                doubleChargeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        chargeMenu.add(doubleChargeCheckBoxMenuItem);
+
+        moreThanTwoChargesCheckBoxMenuItem.setText(">2");
+        moreThanTwoChargesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                moreThanTwoChargesCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        chargeMenu.add(moreThanTwoChargesCheckBoxMenuItem);
+
+        annotationMenuBar.add(chargeMenu);
+
+        splitterMenu3.setText("|");
+        splitterMenu3.setEnabled(false);
+        annotationMenuBar.add(splitterMenu3);
+
+        settingsMenu.setText("Settings");
+
+        allCheckBoxMenuItem.setText("Show All Ions");
+        allCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                allCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(allCheckBoxMenuItem);
+
+        barsCheckBoxMenuItem.setText("Show Bars");
+        barsCheckBoxMenuItem.setToolTipText("Add bars highlighting the fragment ion types");
+        barsCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                barsCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(barsCheckBoxMenuItem);
+
+        ionTableButtonGroup.add(intensityIonTableRadioButtonMenuItem);
+        intensityIonTableRadioButtonMenuItem.setSelected(true);
+        intensityIonTableRadioButtonMenuItem.setText("Intensity Ion Table");
+        intensityIonTableRadioButtonMenuItem.setToolTipText("Bar charts with peak intensities");
+        intensityIonTableRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                intensityIonTableRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(intensityIonTableRadioButtonMenuItem);
+
+        ionTableButtonGroup.add(mzIonTableRadioButtonMenuItem);
+        mzIonTableRadioButtonMenuItem.setText("m/z Ion Table");
+        mzIonTableRadioButtonMenuItem.setToolTipText("Traditional ion table with m/z values");
+        mzIonTableRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mzIonTableRadioButtonMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(mzIonTableRadioButtonMenuItem);
+
+        annotationMenuBar.add(settingsMenu);
+
+        splitterMenu4.setText("|");
+        splitterMenu4.setEnabled(false);
+        annotationMenuBar.add(splitterMenu4);
+
+        helpJMenu.setText("Help");
+
+        helpMenuItem.setText("Help");
+        helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpMenuItemActionPerformed(evt);
+            }
+        });
+        helpJMenu.add(helpMenuItem);
+
+        annotationMenuBar.add(helpJMenu);
+
+        splitterMenu6.setText("|");
+        splitterMenu6.setEnabled(false);
+        annotationMenuBar.add(splitterMenu6);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("PeptideShaker");
@@ -875,8 +1154,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void newJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newJMenuItemActionPerformed
-
-        if (!dataSaved) {
+        if (!dataSaved && experiment != null) {
             int value = JOptionPane.showConfirmDialog(this,
                     "Do you want to save the changes to " + experiment.getReference() + "?",
                     "Unsaved Changes",
@@ -1396,6 +1674,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 }
             }
         }
+        
+        // move the spectrum annotation menu bar
+        if (selectedIndex == OVER_VIEW_TAB_INDEX) {
+            overviewPanel.showSpectrumAnnotationMenu();
+        } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
+            spectrumIdentificationPanel.showSpectrumAnnotationMenu();
+        } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
+            ptmPanel.showSpectrumAnnotationMenu();
+        }
 
         // disable the protein filter option if a tab other than the overview tab is selected
         proteinFilterJMenuItem.setEnabled(selectedIndex == 0);
@@ -1513,7 +1800,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         boolean openProject = true;
 
-        if (!dataSaved) {
+        if (!dataSaved && experiment != null) {
             int value = JOptionPane.showConfirmDialog(this,
                     "Do you want to save the changes to " + experiment.getReference() + "?",
                     "Unsaved Changes",
@@ -1619,6 +1906,120 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void followUpAnalysisMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followUpAnalysisMenuActionPerformed
         new FollowupPreferencesDialog(this);
     }//GEN-LAST:event_followUpAnalysisMenuActionPerformed
+
+private void aIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_aIonCheckBoxMenuItemActionPerformed
+
+private void bIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_bIonCheckBoxMenuItemActionPerformed
+
+private void cIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_cIonCheckBoxMenuItemActionPerformed
+
+private void xIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_xIonCheckBoxMenuItemActionPerformed
+
+private void yIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_yIonCheckBoxMenuItemActionPerformed
+
+private void zIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_zIonCheckBoxMenuItemActionPerformed
+
+private void h2oIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_h2oIonCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_h2oIonCheckBoxMenuItemActionPerformed
+
+private void nh3IonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nh3IonCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_nh3IonCheckBoxMenuItemActionPerformed
+
+private void h3po4IonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_h3po4IonCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_h3po4IonCheckBoxMenuItemActionPerformed
+
+private void hpo3IonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hpo3IonCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_hpo3IonCheckBoxMenuItemActionPerformed
+
+private void ch4osIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ch4osIonCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_ch4osIonCheckBoxMenuItemActionPerformed
+
+private void adaptJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adaptJCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_adaptJCheckBoxMenuItemActionPerformed
+
+private void precursorCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursorCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_precursorCheckBoxMenuItemActionPerformed
+
+private void immoniumCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_immoniumCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_immoniumCheckBoxMenuItemActionPerformed
+
+private void singleChargeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_singleChargeCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_singleChargeCheckBoxMenuItemActionPerformed
+
+private void doubleChargeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doubleChargeCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_doubleChargeCheckBoxMenuItemActionPerformed
+
+private void moreThanTwoChargesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moreThanTwoChargesCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_moreThanTwoChargesCheckBoxMenuItemActionPerformed
+
+private void allCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_allCheckBoxMenuItemActionPerformed
+
+private void barsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barsCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_barsCheckBoxMenuItemActionPerformed
+
+private void intensityIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_intensityIonTableRadioButtonMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_intensityIonTableRadioButtonMenuItemActionPerformed
+
+private void mzIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mzIonTableRadioButtonMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_mzIonTableRadioButtonMenuItemActionPerformed
+
+/**
+ * Opens the wanted Help window.
+ * 
+ * @param evt 
+ */
+private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuItemActionPerformed
+    
+    int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+    
+    setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+    
+    if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+        int spectrumTabIndex = overviewPanel.getSelectedSpectrumTabIndex();
+    
+        if (spectrumTabIndex == 0) {
+            new HelpWindow(this, getClass().getResource("/helpFiles/IonTable.html"));
+        } else if (spectrumTabIndex == 1) {
+            new HelpWindow(this, getClass().getResource("/helpFiles/BubblePlot.html"));
+        } else if (spectrumTabIndex == 2) {
+            new HelpWindow(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
+        }
+    } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+        new HelpWindow(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
+    } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+        new HelpWindow(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
+    }
+    
+    setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR)); 
+}//GEN-LAST:event_helpMenuItemActionPerformed
 
     /**
      * Returns if the 3D model is to be spinning or not.
@@ -1757,13 +2158,23 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JCheckBoxMenuItem aIonCheckBoxMenuItem;
     private javax.swing.JMenuItem aboutJMenuItem;
+    private javax.swing.JCheckBoxMenuItem adaptJCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem allCheckBoxMenuItem;
     private javax.swing.JTabbedPane allTabsJTabbedPane;
+    private javax.swing.JMenuBar annotationMenuBar;
     private javax.swing.JMenuItem annotationPreferencesMenu;
     private javax.swing.JPanel annotationsJPanel;
+    private javax.swing.JCheckBoxMenuItem bIonCheckBoxMenuItem;
     private javax.swing.JRadioButtonMenuItem backboneJRadioButtonMenuItem;
+    private javax.swing.JCheckBoxMenuItem barsCheckBoxMenuItem;
     private javax.swing.JMenuItem bubblePlotJMenuItem;
     private javax.swing.JMenuItem bubbleScaleJMenuItem;
+    private javax.swing.JCheckBoxMenuItem cIonCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem ch4osIonCheckBoxMenuItem;
+    private javax.swing.JMenu chargeMenu;
+    private javax.swing.JCheckBoxMenuItem doubleChargeCheckBoxMenuItem;
     private javax.swing.JMenu editMenu;
     private javax.swing.JCheckBoxMenuItem errorPlotTypeCheckBoxMenuItem;
     private javax.swing.JMenuItem exitJMenuItem;
@@ -1773,23 +2184,40 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem followUpAnalysisMenu;
     private javax.swing.JPanel gradientPanel;
     private javax.swing.JMenu graphicsJMenu;
+    private javax.swing.JCheckBoxMenuItem h2oIonCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem h3po4IonCheckBoxMenuItem;
+    private javax.swing.JMenu helpJMenu;
     private javax.swing.JMenuItem helpJMenuItem;
     private javax.swing.JMenu helpMenu;
+    private javax.swing.JMenuItem helpMenuItem;
+    private javax.swing.JCheckBoxMenuItem hpo3IonCheckBoxMenuItem;
     private javax.swing.JMenuItem identificationFeaturesMenu;
+    private javax.swing.JCheckBoxMenuItem immoniumCheckBoxMenuItem;
+    private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
+    private javax.swing.ButtonGroup ionTableButtonGroup;
+    private javax.swing.JMenu ionsMenu;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
+    private javax.swing.JPopupMenu.Separator jSeparator6;
+    private javax.swing.JPopupMenu.Separator jSeparator7;
+    private javax.swing.JMenu lossMenu;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.ButtonGroup modelButtonGroup;
     private javax.swing.JCheckBoxMenuItem modelSpinJCheckBoxMenuItem;
     private javax.swing.JMenu modelTypeMenu;
+    private javax.swing.JCheckBoxMenuItem moreThanTwoChargesCheckBoxMenuItem;
+    private javax.swing.JRadioButtonMenuItem mzIonTableRadioButtonMenuItem;
     private javax.swing.JMenuItem newJMenuItem;
+    private javax.swing.JCheckBoxMenuItem nh3IonCheckBoxMenuItem;
     private javax.swing.JMenuItem openJMenuItem;
+    private javax.swing.JMenu otherMenu;
     private javax.swing.JMenu overViewTabViewMenu;
     private javax.swing.JPanel overviewJPanel;
     private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem precursorCheckBoxMenuItem;
     private javax.swing.JMenuItem proteinFilterJMenuItem;
     private javax.swing.JPanel proteinStructureJPanel;
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
@@ -1801,6 +2229,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem searchParametersMenu;
     private javax.swing.JCheckBoxMenuItem separatorsCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
+    private javax.swing.JMenu settingsMenu;
+    private javax.swing.JCheckBoxMenuItem singleChargeCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
     private javax.swing.JMenuItem spectrumCountingMenuItem;
     private javax.swing.JCheckBoxMenuItem spectrumJCheckBoxMenuItem;
@@ -1808,9 +2238,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private javax.swing.JMenuItem spectrumModificationsJMenuItem;
     private javax.swing.JMenuItem spectrumOverviewJMenuItem;
     private javax.swing.JMenuItem spectrumSpectrumIdJMenuItem;
+    private javax.swing.JMenu splitterMenu;
+    private javax.swing.JMenu splitterMenu1;
+    private javax.swing.JMenu splitterMenu2;
+    private javax.swing.JMenu splitterMenu3;
+    private javax.swing.JMenu splitterMenu4;
+    private javax.swing.JMenu splitterMenu5;
+    private javax.swing.JMenu splitterMenu6;
     private javax.swing.JPanel statsJPanel;
     private javax.swing.JMenu structureTabViewMenu;
     private javax.swing.JMenu viewJMenu;
+    private javax.swing.JCheckBoxMenuItem xIonCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem yIonCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem zIonCheckBoxMenuItem;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -1982,7 +2422,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * Updates the annotations on all panels
      */
-    public void updateAnnotations() {
+    public void updateAllAnnotations() {
         overviewPanel.updateSpectrum();
         ptmPanel.updateSpectra();
         spectrumIdentificationPanel.updateSpectrum();
@@ -2413,8 +2853,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * HTML and a href tags, where the main use is to include it in the 
      * protein tables.
      * 
-     * @param protein   the protein to get the database link for
-     * @return          the transformed accession number
+     * @param proteinAccession   the protein to get the database link for
+     * @return                   the transformed accession number
      */
     public String addDatabaseLink(String proteinAccession) {
 
@@ -3021,5 +3461,181 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 System.exit(0);
             }
         }.start();
+    }
+    
+    
+    /**
+     * Update the annotation menu bar with the current annotation preferences.
+     */
+    public void updateAnnotationMenus() {
+
+        aIonCheckBoxMenuItem.setSelected(false);
+        bIonCheckBoxMenuItem.setSelected(false);
+        cIonCheckBoxMenuItem.setSelected(false);
+        xIonCheckBoxMenuItem.setSelected(false);
+        yIonCheckBoxMenuItem.setSelected(false);
+        zIonCheckBoxMenuItem.setSelected(false);
+        precursorCheckBoxMenuItem.setSelected(false);
+        immoniumCheckBoxMenuItem.setSelected(false);
+
+        for (PeptideFragmentIonType ionType : annotationPreferences.getIonTypes()) {
+            if (ionType == PeptideFragmentIonType.A_ION) {
+                aIonCheckBoxMenuItem.setSelected(true);
+            } else if (ionType == PeptideFragmentIonType.B_ION) {
+                bIonCheckBoxMenuItem.setSelected(true);
+            } else if (ionType == PeptideFragmentIonType.C_ION) {
+                cIonCheckBoxMenuItem.setSelected(true);
+            } else if (ionType == PeptideFragmentIonType.X_ION) {
+                xIonCheckBoxMenuItem.setSelected(true);
+            } else if (ionType == PeptideFragmentIonType.Y_ION) {
+                yIonCheckBoxMenuItem.setSelected(true);
+            } else if (ionType == PeptideFragmentIonType.Z_ION) {
+                zIonCheckBoxMenuItem.setSelected(true);
+            } else if (ionType == PeptideFragmentIonType.PRECURSOR_ION) {
+                precursorCheckBoxMenuItem.setSelected(true);
+            } else if (ionType == PeptideFragmentIonType.IMMONIUM) {
+                immoniumCheckBoxMenuItem.setSelected(true);
+            }
+        }
+
+        h2oIonCheckBoxMenuItem.setSelected(false);
+        nh3IonCheckBoxMenuItem.setSelected(false);
+        hpo3IonCheckBoxMenuItem.setSelected(false);
+        h3po4IonCheckBoxMenuItem.setSelected(false);
+        ch4osIonCheckBoxMenuItem.setSelected(false);
+
+        for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses().keySet()) {
+            if (neutralLoss.isSameAs(NeutralLoss.H2O)) {
+                h2oIonCheckBoxMenuItem.setSelected(true);
+            } else if (neutralLoss.isSameAs(NeutralLoss.NH3)) {
+                nh3IonCheckBoxMenuItem.setSelected(true);
+            } else if (neutralLoss.isSameAs(NeutralLoss.CH4OS)) {
+                ch4osIonCheckBoxMenuItem.setSelected(true);
+            } else if (neutralLoss.isSameAs(NeutralLoss.H3PO4)) {
+                h3po4IonCheckBoxMenuItem.setSelected(true);
+            } else if (neutralLoss.isSameAs(NeutralLoss.HPO3)) {
+                hpo3IonCheckBoxMenuItem.setSelected(true);
+            }
+        }
+
+        adaptJCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
+
+        singleChargeCheckBoxMenuItem.setSelected(false);
+        doubleChargeCheckBoxMenuItem.setSelected(false);
+        moreThanTwoChargesCheckBoxMenuItem.setSelected(false);
+
+        for (int charge : annotationPreferences.getValidatedCharges()) {
+            if (charge == 1) {
+                singleChargeCheckBoxMenuItem.setSelected(true);
+            } else if (charge == 2) {
+                doubleChargeCheckBoxMenuItem.setSelected(true);
+            } else if (charge > 2) {
+                moreThanTwoChargesCheckBoxMenuItem.setSelected(true);
+            }
+        }
+
+        adaptJCheckBoxMenuItem.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
+        allCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
+        
+        barsCheckBoxMenuItem.setSelected(annotationPreferences.showBars());
+        intensityIonTableRadioButtonMenuItem.setSelected(annotationPreferences.useIntensityIonTable());
+    }
+    
+    /**
+     * Save the current annotation preferences selected in the annotation menus.
+     */
+    public void updateAnnotationPreferences() { 
+
+        annotationPreferences.clearIonTypes();
+        if (aIonCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.A_ION);
+        }
+        if (bIonCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.B_ION);
+        }
+        if (cIonCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.C_ION);
+        }
+        if (xIonCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.X_ION);
+        }
+        if (yIonCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.Y_ION);
+        }
+        if (zIonCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.Z_ION);
+        }
+        if (precursorCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.PRECURSOR_ION);
+        }
+        if (immoniumCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.IMMONIUM);
+        }
+
+        annotationPreferences.clearNeutralLosses();
+        if (h2oIonCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addNeutralLoss(NeutralLoss.H2O);
+        }
+        if (nh3IonCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addNeutralLoss(NeutralLoss.NH3);
+        }
+        if (h3po4IonCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addNeutralLoss(NeutralLoss.H3PO4);
+        }
+        if (hpo3IonCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addNeutralLoss(NeutralLoss.HPO3);
+        }
+        if (ch4osIonCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addNeutralLoss(NeutralLoss.CH4OS);
+        }
+
+        //annotationPreferences.useDefaultAnnotation(!allSpectraCheck.isSelected()); 
+        annotationPreferences.setNeutralLossesSequenceDependant(adaptJCheckBoxMenuItem.isSelected());
+
+        annotationPreferences.clearCharges();
+        if (singleChargeCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addSelectedCharge(1);
+        }
+        if (doubleChargeCheckBoxMenuItem.isSelected()) {
+            annotationPreferences.addSelectedCharge(2);
+        }
+        if (moreThanTwoChargesCheckBoxMenuItem.isSelected()) {
+            int precursorCharge = annotationPreferences.getCurrentPrecursorCharge();
+            if (precursorCharge > 2) {
+                for (int charge = 3; charge < precursorCharge; charge++) {
+                    annotationPreferences.addSelectedCharge(charge);
+                }
+            }
+        }
+
+        annotationPreferences.setShowAllPeaks(allCheckBoxMenuItem.isSelected());
+        annotationPreferences.setShowBars(barsCheckBoxMenuItem.isSelected());
+        annotationPreferences.setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
+        
+        updateAllAnnotations();
+        setDataSaved(false);
+    }
+    
+    /**
+     * Returns the annotation menu bar.
+     * 
+     * @return the annotation menu bar
+     */
+    public JMenuBar getAnnotationMenuBar() {
+        return annotationMenuBar;
+    }
+    
+    /**
+     * Updates the visible menu items on the settings menu of the annotation menu bar.
+     * 
+     * @param showSpectrumOptions       if true, the spectrum options are shown
+     * @param showBubblePlotOptions     if true, the bubble plot options are shown
+     * @param showIonTableOptions       if true, the ion table options are shown
+     */
+    public void updateAnnotationMenuBarVisableOptions (boolean showSpectrumOptions, boolean showBubblePlotOptions, boolean showIonTableOptions) {
+        allCheckBoxMenuItem.setVisible(showSpectrumOptions);
+        barsCheckBoxMenuItem.setVisible(showBubblePlotOptions);
+        intensityIonTableRadioButtonMenuItem.setVisible(showIonTableOptions);
+        mzIonTableRadioButtonMenuItem.setVisible(showIonTableOptions);
     }
 }

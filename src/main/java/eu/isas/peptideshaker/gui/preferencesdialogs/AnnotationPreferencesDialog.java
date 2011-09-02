@@ -506,6 +506,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             }
             
             annotationPreferences.useDefaultAnnotation(!allSpectraCheck.isSelected());
+            annotationPreferences.setNeutralLossesSequenceDependant(sequenceLossCheck.isSelected());
             
             annotationPreferences.clearCharges();
             if (oneCharge.isSelected()) {
@@ -522,8 +523,9 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                     }
                 }
             }
+            
             peptideShakerGUI.setAnnotationPreferences(annotationPreferences);
-            peptideShakerGUI.updateAnnotations();
+            peptideShakerGUI.updateAllAnnotations();
             peptideShakerGUI.setDataSaved(false);
             dispose();
         }

@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.preferences;
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
-import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +15,20 @@ import java.util.HashMap;
 public class AnnotationPreferences implements Serializable {
 
     /**
+     * If true, the ion table is shown as an intensity versionm, false displays 
+     * the standard Mascot version.
+     */
+    private boolean intensityIonTable = true;
+    /**
+     * If true, bars are shown in the bubble plot highlighting the ions.
+     */
+    private boolean showBars = false;
+    /**
+     * If true, all peaks are shown, false displays the annotated peaks, and 
+     * the non-annotated in the background.
+     */
+    private boolean showAllPeaks = false;
+    /**
      * The intensity limit used when only the most intense peaks are to be 
      * annotated.
      */
@@ -25,7 +38,7 @@ public class AnnotationPreferences implements Serializable {
      */
     private boolean mostIntensePeaks;
     /**
-     * Shall Peptide-Shaker use default annotation
+     * Shall PeptideShaker use default annotation
      */
     private boolean defaultAnnotation;
     /**
@@ -64,7 +77,10 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * Sets the annotation settings for the current peptide and precursor charge
+     * Sets the annotation settings for the current peptide and precursor charge.
+     * 
+     * @param currentPeptide
+     * @param currentPrecursorCharge  
      */
     public void setCurrentSettings(Peptide currentPeptide, int currentPrecursorCharge) {
         boolean changed = false;
@@ -87,15 +103,18 @@ public class AnnotationPreferences implements Serializable {
      * Updates the neutral losses and charge annotation settings
      */
     public void updateSettings() {
-        if (defaultAnnotation) {
-            selectedCharges.clear();
-            for (int charge = 1; charge < currentPrecursorCharge; charge++) {
-                selectedCharges.add(charge);
-            }
-            neutralLosses = SpectrumAnnotator.getDefaultLosses(currentPeptide);
-        } else if (neutralLossesSequenceDependant) {
-            neutralLosses = SpectrumAnnotator.getDefaultLosses(currentPeptide, new ArrayList<NeutralLoss>(neutralLosses.keySet()));
-        }
+        
+        // @TODO: re-add this method!!
+        
+//        if (defaultAnnotation) {
+//            selectedCharges.clear();
+//            for (int charge = 1; charge < currentPrecursorCharge; charge++) {
+//                selectedCharges.add(charge);
+//            }
+//            neutralLosses = SpectrumAnnotator.getDefaultLosses(currentPeptide);
+//        } else if (neutralLossesSequenceDependant) {
+//            neutralLosses = SpectrumAnnotator.getDefaultLosses(currentPeptide, new ArrayList<NeutralLoss>(neutralLosses.keySet()));
+//        }
     }
 
     /**
@@ -178,8 +197,9 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * sets whether the default Peptide-Shaker annotation should be used
-     * @param useDefaultAnnotation a boolean indicating whether the default Peptide-Shaker annotation should be used
+     * Sets whether the default PeptideShaker annotation should be used.
+     * 
+     * @param defaultAnnotation a boolean indicating whether the default PeptideShaker annotation should be used
      */
     public void useDefaultAnnotation(boolean defaultAnnotation) {
         this.defaultAnnotation = defaultAnnotation;
@@ -189,8 +209,9 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * Returns whether the Peptide-Shaker default annotation should be used
-     * @return a boolean indicating whether the Peptide-Shaker default annotation should be used
+     * Returns whether the Peptide-Shaker default annotation should be used.
+     * 
+     * @return a boolean indicating whether the PeptideShaker default annotation should be used
      */
     public boolean useDefaultAnnotation() {
         return defaultAnnotation;
@@ -252,5 +273,62 @@ public class AnnotationPreferences implements Serializable {
      */
     public void setAnnotationIntensityLimit(double intensityLimit) {
         this.intensityLimit = intensityLimit;
+    }
+    
+    /**
+     * If true, all peaks are shown, false displays the annotated peaks, and 
+     * the non-annotated in the background.
+     * 
+     * @return true if all peaks are to be shown
+     */
+    public boolean showAllPeaks() {
+        return showAllPeaks;
+    }
+    
+    /**
+     * Set if all peaks or just the annotated ones are to be shown.
+     * 
+     * @param showAllPeaks 
+     */
+    public void setShowAllPeaks(boolean showAllPeaks) {
+        this.showAllPeaks = showAllPeaks;
+    }
+    
+    /**
+     * If true, bars are shown in the bubble plot highlighting the ions.
+     * 
+     * @return true if bars are to be shown in the bubble plot
+     */
+    public boolean showBars() {
+        return showBars;
+    }
+    
+    /**
+     * Set if the bars in the bubble plot are to be shown or not
+     * 
+     * @param showBars 
+     */
+    public void setShowBars(boolean showBars) {
+        this.showBars = showBars;
+    }
+    
+    /**
+     * If true, the ion table is shown as an intensity versionm, false displays 
+     * the standard Mascot version.
+     * 
+     * @return if true, the ion table is shown as an intensity versionm, false displays 
+     *         the standard Mascot version
+     */
+    public boolean useIntensityIonTable() {
+        return intensityIonTable;
+    }
+    
+    /**
+     * Set if the intensity or m/z ion table should be shown.
+     * 
+     * @param intensityIonTable 
+     */
+    public void setIntensityIonTable(boolean intensityIonTable) {
+        this.intensityIonTable = intensityIonTable;
     }
 }
