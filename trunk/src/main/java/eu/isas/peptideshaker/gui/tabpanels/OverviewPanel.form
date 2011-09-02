@@ -1,10 +1,6 @@
 <?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.6" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
-  <NonVisualComponents>
-    <Component class="javax.swing.ButtonGroup" name="ionTableButtonGroup">
-    </Component>
-  </NonVisualComponents>
   <Properties>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
       <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -705,22 +701,24 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
                                   <Component id="spectrumJTabbedPane" pref="453" max="32767" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
                                   <Component id="intensitySlider" min="-2" pref="26" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                         </DimensionLayout>
                         <DimensionLayout dim="1">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="102" attributes="0">
-                                  <Component id="intensitySlider" pref="312" max="32767" attributes="0"/>
-                                  <EmptySpace min="11" pref="11" max="11" attributes="0"/>
-                              </Group>
-                              <Group type="102" attributes="0">
-                                  <EmptySpace min="11" pref="11" max="11" attributes="0"/>
-                                  <Component id="spectrumJTabbedPane" pref="312" max="32767" attributes="0"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Component id="intensitySlider" pref="277" max="32767" attributes="0"/>
+                                          <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="spectrumJTabbedPane" alignment="0" pref="312" max="32767" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
                         </DimensionLayout>
@@ -731,6 +729,10 @@
                             <Property name="selectedIndex" type="int" value="2"/>
                             <Property name="tabPlacement" type="int" value="3"/>
                           </Properties>
+                          <Events>
+                            <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="spectrumJTabbedPaneMouseWheelMoved"/>
+                            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="spectrumJTabbedPaneStateChanged"/>
+                          </Events>
 
                           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                           <SubComponents>
@@ -751,9 +753,9 @@
                               <Layout>
                                 <DimensionLayout dim="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
+                                      <Group type="102" alignment="1" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Group type="103" groupAlignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="1" attributes="0">
                                               <Component id="fragmentIonsJScrollPane" alignment="0" pref="428" max="32767" attributes="0"/>
                                               <Component id="ionTableJToolBar" alignment="0" pref="428" max="32767" attributes="0"/>
                                           </Group>
@@ -765,7 +767,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="fragmentIonsJScrollPane" pref="242" max="32767" attributes="0"/>
+                                          <Component id="fragmentIonsJScrollPane" pref="267" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="ionTableJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -791,266 +793,14 @@
                                     <Property name="floatable" type="boolean" value="false"/>
                                     <Property name="rollover" type="boolean" value="true"/>
                                     <Property name="borderPainted" type="boolean" value="false"/>
-                                    <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                      <Dimension value="[0, 25]"/>
-                                    </Property>
                                   </Properties>
 
                                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
                                   <SubComponents>
-                                    <Component class="javax.swing.JToggleButton" name="aIonTableToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="a"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="a-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[25, 21]"/>
-                                        </Property>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aIonTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="bIonTableToggleButton">
-                                      <Properties>
-                                        <Property name="selected" type="boolean" value="true"/>
-                                        <Property name="text" type="java.lang.String" value="b"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="b-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bIonTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="cIonTableToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="c"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="c-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cIonTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator6">
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="xIonTableToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="x"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="x-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="xIonTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="yIonTableToggleButton">
-                                      <Properties>
-                                        <Property name="selected" type="boolean" value="true"/>
-                                        <Property name="text" type="java.lang.String" value="y"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="y-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="yIonTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="zIonTableToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="z"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="z-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="zIonTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator7">
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="h2oTableToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="H2O"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Water Loss&lt;/html&gt;"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="h2oTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="nh3TableToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="NH3"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Ammonia Loss"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nh3TableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="otherTableToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="Oth."/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Other: Precursor and Immonium Ions"/>
-                                        <Property name="enabled" type="boolean" value="false"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="otherTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator14">
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="oneChargeTableToggleButton">
-                                      <Properties>
-                                        <Property name="selected" type="boolean" value="true"/>
-                                        <Property name="text" type="java.lang.String" value="+"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Single Charge"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="oneChargeTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="twoChargesTableToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="++"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Double Charge"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="twoChargesTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="moreThanTwoChargesTableToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="&gt;2 "/>
-                                        <Property name="toolTipText" type="java.lang.String" value="More Than Two Charges"/>
-                                        <Property name="enabled" type="boolean" value="false"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="moreThanTwoChargesTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator5">
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="barsIonTableToggleButton">
-                                      <Properties>
-                                        <Property name="selected" type="boolean" value="true"/>
-                                        <Property name="text" type="java.lang.String" value="Int"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Bar charts with peak intensities"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[33, 21]"/>
-                                        </Property>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="barsIonTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="mzValuesIonTableToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="m/z"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Traditional ion table with m/z values"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mzValuesIonTableToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator18">
-                                    </Component>
-                                    <Component class="javax.swing.JButton" name="ionTableHelpJButton">
-                                      <Properties>
-                                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                                          <Image iconType="3" name="/icons/help.GIF"/>
-                                        </Property>
-                                        <Property name="toolTipText" type="java.lang.String" value="Help"/>
-                                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                          <Border info="null"/>
-                                        </Property>
-                                        <Property name="borderPainted" type="boolean" value="false"/>
-                                        <Property name="contentAreaFilled" type="boolean" value="false"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ionTableHelpJButtonMouseEntered"/>
-                                        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ionTableHelpJButtonMouseExited"/>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ionTableHelpJButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
+                                    <Container class="javax.swing.JPanel" name="ionTableAnnotationMenuPanel">
+
+                                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                    </Container>
                                   </SubComponents>
                                 </Container>
                               </SubComponents>
@@ -1085,13 +835,13 @@
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace pref="259" max="32767" attributes="0"/>
+                                          <EmptySpace pref="284" max="32767" attributes="0"/>
                                           <Component id="bubblePlotJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
-                                              <Component id="bubbleJPanel" pref="251" max="32767" attributes="0"/>
-                                              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
+                                              <Component id="bubbleJPanel" pref="259" max="32767" attributes="0"/>
+                                              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
                                   </Group>
@@ -1120,239 +870,10 @@
 
                                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
                                   <SubComponents>
-                                    <Component class="javax.swing.JToggleButton" name="aIonBubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="a"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="a-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[25, 21]"/>
-                                        </Property>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aIonBubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="bIonBubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="selected" type="boolean" value="true"/>
-                                        <Property name="text" type="java.lang.String" value="b"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="b-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bIonBubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="cIonBubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="c"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="c-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cIonBubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator8">
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="xIonBubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="x"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="x-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="xIonBubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="yIonBubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="selected" type="boolean" value="true"/>
-                                        <Property name="text" type="java.lang.String" value="y"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="y-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="yIonBubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="zIonBubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="z"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="z-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="zIonBubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator9">
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="h2oBubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="H2O"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Water Loss&lt;/html&gt;"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="h2oBubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="nh3BubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="NH3"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Ammonia Loss"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nh3BubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="otherBubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="Oth."/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Other: Precursor and Immonium Ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="otherBubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator10">
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="oneChargeBubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="selected" type="boolean" value="true"/>
-                                        <Property name="text" type="java.lang.String" value="+"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Single Charge"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="oneChargeBubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="twoChargesBubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="++"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Double Charge"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="twoChargesBubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="moreThanTwoChargesBubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="&gt;2 "/>
-                                        <Property name="toolTipText" type="java.lang.String" value="More Than Two Charges"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="moreThanTwoChargesBubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator4">
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="barsBubblePlotToggleButton">
-                                      <Properties>
-                                        <Property name="selected" type="boolean" value="true"/>
-                                        <Property name="text" type="java.lang.String" value="Bars"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Add bars highlighting the fragment ion types"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="barsBubblePlotToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator17">
-                                    </Component>
-                                    <Component class="javax.swing.JButton" name="bubblePlotHelpJButton">
-                                      <Properties>
-                                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                                          <Image iconType="3" name="/icons/help.GIF"/>
-                                        </Property>
-                                        <Property name="toolTipText" type="java.lang.String" value="Help"/>
-                                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                          <Border info="null"/>
-                                        </Property>
-                                        <Property name="borderPainted" type="boolean" value="false"/>
-                                        <Property name="contentAreaFilled" type="boolean" value="false"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bubblePlotHelpJButtonMouseEntered"/>
-                                        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="bubblePlotHelpJButtonMouseExited"/>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bubblePlotHelpJButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
+                                    <Container class="javax.swing.JPanel" name="bubbleAnnotationMenuPanel">
+
+                                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                    </Container>
                                   </SubComponents>
                                 </Container>
                               </SubComponents>
@@ -1385,8 +906,8 @@
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="spectrumSplitPane" pref="259" max="32767" attributes="0"/>
-                                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                                          <Component id="spectrumSplitPane" pref="278" max="32767" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
                                           <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
@@ -1408,236 +929,10 @@
 
                                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
                                   <SubComponents>
-                                    <Component class="javax.swing.JToggleButton" name="aIonToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="a"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="a-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[25, 21]"/>
-                                        </Property>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aIonToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="bIonToggleButton">
-                                      <Properties>
-                                        <Property name="selected" type="boolean" value="true"/>
-                                        <Property name="text" type="java.lang.String" value="b"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="b-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bIonToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="cIonToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="c"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="c-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cIonToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="xIonToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="x"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="x-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="xIonToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="yIonToggleButton">
-                                      <Properties>
-                                        <Property name="selected" type="boolean" value="true"/>
-                                        <Property name="text" type="java.lang.String" value="y"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="y-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="yIonToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="zIonToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="z"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="z-ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="zIonToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="otherToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="Oth."/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Other: Precursor and Immonium Ions"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="otherToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator12">
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="h2oToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="H2O"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Water Loss"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="h2oToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="nh3ToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="NH3"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Ammonia Loss"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nh3ToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator13">
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="oneChargeToggleButton">
-                                      <Properties>
-                                        <Property name="selected" type="boolean" value="true"/>
-                                        <Property name="text" type="java.lang.String" value="+"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Single Charge"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="oneChargeToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="twoChargesToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="++"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Double Charge"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="twoChargesToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="moreThanTwoChargesToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="&gt;2 "/>
-                                        <Property name="toolTipText" type="java.lang.String" value="More Than Two Charges"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="moreThanTwoChargesToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator15">
-                                    </Component>
-                                    <Component class="javax.swing.JToggleButton" name="allToggleButton">
-                                      <Properties>
-                                        <Property name="text" type="java.lang.String" value="All"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Display all peaks or just the annotated peaks"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
-                                          <Dimension value="[39, 25]"/>
-                                        </Property>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="allToggleButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JToolBar$Separator" name="jSeparator16">
-                                    </Component>
-                                    <Component class="javax.swing.JButton" name="spectrumHelpJButton">
-                                      <Properties>
-                                        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                                          <Image iconType="3" name="/icons/help.GIF"/>
-                                        </Property>
-                                        <Property name="toolTipText" type="java.lang.String" value="Help"/>
-                                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                          <Border info="null"/>
-                                        </Property>
-                                        <Property name="borderPainted" type="boolean" value="false"/>
-                                        <Property name="contentAreaFilled" type="boolean" value="false"/>
-                                        <Property name="focusable" type="boolean" value="false"/>
-                                        <Property name="horizontalTextPosition" type="int" value="0"/>
-                                        <Property name="verticalTextPosition" type="int" value="3"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="spectrumHelpJButtonMouseEntered"/>
-                                        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="spectrumHelpJButtonMouseExited"/>
-                                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spectrumHelpJButtonActionPerformed"/>
-                                      </Events>
-                                    </Component>
+                                    <Container class="javax.swing.JPanel" name="spectrumAnnotationMenuPanel">
+
+                                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                    </Container>
                                   </SubComponents>
                                 </Container>
                                 <Container class="javax.swing.JSplitPane" name="spectrumSplitPane">
@@ -1693,6 +988,7 @@
                             <Property name="opaque" type="boolean" value="false"/>
                           </Properties>
                           <Events>
+                            <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="intensitySliderMouseWheelMoved"/>
                             <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="intensitySliderStateChanged"/>
                           </Events>
                         </Component>

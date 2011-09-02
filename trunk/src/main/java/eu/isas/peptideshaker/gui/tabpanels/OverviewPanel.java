@@ -2,10 +2,8 @@ package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
-import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
@@ -24,7 +22,6 @@ import com.compomics.util.gui.spectrum.MassErrorBubblePlot;
 import com.compomics.util.gui.spectrum.MassErrorPlot;
 import com.compomics.util.gui.spectrum.SequenceFragmentationPanel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
-import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
@@ -161,7 +158,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         this.displayCoverage = false;
 
         initComponents();
-        
+
         intensitySlider.setValue((int) (peptideShakerGUI.getAnnotationPreferences().getAnnotationIntensityLimit()*100));
 
         coverageTableScrollPane.setBorder(null);
@@ -350,7 +347,6 @@ public class OverviewPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        ionTableButtonGroup = new javax.swing.ButtonGroup();
         overviewJPanel = new javax.swing.JPanel();
         overviewJSplitPane = new javax.swing.JSplitPane();
         proteinsJPanel = new javax.swing.JPanel();
@@ -412,68 +408,14 @@ public class OverviewPanel extends javax.swing.JPanel {
         fragmentIonJPanel = new javax.swing.JPanel();
         fragmentIonsJScrollPane = new javax.swing.JScrollPane();
         ionTableJToolBar = new javax.swing.JToolBar();
-        aIonTableToggleButton = new javax.swing.JToggleButton();
-        bIonTableToggleButton = new javax.swing.JToggleButton();
-        cIonTableToggleButton = new javax.swing.JToggleButton();
-        jSeparator6 = new javax.swing.JToolBar.Separator();
-        xIonTableToggleButton = new javax.swing.JToggleButton();
-        yIonTableToggleButton = new javax.swing.JToggleButton();
-        zIonTableToggleButton = new javax.swing.JToggleButton();
-        jSeparator7 = new javax.swing.JToolBar.Separator();
-        h2oTableToggleButton = new javax.swing.JToggleButton();
-        nh3TableToggleButton = new javax.swing.JToggleButton();
-        otherTableToggleButton = new javax.swing.JToggleButton();
-        jSeparator14 = new javax.swing.JToolBar.Separator();
-        oneChargeTableToggleButton = new javax.swing.JToggleButton();
-        twoChargesTableToggleButton = new javax.swing.JToggleButton();
-        moreThanTwoChargesTableToggleButton = new javax.swing.JToggleButton();
-        jSeparator5 = new javax.swing.JToolBar.Separator();
-        barsIonTableToggleButton = new javax.swing.JToggleButton();
-        mzValuesIonTableToggleButton = new javax.swing.JToggleButton();
-        jSeparator18 = new javax.swing.JToolBar.Separator();
-        ionTableHelpJButton = new javax.swing.JButton();
+        ionTableAnnotationMenuPanel = new javax.swing.JPanel();
         bubblePlotTabJPanel = new javax.swing.JPanel();
         bubbleJPanel = new javax.swing.JPanel();
         bubblePlotJToolBar = new javax.swing.JToolBar();
-        aIonBubblePlotToggleButton = new javax.swing.JToggleButton();
-        bIonBubblePlotToggleButton = new javax.swing.JToggleButton();
-        cIonBubblePlotToggleButton = new javax.swing.JToggleButton();
-        jSeparator8 = new javax.swing.JToolBar.Separator();
-        xIonBubblePlotToggleButton = new javax.swing.JToggleButton();
-        yIonBubblePlotToggleButton = new javax.swing.JToggleButton();
-        zIonBubblePlotToggleButton = new javax.swing.JToggleButton();
-        jSeparator9 = new javax.swing.JToolBar.Separator();
-        h2oBubblePlotToggleButton = new javax.swing.JToggleButton();
-        nh3BubblePlotToggleButton = new javax.swing.JToggleButton();
-        otherBubblePlotToggleButton = new javax.swing.JToggleButton();
-        jSeparator10 = new javax.swing.JToolBar.Separator();
-        oneChargeBubblePlotToggleButton = new javax.swing.JToggleButton();
-        twoChargesBubblePlotToggleButton = new javax.swing.JToggleButton();
-        moreThanTwoChargesBubblePlotToggleButton = new javax.swing.JToggleButton();
-        jSeparator4 = new javax.swing.JToolBar.Separator();
-        barsBubblePlotToggleButton = new javax.swing.JToggleButton();
-        jSeparator17 = new javax.swing.JToolBar.Separator();
-        bubblePlotHelpJButton = new javax.swing.JButton();
+        bubbleAnnotationMenuPanel = new javax.swing.JPanel();
         spectrumJPanel = new javax.swing.JPanel();
         spectrumJToolBar = new javax.swing.JToolBar();
-        aIonToggleButton = new javax.swing.JToggleButton();
-        bIonToggleButton = new javax.swing.JToggleButton();
-        cIonToggleButton = new javax.swing.JToggleButton();
-        xIonToggleButton = new javax.swing.JToggleButton();
-        yIonToggleButton = new javax.swing.JToggleButton();
-        zIonToggleButton = new javax.swing.JToggleButton();
-        otherToggleButton = new javax.swing.JToggleButton();
-        jSeparator12 = new javax.swing.JToolBar.Separator();
-        h2oToggleButton = new javax.swing.JToggleButton();
-        nh3ToggleButton = new javax.swing.JToggleButton();
-        jSeparator13 = new javax.swing.JToolBar.Separator();
-        oneChargeToggleButton = new javax.swing.JToggleButton();
-        twoChargesToggleButton = new javax.swing.JToggleButton();
-        moreThanTwoChargesToggleButton = new javax.swing.JToggleButton();
-        jSeparator15 = new javax.swing.JToolBar.Separator();
-        allToggleButton = new javax.swing.JToggleButton();
-        jSeparator16 = new javax.swing.JToolBar.Separator();
-        spectrumHelpJButton = new javax.swing.JButton();
+        spectrumAnnotationMenuPanel = new javax.swing.JPanel();
         spectrumSplitPane = new javax.swing.JSplitPane();
         sequenceFragmentIonPlotsJPanel = new javax.swing.JPanel();
         spectrumPanel = new javax.swing.JPanel();
@@ -769,6 +711,16 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumMainPanel.setOpaque(false);
 
         spectrumJTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+        spectrumJTabbedPane.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                spectrumJTabbedPaneMouseWheelMoved(evt);
+            }
+        });
+        spectrumJTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spectrumJTabbedPaneStateChanged(evt);
+            }
+        });
 
         fragmentIonJPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -779,242 +731,26 @@ public class OverviewPanel extends javax.swing.JPanel {
         ionTableJToolBar.setFloatable(false);
         ionTableJToolBar.setRollover(true);
         ionTableJToolBar.setBorderPainted(false);
-        ionTableJToolBar.setPreferredSize(new java.awt.Dimension(0, 25));
 
-        aIonTableToggleButton.setText("a");
-        aIonTableToggleButton.setToolTipText("a-ions");
-        aIonTableToggleButton.setFocusable(false);
-        aIonTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        aIonTableToggleButton.setMinimumSize(new java.awt.Dimension(25, 21));
-        aIonTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        aIonTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        aIonTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aIonTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(aIonTableToggleButton);
-
-        bIonTableToggleButton.setSelected(true);
-        bIonTableToggleButton.setText("b");
-        bIonTableToggleButton.setToolTipText("b-ions");
-        bIonTableToggleButton.setFocusable(false);
-        bIonTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bIonTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        bIonTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        bIonTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bIonTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(bIonTableToggleButton);
-
-        cIonTableToggleButton.setText("c");
-        cIonTableToggleButton.setToolTipText("c-ions");
-        cIonTableToggleButton.setFocusable(false);
-        cIonTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        cIonTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        cIonTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        cIonTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cIonTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(cIonTableToggleButton);
-        ionTableJToolBar.add(jSeparator6);
-
-        xIonTableToggleButton.setText("x");
-        xIonTableToggleButton.setToolTipText("x-ions");
-        xIonTableToggleButton.setFocusable(false);
-        xIonTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        xIonTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        xIonTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        xIonTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                xIonTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(xIonTableToggleButton);
-
-        yIonTableToggleButton.setSelected(true);
-        yIonTableToggleButton.setText("y");
-        yIonTableToggleButton.setToolTipText("y-ions");
-        yIonTableToggleButton.setFocusable(false);
-        yIonTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        yIonTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        yIonTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        yIonTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yIonTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(yIonTableToggleButton);
-
-        zIonTableToggleButton.setText("z");
-        zIonTableToggleButton.setToolTipText("z-ions");
-        zIonTableToggleButton.setFocusable(false);
-        zIonTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        zIonTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        zIonTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        zIonTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                zIonTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(zIonTableToggleButton);
-        ionTableJToolBar.add(jSeparator7);
-
-        h2oTableToggleButton.setText("H2O");
-        h2oTableToggleButton.setToolTipText("<html>Water Loss</html>");
-        h2oTableToggleButton.setFocusable(false);
-        h2oTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        h2oTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        h2oTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        h2oTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                h2oTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(h2oTableToggleButton);
-
-        nh3TableToggleButton.setText("NH3");
-        nh3TableToggleButton.setToolTipText("Ammonia Loss");
-        nh3TableToggleButton.setFocusable(false);
-        nh3TableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        nh3TableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        nh3TableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        nh3TableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nh3TableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(nh3TableToggleButton);
-
-        otherTableToggleButton.setText("Oth.");
-        otherTableToggleButton.setToolTipText("Other: Precursor and Immonium Ions");
-        otherTableToggleButton.setEnabled(false);
-        otherTableToggleButton.setFocusable(false);
-        otherTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        otherTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        otherTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        otherTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                otherTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(otherTableToggleButton);
-        ionTableJToolBar.add(jSeparator14);
-
-        oneChargeTableToggleButton.setSelected(true);
-        oneChargeTableToggleButton.setText("+");
-        oneChargeTableToggleButton.setToolTipText("Single Charge");
-        oneChargeTableToggleButton.setFocusable(false);
-        oneChargeTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        oneChargeTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        oneChargeTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        oneChargeTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                oneChargeTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(oneChargeTableToggleButton);
-
-        twoChargesTableToggleButton.setText("++");
-        twoChargesTableToggleButton.setToolTipText("Double Charge");
-        twoChargesTableToggleButton.setFocusable(false);
-        twoChargesTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        twoChargesTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        twoChargesTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        twoChargesTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                twoChargesTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(twoChargesTableToggleButton);
-
-        moreThanTwoChargesTableToggleButton.setText(">2 ");
-        moreThanTwoChargesTableToggleButton.setToolTipText("More Than Two Charges");
-        moreThanTwoChargesTableToggleButton.setEnabled(false);
-        moreThanTwoChargesTableToggleButton.setFocusable(false);
-        moreThanTwoChargesTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        moreThanTwoChargesTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        moreThanTwoChargesTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        moreThanTwoChargesTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                moreThanTwoChargesTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(moreThanTwoChargesTableToggleButton);
-        ionTableJToolBar.add(jSeparator5);
-
-        barsIonTableToggleButton.setSelected(true);
-        barsIonTableToggleButton.setText("Int");
-        barsIonTableToggleButton.setToolTipText("Bar charts with peak intensities");
-        barsIonTableToggleButton.setFocusable(false);
-        barsIonTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        barsIonTableToggleButton.setMinimumSize(new java.awt.Dimension(33, 21));
-        barsIonTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        barsIonTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barsIonTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                barsIonTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(barsIonTableToggleButton);
-
-        mzValuesIonTableToggleButton.setText("m/z");
-        mzValuesIonTableToggleButton.setToolTipText("Traditional ion table with m/z values");
-        mzValuesIonTableToggleButton.setFocusable(false);
-        mzValuesIonTableToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        mzValuesIonTableToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        mzValuesIonTableToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        mzValuesIonTableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mzValuesIonTableToggleButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(mzValuesIonTableToggleButton);
-        ionTableJToolBar.add(jSeparator18);
-
-        ionTableHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
-        ionTableHelpJButton.setToolTipText("Help");
-        ionTableHelpJButton.setBorder(null);
-        ionTableHelpJButton.setBorderPainted(false);
-        ionTableHelpJButton.setContentAreaFilled(false);
-        ionTableHelpJButton.setFocusable(false);
-        ionTableHelpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        ionTableHelpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        ionTableHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                ionTableHelpJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                ionTableHelpJButtonMouseExited(evt);
-            }
-        });
-        ionTableHelpJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ionTableHelpJButtonActionPerformed(evt);
-            }
-        });
-        ionTableJToolBar.add(ionTableHelpJButton);
+        ionTableAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(ionTableAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
+        ionTableJToolBar.add(ionTableAnnotationMenuPanel);
 
         javax.swing.GroupLayout fragmentIonJPanelLayout = new javax.swing.GroupLayout(fragmentIonJPanel);
         fragmentIonJPanel.setLayout(fragmentIonJPanelLayout);
         fragmentIonJPanelLayout.setHorizontalGroup(
             fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(fragmentIonJPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
-                    .addComponent(ionTableJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
+                .addGroup(fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+                    .addComponent(ionTableJToolBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE))
                 .addContainerGap())
         );
         fragmentIonJPanelLayout.setVerticalGroup(
             fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE)
+                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ionTableJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -1032,207 +768,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotJToolBar.setRollover(true);
         bubblePlotJToolBar.setBorderPainted(false);
 
-        aIonBubblePlotToggleButton.setText("a");
-        aIonBubblePlotToggleButton.setToolTipText("a-ions");
-        aIonBubblePlotToggleButton.setFocusable(false);
-        aIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        aIonBubblePlotToggleButton.setMinimumSize(new java.awt.Dimension(25, 21));
-        aIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        aIonBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        aIonBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aIonBubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(aIonBubblePlotToggleButton);
-
-        bIonBubblePlotToggleButton.setSelected(true);
-        bIonBubblePlotToggleButton.setText("b");
-        bIonBubblePlotToggleButton.setToolTipText("b-ions");
-        bIonBubblePlotToggleButton.setFocusable(false);
-        bIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        bIonBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        bIonBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bIonBubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(bIonBubblePlotToggleButton);
-
-        cIonBubblePlotToggleButton.setText("c");
-        cIonBubblePlotToggleButton.setToolTipText("c-ions");
-        cIonBubblePlotToggleButton.setFocusable(false);
-        cIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        cIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        cIonBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        cIonBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cIonBubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(cIonBubblePlotToggleButton);
-        bubblePlotJToolBar.add(jSeparator8);
-
-        xIonBubblePlotToggleButton.setText("x");
-        xIonBubblePlotToggleButton.setToolTipText("x-ions");
-        xIonBubblePlotToggleButton.setFocusable(false);
-        xIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        xIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        xIonBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        xIonBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                xIonBubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(xIonBubblePlotToggleButton);
-
-        yIonBubblePlotToggleButton.setSelected(true);
-        yIonBubblePlotToggleButton.setText("y");
-        yIonBubblePlotToggleButton.setToolTipText("y-ions");
-        yIonBubblePlotToggleButton.setFocusable(false);
-        yIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        yIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        yIonBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        yIonBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yIonBubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(yIonBubblePlotToggleButton);
-
-        zIonBubblePlotToggleButton.setText("z");
-        zIonBubblePlotToggleButton.setToolTipText("z-ions");
-        zIonBubblePlotToggleButton.setFocusable(false);
-        zIonBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        zIonBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        zIonBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        zIonBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                zIonBubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(zIonBubblePlotToggleButton);
-        bubblePlotJToolBar.add(jSeparator9);
-
-        h2oBubblePlotToggleButton.setText("H2O");
-        h2oBubblePlotToggleButton.setToolTipText("<html>Water Loss</html>");
-        h2oBubblePlotToggleButton.setFocusable(false);
-        h2oBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        h2oBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        h2oBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        h2oBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                h2oBubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(h2oBubblePlotToggleButton);
-
-        nh3BubblePlotToggleButton.setText("NH3");
-        nh3BubblePlotToggleButton.setToolTipText("Ammonia Loss");
-        nh3BubblePlotToggleButton.setFocusable(false);
-        nh3BubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        nh3BubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        nh3BubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        nh3BubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nh3BubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(nh3BubblePlotToggleButton);
-
-        otherBubblePlotToggleButton.setText("Oth.");
-        otherBubblePlotToggleButton.setToolTipText("Other: Precursor and Immonium Ions");
-        otherBubblePlotToggleButton.setFocusable(false);
-        otherBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        otherBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        otherBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        otherBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                otherBubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(otherBubblePlotToggleButton);
-        bubblePlotJToolBar.add(jSeparator10);
-
-        oneChargeBubblePlotToggleButton.setSelected(true);
-        oneChargeBubblePlotToggleButton.setText("+");
-        oneChargeBubblePlotToggleButton.setToolTipText("Single Charge");
-        oneChargeBubblePlotToggleButton.setFocusable(false);
-        oneChargeBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        oneChargeBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        oneChargeBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        oneChargeBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                oneChargeBubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(oneChargeBubblePlotToggleButton);
-
-        twoChargesBubblePlotToggleButton.setText("++");
-        twoChargesBubblePlotToggleButton.setToolTipText("Double Charge");
-        twoChargesBubblePlotToggleButton.setFocusable(false);
-        twoChargesBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        twoChargesBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        twoChargesBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        twoChargesBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                twoChargesBubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(twoChargesBubblePlotToggleButton);
-
-        moreThanTwoChargesBubblePlotToggleButton.setText(">2 ");
-        moreThanTwoChargesBubblePlotToggleButton.setToolTipText("More Than Two Charges");
-        moreThanTwoChargesBubblePlotToggleButton.setFocusable(false);
-        moreThanTwoChargesBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        moreThanTwoChargesBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        moreThanTwoChargesBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        moreThanTwoChargesBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                moreThanTwoChargesBubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(moreThanTwoChargesBubblePlotToggleButton);
-        bubblePlotJToolBar.add(jSeparator4);
-
-        barsBubblePlotToggleButton.setSelected(true);
-        barsBubblePlotToggleButton.setText("Bars");
-        barsBubblePlotToggleButton.setToolTipText("Add bars highlighting the fragment ion types");
-        barsBubblePlotToggleButton.setFocusable(false);
-        barsBubblePlotToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        barsBubblePlotToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        barsBubblePlotToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        barsBubblePlotToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                barsBubblePlotToggleButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(barsBubblePlotToggleButton);
-        bubblePlotJToolBar.add(jSeparator17);
-
-        bubblePlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
-        bubblePlotHelpJButton.setToolTipText("Help");
-        bubblePlotHelpJButton.setBorder(null);
-        bubblePlotHelpJButton.setBorderPainted(false);
-        bubblePlotHelpJButton.setContentAreaFilled(false);
-        bubblePlotHelpJButton.setFocusable(false);
-        bubblePlotHelpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bubblePlotHelpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        bubblePlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                bubblePlotHelpJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                bubblePlotHelpJButtonMouseExited(evt);
-            }
-        });
-        bubblePlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bubblePlotHelpJButtonActionPerformed(evt);
-            }
-        });
-        bubblePlotJToolBar.add(bubblePlotHelpJButton);
+        bubbleAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(bubbleAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
+        bubblePlotJToolBar.add(bubbleAnnotationMenuPanel);
 
         javax.swing.GroupLayout bubblePlotTabJPanelLayout = new javax.swing.GroupLayout(bubblePlotTabJPanel);
         bubblePlotTabJPanel.setLayout(bubblePlotTabJPanelLayout);
@@ -1248,12 +785,12 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotTabJPanelLayout.setVerticalGroup(
             bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
-                .addContainerGap(259, Short.MAX_VALUE)
+                .addContainerGap(284, Short.MAX_VALUE)
                 .addComponent(bubblePlotJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
-                    .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
-                    .addGap(33, 33, 33)))
+                    .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                    .addGap(25, 25, 25)))
         );
 
         spectrumJTabbedPane.addTab("Bubble Plot", bubblePlotTabJPanel);
@@ -1266,205 +803,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJToolBar.setRollover(true);
         spectrumJToolBar.setBorderPainted(false);
 
-        aIonToggleButton.setText("a");
-        aIonToggleButton.setToolTipText("a-ions");
-        aIonToggleButton.setFocusable(false);
-        aIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        aIonToggleButton.setMinimumSize(new java.awt.Dimension(25, 21));
-        aIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        aIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        aIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                aIonToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(aIonToggleButton);
-
-        bIonToggleButton.setSelected(true);
-        bIonToggleButton.setText("b");
-        bIonToggleButton.setToolTipText("b-ions");
-        bIonToggleButton.setFocusable(false);
-        bIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        bIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        bIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        bIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bIonToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(bIonToggleButton);
-
-        cIonToggleButton.setText("c");
-        cIonToggleButton.setToolTipText("c-ions");
-        cIonToggleButton.setFocusable(false);
-        cIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        cIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        cIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        cIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cIonToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(cIonToggleButton);
-
-        xIonToggleButton.setText("x");
-        xIonToggleButton.setToolTipText("x-ions");
-        xIonToggleButton.setFocusable(false);
-        xIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        xIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        xIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        xIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                xIonToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(xIonToggleButton);
-
-        yIonToggleButton.setSelected(true);
-        yIonToggleButton.setText("y");
-        yIonToggleButton.setToolTipText("y-ions");
-        yIonToggleButton.setFocusable(false);
-        yIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        yIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        yIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        yIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                yIonToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(yIonToggleButton);
-
-        zIonToggleButton.setText("z");
-        zIonToggleButton.setToolTipText("z-ions");
-        zIonToggleButton.setFocusable(false);
-        zIonToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        zIonToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        zIonToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        zIonToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                zIonToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(zIonToggleButton);
-
-        otherToggleButton.setText("Oth.");
-        otherToggleButton.setToolTipText("Other: Precursor and Immonium Ions");
-        otherToggleButton.setFocusable(false);
-        otherToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        otherToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        otherToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        otherToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                otherToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(otherToggleButton);
-        spectrumJToolBar.add(jSeparator12);
-
-        h2oToggleButton.setText("H2O");
-        h2oToggleButton.setToolTipText("Water Loss");
-        h2oToggleButton.setFocusable(false);
-        h2oToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        h2oToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        h2oToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        h2oToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                h2oToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(h2oToggleButton);
-
-        nh3ToggleButton.setText("NH3");
-        nh3ToggleButton.setToolTipText("Ammonia Loss");
-        nh3ToggleButton.setFocusable(false);
-        nh3ToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        nh3ToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        nh3ToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        nh3ToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nh3ToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(nh3ToggleButton);
-        spectrumJToolBar.add(jSeparator13);
-
-        oneChargeToggleButton.setSelected(true);
-        oneChargeToggleButton.setText("+");
-        oneChargeToggleButton.setToolTipText("Single Charge");
-        oneChargeToggleButton.setFocusable(false);
-        oneChargeToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        oneChargeToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        oneChargeToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        oneChargeToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                oneChargeToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(oneChargeToggleButton);
-
-        twoChargesToggleButton.setText("++");
-        twoChargesToggleButton.setToolTipText("Double Charge");
-        twoChargesToggleButton.setFocusable(false);
-        twoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        twoChargesToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        twoChargesToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        twoChargesToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                twoChargesToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(twoChargesToggleButton);
-
-        moreThanTwoChargesToggleButton.setText(">2 ");
-        moreThanTwoChargesToggleButton.setToolTipText("More Than Two Charges");
-        moreThanTwoChargesToggleButton.setFocusable(false);
-        moreThanTwoChargesToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        moreThanTwoChargesToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        moreThanTwoChargesToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        moreThanTwoChargesToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                moreThanTwoChargesToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(moreThanTwoChargesToggleButton);
-        spectrumJToolBar.add(jSeparator15);
-
-        allToggleButton.setText("All");
-        allToggleButton.setToolTipText("Display all peaks or just the annotated peaks");
-        allToggleButton.setFocusable(false);
-        allToggleButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        allToggleButton.setPreferredSize(new java.awt.Dimension(39, 25));
-        allToggleButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        allToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                allToggleButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(allToggleButton);
-        spectrumJToolBar.add(jSeparator16);
-
-        spectrumHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
-        spectrumHelpJButton.setToolTipText("Help");
-        spectrumHelpJButton.setBorder(null);
-        spectrumHelpJButton.setBorderPainted(false);
-        spectrumHelpJButton.setContentAreaFilled(false);
-        spectrumHelpJButton.setFocusable(false);
-        spectrumHelpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        spectrumHelpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        spectrumHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                spectrumHelpJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                spectrumHelpJButtonMouseExited(evt);
-            }
-        });
-        spectrumHelpJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                spectrumHelpJButtonActionPerformed(evt);
-            }
-        });
-        spectrumJToolBar.add(spectrumHelpJButton);
+        spectrumAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(spectrumAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
+        spectrumJToolBar.add(spectrumAnnotationMenuPanel);
 
         spectrumSplitPane.setBorder(null);
         spectrumSplitPane.setDividerLocation(80);
@@ -1493,8 +833,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
-                .addGap(0, 0, 0)
+                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -1508,6 +848,11 @@ public class OverviewPanel extends javax.swing.JPanel {
         intensitySlider.setToolTipText("Annotation Intensity Level");
         intensitySlider.setValue(75);
         intensitySlider.setOpaque(false);
+        intensitySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                intensitySliderMouseWheelMoved(evt);
+            }
+        });
         intensitySlider.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 intensitySliderStateChanged(evt);
@@ -1527,11 +872,12 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumMainPanelLayout.setVerticalGroup(
             spectrumMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumMainPanelLayout.createSequentialGroup()
-                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
-                .addGap(11, 11, 11))
-            .addGroup(spectrumMainPanelLayout.createSequentialGroup()
-                .addGap(11, 11, 11)
-                .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(spectrumMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(spectrumMainPanelLayout.createSequentialGroup()
+                        .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
+                        .addGap(35, 35, 35))
+                    .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)))
         );
 
         peptidesPsmSpectrumFragmentIonsJSplitPane.setRightComponent(spectrumMainPanel);
@@ -1643,232 +989,6 @@ public class OverviewPanel extends javax.swing.JPanel {
 }//GEN-LAST:event_psmTableKeyReleased
 
     /**
-     * Updates the spectrum and variability panels with the currently selected
-     * fragment ions.
-     *
-     * @param evt
-     */
-    private void aIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonToggleButtonActionPerformed
-        if (spectrum != null) {
-            // update the spectrum plots
-            psmTableKeyReleased(null);
-        }
-
-        aIonBubblePlotToggleButton.setSelected(aIonToggleButton.isSelected());
-        aIonTableToggleButton.setSelected(aIonToggleButton.isSelected());
-}//GEN-LAST:event_aIonToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void bIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonToggleButtonActionPerformed
-        aIonToggleButtonActionPerformed(null);
-        bIonBubblePlotToggleButton.setSelected(bIonToggleButton.isSelected());
-        bIonTableToggleButton.setSelected(bIonToggleButton.isSelected());
-}//GEN-LAST:event_bIonToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void cIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonToggleButtonActionPerformed
-        aIonToggleButtonActionPerformed(null);
-        cIonBubblePlotToggleButton.setSelected(cIonToggleButton.isSelected());
-        cIonTableToggleButton.setSelected(cIonToggleButton.isSelected());
-}//GEN-LAST:event_cIonToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void xIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonToggleButtonActionPerformed
-        aIonToggleButtonActionPerformed(null);
-        xIonBubblePlotToggleButton.setSelected(xIonToggleButton.isSelected());
-        xIonTableToggleButton.setSelected(xIonToggleButton.isSelected());
-}//GEN-LAST:event_xIonToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void yIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonToggleButtonActionPerformed
-        aIonToggleButtonActionPerformed(null);
-        yIonBubblePlotToggleButton.setSelected(yIonToggleButton.isSelected());
-        yIonTableToggleButton.setSelected(yIonToggleButton.isSelected());
-}//GEN-LAST:event_yIonToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void zIonToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonToggleButtonActionPerformed
-        aIonToggleButtonActionPerformed(null);
-        zIonBubblePlotToggleButton.setSelected(zIonToggleButton.isSelected());
-        zIonTableToggleButton.setSelected(zIonToggleButton.isSelected());
-}//GEN-LAST:event_zIonToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void h2oToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_h2oToggleButtonActionPerformed
-        aIonToggleButtonActionPerformed(null);
-        h2oBubblePlotToggleButton.setSelected(h2oToggleButton.isSelected());
-        h2oTableToggleButton.setSelected(h2oToggleButton.isSelected());
-}//GEN-LAST:event_h2oToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void nh3ToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nh3ToggleButtonActionPerformed
-        aIonToggleButtonActionPerformed(null);
-        nh3BubblePlotToggleButton.setSelected(nh3ToggleButton.isSelected());
-        nh3TableToggleButton.setSelected(nh3ToggleButton.isSelected());
-}//GEN-LAST:event_nh3ToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void otherToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_otherToggleButtonActionPerformed
-        aIonToggleButtonActionPerformed(null);
-        otherBubblePlotToggleButton.setSelected(otherToggleButton.isSelected());
-}//GEN-LAST:event_otherToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void oneChargeToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oneChargeToggleButtonActionPerformed
-        aIonToggleButtonActionPerformed(null);
-        oneChargeBubblePlotToggleButton.setSelected(oneChargeToggleButton.isSelected());
-        oneChargeTableToggleButton.setSelected(oneChargeToggleButton.isSelected());
-}//GEN-LAST:event_oneChargeToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void twoChargesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_twoChargesToggleButtonActionPerformed
-        aIonToggleButtonActionPerformed(null);
-        twoChargesBubblePlotToggleButton.setSelected(twoChargesToggleButton.isSelected());
-        twoChargesTableToggleButton.setSelected(twoChargesToggleButton.isSelected());
-}//GEN-LAST:event_twoChargesToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void moreThanTwoChargesToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moreThanTwoChargesToggleButtonActionPerformed
-        aIonToggleButtonActionPerformed(null);
-        moreThanTwoChargesBubblePlotToggleButton.setSelected(moreThanTwoChargesToggleButton.isSelected());
-}//GEN-LAST:event_moreThanTwoChargesToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonBubblePlotToggleButtonActionPerformed
-        aIonToggleButton.setSelected(aIonBubblePlotToggleButton.isSelected());
-        aIonTableToggleButton.setSelected(aIonBubblePlotToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_aIonBubblePlotToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void bIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonBubblePlotToggleButtonActionPerformed
-        bIonToggleButton.setSelected(bIonBubblePlotToggleButton.isSelected());
-        bIonTableToggleButton.setSelected(bIonBubblePlotToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_bIonBubblePlotToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void cIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonBubblePlotToggleButtonActionPerformed
-        cIonToggleButton.setSelected(cIonBubblePlotToggleButton.isSelected());
-        cIonTableToggleButton.setSelected(cIonBubblePlotToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_cIonBubblePlotToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void xIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonBubblePlotToggleButtonActionPerformed
-        xIonToggleButton.setSelected(xIonBubblePlotToggleButton.isSelected());
-        xIonTableToggleButton.setSelected(xIonBubblePlotToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_xIonBubblePlotToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void yIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonBubblePlotToggleButtonActionPerformed
-        yIonToggleButton.setSelected(yIonBubblePlotToggleButton.isSelected());
-        yIonTableToggleButton.setSelected(yIonBubblePlotToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_yIonBubblePlotToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void zIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonBubblePlotToggleButtonActionPerformed
-        zIonToggleButton.setSelected(zIonBubblePlotToggleButton.isSelected());
-        zIonTableToggleButton.setSelected(zIonBubblePlotToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_zIonBubblePlotToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void h2oBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_h2oBubblePlotToggleButtonActionPerformed
-        h2oToggleButton.setSelected(h2oBubblePlotToggleButton.isSelected());
-        h2oTableToggleButton.setSelected(h2oBubblePlotToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_h2oBubblePlotToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void nh3BubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nh3BubblePlotToggleButtonActionPerformed
-        nh3ToggleButton.setSelected(nh3BubblePlotToggleButton.isSelected());
-        nh3TableToggleButton.setSelected(nh3BubblePlotToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_nh3BubblePlotToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void otherBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_otherBubblePlotToggleButtonActionPerformed
-        otherToggleButton.setSelected(otherBubblePlotToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_otherBubblePlotToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void oneChargeBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oneChargeBubblePlotToggleButtonActionPerformed
-        oneChargeToggleButton.setSelected(oneChargeBubblePlotToggleButton.isSelected());
-        oneChargeTableToggleButton.setSelected(oneChargeBubblePlotToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_oneChargeBubblePlotToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void twoChargesBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_twoChargesBubblePlotToggleButtonActionPerformed
-        twoChargesToggleButton.setSelected(twoChargesBubblePlotToggleButton.isSelected());
-        twoChargesTableToggleButton.setSelected(twoChargesBubblePlotToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_twoChargesBubblePlotToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void moreThanTwoChargesBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moreThanTwoChargesBubblePlotToggleButtonActionPerformed
-        moreThanTwoChargesToggleButton.setSelected(moreThanTwoChargesBubblePlotToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_moreThanTwoChargesBubblePlotToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void barsBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barsBubblePlotToggleButtonActionPerformed
-        aIonToggleButtonActionPerformed(null);
-}//GEN-LAST:event_barsBubblePlotToggleButtonActionPerformed
-
-    /**
      * Changes the cursor into a hand cursor if the table cell contains an
      * html link.
      *
@@ -1902,160 +1022,6 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void proteinTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinTableMouseExited
-
-    /**
-     * Update the type of the ion table.
-     */
-    private void barsIonTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barsIonTableToggleButtonActionPerformed
-
-        if (barsIonTableToggleButton.isSelected()) {
-            mzValuesIonTableToggleButton.setSelected(false);
-        } else {
-            mzValuesIonTableToggleButton.setSelected(true);
-        }
-
-        int row = psmTable.getSelectedRow();
-
-        if (row != -1) {
-
-            String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
-
-            if (displaySpectrum) {
-
-                try {
-                    MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-                    if (currentSpectrum != null) {
-                        HashSet<Peak> peaks = currentSpectrum.getPeakList();
-
-                        if (peaks == null || peaks.isEmpty()) {
-                            // do nothing, peaks list not found
-                        } else {
-
-                            // get the spectrum annotations
-                            String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
-                            Peptide currentPeptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
-
-                            // create and display the fragment ion table
-                            if (psmTable.getSelectedRowCount() == 1 && mzValuesIonTableToggleButton.isSelected()) {
-                                fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, peptideShakerGUI.getIonsCurrentlyMatched(), peptideShakerGUI.getAnnotationPreferences().getIonTypes(),
-                                        oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected()));
-                            } else {
-                                ArrayList<ArrayList<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
-                                fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, getSelectedSpectra(), peptideShakerGUI.getAnnotationPreferences().getIonTypes(),
-                                        oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected()));
-                            }
-                        }
-                    }
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                }
-            }
-        }
-    }//GEN-LAST:event_barsIonTableToggleButtonActionPerformed
-
-    /**
-     * Update the type of the ion table.
-     */
-    private void mzValuesIonTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mzValuesIonTableToggleButtonActionPerformed
-
-        if (mzValuesIonTableToggleButton.isSelected()) {
-            barsIonTableToggleButton.setSelected(false);
-        } else {
-            barsIonTableToggleButton.setSelected(true);
-        }
-
-        barsIonTableToggleButtonActionPerformed(null);
-    }//GEN-LAST:event_mzValuesIonTableToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void aIonTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonTableToggleButtonActionPerformed
-        aIonToggleButton.setSelected(aIonTableToggleButton.isSelected());
-        aIonBubblePlotToggleButton.setSelected(aIonTableToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-    }//GEN-LAST:event_aIonTableToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void bIonTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonTableToggleButtonActionPerformed
-        bIonToggleButton.setSelected(bIonTableToggleButton.isSelected());
-        bIonBubblePlotToggleButton.setSelected(bIonTableToggleButton.isSelected());
-        bIonToggleButtonActionPerformed(null);
-    }//GEN-LAST:event_bIonTableToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void cIonTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonTableToggleButtonActionPerformed
-        cIonToggleButton.setSelected(cIonTableToggleButton.isSelected());
-        cIonBubblePlotToggleButton.setSelected(cIonTableToggleButton.isSelected());
-        cIonToggleButtonActionPerformed(null);
-    }//GEN-LAST:event_cIonTableToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void xIonTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonTableToggleButtonActionPerformed
-        xIonToggleButton.setSelected(xIonTableToggleButton.isSelected());
-        xIonBubblePlotToggleButton.setSelected(xIonTableToggleButton.isSelected());
-        xIonToggleButtonActionPerformed(null);
-    }//GEN-LAST:event_xIonTableToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void yIonTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonTableToggleButtonActionPerformed
-        yIonToggleButton.setSelected(yIonTableToggleButton.isSelected());
-        yIonBubblePlotToggleButton.setSelected(yIonTableToggleButton.isSelected());
-        yIonToggleButtonActionPerformed(null);
-    }//GEN-LAST:event_yIonTableToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void zIonTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonTableToggleButtonActionPerformed
-        zIonToggleButton.setSelected(zIonTableToggleButton.isSelected());
-        zIonBubblePlotToggleButton.setSelected(zIonTableToggleButton.isSelected());
-        zIonToggleButtonActionPerformed(null);
-    }//GEN-LAST:event_zIonTableToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void h2oTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_h2oTableToggleButtonActionPerformed
-        h2oToggleButton.setSelected(h2oTableToggleButton.isSelected());
-        h2oBubblePlotToggleButton.setSelected(h2oTableToggleButton.isSelected());
-        h2oToggleButtonActionPerformed(null);
-    }//GEN-LAST:event_h2oTableToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void nh3TableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nh3TableToggleButtonActionPerformed
-        nh3ToggleButton.setSelected(nh3TableToggleButton.isSelected());
-        nh3BubblePlotToggleButton.setSelected(nh3TableToggleButton.isSelected());
-        nh3ToggleButtonActionPerformed(null);
-    }//GEN-LAST:event_nh3TableToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void oneChargeTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_oneChargeTableToggleButtonActionPerformed
-        oneChargeToggleButton.setSelected(oneChargeTableToggleButton.isSelected());
-        oneChargeBubblePlotToggleButton.setSelected(oneChargeTableToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-    }//GEN-LAST:event_oneChargeTableToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void twoChargesTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_twoChargesTableToggleButtonActionPerformed
-        twoChargesToggleButton.setSelected(twoChargesTableToggleButton.isSelected());
-        twoChargesBubblePlotToggleButton.setSelected(twoChargesTableToggleButton.isSelected());
-        aIonToggleButtonActionPerformed(null);
-    }//GEN-LAST:event_twoChargesTableToggleButtonActionPerformed
 
     /**
      * Updates the spectrum, bubble plot and ion table.
@@ -2183,34 +1149,6 @@ public class OverviewPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_peptideTableMouseReleased
 
     /**
-     * Update the spectrum to show all or just the annotated ions.
-     * 
-     * @param evt 
-     */
-    private void allToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allToggleButtonActionPerformed
-        if (spectrum != null) {
-            // update the spectrum plots
-            psmTableKeyReleased(null);
-        }
-    }//GEN-LAST:event_allToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void otherTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_otherTableToggleButtonActionPerformed
-        // currently disabled
-        // @TODO: add support for displaying the immonium and precursor information?
-    }//GEN-LAST:event_otherTableToggleButtonActionPerformed
-
-    /**
-     * @see #aIonBubblePlotToggleButtonActionPerformed(java.awt.event.ActionEvent)
-     */
-    private void moreThanTwoChargesTableToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moreThanTwoChargesTableToggleButtonActionPerformed
-        // currently disabled
-        // @TODO: should this be implemented?
-    }//GEN-LAST:event_moreThanTwoChargesTableToggleButtonActionPerformed
-
-    /**
      * Updates the PSM selection and corresponding plots.
      * 
      * @param evt 
@@ -2229,93 +1167,6 @@ public class OverviewPanel extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_psmTableMouseClicked
-
-    /**
-     * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
-     */
-    private void spectrumHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-}//GEN-LAST:event_spectrumHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
-     */
-    private void spectrumHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_spectrumHelpJButtonMouseExited
-
-    /**
-     * Open the help dialog.
-     * 
-     * @param evt 
-     */
-    private void spectrumHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/SpectrumPanel.html"));
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_spectrumHelpJButtonActionPerformed
-
-    /**
-     * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
-     */
-    private void bubblePlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bubblePlotHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_bubblePlotHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
-     */
-    private void bubblePlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bubblePlotHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_bubblePlotHelpJButtonMouseExited
-
-    /**
-     * Open the help dialog.
-     * 
-     * @param evt 
-     */
-    private void bubblePlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bubblePlotHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/BubblePlot.html"));
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_bubblePlotHelpJButtonActionPerformed
-
-    /**
-     * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
-     */
-    private void ionTableHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ionTableHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_ionTableHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
-     */
-    private void ionTableHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ionTableHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_ionTableHelpJButtonMouseExited
-
-    /**
-     * Open the help dialog.
-     * 
-     * @param evt 
-     */
-    private void ionTableHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ionTableHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/IonTable.html"));
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_ionTableHelpJButtonActionPerformed
 
     /**
      * Changes the cursor back to the default cursor.
@@ -2396,68 +1247,79 @@ public class OverviewPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_coverageTableMouseMoved
 
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+private void spectrumJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spectrumJTabbedPaneStateChanged
+
+    if (peptideShakerGUI.getAnnotationMenuBar() != null) {
+        
+        int index = spectrumJTabbedPane.getSelectedIndex();
+
+        if (index == 0) {
+            ionTableAnnotationMenuPanel.removeAll();
+            ionTableAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+            peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, false, true);
+        } else if (index == 1) {
+            bubbleAnnotationMenuPanel.removeAll();
+            bubbleAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+            peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, true, false);
+        } else if (index == 2) {
+            spectrumAnnotationMenuPanel.removeAll();
+            spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+            peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false);
+        }
+    }
+}//GEN-LAST:event_spectrumJTabbedPaneStateChanged
+
+/**
+ * Updates the slider value when the user scrolls.
+ * 
+ * @param evt 
+ */
+private void spectrumJTabbedPaneMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumJTabbedPaneMouseWheelMoved
+    if (evt.getWheelRotation() > 0) { // Down
+        intensitySlider.setValue(intensitySlider.getValue() - 1);
+    } else { // Up
+        intensitySlider.setValue(intensitySlider.getValue() + 1);
+    }
+}//GEN-LAST:event_spectrumJTabbedPaneMouseWheelMoved
+
+/**
+ * Updates the intensity annotation limit.
+ * 
+ * @param evt 
+ */
 private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
     peptideShakerGUI.getAnnotationPreferences().setAnnotationIntensityLimit(((Integer) intensitySlider.getValue()) / 100.0);
-    peptideShakerGUI.updateAnnotations();
+    peptideShakerGUI.updateAllAnnotations();
     peptideShakerGUI.setDataSaved(false);
 }//GEN-LAST:event_intensitySliderStateChanged
 
+/**
+ * Updates the slider value when the user scrolls.
+ * 
+ * @param evt 
+ */
+private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_intensitySliderMouseWheelMoved
+    spectrumJTabbedPaneMouseWheelMoved(evt);
+}//GEN-LAST:event_intensitySliderMouseWheelMoved
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JToggleButton aIonBubblePlotToggleButton;
-    private javax.swing.JToggleButton aIonTableToggleButton;
-    private javax.swing.JToggleButton aIonToggleButton;
-    private javax.swing.JToggleButton allToggleButton;
-    private javax.swing.JToggleButton bIonBubblePlotToggleButton;
-    private javax.swing.JToggleButton bIonTableToggleButton;
-    private javax.swing.JToggleButton bIonToggleButton;
-    private javax.swing.JToggleButton barsBubblePlotToggleButton;
-    private javax.swing.JToggleButton barsIonTableToggleButton;
+    private javax.swing.JPanel bubbleAnnotationMenuPanel;
     private javax.swing.JPanel bubbleJPanel;
-    private javax.swing.JButton bubblePlotHelpJButton;
     private javax.swing.JToolBar bubblePlotJToolBar;
     private javax.swing.JPanel bubblePlotTabJPanel;
-    private javax.swing.JToggleButton cIonBubblePlotToggleButton;
-    private javax.swing.JToggleButton cIonTableToggleButton;
-    private javax.swing.JToggleButton cIonToggleButton;
     private javax.swing.JSplitPane coverageJSplitPane;
     private javax.swing.JTable coverageTable;
     private javax.swing.JScrollPane coverageTableScrollPane;
     private javax.swing.JPanel fragmentIonJPanel;
     private javax.swing.JScrollPane fragmentIonsJScrollPane;
-    private javax.swing.JToggleButton h2oBubblePlotToggleButton;
-    private javax.swing.JToggleButton h2oTableToggleButton;
-    private javax.swing.JToggleButton h2oToggleButton;
     private javax.swing.JSlider intensitySlider;
-    private javax.swing.ButtonGroup ionTableButtonGroup;
-    private javax.swing.JButton ionTableHelpJButton;
+    private javax.swing.JPanel ionTableAnnotationMenuPanel;
     private javax.swing.JToolBar ionTableJToolBar;
-    private javax.swing.JToolBar.Separator jSeparator10;
-    private javax.swing.JToolBar.Separator jSeparator12;
-    private javax.swing.JToolBar.Separator jSeparator13;
-    private javax.swing.JToolBar.Separator jSeparator14;
-    private javax.swing.JToolBar.Separator jSeparator15;
-    private javax.swing.JToolBar.Separator jSeparator16;
-    private javax.swing.JToolBar.Separator jSeparator17;
-    private javax.swing.JToolBar.Separator jSeparator18;
-    private javax.swing.JToolBar.Separator jSeparator4;
-    private javax.swing.JToolBar.Separator jSeparator5;
-    private javax.swing.JToolBar.Separator jSeparator6;
-    private javax.swing.JToolBar.Separator jSeparator7;
-    private javax.swing.JToolBar.Separator jSeparator8;
-    private javax.swing.JToolBar.Separator jSeparator9;
-    private javax.swing.JToggleButton moreThanTwoChargesBubblePlotToggleButton;
-    private javax.swing.JToggleButton moreThanTwoChargesTableToggleButton;
-    private javax.swing.JToggleButton moreThanTwoChargesToggleButton;
-    private javax.swing.JToggleButton mzValuesIonTableToggleButton;
-    private javax.swing.JToggleButton nh3BubblePlotToggleButton;
-    private javax.swing.JToggleButton nh3TableToggleButton;
-    private javax.swing.JToggleButton nh3ToggleButton;
-    private javax.swing.JToggleButton oneChargeBubblePlotToggleButton;
-    private javax.swing.JToggleButton oneChargeTableToggleButton;
-    private javax.swing.JToggleButton oneChargeToggleButton;
-    private javax.swing.JToggleButton otherBubblePlotToggleButton;
-    private javax.swing.JToggleButton otherTableToggleButton;
-    private javax.swing.JToggleButton otherToggleButton;
     private javax.swing.JPanel overviewJPanel;
     private javax.swing.JSplitPane overviewJSplitPane;
     private javax.swing.JScrollPane peptideScrollPane;
@@ -2473,25 +1335,13 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
     private javax.swing.JPanel sequenceCoverageJPanel;
     private javax.swing.JPanel sequenceFragmentIonPlotsJPanel;
     private javax.swing.JScrollPane spectraScrollPane;
-    private javax.swing.JButton spectrumHelpJButton;
+    private javax.swing.JPanel spectrumAnnotationMenuPanel;
     private javax.swing.JPanel spectrumJPanel;
     private javax.swing.JTabbedPane spectrumJTabbedPane;
     private javax.swing.JToolBar spectrumJToolBar;
     private javax.swing.JPanel spectrumMainPanel;
     private javax.swing.JPanel spectrumPanel;
     private javax.swing.JSplitPane spectrumSplitPane;
-    private javax.swing.JToggleButton twoChargesBubblePlotToggleButton;
-    private javax.swing.JToggleButton twoChargesTableToggleButton;
-    private javax.swing.JToggleButton twoChargesToggleButton;
-    private javax.swing.JToggleButton xIonBubblePlotToggleButton;
-    private javax.swing.JToggleButton xIonTableToggleButton;
-    private javax.swing.JToggleButton xIonToggleButton;
-    private javax.swing.JToggleButton yIonBubblePlotToggleButton;
-    private javax.swing.JToggleButton yIonTableToggleButton;
-    private javax.swing.JToggleButton yIonToggleButton;
-    private javax.swing.JToggleButton zIonBubblePlotToggleButton;
-    private javax.swing.JToggleButton zIonTableToggleButton;
-    private javax.swing.JToggleButton zIonToggleButton;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -2797,7 +1647,7 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
                         bubbleScale,
                         annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
                         annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4)),
-                        selectedIndexes.size() == 1, barsBubblePlotToggleButton.isSelected(),
+                        selectedIndexes.size() == 1, annotationPreferences.showBars(),
                         peptideShakerGUI.useRelativeError());
 
                 bubbleJPanel.removeAll();
@@ -2992,10 +1842,10 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
                                     annotationPreferences.getMzTolerance());
                             spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                             spectrum.rescale(lowerMzZoomRange, upperMzZoomRange);
-                            updateAnnotationButtons();
+                            peptideShakerGUI.updateAnnotationMenus();
 
                             // show all or just the annotated peaks
-                            spectrum.showAnnotatedPeaksOnly(!allToggleButton.isSelected());
+                            spectrum.showAnnotatedPeaksOnly(!peptideShakerGUI.getAnnotationPreferences().showAllPeaks());
 
                             // add the spectrum panel to the frame
                             spectrumPanel.removeAll();
@@ -3004,20 +1854,22 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
                             spectrumPanel.repaint();
 
                             // create and display the fragment ion table
-                            if (psmTable.getSelectedRowCount() == 1 && mzValuesIonTableToggleButton.isSelected()) {
+                            if (psmTable.getSelectedRowCount() == 1 && !peptideShakerGUI.getAnnotationPreferences().useIntensityIonTable()) {
                                 fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, annotations, annotationPreferences.getIonTypes(),
-                                        oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected()));
+                                        peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(1)),
+                                        peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(2))));
                             } else {
                                 ArrayList<ArrayList<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
                                 fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, getSelectedSpectra(), annotationPreferences.getIonTypes(),
-                                        oneChargeToggleButton.isSelected(), twoChargesToggleButton.isSelected()));
+                                        peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(1)),
+                                        peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(2))));
                             }
 
                             // create the sequence fragment ion view
                             sequenceFragmentIonPlotsJPanel.removeAll();
                             SequenceFragmentationPanel sequenceFragmentationPanel =
-                                    new SequenceFragmentationPanel(currentPeptide.getNTerminal() + "-" + currentPeptide.getSequence() + "-" + currentPeptide.getCTerminal(), 
-                                            annotations, true);
+                                    new SequenceFragmentationPanel(currentPeptide.getNTerminal() + "-" + currentPeptide.getSequence() + "-" + currentPeptide.getCTerminal(),
+                                    annotations, true);
                             sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                             sequenceFragmentationPanel.setOpaque(false);
                             sequenceFragmentIonPlotsJPanel.add(sequenceFragmentationPanel);
@@ -3062,12 +1914,9 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
 
                             if (psmTable.getSelectedRowCount() > 1) {
                                 spectrumJTabbedPane.setToolTipTextAt(2, "Available for single spectrum selection only");
-                                mzValuesIonTableToggleButton.setEnabled(false);
-                                mzValuesIonTableToggleButton.setSelected(false);
-                                barsIonTableToggleButton.setSelected(true);
+                                peptideShakerGUI.getAnnotationPreferences().setIntensityIonTable(true);
                             } else {
                                 spectrumJTabbedPane.setToolTipTextAt(2, null);
-                                mzValuesIonTableToggleButton.setEnabled(true);
                             }
 
                             // update the panel border title
@@ -3158,61 +2007,6 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
 
             ((TitledBorder) spectrumMainPanel.getBorder()).setTitle("Spectrum & Fragment Ions");
             spectrumMainPanel.repaint();
-        }
-    }
-
-    /**
-     * @TODO: remove this method once we have an adapted GUI
-     */
-    private void updateAnnotationButtons() {
-        AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
-        aIonToggleButton.setSelected(false);
-        bIonToggleButton.setSelected(false);
-        cIonToggleButton.setSelected(false);
-        xIonToggleButton.setSelected(false);
-        yIonToggleButton.setSelected(false);
-        zIonToggleButton.setSelected(false);
-        otherToggleButton.setSelected(false);
-        for (PeptideFragmentIonType ionType : annotationPreferences.getIonTypes()) {
-            if (ionType == PeptideFragmentIonType.A_ION) {
-                aIonToggleButton.setSelected(true);
-            } else if (ionType == PeptideFragmentIonType.B_ION) {
-                bIonToggleButton.setSelected(true);
-            } else if (ionType == PeptideFragmentIonType.C_ION) {
-                cIonToggleButton.setSelected(true);
-            } else if (ionType == PeptideFragmentIonType.X_ION) {
-                xIonToggleButton.setSelected(true);
-            } else if (ionType == PeptideFragmentIonType.Y_ION) {
-                yIonToggleButton.setSelected(true);
-            } else if (ionType == PeptideFragmentIonType.Z_ION) {
-                zIonToggleButton.setSelected(true);
-            } else if (ionType == PeptideFragmentIonType.IMMONIUM
-                    || ionType == PeptideFragmentIonType.PRECURSOR_ION) {
-                otherToggleButton.setSelected(true);
-            }
-        }
-
-        h2oToggleButton.setSelected(false);
-        nh3ToggleButton.setSelected(false);
-        for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses().keySet()) {
-            if (neutralLoss.isSameAs(NeutralLoss.H2O)) {
-                h2oToggleButton.setSelected(true);
-            } else if (neutralLoss.isSameAs(NeutralLoss.NH3)) {
-                h2oToggleButton.setSelected(true);
-            }
-        }
-
-        oneChargeToggleButton.setSelected(false);
-        twoChargesToggleButton.setSelected(false);
-        moreThanTwoChargesToggleButton.setSelected(false);
-        for (int charge : annotationPreferences.getValidatedCharges()) {
-            if (charge == 1) {
-                oneChargeToggleButton.setSelected(true);
-            } else if (charge == 2) {
-                twoChargesToggleButton.setSelected(true);
-            } else if (charge > 2) {
-                moreThanTwoChargesToggleButton.setSelected(true);
-            }
         }
     }
 
@@ -3495,26 +2289,26 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
 
             for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                 if (!SequenceFactory.isDecoy(proteinKey)) {
-                proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
-                score = probabilities.getProteinProbabilityScore();
-                nPeptides = -proteinMatch.getPeptideMatches().size();
-                nSpectra = -peptideShakerGUI.getNSpectra(proteinMatch);
+                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
+                    score = probabilities.getProteinProbabilityScore();
+                    nPeptides = -proteinMatch.getPeptideMatches().size();
+                    nSpectra = -peptideShakerGUI.getNSpectra(proteinMatch);
 
-                if (!orderMap.containsKey(score)) {
-                    orderMap.put(score, new HashMap<Integer, HashMap<Integer, ArrayList<String>>>());
-                    scores.add(score);
-                }
+                    if (!orderMap.containsKey(score)) {
+                        orderMap.put(score, new HashMap<Integer, HashMap<Integer, ArrayList<String>>>());
+                        scores.add(score);
+                    }
 
-                if (!orderMap.get(score).containsKey(nPeptides)) {
-                    orderMap.get(score).put(nPeptides, new HashMap<Integer, ArrayList<String>>());
-                }
+                    if (!orderMap.get(score).containsKey(nPeptides)) {
+                        orderMap.get(score).put(nPeptides, new HashMap<Integer, ArrayList<String>>());
+                    }
 
-                if (!orderMap.get(score).get(nPeptides).containsKey(nSpectra)) {
-                    orderMap.get(score).get(nPeptides).put(nSpectra, new ArrayList<String>());
-                }
+                    if (!orderMap.get(score).get(nPeptides).containsKey(nSpectra)) {
+                        orderMap.get(score).get(nPeptides).put(nSpectra, new ArrayList<String>());
+                    }
 
-                orderMap.get(score).get(nPeptides).get(nSpectra).add(proteinKey);
+                    orderMap.get(score).get(nPeptides).get(nSpectra).add(proteinKey);
                 } else if (progressDialogX != null) {
                     progressDialogX.incrementValue();
                 }
@@ -3565,26 +2359,26 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
                                 peptideShakerGUI.catchException(e);
                                 e.printStackTrace();
                             }
-                                ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
-                                            index + 1,
-                                            probabilities.getGroupClass(),
-                                            peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
-                                            description,
-                                            sequenceCoverage,
-                                            -currentNP,
-                                            -currentNS,
-                                            spectrumCounting,
-                                            probabilities.getProteinScore(),
-                                            probabilities.getProteinConfidence(),
-                                            probabilities.isValidated()
-                                        });
+                            ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
+                                        index + 1,
+                                        probabilities.getGroupClass(),
+                                        peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
+                                        description,
+                                        sequenceCoverage,
+                                        -currentNP,
+                                        -currentNS,
+                                        spectrumCounting,
+                                        probabilities.getProteinScore(),
+                                        probabilities.getProteinConfidence(),
+                                        probabilities.isValidated()
+                                    });
 
-                                proteinTableMap.put(index + 1, proteinKey);
-                                index++;
+                            proteinTableMap.put(index + 1, proteinKey);
+                            index++;
 
-                                if (probabilities.isValidated()) {
-                                    validatedProteinsCounter++;
-                                }
+                            if (probabilities.isValidated()) {
+                                validatedProteinsCounter++;
+                            }
                             if (maxSpectrumCounting < spectrumCounting) {
                                 maxSpectrumCounting = spectrumCounting;
                             }
@@ -3905,5 +2699,23 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * Returns the current selected tab in the spectrum and fragment ions 
+     * tabbed pane.
+     * 
+     * @return the current selected tab in the spectrum and fragment ions tabbed pane
+     */
+    public int getSelectedSpectrumTabIndex () {
+        return spectrumJTabbedPane.getSelectedIndex();
+    }
+    
+    /**
+     * Makes sure that the annotation menu bar is shown in the currently visible 
+     * spectrum and fragment ions tabbed pane.
+     */
+    public void showSpectrumAnnotationMenu () {
+        spectrumJTabbedPaneStateChanged(null);
     }
 }
