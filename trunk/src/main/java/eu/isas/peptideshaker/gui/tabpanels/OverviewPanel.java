@@ -2718,4 +2718,13 @@ private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) 
     public void showSpectrumAnnotationMenu () {
         spectrumJTabbedPaneStateChanged(null);
     }
+    
+    /**
+     * Set the intensity slider value.
+     * 
+     * @param value the intensity slider value
+     */
+    public void setIntensitySliderValue(int value) {
+        intensitySlider.setValue(value);
+    }
 }
