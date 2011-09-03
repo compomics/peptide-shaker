@@ -1676,13 +1676,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         }
         
-        // move the spectrum annotation menu bar
+        // move the spectrum annotation menu bar and set the intensity slider value
         if (selectedIndex == OVER_VIEW_TAB_INDEX) {
             overviewPanel.showSpectrumAnnotationMenu();
+            overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit()*100));
         } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
             spectrumIdentificationPanel.showSpectrumAnnotationMenu();
+            spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit()*100));
         } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
             ptmPanel.showSpectrumAnnotationMenu();
+            ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit()*100));
         }
 
         // disable the protein filter option if a tab other than the overview tab is selected
