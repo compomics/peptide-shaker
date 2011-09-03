@@ -94,7 +94,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="h2oIonCheckBoxMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="H2O"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;H&lt;sub&gt;2&lt;/sub&gt;O&lt;/html&gt;"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="h2oIonCheckBoxMenuItemActionPerformed"/>
@@ -102,7 +102,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="nh3IonCheckBoxMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="NH3"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;NH&lt;sub&gt;3&lt;/sub&gt;&lt;/html&gt;"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nh3IonCheckBoxMenuItemActionPerformed"/>
@@ -110,7 +110,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="h3po4IonCheckBoxMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="H3PO4"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;H&lt;sub&gt;3&lt;/sub&gt;PO&lt;sub&gt;4&lt;/sub&gt;&lt;/html&gt;"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="h3po4IonCheckBoxMenuItemActionPerformed"/>
@@ -118,7 +118,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="hpo3IonCheckBoxMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="HPO3"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;HPO&lt;sub&gt;3&lt;/sub&gt;&lt;/html&gt;"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hpo3IonCheckBoxMenuItemActionPerformed"/>
@@ -126,7 +126,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="ch4osIonCheckBoxMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="CH4OS"/>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;CH&lt;sub&gt;4&lt;/sub&gt;OS&lt;/html&gt;"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ch4osIonCheckBoxMenuItemActionPerformed"/>
