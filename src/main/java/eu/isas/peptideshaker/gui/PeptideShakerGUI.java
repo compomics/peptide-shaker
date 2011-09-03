@@ -46,6 +46,7 @@ import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -568,7 +569,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         lossMenu.setText("Loss");
 
-        h2oIonCheckBoxMenuItem.setText("H2O");
+        h2oIonCheckBoxMenuItem.setText("<html>H<sub>2</sub>O</html>");
         h2oIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 h2oIonCheckBoxMenuItemActionPerformed(evt);
@@ -576,7 +577,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         lossMenu.add(h2oIonCheckBoxMenuItem);
 
-        nh3IonCheckBoxMenuItem.setText("NH3");
+        nh3IonCheckBoxMenuItem.setText("<html>NH<sub>3</sub></html>");
         nh3IonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nh3IonCheckBoxMenuItemActionPerformed(evt);
@@ -584,7 +585,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         lossMenu.add(nh3IonCheckBoxMenuItem);
 
-        h3po4IonCheckBoxMenuItem.setText("H3PO4");
+        h3po4IonCheckBoxMenuItem.setText("<html>H<sub>3</sub>PO<sub>4</sub></html>");
         h3po4IonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 h3po4IonCheckBoxMenuItemActionPerformed(evt);
@@ -592,7 +593,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         lossMenu.add(h3po4IonCheckBoxMenuItem);
 
-        hpo3IonCheckBoxMenuItem.setText("HPO3");
+        hpo3IonCheckBoxMenuItem.setText("<html>HPO<sub>3</sub></html>");
         hpo3IonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hpo3IonCheckBoxMenuItemActionPerformed(evt);
@@ -600,7 +601,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         lossMenu.add(hpo3IonCheckBoxMenuItem);
 
-        ch4osIonCheckBoxMenuItem.setText("CH4OS");
+        ch4osIonCheckBoxMenuItem.setText("<html>CH<sub>4</sub>OS</html>");
         ch4osIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ch4osIonCheckBoxMenuItemActionPerformed(evt);
@@ -3407,8 +3408,15 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         }
     }
 
+    /**
+     * Closes the frame by first checking if the project ought to be saved.
+     */
     private void close() {
+        
+        this.setExtendedState(Frame.MAXIMIZED_BOTH);
+        
         if (!dataSaved && experiment != null) {
+            
             int value = JOptionPane.showConfirmDialog(this,
                     "Do you want to save the changes to " + experiment.getReference() + "?",
                     "Unsaved Changes",
