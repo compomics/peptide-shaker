@@ -32,6 +32,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="aIonCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="a"/>
+                <Property name="toolTipText" type="java.lang.String" value="a-ions"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="aIonCheckBoxMenuItemActionPerformed"/>
@@ -40,6 +41,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="bIonCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="b"/>
+                <Property name="toolTipText" type="java.lang.String" value="b-ions"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="bIonCheckBoxMenuItemActionPerformed"/>
@@ -48,6 +50,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="cIonCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="c"/>
+                <Property name="toolTipText" type="java.lang.String" value="c-ions"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cIonCheckBoxMenuItemActionPerformed"/>
@@ -58,6 +61,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="xIonCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="x"/>
+                <Property name="toolTipText" type="java.lang.String" value="x-ions"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="xIonCheckBoxMenuItemActionPerformed"/>
@@ -66,6 +70,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="yIonCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="y"/>
+                <Property name="toolTipText" type="java.lang.String" value="y-ions"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="yIonCheckBoxMenuItemActionPerformed"/>
@@ -74,6 +79,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="zIonCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="z"/>
+                <Property name="toolTipText" type="java.lang.String" value="z-ions"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="zIonCheckBoxMenuItemActionPerformed"/>
@@ -95,6 +101,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="h2oIonCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;H&lt;sub&gt;2&lt;/sub&gt;O&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="Water Loss"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="h2oIonCheckBoxMenuItemActionPerformed"/>
@@ -103,6 +110,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="nh3IonCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;NH&lt;sub&gt;3&lt;/sub&gt;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="Ammonia Loss"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nh3IonCheckBoxMenuItemActionPerformed"/>
@@ -111,6 +119,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="h3po4IonCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;H&lt;sub&gt;3&lt;/sub&gt;PO&lt;sub&gt;4&lt;/sub&gt;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="Phospo Loss - Type 1"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="h3po4IonCheckBoxMenuItemActionPerformed"/>
@@ -119,6 +128,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="hpo3IonCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;HPO&lt;sub&gt;3&lt;/sub&gt;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="Phospo Loss - Type 2"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hpo3IonCheckBoxMenuItemActionPerformed"/>
@@ -127,6 +137,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="ch4osIonCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;html&gt;CH&lt;sub&gt;4&lt;/sub&gt;OS&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="Sulpho Loss"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ch4osIonCheckBoxMenuItemActionPerformed"/>
@@ -137,6 +148,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="adaptJCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Adapt"/>
+                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Adapt the neutral losses to the&lt;br&gt;&#xa;sequence and modifications&#xa;&lt;/html&gt;"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="adaptJCheckBoxMenuItemActionPerformed"/>
@@ -158,6 +170,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="precursorCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Precursor"/>
+                <Property name="toolTipText" type="java.lang.String" value="Precursor ions"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="precursorCheckBoxMenuItemActionPerformed"/>
@@ -166,6 +179,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="immoniumCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Immonium Ion"/>
+                <Property name="toolTipText" type="java.lang.String" value="Immonium ions"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="immoniumCheckBoxMenuItemActionPerformed"/>
@@ -187,6 +201,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="singleChargeCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="+"/>
+                <Property name="toolTipText" type="java.lang.String" value="Single Charge"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="singleChargeCheckBoxMenuItemActionPerformed"/>
@@ -195,6 +210,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="doubleChargeCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="++"/>
+                <Property name="toolTipText" type="java.lang.String" value="Double Charge"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="doubleChargeCheckBoxMenuItemActionPerformed"/>
@@ -203,6 +219,7 @@
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="moreThanTwoChargesCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&gt;2"/>
+                <Property name="toolTipText" type="java.lang.String" value="More than two charges"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="moreThanTwoChargesCheckBoxMenuItemActionPerformed"/>
@@ -223,7 +240,8 @@
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="allCheckBoxMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Show All Ions"/>
+                <Property name="text" type="java.lang.String" value="Show All Peaks"/>
+                <Property name="toolTipText" type="java.lang.String" value="Show all peaks or just the annotated peaks"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="allCheckBoxMenuItemActionPerformed"/>
