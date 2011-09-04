@@ -442,12 +442,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         settingsMenu = new javax.swing.JMenu();
         allCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         barsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        bubbleScaleJMenuItem = new javax.swing.JMenuItem();
         intensityIonTableRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         mzIonTableRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
+        jSeparator5 = new javax.swing.JPopupMenu.Separator();
+        errorPlotTypeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         splitterMenu4 = new javax.swing.JMenu();
+        exportGraphicsMenu = new javax.swing.JMenu();
+        exportSpectrumGraphicsJMenuItem = new javax.swing.JMenuItem();
+        bubblePlotJMenuItem = new javax.swing.JMenuItem();
+        exportSpectrumValuesJMenuItem = new javax.swing.JMenuItem();
+        splitterMenu6 = new javax.swing.JMenu();
         helpJMenu = new javax.swing.JMenu();
         helpMenuItem = new javax.swing.JMenuItem();
-        splitterMenu6 = new javax.swing.JMenu();
+        splitterMenu7 = new javax.swing.JMenu();
         ionTableButtonGroup = new javax.swing.ButtonGroup();
         gradientPanel = new javax.swing.JPanel();
         allTabsJTabbedPane = new javax.swing.JTabbedPane();
@@ -470,17 +478,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         searchParametersMenu = new javax.swing.JMenuItem();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         spectrumCountingMenuItem = new javax.swing.JMenuItem();
-        jSeparator5 = new javax.swing.JPopupMenu.Separator();
-        bubbleScaleJMenuItem = new javax.swing.JMenuItem();
-        errorPlotTypeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         filterMenu = new javax.swing.JMenu();
         proteinFilterJMenuItem = new javax.swing.JMenuItem();
         exportJMenu = new javax.swing.JMenu();
-        graphicsJMenu = new javax.swing.JMenu();
-        spectrumOverviewJMenuItem = new javax.swing.JMenuItem();
-        bubblePlotJMenuItem = new javax.swing.JMenuItem();
-        spectrumSpectrumIdJMenuItem = new javax.swing.JMenuItem();
-        spectrumModificationsJMenuItem = new javax.swing.JMenuItem();
         identificationFeaturesMenu = new javax.swing.JMenuItem();
         followUpAnalysisMenu = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
@@ -717,6 +717,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         settingsMenu.add(barsCheckBoxMenuItem);
 
+        bubbleScaleJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        bubbleScaleJMenuItem.setText("Bubble Plot Scale");
+        bubbleScaleJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bubbleScaleJMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(bubbleScaleJMenuItem);
+
         ionTableButtonGroup.add(intensityIonTableRadioButtonMenuItem);
         intensityIonTableRadioButtonMenuItem.setSelected(true);
         intensityIonTableRadioButtonMenuItem.setText("Intensity Ion Table");
@@ -737,12 +746,56 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         settingsMenu.add(mzIonTableRadioButtonMenuItem);
+        settingsMenu.add(jSeparator5);
+
+        errorPlotTypeCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        errorPlotTypeCheckBoxMenuItem.setSelected(true);
+        errorPlotTypeCheckBoxMenuItem.setText("Absolute Mass Error Plot");
+        errorPlotTypeCheckBoxMenuItem.setToolTipText("Plot the mass error in Da or ppm ");
+        errorPlotTypeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                errorPlotTypeCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(errorPlotTypeCheckBoxMenuItem);
 
         annotationMenuBar.add(settingsMenu);
 
         splitterMenu4.setText("|");
         splitterMenu4.setEnabled(false);
         annotationMenuBar.add(splitterMenu4);
+
+        exportGraphicsMenu.setText("Export");
+
+        exportSpectrumGraphicsJMenuItem.setText("Spectrum as Figure");
+        exportSpectrumGraphicsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportSpectrumGraphicsJMenuItemActionPerformed(evt);
+            }
+        });
+        exportGraphicsMenu.add(exportSpectrumGraphicsJMenuItem);
+
+        bubblePlotJMenuItem.setText("Bubble Plot");
+        bubblePlotJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bubblePlotJMenuItemActionPerformed(evt);
+            }
+        });
+        exportGraphicsMenu.add(bubblePlotJMenuItem);
+
+        exportSpectrumValuesJMenuItem.setText("Spectrum as MGF");
+        exportSpectrumValuesJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportSpectrumValuesJMenuItemActionPerformed(evt);
+            }
+        });
+        exportGraphicsMenu.add(exportSpectrumValuesJMenuItem);
+
+        annotationMenuBar.add(exportGraphicsMenu);
+
+        splitterMenu6.setText("|");
+        splitterMenu6.setEnabled(false);
+        annotationMenuBar.add(splitterMenu6);
 
         helpJMenu.setText("Help");
 
@@ -756,9 +809,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         annotationMenuBar.add(helpJMenu);
 
-        splitterMenu6.setText("|");
-        splitterMenu6.setEnabled(false);
-        annotationMenuBar.add(splitterMenu6);
+        splitterMenu7.setText("|");
+        splitterMenu7.setEnabled(false);
+        annotationMenuBar.add(splitterMenu7);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("PeptideShaker");
@@ -904,27 +957,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         editMenu.add(spectrumCountingMenuItem);
-        editMenu.add(jSeparator5);
-
-        bubbleScaleJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_B, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        bubbleScaleJMenuItem.setText("Bubble Plot Scale");
-        bubbleScaleJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bubbleScaleJMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(bubbleScaleJMenuItem);
-
-        errorPlotTypeCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        errorPlotTypeCheckBoxMenuItem.setSelected(true);
-        errorPlotTypeCheckBoxMenuItem.setText("Absolute Mass Error Plot");
-        errorPlotTypeCheckBoxMenuItem.setToolTipText("Plot the mass error in Da or ppm ");
-        errorPlotTypeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                errorPlotTypeCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(errorPlotTypeCheckBoxMenuItem);
 
         menuBar.add(editMenu);
 
@@ -944,45 +976,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         exportJMenu.setMnemonic('x');
         exportJMenu.setText("Export");
-
-        graphicsJMenu.setMnemonic('g');
-        graphicsJMenu.setText("Graphics");
-        graphicsJMenu.setToolTipText("Export a graphics element (i.e., spectrum or plot)");
-        graphicsJMenu.setEnabled(false);
-
-        spectrumOverviewJMenuItem.setText("Spectrum");
-        spectrumOverviewJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                spectrumOverviewJMenuItemActionPerformed(evt);
-            }
-        });
-        graphicsJMenu.add(spectrumOverviewJMenuItem);
-
-        bubblePlotJMenuItem.setText("Bubble Plot");
-        bubblePlotJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bubblePlotJMenuItemActionPerformed(evt);
-            }
-        });
-        graphicsJMenu.add(bubblePlotJMenuItem);
-
-        spectrumSpectrumIdJMenuItem.setText("Spectrum");
-        spectrumSpectrumIdJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                spectrumSpectrumIdJMenuItemActionPerformed(evt);
-            }
-        });
-        graphicsJMenu.add(spectrumSpectrumIdJMenuItem);
-
-        spectrumModificationsJMenuItem.setText("Spectrum");
-        spectrumModificationsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                spectrumModificationsJMenuItemActionPerformed(evt);
-            }
-        });
-        graphicsJMenu.add(spectrumModificationsJMenuItem);
-
-        exportJMenu.add(graphicsJMenu);
 
         identificationFeaturesMenu.setText("Identification Features");
         identificationFeaturesMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -1494,13 +1487,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_proteinFilterJMenuItemActionPerformed
 
     /**
-     * Export the spectrum in the Overview tab.
+     * Export the spectrum as a figure.
      * 
      * @param evt 
      */
-    private void spectrumOverviewJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumOverviewJMenuItemActionPerformed
-        new ExportGraphicsDialog(this, true, (Component) overviewPanel.getSpectrum());
-}//GEN-LAST:event_spectrumOverviewJMenuItemActionPerformed
+    private void exportSpectrumGraphicsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumGraphicsJMenuItemActionPerformed
+
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            new ExportGraphicsDialog(this, true, (Component) overviewPanel.getSpectrum());
+        } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
+        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+            new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
+        }
+}//GEN-LAST:event_exportSpectrumGraphicsJMenuItemActionPerformed
 
     /**
      * Update the menu items available on the export graphics menu to only 
@@ -1557,45 +1559,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             ignoreThresholdUpdate = false;
             ignorePepWindowUpdate = false;
         }
-
-        // update the display of the spectra and the bubble plot export menu items
-        spectrumOverviewJMenuItem.setVisible(false);
-        spectrumOverviewJMenuItem.setEnabled(false);
-        bubblePlotJMenuItem.setVisible(false);
-        bubblePlotJMenuItem.setEnabled(false);
-        spectrumSpectrumIdJMenuItem.setVisible(false);
-        spectrumSpectrumIdJMenuItem.setEnabled(false);
-        spectrumModificationsJMenuItem.setVisible(false);
-        spectrumModificationsJMenuItem.setEnabled(false);
-
-        if (displaySpectrum || experiment != null) {
-
-            graphicsJMenu.setEnabled(true);
-
-            switch (selectedIndex) {
-
-                case 0:
-                    if (overviewPanel.isSpectrumEnabled()) {
-                        spectrumOverviewJMenuItem.setVisible(true);
-                        spectrumOverviewJMenuItem.setEnabled(true);
-                    }
-                    bubblePlotJMenuItem.setVisible(true);
-                    bubblePlotJMenuItem.setEnabled(true);
-                    break;
-                case 1:
-                    spectrumSpectrumIdJMenuItem.setVisible(true);
-                    spectrumSpectrumIdJMenuItem.setEnabled(true);
-                    break;
-                case 2:
-                    spectrumModificationsJMenuItem.setVisible(true);
-                    spectrumModificationsJMenuItem.setEnabled(true);
-                    break;
-                default:
-                    graphicsJMenu.setEnabled(false);
-                    break;
-            }
-        }
-
 
         // make sure that the same protein and peptide are selected in both 
         // the overview and protein structure tabs
@@ -1693,17 +1656,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 }
             }
         }
-        
+
         // move the spectrum annotation menu bar and set the intensity slider value
         if (selectedIndex == OVER_VIEW_TAB_INDEX) {
             overviewPanel.showSpectrumAnnotationMenu();
-            overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit()*100));
+            overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
         } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
             spectrumIdentificationPanel.showSpectrumAnnotationMenu();
-            spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit()*100));
+            spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
         } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
             ptmPanel.showSpectrumAnnotationMenu();
-            ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit()*100));
+            ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
         }
 
         // disable the protein filter option if a tab other than the overview tab is selected
@@ -1718,24 +1681,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void bubblePlotJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bubblePlotJMenuItemActionPerformed
         new ExportGraphicsDialog(this, true, (Component) overviewPanel.getBubblePlot());
     }//GEN-LAST:event_bubblePlotJMenuItemActionPerformed
-
-    /**
-     * Export the spectrum in the Spectrum ID tab.
-     * 
-     * @param evt 
-     */
-    private void spectrumSpectrumIdJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumSpectrumIdJMenuItemActionPerformed
-        new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
-    }//GEN-LAST:event_spectrumSpectrumIdJMenuItemActionPerformed
-
-    /**
-     * Export the spectrum in the Modifications tab.
-     * 
-     * @param evt 
-     */
-    private void spectrumModificationsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumModificationsJMenuItemActionPerformed
-        new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
-    }//GEN-LAST:event_spectrumModificationsJMenuItemActionPerformed
 
     /**
      * Enable or disable the separators.
@@ -2013,20 +1958,20 @@ private void mzIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionE
     updateAnnotationPreferences();
 }//GEN-LAST:event_mzIonTableRadioButtonMenuItemActionPerformed
 
-/**
- * Opens the wanted Help window.
- * 
- * @param evt 
- */
+    /**
+     * Opens the wanted Help window.
+     * 
+     * @param evt 
+     */
 private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpMenuItemActionPerformed
-    
+
     int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
-    
+
     setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-    
+
     if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
         int spectrumTabIndex = overviewPanel.getSelectedSpectrumTabIndex();
-    
+
         if (spectrumTabIndex == 0) {
             new HelpWindow(this, getClass().getResource("/helpFiles/IonTable.html"));
         } else if (spectrumTabIndex == 1) {
@@ -2039,9 +1984,85 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
         new HelpWindow(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
     }
-    
-    setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR)); 
+
+    setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_helpMenuItemActionPerformed
+
+/**
+ * Save the current spectrum/spectra to an MGF file.
+ */
+private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumValuesJMenuItemActionPerformed
+    int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+    String spectrumAsMgf = null;
+
+    if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+        spectrumAsMgf = overviewPanel.getSpectrumAsMgf();
+    } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+        spectrumAsMgf = spectrumIdentificationPanel.getSpectrumAsMgf();
+    } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+        spectrumAsMgf = ptmPanel.getSpectrumAsMgf();
+    }
+
+    if (spectrumAsMgf != null) {
+
+        JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
+
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.getName().toLowerCase().endsWith(".mgf") || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "(Mascot Generic Format) *.mgf";
+            }
+        };
+
+        fileChooser.setFileFilter(filter);
+
+        int returnVal = fileChooser.showSaveDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+            lastSelectedFolder = fileChooser.getSelectedFile().getAbsolutePath();
+
+            String path = fileChooser.getSelectedFile().getAbsolutePath();
+
+            if (!path.endsWith(".mgf")) {
+                path += ".mgf";
+            }
+
+            int saveFile = JOptionPane.YES_OPTION;
+
+            if (new File(path).exists()) {
+                saveFile = JOptionPane.showConfirmDialog(progressDialog,
+                        "Should " + path + " be overwritten?", "Overwrite",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            }
+
+            if (saveFile == JOptionPane.YES_OPTION) {
+
+                try {
+                    FileWriter w = new FileWriter(path);
+                    BufferedWriter bw = new BufferedWriter(w);
+                    bw.write(spectrumAsMgf);
+                    bw.close();
+                    w.close();
+
+                    JOptionPane.showMessageDialog(this, "Spectrum saved to " + path + ".",
+                            "File Saved", JOptionPane.INFORMATION_MESSAGE);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "An error occured while saving " + path + ".\n"
+                            + "See conf/PeptideShaker.log for details.", "Save Error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        }
+    }
+}//GEN-LAST:event_exportSpectrumValuesJMenuItemActionPerformed
 
     /**
      * Returns if the 3D model is to be spinning or not.
@@ -2124,7 +2145,7 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
                         overviewPanel.displayResults(progressDialog);
 
                         if (updateValidationTab) {
-                        progressDialog.setTitle("Loading Validation Tab. Please Wait...");
+                            progressDialog.setTitle("Loading Validation Tab. Please Wait...");
                             statsPanel.displayResults();
                         }
                         progressDialog.incrementValue();
@@ -2200,12 +2221,14 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     private javax.swing.JMenu editMenu;
     private javax.swing.JCheckBoxMenuItem errorPlotTypeCheckBoxMenuItem;
     private javax.swing.JMenuItem exitJMenuItem;
+    private javax.swing.JMenu exportGraphicsMenu;
     private javax.swing.JMenu exportJMenu;
+    private javax.swing.JMenuItem exportSpectrumGraphicsJMenuItem;
+    private javax.swing.JMenuItem exportSpectrumValuesJMenuItem;
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JMenu filterMenu;
     private javax.swing.JMenuItem followUpAnalysisMenu;
     private javax.swing.JPanel gradientPanel;
-    private javax.swing.JMenu graphicsJMenu;
     private javax.swing.JCheckBoxMenuItem h2oIonCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem h3po4IonCheckBoxMenuItem;
     private javax.swing.JMenu helpJMenu;
@@ -2257,9 +2280,6 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     private javax.swing.JMenuItem spectrumCountingMenuItem;
     private javax.swing.JCheckBoxMenuItem spectrumJCheckBoxMenuItem;
     private javax.swing.JPanel spectrumJPanel;
-    private javax.swing.JMenuItem spectrumModificationsJMenuItem;
-    private javax.swing.JMenuItem spectrumOverviewJMenuItem;
-    private javax.swing.JMenuItem spectrumSpectrumIdJMenuItem;
     private javax.swing.JMenu splitterMenu;
     private javax.swing.JMenu splitterMenu1;
     private javax.swing.JMenu splitterMenu2;
@@ -2267,6 +2287,7 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     private javax.swing.JMenu splitterMenu4;
     private javax.swing.JMenu splitterMenu5;
     private javax.swing.JMenu splitterMenu6;
+    private javax.swing.JMenu splitterMenu7;
     private javax.swing.JPanel statsJPanel;
     private javax.swing.JMenu structureTabViewMenu;
     private javax.swing.JMenu viewJMenu;
@@ -3195,8 +3216,8 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
      * @param enable if true the spectrum export in the overview panel will be enabled
      */
     public void enableSpectrumExport(boolean enable) {
-        if (spectrumOverviewJMenuItem.isVisible()) {
-            spectrumOverviewJMenuItem.setEnabled(enable);
+        if (exportSpectrumGraphicsJMenuItem.isVisible()) {
+            exportSpectrumGraphicsJMenuItem.setEnabled(enable);
         }
     }
 
@@ -3433,11 +3454,13 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
      * Closes the frame by first checking if the project ought to be saved.
      */
     private void close() {
-        
-        this.setExtendedState(Frame.MAXIMIZED_BOTH);
+
+        if (this.getExtendedState() == Frame.ICONIFIED || !this.isActive()) {
+            this.setExtendedState(Frame.MAXIMIZED_BOTH);
+        }
         
         if (!dataSaved && experiment != null) {
-            
+
             int value = JOptionPane.showConfirmDialog(this,
                     "Do you want to save the changes to " + experiment.getReference() + "?",
                     "Unsaved Changes",
@@ -3491,8 +3514,7 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
             }
         }.start();
     }
-    
-    
+
     /**
      * Update the annotation menu bar with the current annotation preferences.
      */
@@ -3565,15 +3587,15 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
 
         adaptJCheckBoxMenuItem.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
         allCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
-        
+
         barsCheckBoxMenuItem.setSelected(annotationPreferences.showBars());
         intensityIonTableRadioButtonMenuItem.setSelected(annotationPreferences.useIntensityIonTable());
     }
-    
+
     /**
      * Save the current annotation preferences selected in the annotation menus.
      */
-    public void updateAnnotationPreferences() { 
+    public void updateAnnotationPreferences() {
 
         annotationPreferences.clearIonTypes();
         if (aIonCheckBoxMenuItem.isSelected()) {
@@ -3640,11 +3662,11 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         annotationPreferences.setShowAllPeaks(allCheckBoxMenuItem.isSelected());
         annotationPreferences.setShowBars(barsCheckBoxMenuItem.isSelected());
         annotationPreferences.setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
-        
+
         updateAllAnnotations();
         setDataSaved(false);
     }
-    
+
     /**
      * Returns the annotation menu bar.
      * 
@@ -3653,7 +3675,7 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     public JMenuBar getAnnotationMenuBar() {
         return annotationMenuBar;
     }
-    
+
     /**
      * Updates the visible menu items on the settings menu of the annotation menu bar.
      * 
@@ -3661,10 +3683,15 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
      * @param showBubblePlotOptions     if true, the bubble plot options are shown
      * @param showIonTableOptions       if true, the ion table options are shown
      */
-    public void updateAnnotationMenuBarVisableOptions (boolean showSpectrumOptions, boolean showBubblePlotOptions, boolean showIonTableOptions) {
+    public void updateAnnotationMenuBarVisableOptions(boolean showSpectrumOptions, boolean showBubblePlotOptions, boolean showIonTableOptions) {
         allCheckBoxMenuItem.setVisible(showSpectrumOptions);
+        exportSpectrumGraphicsJMenuItem.setVisible(showSpectrumOptions);
         barsCheckBoxMenuItem.setVisible(showBubblePlotOptions);
+        bubblePlotJMenuItem.setVisible(showBubblePlotOptions);
+        bubbleScaleJMenuItem.setVisible(showBubblePlotOptions);
         intensityIonTableRadioButtonMenuItem.setVisible(showIonTableOptions);
         mzIonTableRadioButtonMenuItem.setVisible(showIonTableOptions);
+
+        exportGraphicsMenu.setEnabled(!showIonTableOptions);
     }
 }

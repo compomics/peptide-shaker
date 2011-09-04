@@ -822,9 +822,9 @@
                       <Group type="103" groupAlignment="1" attributes="0">
                           <Group type="102" attributes="0">
                               <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                              <Component id="intensitySlider" pref="388" max="32767" attributes="0"/>
+                              <Component id="intensitySlider" pref="352" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="spectrumChartPanel" alignment="1" pref="408" max="32767" attributes="0"/>
+                          <Component id="spectrumChartPanel" alignment="1" pref="372" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>

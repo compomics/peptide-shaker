@@ -2031,6 +2031,25 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
     public Component getSpectrum() {
         return (Component) spectrumChartPanel.getComponent(0);
     }
+    
+    /**
+     * Returns the current spectrum as an mgf string.
+     * 
+     * @return the current spectrum as an mgf string
+     */
+    public String getSpectrumAsMgf() {
+        
+        if (spectrumTable.getSelectedRow() != -1) {
+            String spectrumKey = Spectrum.getSpectrumKey((String) fileNamesCmb.getSelectedItem(), (String) spectrumTable.getValueAt(spectrumTable.getSelectedRow(), 1));
+            MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+            
+            if (currentSpectrum != null) {
+                return currentSpectrum.asMgf();
+            }
+        }
+                
+        return null;
+    }
 
     /**
      * Makes sure that the annotation menu bar is visible.
