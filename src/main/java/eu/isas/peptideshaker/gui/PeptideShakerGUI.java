@@ -513,6 +513,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ionsMenu.setText("Ions");
 
         aIonCheckBoxMenuItem.setText("a");
+        aIonCheckBoxMenuItem.setToolTipText("a-ions");
         aIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 aIonCheckBoxMenuItemActionPerformed(evt);
@@ -521,6 +522,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ionsMenu.add(aIonCheckBoxMenuItem);
 
         bIonCheckBoxMenuItem.setText("b");
+        bIonCheckBoxMenuItem.setToolTipText("b-ions");
         bIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 bIonCheckBoxMenuItemActionPerformed(evt);
@@ -529,6 +531,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ionsMenu.add(bIonCheckBoxMenuItem);
 
         cIonCheckBoxMenuItem.setText("c");
+        cIonCheckBoxMenuItem.setToolTipText("c-ions");
         cIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cIonCheckBoxMenuItemActionPerformed(evt);
@@ -538,6 +541,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ionsMenu.add(jSeparator6);
 
         xIonCheckBoxMenuItem.setText("x");
+        xIonCheckBoxMenuItem.setToolTipText("x-ions");
         xIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 xIonCheckBoxMenuItemActionPerformed(evt);
@@ -546,6 +550,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ionsMenu.add(xIonCheckBoxMenuItem);
 
         yIonCheckBoxMenuItem.setText("y");
+        yIonCheckBoxMenuItem.setToolTipText("y-ions");
         yIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 yIonCheckBoxMenuItemActionPerformed(evt);
@@ -554,6 +559,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ionsMenu.add(yIonCheckBoxMenuItem);
 
         zIonCheckBoxMenuItem.setText("z");
+        zIonCheckBoxMenuItem.setToolTipText("z-ions");
         zIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 zIonCheckBoxMenuItemActionPerformed(evt);
@@ -570,6 +576,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         lossMenu.setText("Loss");
 
         h2oIonCheckBoxMenuItem.setText("<html>H<sub>2</sub>O</html>");
+        h2oIonCheckBoxMenuItem.setToolTipText("Water Loss");
         h2oIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 h2oIonCheckBoxMenuItemActionPerformed(evt);
@@ -578,6 +585,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         lossMenu.add(h2oIonCheckBoxMenuItem);
 
         nh3IonCheckBoxMenuItem.setText("<html>NH<sub>3</sub></html>");
+        nh3IonCheckBoxMenuItem.setToolTipText("Ammonia Loss");
         nh3IonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nh3IonCheckBoxMenuItemActionPerformed(evt);
@@ -586,6 +594,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         lossMenu.add(nh3IonCheckBoxMenuItem);
 
         h3po4IonCheckBoxMenuItem.setText("<html>H<sub>3</sub>PO<sub>4</sub></html>");
+        h3po4IonCheckBoxMenuItem.setToolTipText("Phospo Loss - Type 1");
         h3po4IonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 h3po4IonCheckBoxMenuItemActionPerformed(evt);
@@ -594,6 +603,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         lossMenu.add(h3po4IonCheckBoxMenuItem);
 
         hpo3IonCheckBoxMenuItem.setText("<html>HPO<sub>3</sub></html>");
+        hpo3IonCheckBoxMenuItem.setToolTipText("Phospo Loss - Type 2");
         hpo3IonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 hpo3IonCheckBoxMenuItemActionPerformed(evt);
@@ -602,6 +612,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         lossMenu.add(hpo3IonCheckBoxMenuItem);
 
         ch4osIonCheckBoxMenuItem.setText("<html>CH<sub>4</sub>OS</html>");
+        ch4osIonCheckBoxMenuItem.setToolTipText("Sulpho Loss");
         ch4osIonCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ch4osIonCheckBoxMenuItemActionPerformed(evt);
@@ -611,6 +622,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         lossMenu.add(jSeparator7);
 
         adaptJCheckBoxMenuItem.setText("Adapt");
+        adaptJCheckBoxMenuItem.setToolTipText("<html>\nAdapt the neutral losses to the<br>\nsequence and modifications\n</html>");
         adaptJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 adaptJCheckBoxMenuItemActionPerformed(evt);
@@ -627,6 +639,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         otherMenu.setText("Other");
 
         precursorCheckBoxMenuItem.setText("Precursor");
+        precursorCheckBoxMenuItem.setToolTipText("Precursor ions");
         precursorCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 precursorCheckBoxMenuItemActionPerformed(evt);
@@ -635,6 +648,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         otherMenu.add(precursorCheckBoxMenuItem);
 
         immoniumCheckBoxMenuItem.setText("Immonium Ion");
+        immoniumCheckBoxMenuItem.setToolTipText("Immonium ions");
         immoniumCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 immoniumCheckBoxMenuItemActionPerformed(evt);
@@ -651,6 +665,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         chargeMenu.setText("Charge");
 
         singleChargeCheckBoxMenuItem.setText("+");
+        singleChargeCheckBoxMenuItem.setToolTipText("Single Charge");
         singleChargeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 singleChargeCheckBoxMenuItemActionPerformed(evt);
@@ -659,6 +674,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         chargeMenu.add(singleChargeCheckBoxMenuItem);
 
         doubleChargeCheckBoxMenuItem.setText("++");
+        doubleChargeCheckBoxMenuItem.setToolTipText("Double Charge");
         doubleChargeCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 doubleChargeCheckBoxMenuItemActionPerformed(evt);
@@ -667,6 +683,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         chargeMenu.add(doubleChargeCheckBoxMenuItem);
 
         moreThanTwoChargesCheckBoxMenuItem.setText(">2");
+        moreThanTwoChargesCheckBoxMenuItem.setToolTipText("More than two charges");
         moreThanTwoChargesCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 moreThanTwoChargesCheckBoxMenuItemActionPerformed(evt);
@@ -682,7 +699,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         settingsMenu.setText("Settings");
 
-        allCheckBoxMenuItem.setText("Show All Ions");
+        allCheckBoxMenuItem.setText("Show All Peaks");
+        allCheckBoxMenuItem.setToolTipText("Show all peaks or just the annotated peaks");
         allCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 allCheckBoxMenuItemActionPerformed(evt);
