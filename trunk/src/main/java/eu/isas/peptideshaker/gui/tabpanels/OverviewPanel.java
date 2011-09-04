@@ -31,6 +31,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -40,6 +41,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
@@ -159,7 +162,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         initComponents();
 
-        intensitySlider.setValue((int) (peptideShakerGUI.getAnnotationPreferences().getAnnotationIntensityLimit()*100));
+        intensitySlider.setValue((int) (peptideShakerGUI.getAnnotationPreferences().getAnnotationIntensityLimit() * 100));
 
         coverageTableScrollPane.setBorder(null);
 
@@ -534,6 +537,14 @@ public class OverviewPanel extends javax.swing.JPanel {
         coverageTable.setEnabled(false);
         coverageTable.setOpaque(false);
         coverageTable.setTableHeader(null);
+        coverageTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                coverageTableMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                coverageTableMouseExited(evt);
+            }
+        });
         coverageTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
                 coverageTableMouseMoved(evt);
@@ -1205,23 +1216,16 @@ public class OverviewPanel extends javax.swing.JPanel {
      */
     private void coverageTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_coverageTableMouseMoved
 
-        // @TODO: not working perfectly yet...
-
-        double paddingInPercent = 0.0115; // best so far: 0.012
-        double xValue = evt.getPoint().getX();
-        double cellWidth = coverageTable.getWidth();
-
-        double width = (xValue - cellWidth * paddingInPercent) / (cellWidth - 2 * cellWidth * paddingInPercent);
-
         if (currentProteinSequence != null) {
 
-            int residueNumber = (int) (width * currentProteinSequence.length());
+            int residueNumber = convertPointToResidueNumber(evt.getPoint().getX());
 
             String tooltipText = "<html>";
 
             for (int i = 0; i < peptideTable.getRowCount(); i++) {
                 if (residueNumber >= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex())
-                        && residueNumber <= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex())) {
+                        && residueNumber <= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex())
+                        && (Boolean) peptideTable.getValueAt(i, peptideTable.getColumnCount() - 1)) {
 
                     String modifications = (String) peptideTable.getValueAt(i, peptideTable.getColumn("Modifications").getModelIndex());
 
@@ -1239,10 +1243,10 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             if (!tooltipText.equalsIgnoreCase("<html>")) {
                 coverageTable.setToolTipText(tooltipText);
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
-                if (residueNumber > 0 && residueNumber <= currentProteinSequence.length()) {
-                    coverageTable.setToolTipText(residueNumber + ": " + currentProteinSequence.substring(residueNumber, residueNumber + 1));
-                }
+                coverageTable.setToolTipText(null);
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
         }
     }//GEN-LAST:event_coverageTableMouseMoved
@@ -1255,7 +1259,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 private void spectrumJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spectrumJTabbedPaneStateChanged
 
     if (peptideShakerGUI.getAnnotationMenuBar() != null) {
-        
+
         int index = spectrumJTabbedPane.getSelectedIndex();
 
         if (index == 0) {
@@ -1274,11 +1278,11 @@ private void spectrumJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) 
     }
 }//GEN-LAST:event_spectrumJTabbedPaneStateChanged
 
-/**
- * Updates the slider value when the user scrolls.
- * 
- * @param evt 
- */
+    /**
+     * Updates the slider value when the user scrolls.
+     * 
+     * @param evt 
+     */
 private void spectrumJTabbedPaneMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumJTabbedPaneMouseWheelMoved
     if (evt.getWheelRotation() > 0) { // Down
         intensitySlider.setValue(intensitySlider.getValue() - 1);
@@ -1287,25 +1291,101 @@ private void spectrumJTabbedPaneMouseWheelMoved(java.awt.event.MouseWheelEvent e
     }
 }//GEN-LAST:event_spectrumJTabbedPaneMouseWheelMoved
 
-/**
- * Updates the intensity annotation limit.
- * 
- * @param evt 
- */
+    /**
+     * Updates the intensity annotation limit.
+     * 
+     * @param evt 
+     */
 private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
     peptideShakerGUI.getAnnotationPreferences().setAnnotationIntensityLimit(((Integer) intensitySlider.getValue()) / 100.0);
     peptideShakerGUI.updateAllAnnotations();
     peptideShakerGUI.setDataSaved(false);
 }//GEN-LAST:event_intensitySliderStateChanged
 
-/**
- * Updates the slider value when the user scrolls.
- * 
- * @param evt 
- */
+    /**
+     * Updates the slider value when the user scrolls.
+     * 
+     * @param evt 
+     */
 private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_intensitySliderMouseWheelMoved
     spectrumJTabbedPaneMouseWheelMoved(evt);
 }//GEN-LAST:event_intensitySliderMouseWheelMoved
+
+    /**
+     * Opens the selected peptide in the coverage table.
+     * 
+     * @param evt 
+     */
+private void coverageTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_coverageTableMouseClicked
+
+    if (currentProteinSequence != null) {
+
+        int residueNumber = convertPointToResidueNumber(evt.getPoint().getX());
+
+        ArrayList<Integer> peptideIndexes = new ArrayList<Integer>();
+
+        for (int i = 0; i < peptideTable.getRowCount(); i++) {
+            if (residueNumber >= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex())
+                    && residueNumber <= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex())
+                    && (Boolean) peptideTable.getValueAt(i, peptideTable.getColumnCount() - 1)) {
+                peptideIndexes.add(i);
+            }
+        }
+
+        if (!peptideIndexes.isEmpty()) {
+
+            if (peptideIndexes.size() == 1) {
+                peptideTable.setRowSelectionInterval(peptideIndexes.get(0), peptideIndexes.get(0));
+                peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideIndexes.get(0), peptideIndexes.get(0), false));
+                peptideTableKeyReleased(null);
+            } else {
+                JPopupMenu peptidesPopupMenu = new JPopupMenu();
+                
+                // needs to be made final to be used below
+                final ArrayList<Integer> tempPeptideIndexes = peptideIndexes;
+
+                for (int i = 0; i < tempPeptideIndexes.size(); i++) {
+
+                    String modifications = (String) peptideTable.getValueAt(peptideIndexes.get(i), peptideTable.getColumn("Modifications").getModelIndex());
+
+                    if (modifications == null) {
+                        modifications = "";
+                    } else {
+                        modifications = " (" + modifications + ")";
+                    }
+
+                    String text = (i + 1) + ": " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("Start").getModelIndex()) + " - "
+                            + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("Sequence").getModelIndex())
+                            + " - " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("End").getModelIndex()) + modifications;
+
+                    final int tempInt = i;
+                    
+                    JMenuItem menuItem = new JMenuItem(text);
+                    menuItem.addActionListener(new java.awt.event.ActionListener() {
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+                            peptideTable.setRowSelectionInterval(tempPeptideIndexes.get(tempInt), tempPeptideIndexes.get(tempInt));
+                            peptideTable.scrollRectToVisible(peptideTable.getCellRect(tempPeptideIndexes.get(tempInt), tempPeptideIndexes.get(tempInt), false));
+                            peptideTableKeyReleased(null);
+                        }
+                    });
+
+                    peptidesPopupMenu.add(menuItem);
+                }
+                
+                peptidesPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+            }
+        }
+    }
+}//GEN-LAST:event_coverageTableMouseClicked
+
+/**
+ * Switch the mouse cursor back to the default cursor.
+ * 
+ * @param evt 
+ */
+private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_coverageTableMouseExited
+    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_coverageTableMouseExited
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bubbleAnnotationMenuPanel;
@@ -2603,6 +2683,31 @@ private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) 
     }
 
     /**
+     * Returns the current spectrum as an mgf string.
+     * 
+     * @return the current spectrum as an mgf string
+     */
+    public String getSpectrumAsMgf() {
+
+        int[] selectedRows = psmTable.getSelectedRows();
+
+        if (selectedRows.length > 0) {
+
+            String spectraAsMgf = "";
+
+            for (int i = 0; i < selectedRows.length; i++) {
+                String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(selectedRows[i], 0));
+                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+                spectraAsMgf += currentSpectrum.asMgf();
+            }
+
+            return spectraAsMgf;
+        }
+
+        return null;
+    }
+
+    /**
      * Returns the bubble plot.
      * 
      * @return the bubble plot
@@ -2700,25 +2805,25 @@ private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) 
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Returns the current selected tab in the spectrum and fragment ions 
      * tabbed pane.
      * 
      * @return the current selected tab in the spectrum and fragment ions tabbed pane
      */
-    public int getSelectedSpectrumTabIndex () {
+    public int getSelectedSpectrumTabIndex() {
         return spectrumJTabbedPane.getSelectedIndex();
     }
-    
+
     /**
      * Makes sure that the annotation menu bar is shown in the currently visible 
      * spectrum and fragment ions tabbed pane.
      */
-    public void showSpectrumAnnotationMenu () {
+    public void showSpectrumAnnotationMenu() {
         spectrumJTabbedPaneStateChanged(null);
     }
-    
+
     /**
      * Set the intensity slider value.
      * 
@@ -2726,5 +2831,24 @@ private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) 
      */
     public void setIntensitySliderValue(int value) {
         intensitySlider.setValue(value);
+    }
+
+    /**
+     * Converts the x-axis coordinate in the coverage table into a residue 
+     * index in the sequence.
+     * 
+     * @param coverageTableX    the x-axis coordinate in the coverage table
+     * @return                  the residue index
+     */
+    private int convertPointToResidueNumber(double coverageTableX) {
+
+        // @TODO: does not work perfectly...
+
+        double paddingInPercent = 0.0115; // @TODO: this hardcoded value should not be required!
+        double cellWidth = coverageTable.getWidth();
+
+        double width = (coverageTableX - cellWidth * paddingInPercent) / (cellWidth - 2 * cellWidth * paddingInPercent);
+
+        return (int) (width * currentProteinSequence.length());
     }
 }

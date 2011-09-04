@@ -2290,6 +2290,36 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
     public Component getSpectrum() {
         return (Component) spectrumJPanel.getComponent(1);
     }
+    
+    /**
+     * Returns the current spectrum as an mgf string.
+     * 
+     * @return the current spectrum as an mgf string
+     */
+    public String getSpectrumAsMgf() {
+        
+        String spectrumAsMgf = "";
+        
+        if (selectedPsmTable.getSelectedRow() != -1 && primarySelectionJComboBox.getSelectedIndex() != -1) {
+            String familyKey = convertComboBoxSelectionToFamilyKey((String) primarySelectionJComboBox.getSelectedItem());
+            String spectrumKey = psmsMap.get(familyKey).get(selectedPsmTable.getSelectedRow());
+            MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+            spectrumAsMgf += currentSpectrum.asMgf();
+        }
+        
+        if (relatedPsmTable.getSelectedRow() != -1 && secondarySelectionJComboBox.getSelectedIndex() != -1) {
+            String familyKey = convertComboBoxSelectionToFamilyKey((String) secondarySelectionJComboBox.getSelectedItem());
+            String spectrumKey = psmsMap.get(familyKey).get(relatedPsmTable.getSelectedRow());
+            MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+            spectrumAsMgf += currentSpectrum.asMgf();
+        }
+        
+        if (!spectrumAsMgf.isEmpty()) {
+            return spectrumAsMgf;
+        }
+                
+        return null;
+    }
 
     /**
      * Hides or displays the score columns in the protein and peptide tables.
@@ -2304,10 +2334,10 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
                 relatedPeptidesTable.removeColumn(relatedPeptidesTable.getColumn("Score"));
             } else {
                 peptidesTable.addColumn(selectedPeptidesScoreColumn);
-                peptidesTable.moveColumn(6, 4);
+                peptidesTable.moveColumn(5, 3);
 
                 relatedPeptidesTable.addColumn(relatedPeptidesScoreColumn);
-                relatedPeptidesTable.moveColumn(6, 4);
+                relatedPeptidesTable.moveColumn(5, 3);
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
