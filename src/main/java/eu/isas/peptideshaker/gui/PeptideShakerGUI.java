@@ -54,6 +54,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,6 +68,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -330,6 +332,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         setUpPanels(true);
         repaintPanels();
 
+        // load the list of recently used projects
+        loadRecentProjectsList();
+
         // set the title
         setFrameTitle(null);
 
@@ -469,7 +474,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
+        jSeparator8 = new javax.swing.JPopupMenu.Separator();
         openJMenuItem = new javax.swing.JMenuItem();
+        openRecentJMenu = new javax.swing.JMenu();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         saveMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -895,6 +902,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         fileJMenu.add(newJMenuItem);
+        fileJMenu.add(jSeparator8);
 
         openJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         openJMenuItem.setMnemonic('O');
@@ -906,6 +914,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         fileJMenu.add(openJMenuItem);
+
+        openRecentJMenu.setText("Open Recent Project");
+        fileJMenu.add(openRecentJMenu);
         fileJMenu.add(jSeparator2);
 
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
@@ -1281,7 +1292,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         if (newFolder.exists()) {
                             String[] fileList = newFolder.list();
                             progressDialog.setMax(fileList.length);
-                            progressDialog.setTitle("Deleting old matches.");
+                            progressDialog.setTitle("Deleting Old Matches.");
                             File toDelete;
                             int cpt = 0;
                             for (String fileName : fileList) {
@@ -1304,6 +1315,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                         // return the peptide shaker icon to the standard version
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        
+                        updateRecentProjectsList(new File(selectedFile));
 
                         JOptionPane.showMessageDialog(tempRef, "Identifications were successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
                         dataSaved = true;
@@ -1828,6 +1841,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         }
                     }
 
+                    updateRecentProjectsList(newFile);
+                    
                     openDialog.isPsFile(true);
                     openDialog.importPeptideShakerFile(newFile);
                 }
@@ -1988,9 +2003,9 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_helpMenuItemActionPerformed
 
-/**
- * Save the current spectrum/spectra to an MGF file.
- */
+    /**
+     * Save the current spectrum/spectra to an MGF file.
+     */
 private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumValuesJMenuItemActionPerformed
     int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
@@ -2248,6 +2263,7 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
+    private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JMenu lossMenu;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.ButtonGroup modelButtonGroup;
@@ -2258,6 +2274,7 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
     private javax.swing.JMenuItem newJMenuItem;
     private javax.swing.JCheckBoxMenuItem nh3IonCheckBoxMenuItem;
     private javax.swing.JMenuItem openJMenuItem;
+    private javax.swing.JMenu openRecentJMenu;
     private javax.swing.JMenu otherMenu;
     private javax.swing.JMenu overViewTabViewMenu;
     private javax.swing.JPanel overviewJPanel;
@@ -3458,7 +3475,7 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
         if (this.getExtendedState() == Frame.ICONIFIED || !this.isActive()) {
             this.setExtendedState(Frame.MAXIMIZED_BOTH);
         }
-        
+
         if (!dataSaved && experiment != null) {
 
             int value = JOptionPane.showConfirmDialog(this,
@@ -3693,5 +3710,149 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
         mzIonTableRadioButtonMenuItem.setVisible(showIonTableOptions);
 
         exportGraphicsMenu.setEnabled(!showIonTableOptions);
+    }
+
+    /**
+     * Add the list of recently used files to the file menu.
+     */
+    private void loadRecentProjectsList() {
+
+        String path = getJarFilePath() + "/conf/recently_opened_projects.txt";
+
+        File file = new File(path);
+
+        boolean fileExists = file.exists();
+        
+        if (!file.exists()) {
+            try {
+                fileExists = file.createNewFile();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        if (fileExists) {
+            
+            openRecentJMenu.removeAll();
+
+            try {
+                FileReader r = new FileReader(file);
+                BufferedReader br = new BufferedReader(r);
+
+                String line = br.readLine();
+                int counter = 1;
+
+                while (line != null) {
+                    JMenuItem menuItem = new JMenuItem(counter++ + ": " + line);
+
+                    final String filePath = line;
+                    final PeptideShakerGUI temp = this;
+
+                    menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                        public void actionPerformed(java.awt.event.ActionEvent evt) {
+
+                            if (!new File(filePath).exists()) {
+                                JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
+                            } else {
+                                OpenDialog openDialog = new OpenDialog(temp, false);
+                                openDialog.setSearchParamatersFiles(new ArrayList<File>());
+
+                                // get the properties files
+                                for (File file : new File(filePath).getParentFile().listFiles()) {
+                                    if (file.getName().toLowerCase().endsWith(".properties")) {
+                                        if (!openDialog.getSearchParametersFiles().contains(file)) {
+                                            openDialog.getSearchParametersFiles().add(file);
+                                        }
+                                    }
+                                }
+
+                                openDialog.isPsFile(true);
+                                openDialog.importPeptideShakerFile(new File(filePath));
+                                updateRecentProjectsList(new File(filePath));
+                                lastSelectedFolder = new File(filePath).getAbsolutePath();
+                            }
+                        }
+                    });
+
+                    openRecentJMenu.add(menuItem);
+                    line = br.readLine();
+                }
+                
+                br.close();
+                r.close();
+                
+                if (openRecentJMenu.getItemCount() == 0) {
+                    JMenuItem menuItem = new JMenuItem("(empty)");
+                    menuItem.setEnabled(false);
+                    openRecentJMenu.add(menuItem);
+                }
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    /**
+     * Add the given file to the top of the recent projects list.
+     * 
+     * @param file the file to add
+     */
+    private void updateRecentProjectsList(File file) {
+        
+        String path = getJarFilePath() + "/conf/recently_opened_projects.txt";
+
+        File recentFiles = new File(path);
+        
+        boolean fileExists = recentFiles.exists();
+        
+        if (!recentFiles.exists()) {
+            try {
+                fileExists = recentFiles.createNewFile();
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        if (fileExists) {
+
+            try {
+                // read the old list
+                FileReader r = new FileReader(recentFiles);
+                BufferedReader br = new BufferedReader(r);
+
+                String line = br.readLine();
+                String oldList = "";
+                int counter = 0;
+
+                while (line != null && counter < 9) {
+                    
+                    if (!line.equalsIgnoreCase(file.getAbsolutePath())) {
+                        oldList += line + "\n";
+                    }
+                    
+                    line = br.readLine();
+                    counter++;
+                }
+                
+                br.close();
+                r.close();
+                
+                // write the new list
+                FileWriter w = new FileWriter(recentFiles);
+                BufferedWriter bw = new BufferedWriter(w);
+                bw.write(file.getAbsolutePath() + "\n" + oldList);
+                
+                bw.close();
+                w.close();
+                
+                // load the updated list
+                loadRecentProjectsList();
+                   
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
