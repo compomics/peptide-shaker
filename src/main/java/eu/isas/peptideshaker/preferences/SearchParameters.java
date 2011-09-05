@@ -27,9 +27,9 @@ public class SearchParameters implements Serializable {
      */
     private double fragmentIonMZTolerance = 0;
     /**
-     * The expected modifications as a map Name -> modification family. Modified peptides will be grouped according to this parameter.
+     * The expected modifications. Modified peptides will be grouped and displayed according to this classification.
      */
-    private HashMap<String, String> modificationProfile = new HashMap<String, String>();
+    private ModificationProfile modificationProfile = new ModificationProfile();
     /**
      * The enzyme used for digestion
      */
@@ -101,29 +101,21 @@ public class SearchParameters implements Serializable {
     }
 
     /**
-     * Returns the expected modifications map (Name -> modification family)
-     * @return the expected modifications map (Name -> modification family)
+     * Returns the modification profile of the project
+     * @return the modification profile of the project
      */
-    public HashMap<String, String> getModificationProfile() {
+    public ModificationProfile getModificationProfile() {
         return modificationProfile;
     }
 
     /**
-     * Adds a modification to the expected modifications map
-     * @param modificationName  The modification name
-     * @param modificationFamily  The family of the modification. Modified peptides will be grouped according to this parameter.
+     * sets the modification profile of the project
+     * @param modificationProfile  The modification profile
      */
-    public void addExpectedModification(String modificationName, String modificationFamily) {
-        modificationProfile.put(modificationName, modificationFamily);
+    public void setModificationProfile(ModificationProfile modificationProfile) {
+        this.modificationProfile = modificationProfile;
     }
-
-    /**
-     * Clears the modification profile
-     */
-    public void clearModificationProfile() {
-        modificationProfile.clear();
-    }
-
+    
     /**
      * Returns the ms2 ion m/z tolerance
      * @return the ms2 ion m/z tolerance

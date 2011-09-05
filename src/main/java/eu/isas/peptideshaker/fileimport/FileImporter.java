@@ -18,6 +18,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.gui.WaitingDialog;
+import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -109,13 +110,14 @@ public class FileImporter {
     /**
      * Imports the identification from files.
      *
-     * @param idFiles           the identification files to import the Ids from
-     * @param spectrumFiles     the files where the corresponding spectra can be imported
-     * @param fastaFile         the FASTA file to use
-     * @param searchParameters  the search parameters
+     * @param idFiles               the identification files to import the Ids from
+     * @param spectrumFiles         the files where the corresponding spectra can be imported
+     * @param fastaFile             the FASTA file to use
+     * @param searchParameters      the search parameters
+     * @param annotationPreferences the annotation preferences to use for PTM scoring
      */
-    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, SearchParameters searchParameters) {
-        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, fastaFile, idFilter, searchParameters);
+    public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) {
+        IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, fastaFile, idFilter, searchParameters, annotationPreferences);
         idProcessor.execute();
     }
 
@@ -271,11 +273,11 @@ public class FileImporter {
         // If someone has a better idea, would be great.
         PTM psPTM;
         ArrayList<PTM> possiblePTMs;
-        if (searchParameters.getModificationProfile().containsKey(sePTM.getName().toLowerCase())) {
+        if (searchParameters.getModificationProfile().getUtilitiesNames().contains(sePTM.getName().toLowerCase())) {
             return ptmFactory.getPTM(sePTM.getName());
         } else {
             possiblePTMs = new ArrayList<PTM>();
-            for (String ptmName : searchParameters.getModificationProfile().keySet()) {
+            for (String ptmName : searchParameters.getModificationProfile().getUtilitiesNames()) {
                 psPTM = ptmFactory.getPTM(ptmName);
                 if (Math.abs(psPTM.getMass() - sePTM.getMass()) < 0.01) {
                     possiblePTMs.add(psPTM);
@@ -368,12 +370,16 @@ public class FileImporter {
          * The search parameters
          */
         private SearchParameters searchParameters;
+        /**
+         * The annotation preferences to use for PTM scoring
+         */
+        private AnnotationPreferences annotationPreferences;
 
         /**
          * Constructor of the worker
          * @param idFiles ArrayList containing the identification files
          */
-        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, IdFilter idFilter, SearchParameters searchParameters) {
+        public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, IdFilter idFilter, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) {
 
             this.idFiles = new ArrayList<File>();
             HashMap<String, File> filesMap = new HashMap<String, File>();
@@ -422,9 +428,10 @@ public class FileImporter {
 
             try {
 
-                for (String modificationName : searchParameters.getModificationProfile().keySet()) {
-                    ptmFactory.getPTM(modificationName).setName(searchParameters.getModificationProfile().get(modificationName));
-                    //ptmFactory.getPTM(modificationName).setShortName(searchParameters.getShortName(modificationName)); // @TODO: implement short name!
+                for (String modificationName : searchParameters.getModificationProfile().getUtilitiesNames()) {
+                    String peptideShakerName = searchParameters.getModificationProfile().getPeptideShakerName(modificationName);
+                    ptmFactory.getPTM(modificationName).setName(peptideShakerName);
+                    ptmFactory.getPTM(modificationName).setShortName(searchParameters.getModificationProfile().getShortName(peptideShakerName)); 
                 }
 
                 waitingDialog.appendReport("Reading identification files.");
@@ -527,7 +534,7 @@ public class FileImporter {
                     waitingDialog.increaseProgressValue(mgfNames.size());
                 }
 
-                peptideShaker.processIdentifications(inputMap, waitingDialog);
+                peptideShaker.processIdentifications(inputMap, waitingDialog, searchParameters, annotationPreferences);
 
             } catch (Exception e) {
                 waitingDialog.appendReport("An error occured while loading the identification files:");

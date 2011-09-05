@@ -17,6 +17,7 @@ import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.preferences.SearchParameters;
+import java.awt.Color;
 import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
@@ -640,7 +641,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
             // add one more just to not start at 0%
             progressCounter++;
-                   
+
             waitingDialog.setMaxProgressValue(progressCounter);
 
             boolean needDialog = false;
@@ -654,14 +655,14 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             }
 
             if (needDialog) {
-                
+
                 // @TODO: there's something strange going on here!!
                 //          The try-catch should not be needed, but if not there the tools sometimes crashes when opening an existing project...
                 //          With the try-catch the tool just starts opening the results in the background instead. 
-                
+
                 try {
                     waitingDialog.setVisible(true);
-                } catch(IndexOutOfBoundsException e) {
+                } catch (IndexOutOfBoundsException e) {
                     // ignore
                 }
                 this.dispose();
@@ -961,7 +962,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OpenDialog.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
@@ -1068,9 +1068,9 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        
+
         peptideShakerGUI.setDataSaved(isPsFile);
-        
+
         return true;
     }
 
@@ -1170,7 +1170,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         boolean precTolUnit = ((String) precMassUnitCmb.getSelectedItem()).equals("ppm");
         peptideShakerGUI.getSearchParameters().setPrecursorTolerance(getMaxMassDeviation());
         IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue(), getMaxMassDeviation(), precTolUnit);
-        peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters());
+        peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
     }
 
     /**
@@ -1196,8 +1196,19 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             }
 
             for (String name : variableMods) {
-                if (!searchParameters.getModificationProfile().containsKey(name)) {
-                    searchParameters.addExpectedModification(name, name);
+                if (!searchParameters.getModificationProfile().getUtilitiesNames().contains(name)) {
+                    searchParameters.getModificationProfile().setPeptideShakerName(name, name);
+                    if (!searchParameters.getModificationProfile().getPeptideShakerNames().contains(name)) {
+                        int index = name.length()-1;
+                        if (name.lastIndexOf(" ") > 0) {
+                            index = name.indexOf(" ");
+                        }
+                        if (name.lastIndexOf("-")>0) {
+                            index = Math.min(index, name.indexOf("-"));
+                        }
+                        searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
+                        searchParameters.getModificationProfile().setColor(name, Color.blue);
+                    }
                 }
             }
 
@@ -1220,7 +1231,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 try {
                     searchParameters.setPrecursorTolerance(new Double(temp.trim()));
                 } catch (Exception e) {
-                    
                 }
             }
 
@@ -1229,11 +1239,11 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             if (temp != null) {
                 precMassUnitCmb.setSelectedItem(temp);
                 int unit = 0;
-            try {
-                unit = new Integer(temp.trim());
-            } catch (Exception e) {
-            }
-        searchParameters.setPrecursorToleranceUnit(unit);
+                try {
+                    unit = new Integer(temp.trim());
+                } catch (Exception e) {
+                }
+                searchParameters.setPrecursorToleranceUnit(unit);
             }
 
             temp = props.getProperty(IdentificationParametersReader.MISSED_CLEAVAGES);
@@ -1265,8 +1275,8 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             if (temp != null && temp.length() > 0) {
                 searchParameters.setIonSearched2(temp);
             }
-            
-            
+
+
             searchParameters.setParametersFile(searchGUIFile);
             temp = props.getProperty(IdentificationParametersReader.DATABASE_FILE);
 
@@ -1293,7 +1303,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "An error occured while reading " + searchGUIFile.getName() + ".\n"
-                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);            
+                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
         }
     }
 
@@ -1365,16 +1375,16 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         peptideShakerGUI.setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
         peptideShakerGUI.setSearchParameters(experimentSettings.getSearchParameters());
         peptideShakerGUI.setSpectrumCountingPreferences(experimentSettings.getSpectrumCountingPreferences());
-        
+
         try {
             SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile());
-        }catch (Exception e) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
-                            "An error occured while reading " + experimentSettings.getSearchParameters().getFastaFile() + ".\n" ,
-                            "File Input Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
+                    "An error occured while reading " + experimentSettings.getSearchParameters().getFastaFile() + ".\n",
+                    "File Input Error", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
-        
+
         ArrayList<String> names = new ArrayList<String>();
         for (File file : spectrumFiles) {
             names.add(file.getName());
@@ -1481,7 +1491,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
                     tempRef.setVisible(false);
                     tempRef.openButtonActionPerformed(null);
-                    
+
                 } catch (Exception e) {
 
                     // change the peptide shaker icon back to the default version
@@ -1505,7 +1515,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     public void cancelProgress() {
         cancelProgress = true;
     }
-    
+
     /**
      * Get the search paramater files.
      * 
@@ -1514,7 +1524,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     public ArrayList<File> getSearchParametersFiles() {
         return searchParametersFiles;
     }
-    
+
     /**
      * Set the search parameters files.
      * 
@@ -1524,7 +1534,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
     public void setSearchParamatersFiles(ArrayList<File> searchParametersFiles) {
         this.searchParametersFiles = searchParametersFiles;
     }
-    
+
     public void isPsFile(boolean isPsFile) {
         this.isPsFile = isPsFile;
     }

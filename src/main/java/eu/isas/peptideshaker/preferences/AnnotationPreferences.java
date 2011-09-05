@@ -34,10 +34,6 @@ public class AnnotationPreferences implements Serializable {
      */
     private double intensityLimit = 0.75;
     /**
-     * boolean indicating whether only most intense peaks should be annotated
-     */
-    private boolean mostIntensePeaks;
-    /**
      * Shall PeptideShaker use default annotation
      */
     private boolean defaultAnnotation;
@@ -215,22 +211,6 @@ public class AnnotationPreferences implements Serializable {
      */
     public boolean useDefaultAnnotation() {
         return defaultAnnotation;
-    }
-
-    /**
-     * Sets whether only most intense peaks should be annotated
-     * @param annotateMostIntensePeaks boolean indicating whether only most intense peaks should be annotated
-     */
-    public void annotateMostIntensePeaks(boolean annotateMostIntensePeaks) {
-        mostIntensePeaks = annotateMostIntensePeaks;
-    }
-
-    /**
-     * Returns whether only most intense peaks should be annotated
-     * @return a boolean indicating whether only most intense peaks should be annotated
-     */
-    public boolean shallAnnotateMostIntensePeaks() {
-        return mostIntensePeaks;
     }
 
     /**

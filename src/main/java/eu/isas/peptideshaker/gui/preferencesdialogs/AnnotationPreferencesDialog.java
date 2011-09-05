@@ -68,9 +68,9 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         jLabel2 = new javax.swing.JLabel();
         mzToleranceTxt = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        mostIntenseJCheckBox = new javax.swing.JCheckBox();
         intensitySpinner = new javax.swing.JSpinner();
         jLabel1 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         h2oBox = new javax.swing.JCheckBox();
@@ -208,15 +208,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
         jLabel3.setText("m/z");
 
-        mostIntenseJCheckBox.setText("Annotate Most Intense Peaks");
-        mostIntenseJCheckBox.setIconTextGap(15);
-        mostIntenseJCheckBox.setOpaque(false);
-        mostIntenseJCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mostIntenseJCheckBoxActionPerformed(evt);
-            }
-        });
-
         intensitySpinner.setModel(new javax.swing.SpinnerNumberModel(75, 0, 100, 1));
         intensitySpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
@@ -226,18 +217,20 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
         jLabel1.setText("%");
 
+        jLabel4.setText("Annotation intensity threshold");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(mostIntenseJCheckBox)
+                .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(intensitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
                 .addComponent(mzToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -250,10 +243,10 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(mostIntenseJCheckBox)
                     .addComponent(jLabel2)
                     .addComponent(mzToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
+                    .addComponent(jLabel4)
                     .addComponent(intensitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -484,7 +477,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             if (immoniumBox.isSelected()) {
                 annotationPreferences.addIonType(PeptideFragmentIonType.IMMONIUM);
             }
-            annotationPreferences.annotateMostIntensePeaks(mostIntenseJCheckBox.isSelected());
             annotationPreferences.setAnnotationIntensityLimit(((Integer) intensitySpinner.getValue()) / 100.0);
             annotationPreferences.setMzTolerance(new Double(mzToleranceTxt.getText().trim()));
 
@@ -545,9 +537,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
      * 
      * @param evt 
      */
-    private void mostIntenseJCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mostIntenseJCheckBoxActionPerformed
-    }//GEN-LAST:event_mostIntenseJCheckBoxActionPerformed
-
     /**
      * Change the cursor to a hand cursor.
      * 
@@ -604,13 +593,13 @@ private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JCheckBox moreCharges;
-    private javax.swing.JCheckBox mostIntenseJCheckBox;
     private javax.swing.JTextField mzToleranceTxt;
     private javax.swing.JCheckBox nh3Box;
     private javax.swing.JButton okButton;
@@ -628,7 +617,6 @@ private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//
      * Refresh the selection,
      */
     private void updateGUI() {
-        mostIntenseJCheckBox.setSelected(annotationPreferences.shallAnnotateMostIntensePeaks());
         intensitySpinner.setValue((int) (annotationPreferences.getAnnotationIntensityLimit()*100));
         mzToleranceTxt.setText(annotationPreferences.getMzTolerance() + "");
         aBox.setSelected(false);

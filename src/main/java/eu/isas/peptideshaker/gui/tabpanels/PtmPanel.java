@@ -1700,7 +1700,7 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
                             annotationPreferences.getNeutralLosses(),
                             annotationPreferences.getValidatedCharges(),
                             currentSpectrum, currentPeptide,
-                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
+                            currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                             annotationPreferences.getMzTolerance());
 
                     // add the spectrum annotations
@@ -1763,7 +1763,7 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
                             annotationPreferences.getNeutralLosses(),
                             annotationPreferences.getValidatedCharges(),
                             currentSpectrum, currentPeptide,
-                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
+                            currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                             annotationPreferences.getMzTolerance());
 
                     // add the spectrum annotations

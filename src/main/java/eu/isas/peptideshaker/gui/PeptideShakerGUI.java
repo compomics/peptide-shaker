@@ -42,6 +42,7 @@ import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.awt.Color;
@@ -2441,7 +2442,7 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
         searchParameters.setIonSearched1("b");
         searchParameters.setIonSearched2("y");
         loadModificationProfile(profileFile);
-        annotationPreferences.annotateMostIntensePeaks(true);
+        annotationPreferences.setAnnotationIntensityLimit(0.75);
         annotationPreferences.useDefaultAnnotation(true);
         updateAnnotationPreferencesFromSearchSettings();
         spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.NSAF);
@@ -2512,24 +2513,23 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
         try {
             FileInputStream fis = new FileInputStream(aFile);
             ObjectInputStream in = new ObjectInputStream(fis);
-            HashMap<String, String> modificationProfile = (HashMap<String, String>) in.readObject();
+            ModificationProfile modificationProfile = (ModificationProfile) in.readObject();
             in.close();
-            for (String modificationName : modificationProfile.keySet()) {
-                searchParameters.addExpectedModification(modificationName, modificationProfile.get(modificationName));
-            }
+            searchParameters.setModificationProfile(modificationProfile);
         } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
-            searchParameters.clearModificationProfile();
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
                     + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
-            searchParameters.clearModificationProfile();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
                     + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
-            searchParameters.clearModificationProfile();
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
+                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
         }
     }
 
