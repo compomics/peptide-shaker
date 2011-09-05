@@ -9,7 +9,9 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.SearchParameters;
+import java.awt.Color;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -90,7 +92,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         expectedModificationsTable.getColumn(" ").setMaxWidth(40);
         expectedModificationsTable.getColumn(" ").setMinWidth(40);
 
-        modificationList = new ArrayList<String>(searchParameters.getModificationProfile().keySet());
+        modificationList = new ArrayList<String>(searchParameters.getModificationProfile().getUtilitiesNames());
         Collections.sort(modificationList);
         enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         ion1Cmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
@@ -397,8 +399,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(saveProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(loadProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(clearProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(profileTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                            .addComponent(profileTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
 
@@ -565,7 +566,18 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         for (int i = selectedRows.length - 1; i >= 0; i--) {
             String name = (String) availableModificationsTable.getValueAt(selectedRows[i], 1);
-            searchParameters.addExpectedModification(name, name);
+            searchParameters.getModificationProfile().setPeptideShakerName(name, name);
+            if (!searchParameters.getModificationProfile().getPeptideShakerNames().contains(name)) {
+                int index = name.length() - 1;
+                if (name.lastIndexOf(" ") > 0) {
+                    index = name.indexOf(" ");
+                }
+                if (name.lastIndexOf("-") > 0) {
+                    index = Math.min(index, name.indexOf("-"));
+                }
+                searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
+                searchParameters.getModificationProfile().setColor(name, Color.blue);
+            }
             modificationList.add(name);
             ((DefaultTableModel) availableModificationsTable.getModel()).removeRow(selectedRows[i]);
         }
@@ -626,7 +638,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void clearProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearProfileBtnActionPerformed
-        searchParameters.clearModificationProfile();
+        searchParameters.setModificationProfile(new ModificationProfile());
         modificationList.clear();
         expectedModificationsTable.revalidate();
         expectedModificationsTable.repaint();
@@ -908,7 +920,18 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         for (String name : variableMods) {
             if (!modificationList.contains(name)) {
-                searchParameters.addExpectedModification(name, name);
+                searchParameters.getModificationProfile().setPeptideShakerName(name, name);
+                if (!searchParameters.getModificationProfile().getPeptideShakerNames().contains(name)) {
+                    int index = name.length() - 1;
+                    if (name.lastIndexOf(" ") > 0) {
+                        index = name.indexOf(" ");
+                    }
+                    if (name.lastIndexOf("-") > 0) {
+                        index = Math.min(index, name.indexOf("-"));
+                    }
+                    searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
+                    searchParameters.getModificationProfile().setColor(name, Color.blue);
+                }
                 modificationList.add(name);
             }
         }
@@ -973,6 +996,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         SwingUtilities.invokeLater(new Runnable() {
 
+            @Override
             public void run() {
                 expectedModificationsTable.revalidate();
                 expectedModificationsTable.repaint();
@@ -1055,14 +1079,12 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         try {
             FileInputStream fis = new FileInputStream(aFile);
             ObjectInputStream in = new ObjectInputStream(fis);
-            HashMap<String, String> modificationProfile = (HashMap<String, String>) in.readObject();
+            ModificationProfile modificationProfile = (ModificationProfile) in.readObject();
             in.close();
 
-            for (String modificationName : modificationProfile.keySet()) {
-                searchParameters.addExpectedModification(modificationName, modificationProfile.get(modificationName));
-            }
+            searchParameters.setModificationProfile(modificationProfile);
 
-            modificationList = new ArrayList<String>(searchParameters.getModificationProfile().keySet());
+            modificationList = new ArrayList<String>(searchParameters.getModificationProfile().getUtilitiesNames());
             Collections.sort(modificationList);
             profileFile = aFile;
             profileTxt.setText(aFile.getName().substring(0, aFile.getName().lastIndexOf(".")));
@@ -1070,17 +1092,18 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
-            searchParameters.clearModificationProfile();
         } catch (IOException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
                     + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
-            searchParameters.clearModificationProfile();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
                     + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
-            searchParameters.clearModificationProfile();
+        } catch (ClassCastException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
+                    + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
         }
 
         expectedModificationsTable.revalidate();
@@ -1158,30 +1181,42 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 3;
+            return 5;
         }
 
         @Override
         public String getColumnName(int column) {
-            if (column == 0) {
-                return " ";
-            } else if (column == 1) {
-                return "Name";
-            } else if (column == 2) {
-                return "Family";
-            } else {
-                return "";
+            switch (column) {
+                case 1:
+                    return "Name";
+                case 2:
+                    return "Family";
+                case 3:
+                    return "Short Name";
+                case 4:
+                    return "Color";
+                default:
+                    return " ";
             }
         }
 
         @Override
         public Object getValueAt(int row, int column) {
-            if (column == 0) {
-                return (row + 1);
-            } else if (column == 1) {
-                return modificationList.get(row);
-            } else {
-                return searchParameters.getModificationProfile().get(modificationList.get(row));
+            switch (column) {
+                case 0:
+                    return row + 1;
+                case 1:
+                    return modificationList.get(row);
+                case 2:
+                    return searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row));
+                case 3:
+                    return searchParameters.getModificationProfile().getShortName(
+                            searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
+                case 4:
+                    return searchParameters.getModificationProfile().getColor(
+                            searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
+                default:
+                    return "";
             }
         }
 
@@ -1189,7 +1224,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         public void setValueAt(Object aValue, int row, int column) {
             try {
                 if (column == 2) {
-                    searchParameters.getModificationProfile().put(modificationList.get(row), aValue.toString());
+                    searchParameters.getModificationProfile().setPeptideShakerName(modificationList.get(row), aValue.toString());
+                } else if (column == 3) {
+                    searchParameters.getModificationProfile().setShortName(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)), aValue.toString());
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for " + modificationList.get(row) + " occurrence.",
@@ -1211,7 +1248,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         @Override
         public boolean isCellEditable(int row, int column) {
 
-            if (column == 2) {
+            if (column == 2 || column == 3) {
                 return true;
             } else {
                 return false;

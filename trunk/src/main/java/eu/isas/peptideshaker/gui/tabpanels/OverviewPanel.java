@@ -1705,7 +1705,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     annotationPreferences.getValidatedCharges(),
                                     currentSpectrum,
                                     selectedPeptideMatch.getTheoreticPeptide(),
-                                    currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
+                                    currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getMzTolerance());
                             allAnnotations.add(annotations);
                             allSpectra.add(currentSpectrum);
@@ -1918,7 +1918,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
                                     currentSpectrum, currentPeptide,
-                                    currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
+                                    currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getMzTolerance());
                             spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                             spectrum.rescale(lowerMzZoomRange, upperMzZoomRange);
@@ -1957,7 +1957,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             // create the intensity histograms
                             sequenceFragmentIonPlotsJPanel.add(new IntensityHistogram(
                                     annotations, annotationPreferences.getIonTypes(), currentSpectrum,
-                                    peptideShakerGUI.getAnnotationPreferences().shallAnnotateMostIntensePeaks(),
                                     peptideShakerGUI.getAnnotationPreferences().getAnnotationIntensityLimit(),
                                     annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
                                     annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4))));
@@ -2631,7 +2630,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             annotationPreferences.getNeutralLosses(),
                             annotationPreferences.getValidatedCharges(),
                             currentSpectrum, currentPeptide,
-                            currentSpectrum.getIntensityLimit(annotationPreferences.shallAnnotateMostIntensePeaks(), annotationPreferences.getAnnotationIntensityLimit()),
+                            currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                             annotationPreferences.getMzTolerance());
                     allAnnotations.add(annotations);
                 }
