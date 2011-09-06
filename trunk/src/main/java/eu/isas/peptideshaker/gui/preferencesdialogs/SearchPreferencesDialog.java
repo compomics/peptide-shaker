@@ -12,6 +12,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,13 +25,18 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JColorChooser;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
 
 /**
  * A dialog for displaying and editing the search preferences.
@@ -40,6 +46,10 @@ import javax.swing.table.DefaultTableModel;
  */
 public class SearchPreferencesDialog extends javax.swing.JDialog {
 
+    /**
+     * The tooltips for the expected variable mods.
+     */
+    Vector<String> expectedVariableModsTableToolTips; 
     /**
      * The search parameters needed by peptide-shaker
      */
@@ -86,11 +96,23 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         loadModifications();
         initComponents();
 
+        // set the renderer for the color column
+        expectedModificationsTable.getColumn("  ").setCellRenderer(new JSparklinesColorTableCellRenderer());
+
         availableModificationsTable.getColumn(" ").setMaxWidth(40);
         availableModificationsTable.getColumn(" ").setMinWidth(40);
 
         expectedModificationsTable.getColumn(" ").setMaxWidth(40);
         expectedModificationsTable.getColumn(" ").setMinWidth(40);
+        expectedModificationsTable.getColumn("  ").setMaxWidth(40);
+        expectedModificationsTable.getColumn("  ").setMinWidth(40);
+        
+        expectedVariableModsTableToolTips = new Vector<String>();
+        expectedVariableModsTableToolTips.add(null);
+        expectedVariableModsTableToolTips.add("Modification Color");
+        expectedVariableModsTableToolTips.add("Modification Name");
+        expectedVariableModsTableToolTips.add("Modification Family Name");
+        expectedVariableModsTableToolTips.add("Modification Short Name");
 
         modificationList = new ArrayList<String>(searchParameters.getModificationProfile().getUtilitiesNames());
         Collections.sort(modificationList);
@@ -133,7 +155,20 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         addModifications = new javax.swing.JButton();
         removeModification = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        expectedModificationsTable = new javax.swing.JTable();
+        expectedModificationsTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        String tip = null;
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        tip = (String) expectedVariableModsTableToolTips.get(realIndex);
+                        return tip;
+                    }
+                };
+            }
+        };
         jLabel3 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         profileTxt = new javax.swing.JTextField();
@@ -279,6 +314,19 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         });
 
         expectedModificationsTable.setModel(new ModificationTable());
+        expectedModificationsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                expectedModificationsTableMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                expectedModificationsTableMouseExited(evt);
+            }
+        });
+        expectedModificationsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                expectedModificationsTableMouseMoved(evt);
+            }
+        });
         jScrollPane1.setViewportView(expectedModificationsTable);
 
         jLabel3.setFont(jLabel3.getFont().deriveFont((jLabel3.getFont().getStyle() | java.awt.Font.ITALIC)));
@@ -576,7 +624,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     index = Math.min(index, name.indexOf("-"));
                 }
                 searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
-                searchParameters.getModificationProfile().setColor(name, Color.blue);
+                searchParameters.getModificationProfile().setColor(name, Color.lightGray);
             }
             modificationList.add(name);
             ((DefaultTableModel) availableModificationsTable.getModel()).removeRow(selectedRows[i]);
@@ -823,6 +871,53 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/SearchPreferencesDialog.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_searchPreferencesHelpJButtonActionPerformed
+
+    /**
+     * Changes the cursor to a hand cursor if over the color column.
+     * 
+     * @param evt 
+     */
+private void expectedModificationsTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseMoved
+    
+    int row = expectedModificationsTable.rowAtPoint(evt.getPoint());
+    int column = expectedModificationsTable.columnAtPoint(evt.getPoint());
+    
+    if (row != -1 && column == 1) {
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    } else {
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }
+}//GEN-LAST:event_expectedModificationsTableMouseMoved
+
+/**
+ * Changes the cursor back to the default cursor.
+ * 
+ * @param evt 
+ */
+private void expectedModificationsTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseExited
+    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_expectedModificationsTableMouseExited
+
+/**
+ * Opens a file chooser where the color for the ptm can be changed.
+ * 
+ * @param evt 
+ */
+private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseClicked
+
+    int row = expectedModificationsTable.rowAtPoint(evt.getPoint());
+    int column = expectedModificationsTable.columnAtPoint(evt.getPoint());
+    
+    if (row != -1 && column == 1) {
+        Color newColor = JColorChooser.showDialog(this, "Pick a Color", (Color) expectedModificationsTable.getValueAt(row, column));
+
+        if (newColor != null) {
+            searchParameters.getModificationProfile().setColor(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)), newColor);
+            expectedModificationsTable.repaint();
+        }
+    }
+}//GEN-LAST:event_expectedModificationsTableMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addModifications;
     private javax.swing.JTable availableModificationsTable;
@@ -930,7 +1025,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                         index = Math.min(index, name.indexOf("-"));
                     }
                     searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
-                    searchParameters.getModificationProfile().setColor(name, Color.blue);
+                    searchParameters.getModificationProfile().setColor(name, Color.lightGray);  // @TODO: color should not be hardcoded!
                 }
                 modificationList.add(name);
             }
@@ -1186,15 +1281,15 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         @Override
         public String getColumnName(int column) {
-            switch (column) {
+            switch (column) { 
                 case 1:
-                    return "Name";
+                    return "  ";
                 case 2:
-                    return "Family";
+                    return "Name";
                 case 3:
-                    return "Short Name";
+                    return "Family";
                 case 4:
-                    return "Color";
+                    return "Short";
                 default:
                     return " ";
             }
@@ -1206,14 +1301,14 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 case 0:
                     return row + 1;
                 case 1:
-                    return modificationList.get(row);
-                case 2:
-                    return searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row));
-                case 3:
-                    return searchParameters.getModificationProfile().getShortName(
-                            searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
-                case 4:
                     return searchParameters.getModificationProfile().getColor(
+                            searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
+                case 2:
+                    return modificationList.get(row);
+                case 3:
+                    return searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row));
+                case 4:
+                    return searchParameters.getModificationProfile().getShortName(
                             searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
                 default:
                     return "";
@@ -1223,9 +1318,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         @Override
         public void setValueAt(Object aValue, int row, int column) {
             try {
-                if (column == 2) {
+                if (column == 3) {
                     searchParameters.getModificationProfile().setPeptideShakerName(modificationList.get(row), aValue.toString());
-                } else if (column == 3) {
+                } else if (column == 4) {
                     searchParameters.getModificationProfile().setShortName(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)), aValue.toString());
                 }
             } catch (Exception e) {
@@ -1248,7 +1343,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         @Override
         public boolean isCellEditable(int row, int column) {
 
-            if (column == 2 || column == 3) {
+            if (column == 1 || column == 3 || column == 4) {
                 return true;
             } else {
                 return false;

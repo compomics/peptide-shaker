@@ -1207,7 +1207,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                             index = Math.min(index, name.indexOf("-"));
                         }
                         searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
-                        searchParameters.getModificationProfile().setColor(name, Color.blue);
+                        searchParameters.getModificationProfile().setColor(name, Color.lightGray);
                     }
                 }
             }
