@@ -2557,6 +2557,11 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
      */
     public void setModificationProfileFile(File profileFile) {
         this.profileFile = profileFile;
+        
+        // update the color coding in the other tabs
+        ptmPanel.updatePtmColors();
+        
+        // @TODO: update the other tabs when the color coding is used there as well...
     }
 
     /**

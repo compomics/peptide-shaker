@@ -37,6 +37,7 @@ import java.util.Iterator;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
@@ -47,7 +48,7 @@ import javax.swing.table.TableColumn;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
-import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
+import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 
 /**
@@ -58,6 +59,10 @@ import org.jfree.chart.plot.PlotOrientation;
  */
 public class PtmPanel extends javax.swing.JPanel {
 
+    /**
+     * The currently selected row in the PTM table.
+     */
+    private int currentPtmRow = -1;
     /**
      * The current selected peptide spectrum key.
      */
@@ -142,18 +147,6 @@ public class PtmPanel extends javax.swing.JPanel {
      * The current spectrum panel for lower psm.
      */
     private SpectrumPanel spectrumB;
-    /**
-     * The PTM color coding map for the cell renderer.
-     */
-    HashMap<Integer, Color> ptmColorMap;
-    /**
-     * The PTM color coding map.
-     */
-    HashMap<String, Color> ptmColors;
-    /**
-     * The PTM color tooltips.
-     */
-    HashMap<Integer, String> ptmColorToolTips;
 
     /**
      * Creates a new PTM tab.
@@ -163,8 +156,6 @@ public class PtmPanel extends javax.swing.JPanel {
     public PtmPanel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
-
-        ptmColors = new HashMap<String, Color>();
 
         selectedPeptidesScoreColumn = peptidesTable.getColumn("Score");
         relatedPeptidesScoreColumn = relatedPeptidesTable.getColumn("Score");
@@ -179,30 +170,6 @@ public class PtmPanel extends javax.swing.JPanel {
         secondarySelectionJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         spectrumTabbedPane.setEnabledAt(0, false);
-
-        // @TODO: remove hardcoding of ptm color!!
-
-        // set up the ptm color map
-        ptmColorMap = new HashMap<Integer, Color>();
-        ptmColorMap.put(0, Color.MAGENTA);
-        ptmColorMap.put(1, Color.ORANGE);
-        ptmColorMap.put(2, Color.BLUE);
-        ptmColorMap.put(3, Color.RED);
-        ptmColorMap.put(4, Color.GREEN);
-        ptmColorMap.put(5, Color.PINK);
-        ptmColorMap.put(6, Color.CYAN);
-
-        // @TODO: remove hardcoding of ptm color tooltips!!
-
-        ptmColorToolTips = new HashMap<Integer, String>();
-        ptmColorToolTips.put(0, "PTM Color");
-        ptmColorToolTips.put(1, "PTM Color");
-        ptmColorToolTips.put(2, "PTM Color");
-        ptmColorToolTips.put(3, "PTM Color");
-        ptmColorToolTips.put(4, "PTM Color");
-        ptmColorToolTips.put(5, "PTM Color");
-        ptmColorToolTips.put(6, "PTM Color");
-        ptmColorToolTips.put(100, "PTM Color");
 
         setTableProperties();
 
@@ -275,7 +242,7 @@ public class PtmPanel extends javax.swing.JPanel {
         }
 
         // ptm color coding
-        ptmJTable.getColumn("MC").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(new Color(240, 240, 240), ptmColorMap, ptmColorToolTips));
+        ptmJTable.getColumn("MC").setCellRenderer(new JSparklinesColorTableCellRenderer());
 
         // set up the table header tooltips
         selectedPeptidesTableToolTips = new ArrayList<String>();
@@ -442,7 +409,7 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.Object.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false
@@ -459,8 +426,16 @@ public class PtmPanel extends javax.swing.JPanel {
         ptmJTable.setOpaque(false);
         ptmJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         ptmJTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                ptmJTableMouseExited(evt);
+            }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 ptmJTableMouseReleased(evt);
+            }
+        });
+        ptmJTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                ptmJTableMouseMoved(evt);
             }
         });
         ptmJTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -865,16 +840,6 @@ public class PtmPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Update the peptide table.
-     *
-     * @param evt
-     */
-    /**
-     * Update the peptide table.
-     *
-     * @param evt
-     */
-    /**
      * @see #peptidesTableMouseClicked(java.awt.event.MouseEvent)
      */
     private void peptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptidesTableKeyReleased
@@ -1126,15 +1091,43 @@ public class PtmPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_relatedPeptidesTableMouseMoved
 
     /**
-     * Update the peptide table.
+     * Update the peptide table or opens a color chooser if the color column is clicked.
      * 
      * @param evt 
      */
 private void ptmJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ptmJTableMouseReleased
-    updatePeptideTable();
+
+    int row = ptmJTable.rowAtPoint(evt.getPoint());
+    int column = ptmJTable.columnAtPoint(evt.getPoint());
+
+    if (row != -1 && column == 1) {
+        
+        if (row != currentPtmRow) {
+            updatePeptideTable();
+        }
+        
+        Color newColor = JColorChooser.showDialog(this, "Pick a Color", (Color) ptmJTable.getValueAt(row, column));
+
+        if (newColor != null) {
+
+            // update the color in the table
+            ptmJTable.setValueAt(newColor, row, column);
+            
+            // update the profiles with the new colors
+            if (!((String) ptmJTable.getValueAt(row, 2)).equalsIgnoreCase("no modification")) {
+                peptideShakerGUI.getSearchParameters().getModificationProfile().setColor(
+                        (String) ptmJTable.getValueAt(row, 2), newColor);
+                updateModificationProfiles();
+            }
+        }
+    } else {
+        updatePeptideTable();
+    }
+    
+    currentPtmRow = row;
 }//GEN-LAST:event_ptmJTableMouseReleased
 
-/**
+    /**
      * Update the peptide table.
      * 
      * @param evt 
@@ -1175,6 +1168,31 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
         intensitySlider.setValue(intensitySlider.getValue() + 1);
     }
 }//GEN-LAST:event_spectrumAndFragmentIonPanelMouseWheelMoved
+
+    /**
+     * Changes the cursor to a hand cursor if over the color column.
+     * 
+     * @param evt 
+     */
+private void ptmJTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ptmJTableMouseMoved
+    int row = ptmJTable.rowAtPoint(evt.getPoint());
+    int column = ptmJTable.columnAtPoint(evt.getPoint());
+
+    if (row != -1 && column == 1) {
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    } else {
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }
+}//GEN-LAST:event_ptmJTableMouseMoved
+
+    /**
+     * Changes the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ptmJTableMouseExited
+    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+}//GEN-LAST:event_ptmJTableMouseExited
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel fragmentIonsJPanel;
     private javax.swing.JSlider intensitySlider;
@@ -1359,26 +1377,16 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
             if (!modifications[i].equalsIgnoreCase("no modification")) {
                 ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{
                             (i + 1),
-                            i,
+                            peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(modifications[i]),
                             modifications[i]
                         });
-
-                Color ptmColor = Color.lightGray;
-
-                if (ptmColorMap.containsKey(i)) {
-                    ptmColor = ptmColorMap.get(i);
-                }
-
-                ptmColors.put(modifications[i], ptmColor);
             }
         }
 
         ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{
                     (ptmJTable.getRowCount() + 2),
-                    100,
-                    "no modification",});
-
-        ptmColors.put("no modification", Color.lightGray);
+                    Color.lightGray,
+                    "no modification"});
 
         if (ptmJTable.getRowCount() > 0) {
             ptmJTable.setRowSelectionInterval(0, 0);
@@ -1393,6 +1401,11 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
      * Updates the peptide table.
      */
     private void updatePeptideTable() {
+        
+        // @TODO: replace the waiting cursor with a progress bar dialog?
+        
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        
         try {
             HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<Double, ArrayList<String>>();
             PeptideMatch peptideMatch;
@@ -1460,6 +1473,8 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
+        
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
     /**
@@ -1703,7 +1718,7 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
                         }
                     }
 
-                    annotationPreferences.setCurrentSettings(currentPeptide, 
+                    annotationPreferences.setCurrentSettings(currentPeptide,
                             currentSpectrum.getPrecursor().getCharge().value, !currentPeptideSpectrumKey.equalsIgnoreCase(spectrumKey));
                     ArrayList<IonMatch> annotations = annotatorA.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(),
@@ -1770,7 +1785,7 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
                             }
                         }
                     }
-                    annotationPreferences.setCurrentSettings(currentPeptide, 
+                    annotationPreferences.setCurrentSettings(currentPeptide,
                             currentSpectrum.getPrecursor().getCharge().value, !currentReleatedPeptideSpectrumKey.equalsIgnoreCase(spectrumKey));
                     ArrayList<IonMatch> annotations = annotatorB.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(),
@@ -1837,9 +1852,9 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
         if (scores != null) {
             for (String ptmName : scores.getScoredPTMs()) {
 
-                ModificationProfile tempProfile = new ModificationProfile(ptmName, new double[peptide.getSequence().length()][2], ptmColors.get(ptmName));
+                Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(ptmName);
+                ModificationProfile tempProfile = new ModificationProfile(ptmName, new double[peptide.getSequence().length()][2], ptmColor);
 
-                //result += ptmName + " ";
                 PtmScoring locationScoring = scores.getPtmScoring(ptmName);
                 String bestLocation = "";
                 double bestScore = 0;
@@ -2306,34 +2321,34 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
     public Component getSpectrum() {
         return (Component) spectrumJPanel.getComponent(1);
     }
-    
+
     /**
      * Returns the current spectrum as an mgf string.
      * 
      * @return the current spectrum as an mgf string
      */
     public String getSpectrumAsMgf() {
-        
+
         String spectrumAsMgf = "";
-        
+
         if (selectedPsmTable.getSelectedRow() != -1 && primarySelectionJComboBox.getSelectedIndex() != -1) {
             String familyKey = convertComboBoxSelectionToFamilyKey((String) primarySelectionJComboBox.getSelectedItem());
             String spectrumKey = psmsMap.get(familyKey).get(selectedPsmTable.getSelectedRow());
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
             spectrumAsMgf += currentSpectrum.asMgf();
         }
-        
+
         if (relatedPsmTable.getSelectedRow() != -1 && secondarySelectionJComboBox.getSelectedIndex() != -1) {
             String familyKey = convertComboBoxSelectionToFamilyKey((String) secondarySelectionJComboBox.getSelectedItem());
             String spectrumKey = psmsMap.get(familyKey).get(relatedPsmTable.getSelectedRow());
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
             spectrumAsMgf += currentSpectrum.asMgf();
         }
-        
+
         if (!spectrumAsMgf.isEmpty()) {
             return spectrumAsMgf;
         }
-                
+
         return null;
     }
 
@@ -2435,5 +2450,38 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
      */
     public void setIntensitySliderValue(int value) {
         intensitySlider.setValue(value);
+    }
+    
+    /**
+     * Update the PTM color coding.
+     */
+    public void updatePtmColors() {
+        
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        
+        for (int i=0; i<ptmJTable.getRowCount(); i++) {
+            ptmJTable.setValueAt(peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(
+                    (String) ptmJTable.getValueAt(i, 2)), i, 1);
+        }
+        
+        updateModificationProfiles();
+        
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }
+    
+    /**
+     * Redraws the modification profiles. For example if the ptm colors are updated.
+     */
+    public void updateModificationProfiles () {
+        try {
+            if (peptidesTable.getSelectedRow() != -1) {
+                updateModificationProfile(identification.getPeptideMatch(displayedPeptides.get(peptidesTable.getSelectedRow())), true);
+            }
+            if (relatedPeptidesTable.getSelectedRow() != -1) {
+                updateModificationProfile(identification.getPeptideMatch(relatedPeptides.get(relatedPeptidesTable.getSelectedRow())), false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
