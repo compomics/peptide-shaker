@@ -31,7 +31,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -67,6 +66,10 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class OverviewPanel extends javax.swing.JPanel {
 
+    /**
+     * The current spectrum key.
+     */
+    private String currentSpectrumKey = "";
     /**
      * A reference to the protein score column.
      */
@@ -1298,7 +1301,7 @@ private void spectrumJTabbedPaneMouseWheelMoved(java.awt.event.MouseWheelEvent e
      */
 private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
     peptideShakerGUI.getAnnotationPreferences().setAnnotationIntensityLimit(((Integer) intensitySlider.getValue()) / 100.0);
-    peptideShakerGUI.updateAllAnnotations();
+    peptideShakerGUI.updateAnnotations();
     peptideShakerGUI.setDataSaved(false);
 }//GEN-LAST:event_intensitySliderStateChanged
 
@@ -1699,7 +1702,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                         MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
                         if (currentSpectrum != null) {
-                            annotationPreferences.setCurrentSettings(selectedPeptideMatch.getTheoreticPeptide(), currentSpectrum.getPrecursor().getCharge().value);
+                            annotationPreferences.setCurrentSettings(
+                                    selectedPeptideMatch.getTheoreticPeptide(), 
+                                    currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
@@ -1709,6 +1714,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     annotationPreferences.getMzTolerance());
                             allAnnotations.add(annotations);
                             allSpectra.add(currentSpectrum);
+                            
+                            currentSpectrumKey = spectrumKey;
                         }
                     }
                 }
@@ -1913,7 +1920,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             Peptide currentPeptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
                             SpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
                             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
-                            annotationPreferences.setCurrentSettings(currentPeptide, currentSpectrum.getPrecursor().getCharge().value);
+                            annotationPreferences.setCurrentSettings(
+                                    currentPeptide, currentSpectrum.getPrecursor().getCharge().value, 
+                                    !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
@@ -1922,10 +1931,22 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     annotationPreferences.getMzTolerance());
                             spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                             spectrum.rescale(lowerMzZoomRange, upperMzZoomRange);
+                            
+                            if (!currentSpectrumKey.equalsIgnoreCase(spectrumKey)) {
+                                if (annotationPreferences.useAutomaticAnnotation()) {
+                                    annotationPreferences.setNeutralLossesSequenceDependant(true);
+                                }
+                            }
+                            
                             peptideShakerGUI.updateAnnotationMenus();
+                            
+                            
+                            currentSpectrumKey = spectrumKey;
 
                             // show all or just the annotated peaks
                             spectrum.showAnnotatedPeaksOnly(!peptideShakerGUI.getAnnotationPreferences().showAllPeaks());
+                            
+                            spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
 
                             // add the spectrum panel to the frame
                             spectrumPanel.removeAll();
@@ -2625,7 +2646,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     // get the spectrum annotations
                     String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
                     Peptide currentPeptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
-                    annotationPreferences.setCurrentSettings(currentPeptide, currentSpectrum.getPrecursor().getCharge().value);
+                    annotationPreferences.setCurrentSettings(currentPeptide, 
+                            currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                     ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(),
                             annotationPreferences.getValidatedCharges(),
@@ -2633,6 +2655,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                             annotationPreferences.getMzTolerance());
                     allAnnotations.add(annotations);
+                    currentSpectrumKey = spectrumKey;
                 }
             }
             return allAnnotations;
