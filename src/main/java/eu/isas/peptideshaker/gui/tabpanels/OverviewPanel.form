@@ -468,13 +468,12 @@
                                 <Component class="javax.swing.JTable" name="peptideTable">
                                   <Properties>
                                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                      <Table columnCount="10" rowCount="0">
+                                      <Table columnCount="9" rowCount="0">
                                         <Column editable="false" title=" " type="java.lang.Integer"/>
                                         <Column editable="false" title="PI" type="java.lang.Integer"/>
                                         <Column editable="false" title="Sequence" type="java.lang.String"/>
                                         <Column editable="false" title="Start" type="java.lang.Integer"/>
                                         <Column editable="false" title="End" type="java.lang.Integer"/>
-                                        <Column editable="false" title="Modifications" type="java.lang.String"/>
                                         <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
                                         <Column editable="false" title="Score" type="java.lang.Double"/>
                                         <Column editable="false" title="Confidence" type="java.lang.Double"/>
@@ -596,10 +595,9 @@
                                 <Component class="javax.swing.JTable" name="psmTable">
                                   <Properties>
                                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                                      <Table columnCount="6" rowCount="0">
+                                      <Table columnCount="5" rowCount="0">
                                         <Column editable="false" title=" " type="java.lang.Integer"/>
                                         <Column editable="false" title="Sequence" type="java.lang.String"/>
-                                        <Column editable="false" title="Modifications" type="java.lang.String"/>
                                         <Column editable="false" title="Charge" type="java.lang.Integer"/>
                                         <Column editable="false" title="Mass Error" type="java.lang.Double"/>
                                         <Column editable="false" title="" type="java.lang.Boolean"/>
@@ -703,9 +701,9 @@
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
-                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Component id="spectrumJTabbedPane" pref="453" max="32767" attributes="0"/>
-                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Component id="intensitySlider" min="-2" pref="26" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -716,10 +714,13 @@
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
+                                          <Component id="spectrumJTabbedPane" pref="301" max="32767" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                      </Group>
+                                      <Group type="102" alignment="0" attributes="0">
                                           <Component id="intensitySlider" pref="277" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="spectrumJTabbedPane" alignment="0" pref="312" max="32767" attributes="0"/>
                                   </Group>
                               </Group>
                           </Group>
@@ -769,7 +770,7 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="fragmentIonsJScrollPane" pref="267" max="32767" attributes="0"/>
+                                          <Component id="fragmentIonsJScrollPane" pref="256" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="ionTableJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -837,12 +838,12 @@
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace pref="284" max="32767" attributes="0"/>
+                                          <EmptySpace pref="273" max="32767" attributes="0"/>
                                           <Component id="bubblePlotJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                           <Group type="102" alignment="0" attributes="0">
-                                              <Component id="bubbleJPanel" pref="259" max="32767" attributes="0"/>
+                                              <Component id="bubbleJPanel" pref="248" max="32767" attributes="0"/>
                                               <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -908,7 +909,7 @@
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="spectrumSplitPane" pref="278" max="32767" attributes="0"/>
+                                          <Component id="spectrumSplitPane" pref="267" max="32767" attributes="0"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>

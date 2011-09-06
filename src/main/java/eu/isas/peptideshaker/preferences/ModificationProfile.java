@@ -131,4 +131,11 @@ public class ModificationProfile implements Serializable {
             colors.remove(psName);
         }
     }
+    
+    /**
+     * Returns a mapping of the PeptideShaker names to the colors used.
+     */
+    public HashMap<String, Color> getPtmColors () {
+        return colors;
+    }
 }

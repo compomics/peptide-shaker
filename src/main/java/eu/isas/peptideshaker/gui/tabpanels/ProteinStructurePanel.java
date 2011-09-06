@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
+import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -182,7 +183,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         peptideTableToolTips.add("Peptide Sequence");
         peptideTableToolTips.add("Peptide Start Index");
         peptideTableToolTips.add("Peptide End Index");
-        peptideTableToolTips.add("Peptide Modifications");
         peptideTableToolTips.add("In PDB Sequence");
         peptideTableToolTips.add("Validated");
 
@@ -530,14 +530,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             },
             new String [] {
-                " ", "PI", "Sequence", "Start", "End", "Modifications", "PDB", ""
+                " ", "PI", "Sequence", "Start", "End", "PDB", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Boolean.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Boolean.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -844,14 +844,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
 
                 // set the accession number in the annotation tab
-                String accessionNumber = (String) proteinTable.getValueAt(row, proteinTable.getColumn("Accession").getModelIndex());
-
-                if (accessionNumber.lastIndexOf("a href") != -1) {
-                    accessionNumber = accessionNumber.substring(accessionNumber.lastIndexOf("\">") + 2);
-                    accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf("<"));
-                }
-//@TODO What is the difference between accessionNumber and proteinAccession?
-                peptideShakerGUI.setSelectedProteinAccession(accessionNumber);
+                peptideShakerGUI.setSelectedProteinAccession(proteinAccession);
 
                 // update the pdb file table
                 updatePdbTable(proteinTableMap.get(getProteinKey(row)));
@@ -1356,8 +1349,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @return      the peptide key
      */
     private String getPeptideKey(int row) {
-        return (String) peptideTable.getValueAt(row, peptideTable.getColumn("Sequence").getModelIndex())
-                + (String) peptideTable.getValueAt(row, peptideTable.getColumn("Modifications").getModelIndex());
+        return (String) peptideTable.getValueAt(row, peptideTable.getColumn("Sequence").getModelIndex());
     }
 
     /**
@@ -1403,20 +1395,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 for (double score : scores) {
                     for (PeptideMatch currentMatch : peptideMap.get(score)) {
 
-                        String modifications = "";
-
-                        for (ModificationMatch mod : currentMatch.getTheoreticPeptide().getModificationMatches()) {
-                            if (mod.isVariable()) {
-                                modifications += mod.getTheoreticPtm().getName() + ", ";
-                            }
-                        }
-
-                        if (modifications.length() > 0) {
-                            modifications = modifications.substring(0, modifications.length() - 2);
-                        } else {
-                            modifications = null;
-                        }
-
                         probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(currentMatch.getKey(), probabilities);
                         ArrayList<String> otherProteins = new ArrayList<String>();
                         List<String> proteinProteins = Arrays.asList(ProteinMatch.getAccessions(proteinKey));
@@ -1443,10 +1421,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                         ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
                                     index + 1,
                                     proteinInferenceType,
-                                    peptideSequence,
+                                    currentMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
+                                    peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
                                     peptideStart,
                                     peptideEnd,
-                                    modifications,
                                     false,
                                     probabilities.isValidated()
                                 });
@@ -1455,7 +1433,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                             validatedPeptideCounter++;
                         }
 
-                        peptideTableMap.put(currentMatch.getTheoreticPeptide().getSequence() + modifications, currentMatch.getKey());
+                        peptideTableMap.put(currentMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
+                                peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()), currentMatch.getKey());
                         index++;
                     }
                 }
@@ -1579,8 +1558,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                         peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
                                         description,
                                         sequenceCoverage,
-                                        currentNP,
-                                        currentNS,
+                                        -currentNP,
+                                        -currentNS,
                                         spectrumCounting,
                                         probabilities.getProteinScore(),
                                         probabilities.getProteinConfidence(),
@@ -1600,12 +1579,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                 progressDialogX.incrementValue();
                             }
                         }
-                        if (maxSpectra < currentNS) {
-                            maxSpectra = currentNS;
+                        if (maxSpectra < -currentNS) {
+                            maxSpectra = -currentNS;
                         }
                     }
-                    if (maxPeptides < currentNP) {
-                        maxPeptides = currentNP;
+                    if (maxPeptides < -currentNP) {
+                        maxPeptides = -currentNP;
                     }
                 }
             }
@@ -1929,19 +1908,67 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         int selectedChainIndex = (Integer) pdbChainsJTable.getValueAt(pdbChainsJTable.getSelectedRow(), 0);
         String currentChain = chains[selectedChainIndex - 1].getBlock();
 
+        ArrayList<Integer> modifiedResidues = new ArrayList<Integer>();
+
         // iterate the peptide table and store the coverage for each peptide
         for (int i = 0; i < peptideTable.getRowCount(); i++) {
             String peptideKey = peptideTableMap.get(getPeptideKey(i));
             String peptideSequence = Peptide.getSequence(peptideKey);
             String tempSequence = proteinSequence;
 
+            ArrayList<ModificationMatch> modifications = new ArrayList<ModificationMatch>();
+
+            try {
+                modifications = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModificationMatches();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             while (tempSequence.lastIndexOf(peptideSequence) >= 0 && chainSequence.lastIndexOf(peptideSequence) >= 0) {
                 int peptideTempStart = tempSequence.lastIndexOf(peptideSequence);
                 int peptideTempEnd = peptideTempStart + peptideSequence.length();
-                jmolPanel.getViewer().evalString(
-                        "select resno >=" + peptideTempStart
-                        + " and resno <=" + peptideTempEnd
-                        + " and chain = " + currentChain + "; color orange");
+
+                int peptideIndex = 0;
+                boolean modifiedResidue = false;
+
+                for (int j = peptideTempStart; j < peptideTempEnd; j++) {
+
+                    // @TODO: has to be possible to make this test simpler?
+                    
+                    for (int k = 0; k < modifications.size(); k++) {
+                        if (modifications.get(k).getTheoreticPtm().getType() == PTM.MODAA && modifications.get(k).isVariable()) {
+
+                            if (modifications.get(k).getModificationSite() == (peptideIndex + 1)) {
+
+                                Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors().get(
+                                        modifications.get(k).getTheoreticPtm().getName());
+
+                                jmolPanel.getViewer().evalString(
+                                        "select resno =" + j
+                                        + " and chain = " + currentChain + "; color ["
+                                        + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "]");
+
+                                modifiedResidues.add(j);
+                                modifiedResidue = true;
+                            }
+                        }
+                    }
+
+                    if (!modifiedResidue) {
+
+                        if (!modifiedResidues.contains(j)) {
+                            
+                            // @TODO: add unmodified areas in pieces and not on residues at the time?
+                            
+                            jmolPanel.getViewer().evalString(
+                                    "select resno =" + j
+                                    + " and chain = " + currentChain + "; color green");
+                        }
+                    }
+
+                    peptideIndex++;
+                }
+
                 tempSequence = proteinSequence.substring(0, peptideTempStart);
 
                 peptideTable.setValueAt(true, i, peptideTable.getColumn("PDB").getModelIndex());
@@ -1953,16 +1980,59 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         String peptideSequence = Peptide.getSequence(peptideKey);
         String tempSequence = proteinSequence;
 
+        ArrayList<ModificationMatch> modifications = new ArrayList<ModificationMatch>();
+
+        try {
+            modifications = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModificationMatches();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         while (tempSequence.lastIndexOf(peptideSequence) >= 0 && chainSequence.lastIndexOf(peptideSequence) >= 0) {
 
             int peptideTempStart = tempSequence.lastIndexOf(peptideSequence);
             int peptideTempEnd = peptideTempStart + peptideSequence.length();
 
-            jmolPanel.getViewer().evalString(
-                    "select resno >=" + peptideTempStart
-                    + " and resno <=" + peptideTempEnd
-                    + " and chain = " + currentChain + "; color blue");
+            int peptideIndex = 0;
+            boolean modifiedResidue = false;
+            
+            // @TODO: the mod test below ought to be combined with the one above...
+
+            for (int j = peptideTempStart; j < peptideTempEnd; j++) {
+
+                for (int k = 0; k < modifications.size(); k++) {
+                    if (modifications.get(k).getTheoreticPtm().getType() == PTM.MODAA && modifications.get(k).isVariable()) {
+
+                        if (modifications.get(k).getModificationSite() == (peptideIndex + 1)) {
+
+                            Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors().get(
+                                    modifications.get(k).getTheoreticPtm().getName());
+
+                            jmolPanel.getViewer().evalString(
+                                    "select resno =" + j
+                                    + " and chain = " + currentChain + "; color ["
+                                    + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "]");
+
+                            modifiedResidues.add(j);
+                            modifiedResidue = true;
+                        }
+                    }
+                }
+
+                if (!modifiedResidue) {
+
+                    if (!modifiedResidues.contains(j)) {
+                        jmolPanel.getViewer().evalString(
+                                "select resno =" + j
+                                + " and chain = " + currentChain + "; color blue");
+                    }
+                } else {
+                    System.out.println("mod found!");
+                }
+
+                peptideIndex++;
+            }
+
             tempSequence = proteinSequence.substring(0, peptideTempStart);
         }
 

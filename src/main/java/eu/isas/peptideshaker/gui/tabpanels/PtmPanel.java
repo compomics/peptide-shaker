@@ -249,7 +249,6 @@ public class PtmPanel extends javax.swing.JPanel {
         selectedPeptidesTableToolTips.add(null);
         selectedPeptidesTableToolTips.add("Mapping Protein(s)");
         selectedPeptidesTableToolTips.add("Peptide Sequence");
-        selectedPeptidesTableToolTips.add("Peptide Modifications");
         selectedPeptidesTableToolTips.add("Peptide Score");
         selectedPeptidesTableToolTips.add("Peptide Confidence");
         selectedPeptidesTableToolTips.add("Validated");
@@ -258,7 +257,6 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesTableToolTips.add(null);
         relatedPeptidesTableToolTips.add("Mapping Protein(s)");
         relatedPeptidesTableToolTips.add("Peptide Sequence");
-        relatedPeptidesTableToolTips.add("Peptide Modifications");
         relatedPeptidesTableToolTips.add("Peptide Score");
         relatedPeptidesTableToolTips.add("Peptide Confidence");
         selectedPeptidesTableToolTips.add("Validated");
@@ -266,14 +264,12 @@ public class PtmPanel extends javax.swing.JPanel {
         selectedPsmsTableToolTips = new ArrayList<String>();
         selectedPsmsTableToolTips.add("Search Engine Ranks");
         selectedPsmsTableToolTips.add("Peptide Sequence");
-        selectedPsmsTableToolTips.add("Peptide Modifications");
         selectedPsmsTableToolTips.add("Precursor m/z");
         selectedPsmsTableToolTips.add("Precursor Charge");
 
         relatedPsmsTableToolTips = new ArrayList<String>();
         relatedPsmsTableToolTips.add("Search Engine Ranks");
         relatedPsmsTableToolTips.add("Peptide Sequence");
-        relatedPsmsTableToolTips.add("Peptide Modifications");
         relatedPsmsTableToolTips.add("Precursor m/z");
         relatedPsmsTableToolTips.add("Precursor Charge");
     }
@@ -456,8 +452,9 @@ public class PtmPanel extends javax.swing.JPanel {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(ptmJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ptmJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -737,7 +734,7 @@ public class PtmPanel extends javax.swing.JPanel {
         );
         fragmentIonsJPanelLayout.setVerticalGroup(
             fragmentIonsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 390, Short.MAX_VALUE)
+            .addGap(0, 368, Short.MAX_VALUE)
         );
 
         spectrumTabbedPane.addTab("Ions", fragmentIonsJPanel);
@@ -769,7 +766,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -808,11 +805,15 @@ public class PtmPanel extends javax.swing.JPanel {
         );
         spectrumAndFragmentIonPanelLayout.setVerticalGroup(
             spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumAndFragmentIonPanelLayout.createSequentialGroup()
+            .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-                .addGap(35, 35, 35))
+                .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
+                        .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
+                        .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                        .addGap(35, 35, 35))))
         );
 
         psmSpectraSplitPane.setRightComponent(spectrumAndFragmentIonPanel);
@@ -1924,7 +1925,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                             identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getParentProteins());
                     return result;
                 } else if (column == 2) {
-                    return identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getSequence();
+                    //return identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getSequence();
+                    return identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getModifiedSequenceAsHtml(
+                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors());
                 } else if (column == 3) {
                     PSParameter probabilities = new PSParameter();
                     probabilities = (PSParameter) identification.getMatchParameter(displayedPeptides.get(row), probabilities);
@@ -2006,7 +2009,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                             identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide().getParentProteins());
                     return result;
                 } else if (column == 2) {
-                    return identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide().getSequence();
+                    //return identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide().getSequence();
+                    return identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide().getModifiedSequenceAsHtml(
+                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors());
                 } else if (column == 3) {
                     PSParameter probabilities = new PSParameter();
                     probabilities = (PSParameter) identification.getMatchParameter(relatedPeptides.get(row), probabilities);
@@ -2060,7 +2065,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         @Override
         public int getColumnCount() {
-            return 5;
+            return 4;
         }
 
         @Override
@@ -2070,10 +2075,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             } else if (column == 1) {
                 return "Sequence";
             } else if (column == 2) {
-                return "Modification Profile";
-            } else if (column == 3) {
                 return "m/z";
-            } else if (column == 4) {
+            } else if (column == 3) {
                 return "Charge";
             } else {
                 return "";
@@ -2120,18 +2123,16 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     return result;
                 } else if (column == 1) {
                     // Not sure that it will always be the best assumption, might have to iterate assumptions if the wrong sequence is displayed
-                    return spectrumMatch.getBestAssumption().getPeptide().getSequence();
+                    //return spectrumMatch.getBestAssumption().getPeptide().getSequence();
+                    return spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
+                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors());
                 } else if (column == 2) {
-                    PSPtmScores scores = new PSPtmScores();
-                    scores = (PSPtmScores) spectrumMatch.getUrParam(scores);
-                    return getModificationProfile(spectrumMatch.getBestAssumption().getPeptide(), scores);
-                } else if (column == 3) {
                     try {
                         return peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getMz();
                     } catch (Exception e) {
                         return "";
                     }
-                } else if (column == 4) {
+                } else if (column == 3) {
                     try {
                         return peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getCharge().value;
                     } catch (Exception e) {
@@ -2178,7 +2179,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         @Override
         public int getColumnCount() {
-            return 5;
+            return 4;
         }
 
         @Override
@@ -2191,11 +2192,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 return "Rank";
             } else if (column == 1) {
                 return "Sequence";
-            } else if (column == 2) {
-                return "Modification(s)";
-            } else if (column == 3) {
+            }  else if (column == 2) {
                 return "m/z";
-            } else if (column == 4) {
+            } else if (column == 3) {
                 return "Charge";
             } else {
                 return "";
@@ -2245,19 +2244,16 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     }
                 } else if (column == 1) {
                     // Not sure that it will wlways be the best assumption, might have to iterate assumptions if the wrong sequence is displayed
-                    return spectrumMatch.getBestAssumption().getPeptide().getSequence();
+                    //return spectrumMatch.getBestAssumption().getPeptide().getSequence();
+                    return spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
+                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors());
                 } else if (column == 2) {
-                    if (familyKey.equals("Related Peptide")) {
-                        return getModificationFamily(spectrumMatch.getBestAssumption().getPeptide());
-                    }
-                    return familyKey;
-                } else if (column == 3) {
                     try {
                         return peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getMz();
                     } catch (Exception e) {
                         return "";
                     }
-                } else if (column == 4) {
+                } else if (column == 3) {
                     try {
                         return peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getCharge().value;
                     } catch (Exception e) {
