@@ -2176,6 +2176,8 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
                     + 1;
             progressDialog.setMax(max);
             progressDialog.doNothingOnClose();
+            
+            final PeptideShakerGUI tempRef = this; // needed due to threading issues
 
             new Thread(new Runnable() {
 
@@ -2189,6 +2191,9 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
 
                 @Override
                 public void run() {
+                    
+                    // change the peptide shaker icon to a "waiting version"
+                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     if (displaySpectrum) {
                         progressDialog.setTitle("Loading Spectrum ID Tab. Please Wait...");
@@ -2228,6 +2233,9 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
 
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
+                    
+                    // return the peptide shaker icon to the standard version
+                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                     saveMenuItem.setEnabled(true);
                 }

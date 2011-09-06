@@ -6,7 +6,6 @@ import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -230,17 +229,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         peptideShakerTableToolTips.add(null);
         peptideShakerTableToolTips.add("Mapping Protein(s)");
         peptideShakerTableToolTips.add("Peptide Sequence");
-        peptideShakerTableToolTips.add("Peptide Modifications");
         peptideShakerTableToolTips.add("Peptide Score");
         peptideShakerTableToolTips.add("Peptide Confidence");
-        //peptideShakerTableToolTips.add("Delta P"); // @TODO: re-add the delta p column
         peptideShakerTableToolTips.add("Validated");
 
         omssaTableToolTips = new ArrayList<String>();
         omssaTableToolTips.add("Search Engine Peptide Rank");
         omssaTableToolTips.add("Mapping Protein(s)");
         omssaTableToolTips.add("Peptide Sequence");
-        omssaTableToolTips.add("Peptide Modifications");
         omssaTableToolTips.add("Peptide e-value");
         omssaTableToolTips.add("Peptide Confidence");
 
@@ -248,7 +244,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         xTandemTableToolTips.add("Search Engine Peptide Rank");
         xTandemTableToolTips.add("Mapping Protein(s)");
         xTandemTableToolTips.add("Peptide Sequence");
-        xTandemTableToolTips.add("Peptide Modifications");
         xTandemTableToolTips.add("Peptide e-value");
         xTandemTableToolTips.add("Peptide Confidence");
 
@@ -256,7 +251,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         mascotTableToolTips.add("Search Engine Peptide Rank");
         mascotTableToolTips.add("Mapping Protein(s)");
         mascotTableToolTips.add("Peptide Sequence");
-        mascotTableToolTips.add("Peptide Modifications");
         mascotTableToolTips.add("Peptide e-value");
         mascotTableToolTips.add("Peptide Confidence");
     }
@@ -495,14 +489,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Peptide", "Modification(s)", "Score", "Confidence", "  "
+                " ", "Protein(s)", "Peptide", "Score", "Confidence", "  "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -542,14 +536,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Peptide", "Modification(s)", "e-value", "Confidence"
+                " ", "Protein(s)", "Peptide", "e-value", "Confidence"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -614,14 +608,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Peptide", "Modification(s)", "e-value", "Confidence"
+                " ", "Protein(s)", "Peptide", "e-value", "Confidence"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -684,14 +678,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Peptide", "Modification(s)", "e-value", "Confidence"
+                " ", "Protein(s)", "Peptide", "e-value", "Confidence"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -937,8 +931,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addGroup(spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(spectrumPanelLayout.createSequentialGroup()
                         .addGap(20, 20, 20)
-                        .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 388, Short.MAX_VALUE))
-                    .addComponent(spectrumChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE))
+                        .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 352, Short.MAX_VALUE))
+                    .addGroup(spectrumPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(spectrumChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 361, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -1715,25 +1711,11 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                 // Fill peptide shaker table
                 String proteins = peptideShakerGUI.addDatabaseLinks(spectrumMatch.getBestAssumption().getPeptide().getParentProteins());
 
-                String modifications = "";
-                boolean firstline = true;
-
-                for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
-                    if (modificationMatch.isVariable()) {
-                        if (!firstline) {
-                            modifications += ", ";
-                        } else {
-                            firstline = false;
-                        }
-                        modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
-                    }
-                }
-
                 ((DefaultTableModel) peptideShakerJTable.getModel()).addRow(new Object[]{
                             1,
                             proteins,
-                            spectrumMatch.getBestAssumption().getPeptide().getSequence(),
-                            modifications,
+                            spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
                             probabilities.getPsmScore(),
                             probabilities.getPsmConfidence(),
                             probabilities.isValidated()
@@ -1748,23 +1730,12 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                         for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValue)) {
                             probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
                             proteins = peptideShakerGUI.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins());
-                            modifications = "";
-                            firstline = true;
-                            for (ModificationMatch modificationMatch : currentAssumption.getPeptide().getModificationMatches()) {
-                                if (modificationMatch.isVariable()) {
-                                    if (!firstline) {
-                                        modifications += ", ";
-                                    } else {
-                                        firstline = false;
-                                    }
-                                    modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
-                                }
-                            }
+
                             ((DefaultTableModel) mascotTable.getModel()).addRow(new Object[]{
                                         ++rank,
                                         proteins,
-                                        currentAssumption.getPeptide().getSequence(),
-                                        modifications,
+                                        currentAssumption.getPeptide().getModifiedSequenceAsHtml(
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
                                         currentAssumption.getEValue(),
                                         probabilities.getSearchEngineConfidence()
                                     });
@@ -1785,23 +1756,12 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                         for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValue)) {
                             probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
                             proteins = peptideShakerGUI.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins());
-                            modifications = "";
-                            firstline = true;
-                            for (ModificationMatch modificationMatch : currentAssumption.getPeptide().getModificationMatches()) {
-                                if (modificationMatch.isVariable()) {
-                                    if (!firstline) {
-                                        modifications += ", ";
-                                    } else {
-                                        firstline = false;
-                                    }
-                                    modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
-                                }
-                            }
+
                             ((DefaultTableModel) omssaTable.getModel()).addRow(new Object[]{
                                         ++rank,
                                         proteins,
-                                        currentAssumption.getPeptide().getSequence(),
-                                        modifications,
+                                        currentAssumption.getPeptide().getModifiedSequenceAsHtml(
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
                                         currentAssumption.getEValue(),
                                         probabilities.getSearchEngineConfidence()
                                     });
@@ -1822,23 +1782,12 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                         for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValue)) {
                             probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
                             proteins = peptideShakerGUI.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins());
-                            modifications = "";
-                            firstline = true;
-                            for (ModificationMatch modificationMatch : currentAssumption.getPeptide().getModificationMatches()) {
-                                if (modificationMatch.isVariable()) {
-                                    if (!firstline) {
-                                        modifications += ", ";
-                                    } else {
-                                        firstline = false;
-                                    }
-                                    modifications += modificationMatch.getTheoreticPtm().getName() + " (" + modificationMatch.getModificationSite() + ")";
-                                }
-                            }
+
                             ((DefaultTableModel) xTandemTable.getModel()).addRow(new Object[]{
                                         ++rank,
                                         proteins,
-                                        currentAssumption.getPeptide().getSequence(),
-                                        modifications,
+                                        currentAssumption.getPeptide().getModifiedSequenceAsHtml(
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
                                         currentAssumption.getEValue(),
                                         probabilities.getSearchEngineConfidence()
                                     });

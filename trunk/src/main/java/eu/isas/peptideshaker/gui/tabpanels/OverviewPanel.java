@@ -8,7 +8,6 @@ import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -329,7 +328,6 @@ public class OverviewPanel extends javax.swing.JPanel {
         peptideTableToolTips.add("Peptide Sequence");
         peptideTableToolTips.add("Peptide Start Index");
         peptideTableToolTips.add("Peptide End Index");
-        peptideTableToolTips.add("Peptide Modifications");
         peptideTableToolTips.add("Number of Spectra");
         peptideTableToolTips.add("Peptide Score");
         peptideTableToolTips.add("Peptide Confidence");
@@ -338,7 +336,6 @@ public class OverviewPanel extends javax.swing.JPanel {
         psmTableToolTips = new ArrayList<String>();
         psmTableToolTips.add(null);
         psmTableToolTips.add("Peptide Sequence");
-        psmTableToolTips.add("Peptide Modifications");
         psmTableToolTips.add("Precursor Charge");
         psmTableToolTips.add("Mass Error");
         psmTableToolTips.add("Validated");
@@ -597,14 +594,14 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "PI", "Sequence", "Start", "End", "Modifications", "#Spectra", "Score", "Confidence", ""
+                " ", "PI", "Sequence", "Start", "End", "#Spectra", "Score", "Confidence", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -666,14 +663,14 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Sequence", "Modifications", "Charge", "Mass Error", ""
+                " ", "Sequence", "Charge", "Mass Error", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -764,7 +761,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             fragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fragmentIonJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
+                .addComponent(fragmentIonsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 256, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ionTableJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -799,11 +796,11 @@ public class OverviewPanel extends javax.swing.JPanel {
         bubblePlotTabJPanelLayout.setVerticalGroup(
             bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
-                .addContainerGap(284, Short.MAX_VALUE)
+                .addContainerGap(273, Short.MAX_VALUE)
                 .addComponent(bubblePlotJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(bubblePlotTabJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(bubblePlotTabJPanelLayout.createSequentialGroup()
-                    .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                    .addComponent(bubbleJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE)
                     .addGap(25, 25, 25)))
         );
 
@@ -847,7 +844,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
+                .addComponent(spectrumSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 267, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -889,9 +886,11 @@ public class OverviewPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(spectrumMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(spectrumMainPanelLayout.createSequentialGroup()
+                        .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(spectrumMainPanelLayout.createSequentialGroup()
                         .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
-                        .addGap(35, 35, 35))
-                    .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)))
+                        .addGap(35, 35, 35))))
         );
 
         peptidesPsmSpectrumFragmentIonsJSplitPane.setRightComponent(spectrumMainPanel);
@@ -1154,7 +1153,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, currentPeptideMatch.getTheoreticPeptide().getSequence(), allProteins);
+                    new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, currentPeptideMatch.getTheoreticPeptide().getModifiedSequenceAsString(), allProteins);
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
@@ -1229,18 +1228,9 @@ public class OverviewPanel extends javax.swing.JPanel {
                 if (residueNumber >= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex())
                         && residueNumber <= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex())
                         && (Boolean) peptideTable.getValueAt(i, peptideTable.getColumnCount() - 1)) {
-
-                    String modifications = (String) peptideTable.getValueAt(i, peptideTable.getColumn("Modifications").getModelIndex());
-
-                    if (modifications == null) {
-                        modifications = "";
-                    } else {
-                        modifications = " (" + modifications + ")";
-                    }
-
                     tooltipText += peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex()) + " - "
                             + peptideTable.getValueAt(i, peptideTable.getColumn("Sequence").getModelIndex())
-                            + " - " + peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex()) + modifications + "<br>";
+                            + " - " + peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex()) + "<br>";
                 }
             }
 
@@ -1349,17 +1339,9 @@ private void coverageTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
 
                 for (int i = 0; i < tempPeptideIndexes.size(); i++) {
 
-                    String modifications = (String) peptideTable.getValueAt(peptideIndexes.get(i), peptideTable.getColumn("Modifications").getModelIndex());
-
-                    if (modifications == null) {
-                        modifications = "";
-                    } else {
-                        modifications = " (" + modifications + ")";
-                    }
-
                     String text = (i + 1) + ": " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("Start").getModelIndex()) + " - "
                             + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("Sequence").getModelIndex())
-                            + " - " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("End").getModelIndex()) + modifications;
+                            + " - " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("End").getModelIndex());
 
                     final int tempInt = i;
                     
@@ -2152,18 +2134,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                     PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
                     if (peptideAssumption.getPeptide().isSameAs(currentPeptideMatch.getTheoreticPeptide())) {
-                        String modifications = "";
-                        for (ModificationMatch mod : peptideAssumption.getPeptide().getModificationMatches()) {
-                            if (mod.isVariable()) {
-                                modifications += mod.getTheoreticPtm().getName() + ", ";
-                            }
-                        }
-
-                        if (modifications.length() > 0) {
-                            modifications = modifications.substring(0, modifications.length() - 2);
-                        } else {
-                            modifications = null;
-                        }
 
                         MSnSpectrum tempSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
                         if (tempSpectrum != null) {
@@ -2172,8 +2142,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                             ((DefaultTableModel) psmTable.getModel()).addRow(new Object[]{
                                         index,
-                                        peptideAssumption.getPeptide().getSequence(),
-                                        modifications,
+                                        peptideAssumption.getPeptide().getModifiedSequenceAsHtml(
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
                                         tempSpectrum.getPrecursor().getCharge().value,
                                         peptideAssumption.getDeltaMass(),
                                         probabilities.isValidated()
@@ -2272,20 +2242,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 for (double score : scores) {
                     for (PeptideMatch currentMatch : peptideMap.get(score)) {
 
-                        String modifications = "";
-
-                        for (ModificationMatch mod : currentMatch.getTheoreticPeptide().getModificationMatches()) {
-                            if (mod.isVariable()) {
-                                modifications += mod.getTheoreticPtm().getName() + ", ";
-                            }
-                        }
-
-                        if (modifications.length() > 0) {
-                            modifications = modifications.substring(0, modifications.length() - 2);
-                        } else {
-                            modifications = null;
-                        }
-
                         probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(currentMatch.getKey(), probabilities);
 
                         ArrayList<String> otherProteins = new ArrayList<String>();
@@ -2321,10 +2277,10 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
                                     index + 1,
                                     proteinInferenceType,
-                                    peptideSequence,
+                                    currentMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
+                                        peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
                                     peptideStart,
                                     peptideEnd,
-                                    modifications,
                                     currentMatch.getSpectrumCount(),
                                     probabilities.getPeptideScore(),
                                     probabilities.getPeptideConfidence(),
@@ -2821,7 +2777,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 proteinTable.moveColumn(10, 8);
 
                 peptideTable.addColumn(peptideScoreColumn);
-                peptideTable.moveColumn(9, 7);
+                peptideTable.moveColumn(8, 6);
             }
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
