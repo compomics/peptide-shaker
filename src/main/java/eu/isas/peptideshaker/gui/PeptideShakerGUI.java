@@ -66,7 +66,6 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -434,7 +433,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         hpo3IonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         ch4osIonCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator7 = new javax.swing.JPopupMenu.Separator();
-        adaptJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        adaptCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         splitterMenu1 = new javax.swing.JMenu();
         otherMenu = new javax.swing.JMenu();
         precursorCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -452,6 +451,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         intensityIonTableRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         mzIonTableRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         jSeparator5 = new javax.swing.JPopupMenu.Separator();
+        automaticAnnotationCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         errorPlotTypeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         splitterMenu4 = new javax.swing.JMenu();
         exportGraphicsMenu = new javax.swing.JMenu();
@@ -629,14 +629,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         lossMenu.add(ch4osIonCheckBoxMenuItem);
         lossMenu.add(jSeparator7);
 
-        adaptJCheckBoxMenuItem.setText("Adapt");
-        adaptJCheckBoxMenuItem.setToolTipText("<html>\nAdapt the neutral losses to the<br>\nsequence and modifications\n</html>");
-        adaptJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        adaptCheckBoxMenuItem.setText("Adapt");
+        adaptCheckBoxMenuItem.setToolTipText("Adapt losses to sequence and modifications");
+        adaptCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                adaptJCheckBoxMenuItemActionPerformed(evt);
+                adaptCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        lossMenu.add(adaptJCheckBoxMenuItem);
+        lossMenu.add(adaptCheckBoxMenuItem);
 
         annotationMenuBar.add(lossMenu);
 
@@ -755,6 +755,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         settingsMenu.add(mzIonTableRadioButtonMenuItem);
         settingsMenu.add(jSeparator5);
+
+        automaticAnnotationCheckBoxMenuItem.setSelected(true);
+        automaticAnnotationCheckBoxMenuItem.setText("Automatic Annotation");
+        automaticAnnotationCheckBoxMenuItem.setToolTipText("Use automatic annotation");
+        automaticAnnotationCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                automaticAnnotationCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        settingsMenu.add(automaticAnnotationCheckBoxMenuItem);
 
         errorPlotTypeCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         errorPlotTypeCheckBoxMenuItem.setSelected(true);
@@ -1293,7 +1303,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         if (newFolder.exists()) {
                             String[] fileList = newFolder.list();
                             progressDialog.setMax(fileList.length);
-                            progressDialog.setTitle("Deleting Old Matches.");
+                            progressDialog.setTitle("Deleting Old Matches. Please Wait...");
                             File toDelete;
                             int cpt = 0;
                             for (String fileName : fileList) {
@@ -1682,6 +1692,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             ptmPanel.showSpectrumAnnotationMenu();
             ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
         }
+        
+        updateAnnotations();
 
         // disable the protein filter option if a tab other than the overview tab is selected
         proteinFilterJMenuItem.setEnabled(selectedIndex == 0);
@@ -1732,7 +1744,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void errorPlotTypeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_errorPlotTypeCheckBoxMenuItemActionPerformed
         useRelativeError = !errorPlotTypeCheckBoxMenuItem.isSelected();
-        overviewPanel.updateSpectrum();
+        overviewPanel.updateSpectrum(); // @TODO: verify that this is correct!
     }//GEN-LAST:event_errorPlotTypeCheckBoxMenuItemActionPerformed
 
     /**
@@ -1934,10 +1946,6 @@ private void ch4osIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent 
     updateAnnotationPreferences();
 }//GEN-LAST:event_ch4osIonCheckBoxMenuItemActionPerformed
 
-private void adaptJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adaptJCheckBoxMenuItemActionPerformed
-    updateAnnotationPreferences();
-}//GEN-LAST:event_adaptJCheckBoxMenuItemActionPerformed
-
 private void precursorCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursorCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_precursorCheckBoxMenuItemActionPerformed
@@ -2080,6 +2088,44 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
     }
 }//GEN-LAST:event_exportSpectrumValuesJMenuItemActionPerformed
 
+/**
+ * Set if the current annotation is to be used for all spectra.
+ * 
+ * @param evt 
+ */
+private void automaticAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
+    
+    if (automaticAnnotationCheckBoxMenuItem.isSelected()) {
+        adaptCheckBoxMenuItem.setSelected(true);
+        annotationPreferences.resetAutomaticAnnotation();
+        
+        singleChargeCheckBoxMenuItem.setSelected(false);
+        doubleChargeCheckBoxMenuItem.setSelected(false);
+        moreThanTwoChargesCheckBoxMenuItem.setSelected(false);
+
+        for (int charge : annotationPreferences.getValidatedCharges()) {
+            if (charge == 1) {
+                singleChargeCheckBoxMenuItem.setSelected(true);
+            } else if (charge == 2) {
+                doubleChargeCheckBoxMenuItem.setSelected(true);
+            } else if (charge > 2) {
+                moreThanTwoChargesCheckBoxMenuItem.setSelected(true);
+            }
+        }
+    }
+    
+    updateAnnotationPreferences();
+}//GEN-LAST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
+
+/**
+ * Update annotations.
+ * 
+ * @param evt 
+ */
+private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adaptCheckBoxMenuItemActionPerformed
+    updateAnnotationPreferences();
+}//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
+
     /**
      * Returns if the 3D model is to be spinning or not.
      * 
@@ -2219,12 +2265,13 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBoxMenuItem aIonCheckBoxMenuItem;
     private javax.swing.JMenuItem aboutJMenuItem;
-    private javax.swing.JCheckBoxMenuItem adaptJCheckBoxMenuItem;
+    private javax.swing.JCheckBoxMenuItem adaptCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem allCheckBoxMenuItem;
     private javax.swing.JTabbedPane allTabsJTabbedPane;
     private javax.swing.JMenuBar annotationMenuBar;
     private javax.swing.JMenuItem annotationPreferencesMenu;
     private javax.swing.JPanel annotationsJPanel;
+    private javax.swing.JCheckBoxMenuItem automaticAnnotationCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem bIonCheckBoxMenuItem;
     private javax.swing.JRadioButtonMenuItem backboneJRadioButtonMenuItem;
     private javax.swing.JCheckBoxMenuItem barsCheckBoxMenuItem;
@@ -2443,7 +2490,7 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
         searchParameters.setIonSearched2("y");
         loadModificationProfile(profileFile);
         annotationPreferences.setAnnotationIntensityLimit(0.75);
-        annotationPreferences.useDefaultAnnotation(true);
+        annotationPreferences.useAutomaticAnnotation(true);
         updateAnnotationPreferencesFromSearchSettings();
         spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.NSAF);
         spectrumCountingPreferences.setValidatedHits(true);
@@ -2481,12 +2528,19 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
     }
 
     /**
-     * Updates the annotations on all panels
+     * Updates the annotations in the selected tab.
      */
-    public void updateAllAnnotations() {
-        overviewPanel.updateSpectrum();
-        ptmPanel.updateSpectra();
-        spectrumIdentificationPanel.updateSpectrum();
+    public void updateAnnotations() {
+        
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            overviewPanel.updateSpectrum();
+        } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+            spectrumIdentificationPanel.updateSpectrum();
+        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+            ptmPanel.updateSpectra();
+        }   
     }
 
     /**
@@ -3586,8 +3640,6 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
             }
         }
 
-        adaptJCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
-
         singleChargeCheckBoxMenuItem.setSelected(false);
         doubleChargeCheckBoxMenuItem.setSelected(false);
         moreThanTwoChargesCheckBoxMenuItem.setSelected(false);
@@ -3602,7 +3654,9 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
             }
         }
 
-        adaptJCheckBoxMenuItem.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
+        automaticAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.useAutomaticAnnotation());
+        adaptCheckBoxMenuItem.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
+        
         allCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
 
         barsCheckBoxMenuItem.setSelected(annotationPreferences.showBars());
@@ -3657,8 +3711,8 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
             annotationPreferences.addNeutralLoss(NeutralLoss.CH4OS);
         }
 
-        //annotationPreferences.useDefaultAnnotation(!allSpectraCheck.isSelected()); 
-        annotationPreferences.setNeutralLossesSequenceDependant(adaptJCheckBoxMenuItem.isSelected());
+        annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheckBoxMenuItem.isSelected()); 
+        annotationPreferences.setNeutralLossesSequenceDependant(adaptCheckBoxMenuItem.isSelected());
 
         annotationPreferences.clearCharges();
         if (singleChargeCheckBoxMenuItem.isSelected()) {
@@ -3679,8 +3733,8 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
         annotationPreferences.setShowAllPeaks(allCheckBoxMenuItem.isSelected());
         annotationPreferences.setShowBars(barsCheckBoxMenuItem.isSelected());
         annotationPreferences.setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
-
-        updateAllAnnotations();
+        
+        updateAnnotations();
         setDataSaved(false);
     }
 
@@ -3703,9 +3757,11 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
     public void updateAnnotationMenuBarVisableOptions(boolean showSpectrumOptions, boolean showBubblePlotOptions, boolean showIonTableOptions) {
         allCheckBoxMenuItem.setVisible(showSpectrumOptions);
         exportSpectrumGraphicsJMenuItem.setVisible(showSpectrumOptions);
+
         barsCheckBoxMenuItem.setVisible(showBubblePlotOptions);
         bubblePlotJMenuItem.setVisible(showBubblePlotOptions);
         bubbleScaleJMenuItem.setVisible(showBubblePlotOptions);
+        
         intensityIonTableRadioButtonMenuItem.setVisible(showIonTableOptions);
         mzIonTableRadioButtonMenuItem.setVisible(showIonTableOptions);
 

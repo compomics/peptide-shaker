@@ -145,13 +145,13 @@
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator7">
             </MenuItem>
-            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="adaptJCheckBoxMenuItem">
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="adaptCheckBoxMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Adapt"/>
-                <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Adapt the neutral losses to the&lt;br&gt;&#xa;sequence and modifications&#xa;&lt;/html&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="Adapt losses to sequence and modifications"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="adaptJCheckBoxMenuItemActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="adaptCheckBoxMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -293,6 +293,16 @@
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator5">
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="automaticAnnotationCheckBoxMenuItem">
+              <Properties>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="Automatic Annotation"/>
+                <Property name="toolTipText" type="java.lang.String" value="Use automatic annotation"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="automaticAnnotationCheckBoxMenuItemActionPerformed"/>
+              </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="errorPlotTypeCheckBoxMenuItem">
               <Properties>

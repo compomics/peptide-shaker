@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.preferences;
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
+import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,11 @@ import java.util.HashMap;
  */
 public class AnnotationPreferences implements Serializable {
 
+    /**
+     * If true, the automatic y-axis zoom excludes background peaks. False 
+     * includes all peaks in the auto zoom.
+     */
+    private boolean yAxisZoomExcludesBackgroundPeaks = true;
     /**
      * If true, the ion table is shown as an intensity versionm, false displays 
      * the standard Mascot version.
@@ -34,9 +40,9 @@ public class AnnotationPreferences implements Serializable {
      */
     private double intensityLimit = 0.75;
     /**
-     * Shall PeptideShaker use default annotation
+     * Shall PeptideShaker use automatic annotation
      */
-    private boolean defaultAnnotation;
+    private boolean automaticAnnotation;
     /**
      * The types of ions to annotate
      */
@@ -77,61 +83,49 @@ public class AnnotationPreferences implements Serializable {
      * 
      * @param currentPeptide
      * @param currentPrecursorCharge  
+     * @param newSpectrum
      */
-    public void setCurrentSettings(Peptide currentPeptide, int currentPrecursorCharge) {
-        boolean changed = false;
-        if (this.currentPeptide == null 
-                || !currentPeptide.isSameAs(this.currentPeptide) 
-                || !currentPeptide.sameModificationsAs(this.currentPeptide)) {
-            this.currentPeptide = currentPeptide;
-            changed = true;
-        }
-        if (currentPrecursorCharge != this.currentPrecursorCharge) {
-            this.currentPrecursorCharge = currentPrecursorCharge;
-            changed = true;
-        }
-        if (changed) {
-            updateSettings();
+    public void setCurrentSettings(Peptide currentPeptide, int currentPrecursorCharge, boolean newSpectrum) {
+        
+        this.currentPeptide = currentPeptide;
+        this.currentPrecursorCharge = currentPrecursorCharge;
+        
+        if (newSpectrum && automaticAnnotation) {
+            resetAutomaticAnnotation();
+        } else if (neutralLossesSequenceDependant) {
+            neutralLosses = SpectrumAnnotator.getDefaultLosses(currentPeptide);
         }
     }
 
     /**
      * Updates the neutral losses and charge annotation settings
      */
-    public void updateSettings() {
-        
-        // @TODO: re-add this method!!
-        
-//        if (defaultAnnotation) {
-//            selectedCharges.clear();
-//            for (int charge = 1; charge < currentPrecursorCharge; charge++) {
-//                selectedCharges.add(charge);
-//            }
-//            neutralLosses = SpectrumAnnotator.getDefaultLosses(currentPeptide);
-//        } else if (neutralLossesSequenceDependant) {
-//            neutralLosses = SpectrumAnnotator.getDefaultLosses(currentPeptide, new ArrayList<NeutralLoss>(neutralLosses.keySet()));
-//        }
+    public void resetAutomaticAnnotation() {
+         
+        selectedCharges.clear();
+        for (int charge = 1; charge < currentPrecursorCharge; charge++) {
+            selectedCharges.add(charge);
+        }
+
+        neutralLosses = SpectrumAnnotator.getDefaultLosses(currentPeptide);
     }
 
     /**
+     * Returns whether neutral losses are considered only for amino acids of interest or not.
      * 
-     * @param neutralLossesSequenceDependant 
-     */
-    public void setNeutralLossesSequenceDependant(boolean neutralLossesSequenceDependant) {
-        this.neutralLossesSequenceDependant = neutralLossesSequenceDependant;
-    }
-
-    /**
-     * returns whether neutral losses are considered only for amino acids of interest or not.
      * @return a boolean indicating whether neutral losses are considered only for amino acids of interest or not.
      */
     public boolean areNeutralLossesSequenceDependant() {
         return neutralLossesSequenceDependant;
     }
 
+    public void setNeutralLossesSequenceDependant(boolean neutralLossesSequenceDependant) {
+        this.neutralLossesSequenceDependant = neutralLossesSequenceDependant;
+    }
+    
     /**
      * Returns the fragment ion charges considered for the desired precursor charge
-     * @TODO rewrite this method as soon as the GUI has a better handling of charges
+     * 
      * @return the fragment ion charges considered 
      */
     public ArrayList<Integer> getValidatedCharges() {
@@ -195,22 +189,23 @@ public class AnnotationPreferences implements Serializable {
     /**
      * Sets whether the default PeptideShaker annotation should be used.
      * 
-     * @param defaultAnnotation a boolean indicating whether the default PeptideShaker annotation should be used
+     * @param automaticAnnotation a boolean indicating whether the default PeptideShaker annotation should be used
      */
-    public void useDefaultAnnotation(boolean defaultAnnotation) {
-        this.defaultAnnotation = defaultAnnotation;
-        if (defaultAnnotation) {
+    public void useAutomaticAnnotation(boolean automaticAnnotation) {
+        this.automaticAnnotation = automaticAnnotation;
+        
+        if (automaticAnnotation) {
             neutralLossesSequenceDependant = true;
         }
     }
 
     /**
-     * Returns whether the Peptide-Shaker default annotation should be used.
+     * Returns whether PeptideShaker should automatically set the annotations.
      * 
-     * @return a boolean indicating whether the PeptideShaker default annotation should be used
+     * @return a boolean indicating whether PeptideShaker should automatically set the annotations
      */
-    public boolean useDefaultAnnotation() {
-        return defaultAnnotation;
+    public boolean useAutomaticAnnotation() {
+        return automaticAnnotation;
     }
 
     /**
@@ -310,5 +305,24 @@ public class AnnotationPreferences implements Serializable {
      */
     public void setIntensityIonTable(boolean intensityIonTable) {
         this.intensityIonTable = intensityIonTable;
+    }
+    
+    /**
+     * Returns true if the automatic y-axis zoom excludes background peaks. False 
+     * if includes all peaks.
+     * 
+     * @return true if the automatic y-axis zoom excludes background peaks
+     */
+    public boolean yAxisZoomExcludesBackgroundPeaks() {
+        return yAxisZoomExcludesBackgroundPeaks;
+    }
+
+    /**
+     * Set if the automatic y-axis zoom only considers the anotated peaks.
+     * 
+     * @param yAxisZoomExcludesBackgroundPeaks
+     */
+    public void setYAxisZoomExcludesBackgroundPeaks(boolean yAxisZoomExcludesBackgroundPeaks) {
+        this.yAxisZoomExcludesBackgroundPeaks = yAxisZoomExcludesBackgroundPeaks;
     }
 }

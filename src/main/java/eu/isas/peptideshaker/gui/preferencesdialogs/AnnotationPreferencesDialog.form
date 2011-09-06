@@ -172,26 +172,26 @@
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="aBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="bBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="cBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="aBox" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="bBox" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="cBox" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="63" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="zBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="xBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="yBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="yBox" linkSize="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="xBox" linkSize="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="immoniumBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="precursorBox" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="immoniumBox" linkSize="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="precursorBox" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
+                                  <Component id="zBox" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="225" max="32767" attributes="0"/>
+                              <EmptySpace pref="191" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -207,7 +207,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="bBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="yBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="yBox" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                                   <Component id="immoniumBox" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -373,11 +373,6 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace pref="305" max="32767" attributes="0"/>
-                          <Component id="allSpectraCheck" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
                       <Component id="jPanel3" alignment="1" max="32767" attributes="0"/>
                       <Component id="chargePanel" alignment="0" max="32767" attributes="0"/>
                   </Group>
@@ -388,9 +383,7 @@
                           <Component id="jPanel3" max="32767" attributes="1"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="chargePanel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                          <Component id="allSpectraCheck" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="46" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -414,26 +407,32 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="h2oBox" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="nh3Box" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="h2oBox" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="nh3Box" linkSize="4" alignment="0" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="h3po4Box" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          <Component id="hpo3Box" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="h3po4Box" linkSize="4" min="-2" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="ch4osBox" linkSize="4" min="-2" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Component id="hpo3Box" linkSize="4" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <EmptySpace min="-2" pref="99" max="-2" attributes="0"/>
-                                      <Component id="ch4osBox" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="sequenceLossCheck" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="adaptBox" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace pref="328" max="32767" attributes="0"/>
+                                      <Component id="automaticAnnotationCheck" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <EmptySpace pref="203" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
+                          <Group type="102" attributes="0">
                               <EmptySpace max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="h2oBox" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -446,7 +445,10 @@
                                   <Component id="hpo3Box" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="sequenceLossCheck" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="adaptBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="automaticAnnotationCheck" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -482,11 +484,21 @@
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JCheckBox" name="sequenceLossCheck">
+                    <Component class="javax.swing.JCheckBox" name="adaptBox">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Adapt neutral losses to the sequence and modifications"/>
+                        <Property name="text" type="java.lang.String" value="Adapt"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="automaticAnnotationCheck">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="Automatic Annotation"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="automaticAnnotationCheckActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -549,15 +561,6 @@
                     </Component>
                   </SubComponents>
                 </Container>
-                <Component class="javax.swing.JCheckBox" name="allSpectraCheck">
-                  <Properties>
-                    <Property name="text" type="java.lang.String" value="Always use these settings for this project"/>
-                    <Property name="opaque" type="boolean" value="false"/>
-                  </Properties>
-                  <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="allSpectraCheckActionPerformed"/>
-                  </Events>
-                </Component>
               </SubComponents>
             </Container>
           </SubComponents>

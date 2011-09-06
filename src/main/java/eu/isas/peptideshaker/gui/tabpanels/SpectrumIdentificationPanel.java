@@ -53,6 +53,10 @@ import org.jfree.chart.plot.PlotOrientation;
 public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
     /**
+     * The current spectrum key.
+     */
+    private String currentSpectrumKey = "";
+    /**
      * The search engine table column header tooltips.
      */
     private ArrayList<String> searchEngineTableToolTips;
@@ -1350,7 +1354,7 @@ private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) 
      */
 private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
     peptideShakerGUI.getAnnotationPreferences().setAnnotationIntensityLimit(((Integer) intensitySlider.getValue()) / 100.0);
-    peptideShakerGUI.updateAllAnnotations();
+    peptideShakerGUI.updateAnnotations();
     peptideShakerGUI.setDataSaved(false);
 }//GEN-LAST:event_intensitySliderStateChanged
 
@@ -1885,7 +1889,8 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
                 PSParameter probabilities = new PSParameter();
                 probabilities = (PSParameter) identification.getMatchParameter(key, probabilities);
-                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumMatch.getKey());
+                String spectrumKey = spectrumMatch.getKey();
+                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
                 if (currentSpectrum != null) {
                     Precursor precursor = currentSpectrum.getPrecursor();
 
@@ -1924,17 +1929,20 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                                 }
                             }
 
-                            annotationPreferences.setCurrentSettings(currentPeptide, currentSpectrum.getPrecursor().getCharge().value);
+                            annotationPreferences.setCurrentSettings(currentPeptide, 
+                                    currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
                                     currentSpectrum, currentPeptide,
                                     currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getMzTolerance());
+                            currentSpectrumKey = spectrumKey;
 
                             // add the spectrum annotations
                             spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                             spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
+                            spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
                         }
 
                         // xtandem annotation (if any)
@@ -1961,17 +1969,20 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                                 }
                             }
 
-                            annotationPreferences.setCurrentSettings(currentPeptide, currentSpectrum.getPrecursor().getCharge().value);
+                            annotationPreferences.setCurrentSettings(currentPeptide, 
+                                    currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
                                     currentSpectrum, currentPeptide,
                                     currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getMzTolerance());
+                            currentSpectrumKey = spectrumKey;
 
                             // add the spectrum annotations
                             spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                             spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
+                            spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
                         }
 
                         // mascot annotation (if any)
@@ -1998,17 +2009,20 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                                 }
                             }
 
-                            annotationPreferences.setCurrentSettings(currentPeptide, currentSpectrum.getPrecursor().getCharge().value);
+                            annotationPreferences.setCurrentSettings(currentPeptide, 
+                                    currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
                                     currentSpectrum, currentPeptide,
                                     currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getMzTolerance());
+                            currentSpectrumKey = spectrumKey;
 
                             // add the spectrum annotations
                             spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                             spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
+                            spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
                         }
 
                         spectrumChartPanel.add(spectrum);
