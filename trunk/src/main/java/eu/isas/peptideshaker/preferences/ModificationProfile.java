@@ -16,7 +16,10 @@ import java.util.Set;
  */
 public class ModificationProfile implements Serializable {
 
-    // @TODO: add serialization number
+    /**
+     * Serial version number for serialization compatibility
+     */
+    static final long serialVersionUID = 342611308111304721L;
     /**
      * Mapping of the utilities modification names to the PeptideShaker names
      */
