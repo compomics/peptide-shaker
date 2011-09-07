@@ -2250,7 +2250,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 for (double score : scores) {
                     nSpectra = new ArrayList<Integer>(peptideMap.get(score).keySet());
                     Collections.sort(nSpectra);
-                    maxSpectra = nSpectra.get(nSpectra.size() - 1);
+                    
                     for (int i = nSpectra.size() - 1; i >= 0; i--) {
                         spectrumCount = nSpectra.get(i);
                         keys = new ArrayList<String>(peptideMap.get(score).get(spectrumCount).keySet());
@@ -2306,8 +2306,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                 validatedPeptideCounter++;
                             }
 
-                            if (maxSpectra < currentMatch.getSpectrumCount()) {
-                                maxSpectra = currentMatch.getSpectrumCount();
+                            if (maxSpectra < spectrumCount) {
+                                maxSpectra = spectrumCount;
                             }
 
                             peptideTableMap.put(index + 1, currentMatch.getKey());
@@ -2318,7 +2318,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                 ((TitledBorder) peptidesJPanel.getBorder()).setTitle("Peptides (" + validatedPeptideCounter + "/" + peptideTable.getRowCount() + ")");
                 peptidesJPanel.repaint();
-
 
                 ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
 
