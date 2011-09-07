@@ -1333,7 +1333,7 @@ private void coverageTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
                 peptideTableKeyReleased(null);
             } else {
                 JPopupMenu peptidesPopupMenu = new JPopupMenu();
-                
+
                 // needs to be made final to be used below
                 final ArrayList<Integer> tempPeptideIndexes = peptideIndexes;
 
@@ -1344,9 +1344,10 @@ private void coverageTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
                             + " - " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("End").getModelIndex());
 
                     final int tempInt = i;
-                    
+
                     JMenuItem menuItem = new JMenuItem(text);
                     menuItem.addActionListener(new java.awt.event.ActionListener() {
+
                         public void actionPerformed(java.awt.event.ActionEvent evt) {
                             peptideTable.setRowSelectionInterval(tempPeptideIndexes.get(tempInt), tempPeptideIndexes.get(tempInt));
                             peptideTable.scrollRectToVisible(peptideTable.getCellRect(tempPeptideIndexes.get(tempInt), tempPeptideIndexes.get(tempInt), false));
@@ -1356,22 +1357,21 @@ private void coverageTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
 
                     peptidesPopupMenu.add(menuItem);
                 }
-                
+
                 peptidesPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
             }
         }
     }
 }//GEN-LAST:event_coverageTableMouseClicked
 
-/**
- * Switch the mouse cursor back to the default cursor.
- * 
- * @param evt 
- */
+    /**
+     * Switch the mouse cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
 private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_coverageTableMouseExited
     this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_coverageTableMouseExited
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel bubbleAnnotationMenuPanel;
     private javax.swing.JPanel bubbleJPanel;
@@ -1685,7 +1685,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
                         if (currentSpectrum != null) {
                             annotationPreferences.setCurrentSettings(
-                                    selectedPeptideMatch.getTheoreticPeptide(), 
+                                    selectedPeptideMatch.getTheoreticPeptide(),
                                     currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
@@ -1696,7 +1696,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     annotationPreferences.getMzTolerance());
                             allAnnotations.add(annotations);
                             allSpectra.add(currentSpectrum);
-                            
+
                             currentSpectrumKey = spectrumKey;
                         }
                     }
@@ -1903,7 +1903,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             SpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
                             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
                             annotationPreferences.setCurrentSettings(
-                                    currentPeptide, currentSpectrum.getPrecursor().getCharge().value, 
+                                    currentPeptide, currentSpectrum.getPrecursor().getCharge().value,
                                     !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
@@ -1913,21 +1913,21 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     annotationPreferences.getMzTolerance());
                             spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                             spectrum.rescale(lowerMzZoomRange, upperMzZoomRange);
-                            
+
                             if (!currentSpectrumKey.equalsIgnoreCase(spectrumKey)) {
                                 if (annotationPreferences.useAutomaticAnnotation()) {
                                     annotationPreferences.setNeutralLossesSequenceDependant(true);
                                 }
                             }
-                            
+
                             peptideShakerGUI.updateAnnotationMenus();
-                            
-                            
+
+
                             currentSpectrumKey = spectrumKey;
 
                             // show all or just the annotated peaks
                             spectrum.showAnnotatedPeaksOnly(!peptideShakerGUI.getAnnotationPreferences().showAllPeaks());
-                            
+
                             spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
 
                             // add the spectrum panel to the frame
@@ -2143,7 +2143,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             ((DefaultTableModel) psmTable.getModel()).addRow(new Object[]{
                                         index,
                                         peptideAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
+                                        peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
                                         tempSpectrum.getPrecursor().getCharge().value,
                                         peptideAssumption.getDeltaMass(),
                                         probabilities.isValidated()
@@ -2216,88 +2216,103 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 peptideTableMap = new HashMap<Integer, String>();
 
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                HashMap<Double, ArrayList<PeptideMatch>> peptideMap = new HashMap<Double, ArrayList<PeptideMatch>>();
+                HashMap<Double, HashMap<Integer, HashMap<String, PeptideMatch>>> peptideMap = new HashMap<Double, HashMap<Integer, HashMap<String, PeptideMatch>>>();
                 PSParameter probabilities = new PSParameter();
                 double peptideProbabilityScore;
                 PeptideMatch peptideMatch;
+                int spectrumCount;
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, probabilities);
                     peptideProbabilityScore = probabilities.getPeptideProbabilityScore();
 
                     if (!peptideMap.containsKey(peptideProbabilityScore)) {
-                        peptideMap.put(peptideProbabilityScore, new ArrayList<PeptideMatch>());
+                        peptideMap.put(peptideProbabilityScore, new HashMap<Integer, HashMap<String, PeptideMatch>>());
                     }
                     peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-                    peptideMap.get(peptideProbabilityScore).add(peptideMatch);
+                    spectrumCount = peptideMatch.getSpectrumCount();
+                    if (!peptideMap.get(peptideProbabilityScore).containsKey(spectrumCount)) {
+                        peptideMap.get(peptideProbabilityScore).put(spectrumCount, new HashMap<String, PeptideMatch>());
+                    }
+                    peptideMap.get(peptideProbabilityScore).get(spectrumCount).put(peptideKey, peptideMatch);
                 }
 
                 ArrayList<Double> scores = new ArrayList<Double>(peptideMap.keySet());
                 Collections.sort(scores);
+                ArrayList<Integer> nSpectra;
+                ArrayList<String> keys;
+                PeptideMatch currentMatch;
 
-                double maxSpectra = Double.MIN_VALUE;
+                double maxSpectra = 0;
 
                 int index = 0;
                 int validatedPeptideCounter = 0;
 
                 for (double score : scores) {
-                    for (PeptideMatch currentMatch : peptideMap.get(score)) {
+                    nSpectra = new ArrayList<Integer>(peptideMap.get(score).keySet());
+                    Collections.sort(nSpectra);
+                    maxSpectra = nSpectra.get(nSpectra.size() - 1);
+                    for (int i = nSpectra.size() - 1; i >= 0; i--) {
+                        spectrumCount = nSpectra.get(i);
+                        keys = new ArrayList<String>(peptideMap.get(score).get(spectrumCount).keySet());
+                        Collections.sort(keys);
+                        for (String key : keys) {
+                            currentMatch = peptideMap.get(score).get(spectrumCount).get(key);
+                            probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(key, probabilities);
 
-                        probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(currentMatch.getKey(), probabilities);
-
-                        ArrayList<String> otherProteins = new ArrayList<String>();
-                        List<String> proteinProteins = Arrays.asList(ProteinMatch.getAccessions(proteinKey));
-                        for (String accession : currentMatch.getTheoreticPeptide().getParentProteins()) {
-                            if (!proteinProteins.contains(accession)) {
-                                otherProteins.add(accession);
+                            ArrayList<String> otherProteins = new ArrayList<String>();
+                            List<String> proteinProteins = Arrays.asList(ProteinMatch.getAccessions(proteinKey));
+                            for (String accession : currentMatch.getTheoreticPeptide().getParentProteins()) {
+                                if (!proteinProteins.contains(accession)) {
+                                    otherProteins.add(accession);
+                                }
                             }
-                        }
 
-                        // find and add the peptide start and end indexes
-                        int peptideStart = 0;
-                        int peptideEnd = 0;
-                        String peptideSequence = currentMatch.getTheoreticPeptide().getSequence();
-                        try {
-                            String proteinAccession = proteinMatch.getMainMatch();
-                            String proteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
-                            peptideStart = proteinSequence.lastIndexOf(peptideSequence) + 1;
-                            peptideEnd = peptideStart + peptideSequence.length() - 1;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        int proteinInferenceType = 0;
+                            // find and add the peptide start and end indexes
+                            int peptideStart = 0;
+                            int peptideEnd = 0;
+                            String peptideSequence = currentMatch.getTheoreticPeptide().getSequence();
+                            try {
+                                String proteinAccession = proteinMatch.getMainMatch();
+                                String proteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
+                                peptideStart = proteinSequence.lastIndexOf(peptideSequence) + 1;
+                                peptideEnd = peptideStart + peptideSequence.length() - 1;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            int proteinInferenceType = 0;
 
-                        if (otherProteins.size() == 1) {
-                            proteinInferenceType = 1;
-                        } else if (otherProteins.size() > 1 && otherProteins.size() <= 4) {
-                            proteinInferenceType = 2;
-                        } else if (otherProteins.size() > 4) {
-                            proteinInferenceType = 3;
-                        }
+                            if (otherProteins.size() == 1) {
+                                proteinInferenceType = 1;
+                            } else if (otherProteins.size() > 1 && otherProteins.size() <= 4) {
+                                proteinInferenceType = 2;
+                            } else if (otherProteins.size() > 4) {
+                                proteinInferenceType = 3;
+                            }
 
-                        ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
-                                    index + 1,
-                                    proteinInferenceType,
-                                    currentMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
+                            ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
+                                        index + 1,
+                                        proteinInferenceType,
+                                        currentMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
                                         peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
-                                    peptideStart,
-                                    peptideEnd,
-                                    currentMatch.getSpectrumCount(),
-                                    probabilities.getPeptideScore(),
-                                    probabilities.getPeptideConfidence(),
-                                    probabilities.isValidated()
-                                });
+                                        peptideStart,
+                                        peptideEnd,
+                                        spectrumCount,
+                                        probabilities.getPeptideScore(),
+                                        probabilities.getPeptideConfidence(),
+                                        probabilities.isValidated()
+                                    });
 
-                        if (probabilities.isValidated()) {
-                            validatedPeptideCounter++;
+                            if (probabilities.isValidated()) {
+                                validatedPeptideCounter++;
+                            }
+
+                            if (maxSpectra < currentMatch.getSpectrumCount()) {
+                                maxSpectra = currentMatch.getSpectrumCount();
+                            }
+
+                            peptideTableMap.put(index + 1, currentMatch.getKey());
+                            index++;
                         }
-
-                        if (maxSpectra < currentMatch.getSpectrumCount()) {
-                            maxSpectra = currentMatch.getSpectrumCount();
-                        }
-
-                        peptideTableMap.put(index + 1, currentMatch.getKey());
-                        index++;
-
                     }
                 }
 
@@ -2602,7 +2617,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     // get the spectrum annotations
                     String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
                     Peptide currentPeptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
-                    annotationPreferences.setCurrentSettings(currentPeptide, 
+                    annotationPreferences.setCurrentSettings(currentPeptide,
                             currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                     ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(),
