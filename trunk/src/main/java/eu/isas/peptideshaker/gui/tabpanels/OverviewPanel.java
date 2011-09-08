@@ -1153,7 +1153,8 @@ public class OverviewPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, currentPeptideMatch.getTheoreticPeptide().getModifiedSequenceAsString(), allProteins);
+                    new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, currentPeptideMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
+                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true), allProteins);
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
@@ -1228,8 +1229,19 @@ public class OverviewPanel extends javax.swing.JPanel {
                 if (residueNumber >= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex())
                         && residueNumber <= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex())
                         && (Boolean) peptideTable.getValueAt(i, peptideTable.getColumnCount() - 1)) {
+
+                    String peptideKey = peptideTableMap.get(getPeptideKey(i));
+                    String modifiedSequence = "";
+
+                    try {
+                        modifiedSequence = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(
+                                peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     tooltipText += peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex()) + " - "
-                            + peptideTable.getValueAt(i, peptideTable.getColumn("Sequence").getModelIndex())
+                            + modifiedSequence
                             + " - " + peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex()) + "<br>";
                 }
             }
@@ -1339,9 +1351,20 @@ private void coverageTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
 
                 for (int i = 0; i < tempPeptideIndexes.size(); i++) {
 
-                    String text = (i + 1) + ": " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("Start").getModelIndex()) + " - "
-                            + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("Sequence").getModelIndex())
-                            + " - " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("End").getModelIndex());
+                    String peptideKey = peptideTableMap.get(getPeptideKey(tempPeptideIndexes.get(i)));
+                    String modifiedSequence = "";
+
+                    try {
+                        modifiedSequence = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(
+                                peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    String text = "<html>" + (i + 1) + ": " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("Start").getModelIndex()) + " - "
+                            + modifiedSequence
+                            + " - " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("End").getModelIndex())
+                            + "</html>";
 
                     final int tempInt = i;
 
@@ -2003,32 +2026,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                             // update the panel border title
                             if (psmTable.getSelectedRowCount() == 1) {
-
-                                int selectedRow = peptideTable.getSelectedRow();
-                                int start = (Integer) peptideTable.getValueAt(selectedRow, peptideTable.getColumn("Start").getModelIndex()) - 1;
-                                int end = (Integer) peptideTable.getValueAt(selectedRow, peptideTable.getColumn("End").getModelIndex());
-
-                                String before = "";
-                                String after = "";
-
-                                // @TODO: make the number of residues before/after up to the user?
-
-                                if (start - 2 >= 0) {
-                                    before = currentProteinSequence.substring(start - 2, start) + " - ";
-                                } else if (start - 1 >= 0) {
-                                    before = currentProteinSequence.substring(start - 1, start) + " - ";
-                                }
-
-                                if (end + 2 <= currentProteinSequence.length()) {
-                                    after = " - " + currentProteinSequence.substring(end, end + 2);
-                                } else if (end + 1 <= currentProteinSequence.length()) {
-                                    after = " - " + currentProteinSequence.substring(end, end + 1);
-                                }
-
-                                ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
-                                        "Spectrum & Fragment Ions (" + before + currentPeptide.getSequence() + after
-                                        + "   " + precursor.getCharge().toString() + "   "
-                                        + Util.roundDouble(precursor.getMz(), 4) + " m/z)");
+                                updateSpectrumPanelBorderTitle(currentPeptide, currentSpectrum);
                             } else {
 
                                 // get the current charges
@@ -2143,7 +2141,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             ((DefaultTableModel) psmTable.getModel()).addRow(new Object[]{
                                         index,
                                         peptideAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                        peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
+                                        peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                                         tempSpectrum.getPrecursor().getCharge().value,
                                         peptideAssumption.getDeltaMass(),
                                         probabilities.isValidated()
@@ -2250,7 +2248,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 for (double score : scores) {
                     nSpectra = new ArrayList<Integer>(peptideMap.get(score).keySet());
                     Collections.sort(nSpectra);
-                    
+
                     for (int i = nSpectra.size() - 1; i >= 0; i--) {
                         spectrumCount = nSpectra.get(i);
                         keys = new ArrayList<String>(peptideMap.get(score).get(spectrumCount).keySet());
@@ -2293,7 +2291,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                         index + 1,
                                         proteinInferenceType,
                                         currentMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
-                                        peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
+                                        peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                                         peptideStart,
                                         peptideEnd,
                                         spectrumCount,
@@ -2842,5 +2840,101 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         double width = (coverageTableX - cellWidth * paddingInPercent) / (cellWidth - 2 * cellWidth * paddingInPercent);
 
         return (int) (width * currentProteinSequence.length());
+    }
+
+    /**
+     * Update the PTM color coding.
+     */
+    public void updatePtmColors() {
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+        HashMap<String, Color> ptmColors = peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors();
+
+        try {
+
+            // update the peptide table
+            for (int i = 0; i < peptideTable.getRowCount(); i++) {
+                String peptideKey = peptideTableMap.get(getPeptideKey(i));
+                String modifiedSequence = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(ptmColors, true);
+                peptideTable.setValueAt(modifiedSequence, i, peptideTable.getColumn("Sequence").getModelIndex());
+            }
+
+            // update the psm table
+            if (peptideTable.getSelectedRow() != -1) {
+
+                String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
+                PeptideMatch currentPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+
+                for (int i = 0; i < psmTable.getRowCount(); i++) {
+
+                    String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(i, 0));
+                    PeptideAssumption peptideAssumption = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey).getBestAssumption();
+
+                    if (peptideAssumption.getPeptide().isSameAs(currentPeptideMatch.getTheoreticPeptide())) {
+                        String modifiedSequence = peptideAssumption.getPeptide().getModifiedSequenceAsHtml(
+                                peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
+                        psmTable.setValueAt(modifiedSequence, i, psmTable.getColumn("Sequence").getModelIndex());
+                    } else {
+                        // @TODO: do we need to do something here??
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }
+
+    /**
+     * Update the spectrum and fragment ions panel border title with information 
+     * about the currently selected psm.
+     * 
+     * @param currentPeptide
+     * @param currentSpectrum 
+     */
+    private void updateSpectrumPanelBorderTitle(Peptide currentPeptide, MSnSpectrum currentSpectrum) {
+        
+        int selectedRow = peptideTable.getSelectedRow();
+        int start = (Integer) peptideTable.getValueAt(selectedRow, peptideTable.getColumn("Start").getModelIndex()) - 1;
+        int end = (Integer) peptideTable.getValueAt(selectedRow, peptideTable.getColumn("End").getModelIndex());
+
+        String before = "";
+        String after = "";
+
+        // @TODO: make the number of residues shown before/after up to the user?
+
+        if (start - 2 >= 0) {
+            before = currentProteinSequence.substring(start - 2, start) + " - ";
+        } else if (start - 1 >= 0) {
+            before = currentProteinSequence.substring(start - 1, start) + " - ";
+        }
+
+        if (end + 2 <= currentProteinSequence.length()) {
+            after = " - " + currentProteinSequence.substring(end, end + 2);
+        } else if (end + 1 <= currentProteinSequence.length()) {
+            after = " - " + currentProteinSequence.substring(end, end + 1);
+        }
+
+        String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(psmTable.getSelectedRow(), 0));
+        String modifiedSequence = "";
+
+        try {
+            PeptideAssumption peptideAssumption = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey).getBestAssumption();
+
+            if (peptideAssumption.getPeptide().isSameAs(currentPeptide)) {
+                modifiedSequence = peptideAssumption.getPeptide().getModifiedSequenceAsString(false);
+            } else {
+                // @TODO: do we need to do something here??
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
+                "Spectrum & Fragment Ions (" + before + modifiedSequence + after
+                + "   " + currentSpectrum.getPrecursor().getCharge().toString() + "   "
+                + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 4) + " m/z)");
     }
 }

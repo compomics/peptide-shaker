@@ -151,6 +151,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         jLabel9 = new javax.swing.JLabel();
         precursorTolerance = new javax.swing.JTextField();
         precursorUnit = new javax.swing.JComboBox();
+        jLabel10 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         addModifications = new javax.swing.JButton();
         removeModification = new javax.swing.JButton();
@@ -205,16 +206,16 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Search Paramaters"));
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Enzyme and Fragment Ions"));
         jPanel5.setOpaque(false);
 
-        jLabel1.setText("Fragment Ion Accuracy (Da):");
+        jLabel1.setText("Fragment Ion Accuracy:");
 
         fragmentIonToleranceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         enzymesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
-        jLabel5.setText("Enzyme Used:");
+        jLabel5.setText("Enzyme:");
 
         missedCleavagesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         missedCleavagesTxt.setText("1");
@@ -229,11 +230,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         ion2Cmb.setModel(new DefaultComboBoxModel(searchParameters.getIons()));
 
-        jLabel9.setText("Precursor tolerance:");
+        jLabel9.setText("Precursor Accuracy:");
 
         precursorTolerance.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         precursorUnit.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "ppm", "Da" }));
+
+        jLabel10.setText("Da");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -246,31 +249,38 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel9))
-                        .addGap(52, 52, 52)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                                .addComponent(precursorTolerance, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
+                        .addGap(37, 37, 37)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(precursorTolerance, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(precursorUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(enzymesCmb, 0, 289, Short.MAX_VALUE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel7)
-                        .addGap(34, 34, 34)
-                        .addComponent(missedCleavagesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                            .addComponent(enzymesCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(fragmentIonToleranceTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(jLabel2)
+                        .addComponent(fragmentIonToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(ion1Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(35, 35, 35)
+                        .addComponent(jLabel10)))
+                .addGap(71, 71, 71)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel8)
                         .addGap(18, 18, 18)
-                        .addComponent(ion2Cmb, 0, 79, Short.MAX_VALUE)))
+                        .addComponent(ion2Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, 286, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel7))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(missedCleavagesTxt)
+                            .addComponent(ion1Cmb, 0, 286, Short.MAX_VALUE))))
                 .addContainerGap())
         );
+
+        jPanel5Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {ion1Cmb, ion2Cmb});
+
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
@@ -284,15 +294,16 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
                     .addComponent(precursorTolerance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(precursorUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(precursorUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(ion1Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(fragmentIonToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(ion1Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8)
                     .addComponent(ion2Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8))
+                    .addComponent(jLabel10))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -300,6 +311,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         jPanel6.setOpaque(false);
 
         addModifications.setText("<<");
+        addModifications.setToolTipText("Add");
         addModifications.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 addModificationsActionPerformed(evt);
@@ -307,6 +319,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         });
 
         removeModification.setText(">>");
+        removeModification.setToolTipText("Remove");
         removeModification.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 removeModificationActionPerformed(evt);
@@ -336,8 +349,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         jLabel6.setText("Available Modifications");
 
         profileTxt.setEditable(false);
+        profileTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         clearProfileBtn.setText("Clear");
+        clearProfileBtn.setToolTipText("Clear the list of expected modifications");
         clearProfileBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearProfileBtnActionPerformed(evt);
@@ -345,6 +360,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         });
 
         saveAsProfileBtn.setText("Save As");
+        saveAsProfileBtn.setToolTipText("Save the modification profile to a psm file");
         saveAsProfileBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveAsProfileBtnActionPerformed(evt);
@@ -352,6 +368,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         });
 
         saveProfileBtn.setText("Save");
+        saveProfileBtn.setToolTipText("Save as default modification profile");
         saveProfileBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveProfileBtnActionPerformed(evt);
@@ -359,6 +376,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         });
 
         loadProfileBtn.setText("Load");
+        loadProfileBtn.setToolTipText("Load a modification profile from a psm file");
         loadProfileBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadProfileBtnActionPerformed(evt);
@@ -459,6 +477,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         fileTxt.setEditable(false);
 
         loadButton.setText("Load");
+        loadButton.setToolTipText("Load parameters from a SearchGUI parameters file");
         loadButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 loadButtonActionPerformed(evt);
@@ -727,7 +746,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
             @Override
             public String getDescription() {
-                return "(Peptide Shake Modifications) *.psm";
+                return "(PeptideShaker Modifications) *.psm";
             }
         };
 
@@ -932,6 +951,7 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
     private javax.swing.JComboBox ion1Cmb;
     private javax.swing.JComboBox ion2Cmb;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
