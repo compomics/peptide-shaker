@@ -5,7 +5,6 @@ import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFrag
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * This class will compile the search options

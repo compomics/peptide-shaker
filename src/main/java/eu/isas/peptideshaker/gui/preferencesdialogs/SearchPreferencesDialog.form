@@ -115,7 +115,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Search Paramaters"/>
+                <TitledBorder title="Enzyme and Fragment Ions"/>
               </Border>
             </Property>
             <Property name="opaque" type="boolean" value="false"/>
@@ -124,40 +124,49 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" max="-2" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <Component id="precursorTolerance" pref="238" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Component id="precursorTolerance" min="-2" pref="242" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="precursorUnit" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="enzymesCmb" alignment="0" pref="289" max="32767" attributes="2"/>
+                                  <Component id="enzymesCmb" max="32767" attributes="3"/>
                               </Group>
-                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
-                              <Component id="missedCleavagesTxt" pref="327" max="32767" attributes="2"/>
                           </Group>
-                          <Group type="102" alignment="1" attributes="0">
+                          <Group type="102" alignment="0" attributes="1">
                               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-                              <Component id="fragmentIonToleranceTxt" pref="289" max="32767" attributes="2"/>
-                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                              <Component id="ion1Cmb" min="-2" pref="90" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="35" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="fragmentIonToleranceTxt" min="-2" pref="242" max="-2" attributes="2"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
                               <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="ion2Cmb" pref="79" max="32767" attributes="0"/>
+                              <Component id="ion2Cmb" linkSize="2" min="-2" pref="286" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="missedCleavagesTxt" max="32767" attributes="1"/>
+                                  <Component id="ion1Cmb" linkSize="2" alignment="0" pref="286" max="32767" attributes="1"/>
+                              </Group>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -179,15 +188,16 @@
                           <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="precursorTolerance" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="precursorUnit" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="ion1Cmb" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="fragmentIonToleranceTxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="ion1Cmb" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="ion2Cmb" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="ion2Cmb" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -197,7 +207,7 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Fragment Ion Accuracy (Da):"/>
+                <Property name="text" type="java.lang.String" value="Fragment Ion Accuracy:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="fragmentIonToleranceTxt">
@@ -219,7 +229,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Enzyme Used:"/>
+                <Property name="text" type="java.lang.String" value="Enzyme:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="missedCleavagesTxt">
@@ -259,7 +269,7 @@
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel9">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Precursor tolerance:"/>
+                <Property name="text" type="java.lang.String" value="Precursor Accuracy:"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="precursorTolerance">
@@ -275,6 +285,11 @@
                     <StringItem index="1" value="Da"/>
                   </StringArray>
                 </Property>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel10">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Da"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -370,6 +385,7 @@
             <Component class="javax.swing.JButton" name="addModifications">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&lt;&lt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="Add"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addModificationsActionPerformed"/>
@@ -378,6 +394,7 @@
             <Component class="javax.swing.JButton" name="removeModification">
               <Properties>
                 <Property name="text" type="java.lang.String" value="&gt;&gt;"/>
+                <Property name="toolTipText" type="java.lang.String" value="Remove"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="removeModificationActionPerformed"/>
@@ -436,11 +453,13 @@
             <Component class="javax.swing.JTextField" name="profileTxt">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
+                <Property name="horizontalAlignment" type="int" value="0"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="clearProfileBtn">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Clear"/>
+                <Property name="toolTipText" type="java.lang.String" value="Clear the list of expected modifications"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearProfileBtnActionPerformed"/>
@@ -449,6 +468,7 @@
             <Component class="javax.swing.JButton" name="saveAsProfileBtn">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Save As"/>
+                <Property name="toolTipText" type="java.lang.String" value="Save the modification profile to a psm file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveAsProfileBtnActionPerformed"/>
@@ -457,6 +477,7 @@
             <Component class="javax.swing.JButton" name="saveProfileBtn">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Save"/>
+                <Property name="toolTipText" type="java.lang.String" value="Save as default modification profile"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="saveProfileBtnActionPerformed"/>
@@ -465,6 +486,7 @@
             <Component class="javax.swing.JButton" name="loadProfileBtn">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Load"/>
+                <Property name="toolTipText" type="java.lang.String" value="Load a modification profile from a psm file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadProfileBtnActionPerformed"/>
@@ -549,6 +571,7 @@
             <Component class="javax.swing.JButton" name="loadButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Load"/>
+                <Property name="toolTipText" type="java.lang.String" value="Load parameters from a SearchGUI parameters file"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loadButtonActionPerformed"/>

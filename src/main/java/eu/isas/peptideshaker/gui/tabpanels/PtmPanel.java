@@ -1118,7 +1118,7 @@ private void ptmJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             if (!((String) ptmJTable.getValueAt(row, 2)).equalsIgnoreCase("no modification")) {
                 peptideShakerGUI.getSearchParameters().getModificationProfile().setColor(
                         (String) ptmJTable.getValueAt(row, 2), newColor);
-                updateModificationProfiles();
+                peptideShakerGUI.updatePtmColorCoding();
             }
         }
     } else {
@@ -1927,7 +1927,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 } else if (column == 2) {
                     //return identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getSequence();
                     return identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getModifiedSequenceAsHtml(
-                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors());
+                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
                 } else if (column == 3) {
                     PSParameter probabilities = new PSParameter();
                     probabilities = (PSParameter) identification.getMatchParameter(displayedPeptides.get(row), probabilities);
@@ -2011,7 +2011,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 } else if (column == 2) {
                     //return identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide().getSequence();
                     return identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide().getModifiedSequenceAsHtml(
-                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors());
+                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
                 } else if (column == 3) {
                     PSParameter probabilities = new PSParameter();
                     probabilities = (PSParameter) identification.getMatchParameter(relatedPeptides.get(row), probabilities);
@@ -2125,7 +2125,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     // Not sure that it will always be the best assumption, might have to iterate assumptions if the wrong sequence is displayed
                     //return spectrumMatch.getBestAssumption().getPeptide().getSequence();
                     return spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
-                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors());
+                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
                 } else if (column == 2) {
                     try {
                         return peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getMz();
@@ -2246,7 +2246,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     // Not sure that it will wlways be the best assumption, might have to iterate assumptions if the wrong sequence is displayed
                     //return spectrumMatch.getBestAssumption().getPeptide().getSequence();
                     return spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
-                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors());
+                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
                 } else if (column == 2) {
                     try {
                         return peptideShakerGUI.getPrecursor(spectrumMatch.getKey()).getMz();

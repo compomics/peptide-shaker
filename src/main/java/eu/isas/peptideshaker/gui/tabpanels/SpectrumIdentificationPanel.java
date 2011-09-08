@@ -1715,7 +1715,7 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                             1,
                             proteins,
                             spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                             probabilities.getPsmScore(),
                             probabilities.getPsmConfidence(),
                             probabilities.isValidated()
@@ -1735,7 +1735,7 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                                         ++rank,
                                         proteins,
                                         currentAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                                         currentAssumption.getEValue(),
                                         probabilities.getSearchEngineConfidence()
                                     });
@@ -1761,7 +1761,7 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                                         ++rank,
                                         proteins,
                                         currentAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                                         currentAssumption.getEValue(),
                                         probabilities.getSearchEngineConfidence()
                                     });
@@ -1787,7 +1787,7 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                                         ++rank,
                                         proteins,
                                         currentAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
+                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                                         currentAssumption.getEValue(),
                                         probabilities.getSearchEngineConfidence()
                                     });
@@ -2030,5 +2030,17 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
      */
     public void setIntensitySliderValue(int value) {
         intensitySlider.setValue(value);
+    }
+    
+    /**
+     * Update the PTM color coding.
+     */
+    public void updatePtmColors() {
+        
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        
+        spectrumSelectionChanged();
+        
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 }
