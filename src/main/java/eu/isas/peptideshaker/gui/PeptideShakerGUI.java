@@ -497,11 +497,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         peptidesAndPsmsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         spectrumJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         sequenceCoverageJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        structureTabViewMenu = new javax.swing.JMenu();
-        modelSpinJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        modelTypeMenu = new javax.swing.JMenu();
-        ribbonJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
-        backboneJRadioButtonMenuItem = new javax.swing.JRadioButtonMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -1067,45 +1062,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         overViewTabViewMenu.add(sequenceCoverageJCheckBoxMenuItem);
 
         viewJMenu.add(overViewTabViewMenu);
-
-        structureTabViewMenu.setText("3D Structure");
-
-        modelSpinJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_R, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        modelSpinJCheckBoxMenuItem.setMnemonic('R');
-        modelSpinJCheckBoxMenuItem.setSelected(true);
-        modelSpinJCheckBoxMenuItem.setText("Rotate");
-        modelSpinJCheckBoxMenuItem.setToolTipText("Rotate the protein model");
-        modelSpinJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                modelSpinJCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        structureTabViewMenu.add(modelSpinJCheckBoxMenuItem);
-
-        modelTypeMenu.setText("Model");
-
-        modelButtonGroup.add(ribbonJRadioButtonMenuItem);
-        ribbonJRadioButtonMenuItem.setSelected(true);
-        ribbonJRadioButtonMenuItem.setText("Ribbon");
-        ribbonJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ribbonJRadioButtonMenuItemActionPerformed(evt);
-            }
-        });
-        modelTypeMenu.add(ribbonJRadioButtonMenuItem);
-
-        modelButtonGroup.add(backboneJRadioButtonMenuItem);
-        backboneJRadioButtonMenuItem.setText("Backbone");
-        backboneJRadioButtonMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                backboneJRadioButtonMenuItemActionPerformed(evt);
-            }
-        });
-        modelTypeMenu.add(backboneJRadioButtonMenuItem);
-
-        structureTabViewMenu.add(modelTypeMenu);
-
-        viewJMenu.add(structureTabViewMenu);
         viewJMenu.add(jSeparator3);
 
         sparklinesJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
@@ -1728,15 +1684,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_formWindowClosing
 
     /**
-     * Turn the model spin on or off.
-     * 
-     * @param evt 
-     */
-    private void modelSpinJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modelSpinJCheckBoxMenuItemActionPerformed
-        proteinStructurePanel.spinModel(modelSpinJCheckBoxMenuItem.isSelected());
-    }//GEN-LAST:event_modelSpinJCheckBoxMenuItemActionPerformed
-
-    /**
      * Edit the use of relative error (ppm) or absolute error (Da) in the mass 
      * error plot.
      * 
@@ -1871,28 +1818,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void spectrumCountingMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumCountingMenuItemActionPerformed
         new SpectrumCountingPreferencesDialog(this);
     }//GEN-LAST:event_spectrumCountingMenuItemActionPerformed
-
-    /**
-     * Set the 3d structure model type to ribbon.
-     * 
-     * @param evt 
-     */
-    private void ribbonJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ribbonJRadioButtonMenuItemActionPerformed
-        proteinStructurePanel.setRibbonModel(ribbonJRadioButtonMenuItem.isSelected());
-        proteinStructurePanel.setBackboneModel(backboneJRadioButtonMenuItem.isSelected());
-        proteinStructurePanel.updateModelType();
-    }//GEN-LAST:event_ribbonJRadioButtonMenuItemActionPerformed
-
-    /**
-     * Set the 3d structure model type to backbone.
-     * 
-     * @param evt 
-     */
-    private void backboneJRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backboneJRadioButtonMenuItemActionPerformed
-        proteinStructurePanel.setRibbonModel(ribbonJRadioButtonMenuItem.isSelected());
-        proteinStructurePanel.setBackboneModel(backboneJRadioButtonMenuItem.isSelected());
-        proteinStructurePanel.updateModelType();
-    }//GEN-LAST:event_backboneJRadioButtonMenuItemActionPerformed
 
     private void identificationFeaturesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificationFeaturesMenuActionPerformed
         new FeaturesPreferencesDialog(this);
@@ -2127,15 +2052,6 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
 }//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
 
     /**
-     * Returns if the 3D model is to be spinning or not.
-     * 
-     * @return true if the 3D model is to be spinning
-     */
-    public boolean spinModel() {
-        return modelSpinJCheckBoxMenuItem.isSelected();
-    }
-
-    /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
     private void loadEnzymes() {
@@ -2281,7 +2197,6 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
     private javax.swing.JPanel annotationsJPanel;
     private javax.swing.JCheckBoxMenuItem automaticAnnotationCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem bIonCheckBoxMenuItem;
-    private javax.swing.JRadioButtonMenuItem backboneJRadioButtonMenuItem;
     private javax.swing.JCheckBoxMenuItem barsCheckBoxMenuItem;
     private javax.swing.JMenuItem bubblePlotJMenuItem;
     private javax.swing.JMenuItem bubbleScaleJMenuItem;
@@ -2323,8 +2238,6 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
     private javax.swing.JMenu lossMenu;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.ButtonGroup modelButtonGroup;
-    private javax.swing.JCheckBoxMenuItem modelSpinJCheckBoxMenuItem;
-    private javax.swing.JMenu modelTypeMenu;
     private javax.swing.JCheckBoxMenuItem moreThanTwoChargesCheckBoxMenuItem;
     private javax.swing.JRadioButtonMenuItem mzIonTableRadioButtonMenuItem;
     private javax.swing.JMenuItem newJMenuItem;
@@ -2341,7 +2254,6 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
     private javax.swing.JPanel ptmJPanel;
     private javax.swing.JPanel qcJPanel;
-    private javax.swing.JRadioButtonMenuItem ribbonJRadioButtonMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JCheckBoxMenuItem scoresJCheckBoxMenuItem;
     private javax.swing.JMenuItem searchParametersMenu;
@@ -2362,7 +2274,6 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
     private javax.swing.JMenu splitterMenu6;
     private javax.swing.JMenu splitterMenu7;
     private javax.swing.JPanel statsJPanel;
-    private javax.swing.JMenu structureTabViewMenu;
     private javax.swing.JMenu viewJMenu;
     private javax.swing.JCheckBoxMenuItem xIonCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem yIonCheckBoxMenuItem;

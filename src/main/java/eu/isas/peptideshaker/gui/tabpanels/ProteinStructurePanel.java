@@ -56,6 +56,14 @@ import org.jmol.api.JmolViewer;
 public class ProteinStructurePanel extends javax.swing.JPanel implements ProgressDialogParent {
 
     /**
+     * If true, labels are shown for the modifications in the 3D structure.
+     */
+    private boolean showModificationLabels = true;
+    /**
+     * If true, the 3D model will be spinning. 
+     */
+    private boolean spinModel = true;
+    /**
      * If true the ribbon model is used.
      */
     private boolean ribbonModel = true;
@@ -332,6 +340,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         pdbStructureLayeredPane = new javax.swing.JLayeredPane();
         pdbPanel = new javax.swing.JPanel();
         pdbHelpJButton = new javax.swing.JButton();
+        labelsJButton = new javax.swing.JButton();
+        ribbonJButton = new javax.swing.JButton();
+        backboneJButton = new javax.swing.JButton();
+        playJButton = new javax.swing.JButton();
         proteinsJPanel = new javax.swing.JPanel();
         proteinScrollPane = new javax.swing.JScrollPane();
         proteinTable = new JTable() {
@@ -412,7 +424,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         pdbPanel.setBounds(0, 0, 435, 410);
         pdbStructureLayeredPane.add(pdbPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        pdbHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        pdbHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.png"))); // NOI18N
         pdbHelpJButton.setToolTipText("Help");
         pdbHelpJButton.setBorder(null);
         pdbHelpJButton.setBorderPainted(false);
@@ -433,8 +445,104 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 pdbHelpJButtonActionPerformed(evt);
             }
         });
-        pdbHelpJButton.setBounds(0, 0, 17, 17);
+        pdbHelpJButton.setBounds(0, 0, 27, 25);
         pdbStructureLayeredPane.add(pdbHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        labelsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/labels_selected.png"))); // NOI18N
+        labelsJButton.setToolTipText("Hide Modification Labels");
+        labelsJButton.setBorder(null);
+        labelsJButton.setBorderPainted(false);
+        labelsJButton.setContentAreaFilled(false);
+        labelsJButton.setFocusable(false);
+        labelsJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        labelsJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        labelsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                labelsJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                labelsJButtonMouseExited(evt);
+            }
+        });
+        labelsJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                labelsJButtonActionPerformed(evt);
+            }
+        });
+        labelsJButton.setBounds(0, 0, 25, 25);
+        pdbStructureLayeredPane.add(labelsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        ribbonJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/ribbon_selected.png"))); // NOI18N
+        ribbonJButton.setToolTipText("Ribbon Model");
+        ribbonJButton.setBorder(null);
+        ribbonJButton.setBorderPainted(false);
+        ribbonJButton.setContentAreaFilled(false);
+        ribbonJButton.setFocusable(false);
+        ribbonJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        ribbonJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        ribbonJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                ribbonJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                ribbonJButtonMouseExited(evt);
+            }
+        });
+        ribbonJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ribbonJButtonActionPerformed(evt);
+            }
+        });
+        ribbonJButton.setBounds(0, 0, 25, 25);
+        pdbStructureLayeredPane.add(ribbonJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        backboneJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/backbone.png"))); // NOI18N
+        backboneJButton.setToolTipText("Backbone Model");
+        backboneJButton.setBorder(null);
+        backboneJButton.setBorderPainted(false);
+        backboneJButton.setContentAreaFilled(false);
+        backboneJButton.setFocusable(false);
+        backboneJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        backboneJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        backboneJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                backboneJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                backboneJButtonMouseExited(evt);
+            }
+        });
+        backboneJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                backboneJButtonActionPerformed(evt);
+            }
+        });
+        backboneJButton.setBounds(0, 0, 25, 25);
+        pdbStructureLayeredPane.add(backboneJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        playJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/pause.png"))); // NOI18N
+        playJButton.setToolTipText("Stop Rotation");
+        playJButton.setBorder(null);
+        playJButton.setBorderPainted(false);
+        playJButton.setContentAreaFilled(false);
+        playJButton.setFocusable(false);
+        playJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        playJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        playJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                playJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                playJButtonMouseExited(evt);
+            }
+        });
+        playJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                playJButtonActionPerformed(evt);
+            }
+        });
+        playJButton.setBounds(0, 0, 21, 21);
+        pdbStructureLayeredPane.add(playJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout pdbStructureJPanelLayout = new javax.swing.GroupLayout(pdbStructureJPanel);
         pdbStructureJPanel.setLayout(pdbStructureJPanelLayout);
@@ -442,7 +550,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             pdbStructureJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pdbStructureJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pdbStructureLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 435, Short.MAX_VALUE)
+                .addComponent(pdbStructureLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pdbStructureJPanelLayout.setVerticalGroup(
@@ -576,7 +684,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             peptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptidesJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptideScrollPane)
+                .addComponent(peptideScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
                 .addContainerGap())
         );
         peptidesJPanelLayout.setVerticalGroup(
@@ -643,7 +751,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             pdbMatchesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pdbMatchesJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pdbJScrollPane)
+                .addComponent(pdbJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pdbMatchesJPanelLayout.setVerticalGroup(
@@ -702,7 +810,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             pdbChainsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pdbChainsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pdbChainsJScrollPane)
+                .addComponent(pdbChainsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
                 .addContainerGap())
         );
         pdbChainsJPanelLayout.setVerticalGroup(
@@ -1109,7 +1217,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     } else if (backboneModel) {
                         jmolPanel.getViewer().evalString("select all; backbone only;");
                     }
-                    spinModel(peptideShakerGUI.spinModel());
+                    spinModel(spinModel);
                     jmolStructureShown = true;
 
                     ((TitledBorder) pdbStructureJPanel.getBorder()).setTitle("PDB Structure (" + lParam.getPdbaccession() + ")");
@@ -1186,15 +1294,42 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void pdbStructureLayeredPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_pdbStructureLayeredPaneComponentResized
-        // move the help icon
-        pdbStructureLayeredPane.getComponent(0).setBounds(
-                pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth() - 10,
-                pdbStructureLayeredPane.getComponent(0).getHeight() / 2 - 2,
+        
+        int componentIndex = 0;
+        
+        // move the icons
+        pdbStructureLayeredPane.getComponent(componentIndex++).setBounds(
+                pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth() - 5,
+                pdbStructureLayeredPane.getComponent(0).getHeight() / 10 - 2,
+                pdbStructureLayeredPane.getComponent(0).getWidth(),
+                pdbStructureLayeredPane.getComponent(0).getHeight());
+        
+        pdbStructureLayeredPane.getComponent(componentIndex++).setBounds(
+                pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth()*componentIndex - 10,
+                pdbStructureLayeredPane.getComponent(0).getHeight() / 10 - 2,
+                pdbStructureLayeredPane.getComponent(0).getWidth(),
+                pdbStructureLayeredPane.getComponent(0).getHeight());
+        
+        pdbStructureLayeredPane.getComponent(componentIndex++).setBounds(
+                pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth()*componentIndex - 15,
+                pdbStructureLayeredPane.getComponent(0).getHeight() / 10 - 2,
+                pdbStructureLayeredPane.getComponent(0).getWidth(),
+                pdbStructureLayeredPane.getComponent(0).getHeight());
+        
+        pdbStructureLayeredPane.getComponent(componentIndex++).setBounds(
+                pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth()*componentIndex - 10,
+                pdbStructureLayeredPane.getComponent(0).getHeight() / 10 - 2,
+                pdbStructureLayeredPane.getComponent(0).getWidth(),
+                pdbStructureLayeredPane.getComponent(0).getHeight());
+        
+        pdbStructureLayeredPane.getComponent(componentIndex++).setBounds(
+                pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth()*componentIndex - 15,
+                pdbStructureLayeredPane.getComponent(0).getHeight() / 10,
                 pdbStructureLayeredPane.getComponent(0).getWidth(),
                 pdbStructureLayeredPane.getComponent(0).getHeight());
 
         // resize the plot area
-        pdbStructureLayeredPane.getComponent(1).setBounds(0, 0, pdbStructureLayeredPane.getWidth(), pdbStructureLayeredPane.getHeight());
+        pdbStructureLayeredPane.getComponent(componentIndex++).setBounds(0, 0, pdbStructureLayeredPane.getWidth(), pdbStructureLayeredPane.getHeight());
         pdbStructureLayeredPane.revalidate();
         pdbStructureLayeredPane.repaint();
     }//GEN-LAST:event_pdbStructureLayeredPaneComponentResized
@@ -1257,7 +1392,160 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_peptideTableMouseMoved
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void playJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_playJButtonMouseEntered
+
+    /**
+     * Changes the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void playJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playJButtonMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_playJButtonMouseExited
+
+    /**
+     * Start/stop the rotation of the structure.
+     * 
+     * @param evt 
+     */
+    private void playJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playJButtonActionPerformed
+        
+        spinModel = !spinModel;
+        spinModel(spinModel);
+        
+        if (spinModel) {
+            playJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/pause.png")));
+            playJButton.setToolTipText("Stop Rotation");
+        } else {
+            playJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/play.png")));
+            playJButton.setToolTipText("Start Rotation");
+        }
+    }//GEN-LAST:event_playJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void ribbonJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ribbonJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_ribbonJButtonMouseEntered
+
+    /**
+     * Changes the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void ribbonJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ribbonJButtonMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_ribbonJButtonMouseExited
+
+    /**
+     * Change the model type to ribbon.
+     * 
+     * @param evt 
+     */
+    private void ribbonJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ribbonJButtonActionPerformed
+        ribbonModel = true;
+        backboneModel = false;
+        updateModelType();
+        
+        if (backboneModel) {
+            backboneJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/backbone_selected.png")));
+            ribbonJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/ribbon.png")));
+        } else {
+            backboneJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/backbone.png")));
+            ribbonJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/ribbon_selected.png")));
+        }
+    }//GEN-LAST:event_ribbonJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void backboneJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backboneJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_backboneJButtonMouseEntered
+
+    /**
+     * Changes the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void backboneJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_backboneJButtonMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_backboneJButtonMouseExited
+
+    /**
+     * Change the model type to backbone.
+     * 
+     * @param evt 
+     */
+    private void backboneJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backboneJButtonActionPerformed
+        ribbonModel = false;
+        backboneModel = true;
+        updateModelType();
+        
+        if (backboneModel) {
+            backboneJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/backbone_selected.png")));
+            ribbonJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/ribbon.png")));
+        } else {
+            backboneJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/backbone.png")));
+            ribbonJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/ribbon_selected.png")));
+        }
+    }//GEN-LAST:event_backboneJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void labelsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_labelsJButtonMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_labelsJButtonMouseEntered
+
+    /**
+     * Changes the cursor back to the default cursor.
+     *
+     * @param evt
+     */
+    private void labelsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_labelsJButtonMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_labelsJButtonMouseExited
+
+    /**
+     * Set if the modification labels are to be shown or not.
+     * 
+     * @param evt 
+     */
+    private void labelsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_labelsJButtonActionPerformed
+        showModificationLabels = !showModificationLabels;
+        
+        if (showModificationLabels) {
+            labelsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/labels_selected.png")));
+            labelsJButton.setToolTipText("Hide Modification Labels");
+        } else {
+            labelsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/labels.png")));
+            labelsJButton.setToolTipText("Show Modification Labels");
+        }
+        
+        if (pdbMatchesJTable.getSelectedRow() != -1 && peptideTable.getSelectedRow() != -1) {
+            updatePeptideToPdbMapping();
+        }
+    }//GEN-LAST:event_labelsJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton backboneJButton;
+    private javax.swing.JButton labelsJButton;
     private javax.swing.JPanel pdbChainsJPanel;
     private javax.swing.JScrollPane pdbChainsJScrollPane;
     private javax.swing.JTable pdbChainsJTable;
@@ -1271,9 +1559,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     private javax.swing.JScrollPane peptideScrollPane;
     private javax.swing.JTable peptideTable;
     private javax.swing.JPanel peptidesJPanel;
+    private javax.swing.JButton playJButton;
     private javax.swing.JScrollPane proteinScrollPane;
     private javax.swing.JTable proteinTable;
     private javax.swing.JPanel proteinsJPanel;
+    private javax.swing.JButton ribbonJButton;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -1755,42 +2045,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     }
 
     /**
-     * If true the ribbon model is used.
-     * 
-     * @return true if the ribbon model is used
-     */
-    public boolean isRibbonModel() {
-        return ribbonModel;
-    }
-
-    /**
-     * Set to true if the ribbon model is to be used.
-     * 
-     * @param ribbonModel true if the ribbon model is used
-     */
-    public void setRibbonModel(boolean ribbonModel) {
-        this.ribbonModel = ribbonModel;
-    }
-
-    /**
-     * If true the backbone model is used.
-     * 
-     * @return true if the backbone model is used
-     */
-    public boolean isBackboneModel() {
-        return backboneModel;
-    }
-
-    /**
-     * Set to true if the backbone model is to be used.
-     * 
-     * @param backboneModel true if the backbone model is used
-     */
-    public void setBackboneModel(boolean backboneModel) {
-        this.backboneModel = backboneModel;
-    }
-
-    /**
      * Updates the model type if the jmol structure is currently visible.
      */
     public void updateModelType() {
@@ -2012,11 +2266,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                         + " and chain = " + currentChain + "; color ["
                                         + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "]");
 
-                                jmolPanel.getViewer().evalString(
-                                        "select resno =" + j
-                                        + " and chain = " + currentChain + " and *.ca; color ["
-                                        + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "];"
-                                        + "label " + modifications.get(k).getTheoreticPtm().getName());
+                                if (showModificationLabels) {
+                                    jmolPanel.getViewer().evalString(
+                                            "select resno =" + j
+                                            + " and chain = " + currentChain + " and *.ca; color ["
+                                            + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "];"
+                                            + "label " + modifications.get(k).getTheoreticPtm().getName());
+                                }
                             }
                         }
                     }
