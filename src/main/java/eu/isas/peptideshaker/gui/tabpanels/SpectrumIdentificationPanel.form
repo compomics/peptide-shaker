@@ -216,7 +216,7 @@
                   <Table columnCount="6" rowCount="0">
                     <Column editable="false" title=" " type="java.lang.Integer"/>
                     <Column editable="false" title="Protein(s)" type="java.lang.String"/>
-                    <Column editable="false" title="Peptide" type="java.lang.String"/>
+                    <Column editable="false" title="Sequence" type="java.lang.String"/>
                     <Column editable="false" title="Score" type="java.lang.Double"/>
                     <Column editable="false" title="Confidence" type="java.lang.Double"/>
                     <Column editable="false" title="  " type="java.lang.Boolean"/>
@@ -330,7 +330,7 @@
                       <Table columnCount="5" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Protein(s)" type="java.lang.String"/>
-                        <Column editable="false" title="Peptide" type="java.lang.String"/>
+                        <Column editable="false" title="Sequence" type="java.lang.String"/>
                         <Column editable="false" title="e-value" type="java.lang.Double"/>
                         <Column editable="false" title="Confidence" type="java.lang.Double"/>
                       </Table>
@@ -453,7 +453,7 @@
                       <Table columnCount="5" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Protein(s)" type="java.lang.String"/>
-                        <Column editable="false" title="Peptide" type="java.lang.String"/>
+                        <Column editable="false" title="Sequence" type="java.lang.String"/>
                         <Column editable="false" title="e-value" type="java.lang.Double"/>
                         <Column editable="false" title="Confidence" type="java.lang.Double"/>
                       </Table>
@@ -564,7 +564,7 @@
                       <Table columnCount="5" rowCount="0">
                         <Column editable="false" title=" " type="java.lang.Integer"/>
                         <Column editable="false" title="Protein(s)" type="java.lang.String"/>
-                        <Column editable="false" title="Peptide" type="java.lang.String"/>
+                        <Column editable="false" title="Sequence" type="java.lang.String"/>
                         <Column editable="false" title="e-value" type="java.lang.Double"/>
                         <Column editable="false" title="Confidence" type="java.lang.Double"/>
                       </Table>
