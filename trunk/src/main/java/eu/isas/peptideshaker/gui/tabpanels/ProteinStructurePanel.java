@@ -1374,7 +1374,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an
-     * HTML link.
+     * HTML link. Or shows a tooltip with modification details is over 
+     * the sequence column.
      *
      * @param evt
      */
@@ -1385,11 +1386,33 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         if (peptideTable.getValueAt(row, column) != null) {
             if (column == peptideTable.getColumn("PI").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                peptideTable.setToolTipText(null);
+            } else if (column == peptideTable.getColumn("Sequence").getModelIndex()) {
+
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+                // check if we ought to show a tooltip with mod details
+                String sequence = (String) peptideTable.getValueAt(row, column);
+
+                if (sequence.indexOf("<span") != -1) {
+                    try {
+                        String peptideKey = peptideTableMap.get(getPeptideKey(row));
+                        Peptide peptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
+                        String tooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(peptide);
+                        peptideTable.setToolTipText(tooltip);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    peptideTable.setToolTipText(null);
+                }
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                peptideTable.setToolTipText(null);
             }
         } else {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            peptideTable.setToolTipText(null);
         }
     }//GEN-LAST:event_peptideTableMouseMoved
 

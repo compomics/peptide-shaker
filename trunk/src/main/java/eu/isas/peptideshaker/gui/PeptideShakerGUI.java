@@ -1,11 +1,13 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.NeutralLoss;
+import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
@@ -16,6 +18,7 @@ import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
+import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
@@ -1282,7 +1285,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                         // return the peptide shaker icon to the standard version
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                        
+
                         updateRecentProjectsList(new File(selectedFile));
 
                         JOptionPane.showMessageDialog(tempRef, "Identifications were successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
@@ -1648,7 +1651,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             ptmPanel.showSpectrumAnnotationMenu();
             ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
         }
-        
+
         updateAnnotations();
 
         // disable the protein filter option if a tab other than the overview tab is selected
@@ -1802,7 +1805,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     }
 
                     updateRecentProjectsList(newFile);
-                    
+
                     openDialog.isPsFile(true);
                     openDialog.importPeptideShakerFile(newFile);
                 }
@@ -2013,17 +2016,17 @@ private void exportSpectrumValuesJMenuItemActionPerformed(java.awt.event.ActionE
     }
 }//GEN-LAST:event_exportSpectrumValuesJMenuItemActionPerformed
 
-/**
- * Set if the current annotation is to be used for all spectra.
- * 
- * @param evt 
- */
+    /**
+     * Set if the current annotation is to be used for all spectra.
+     * 
+     * @param evt 
+     */
 private void automaticAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
-    
+
     if (automaticAnnotationCheckBoxMenuItem.isSelected()) {
         adaptCheckBoxMenuItem.setSelected(true);
         annotationPreferences.resetAutomaticAnnotation();
-        
+
         singleChargeCheckBoxMenuItem.setSelected(false);
         doubleChargeCheckBoxMenuItem.setSelected(false);
         moreThanTwoChargesCheckBoxMenuItem.setSelected(false);
@@ -2038,15 +2041,15 @@ private void automaticAnnotationCheckBoxMenuItemActionPerformed(java.awt.event.A
             }
         }
     }
-    
+
     updateAnnotationPreferences();
 }//GEN-LAST:event_automaticAnnotationCheckBoxMenuItemActionPerformed
 
-/**
- * Update annotations.
- * 
- * @param evt 
- */
+    /**
+     * Update annotations.
+     * 
+     * @param evt 
+     */
 private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_adaptCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
@@ -2092,7 +2095,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
                     + 1;
             progressDialog.setMax(max);
             progressDialog.doNothingOnClose();
-            
+
             final PeptideShakerGUI tempRef = this; // needed due to threading issues
 
             new Thread(new Runnable() {
@@ -2107,7 +2110,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
 
                 @Override
                 public void run() {
-                    
+
                     // change the peptide shaker icon to a "waiting version"
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
@@ -2149,7 +2152,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
 
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
-                    
+
                     // return the peptide shaker icon to the standard version
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -2450,7 +2453,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
      * Updates the annotations in the selected tab.
      */
     public void updateAnnotations() {
-        
+
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
@@ -2459,7 +2462,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
             spectrumIdentificationPanel.updateSpectrum();
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
             ptmPanel.updateSpectra();
-        }   
+        }
     }
 
     /**
@@ -2476,11 +2479,11 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
      */
     public void setModificationProfileFile(File profileFile) {
         this.profileFile = profileFile;
-        
+
         // update the color coding in the other tabs
         updatePtmColorCoding();
     }
-    
+
     /**
      * Update the color coding in all tabs.
      */
@@ -3588,7 +3591,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
 
         automaticAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.useAutomaticAnnotation());
         adaptCheckBoxMenuItem.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
-        
+
         allCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
 
         barsCheckBoxMenuItem.setSelected(annotationPreferences.showBars());
@@ -3643,7 +3646,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
             annotationPreferences.addNeutralLoss(NeutralLoss.CH4OS);
         }
 
-        annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheckBoxMenuItem.isSelected()); 
+        annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheckBoxMenuItem.isSelected());
         annotationPreferences.setNeutralLossesSequenceDependant(adaptCheckBoxMenuItem.isSelected());
 
         annotationPreferences.clearCharges();
@@ -3665,7 +3668,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
         annotationPreferences.setShowAllPeaks(allCheckBoxMenuItem.isSelected());
         annotationPreferences.setShowBars(barsCheckBoxMenuItem.isSelected());
         annotationPreferences.setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
-        
+
         updateAnnotations();
         setDataSaved(false);
     }
@@ -3693,7 +3696,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
         barsCheckBoxMenuItem.setVisible(showBubblePlotOptions);
         bubblePlotJMenuItem.setVisible(showBubblePlotOptions);
         bubbleScaleJMenuItem.setVisible(showBubblePlotOptions);
-        
+
         intensityIonTableRadioButtonMenuItem.setVisible(showIonTableOptions);
         mzIonTableRadioButtonMenuItem.setVisible(showIonTableOptions);
 
@@ -3710,17 +3713,17 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
         File file = new File(path);
 
         boolean fileExists = file.exists();
-        
+
         if (!file.exists()) {
             try {
                 fileExists = file.createNewFile();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        
+
         if (fileExists) {
-            
+
             openRecentJMenu.removeAll();
 
             try {
@@ -3766,43 +3769,43 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
                     openRecentJMenu.add(menuItem);
                     line = br.readLine();
                 }
-                
+
                 br.close();
                 r.close();
-                
+
                 if (openRecentJMenu.getItemCount() == 0) {
                     JMenuItem menuItem = new JMenuItem("(empty)");
                     menuItem.setEnabled(false);
                     openRecentJMenu.add(menuItem);
                 }
-                
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
-    
+
     /**
      * Add the given file to the top of the recent projects list.
      * 
      * @param file the file to add
      */
     private void updateRecentProjectsList(File file) {
-        
+
         String path = getJarFilePath() + "/conf/recently_opened_projects.txt";
 
         File recentFiles = new File(path);
-        
+
         boolean fileExists = recentFiles.exists();
-        
+
         if (!recentFiles.exists()) {
             try {
                 fileExists = recentFiles.createNewFile();
-            } catch(IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        
+
         if (fileExists) {
 
             try {
@@ -3815,32 +3818,76 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
                 int counter = 0;
 
                 while (line != null && counter < 9) {
-                    
+
                     if (!line.equalsIgnoreCase(file.getAbsolutePath())) {
                         oldList += line + "\n";
                     }
-                    
+
                     line = br.readLine();
                     counter++;
                 }
-                
+
                 br.close();
                 r.close();
-                
+
                 // write the new list
                 FileWriter w = new FileWriter(recentFiles);
                 BufferedWriter bw = new BufferedWriter(w);
                 bw.write(file.getAbsolutePath() + "\n" + oldList);
-                
+
                 bw.close();
                 w.close();
-                
+
                 // load the updated list
                 loadRecentProjectsList();
-                   
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Returns a String with the HTML tooltip for the peptide indicating the 
+     * modification details.
+     * 
+     * @param peptide
+     * @return 
+     */
+    public String getPeptideModificationTooltipAsHtml(Peptide peptide) {
+
+        String tooltip = "<html>";
+
+        ArrayList<ModificationMatch> modifications = peptide.getModificationMatches();
+
+        ArrayList<String> alreadyAnnotated = new ArrayList<String>();
+
+        for (int i = 0; i < modifications.size(); i++) {
+
+            if (modifications.get(i).getTheoreticPtm().getType() == PTM.MODAA && modifications.get(i).isVariable()) { // @TODO: should only PTM.MODAA be included??
+
+                int modSite = modifications.get(i).getModificationSite();
+                String modName = modifications.get(i).getTheoreticPtm().getName();
+                char affectedResidue = peptide.getSequence().charAt(modSite - 1);
+                Color ptmColor = searchParameters.getModificationProfile().getColor(modifications.get(i).getTheoreticPtm().getName());
+
+                if (!alreadyAnnotated.contains(modName + "_" + affectedResidue)) {
+                    tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
+                            + affectedResidue
+                            + "</span>"
+                            + ": " + modName + "<br>";
+
+                    alreadyAnnotated.add(modName + "_" + affectedResidue);
+                }
+            }
+        }
+
+        if (!tooltip.equalsIgnoreCase("<html>")) {
+            tooltip += "</html>";
+        } else {
+            tooltip = null;
+        }
+
+        return tooltip;
     }
 }

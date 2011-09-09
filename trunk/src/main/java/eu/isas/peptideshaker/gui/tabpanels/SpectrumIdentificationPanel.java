@@ -52,6 +52,22 @@ import org.jfree.chart.plot.PlotOrientation;
 public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
     /**
+     * The peptide sequence tooltips for the OMSSA table.
+     */
+    private HashMap<Integer, String> omssaTablePeptideTooltips = null;
+    /**
+     * The peptide sequence tooltips for the XTandem table.
+     */
+    private HashMap<Integer, String> xTandemTablePeptideTooltips = null;
+    /**
+     * The peptide sequence tooltips for the Mascot table.
+     */
+    private HashMap<Integer, String> mascotTablePeptideTooltips = null;
+    /**
+     * The peptide sequence tooltips for the OMSSA table.
+     */
+    private String peptideShakerJTablePeptideTooltip = null;
+    /**
      * The current spectrum key.
      */
     private String currentSpectrumKey = "";
@@ -489,7 +505,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Peptide", "Score", "Confidence", "  "
+                " ", "Protein(s)", "Sequence", "Score", "Confidence", "  "
             }
         ) {
             Class[] types = new Class [] {
@@ -536,7 +552,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Peptide", "e-value", "Confidence"
+                " ", "Protein(s)", "Sequence", "e-value", "Confidence"
             }
         ) {
             Class[] types = new Class [] {
@@ -608,7 +624,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Peptide", "e-value", "Confidence"
+                " ", "Protein(s)", "Sequence", "e-value", "Confidence"
             }
         ) {
             Class[] types = new Class [] {
@@ -678,7 +694,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Protein(s)", "Peptide", "e-value", "Confidence"
+                " ", "Protein(s)", "Sequence", "e-value", "Confidence"
             }
         ) {
             Class[] types = new Class [] {
@@ -1182,7 +1198,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an
-     * HTML link.
+     * HTML link. Or shows a tooltip with modification details is over 
+     * the sequence column.
      *
      * @param evt
      */
@@ -1190,17 +1207,28 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         int row = peptideShakerJTable.rowAtPoint(evt.getPoint());
         int column = peptideShakerJTable.columnAtPoint(evt.getPoint());
 
-        if (column == 1 && peptideShakerJTable.getValueAt(row, column) != null) {
+        if (peptideShakerJTable.getValueAt(row, column) != null) {
+            if (column == peptideShakerJTable.getColumn("Protein(s)").getModelIndex()) {
 
-            String tempValue = (String) peptideShakerJTable.getValueAt(row, column);
+                String tempValue = (String) peptideShakerJTable.getValueAt(row, column);
 
-            if (tempValue.lastIndexOf("a href=") != -1) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                if (tempValue.lastIndexOf("a href=") != -1) {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                } else {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
+
+                peptideShakerJTable.setToolTipText(null);
+
+            } else if (column == peptideShakerJTable.getColumn("Sequence").getModelIndex()) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+                // check if we ought to show a tooltip with mod details
+                peptideShakerJTable.setToolTipText(peptideShakerJTablePeptideTooltip);
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                peptideShakerJTable.setToolTipText(null);
             }
-        } else {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_peptideShakerJTableMouseMoved
 
@@ -1264,7 +1292,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an
-     * HTML link.
+     * HTML link. Or shows a tooltip with modification details is over 
+     * the sequence column.
      *
      * @param evt
      */
@@ -1272,23 +1301,36 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         int row = omssaTable.rowAtPoint(evt.getPoint());
         int column = omssaTable.columnAtPoint(evt.getPoint());
 
-        if (column == 1 && omssaTable.getValueAt(row, column) != null) {
+        if (omssaTable.getValueAt(row, column) != null) {
 
-            String tempValue = (String) omssaTable.getValueAt(row, column);
+            if (column == omssaTable.getColumn("Protein(s)").getModelIndex()) {
 
-            if (tempValue.lastIndexOf("a href=") != -1) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                String tempValue = (String) omssaTable.getValueAt(row, column);
+
+                if (tempValue.lastIndexOf("a href=") != -1) {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                } else {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
+                
+                omssaTable.setToolTipText(null);
+                
+            } else if (column == omssaTable.getColumn("Sequence").getModelIndex()) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                omssaTable.setToolTipText(omssaTablePeptideTooltips.get((Integer) omssaTable.getValueAt(row, 0)));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                omssaTable.setToolTipText(null);
             }
         } else {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            omssaTable.setToolTipText(null);
         }
     }//GEN-LAST:event_omssaTableMouseMoved
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an
-     * HTML link.
+     * HTML link. Or shows a tooltip with modification details is over 
+     * the sequence column.
      *
      * @param evt
      */
@@ -1296,23 +1338,36 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         int row = xTandemTable.rowAtPoint(evt.getPoint());
         int column = xTandemTable.columnAtPoint(evt.getPoint());
 
-        if (column == 1 && xTandemTable.getValueAt(row, column) != null) {
+        if (xTandemTable.getValueAt(row, column) != null) {
 
-            String tempValue = (String) xTandemTable.getValueAt(row, column);
+            if (column == xTandemTable.getColumn("Protein(s)").getModelIndex()) {
 
-            if (tempValue.lastIndexOf("a href=") != -1) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                String tempValue = (String) xTandemTable.getValueAt(row, column);
+
+                if (tempValue.lastIndexOf("a href=") != -1) {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                } else {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
+                
+                xTandemTable.setToolTipText(null);
+                
+            } else if (column == xTandemTable.getColumn("Sequence").getModelIndex()) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                xTandemTable.setToolTipText(xTandemTablePeptideTooltips.get((Integer) xTandemTable.getValueAt(row, 0)));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                xTandemTable.setToolTipText(null);
             }
         } else {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            xTandemTable.setToolTipText(null);
         }
     }//GEN-LAST:event_xTandemTableMouseMoved
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an
-     * HTML link.
+     * HTML link. Or shows a tooltip with modification details is over 
+     * the sequence column.
      *
      * @param evt
      */
@@ -1320,17 +1375,29 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         int row = mascotTable.rowAtPoint(evt.getPoint());
         int column = mascotTable.columnAtPoint(evt.getPoint());
 
-        if (column == 1 && mascotTable.getValueAt(row, column) != null) {
+        if (mascotTable.getValueAt(row, column) != null) {
 
-            String tempValue = (String) mascotTable.getValueAt(row, column);
+            if (column == mascotTable.getColumn("Protein(s)").getModelIndex()) {
 
-            if (tempValue.lastIndexOf("a href=") != -1) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                String tempValue = (String) mascotTable.getValueAt(row, column);
+
+                if (tempValue.lastIndexOf("a href=") != -1) {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                } else {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
+                
+                mascotTable.setToolTipText(null);
+                
+            } else if (column == mascotTable.getColumn("Sequence").getModelIndex()) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                mascotTable.setToolTipText(mascotTablePeptideTooltips.get((Integer) mascotTable.getValueAt(row, 0)));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                mascotTable.setToolTipText(null);
             }
         } else {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            mascotTable.setToolTipText(null);
         }
     }//GEN-LAST:event_mascotTableMouseMoved
 
@@ -1707,6 +1774,10 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                 while (xTandemTable.getRowCount() > 0) {
                     ((DefaultTableModel) xTandemTable.getModel()).removeRow(0);
                 }
+                
+                omssaTablePeptideTooltips = new HashMap<Integer, String>();
+                xTandemTablePeptideTooltips = new HashMap<Integer, String>();
+                mascotTablePeptideTooltips = new HashMap<Integer, String>();
 
                 // Fill peptide shaker table
                 String proteins = peptideShakerGUI.addDatabaseLinks(spectrumMatch.getBestAssumption().getPeptide().getParentProteins());
@@ -1715,11 +1786,13 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                             1,
                             proteins,
                             spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
+                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                             probabilities.getPsmScore(),
                             probabilities.getPsmConfidence(),
                             probabilities.isValidated()
                         });
+
+                peptideShakerJTablePeptideTooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide());
 
                 // Fill Mascot table
                 if (spectrumMatch.getAllAssumptions(Advocate.MASCOT) != null) {
@@ -1735,11 +1808,12 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                                         ++rank,
                                         proteins,
                                         currentAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
+                                        peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                                         currentAssumption.getEValue(),
                                         probabilities.getSearchEngineConfidence()
                                     });
 
+                            mascotTablePeptideTooltips.put(rank, peptideShakerGUI.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide()));
                             mascotPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
                         }
                     }
@@ -1761,11 +1835,12 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                                         ++rank,
                                         proteins,
                                         currentAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
+                                        peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                                         currentAssumption.getEValue(),
                                         probabilities.getSearchEngineConfidence()
                                     });
 
+                            omssaTablePeptideTooltips.put(rank, peptideShakerGUI.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide()));
                             omssaPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
                         }
                     }
@@ -1787,11 +1862,12 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                                         ++rank,
                                         proteins,
                                         currentAssumption.getPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
+                                        peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                                         currentAssumption.getEValue(),
                                         probabilities.getSearchEngineConfidence()
                                     });
 
+                            xTandemTablePeptideTooltips.put(rank, peptideShakerGUI.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide()));
                             xtandemPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
                         }
                     }
@@ -1878,7 +1954,7 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                                 }
                             }
 
-                            annotationPreferences.setCurrentSettings(currentPeptide, 
+                            annotationPreferences.setCurrentSettings(currentPeptide,
                                     currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
@@ -1918,7 +1994,7 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                                 }
                             }
 
-                            annotationPreferences.setCurrentSettings(currentPeptide, 
+                            annotationPreferences.setCurrentSettings(currentPeptide,
                                     currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
@@ -1958,7 +2034,7 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
                                 }
                             }
 
-                            annotationPreferences.setCurrentSettings(currentPeptide, 
+                            annotationPreferences.setCurrentSettings(currentPeptide,
                                     currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
@@ -1994,23 +2070,23 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
     public Component getSpectrum() {
         return (Component) spectrumChartPanel.getComponent(0);
     }
-    
+
     /**
      * Returns the current spectrum as an mgf string.
      * 
      * @return the current spectrum as an mgf string
      */
     public String getSpectrumAsMgf() {
-        
+
         if (spectrumTable.getSelectedRow() != -1) {
             String spectrumKey = Spectrum.getSpectrumKey((String) fileNamesCmb.getSelectedItem(), (String) spectrumTable.getValueAt(spectrumTable.getSelectedRow(), 1));
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-            
+
             if (currentSpectrum != null) {
                 return currentSpectrum.asMgf();
             }
         }
-                
+
         return null;
     }
 
@@ -2031,16 +2107,16 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
     public void setIntensitySliderValue(int value) {
         intensitySlider.setValue(value);
     }
-    
+
     /**
      * Update the PTM color coding.
      */
     public void updatePtmColors() {
-        
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        
+
         spectrumSelectionChanged();
-        
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 }

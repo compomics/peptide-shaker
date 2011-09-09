@@ -626,6 +626,11 @@ public class PtmPanel extends javax.swing.JPanel {
                 selectedPsmTableMouseReleased(evt);
             }
         });
+        selectedPsmTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                selectedPsmTableMouseMoved(evt);
+            }
+        });
         selectedPsmTable.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 selectedPsmTableKeyReleased(evt);
@@ -673,6 +678,11 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPsmTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 relatedPsmTableMouseReleased(evt);
+            }
+        });
+        relatedPsmTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                relatedPsmTableMouseMoved(evt);
             }
         });
         relatedPsmTable.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1027,7 +1037,8 @@ public class PtmPanel extends javax.swing.JPanel {
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an
-     * HTML link.
+     * HTML link. Or shows a tooltip with modification details is over 
+     * the sequence column.
      *
      * @param evt
      */
@@ -1035,17 +1046,36 @@ public class PtmPanel extends javax.swing.JPanel {
         int row = peptidesTable.rowAtPoint(evt.getPoint());
         int column = peptidesTable.columnAtPoint(evt.getPoint());
 
-        if (column == 1 && peptidesTable.getValueAt(row, column) != null) {
+        if (peptidesTable.getValueAt(row, column) != null) {
+            if (column == peptidesTable.getColumn("Protein(s)").getModelIndex()) {
 
-            String tempValue = (String) peptidesTable.getValueAt(row, column);
+                String tempValue = (String) peptidesTable.getValueAt(row, column);
 
-            if (tempValue.lastIndexOf("a href=") != -1) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                if (tempValue.lastIndexOf("a href=") != -1) {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                } else {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
+
+                peptidesTable.setToolTipText(null);
+
+            } else if (column == peptidesTable.getColumn("Sequence").getModelIndex()) {
+
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+                try {
+                    peptidesTable.setToolTipText(
+                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                peptidesTable.setToolTipText(null);
             }
         } else {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            peptidesTable.setToolTipText(null);
         }
     }//GEN-LAST:event_peptidesTableMouseMoved
 
@@ -1069,7 +1099,8 @@ public class PtmPanel extends javax.swing.JPanel {
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an
-     * HTML link.
+     * HTML link. Or shows a tooltip with modification details is over 
+     * the sequence column.
      *
      * @param evt
      */
@@ -1077,17 +1108,36 @@ public class PtmPanel extends javax.swing.JPanel {
         int row = relatedPeptidesTable.rowAtPoint(evt.getPoint());
         int column = relatedPeptidesTable.columnAtPoint(evt.getPoint());
 
-        if (column == 1 && relatedPeptidesTable.getValueAt(row, column) != null) {
+        if (relatedPeptidesTable.getValueAt(row, column) != null) {
+            if (column == relatedPeptidesTable.getColumn("Protein(s)").getModelIndex()) {
 
-            String tempValue = (String) relatedPeptidesTable.getValueAt(row, column);
+                String tempValue = (String) relatedPeptidesTable.getValueAt(row, column);
 
-            if (tempValue.lastIndexOf("a href=") != -1) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                if (tempValue.lastIndexOf("a href=") != -1) {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                } else {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
+
+                relatedPeptidesTable.setToolTipText(null);
+
+            } else if (column == relatedPeptidesTable.getColumn("Sequence").getModelIndex()) {
+
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+                try {
+                    relatedPeptidesTable.setToolTipText(
+                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                relatedPeptidesTable.setToolTipText(null);
             }
         } else {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            relatedPeptidesTable.setToolTipText(null);
         }
     }//GEN-LAST:event_relatedPeptidesTableMouseMoved
 
@@ -1102,18 +1152,18 @@ private void ptmJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     int column = ptmJTable.columnAtPoint(evt.getPoint());
 
     if (row != -1 && column == 1) {
-        
+
         if (row != currentPtmRow) {
             updatePeptideTable();
         }
-        
+
         Color newColor = JColorChooser.showDialog(this, "Pick a Color", (Color) ptmJTable.getValueAt(row, column));
 
         if (newColor != null) {
 
             // update the color in the table
             ptmJTable.setValueAt(newColor, row, column);
-            
+
             // update the profiles with the new colors
             if (!((String) ptmJTable.getValueAt(row, 2)).equalsIgnoreCase("no modification")) {
                 peptideShakerGUI.getSearchParameters().getModificationProfile().setColor(
@@ -1124,7 +1174,7 @@ private void ptmJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     } else {
         updatePeptideTable();
     }
-    
+
     currentPtmRow = row;
 }//GEN-LAST:event_ptmJTableMouseReleased
 
@@ -1194,6 +1244,70 @@ private void ptmJTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
 private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ptmJTableMouseExited
     this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_ptmJTableMouseExited
+
+    /**
+     * See if we ought to show a tooltip with modification details for the 
+     * sequenence column.
+     * 
+     * @param evt 
+     */
+    private void selectedPsmTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectedPsmTableMouseMoved
+
+        int row = selectedPsmTable.rowAtPoint(evt.getPoint());
+        int column = selectedPsmTable.columnAtPoint(evt.getPoint());
+
+        if (selectedPsmTable.getValueAt(row, column) != null) {
+
+            if (column == selectedPsmTable.getColumn("Sequence").getModelIndex()) {
+
+                String familyKey = convertComboBoxSelectionToFamilyKey((String) primarySelectionJComboBox.getSelectedItem());
+
+                try {
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmsMap.get(familyKey).get(row));
+                    selectedPsmTable.setToolTipText(
+                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            } else {
+                selectedPsmTable.setToolTipText(null);
+            }
+
+        } else {
+            selectedPsmTable.setToolTipText(null);
+        }
+    }//GEN-LAST:event_selectedPsmTableMouseMoved
+
+    /**
+     * See if we ought to show a tooltip with modification details for the 
+     * sequenence column.
+     * 
+     * @param evt 
+     */
+    private void relatedPsmTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPsmTableMouseMoved
+        int row = relatedPsmTable.rowAtPoint(evt.getPoint());
+        int column = relatedPsmTable.columnAtPoint(evt.getPoint());
+
+        if (relatedPsmTable.getValueAt(row, column) != null) {
+            if (column == relatedPsmTable.getColumn("Sequence").getModelIndex()) {
+
+                String familyKey = convertComboBoxSelectionToFamilyKey((String) secondarySelectionJComboBox.getSelectedItem());
+
+                try {
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmsMap.get(familyKey).get(row));
+                    relatedPsmTable.setToolTipText(
+                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                relatedPsmTable.setToolTipText(null);
+            }
+        } else {
+            relatedPsmTable.setToolTipText(null);
+        }
+    }//GEN-LAST:event_relatedPsmTableMouseMoved
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel fragmentIonsJPanel;
     private javax.swing.JSlider intensitySlider;
@@ -1402,11 +1516,11 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * Updates the peptide table.
      */
     private void updatePeptideTable() {
-        
+
         // @TODO: replace the waiting cursor with a progress bar dialog?
-        
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        
+
         try {
             HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<Double, ArrayList<String>>();
             PeptideMatch peptideMatch;
@@ -1474,7 +1588,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
-        
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
@@ -1925,7 +2039,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                             identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getParentProteins());
                     return result;
                 } else if (column == 2) {
-                    //return identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getSequence();
                     return identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getModifiedSequenceAsHtml(
                             peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
                 } else if (column == 3) {
@@ -2123,7 +2236,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     return result;
                 } else if (column == 1) {
                     // Not sure that it will always be the best assumption, might have to iterate assumptions if the wrong sequence is displayed
-                    //return spectrumMatch.getBestAssumption().getPeptide().getSequence();
                     return spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
                             peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
                 } else if (column == 2) {
@@ -2192,7 +2304,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 return "Rank";
             } else if (column == 1) {
                 return "Sequence";
-            }  else if (column == 2) {
+            } else if (column == 2) {
                 return "m/z";
             } else if (column == 3) {
                 return "Charge";
@@ -2244,7 +2356,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     }
                 } else if (column == 1) {
                     // Not sure that it will wlways be the best assumption, might have to iterate assumptions if the wrong sequence is displayed
-                    //return spectrumMatch.getBestAssumption().getPeptide().getSequence();
                     return spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
                             peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
                 } else if (column == 2) {
@@ -2447,28 +2558,28 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     public void setIntensitySliderValue(int value) {
         intensitySlider.setValue(value);
     }
-    
+
     /**
      * Update the PTM color coding.
      */
     public void updatePtmColors() {
-        
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        
-        for (int i=0; i<ptmJTable.getRowCount(); i++) {
+
+        for (int i = 0; i < ptmJTable.getRowCount(); i++) {
             ptmJTable.setValueAt(peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(
                     (String) ptmJTable.getValueAt(i, 2)), i, 1);
         }
-        
+
         updateModificationProfiles();
-        
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
-    
+
     /**
      * Redraws the modification profiles. For example if the ptm colors are updated.
      */
-    public void updateModificationProfiles () {
+    public void updateModificationProfiles() {
         try {
             if (peptidesTable.getSelectedRow() != -1) {
                 updateModificationProfile(identification.getPeptideMatch(displayedPeptides.get(peptidesTable.getSelectedRow())), true);
