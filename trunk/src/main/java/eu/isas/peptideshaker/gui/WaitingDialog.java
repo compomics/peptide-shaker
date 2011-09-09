@@ -15,6 +15,7 @@ import java.util.Date;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.swing.Timer;
 import javax.swing.filechooser.FileFilter;
 
@@ -117,6 +118,15 @@ public class WaitingDialog extends javax.swing.JDialog {
     public void setMaxSecondaryProgressValue(int maxProgressValue) {
         secondaryJProgressBar.setValue(0);
         secondaryJProgressBar.setMaximum(maxProgressValue);
+    }
+    
+    /**
+     * Reset the secondary progress bar value to 0.
+     */
+    public void resetSecondaryProgressBar() {
+        secondaryJProgressBar.setIndeterminate(false);
+        secondaryJProgressBar.setStringPainted(true);
+        secondaryJProgressBar.setValue(0);
     }
 
     /**
@@ -592,5 +602,14 @@ public class WaitingDialog extends javax.swing.JDialog {
 
         // return the peptide shaker icon to the standard version
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+    }
+    
+    /**
+     * Returns the secondary progress bar for updates from external processes.
+     * 
+     * @return the secondary progress bar
+     */
+    public JProgressBar getSecondaryProgressBar () {
+        return secondaryJProgressBar;
     }
 }
