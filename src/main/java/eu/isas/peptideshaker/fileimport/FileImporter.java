@@ -144,7 +144,9 @@ public class FileImporter {
 
         try {
             waitingDialog.appendReport("Importing sequences from " + fastaFile.getName() + ".");
-            sequenceFactory.loadFastaFile(fastaFile);
+            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+            waitingDialog.resetSecondaryProgressBar();
+            sequenceFactory.loadFastaFile(fastaFile, waitingDialog.getSecondaryProgressBar());
 
             String firstAccession = sequenceFactory.getAccessions().get(0);
             if (!sequenceFactory.getHeader(firstAccession).getDatabaseType().equalsIgnoreCase("UniProt")) {
@@ -163,8 +165,11 @@ public class FileImporter {
                         "No Decoys Found",
                         JOptionPane.INFORMATION_MESSAGE);
             }
+            
+            waitingDialog.resetSecondaryProgressBar();
+            
             if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache()) {
-                waitingDialog.appendReport("Inferring peptides from proteins.");
+                waitingDialog.appendReport("Creating peptide to protein map.");
                 String sequence;
                 Enzyme enzyme = searchParameters.getEnzyme();
                 int nMissedCleavages = searchParameters.getnMissedCleavages();
@@ -224,7 +229,10 @@ public class FileImporter {
             try {
                 fileName = spectrumFile.getName();
                 waitingDialog.appendReport("Importing " + fileName);
-                spectrumFactory.addSpectra(spectrumFile);
+                waitingDialog.setSecondaryProgressDialogIntermediate(false);
+                waitingDialog.resetSecondaryProgressBar();
+                spectrumFactory.addSpectra(spectrumFile, waitingDialog.getSecondaryProgressBar());
+                waitingDialog.resetSecondaryProgressBar();
                 waitingDialog.increaseProgressValue();
             } catch (Exception e) {
                 waitingDialog.appendReport("Spectrum files import failed when trying to import " + fileName + ".");

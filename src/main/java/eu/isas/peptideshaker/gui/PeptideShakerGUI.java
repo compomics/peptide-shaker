@@ -3514,7 +3514,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                progressDialog.setVisible(false);
+
                 progressDialog.dispose();
                 System.exit(0);
             }
