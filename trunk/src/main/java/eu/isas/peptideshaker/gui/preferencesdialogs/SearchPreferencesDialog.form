@@ -135,7 +135,7 @@
                               <EmptySpace min="-2" pref="37" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Group type="102" attributes="0">
-                                      <Component id="precursorTolerance" min="-2" pref="242" max="-2" attributes="0"/>
+                                      <Component id="precursorAccuracy" min="-2" pref="242" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="precursorUnit" min="-2" max="-2" attributes="0"/>
                                   </Group>
@@ -145,7 +145,7 @@
                           <Group type="102" alignment="0" attributes="1">
                               <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="fragmentIonToleranceTxt" min="-2" pref="242" max="-2" attributes="2"/>
+                              <Component id="fragmentIonAccuracyTxt" min="-2" pref="242" max="-2" attributes="2"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -186,7 +186,7 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="precursorTolerance" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="precursorAccuracy" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="precursorUnit" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="ion1Cmb" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -194,7 +194,7 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="fragmentIonToleranceTxt" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="fragmentIonAccuracyTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="ion2Cmb" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -210,7 +210,7 @@
                 <Property name="text" type="java.lang.String" value="Fragment Ion Accuracy:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="fragmentIonToleranceTxt">
+            <Component class="javax.swing.JTextField" name="fragmentIonAccuracyTxt">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
               </Properties>
@@ -272,7 +272,7 @@
                 <Property name="text" type="java.lang.String" value="Precursor Accuracy:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="precursorTolerance">
+            <Component class="javax.swing.JTextField" name="precursorAccuracy">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
               </Properties>

@@ -1202,7 +1202,7 @@ private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) 
      * @param evt 
      */
 private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
-    peptideShakerGUI.getAnnotationPreferences().setAnnotationIntensityLimit(((Integer) intensitySlider.getValue()) / 100.0);
+    peptideShakerGUI.getAnnotationPreferences().setAnnotationLevel(((Integer) intensitySlider.getValue()) / 100.0);
     peptideShakerGUI.updateAnnotations();
     peptideShakerGUI.setDataSaved(false);
 }//GEN-LAST:event_intensitySliderStateChanged
@@ -1820,7 +1820,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                             currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                             precursor.getMz(), precursor.getCharge().toString(),
                             "", 40, false, false, false, 2, false);
-                    spectrumA.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getMzTolerance());
+                    spectrumA.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
                     spectrumA.setBorder(null);
 
                     // get the spectrum annotations
@@ -1840,7 +1840,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                             annotationPreferences.getValidatedCharges(),
                             currentSpectrum, currentPeptide,
                             currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                            annotationPreferences.getMzTolerance());
+                            annotationPreferences.getFragmentIonAccuracy());
                     currentPeptideSpectrumKey = spectrumKey;
                     //peptideShakerGUI.updateAnnotationMenus();
 
@@ -1886,7 +1886,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                             currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                             precursor.getMz(), precursor.getCharge().toString(),
                             "", 40, false, false, false, 2, false);
-                    spectrumB.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getMzTolerance());
+                    spectrumB.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
                     spectrumB.setBorder(null);
 
                     // get the spectrum annotations                
@@ -1907,7 +1907,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                             annotationPreferences.getValidatedCharges(),
                             currentSpectrum, currentPeptide,
                             currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                            annotationPreferences.getMzTolerance());
+                            annotationPreferences.getFragmentIonAccuracy());
                     currentReleatedPeptideSpectrumKey = spectrumKey;
                     //peptideShakerGUI.updateAnnotationMenus();
 

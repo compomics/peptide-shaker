@@ -1168,7 +1168,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
         boolean precTolUnit = ((String) precMassUnitCmb.getSelectedItem()).equals("ppm");
-        peptideShakerGUI.getSearchParameters().setPrecursorTolerance(getMaxMassDeviation());
+        peptideShakerGUI.getSearchParameters().setPrecursorAccuracy(getMaxMassDeviation());
         IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue(), getMaxMassDeviation(), precTolUnit);
         peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
     }
@@ -1218,10 +1218,10 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 searchParameters.setEnzyme(enzymeFactory.getEnzyme(temp.trim()));
             }
 
-            temp = props.getProperty(IdentificationParametersReader.FRAGMENT_MASS_TOLERANCE);
+            temp = props.getProperty(IdentificationParametersReader.FRAGMENT_ION_MASS_ACCURACY);
 
             if (temp != null) {
-                searchParameters.setFragmentIonMZTolerance(new Double(temp.trim()));
+                searchParameters.setFragmentIonAccuracy(new Double(temp.trim()));
             }
 
             temp = props.getProperty(IdentificationParametersReader.PRECURSOR_MASS_TOLERANCE);
@@ -1229,12 +1229,12 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             if (temp != null) {
                 massDeviationTxt.setText(temp);
                 try {
-                    searchParameters.setPrecursorTolerance(new Double(temp.trim()));
+                    searchParameters.setPrecursorAccuracy(new Double(temp.trim()));
                 } catch (Exception e) {
                 }
             }
 
-            temp = props.getProperty(IdentificationParametersReader.PRECURSOR_MASS_TOLERANCE_UNIT);
+            temp = props.getProperty(IdentificationParametersReader.PRECURSOR_MASS_ACCURACY_UNIT);
 
             if (temp != null) {
                 precMassUnitCmb.setSelectedItem(temp);
@@ -1243,7 +1243,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     unit = new Integer(temp.trim());
                 } catch (Exception e) {
                 }
-                searchParameters.setPrecursorToleranceUnit(unit);
+                searchParameters.setPrecursorAccuracyUnit(unit);
             }
 
             temp = props.getProperty(IdentificationParametersReader.MISSED_CLEAVAGES);

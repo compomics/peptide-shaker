@@ -5,7 +5,7 @@ import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFrag
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
-import javax.swing.JOptionPane;
+import javax.swing.SpinnerNumberModel;
 
 /**
  * A simple dialog for setting the spectrum annotation preferences.
@@ -66,11 +66,11 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         immoniumBox = new javax.swing.JCheckBox();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        mzToleranceTxt = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         intensitySpinner = new javax.swing.JSpinner();
         jLabel1 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        accuracySpinner = new javax.swing.JSpinner();
         jPanel5 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         h2oBox = new javax.swing.JCheckBox();
@@ -177,7 +177,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(immoniumBox)
                             .addComponent(precursorBox)))
                     .addComponent(zBox))
-                .addContainerGap(191, Short.MAX_VALUE))
+                .addContainerGap(113, Short.MAX_VALUE))
         );
 
         jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {aBox, bBox, cBox, immoniumBox, precursorBox, xBox, yBox, zBox});
@@ -204,14 +204,12 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Peak Matching"));
         jPanel1.setOpaque(false);
 
-        jLabel2.setText("m/z Accuracy:");
+        jLabel2.setText("Fragment Ion Accuracy:");
 
-        mzToleranceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        mzToleranceTxt.setText("0.5");
+        jLabel3.setText("Da");
 
-        jLabel3.setText("m/z");
-
-        intensitySpinner.setModel(new javax.swing.SpinnerNumberModel(75, 0, 100, 1));
+        intensitySpinner.setModel(new javax.swing.SpinnerNumberModel(25, 0, 100, 1));
+        intensitySpinner.setToolTipText("Display a certain percent of the possible annotations");
         intensitySpinner.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 intensitySpinnerStateChanged(evt);
@@ -220,7 +218,16 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 
         jLabel1.setText("%");
 
-        jLabel4.setText("Annotation intensity threshold");
+        jLabel4.setText("Annotation Level:");
+        jLabel4.setToolTipText("Display a certain percent of the possible annotations");
+
+        accuracySpinner.setModel(new javax.swing.SpinnerNumberModel(0.05d, 0.0d, 0.05d, 0.0010d));
+        accuracySpinner.setToolTipText("Display a certain percent of the possible annotations");
+        accuracySpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                accuracySpinnerStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -233,25 +240,25 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(intensitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 88, Short.MAX_VALUE)
+                .addGap(26, 26, 26)
                 .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(mzToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(accuracySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
-                .addContainerGap())
+                .addContainerGap(36, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(mzToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
                     .addComponent(jLabel4)
                     .addComponent(intensitySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
+                    .addComponent(jLabel1)
+                    .addComponent(accuracySpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -314,18 +321,19 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(h2oBox)
-                            .addComponent(nh3Box))
+                            .addComponent(nh3Box)
+                            .addComponent(h2oBox))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(hpo3Box)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(h3po4Box)
                                 .addGap(18, 18, 18)
-                                .addComponent(ch4osBox))
-                            .addComponent(hpo3Box)))
+                                .addComponent(ch4osBox)))
+                        .addGap(200, 200, 200))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(adaptBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 328, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 340, Short.MAX_VALUE)
                         .addComponent(automaticAnnotationCheck)))
                 .addContainerGap())
         );
@@ -337,7 +345,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(h2oBox)
+                    .addComponent(h2oBox, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(h3po4Box)
                     .addComponent(ch4osBox))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -373,7 +381,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(twoCharges)
                 .addGap(18, 18, 18)
                 .addComponent(moreCharges)
-                .addContainerGap(365, Short.MAX_VALUE))
+                .addContainerGap(287, Short.MAX_VALUE))
         );
         chargePanelLayout.setVerticalGroup(
             chargePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -399,7 +407,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(chargePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(42, 42, 42))
+                .addGap(46, 46, 46))
         );
 
         tabbedPane.addTab("Advanced Settings", jPanel5);
@@ -409,16 +417,17 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 541, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addGap(18, 18, 18)
                         .addComponent(annotationPreferencesHelpJButton)
-                        .addGap(380, 380, 380)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 302, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton)))
+                        .addComponent(cancelButton))
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)))
                 .addContainerGap())
         );
 
@@ -430,10 +439,9 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(tabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 243, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                        .addComponent(annotationPreferencesHelpJButton)
-                        .addComponent(okButton))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(annotationPreferencesHelpJButton)
+                    .addComponent(okButton)
                     .addComponent(cancelButton))
                 .addContainerGap())
         );
@@ -442,7 +450,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -458,76 +466,75 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        if (validateInput()) {
-            annotationPreferences.clearIonTypes();
-            if (aBox.isSelected()) {
-                annotationPreferences.addIonType(PeptideFragmentIonType.A_ION);
-            }
-            if (bBox.isSelected()) {
-                annotationPreferences.addIonType(PeptideFragmentIonType.B_ION);
-            }
-            if (cBox.isSelected()) {
-                annotationPreferences.addIonType(PeptideFragmentIonType.C_ION);
-            }
-            if (xBox.isSelected()) {
-                annotationPreferences.addIonType(PeptideFragmentIonType.X_ION);
-            }
-            if (yBox.isSelected()) {
-                annotationPreferences.addIonType(PeptideFragmentIonType.Y_ION);
-            }
-            if (zBox.isSelected()) {
-                annotationPreferences.addIonType(PeptideFragmentIonType.Z_ION);
-            }
-            if (precursorBox.isSelected()) {
-                annotationPreferences.addIonType(PeptideFragmentIonType.PRECURSOR_ION);
-            }
-            if (immoniumBox.isSelected()) {
-                annotationPreferences.addIonType(PeptideFragmentIonType.IMMONIUM);
-            }
-            annotationPreferences.setAnnotationIntensityLimit(((Integer) intensitySpinner.getValue()) / 100.0);
-            annotationPreferences.setMzTolerance(new Double(mzToleranceTxt.getText().trim()));
 
-            annotationPreferences.clearNeutralLosses();
-            if (h2oBox.isSelected()) {
-                annotationPreferences.addNeutralLoss(NeutralLoss.H2O);
-            }
-            if (nh3Box.isSelected()) {
-                annotationPreferences.addNeutralLoss(NeutralLoss.NH3);
-            }
-            if (h3po4Box.isSelected()) {
-                annotationPreferences.addNeutralLoss(NeutralLoss.H3PO4);
-            }
-            if (hpo3Box.isSelected()) {
-                annotationPreferences.addNeutralLoss(NeutralLoss.HPO3);
-            }
-            if (ch4osBox.isSelected()) {
-                annotationPreferences.addNeutralLoss(NeutralLoss.CH4OS);
-            }
-            
-            annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheck.isSelected());
-            annotationPreferences.setNeutralLossesSequenceDependant(adaptBox.isSelected());
-            
-            annotationPreferences.clearCharges();
-            if (oneCharge.isSelected()) {
-                annotationPreferences.addSelectedCharge(1);
-            }
-            if (twoCharges.isSelected()) {
-                annotationPreferences.addSelectedCharge(2);
-            }
-            if (moreCharges.isSelected()) {
-                int precursorCharge = annotationPreferences.getCurrentPrecursorCharge();
-                if (precursorCharge > 2) {
-                    for (int charge = 3; charge < precursorCharge ; charge ++) {
-                        annotationPreferences.addSelectedCharge(charge);
-                    }
+        annotationPreferences.clearIonTypes();
+        if (aBox.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.A_ION);
+        }
+        if (bBox.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.B_ION);
+        }
+        if (cBox.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.C_ION);
+        }
+        if (xBox.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.X_ION);
+        }
+        if (yBox.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.Y_ION);
+        }
+        if (zBox.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.Z_ION);
+        }
+        if (precursorBox.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.PRECURSOR_ION);
+        }
+        if (immoniumBox.isSelected()) {
+            annotationPreferences.addIonType(PeptideFragmentIonType.IMMONIUM);
+        }
+        annotationPreferences.setAnnotationLevel(((Integer) intensitySpinner.getValue()) / 100.0);
+        annotationPreferences.setFragmentIonAccuracy((Double) accuracySpinner.getValue());
+
+        annotationPreferences.clearNeutralLosses();
+        if (h2oBox.isSelected()) {
+            annotationPreferences.addNeutralLoss(NeutralLoss.H2O);
+        }
+        if (nh3Box.isSelected()) {
+            annotationPreferences.addNeutralLoss(NeutralLoss.NH3);
+        }
+        if (h3po4Box.isSelected()) {
+            annotationPreferences.addNeutralLoss(NeutralLoss.H3PO4);
+        }
+        if (hpo3Box.isSelected()) {
+            annotationPreferences.addNeutralLoss(NeutralLoss.HPO3);
+        }
+        if (ch4osBox.isSelected()) {
+            annotationPreferences.addNeutralLoss(NeutralLoss.CH4OS);
+        }
+
+        annotationPreferences.useAutomaticAnnotation(automaticAnnotationCheck.isSelected());
+        annotationPreferences.setNeutralLossesSequenceDependant(adaptBox.isSelected());
+
+        annotationPreferences.clearCharges();
+        if (oneCharge.isSelected()) {
+            annotationPreferences.addSelectedCharge(1);
+        }
+        if (twoCharges.isSelected()) {
+            annotationPreferences.addSelectedCharge(2);
+        }
+        if (moreCharges.isSelected()) {
+            int precursorCharge = annotationPreferences.getCurrentPrecursorCharge();
+            if (precursorCharge > 2) {
+                for (int charge = 3; charge < precursorCharge; charge++) {
+                    annotationPreferences.addSelectedCharge(charge);
                 }
             }
-            
-            peptideShakerGUI.setAnnotationPreferences(annotationPreferences);
-            peptideShakerGUI.updateAnnotations();
-            peptideShakerGUI.setDataSaved(false);
-            dispose();
         }
+
+        peptideShakerGUI.setAnnotationPreferences(annotationPreferences);
+        peptideShakerGUI.updateAnnotations();
+        peptideShakerGUI.setDataSaved(false);
+        dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
     /**
@@ -569,15 +576,18 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
 }//GEN-LAST:event_annotationPreferencesHelpJButtonActionPerformed
 
     private void automaticAnnotationCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckActionPerformed
-
     }//GEN-LAST:event_automaticAnnotationCheckActionPerformed
 
 private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySpinnerStateChanged
-         annotationPreferences.setAnnotationIntensityLimit(((Integer) intensitySpinner.getValue()) / 100.0); 
+    annotationPreferences.setAnnotationLevel(((Integer) intensitySpinner.getValue()) / 100.0);
 }//GEN-LAST:event_intensitySpinnerStateChanged
 
+    private void accuracySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_accuracySpinnerStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_accuracySpinnerStateChanged
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox aBox;
+    private javax.swing.JSpinner accuracySpinner;
     private javax.swing.JCheckBox adaptBox;
     private javax.swing.JButton annotationPreferencesHelpJButton;
     private javax.swing.JCheckBox automaticAnnotationCheck;
@@ -603,7 +613,6 @@ private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JCheckBox moreCharges;
-    private javax.swing.JTextField mzToleranceTxt;
     private javax.swing.JCheckBox nh3Box;
     private javax.swing.JButton okButton;
     private javax.swing.JCheckBox oneCharge;
@@ -619,8 +628,9 @@ private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//
      * Refresh the selection,
      */
     private void updateGUI() {
-        intensitySpinner.setValue((int) (annotationPreferences.getAnnotationIntensityLimit()*100));
-        mzToleranceTxt.setText(annotationPreferences.getMzTolerance() + "");
+        intensitySpinner.setValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+        ((SpinnerNumberModel) accuracySpinner.getModel()).setMaximum(peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+        accuracySpinner.setValue(new Double(annotationPreferences.getFragmentIonAccuracy()));
         aBox.setSelected(false);
         bBox.setSelected(false);
         cBox.setSelected(false);
@@ -681,21 +691,5 @@ private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//
 
         automaticAnnotationCheck.setSelected(annotationPreferences.useAutomaticAnnotation());
         adaptBox.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
-    }
-
-    /**
-     * Validate the annotation accuracy.
-     * 
-     * @return true if validated
-     */
-    private boolean validateInput() {
-        try {
-            new Double(mzToleranceTxt.getText().trim());
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for max mass deviation.",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        return true;
     }
 }

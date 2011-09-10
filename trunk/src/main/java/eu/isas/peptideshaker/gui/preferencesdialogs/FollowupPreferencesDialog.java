@@ -711,13 +711,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 if (range < minWindow) {
                     range = minWindow;
                 }
-                if (peptideShakerGUI.getSearchParameters().getPrecursorToleranceUnit() == SearchParameters.PPM) {
-                    double deltaMZ = peptideShakerGUI.getSearchParameters().getPrecursorTolerance() / 1000000 * precursor.getMz();
+                if (peptideShakerGUI.getSearchParameters().getPrecursorAccuracyUnit() == SearchParameters.PPM) {
+                    double deltaMZ = peptideShakerGUI.getSearchParameters().getPrecursorAccuracy() / 1000000 * precursor.getMz();
                     double mzMin = precursor.getMz() - deltaMZ;
                     double mzMax = precursor.getMz() + deltaMZ;
                     return rt + "," + range + "," + mzMin + "," + mzMax + "\n";
                 } else {
-                    double deltaMZ = peptideShakerGUI.getSearchParameters().getPrecursorTolerance() / precursor.getCharge().value;
+                    double deltaMZ = peptideShakerGUI.getSearchParameters().getPrecursorAccuracy() / precursor.getCharge().value;
                     double mzMin = precursor.getMz() - deltaMZ;
                     double mzMax = precursor.getMz() + deltaMZ;
                     return rt + "," + range + "," + mzMin + "," + mzMax + "\n";
