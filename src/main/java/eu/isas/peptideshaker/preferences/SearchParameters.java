@@ -24,7 +24,7 @@ public class SearchParameters implements Serializable {
     /**
      * The ms2 ion tolerance
      */
-    private double fragmentIonMZTolerance = 0;
+    private double fragmentIonMZTolerance = 0.5;
     /**
      * The expected modifications. Modified peptides will be grouped and displayed according to this classification.
      */
@@ -119,7 +119,7 @@ public class SearchParameters implements Serializable {
      * Returns the ms2 ion m/z tolerance
      * @return the ms2 ion m/z tolerance
      */
-    public double getFragmentIonMZTolerance() {
+    public double getFragmentIonAccuracy() {
         return fragmentIonMZTolerance;
     }
 
@@ -127,7 +127,7 @@ public class SearchParameters implements Serializable {
      * Sets the fragment ion m/z tolerance
      * @param fragmentIonMZTolerance
      */
-    public void setFragmentIonMZTolerance(double fragmentIonMZTolerance) {
+    public void setFragmentIonAccuracy(double fragmentIonMZTolerance) {
         this.fragmentIonMZTolerance = fragmentIonMZTolerance;
     }
 
@@ -263,7 +263,7 @@ public class SearchParameters implements Serializable {
      * Returns the precursor tolerance
      * @return the precursor tolerance 
      */
-    public double getPrecursorTolerance() {
+    public double getPrecursorAccuracy() {
         return precursorTolerance;
     }
 
@@ -271,7 +271,7 @@ public class SearchParameters implements Serializable {
      * Sets the precursor tolerance
      * @param precursorTolerance the precursor tolerance
      */
-    public void setPrecursorTolerance(double precursorTolerance) {
+    public void setPrecursorAccuracy(double precursorTolerance) {
         this.precursorTolerance = precursorTolerance;
     }
 
@@ -279,7 +279,7 @@ public class SearchParameters implements Serializable {
      * Returns the precursor tolerance unit as defined in the static fields
      * @return the precursor tolerance unit 
      */
-    public int getPrecursorToleranceUnit() {
+    public int getPrecursorAccuracyUnit() {
         return precursorToleranceUnit;
     }
 
@@ -287,7 +287,7 @@ public class SearchParameters implements Serializable {
      * Setts the precursor tolerance unit as defined in the static fields
      * @param precursorToleranceUnit the precursor tolerance unit 
      */
-    public void setPrecursorToleranceUnit(int precursorToleranceUnit) {
+    public void setPrecursorAccuracyUnit(int precursorToleranceUnit) {
         this.precursorToleranceUnit = precursorToleranceUnit;
     }
 }

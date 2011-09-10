@@ -423,6 +423,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         sequenceFragmentIonPlotsJPanel = new javax.swing.JPanel();
         spectrumPanel = new javax.swing.JPanel();
         intensitySlider = new javax.swing.JSlider();
+        accuracySlider = new javax.swing.JSlider();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -858,11 +859,10 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         spectrumJTabbedPane.setSelectedIndex(2);
 
-        intensitySlider.setMaximum(99);
         intensitySlider.setOrientation(javax.swing.JSlider.VERTICAL);
         intensitySlider.setPaintTicks(true);
-        intensitySlider.setToolTipText("Annotation Intensity Level");
-        intensitySlider.setValue(75);
+        intensitySlider.setToolTipText("Annotation Level");
+        intensitySlider.setValue(25);
         intensitySlider.setOpaque(false);
         intensitySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
@@ -875,6 +875,22 @@ public class OverviewPanel extends javax.swing.JPanel {
             }
         });
 
+        accuracySlider.setOrientation(javax.swing.JSlider.VERTICAL);
+        accuracySlider.setPaintTicks(true);
+        accuracySlider.setToolTipText("Annotation Accuracy");
+        accuracySlider.setValue(100);
+        accuracySlider.setOpaque(false);
+        accuracySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                accuracySliderMouseWheelMoved(evt);
+            }
+        });
+        accuracySlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                accuracySliderStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout spectrumMainPanelLayout = new javax.swing.GroupLayout(spectrumMainPanel);
         spectrumMainPanel.setLayout(spectrumMainPanelLayout);
         spectrumMainPanelLayout.setHorizontalGroup(
@@ -883,19 +899,23 @@ public class OverviewPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(intensitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(spectrumMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(accuracySlider, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(intensitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
         spectrumMainPanelLayout.setVerticalGroup(
             spectrumMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(spectrumMainPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumMainPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(spectrumMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(spectrumMainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
                     .addGroup(spectrumMainPanelLayout.createSequentialGroup()
-                        .addComponent(spectrumJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(spectrumMainPanelLayout.createSequentialGroup()
-                        .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 277, Short.MAX_VALUE)
-                        .addGap(35, 35, 35))))
+                        .addGap(25, 25, 25)
+                        .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                        .addGap(29, 29, 29)
+                        .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 94, Short.MAX_VALUE)
+                        .addGap(59, 59, 59)))
+                .addContainerGap())
         );
 
         peptidesPsmSpectrumFragmentIonsJSplitPane.setRightComponent(spectrumMainPanel);
@@ -1316,10 +1336,33 @@ private void spectrumJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) 
      * @param evt 
      */
 private void spectrumJTabbedPaneMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumJTabbedPaneMouseWheelMoved
-    if (evt.getWheelRotation() > 0) { // Down
-        intensitySlider.setValue(intensitySlider.getValue() - 1);
-    } else { // Up
-        intensitySlider.setValue(intensitySlider.getValue() + 1);
+
+    // @TODO: figure out why the strange special cases are needed... if not included the slider gets stuck at the given values
+    
+    if (evt.isAltDown()) {
+        if (evt.getWheelRotation() > 0) { // Down
+            intensitySlider.setValue(intensitySlider.getValue() - 1);
+        } else { // Up
+            if (intensitySlider.getValue() == 28) {
+                intensitySlider.setValue(intensitySlider.getValue() + 2);
+            } else if (intensitySlider.getValue() == 56) {
+                intensitySlider.setValue(intensitySlider.getValue() + 3);
+            } else {
+                intensitySlider.setValue(intensitySlider.getValue() + 1);
+            }
+        }
+    } else {
+        if (evt.getWheelRotation() > 0) { // Down
+            accuracySlider.setValue(accuracySlider.getValue() - 1);
+        } else { // Up
+            if (accuracySlider.getValue() == 28) {
+                accuracySlider.setValue(accuracySlider.getValue() + 2);
+            } else if (accuracySlider.getValue() == 56) {
+                accuracySlider.setValue(accuracySlider.getValue() + 3);
+            } else {
+                accuracySlider.setValue(accuracySlider.getValue() + 1);
+            }
+        }
     }
 }//GEN-LAST:event_spectrumJTabbedPaneMouseWheelMoved
 
@@ -1329,7 +1372,7 @@ private void spectrumJTabbedPaneMouseWheelMoved(java.awt.event.MouseWheelEvent e
      * @param evt 
      */
 private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
-    peptideShakerGUI.getAnnotationPreferences().setAnnotationIntensityLimit(((Integer) intensitySlider.getValue()) / 100.0);
+    peptideShakerGUI.getAnnotationPreferences().setAnnotationLevel(intensitySlider.getValue() / 100.0);
     peptideShakerGUI.updateAnnotations();
     peptideShakerGUI.setDataSaved(false);
 }//GEN-LAST:event_intensitySliderStateChanged
@@ -1444,11 +1487,11 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     try {
                         String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
                         PeptideMatch currentPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-                        
+
                         String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
                         SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                         PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
-                        
+
                         if (peptideAssumption.getPeptide().isSameAs(currentPeptideMatch.getTheoreticPeptide())) {
                             Peptide peptide = peptideAssumption.getPeptide();
                             String tooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(peptide);
@@ -1469,7 +1512,29 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             psmTable.setToolTipText(null);
         }
     }//GEN-LAST:event_psmTableMouseMoved
+
+    /**
+     * Update the fragment ion annotation accuracy.
+     * 
+     * @param evt 
+     */
+    private void accuracySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_accuracySliderStateChanged
+        peptideShakerGUI.getAnnotationPreferences().setFragmentIonAccuracy((accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+        peptideShakerGUI.updateAnnotations();
+        peptideShakerGUI.setDataSaved(false);
+    }//GEN-LAST:event_accuracySliderStateChanged
+
+    /**
+     * Updates the slider value when the user scrolls.
+     * 
+     * @param evt 
+     */
+    private void accuracySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_accuracySliderMouseWheelMoved
+        spectrumJTabbedPaneMouseWheelMoved(evt);
+    }//GEN-LAST:event_accuracySliderMouseWheelMoved
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel bubbleAnnotationMenuPanel;
     private javax.swing.JPanel bubbleJPanel;
     private javax.swing.JToolBar bubblePlotJToolBar;
@@ -1790,7 +1855,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     currentSpectrum,
                                     selectedPeptideMatch.getTheoreticPeptide(),
                                     currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                    annotationPreferences.getMzTolerance());
+                                    annotationPreferences.getFragmentIonAccuracy());
                             allAnnotations.add(annotations);
                             allSpectra.add(currentSpectrum);
 
@@ -1801,15 +1866,15 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                 // @TODO: rewrite the charge selection below when the new ion selection gui has been implemented!
 
-                double bubbleScale = annotationPreferences.getMzTolerance() * 10 * peptideShakerGUI.getBubbleScale();
+                double bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10 * peptideShakerGUI.getBubbleScale();
 
                 if (peptideShakerGUI.useRelativeError()) {
-                    bubbleScale = annotationPreferences.getMzTolerance() * 10000 * peptideShakerGUI.getBubbleScale();
+                    bubbleScale = annotationPreferences.getFragmentIonAccuracy() * 10000 * peptideShakerGUI.getBubbleScale();
                 }
 
                 MassErrorBubblePlot massErrorBubblePlot = new MassErrorBubblePlot(
                         selectedIndexes,
-                        allAnnotations, annotationPreferences.getIonTypes(), allSpectra, annotationPreferences.getMzTolerance(),
+                        allAnnotations, annotationPreferences.getIonTypes(), allSpectra, annotationPreferences.getFragmentIonAccuracy(),
                         bubbleScale,
                         annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
                         annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4)),
@@ -1991,7 +2056,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                                     precursor.getMz(), precursor.getCharge().toString(),
                                     "", 40, false, false, false, 2, false);
-                            spectrum.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getMzTolerance());
+                            spectrum.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
                             spectrum.setBorder(null);
 
                             // get the spectrum annotations
@@ -2007,7 +2072,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     annotationPreferences.getValidatedCharges(),
                                     currentSpectrum, currentPeptide,
                                     currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                    annotationPreferences.getMzTolerance());
+                                    annotationPreferences.getFragmentIonAccuracy());
                             spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                             spectrum.rescale(lowerMzZoomRange, upperMzZoomRange);
 
@@ -2066,7 +2131,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             // create the miniature mass error plot
                             MassErrorPlot massErrorPlot = new MassErrorPlot(
                                     annotations, annotationPreferences.getIonTypes(), currentSpectrum,
-                                    annotationPreferences.getMzTolerance(),
+                                    annotationPreferences.getFragmentIonAccuracy(),
                                     annotationPreferences.getValidatedCharges().contains(new Integer(1)), annotationPreferences.getValidatedCharges().contains(new Integer(2)),
                                     annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4)),
                                     peptideShakerGUI.useRelativeError());
@@ -2695,7 +2760,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             annotationPreferences.getValidatedCharges(),
                             currentSpectrum, currentPeptide,
                             currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                            annotationPreferences.getMzTolerance());
+                            annotationPreferences.getFragmentIonAccuracy());
                     allAnnotations.add(annotations);
                     currentSpectrumKey = spectrumKey;
                 }
@@ -2895,6 +2960,15 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      */
     public void setIntensitySliderValue(int value) {
         intensitySlider.setValue(value);
+    }
+
+    /**
+     * Set the accuracy slider value.
+     * 
+     * @param value the accuracy slider value
+     */
+    public void setAccuracySliderValue(int value) {
+        accuracySlider.setValue(value);
     }
 
     /**

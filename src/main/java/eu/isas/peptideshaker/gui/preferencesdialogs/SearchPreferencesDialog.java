@@ -139,7 +139,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         okButton = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        fragmentIonToleranceTxt = new javax.swing.JTextField();
+        fragmentIonAccuracyTxt = new javax.swing.JTextField();
         enzymesCmb = new javax.swing.JComboBox();
         jLabel5 = new javax.swing.JLabel();
         missedCleavagesTxt = new javax.swing.JTextField();
@@ -149,7 +149,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         ion1Cmb = new javax.swing.JComboBox();
         ion2Cmb = new javax.swing.JComboBox();
         jLabel9 = new javax.swing.JLabel();
-        precursorTolerance = new javax.swing.JTextField();
+        precursorAccuracy = new javax.swing.JTextField();
         precursorUnit = new javax.swing.JComboBox();
         jLabel10 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
@@ -211,7 +211,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Fragment Ion Accuracy:");
 
-        fragmentIonToleranceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        fragmentIonAccuracyTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         enzymesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
@@ -232,7 +232,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
 
         jLabel9.setText("Precursor Accuracy:");
 
-        precursorTolerance.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        precursorAccuracy.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         precursorUnit.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "ppm", "Da" }));
 
@@ -252,14 +252,14 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                         .addGap(37, 37, 37)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(precursorTolerance, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(precursorAccuracy, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(precursorUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(enzymesCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(fragmentIonToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(fragmentIonAccuracyTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel10)))
                 .addGap(71, 71, 71)
@@ -293,14 +293,14 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(precursorTolerance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(precursorAccuracy, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(precursorUnit, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
                     .addComponent(ion1Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(fragmentIonToleranceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fragmentIonAccuracyTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
                     .addComponent(ion2Cmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10))
@@ -598,13 +598,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
-            searchParameters.setFragmentIonMZTolerance(new Double(fragmentIonToleranceTxt.getText()));
+            searchParameters.setFragmentIonAccuracy(new Double(fragmentIonAccuracyTxt.getText()));
             searchParameters.setnMissedCleavages(new Integer(missedCleavagesTxt.getText()));
             searchParameters.setEnzyme(enzymeFactory.getEnzyme((String) enzymesCmb.getSelectedItem()));
             searchParameters.setIonSearched1((String) ion1Cmb.getSelectedItem());
             searchParameters.setIonSearched2((String) ion2Cmb.getSelectedItem());
-            searchParameters.setPrecursorToleranceUnit(precursorUnit.getSelectedIndex());
-            searchParameters.setPrecursorTolerance(new Double(precursorTolerance.getText()));
+            searchParameters.setPrecursorAccuracyUnit(precursorUnit.getSelectedIndex());
+            searchParameters.setPrecursorAccuracy(new Double(precursorAccuracy.getText()));
             peptideShakerGUI.setSearchParameters(searchParameters);
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
             peptideShakerGUI.setModificationProfileFile(profileFile);
@@ -946,7 +946,7 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
     private javax.swing.JComboBox enzymesCmb;
     private javax.swing.JTable expectedModificationsTable;
     private javax.swing.JTextField fileTxt;
-    private javax.swing.JTextField fragmentIonToleranceTxt;
+    private javax.swing.JTextField fragmentIonAccuracyTxt;
     private javax.swing.JLabel helpLineLabel;
     private javax.swing.JComboBox ion1Cmb;
     private javax.swing.JComboBox ion2Cmb;
@@ -969,7 +969,7 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
     private javax.swing.JButton loadProfileBtn;
     private javax.swing.JTextField missedCleavagesTxt;
     private javax.swing.JButton okButton;
-    private javax.swing.JTextField precursorTolerance;
+    private javax.swing.JTextField precursorAccuracy;
     private javax.swing.JComboBox precursorUnit;
     private javax.swing.JTextField profileTxt;
     private javax.swing.JButton removeModification;
@@ -985,9 +985,9 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
      */
     private boolean validateInput() {
         try {
-            new Double(fragmentIonToleranceTxt.getText());
+            new Double(fragmentIonAccuracyTxt.getText());
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for fragment ion tolerance.",
+            JOptionPane.showMessageDialog(null, "Please verify the input for fragment ion accuracy.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -1001,7 +1001,7 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
         }
 
         try {
-            new Double(precursorTolerance.getText());
+            new Double(precursorAccuracy.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please verify the input for allowed missed cleavages.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -1058,13 +1058,13 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
             enzymesCmb.setSelectedItem(temp.trim());
         }
 
-        temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_MASS_TOLERANCE);
+        temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_ION_MASS_ACCURACY);
 
         if (temp == null) {
             temp = "";
         }
 
-        fragmentIonToleranceTxt.setText(temp.trim());
+        fragmentIonAccuracyTxt.setText(temp.trim());
         temp = aProps.getProperty(IdentificationParametersReader.MISSED_CLEAVAGES);
 
         if (temp == null) {
@@ -1084,7 +1084,7 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
             ion2Cmb.setSelectedItem(temp);
         }
 
-        temp = aProps.getProperty(IdentificationParametersReader.PRECURSOR_MASS_TOLERANCE_UNIT);
+        temp = aProps.getProperty(IdentificationParametersReader.PRECURSOR_MASS_ACCURACY_UNIT);
         int unit = 0;
         if (temp != null) {
             try {
@@ -1094,13 +1094,13 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
         }
         precursorUnit.setSelectedItem(unit);
 
-        temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_MASS_TOLERANCE);
+        temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_ION_MASS_ACCURACY);
 
         if (temp == null) {
             temp = "";
         }
 
-        precursorTolerance.setText(temp.trim());
+        precursorAccuracy.setText(temp.trim());
 
     }
 
@@ -1140,13 +1140,13 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
      */
     private void loadValues() {
 
-        fragmentIonToleranceTxt.setText(searchParameters.getFragmentIonMZTolerance() + "");
+        fragmentIonAccuracyTxt.setText(searchParameters.getFragmentIonAccuracy() + "");
         enzymesCmb.setModel(new DefaultComboBoxModel(loadEnzymes()));
         enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         enzymesCmb.setSelectedItem(searchParameters.getEnzyme().getName());
         missedCleavagesTxt.setText(searchParameters.getnMissedCleavages() + "");
-        precursorUnit.setSelectedIndex(searchParameters.getPrecursorToleranceUnit());
-        precursorTolerance.setText(searchParameters.getPrecursorTolerance() + "");
+        precursorUnit.setSelectedIndex(searchParameters.getPrecursorAccuracyUnit());
+        precursorAccuracy.setText(searchParameters.getPrecursorAccuracy() + "");
         setIons();
         if (searchParameters.getParametersFile() != null) {
             fileTxt.setText(searchParameters.getParametersFile().getAbsolutePath());

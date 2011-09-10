@@ -38,7 +38,7 @@ public class AnnotationPreferences implements Serializable {
      * The intensity limit used when only the most intense peaks are to be 
      * annotated.
      */
-    private double intensityLimit = 0.75;
+    private double intensityLimit = 0.25;
     /**
      * Shall PeptideShaker use automatic annotation
      */
@@ -60,9 +60,9 @@ public class AnnotationPreferences implements Serializable {
      */
     private ArrayList<Integer> selectedCharges = new ArrayList<Integer>();
     /**
-     * m/z tolerance used for peak matching
+     * Fragment ion accuracy used for peak matching.
      */
-    private double mzTolerance;
+    private double fragmentIonAccuracy;
     /**
      * The currently inspected peptide
      */
@@ -209,19 +209,21 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * Returns the m/z tolerance
-     * @return the m/z tolerance
+     * Returns the fragment ion accuracy.
+     * 
+     * @return the fragment ion accuracy
      */
-    public double getMzTolerance() {
-        return mzTolerance;
+    public double getFragmentIonAccuracy() {
+        return fragmentIonAccuracy;
     }
 
     /**
-     * Sets the m/z tolerance
-     * @param mzTolerance the m/z tolerance
+     * Sets the fragment ion accuracy.
+     * 
+     * @param fragmentIonAccuracy the fragment ion accuracy
      */
-    public void setMzTolerance(double mzTolerance) {
-        this.mzTolerance = mzTolerance;
+    public void setFragmentIonAccuracy(double fragmentIonAccuracy) {
+        this.fragmentIonAccuracy = fragmentIonAccuracy;
     }
     
     /**
@@ -233,7 +235,9 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * Returns the intensity limit.
+     * Returns the intensity limit. [0.0 - 1.0], where 1.0 means that all peaks 
+     * are considered for annotations, while 0.3 means that only the 30% most 
+     * intense peaks are considered for annotations.
      * 
      * @return the intensityLimit
      */
@@ -242,11 +246,13 @@ public class AnnotationPreferences implements Serializable {
     }
 
     /**
-     * Sets the intensity limit.
+     * Sets the annotation level. [0.0 - 1.0], where 1.0 means that all peaks 
+     * are considered for annotations, while 0.3 means that only the 30% most 
+     * intense peaks are considered for annotations.
      * 
      * @param intensityLimit the intensityLimit to set
      */
-    public void setAnnotationIntensityLimit(double intensityLimit) {
+    public void setAnnotationLevel(double intensityLimit) {
         this.intensityLimit = intensityLimit;
     }
     

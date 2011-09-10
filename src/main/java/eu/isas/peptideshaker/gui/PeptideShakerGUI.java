@@ -1288,7 +1288,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                         updateRecentProjectsList(new File(selectedFile));
 
-                        JOptionPane.showMessageDialog(tempRef, "Identifications were successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
                         dataSaved = true;
                     } catch (Exception e) {
 
@@ -2405,13 +2405,13 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
     private void setDefaultPreferences() {
         searchParameters = new SearchParameters();
         searchParameters.setEnzyme(enzymeFactory.getEnzyme("Trypsin"));
-        searchParameters.setFragmentIonMZTolerance(0.5);
-        searchParameters.setPrecursorToleranceUnit(0);
-        searchParameters.setPrecursorTolerance(10);
+        searchParameters.setFragmentIonAccuracy(0.5);
+        searchParameters.setPrecursorAccuracyUnit(0);
+        searchParameters.setPrecursorAccuracy(10);
         searchParameters.setIonSearched1("b");
         searchParameters.setIonSearched2("y");
         loadModificationProfile(profileFile);
-        annotationPreferences.setAnnotationIntensityLimit(0.75);
+        annotationPreferences.setAnnotationLevel(0.25);
         annotationPreferences.useAutomaticAnnotation(true);
         updateAnnotationPreferencesFromSearchSettings();
         spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.NSAF);
@@ -2427,7 +2427,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
         annotationPreferences.addIonType(searchParameters.getIonSearched2());
         annotationPreferences.addIonType(PeptideFragmentIonType.PRECURSOR_ION);
         annotationPreferences.addIonType(PeptideFragmentIonType.IMMONIUM);
-        annotationPreferences.setMzTolerance(searchParameters.getFragmentIonMZTolerance());
+        annotationPreferences.setFragmentIonAccuracy(searchParameters.getFragmentIonAccuracy());
     }
 
     /**
@@ -2453,14 +2453,18 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
      * Updates the annotations in the selected tab.
      */
     public void updateAnnotations() {
-
+        
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+            overviewPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / searchParameters.getFragmentIonAccuracy()) * 100));
             overviewPanel.updateSpectrum();
         } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+            spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
             spectrumIdentificationPanel.updateSpectrum();
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+            ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
             ptmPanel.updateSpectra();
         }
     }

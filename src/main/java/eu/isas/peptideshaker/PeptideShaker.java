@@ -810,7 +810,7 @@ public class PeptideShaker {
                             modifications.get(mod), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                             spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                            searchParameters.getFragmentIonMZTolerance());
+                            searchParameters.getFragmentIonAccuracy());
                     ptmScoring = new PtmScoring(mod);
                     for (ArrayList<Integer> modificationProfile : aScores.keySet()) {
                         ptmScoring.addDeltaScore(modificationProfile, aScores.get(modificationProfile));
