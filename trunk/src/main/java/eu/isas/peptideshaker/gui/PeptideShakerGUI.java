@@ -985,6 +985,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         proteinFilterJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
         proteinFilterJMenuItem.setText("Proteins");
+        proteinFilterJMenuItem.setEnabled(false);
         proteinFilterJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 proteinFilterJMenuItemActionPerformed(evt);
@@ -998,6 +999,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         exportJMenu.setText("Export");
 
         identificationFeaturesMenu.setText("Identification Features");
+        identificationFeaturesMenu.setEnabled(false);
         identificationFeaturesMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 identificationFeaturesMenuActionPerformed(evt);
@@ -1006,6 +1008,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         exportJMenu.add(identificationFeaturesMenu);
 
         followUpAnalysisMenu.setText("Follow-up Analysis");
+        followUpAnalysisMenu.setEnabled(false);
         followUpAnalysisMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 followUpAnalysisMenuActionPerformed(evt);
@@ -2156,7 +2159,11 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
                     // return the peptide shaker icon to the standard version
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
+                    // enable the menu items depending on a project being open
                     saveMenuItem.setEnabled(true);
+                    proteinFilterJMenuItem.setEnabled(true);
+                    identificationFeaturesMenu.setEnabled(true);
+                    followUpAnalysisMenu.setEnabled(true);
                 }
             }.start();
 

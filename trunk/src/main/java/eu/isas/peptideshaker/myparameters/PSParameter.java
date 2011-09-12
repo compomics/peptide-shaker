@@ -368,6 +368,8 @@ public class PSParameter implements UrParameter {
      */
     public String getGroupName() {
         switch (groupClass) {
+            case NOT_GROUP:
+                return "Single Protein";
             case ISOFORMS:
                 return "Isoforms";
             case ISOFORMS_UNRELATED:

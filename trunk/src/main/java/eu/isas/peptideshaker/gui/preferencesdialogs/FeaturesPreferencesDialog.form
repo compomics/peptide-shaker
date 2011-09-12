@@ -23,10 +23,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Group type="102" alignment="0" attributes="0">
-              <Component id="backgroundPanel" max="32767" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
-          </Group>
+          <Component id="backgroundPanel" alignment="0" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -47,14 +44,18 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
-                          <Component id="projectPanel" min="-2" max="-2" attributes="1"/>
+                  <Group type="103" groupAlignment="1" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="1" attributes="0">
+                                  <EmptySpace min="-2" pref="1" max="-2" attributes="0"/>
+                                  <Component id="projectPanel" min="-2" max="-2" attributes="1"/>
+                              </Group>
+                              <Component id="featuresPanel" alignment="1" max="32767" attributes="2"/>
+                          </Group>
                       </Group>
-                      <Component id="featuresPanel" alignment="1" max="32767" attributes="2"/>
-                      <Component id="jButton1" alignment="1" min="-2" max="-2" attributes="0"/>
+                      <Component id="exitButton" alignment="1" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -68,7 +69,7 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="featuresPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                  <Component id="exitButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -90,7 +91,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                      <Component id="exportTextFilesLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="exportAll" pref="510" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -102,7 +103,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportTextFilesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="exportAll" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
@@ -111,7 +112,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel1">
+            <Component class="javax.swing.JLabel" name="exportTextFilesLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Export All Identification Results:"/>
               </Properties>
@@ -141,7 +142,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="tabbedPane" max="32767" attributes="0"/>
+                      <Component id="tabbedPane" pref="697" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -183,7 +184,7 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="proteinDescription" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="proteinSequenceCoverage" min="-2" max="-2" attributes="0"/>
+                                      <Component id="proteinSequenceCoverage" linkSize="1" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
@@ -210,7 +211,7 @@
                                       <Component id="proteinSelectAll" linkSize="12" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinUnselectAll" linkSize="12" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="131" max="32767" attributes="0"/>
+                                      <EmptySpace pref="141" max="32767" attributes="0"/>
                                       <Component id="proteinExportDisplayed" linkSize="13" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinExportValidated" linkSize="13" min="-2" max="-2" attributes="0"/>
@@ -340,7 +341,7 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="proteinUnselectAll">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Unselect All"/>
+                        <Property name="text" type="java.lang.String" value="Deselect All"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinUnselectAllActionPerformed"/>
@@ -364,7 +365,9 @@
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="proteinSequenceCoverage">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Sequence coverage"/>
+                        <Property name="text" type="java.lang.String" value="Sequence Coverage"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                   </SubComponents>
@@ -389,22 +392,23 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="peptidePosition" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptidePosition" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" attributes="0">
-                                      <Group type="103" groupAlignment="1" attributes="0">
-                                          <Component id="peptideSequence" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="peptideAccession" linkSize="2" alignment="1" min="-2" pref="150" max="-2" attributes="0"/>
-                                      </Group>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Group type="102" attributes="0">
+                                              <Component id="peptideAccession" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Component id="peptideModification" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Component id="peptideNSpectra" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
                                           </Group>
-                                          <Component id="peptideLocation" linkSize="2" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Group type="102" attributes="0">
+                                              <Component id="peptideSequence" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="peptideLocation" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                          </Group>
                                       </Group>
-                                      <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="peptideConfidence" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="peptideScore" linkSize="2" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
@@ -414,7 +418,7 @@
                                       <Component id="peptideSelectAll" linkSize="9" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="peptideUnselectAll" linkSize="9" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="131" max="32767" attributes="0"/>
+                                      <EmptySpace pref="141" max="32767" attributes="0"/>
                                       <Component id="peptideExportDisplayed" linkSize="8" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="peptideExportValidated" linkSize="8" min="-2" max="-2" attributes="0"/>
@@ -439,8 +443,8 @@
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="peptideConfidence" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="peptideLocation" linkSize="16" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                                   <Component id="peptideSequence" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptideLocation" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="peptidePosition" min="-2" max="-2" attributes="0"/>
@@ -462,14 +466,6 @@
                       <Properties>
                         <Property name="selected" type="boolean" value="true"/>
                         <Property name="text" type="java.lang.String" value="Protein Accession"/>
-                        <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JCheckBox" name="peptideSequence">
-                      <Properties>
-                        <Property name="selected" type="boolean" value="true"/>
-                        <Property name="text" type="java.lang.String" value="Peptide Sequence"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
@@ -503,13 +499,6 @@
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
-                    <Component class="javax.swing.JCheckBox" name="peptideLocation">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Location Scores"/>
-                        <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
-                      </Properties>
-                    </Component>
                     <Component class="javax.swing.JButton" name="peptideSelectAll">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Select All"/>
@@ -520,7 +509,7 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="peptideUnselectAll">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Unselect All"/>
+                        <Property name="text" type="java.lang.String" value="Deselect All"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideUnselectAllActionPerformed"/>
@@ -550,9 +539,26 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideExportDisplayedActionPerformed"/>
                       </Events>
                     </Component>
+                    <Component class="javax.swing.JCheckBox" name="peptideSequence">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="Peptide Sequence"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
                     <Component class="javax.swing.JCheckBox" name="peptidePosition">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Peptide position"/>
+                        <Property name="text" type="java.lang.String" value="Peptide Position"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="peptideLocation">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Location Scores"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                   </SubComponents>
@@ -603,7 +609,7 @@
                                       <Component id="psmSelectAll" linkSize="10" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="psmUnselectAll" linkSize="10" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="131" max="32767" attributes="0"/>
+                                      <EmptySpace pref="141" max="32767" attributes="0"/>
                                       <Component id="psmExportDisplayed" linkSize="7" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="psmExportValidated" linkSize="7" min="-2" max="-2" attributes="0"/>
@@ -725,7 +731,7 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="psmUnselectAll">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Unselect All"/>
+                        <Property name="text" type="java.lang.String" value="Deselect All"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmUnselectAllActionPerformed"/>
@@ -803,7 +809,7 @@
                                       <Component id="assumptionsExportAll" linkSize="11" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="assumptionUnselectAll" linkSize="11" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="131" max="32767" attributes="0"/>
+                                      <EmptySpace pref="141" max="32767" attributes="0"/>
                                       <Component id="assumptionsExportDisplayed" linkSize="6" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="assumptionsExportValidated" linkSize="6" min="-2" max="-2" attributes="0"/>
@@ -926,7 +932,7 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="assumptionUnselectAll">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Unselect All"/>
+                        <Property name="text" type="java.lang.String" value="Deselect All"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionUnselectAllActionPerformed"/>
@@ -962,12 +968,12 @@
             </Container>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JButton" name="jButton1">
+        <Component class="javax.swing.JButton" name="exitButton">
           <Properties>
             <Property name="text" type="java.lang.String" value="Exit"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton1ActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exitButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

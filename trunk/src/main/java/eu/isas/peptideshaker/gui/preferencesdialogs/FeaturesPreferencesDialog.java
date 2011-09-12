@@ -61,7 +61,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         backgroundPanel = new javax.swing.JPanel();
         projectPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        exportTextFilesLabel = new javax.swing.JLabel();
         exportAll = new javax.swing.JButton();
         featuresPanel = new javax.swing.JPanel();
         tabbedPane = new javax.swing.JTabbedPane();
@@ -83,18 +83,18 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinSequenceCoverage = new javax.swing.JCheckBox();
         peptidesPanel = new javax.swing.JPanel();
         peptideAccession = new javax.swing.JCheckBox();
-        peptideSequence = new javax.swing.JCheckBox();
         peptideModification = new javax.swing.JCheckBox();
         peptideNSpectra = new javax.swing.JCheckBox();
         peptideScore = new javax.swing.JCheckBox();
         peptideConfidence = new javax.swing.JCheckBox();
-        peptideLocation = new javax.swing.JCheckBox();
         peptideSelectAll = new javax.swing.JButton();
         peptideUnselectAll = new javax.swing.JButton();
         peptideExportAll = new javax.swing.JButton();
         peptideExportValidated = new javax.swing.JButton();
         peptideExportDisplayed = new javax.swing.JButton();
+        peptideSequence = new javax.swing.JCheckBox();
         peptidePosition = new javax.swing.JCheckBox();
+        peptideLocation = new javax.swing.JCheckBox();
         psmPanel = new javax.swing.JPanel();
         psmAccession = new javax.swing.JCheckBox();
         psmSequence = new javax.swing.JCheckBox();
@@ -125,7 +125,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionExportAll = new javax.swing.JButton();
         assumptionsExportDisplayed = new javax.swing.JButton();
         assumptionsExportValidated = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        exitButton = new javax.swing.JButton();
 
         setTitle("Export Features");
         setResizable(false);
@@ -135,7 +135,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         projectPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project"));
         projectPanel.setOpaque(false);
 
-        jLabel1.setText("Export All Identification Results:");
+        exportTextFilesLabel.setText("Export All Identification Results:");
 
         exportAll.setText("Export as Text Files");
         exportAll.addActionListener(new java.awt.event.ActionListener() {
@@ -150,7 +150,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(projectPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1)
+                .addComponent(exportTextFilesLabel)
                 .addGap(18, 18, 18)
                 .addComponent(exportAll, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                 .addContainerGap())
@@ -160,7 +160,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             .addGroup(projectPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(exportTextFilesLabel)
                     .addComponent(exportAll))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -221,7 +221,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        proteinUnselectAll.setText("Unselect All");
+        proteinUnselectAll.setText("Deselect All");
         proteinUnselectAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 proteinUnselectAllActionPerformed(evt);
@@ -242,7 +242,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        proteinSequenceCoverage.setText("Sequence coverage");
+        proteinSequenceCoverage.setText("Sequence Coverage");
+        proteinSequenceCoverage.setIconTextGap(10);
+        proteinSequenceCoverage.setOpaque(false);
 
         javax.swing.GroupLayout proteinsPanelLayout = new javax.swing.GroupLayout(proteinsPanel);
         proteinsPanel.setLayout(proteinsPanelLayout);
@@ -275,7 +277,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(proteinSelectAll)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinUnselectAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 131, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
                         .addComponent(proteinExportDisplayed)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinExportValidated)
@@ -284,7 +286,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {proteinAccession, proteinConfidence, proteinDescription, proteinEmpai, proteinNPeptides, proteinNSpectra, proteinNsaf, proteinPI, proteinScore});
+        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {proteinAccession, proteinConfidence, proteinDescription, proteinEmpai, proteinNPeptides, proteinNSpectra, proteinNsaf, proteinPI, proteinScore, proteinSequenceCoverage});
 
         proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {proteinSelectAll, proteinUnselectAll});
 
@@ -330,11 +332,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideAccession.setIconTextGap(10);
         peptideAccession.setOpaque(false);
 
-        peptideSequence.setSelected(true);
-        peptideSequence.setText("Peptide Sequence");
-        peptideSequence.setIconTextGap(10);
-        peptideSequence.setOpaque(false);
-
         peptideModification.setText("Modification Status");
         peptideModification.setIconTextGap(10);
         peptideModification.setOpaque(false);
@@ -352,10 +349,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideConfidence.setIconTextGap(10);
         peptideConfidence.setOpaque(false);
 
-        peptideLocation.setText("Location Scores");
-        peptideLocation.setIconTextGap(10);
-        peptideLocation.setOpaque(false);
-
         peptideSelectAll.setText("Select All");
         peptideSelectAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -363,7 +356,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        peptideUnselectAll.setText("Unselect All");
+        peptideUnselectAll.setText("Deselect All");
         peptideUnselectAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideUnselectAllActionPerformed(evt);
@@ -391,7 +384,18 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        peptidePosition.setText("Peptide position");
+        peptideSequence.setSelected(true);
+        peptideSequence.setText("Peptide Sequence");
+        peptideSequence.setIconTextGap(10);
+        peptideSequence.setOpaque(false);
+
+        peptidePosition.setText("Peptide Position");
+        peptidePosition.setIconTextGap(10);
+        peptidePosition.setOpaque(false);
+
+        peptideLocation.setText("Location Scores");
+        peptideLocation.setIconTextGap(10);
+        peptideLocation.setOpaque(false);
 
         javax.swing.GroupLayout peptidesPanelLayout = new javax.swing.GroupLayout(peptidesPanel);
         peptidesPanel.setLayout(peptidesPanelLayout);
@@ -402,16 +406,17 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(peptidePosition)
                     .addGroup(peptidesPanelLayout.createSequentialGroup()
-                        .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(peptideSequence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(peptideAccession, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
                         .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(peptidesPanelLayout.createSequentialGroup()
+                                .addComponent(peptideAccession, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
                                 .addComponent(peptideModification, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(peptideNSpectra, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(peptidesPanelLayout.createSequentialGroup()
+                                .addComponent(peptideSequence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(peptideConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -420,7 +425,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(peptideSelectAll)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(peptideUnselectAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 131, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
                         .addComponent(peptideExportDisplayed)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(peptideExportValidated)
@@ -429,7 +434,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        peptidesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {peptideAccession, peptideConfidence, peptideLocation, peptideModification, peptideNSpectra, peptideScore, peptideSequence});
+        peptidesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {peptideAccession, peptideConfidence, peptideLocation, peptideModification, peptideNSpectra, peptidePosition, peptideScore, peptideSequence});
 
         peptidesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {peptideExportAll, peptideExportDisplayed, peptideExportValidated});
 
@@ -447,8 +452,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(peptideConfidence)
-                    .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(peptideSequence))
+                    .addComponent(peptideSequence)
+                    .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(peptidePosition)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
@@ -461,7 +466,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        peptidesPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {peptideAccession, peptideConfidence, peptideLocation, peptideModification, peptideNSpectra, peptideScore, peptideSequence});
+        peptidesPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {peptideAccession, peptideConfidence, peptideModification, peptideNSpectra, peptideScore, peptideSequence});
 
         tabbedPane.addTab("Peptides", peptidesPanel);
 
@@ -514,7 +519,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        psmUnselectAll.setText("Unselect All");
+        psmUnselectAll.setText("Deselect All");
         psmUnselectAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 psmUnselectAllActionPerformed(evt);
@@ -570,7 +575,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(psmSelectAll)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(psmUnselectAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 131, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
                         .addComponent(psmExportDisplayed)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(psmExportValidated)
@@ -666,7 +671,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        assumptionUnselectAll.setText("Unselect All");
+        assumptionUnselectAll.setText("Deselect All");
         assumptionUnselectAll.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 assumptionUnselectAllActionPerformed(evt);
@@ -722,7 +727,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(assumptionsExportAll)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(assumptionUnselectAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 131, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
                         .addComponent(assumptionsExportDisplayed)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(assumptionsExportValidated)
@@ -774,7 +779,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             featuresPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(featuresPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 697, Short.MAX_VALUE)
                 .addContainerGap())
         );
         featuresPanelLayout.setVerticalGroup(
@@ -784,10 +789,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jButton1.setText("Exit");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        exitButton.setText("Exit");
+        exitButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                exitButtonActionPerformed(evt);
             }
         });
 
@@ -796,13 +801,15 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
-                        .addGap(1, 1, 1)
-                        .addComponent(projectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(featuresPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, backgroundPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                                .addGap(1, 1, 1)
+                                .addComponent(projectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(featuresPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(exitButton))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -813,7 +820,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(featuresPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jButton1)
+                .addComponent(exitButton)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -821,9 +828,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -902,6 +907,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideScore.setSelected(true);
         peptideConfidence.setSelected(true);
         peptideLocation.setSelected(true);
+        peptidePosition.setSelected(true);
     }//GEN-LAST:event_peptideSelectAllActionPerformed
 
     private void peptideUnselectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideUnselectAllActionPerformed
@@ -913,6 +919,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideScore.setSelected(false);
         peptideConfidence.setSelected(false);
         peptideLocation.setSelected(false);
+        peptidePosition.setSelected(false);
     }//GEN-LAST:event_peptideUnselectAllActionPerformed
 
     private void psmSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmSelectAllActionPerformed
@@ -1227,9 +1234,15 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
                     CsvExporter exporter = new CsvExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), 
                             peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getSearchParameters().getEnzyme());
-                    exporter.exportResults(progressDialog, fileChooser.getSelectedFile());
-                    JOptionPane.showMessageDialog(tempRef, "Identification results saved to " + fileChooser.getSelectedFile().getName() + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
-
+                    boolean exported = exporter.exportResults(progressDialog, fileChooser.getSelectedFile());
+                    
+                    if (exported) {
+                        JOptionPane.showMessageDialog(tempRef, "Identification results saved to folder \'" + fileChooser.getSelectedFile().getName() + "\'.", 
+                                "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                    } else {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured during saving. See conf/PeptideShaker.log for details.", "Save Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                    
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
@@ -1423,9 +1436,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         }.start();
     }//GEN-LAST:event_assumptionsExportDisplayedActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_exitButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox assumptionAccession;
@@ -1443,10 +1456,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton assumptionsExportDisplayed;
     private javax.swing.JButton assumptionsExportValidated;
     private javax.swing.JPanel backgroundPanel;
+    private javax.swing.JButton exitButton;
     private javax.swing.JButton exportAll;
+    private javax.swing.JLabel exportTextFilesLabel;
     private javax.swing.JPanel featuresPanel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JCheckBox peptideAccession;
     private javax.swing.JCheckBox peptideConfidence;
     private javax.swing.JButton peptideExportAll;

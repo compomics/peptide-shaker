@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -107,7 +106,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Spectra Matching To:");
 
-        spectrumValidationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Non-validated PSMs", "Non-validated peptides", "Non-validated proteins" }));
+        spectrumValidationCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Non-Validated PSMs", "Non-Validated Peptides", "Non-Validated Proteins" }));
 
         exportMgfButton.setText("Export as MGF");
         exportMgfButton.addActionListener(new java.awt.event.ActionListener() {
@@ -157,7 +156,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         jLabel3.setText("Include Validated PSMs:");
 
-        idSelectionCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "of all validated PSMs", "of validated PSMs of all validated peptides", "of validated PSMs of validated peptides of all validated proteins", "of validated PSMs of currently displayed peptides", "of validated PSMs of currently displayed proteins" }));
+        idSelectionCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "All Validated PSMs", "Validated PSMs of All Validated Peptides", "Validated PSMs of Validated Peptides of All Validated Proteins", "Validated PSMs of Currently Displayed Peptides", "Validated PSMs of Currently Displayed Proteins" }));
 
         jLabel4.setText("Format:");
 

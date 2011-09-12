@@ -115,9 +115,9 @@
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="3">
-                    <StringItem index="0" value="Non-validated PSMs"/>
-                    <StringItem index="1" value="Non-validated peptides"/>
-                    <StringItem index="2" value="Non-validated proteins"/>
+                    <StringItem index="0" value="Non-Validated PSMs"/>
+                    <StringItem index="1" value="Non-Validated Peptides"/>
+                    <StringItem index="2" value="Non-Validated Proteins"/>
                   </StringArray>
                 </Property>
               </Properties>
@@ -280,11 +280,11 @@
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="5">
-                    <StringItem index="0" value="of all validated PSMs"/>
-                    <StringItem index="1" value="of validated PSMs of all validated peptides"/>
-                    <StringItem index="2" value="of validated PSMs of validated peptides of all validated proteins"/>
-                    <StringItem index="3" value="of validated PSMs of currently displayed peptides"/>
-                    <StringItem index="4" value="of validated PSMs of currently displayed proteins"/>
+                    <StringItem index="0" value="All Validated PSMs"/>
+                    <StringItem index="1" value="Validated PSMs of All Validated Peptides"/>
+                    <StringItem index="2" value="Validated PSMs of Validated Peptides of All Validated Proteins"/>
+                    <StringItem index="3" value="Validated PSMs of Currently Displayed Peptides"/>
+                    <StringItem index="4" value="Validated PSMs of Currently Displayed Proteins"/>
                   </StringArray>
                 </Property>
               </Properties>
