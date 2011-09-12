@@ -505,6 +505,7 @@
                   <KeyStroke key="Ctrl+F"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Proteins"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinFilterJMenuItemActionPerformed"/>
@@ -521,6 +522,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="identificationFeaturesMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Identification Features"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="identificationFeaturesMenuActionPerformed"/>
@@ -529,6 +531,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="followUpAnalysisMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Follow-up Analysis"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="followUpAnalysisMenuActionPerformed"/>

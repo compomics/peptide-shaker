@@ -3,7 +3,6 @@ package eu.isas.peptideshaker.export;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
@@ -79,7 +78,7 @@ public class CsvExporter {
     /**
      * The sequence factory
      */
-    private SequenceFactory sequenceFactory;
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
      * The identification
      */
@@ -91,6 +90,7 @@ public class CsvExporter {
      * @param experiment the ms experiment
      * @param sample the sample
      * @param replicateNumber the replicate number
+     * @param enzyme the enzyme used 
      */
     public CsvExporter(MsExperiment experiment, Sample sample, int replicateNumber, Enzyme enzyme) {
         this.experiment = experiment;
@@ -119,7 +119,8 @@ public class CsvExporter {
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
             Writer assumptionWriter = new BufferedWriter(new FileWriter(new File(folder, assumptionFile)));
 
-            String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra" + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "nPossibilities" + SEPARATOR + "Protein length" + SEPARATOR + "p score"
+            String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra"
+                    + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "nPossibilities" + SEPARATOR + "Protein length" + SEPARATOR + "p score"
                     + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR + "Description" + "\n";
             proteinWriter.write(content);
 
@@ -229,11 +230,11 @@ public class CsvExporter {
                 }
             }
         }
+        
         line += nSpectra + SEPARATOR;
         line += nValidatedPeptides + SEPARATOR + nValidatedPsms + SEPARATOR;
-            line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getNPossiblePeptides(enzyme) + SEPARATOR;
-            line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence().length() + SEPARATOR;
-
+        line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getNPossiblePeptides(enzyme) + SEPARATOR;
+        line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence().length() + SEPARATOR;
 
         try {
             line += probabilities.getProteinProbabilityScore() + SEPARATOR
@@ -248,12 +249,13 @@ public class CsvExporter {
             line += "0" + SEPARATOR;
         }
 
-            if (probabilities.isValidated()) {
-                line += "1" + SEPARATOR;
-            } else {
-                line += "0" + SEPARATOR;
-            }
-            line += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
+        if (probabilities.isValidated()) {
+            line += "1" + SEPARATOR;
+        } else {
+            line += "0" + SEPARATOR;
+        }
+        
+        line += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
 
         line += "\n";
         return line;
@@ -303,19 +305,19 @@ public class CsvExporter {
         line += nSpectraValidated + SEPARATOR;
         probabilities = (PSParameter) identification.getMatchParameter(peptideKey, probabilities);
 
-            line += probabilities.getPeptideProbabilityScore() + SEPARATOR
-                    + probabilities.getPeptideProbability() + SEPARATOR;
+        line += probabilities.getPeptideProbabilityScore() + SEPARATOR
+                + probabilities.getPeptideProbability() + SEPARATOR;
 
         if (peptideMatch.isDecoy()) {
             line += "1" + SEPARATOR;
         } else {
             line += "0" + SEPARATOR;
         }
-            if (probabilities.isValidated()) {
-                line += "1";
-            } else {
-                line += "0";
-            }
+        if (probabilities.isValidated()) {
+            line += "1";
+        } else {
+            line += "0";
+        }
         line += "\n";
 
         return line;
@@ -330,7 +332,7 @@ public class CsvExporter {
     private String getSpectrumLine(String spectrumKey) throws Exception {
 
         String line = "";
-        
+
         SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
 
         Peptide bestAssumption = spectrumMatch.getBestAssumption().getPeptide();
@@ -403,8 +405,8 @@ public class CsvExporter {
         PSParameter probabilities = new PSParameter();
         probabilities = (PSParameter) identification.getMatchParameter(spectrumKey, probabilities);
 
-            line += probabilities.getPsmProbabilityScore() + SEPARATOR
-                    + probabilities.getPsmProbability() + SEPARATOR;
+        line += probabilities.getPsmProbabilityScore() + SEPARATOR
+                + probabilities.getPsmProbability() + SEPARATOR;
 
         if (spectrumMatch.getBestAssumption().isDecoy()) {
             line += "1" + SEPARATOR;
@@ -412,11 +414,11 @@ public class CsvExporter {
             line += "0" + SEPARATOR;
         }
 
-            if (probabilities.isValidated()) {
-                line += "1";
-            } else {
-                line += "0";
-            }
+        if (probabilities.isValidated()) {
+            line += "1";
+        } else {
+            line += "0";
+        }
 
         line += "\n";
 

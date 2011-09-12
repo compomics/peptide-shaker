@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.export;
 
 import com.compomics.util.experiment.biology.Peptide;
@@ -22,16 +18,14 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 /**
  * This class will generate the output as requested by the user
  *
- * @author marc
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class FeaturesGenerator {
 
@@ -58,7 +52,7 @@ public class FeaturesGenerator {
 
     /**
      * Constructor
-     * @param identification the identification to get the data from
+     * @param peptideShakerGUI
      */
     public FeaturesGenerator(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
@@ -69,18 +63,20 @@ public class FeaturesGenerator {
      * Returns the desired protein output based on the elements needed as provided in arguments
      * 
      * @param progressDialog the progress dialog (can be null)
+     * @param proteinKeys 
      * @param onlyValidated
      * @param accession
      * @param piDetails
      * @param description
      * @param nPeptides
      * @param emPAI
+     * @param sequenceCoverage 
      * @param nSpectra
      * @param nsaf
      * @param score
      * @param confidence
      * @return
-     * @throws IOException 
+     * @throws Exception  
      */
     public String getProteinsOutput(ProgressDialogX progressDialog, ArrayList<String> proteinKeys, boolean onlyValidated, boolean accession, boolean piDetails,
             boolean description, boolean nPeptides, boolean emPAI, boolean sequenceCoverage, boolean nSpectra, boolean nsaf,
@@ -109,13 +105,13 @@ public class FeaturesGenerator {
             result += "Sequence Coverage" + SEPARATOR;
         }
         if (nPeptides) {
-            result += "# validated peptides" + SEPARATOR;
+            result += "#Validated Peptides" + SEPARATOR;
         }
         if (emPAI) {
             result += "emPAI" + SEPARATOR;
         }
         if (nSpectra) {
-            result += "# validated spectra" + SEPARATOR;
+            result += "#Validated Spectra" + SEPARATOR;
         }
         if (nsaf) {
             result += "NSAF" + SEPARATOR;
@@ -162,7 +158,7 @@ public class FeaturesGenerator {
                     result += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR;
                 }
                 if (sequenceCoverage) {
-                    peptideShakerGUI.estimateSequenceCoverage(proteinMatch, sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence());
+                    result += peptideShakerGUI.estimateSequenceCoverage(proteinMatch, sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence()) + SEPARATOR;
                 }
                 if (nPeptides || emPAI) {
                     Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
@@ -240,15 +236,18 @@ public class FeaturesGenerator {
      * @param peptideKeys
      * @param onlyValidated
      * @param accession
+     * @param location 
      * @param sequence
      * @param modifications
-     * @param locations
      * @param nSpectra
+     * @param ptmLocations 
      * @param score
      * @param confidence
-     * @return 
+     * @return
+     * @throws Exception  
      */
-    public String getPeptidesOutput(ProgressDialogX progressDialog, ArrayList<String> peptideKeys, boolean onlyValidated, boolean accession, boolean location, boolean sequence, boolean modifications, boolean ptmLocations,
+    public String getPeptidesOutput(ProgressDialogX progressDialog, ArrayList<String> peptideKeys, boolean onlyValidated, boolean accession,
+            boolean location, boolean sequence, boolean modifications, boolean ptmLocations,
             boolean nSpectra, boolean score, boolean confidence) throws Exception {
 
         if (peptideKeys == null) {
@@ -272,10 +271,10 @@ public class FeaturesGenerator {
         }
         if (modifications || ptmLocations) {
             result += "Variable Modification" + SEPARATOR;
-            result += "Modification location" + SEPARATOR;
+            result += "Modification Location" + SEPARATOR;
         }
         if (nSpectra) {
-            result += "# validated spectra" + SEPARATOR;
+            result += "#Validated Spectra" + SEPARATOR;
         }
         if (score) {
             result += "Score" + SEPARATOR;
@@ -319,7 +318,7 @@ public class FeaturesGenerator {
                         int index = tempSequence.indexOf(peptide.getSequence());
                         while (index >= 0 && tempSequence.length() > 1) {
                             positions.add(index);
-                            tempSequence = tempSequence.substring(index+peptide.getSequence().length());
+                            tempSequence = tempSequence.substring(index + peptide.getSequence().length());
                             index = tempSequence.indexOf(peptide.getSequence());
                         }
                         boolean first = true;
@@ -408,7 +407,6 @@ public class FeaturesGenerator {
      * @param score
      * @param confidence
      * @return
-     * @throws IOException
      * @throws Exception 
      */
     public String getPSMsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean onlyValidated, boolean accessions, boolean sequence, boolean modification,
@@ -432,10 +430,10 @@ public class FeaturesGenerator {
         }
         if (modification || location) {
             result += "Variable Modification(s)" + SEPARATOR;
-            result += "Modification location" + SEPARATOR;
+            result += "Modification Location" + SEPARATOR;
         }
         if (file) {
-            result += "Spectrum file" + SEPARATOR;
+            result += "Spectrum File" + SEPARATOR;
         }
         if (title) {
             result += "Spectrum Title" + SEPARATOR;
@@ -445,10 +443,10 @@ public class FeaturesGenerator {
             result += "Precursor Charge" + SEPARATOR;
             result += "Precursor Retention Time" + SEPARATOR;
             result += "Peptide Theoretic Mass" + SEPARATOR;
-            result += "Mass Error [ppm]";
+            result += "Mass Error [ppm]" + SEPARATOR;
         }
         if (score) {
-            result += "score" + SEPARATOR;
+            result += "Score" + SEPARATOR;
         }
         if (confidence) {
             result += "Confidence" + SEPARATOR;
@@ -545,6 +543,8 @@ public class FeaturesGenerator {
      * Returns the assumption output based on the given arguments
      * 
      * @param progressDialog the progress dialog (can be null)
+     * @param psmKeys 
+     * @param onlyValidated 
      * @param accession
      * @param sequence
      * @param modifications
@@ -555,10 +555,10 @@ public class FeaturesGenerator {
      * @param scores
      * @param confidence
      * @return
-     * @throws IOException
      * @throws Exception 
      */
-    public String getAssumptionsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean onlyValidated, boolean accession, boolean sequence, boolean modifications, boolean locations,
+    public String getAssumptionsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean onlyValidated,
+            boolean accession, boolean sequence, boolean modifications, boolean locations,
             boolean file, boolean title, boolean precursor, boolean scores, boolean confidence) throws Exception {
 
         if (psmKeys == null) {
@@ -570,7 +570,7 @@ public class FeaturesGenerator {
         }
 
         String result = "";
-        result += "Search engine" + SEPARATOR;
+        result += "Search Engine" + SEPARATOR;
         result += "Rank" + SEPARATOR;
         if (accession) {
             result += "Accession" + SEPARATOR;
