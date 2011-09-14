@@ -15,6 +15,7 @@ import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
 import uk.ac.ebi.kraken.interfaces.uniprot.comments.CommentType;
 import uk.ac.ebi.kraken.uuw.services.remoting.EntryIterator;
 import uk.ac.ebi.kraken.uuw.services.remoting.Query;
+import uk.ac.ebi.kraken.uuw.services.remoting.RemoteDataAccessException;
 import uk.ac.ebi.kraken.uuw.services.remoting.UniProtJAPI;
 import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryBuilder;
 import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryService;
@@ -738,8 +739,13 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                             proteinNameJTextField.setText("Unknown");
                             geneNameJTextField.setText("Unknown");
                             taxonomyJTextField.setText("Unknown");
+                            descriptionJTextArea.setText("Unknown");
                         }
                     } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (RemoteDataAccessException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
 
