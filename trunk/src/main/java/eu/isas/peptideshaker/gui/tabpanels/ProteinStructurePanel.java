@@ -1126,8 +1126,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 for (int j = 0; j < chains.length; j++) {
 
                     XYDataPoint[] temp = new XYDataPoint[2];
-                    temp[0] = new XYDataPoint(chains[j].getStart_block(), chains[j].getEnd_block());
-                    temp[1] = new XYDataPoint(0, proteinSequenceLength);
+                    temp[0] = new XYDataPoint(chains[j].getStart_protein(), chains[j].getEnd_protein());
+                    temp[1] = new XYDataPoint(1, proteinSequenceLength);
 
                     ((DefaultTableModel) pdbChainsJTable.getModel()).addRow(new Object[]{
                                 (j + 1),
@@ -1215,7 +1215,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     if (ribbonModel) {
                         jmolPanel.getViewer().evalString("select all; ribbon only;");
                     } else if (backboneModel) {
-                        jmolPanel.getViewer().evalString("select all; backbone only;");
+                        jmolPanel.getViewer().evalString("select all; backbone only; backbone 100;");
                     }
                     spinModel(spinModel);
                     jmolStructureShown = true;
@@ -2075,7 +2075,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             if (ribbonModel) {
                 jmolPanel.getViewer().evalString("select all; ribbon; backbone off");
             } else if (backboneModel) {
-                jmolPanel.getViewer().evalString("select all; backbone; ribbon off");
+                jmolPanel.getViewer().evalString("select all; backbone 100; ribbon off");
             }
         }
     }
@@ -2214,20 +2214,22 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         for (int i = 0; i < peptideTable.getRowCount(); i++) {
             String peptideKey = peptideTableMap.get(getPeptideKey(i));
             String peptideSequence = Peptide.getSequence(peptideKey);
-            String tempSequence = chainSequence;
+            String tempSequence = proteinSequence;
 
             while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
                 int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
                 int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
                 jmolPanel.getViewer().evalString(
-                        "select resno >=" + peptideTempStart
-                        + " and resno <=" + peptideTempEnd
+                        "select resno >=" + (peptideTempStart - chains[selectedChainIndex - 1].getDifference())
+                        + " and resno <=" + (peptideTempEnd - chains[selectedChainIndex - 1].getDifference())
                         + " and chain = " + currentChain + "; color green");
 
-                tempSequence = chainSequence.substring(0, peptideTempEnd - 1);
+                tempSequence = proteinSequence.substring(0, peptideTempEnd - 1);
 
-                peptideTable.setValueAt(true, i, peptideTable.getColumn("PDB").getModelIndex());
+                if (chainSequence.indexOf(peptideSequence) != -1) {
+                    peptideTable.setValueAt(true, i, peptideTable.getColumn("PDB").getModelIndex());
+                }
             }
         }
 
@@ -2235,7 +2237,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         // highlight the selected peptide
         String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
         String peptideSequence = Peptide.getSequence(peptideKey);
-        String tempSequence = chainSequence;
+        String tempSequence = proteinSequence;
 
         while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
 
@@ -2243,11 +2245,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
 
             jmolPanel.getViewer().evalString(
-                    "select resno >=" + peptideTempStart
-                    + " and resno <=" + peptideTempEnd
+                    "select resno >=" + (peptideTempStart - chains[selectedChainIndex - 1].getDifference())
+                    + " and resno <=" + (peptideTempEnd - chains[selectedChainIndex - 1].getDifference())
                     + " and chain = " + currentChain + "; color blue");
 
-            tempSequence = chainSequence.substring(0, peptideTempEnd - 1);
+            tempSequence = proteinSequence.substring(0, peptideTempEnd - 1);
         }
 
 
@@ -2259,7 +2261,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         for (int i = 0; i < peptideTable.getRowCount(); i++) {
             peptideKey = peptideTableMap.get(getPeptideKey(i));
             peptideSequence = Peptide.getSequence(peptideKey);
-            tempSequence = chainSequence;
+            tempSequence = proteinSequence;
 
             ArrayList<ModificationMatch> modifications = new ArrayList<ModificationMatch>();
 
@@ -2273,7 +2275,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
                 int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
                 int peptideTempEnd = peptideTempStart + peptideSequence.length() - 1;
-
+  
                 int peptideIndex = 0;
 
                 for (int j = peptideTempStart; j < peptideTempEnd; j++) {
@@ -2285,13 +2287,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                         modifications.get(k).getTheoreticPtm().getName());
 
                                 jmolPanel.getViewer().evalString(
-                                        "select resno =" + j
+                                        "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())
                                         + " and chain = " + currentChain + "; color ["
                                         + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "]");
 
                                 if (showModificationLabels) {
                                     jmolPanel.getViewer().evalString(
-                                            "select resno =" + j
+                                            "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())
                                             + " and chain = " + currentChain + " and *.ca; color ["
                                             + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "];"
                                             + "label " + modifications.get(k).getTheoreticPtm().getName());
@@ -2303,10 +2305,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     peptideIndex++;
                 }
 
-                tempSequence = chainSequence.substring(0, peptideTempEnd - 1);
+                tempSequence = proteinSequence.substring(0, peptideTempEnd - 1);
             }
         }
 
+        // resort the peptide table, required if sorted on the pdb column and the structure is changed
+        peptideTable.getRowSorter().allRowsChanged();
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
