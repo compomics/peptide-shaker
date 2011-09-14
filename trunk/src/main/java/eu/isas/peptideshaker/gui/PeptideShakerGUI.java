@@ -29,6 +29,7 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FeaturesPreferencesDialog;
@@ -91,6 +92,10 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDialogParent {
 
+    /**
+     * The currently selected protein accession number.
+     */
+    private String selectedProteinAccession = null;
     /**
      * The Overview tab index.
      */
@@ -1548,7 +1553,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // make sure that the same protein and peptide are selected in both 
         // the overview and protein structure tabs
-        if (selectedIndex == 0) {
+        if (selectedIndex == OVER_VIEW_TAB_INDEX) {
 
             if (selectedProteinIndex != -1) {
 
@@ -1588,7 +1593,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     });
                 }
             }
-        } else if (selectedIndex == 3) {
+        } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
 
             if (selectedProteinIndex != -1) {
 
@@ -1642,6 +1647,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 }
             }
         }
+        
+        // update the basic protein annotation
+        if (selectedIndex == ANNOTATION_TAB_INDEX) {
+            annotationPanel.updateBasicProteinAnnotation(selectedProteinAccession);
+        }
 
         // move the spectrum annotation menu bar and set the intensity slider value
         if (selectedIndex == OVER_VIEW_TAB_INDEX) {
@@ -1655,10 +1665,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
         }
 
-        updateAnnotations();
+        updateSpectrumAnnotations();
 
         // disable the protein filter option if a tab other than the overview tab is selected
-        proteinFilterJMenuItem.setEnabled(selectedIndex == 0);
+        proteinFilterJMenuItem.setEnabled(selectedIndex == OVER_VIEW_TAB_INDEX);
     }//GEN-LAST:event_allTabsJTabbedPaneStateChanged
 
     /**
@@ -2459,7 +2469,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
     /**
      * Updates the annotations in the selected tab.
      */
-    public void updateAnnotations() {
+    public void updateSpectrumAnnotations() {
         
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
@@ -2853,7 +2863,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
      * @param selectedProteinAccession      the selected protein accession number
      */
     public void setSelectedProteinAccession(String selectedProteinAccession) {
-        annotationPanel.setAccessionNumber(selectedProteinAccession);
+        this.selectedProteinAccession = selectedProteinAccession;
     }
 
     /**
@@ -2923,14 +2933,14 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
             if (sequenceFactory.getHeader(proteinAccession) != null) {
 
                 // try to find the database from the SequenceDatabase
-                String database = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
+                DatabaseType databaseType = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
 
                 // create the database link
-                if (database != null) {
+                if (databaseType != null) {
 
                     // @TODO: support more databases
 
-                    if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
+                    if (databaseType == DatabaseType.IPI || databaseType == DatabaseType.UniProt) {
                         accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(proteinAccession)
                                 + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
                                 + proteinAccession + "</font></a></html>";
@@ -2969,14 +2979,14 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
                 if (!SequenceFactory.isDecoy(proteins.get(i)) && sequenceFactory.getHeader(proteinAccession) != null) {
 
                     // try to find the database from the SequenceDatabase
-                    String database = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
+                    DatabaseType database = sequenceFactory.getHeader(proteinAccession).getDatabaseType();
 
                     // create the database link
                     if (database != null) {
 
                         // @TODO: support more databases
 
-                        if (database.equalsIgnoreCase("IPI") || database.equalsIgnoreCase("UNIPROT")) {
+                        if (database == DatabaseType.IPI || database == DatabaseType.UniProt) {
                             accessionNumberWithLink += "<a href=\"" + getUniProtAccessionLink(proteinAccession)
                                     + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
                                     + proteinAccession + "</font></a>, ";
@@ -3680,7 +3690,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
         annotationPreferences.setShowBars(barsCheckBoxMenuItem.isSelected());
         annotationPreferences.setIntensityIonTable(intensityIonTableRadioButtonMenuItem.isSelected());
 
-        updateAnnotations();
+        updateSpectrumAnnotations();
         setDataSaved(false);
     }
 

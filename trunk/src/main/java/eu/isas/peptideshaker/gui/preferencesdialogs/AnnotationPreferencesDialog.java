@@ -532,7 +532,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         }
 
         peptideShakerGUI.setAnnotationPreferences(annotationPreferences);
-        peptideShakerGUI.updateAnnotations();
+        peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
