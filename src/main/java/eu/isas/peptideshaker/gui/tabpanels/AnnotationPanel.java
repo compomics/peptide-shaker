@@ -1,9 +1,23 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
+import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import javax.swing.JOptionPane;
+import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
+import uk.ac.ebi.kraken.interfaces.uniprot.comments.CommentType;
+import uk.ac.ebi.kraken.uuw.services.remoting.EntryIterator;
+import uk.ac.ebi.kraken.uuw.services.remoting.Query;
+import uk.ac.ebi.kraken.uuw.services.remoting.UniProtJAPI;
+import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryBuilder;
+import uk.ac.ebi.kraken.uuw.services.remoting.UniProtQueryService;
 
 /**
  * This tab contains the basic protein annotation and links to other 
@@ -11,8 +25,16 @@ import java.io.IOException;
  * 
  * @author Harald Barsnes
  */
-public class AnnotationPanel extends javax.swing.JPanel {
+public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialogParent {
 
+    /**
+     * The current protein accession number.
+     */
+    private String currentAccessionNumber = "";
+    /**
+     * A progress dialog.
+     */
+    private ProgressDialogX progressDialog;
     /**
      * The PeptideShakerGUI parent.
      */
@@ -96,25 +118,21 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
         proteinNameJTextField.setEditable(false);
         proteinNameJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        proteinNameJTextField.setText("(not yet implemented)");
 
         jLabel4.setText("Gene Name(s):");
 
         geneNameJTextField.setEditable(false);
         geneNameJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        geneNameJTextField.setText("(not yet implemented)");
 
         jLabel8.setText("Taxonomy:");
 
         taxonomyJTextField.setEditable(false);
         taxonomyJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        taxonomyJTextField.setText("(not yet implemented)");
 
         descriptionJTextArea.setColumns(20);
         descriptionJTextArea.setEditable(false);
         descriptionJTextArea.setLineWrap(true);
         descriptionJTextArea.setRows(5);
-        descriptionJTextArea.setText("(not yet implemented)");
         descriptionJTextArea.setWrapStyleWord(true);
         jScrollPane1.setViewportView(descriptionJTextArea);
 
@@ -122,7 +140,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
 
         databaseJTextField.setEditable(false);
         databaseJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        databaseJTextField.setText("(not yet implemented)");
 
         javax.swing.GroupLayout annotationLinksJPanelLayout = new javax.swing.GroupLayout(annotationLinksJPanel);
         annotationLinksJPanel.setLayout(annotationLinksJPanelLayout);
@@ -529,7 +546,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
     private void loadUniProtJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadUniProtJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://www.uniprot.org/uniprot/" + accessionNumberJTextField.getText());
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR)); 
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadUniProtJButtonActionPerformed
 
     /**
@@ -540,7 +557,7 @@ public class AnnotationPanel extends javax.swing.JPanel {
     private void loadReactomeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadReactomeJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         BareBonesBrowserLaunch.openURL("http://www.reactome.org/cgi-bin/link?SOURCE=UNIPROT&ID=" + accessionNumberJTextField.getText());
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR)); 
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadReactomeJButtonActionPerformed
 
     /**
@@ -597,7 +614,6 @@ public class AnnotationPanel extends javax.swing.JPanel {
         BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/interpro/ISearch?query=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadInterProJButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField accessionNumberJTextField;
     private javax.swing.JPanel annotationLinksJPanel;
@@ -641,17 +657,102 @@ public class AnnotationPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Set the current accession number.
+     * Updates the basic protein annotation information.
      * 
-     * @param accessionNumber the current accession number
+     * @param aAccessionNumber the new accession number
      */
-    public void setAccessionNumber(String accessionNumber) {
-        accessionNumberJTextField.setText(accessionNumber);
-        
-        try {
-            databaseJTextField.setText(sequenceFactory.getProtein(accessionNumber).getDatabaseType());
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void updateBasicProteinAnnotation(String aAccessionNumber) {
+
+        // only update if new accession number
+        if (aAccessionNumber != null && !currentAccessionNumber.equalsIgnoreCase(aAccessionNumber)) {
+
+            currentAccessionNumber = aAccessionNumber;
+            accessionNumberJTextField.setText(currentAccessionNumber);
+            
+            progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setTitle("Loading Basic Protein Annotation. Please Wait...");
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("BasicProteinDetailsThread") {
+
+                @Override
+                public void run() {
+
+                    try {
+                        Protein currentProtein = sequenceFactory.getProtein(currentAccessionNumber);
+                        DatabaseType databaseType = currentProtein.getDatabaseType();
+
+                        databaseJTextField.setText(databaseType.toString());
+
+                        if (databaseType == DatabaseType.UniProt) {
+
+                            UniProtQueryService queryService = UniProtJAPI.factory.getUniProtQueryService();
+                            ArrayList<String> accessionNumbers = new ArrayList<String>();
+                            accessionNumbers.add(currentAccessionNumber);
+
+                            Query proteinQuery = UniProtQueryBuilder.buildIDListQuery(accessionNumbers);
+                            EntryIterator<UniProtEntry> entries = queryService.getEntryIterator(proteinQuery);
+
+                            Iterator<UniProtEntry> iterator = entries.iterator();
+
+                            int counter = 0;
+
+                            if (iterator.hasNext()) {
+
+                                UniProtEntry uniProtEntry = iterator.next();
+
+                                proteinNameJTextField.setText(uniProtEntry.getUniProtId().toString());
+                                geneNameJTextField.setText(uniProtEntry.getGenes().get(0).getGeneName().toString());
+
+                                if (uniProtEntry.getOrganism().hasCommonName()) {
+                                    taxonomyJTextField.setText(uniProtEntry.getOrganism().getCommonName().toString());
+                                } else {
+                                    taxonomyJTextField.setText(uniProtEntry.getOrganism().getScientificName().toString());
+                                }
+
+                                //descriptionJTextArea.setText("Recommended Name: " + uniProtEntry.getProteinDescription().getRecommendedName());
+
+                                descriptionJTextArea.setText(uniProtEntry.getComments(CommentType.FUNCTION).get(0).toString());
+                                descriptionJTextArea.setCaretPosition(0);
+
+                                counter++;
+                            }
+
+                            if (iterator.hasNext()) {
+                                counter++;
+                            }
+
+                            if (counter > 1) {
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "UniProt Error", "The accession number resulted in more than 1 hit!", JOptionPane.WARNING_MESSAGE);
+                            } else if (counter == 0) {
+                                JOptionPane.showMessageDialog(peptideShakerGUI, "UniProt Error", "The accession number resulted in 0 hits!", JOptionPane.WARNING_MESSAGE);
+                            }
+                        } else {
+                            proteinNameJTextField.setText("Unknown");
+                            geneNameJTextField.setText("Unknown");
+                            taxonomyJTextField.setText("Unknown");
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                }
+            }.start();
         }
+    }
+
+    @Override
+    public void cancelProgress() {
+        // do nothing??
+        // @TODO: is this correct??
     }
 }

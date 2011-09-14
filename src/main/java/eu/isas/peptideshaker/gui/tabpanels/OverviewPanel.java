@@ -1373,7 +1373,7 @@ private void spectrumJTabbedPaneMouseWheelMoved(java.awt.event.MouseWheelEvent e
      */
 private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
     peptideShakerGUI.getAnnotationPreferences().setAnnotationLevel(intensitySlider.getValue() / 100.0);
-    peptideShakerGUI.updateAnnotations();
+    peptideShakerGUI.updateSpectrumAnnotations();
     peptideShakerGUI.setDataSaved(false);
 }//GEN-LAST:event_intensitySliderStateChanged
 
@@ -1520,7 +1520,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      */
     private void accuracySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_accuracySliderStateChanged
         peptideShakerGUI.getAnnotationPreferences().setFragmentIonAccuracy((accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
-        peptideShakerGUI.updateAnnotations();
+        peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
     }//GEN-LAST:event_accuracySliderStateChanged
 

@@ -15,6 +15,7 @@ import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.gui.WaitingDialog;
@@ -149,7 +150,7 @@ public class FileImporter {
             sequenceFactory.loadFastaFile(fastaFile, waitingDialog.getSecondaryProgressBar());
 
             String firstAccession = sequenceFactory.getAccessions().get(0);
-            if (!sequenceFactory.getHeader(firstAccession).getDatabaseType().equalsIgnoreCase("UniProt")) {
+            if (sequenceFactory.getHeader(firstAccession).getDatabaseType() != DatabaseType.UniProt) {
                 JOptionPane.showMessageDialog(waitingDialog,
                         "We strongly recommend the use of UniProt accession numbers.\n"
                         + "Some features will be limited if using other databases.",

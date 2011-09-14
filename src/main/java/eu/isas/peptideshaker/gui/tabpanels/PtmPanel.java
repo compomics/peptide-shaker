@@ -1203,7 +1203,7 @@ private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) 
      */
 private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
     peptideShakerGUI.getAnnotationPreferences().setAnnotationLevel(((Integer) intensitySlider.getValue()) / 100.0);
-    peptideShakerGUI.updateAnnotations();
+    peptideShakerGUI.updateSpectrumAnnotations();
     peptideShakerGUI.setDataSaved(false);
 }//GEN-LAST:event_intensitySliderStateChanged
 
