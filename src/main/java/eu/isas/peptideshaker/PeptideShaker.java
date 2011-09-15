@@ -205,15 +205,6 @@ public class PeptideShaker {
             e.printStackTrace();
         }
 
-        proteinMap = new ProteinMap();
-
-        try {
-            fillProteinMap(waitingDialog);
-        } catch (Exception e) {
-            e.printStackTrace();
-            waitingDialog.appendReport("An error occurred while working on the identification. See the log file for more details.");
-        }
-
         proteinMap.estimateProbabilities();
         attachProteinProbabilities();
 
@@ -975,6 +966,7 @@ public class PeptideShaker {
         }
 
         int nSolved = toRemove.size();
+        int nGroups = 0;
         int nLeft = 0;
         String mainKey = null;
         boolean similarityFound, allSimilar;
@@ -1017,12 +1009,15 @@ public class PeptideShaker {
                 }
                 if (!similarityFound) {
                     psParameter.setGroupClass(PSParameter.UNRELATED);
+                    nGroups++;
                     nLeft++;
                 } else if (!allSimilar) {
                     psParameter.setGroupClass(PSParameter.ISOFORMS_UNRELATED);
+                    nGroups++;
                     nSolved++;
                 } else {
                     psParameter.setGroupClass(PSParameter.ISOFORMS);
+                    nGroups++;
                     nSolved++;
                 }
             }
@@ -1036,7 +1031,7 @@ public class PeptideShaker {
         }
 
         if (waitingDialog != null) {
-            waitingDialog.appendReport(nSolved + " conflicts resolved. " + nLeft + " protein groups remaining.");
+            waitingDialog.appendReport(nSolved + " conflicts resolved. " + nGroups + " protein groups remaining (" + nLeft + " suspicious).");
         }
     }
 
