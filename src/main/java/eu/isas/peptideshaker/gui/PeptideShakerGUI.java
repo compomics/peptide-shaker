@@ -2162,6 +2162,9 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
                     }
 
                     allTabsJTabbedPaneStateChanged(null);
+                    
+                    // make sure that all panels are looking the way they should
+                    repaintPanels();
 
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
