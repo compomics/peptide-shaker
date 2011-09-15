@@ -21,6 +21,7 @@ import com.compomics.util.gui.spectrum.MassErrorBubblePlot;
 import com.compomics.util.gui.spectrum.MassErrorPlot;
 import com.compomics.util.gui.spectrum.SequenceFragmentationPanel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
+import eu.isas.peptideshaker.gui.ExportFeatureDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
@@ -211,6 +212,11 @@ public class OverviewPanel extends javax.swing.JPanel {
         peptideTable.getColumn("Start").setMaxWidth(50);
         peptideTable.getColumn("End").setMinWidth(50);
         peptideTable.getColumn("End").setMaxWidth(50);
+        
+        proteinTable.getColumn("Confidence").setMaxWidth(90);
+        proteinTable.getColumn("Confidence").setMinWidth(90);
+        peptideTable.getColumn("Confidence").setMaxWidth(90);
+        peptideTable.getColumn("Confidence").setMinWidth(90);
 
         // the validated column
         proteinTable.getColumn("").setMaxWidth(30);
@@ -1338,7 +1344,7 @@ private void spectrumJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) 
 private void spectrumJTabbedPaneMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumJTabbedPaneMouseWheelMoved
 
     // @TODO: figure out why the strange special cases are needed... if not included the slider gets stuck at the given values
-    
+
     if (evt.isAltDown()) {
         if (evt.getWheelRotation() > 0) { // Down
             intensitySlider.setValue(intensitySlider.getValue() - 1);
@@ -1395,64 +1401,88 @@ private void coverageTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
 
     if (currentProteinSequence != null) {
 
-        int residueNumber = convertPointToResidueNumber(evt.getPoint().getX());
+        if (evt.getButton() == MouseEvent.BUTTON1) {
 
-        ArrayList<Integer> peptideIndexes = new ArrayList<Integer>();
+            int residueNumber = convertPointToResidueNumber(evt.getPoint().getX());
 
-        for (int i = 0; i < peptideTable.getRowCount(); i++) {
-            if (residueNumber >= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex())
-                    && residueNumber <= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex())
-                    && (Boolean) peptideTable.getValueAt(i, peptideTable.getColumnCount() - 1)) {
-                peptideIndexes.add(i);
+            ArrayList<Integer> peptideIndexes = new ArrayList<Integer>();
+
+            for (int i = 0; i < peptideTable.getRowCount(); i++) {
+                if (residueNumber >= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex())
+                        && residueNumber <= (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("End").getModelIndex())
+                        && (Boolean) peptideTable.getValueAt(i, peptideTable.getColumnCount() - 1)) {
+                    peptideIndexes.add(i);
+                }
             }
-        }
 
-        if (!peptideIndexes.isEmpty()) {
+            if (!peptideIndexes.isEmpty()) {
 
-            if (peptideIndexes.size() == 1) {
-                peptideTable.setRowSelectionInterval(peptideIndexes.get(0), peptideIndexes.get(0));
-                peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideIndexes.get(0), peptideIndexes.get(0), false));
-                peptideTableKeyReleased(null);
-            } else {
-                JPopupMenu peptidesPopupMenu = new JPopupMenu();
+                if (peptideIndexes.size() == 1) {
+                    peptideTable.setRowSelectionInterval(peptideIndexes.get(0), peptideIndexes.get(0));
+                    peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideIndexes.get(0), peptideIndexes.get(0), false));
+                    peptideTableKeyReleased(null);
+                } else {
+                    JPopupMenu peptidesPopupMenu = new JPopupMenu();
 
-                // needs to be made final to be used below
-                final ArrayList<Integer> tempPeptideIndexes = peptideIndexes;
+                    // needs to be made final to be used below
+                    final ArrayList<Integer> tempPeptideIndexes = peptideIndexes;
 
-                for (int i = 0; i < tempPeptideIndexes.size(); i++) {
+                    for (int i = 0; i < tempPeptideIndexes.size(); i++) {
 
-                    String peptideKey = peptideTableMap.get(getPeptideKey(tempPeptideIndexes.get(i)));
-                    String modifiedSequence = "";
+                        String peptideKey = peptideTableMap.get(getPeptideKey(tempPeptideIndexes.get(i)));
+                        String modifiedSequence = "";
+
+                        try {
+                            modifiedSequence = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(
+                                    peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), false);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        String text = "<html>" + (i + 1) + ": " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("Start").getModelIndex()) + " - "
+                                + modifiedSequence
+                                + " - " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("End").getModelIndex())
+                                + "</html>";
+
+                        final int tempInt = i;
+
+                        JMenuItem menuItem = new JMenuItem(text);
+                        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                                peptideTable.setRowSelectionInterval(tempPeptideIndexes.get(tempInt), tempPeptideIndexes.get(tempInt));
+                                peptideTable.scrollRectToVisible(peptideTable.getCellRect(tempPeptideIndexes.get(tempInt), tempPeptideIndexes.get(tempInt), false));
+                                peptideTableKeyReleased(null);
+                            }
+                        });
+
+                        peptidesPopupMenu.add(menuItem);
+                    }
+
+                    peptidesPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
+                }
+            }
+        } else if (evt.getButton() == MouseEvent.BUTTON3) {
+            JPopupMenu peptidesPopupMenu = new JPopupMenu();
+
+            JMenuItem menuItem = new JMenuItem("Export Sequence");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+
+                    String proteinKey = proteinTableMap.get(getProteinKey(proteinTable.getSelectedRow()));
 
                     try {
-                        modifiedSequence = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(
-                                peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), false);
+                        Protein protein = sequenceFactory.getProtein(proteinKey);
+                        new ExportFeatureDialog(peptideShakerGUI, true, protein.getSequence(), "Sequence");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
-                    String text = "<html>" + (i + 1) + ": " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("Start").getModelIndex()) + " - "
-                            + modifiedSequence
-                            + " - " + peptideTable.getValueAt(tempPeptideIndexes.get(i), peptideTable.getColumn("End").getModelIndex())
-                            + "</html>";
-
-                    final int tempInt = i;
-
-                    JMenuItem menuItem = new JMenuItem(text);
-                    menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-                            peptideTable.setRowSelectionInterval(tempPeptideIndexes.get(tempInt), tempPeptideIndexes.get(tempInt));
-                            peptideTable.scrollRectToVisible(peptideTable.getCellRect(tempPeptideIndexes.get(tempInt), tempPeptideIndexes.get(tempInt), false));
-                            peptideTableKeyReleased(null);
-                        }
-                    });
-
-                    peptidesPopupMenu.add(menuItem);
                 }
+            });
 
-                peptidesPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
-            }
+            peptidesPopupMenu.add(menuItem);
+            peptidesPopupMenu.show(evt.getComponent(), evt.getX(), evt.getY());
         }
     }
 }//GEN-LAST:event_coverageTableMouseClicked
@@ -1532,7 +1562,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private void accuracySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_accuracySliderMouseWheelMoved
         spectrumJTabbedPaneMouseWheelMoved(evt);
     }//GEN-LAST:event_accuracySliderMouseWheelMoved
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel bubbleAnnotationMenuPanel;

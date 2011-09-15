@@ -201,6 +201,11 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPsmTable.getColumn("Rank").setMaxWidth(65);
         relatedPsmTable.getColumn("Rank").setMinWidth(65);
 
+        peptidesTable.getColumn("Confidence").setMaxWidth(90);
+        peptidesTable.getColumn("Confidence").setMinWidth(90);
+        relatedPeptidesTable.getColumn("Confidence").setMaxWidth(90);
+        relatedPeptidesTable.getColumn("Confidence").setMinWidth(90);
+        
         peptidesTable.getTableHeader().setReorderingAllowed(false);
         relatedPeptidesTable.getTableHeader().setReorderingAllowed(false);
         selectedPsmTable.getTableHeader().setReorderingAllowed(false);

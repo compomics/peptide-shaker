@@ -10,9 +10,11 @@ import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import javax.swing.JOptionPane;
 import uk.ac.ebi.kraken.interfaces.uniprot.UniProtEntry;
-import uk.ac.ebi.kraken.interfaces.uniprot.comments.CommentType;
+import uk.ac.ebi.kraken.interfaces.uniprot.description.FieldType;
+import uk.ac.ebi.kraken.interfaces.uniprot.description.Name;
 import uk.ac.ebi.kraken.uuw.services.remoting.EntryIterator;
 import uk.ac.ebi.kraken.uuw.services.remoting.Query;
 import uk.ac.ebi.kraken.uuw.services.remoting.RemoteDataAccessException;
@@ -73,10 +75,10 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         geneNameJTextField = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         taxonomyJTextField = new javax.swing.JTextField();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        descriptionJTextArea = new javax.swing.JTextArea();
         jLabel16 = new javax.swing.JLabel();
         databaseJTextField = new javax.swing.JTextField();
+        jLabel6 = new javax.swing.JLabel();
+        altProteinNameJTextField = new javax.swing.JTextField();
         annotationLinksJPanel1 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         loadUniProtJButton = new javax.swing.JButton();
@@ -112,35 +114,27 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         jLabel1.setText("Accession Number:");
 
         accessionNumberJTextField.setEditable(false);
-        accessionNumberJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         accessionNumberJTextField.setText("P02768");
 
         jLabel3.setText("Protein Name:");
 
         proteinNameJTextField.setEditable(false);
-        proteinNameJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
-        jLabel4.setText("Gene Name(s):");
+        jLabel4.setText("Gene Name:");
 
         geneNameJTextField.setEditable(false);
-        geneNameJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         jLabel8.setText("Taxonomy:");
 
         taxonomyJTextField.setEditable(false);
-        taxonomyJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-
-        descriptionJTextArea.setColumns(20);
-        descriptionJTextArea.setEditable(false);
-        descriptionJTextArea.setLineWrap(true);
-        descriptionJTextArea.setRows(5);
-        descriptionJTextArea.setWrapStyleWord(true);
-        jScrollPane1.setViewportView(descriptionJTextArea);
 
         jLabel16.setText("Database:");
 
         databaseJTextField.setEditable(false);
-        databaseJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+
+        jLabel6.setText("Alt. Names:");
+
+        altProteinNameJTextField.setEditable(false);
 
         javax.swing.GroupLayout annotationLinksJPanelLayout = new javax.swing.GroupLayout(annotationLinksJPanel);
         annotationLinksJPanel.setLayout(annotationLinksJPanelLayout);
@@ -149,49 +143,53 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             .addGroup(annotationLinksJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel6)
                     .addComponent(jLabel1)
                     .addComponent(jLabel3)
                     .addComponent(jLabel4)
                     .addComponent(jLabel8)
                     .addComponent(jLabel16))
-                .addGap(18, 18, 18)
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(databaseJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
-                    .addComponent(taxonomyJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
-                    .addComponent(geneNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
-                    .addComponent(proteinNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE)
-                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 287, Short.MAX_VALUE))
-                .addGap(31, 31, 31)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
+                .addGap(38, 38, 38)
+                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(databaseJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+                    .addComponent(taxonomyJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+                    .addComponent(geneNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+                    .addComponent(altProteinNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+                    .addComponent(proteinNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
+                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        annotationLinksJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jLabel1, jLabel3, jLabel6, jLabel8});
+
         annotationLinksJPanelLayout.setVerticalGroup(
             annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(annotationLinksJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, annotationLinksJPanelLayout.createSequentialGroup()
-                        .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel1)
-                            .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel3)
-                            .addComponent(proteinNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(geneNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(taxonomyJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(databaseJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel16))))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(proteinNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(altProteinNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(geneNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(taxonomyJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(databaseJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel16))
+                .addContainerGap())
         );
 
         annotationLinksJPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("UniProt - protein knowledgebase"));
@@ -215,7 +213,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadUniProtJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
-                .addContainerGap(341, Short.MAX_VALUE))
+                .addContainerGap(176, Short.MAX_VALUE))
         );
         annotationLinksJPanel1Layout.setVerticalGroup(
             annotationLinksJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -248,7 +246,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadDastyJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel7)
-                .addContainerGap(312, Short.MAX_VALUE))
+                .addContainerGap(133, Short.MAX_VALUE))
         );
         annotationLinksJPanel2Layout.setVerticalGroup(
             annotationLinksJPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -281,7 +279,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadReactomeJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel9)
-                .addContainerGap(343, Short.MAX_VALUE))
+                .addContainerGap(178, Short.MAX_VALUE))
         );
         annotationLinksJPanel3Layout.setVerticalGroup(
             annotationLinksJPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -314,7 +312,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadStringJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel10)
-                .addContainerGap(375, Short.MAX_VALUE))
+                .addContainerGap(210, Short.MAX_VALUE))
         );
         annotationLinksJPanel4Layout.setVerticalGroup(
             annotationLinksJPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -347,7 +345,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadDavidJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel11)
-                .addContainerGap(302, Short.MAX_VALUE))
+                .addContainerGap(123, Short.MAX_VALUE))
         );
         annotationLinksJPanel5Layout.setVerticalGroup(
             annotationLinksJPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -380,7 +378,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadIntActJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel12)
-                .addContainerGap(414, Short.MAX_VALUE))
+                .addContainerGap(235, Short.MAX_VALUE))
         );
         annotationLinksJPanel6Layout.setVerticalGroup(
             annotationLinksJPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -413,7 +411,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadQuickGOJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel13)
-                .addContainerGap(393, Short.MAX_VALUE))
+                .addContainerGap(228, Short.MAX_VALUE))
         );
         annotationLinksJPanel7Layout.setVerticalGroup(
             annotationLinksJPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -446,7 +444,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadInterProJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel14)
-                .addContainerGap(359, Short.MAX_VALUE))
+                .addContainerGap(180, Short.MAX_VALUE))
         );
         annotationLinksJPanel8Layout.setVerticalGroup(
             annotationLinksJPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -461,7 +459,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Annotation - Help"));
         jPanel1.setOpaque(false);
 
-        jLabel2.setText("<html>\nThere are numerous sources of protein information, each covering different aspects of protein properties.<br>\nSome of the most common resources are listed below.\n<br><br>\nTo access the annotations of your protein simply click the button corresponding to the wanted resource.\n<br><br>\nSome resources also allow you to search with a set of proteins. To get the list of all proteins in your project,<br> \ngo to the Export menu and select Features > Protein Accession Numbers. This will provide you with the<br>\nlist of accession numbers that you can copy and paste into any tool. \n<br><br>\nTo querry a resource using multiple proteins, open the wanted resource in your web browser and follow the<br>\nresource's instructions for how to perform the search.\n</html>");
+        jLabel2.setText("<html>\nThere are numerous sources of protein information, each covering different aspects of protein properties.\nSome of the most common resources are listed below.\n<br><br>\nTo access the annotations of your protein simply click the button corresponding to the wanted resource.\n<br><br>\nSome resources also allow you to search with a set of proteins. To get the list of all proteins in your project,\ngo to the Export menu and select Features > Protein Accession Numbers. This will provide you with the\nlist of accession numbers that you can copy and paste into any tool. \n<br><br>\nTo querry a resource using multiple proteins, open the wanted resource in your web browser and follow the\nresource's instructions for how to perform the search.\n</html>");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -469,15 +467,14 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(247, Short.MAX_VALUE))
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 456, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(129, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -489,42 +486,48 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(annotationLinksJPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(annotationLinksJPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(annotationLinksJPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(annotationLinksJPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel8, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(annotationLinksJPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(annotationLinksJPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(annotationLinksJPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(annotationLinksJPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(10, 10, 10))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(annotationLinksJPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(annotationLinksJPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(annotationLinksJPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(annotationLinksJPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(annotationLinksJPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(annotationLinksJPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(annotationLinksJPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(annotationLinksJPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(annotationLinksJPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(annotationLinksJPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(annotationLinksJPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(annotationLinksJPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(annotationLinksJPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(annotationLinksJPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(annotationLinksJPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(annotationLinksJPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(114, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -617,6 +620,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     }//GEN-LAST:event_loadInterProJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField accessionNumberJTextField;
+    private javax.swing.JTextField altProteinNameJTextField;
     private javax.swing.JPanel annotationLinksJPanel;
     private javax.swing.JPanel annotationLinksJPanel1;
     private javax.swing.JPanel annotationLinksJPanel2;
@@ -627,7 +631,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     private javax.swing.JPanel annotationLinksJPanel7;
     private javax.swing.JPanel annotationLinksJPanel8;
     private javax.swing.JTextField databaseJTextField;
-    private javax.swing.JTextArea descriptionJTextArea;
     private javax.swing.JTextField geneNameJTextField;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -640,11 +643,11 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton loadDastyJButton;
     private javax.swing.JButton loadDavidJButton;
     private javax.swing.JButton loadIntActJButton;
@@ -709,7 +712,37 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
 
                                 UniProtEntry uniProtEntry = iterator.next();
 
-                                proteinNameJTextField.setText(uniProtEntry.getUniProtId().toString());
+                                if (uniProtEntry.getProteinDescription().getRecommendedName().getFieldsByType(FieldType.FULL).size() > 0) {
+                                    proteinNameJTextField.setText(uniProtEntry.getProteinDescription().getRecommendedName().getFieldsByType(FieldType.FULL).get(0).getValue());
+                                } else {
+                                    proteinNameJTextField.setText("(not available)");
+                                }
+                                
+                                List<Name> altNames = uniProtEntry.getProteinDescription().getAlternativeNames();
+                                
+                                String altNamesAsString = "";
+                                String altProteinNamesTooltip = "<html>";
+                                
+                                for (int i=0; i<altNames.size(); i++) { 
+                                    if (altNames.get(i).getFieldsByType(FieldType.FULL).size() > 0) {
+                                        altNamesAsString += altNames.get(i).getFieldsByType(FieldType.FULL).get(0).getValue().toString() + ", ";
+                                        altProteinNamesTooltip += altNames.get(i).getFieldsByType(FieldType.FULL).get(0).getValue().toString() + "<br>";
+                                    }    
+                                }
+                                
+                                if (altNamesAsString.endsWith(", ")) {
+                                    altNamesAsString = altNamesAsString.substring(0, altNamesAsString.length() - 2);
+                                }
+                                
+                                if (altNamesAsString.length() > 0) {
+                                    altProteinNamesTooltip += "</html>";
+                                    altProteinNameJTextField.setToolTipText(altProteinNamesTooltip);
+                                    altProteinNameJTextField.setText(altNamesAsString);
+                                } else {
+                                    altProteinNameJTextField.setToolTipText(null);
+                                    altProteinNameJTextField.setText("(not available)");
+                                }
+                                
                                 geneNameJTextField.setText(uniProtEntry.getGenes().get(0).getGeneName().toString());
 
                                 if (uniProtEntry.getOrganism().hasCommonName()) {
@@ -717,11 +750,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                                 } else {
                                     taxonomyJTextField.setText(uniProtEntry.getOrganism().getScientificName().toString());
                                 }
-
-                                //descriptionJTextArea.setText("Recommended Name: " + uniProtEntry.getProteinDescription().getRecommendedName());
-
-                                descriptionJTextArea.setText(uniProtEntry.getComments(CommentType.FUNCTION).get(0).toString());
-                                descriptionJTextArea.setCaretPosition(0);
 
                                 counter++;
                             }
@@ -739,7 +767,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                             proteinNameJTextField.setText("Unknown");
                             geneNameJTextField.setText("Unknown");
                             taxonomyJTextField.setText("Unknown");
-                            descriptionJTextArea.setText("Unknown");
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
