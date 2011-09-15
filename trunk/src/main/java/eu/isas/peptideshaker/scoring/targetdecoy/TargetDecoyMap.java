@@ -50,8 +50,8 @@ public class TargetDecoyMap implements Serializable {
         TargetDecoyPoint point = hitMap.get(score);
         if (point != null) {
             return point.p;
-        } else if (score >= scores.get(scores.size()-1)) {
-            return hitMap.get(scores.get(scores.size()-1)).p;
+        } else if (score >= scores.get(scores.size() - 1)) {
+            return hitMap.get(scores.get(scores.size() - 1)).p;
         } else {
             int indexInf = 0;
             int indexSup = scores.size() - 1;
@@ -116,10 +116,10 @@ public class TargetDecoyMap implements Serializable {
         if (hitMap.get(score).nTarget == 0
                 && hitMap.get(score).nDecoy == 0) {
             hitMap.remove(score);
-            scores = null;
-            nmax = null;
-            windowSize = null;
         }
+        scores = null;
+        nmax = null;
+        windowSize = null;
     }
 
     /**

@@ -4,6 +4,7 @@ import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
@@ -2033,7 +2034,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 sequenceCoverageJPanel.repaint();
             }
         } catch (Exception e) {
-            int debug = 1;
             e.printStackTrace();
         }
     }
@@ -2271,8 +2271,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                 // update the sequence coverage map
                 String proteinKey = proteinTableMap.get(getProteinKey(proteinTable.getSelectedRow()));
+                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
 
-                updateSequenceCoverage(proteinKey);
+                updateSequenceCoverage(proteinMatch.getMainMatch());
 
                 while (psmTable.getRowCount() > 0) {
                     ((DefaultTableModel) psmTable.getModel()).removeRow(0);

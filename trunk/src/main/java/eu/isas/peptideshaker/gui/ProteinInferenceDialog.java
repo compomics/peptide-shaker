@@ -33,7 +33,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     /**
      * The inspected protein match
      */
-    private String inspectedMatch;
+    private ProteinMatch inspectedMatch;
     /**
      * The protein accessions
      */
@@ -83,15 +83,20 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, true);
         this.identification = identification;
         this.peptideShakerGUI = peptideShakerGUI;
-        this.inspectedMatch = inspectedMatch;
+        try {
+            this.inspectedMatch = identification.getProteinMatch(inspectedMatch);
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            this.dispose();
+        }
         accessions = new ArrayList(Arrays.asList(ProteinMatch.getAccessions(inspectedMatch)));
-        
+
         for (String proteinAccession : accessions) {
             if (identification.getProteinIdentification().contains(proteinAccession)) {
                 uniqueMatches.add(proteinAccession);
             }
         }
-        
+
         for (String proteinKey : identification.getProteinIdentification()) {
             if (ProteinMatch.getNProteins(proteinKey) > 1 && !associatedMatches.contains(proteinKey) && !proteinKey.equals(inspectedMatch)) {
                 for (String proteinAccession : accessions) {
@@ -104,7 +109,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         }
 
         initComponents();
-        
+
         // make sure that the scroll panes are see-through
         proteinMatchJScrollPane.getViewport().setOpaque(false);
         uniqueHitsJScrollPane.getViewport().setOpaque(false);
@@ -506,7 +511,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        peptideShakerGUI.updateMainMatch(inspectedMatch, groupClassJComboBox.getSelectedIndex());
+        peptideShakerGUI.updateMainMatch(inspectedMatch.getMainMatch(), groupClassJComboBox.getSelectedIndex());
         peptideShakerGUI.setDataSaved(false);
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
@@ -518,7 +523,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      */
     private void groupClassJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupClassJComboBoxActionPerformed
         PSParameter pSParameter = new PSParameter();
-        pSParameter = (PSParameter) identification.getMatchParameter(inspectedMatch, pSParameter);
+        pSParameter = (PSParameter) identification.getMatchParameter(inspectedMatch.getKey(), pSParameter);
         pSParameter.setGroupClass(groupClassJComboBox.getSelectedIndex());
     }//GEN-LAST:event_groupClassJComboBoxActionPerformed
 
@@ -529,7 +534,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void proteinMatchTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinMatchTableMouseReleased
-        
+
         int row = proteinMatchTable.rowAtPoint(evt.getPoint());
         int column = proteinMatchTable.columnAtPoint(evt.getPoint());
 
@@ -537,16 +542,15 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
             if (column == 1) {
                 try {
-                ProteinMatch proteinMatch = identification.getProteinMatch(inspectedMatch);
-                proteinMatch.setMainMatch(accessions.get(row));
-                identification.setMatchChanged(proteinMatch);
+                    inspectedMatch.setMainMatch(accessions.get(row));
+                    identification.setMatchChanged(inspectedMatch);
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                 }
                 proteinMatchTable.revalidate();
                 proteinMatchTable.repaint();
             } else if (column == 2) {
-                
+
                 // open protein link in web browser
                 if (evt.getButton() == MouseEvent.BUTTON1
                         && ((String) proteinMatchTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
@@ -631,7 +635,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * @param evt
      */
     private void uniqueHitsTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_uniqueHitsTableMouseExited
-       this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_uniqueHitsTableMouseExited
 
     /**
@@ -734,7 +738,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_relatedHitsTableMouseReleased
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JComboBox groupClassJComboBox;
@@ -761,7 +764,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getRowCount() {
-            return ProteinMatch.getNProteins(inspectedMatch);
+            return inspectedMatch.getNProteins();
         }
 
         @Override
@@ -793,13 +796,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return (row + 1);
                 case 1:
-                try {
-                ProteinMatch proteinMatch = identification.getProteinMatch(inspectedMatch);
-                    return proteinMatch.getMainMatch().equals(accessions.get(row));
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                    return "";
-                }
+                    return inspectedMatch.getMainMatch().equals(accessions.get(row));
                 case 2:
                     return peptideShakerGUI.addDatabaseLink(accessions.get(row));
                 case 3:
@@ -867,7 +864,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             switch (column) {
                 case 0:
                     return (row + 1);
-                case 1:              
+                case 1:
                     return peptideShakerGUI.addDatabaseLinks(new ArrayList<String>(Arrays.asList(ProteinMatch.getAccessions(uniqueMatches.get(row)))));
                 case 2:
                     return pSParameter.getProteinScore();
