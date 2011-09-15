@@ -133,6 +133,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         databaseJTextField.setEditable(false);
 
         jLabel6.setText("Alt. Names:");
+        jLabel6.setToolTipText("Alternative Protein Names");
 
         altProteinNameJTextField.setEditable(false);
 
@@ -459,7 +460,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Annotation - Help"));
         jPanel1.setOpaque(false);
 
-        jLabel2.setText("<html>\nThere are numerous sources of protein information, each covering different aspects of protein properties.\nSome of the most common resources are listed below.\n<br><br>\nTo access the annotations of your protein simply click the button corresponding to the wanted resource.\n<br><br>\nSome resources also allow you to search with a set of proteins. To get the list of all proteins in your project,\ngo to the Export menu and select Features > Protein Accession Numbers. This will provide you with the\nlist of accession numbers that you can copy and paste into any tool. \n<br><br>\nTo querry a resource using multiple proteins, open the wanted resource in your web browser and follow the\nresource's instructions for how to perform the search.\n</html>");
+        jLabel2.setText("<html>\nThere are numerous sources of protein information, each covering different aspects of protein properties.\nSome of the most common resources are listed below.\n<br><br>\nTo access the annotations for your protein, simply click the button corresponding to the wanted resource.\n<br><br>\nSome resources also allow you to search with a set of proteins. To get the list of all proteins in your project,\ngo to the <b>Export</b> menu and select <b>Identification Features</b>. This will provide you with the\nlist of accession numbers that you can copy and paste into any tool. \n<br><br>\nTo querry a resource using multiple proteins, open the wanted resource in your web browser and follow the\nresource's instructions for how to perform the search.\n</html>");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

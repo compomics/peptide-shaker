@@ -1475,7 +1475,7 @@ private void coverageTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
 
                     try {
                         Protein protein = sequenceFactory.getProtein(proteinKey);
-                        new ExportFeatureDialog(peptideShakerGUI, true, protein.getSequence(), "Sequence");
+                        new ExportFeatureDialog(peptideShakerGUI, true, protein.getSequence(), "Sequence", true);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

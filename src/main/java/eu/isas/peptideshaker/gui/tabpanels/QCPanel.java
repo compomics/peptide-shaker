@@ -8,13 +8,12 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
-import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.util.ArrayList;
-import javax.swing.SwingConstants;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -79,10 +78,6 @@ public class QCPanel extends javax.swing.JPanel {
         // make the tabs in the spectrum tabbed pane go from right to left
         tabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
-        proteinMetricCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        peptideMetricCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-        psmMetricCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
-
         // Initialize protein QC plot
         NumberAxis proteinYAxis = new NumberAxis("Amount of Proteins");
         NumberAxis proteinMetricAxis = new NumberAxis("protein metric");
@@ -111,20 +106,30 @@ public class QCPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        proteinButtonGroup = new javax.swing.ButtonGroup();
+        peptideButtonGroup = new javax.swing.ButtonGroup();
+        psmButtonGroup = new javax.swing.ButtonGroup();
         qcPanel = new javax.swing.JPanel();
         tabbedPane = new javax.swing.JTabbedPane();
         psmPanel = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        psmMetricCmb = new javax.swing.JComboBox();
         psmQCPlotPanel = new javax.swing.JPanel();
+        proteinPlotTypePanel2 = new javax.swing.JPanel();
+        psmPrecursorMassErrorJRadioButton = new javax.swing.JRadioButton();
+        psmPrecursorChargeJRadioButton = new javax.swing.JRadioButton();
+        psmQcPlotHelpJButton = new javax.swing.JButton();
         peptidePanel = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        peptideMetricCmb = new javax.swing.JComboBox();
         peptideQCPlotPanel = new javax.swing.JPanel();
+        proteinPlotTypePanel1 = new javax.swing.JPanel();
+        peptidesValidatedPsmsJRadioButton = new javax.swing.JRadioButton();
+        peptidesMissedCleavagesJRadioButton = new javax.swing.JRadioButton();
+        peptidesQcPlotHelpJButton = new javax.swing.JButton();
         proteinPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        proteinMetricCmb = new javax.swing.JComboBox();
         proteinQCPlotPanel = new javax.swing.JPanel();
+        proteinPlotTypePanel = new javax.swing.JPanel();
+        proteinSpectrumCountingScoreJRadioButton = new javax.swing.JRadioButton();
+        proteinNumberValidatedPeptidesJRadioButton = new javax.swing.JRadioButton();
+        proteinSequenceCoverageJRadioButton = new javax.swing.JRadioButton();
+        proteinQcPlotHelpJButton = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -135,41 +140,95 @@ public class QCPanel extends javax.swing.JPanel {
 
         psmPanel.setOpaque(false);
 
-        jLabel3.setText("Metric of Interest:");
+        psmQCPlotPanel.setOpaque(false);
+        psmQCPlotPanel.setLayout(new javax.swing.BoxLayout(psmQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        psmMetricCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Precursor Mass Deviation", "Precursor Charge" }));
-        psmMetricCmb.addActionListener(new java.awt.event.ActionListener() {
+        proteinPlotTypePanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Plot Type"));
+        proteinPlotTypePanel2.setOpaque(false);
+
+        psmButtonGroup.add(psmPrecursorMassErrorJRadioButton);
+        psmPrecursorMassErrorJRadioButton.setSelected(true);
+        psmPrecursorMassErrorJRadioButton.setText("Precursor Mass Error");
+        psmPrecursorMassErrorJRadioButton.setIconTextGap(10);
+        psmPrecursorMassErrorJRadioButton.setOpaque(false);
+        psmPrecursorMassErrorJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                psmMetricCmbActionPerformed(evt);
+                psmPrecursorMassErrorJRadioButtonActionPerformed(evt);
             }
         });
 
-        psmQCPlotPanel.setOpaque(false);
-        psmQCPlotPanel.setLayout(new javax.swing.BoxLayout(psmQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+        psmButtonGroup.add(psmPrecursorChargeJRadioButton);
+        psmPrecursorChargeJRadioButton.setText("Precursor Charge");
+        psmPrecursorChargeJRadioButton.setIconTextGap(10);
+        psmPrecursorChargeJRadioButton.setOpaque(false);
+        psmPrecursorChargeJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                psmPrecursorChargeJRadioButtonActionPerformed(evt);
+            }
+        });
+
+        psmQcPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        psmQcPlotHelpJButton.setToolTipText("Help");
+        psmQcPlotHelpJButton.setBorder(null);
+        psmQcPlotHelpJButton.setBorderPainted(false);
+        psmQcPlotHelpJButton.setContentAreaFilled(false);
+        psmQcPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                psmQcPlotHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                psmQcPlotHelpJButtonMouseExited(evt);
+            }
+        });
+        psmQcPlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                psmQcPlotHelpJButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout proteinPlotTypePanel2Layout = new javax.swing.GroupLayout(proteinPlotTypePanel2);
+        proteinPlotTypePanel2.setLayout(proteinPlotTypePanel2Layout);
+        proteinPlotTypePanel2Layout.setHorizontalGroup(
+            proteinPlotTypePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proteinPlotTypePanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(psmPrecursorMassErrorJRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(psmPrecursorChargeJRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 342, Short.MAX_VALUE)
+                .addComponent(psmQcPlotHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        proteinPlotTypePanel2Layout.setVerticalGroup(
+            proteinPlotTypePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinPlotTypePanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(proteinPlotTypePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(psmQcPlotHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinPlotTypePanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(psmPrecursorMassErrorJRadioButton)
+                        .addComponent(psmPrecursorChargeJRadioButton)))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout psmPanelLayout = new javax.swing.GroupLayout(psmPanel);
         psmPanel.setLayout(psmPanelLayout);
         psmPanelLayout.setHorizontalGroup(
             psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(psmPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, psmPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(psmQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
-                    .addGroup(psmPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)
-                        .addComponent(psmMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(psmQCPlotPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 657, Short.MAX_VALUE)
+                    .addComponent(proteinPlotTypePanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         psmPanelLayout.setVerticalGroup(
             psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(psmPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, psmPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(psmMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(psmQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(psmQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                .addComponent(proteinPlotTypePanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -177,41 +236,95 @@ public class QCPanel extends javax.swing.JPanel {
 
         peptidePanel.setOpaque(false);
 
-        jLabel2.setText("Metric of Interest:");
+        peptideQCPlotPanel.setOpaque(false);
+        peptideQCPlotPanel.setLayout(new javax.swing.BoxLayout(peptideQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        peptideMetricCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Validated PSMs", "Missed Cleavages" }));
-        peptideMetricCmb.addActionListener(new java.awt.event.ActionListener() {
+        proteinPlotTypePanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Plot Type"));
+        proteinPlotTypePanel1.setOpaque(false);
+
+        peptideButtonGroup.add(peptidesValidatedPsmsJRadioButton);
+        peptidesValidatedPsmsJRadioButton.setSelected(true);
+        peptidesValidatedPsmsJRadioButton.setText("#Validated PSMs");
+        peptidesValidatedPsmsJRadioButton.setIconTextGap(10);
+        peptidesValidatedPsmsJRadioButton.setOpaque(false);
+        peptidesValidatedPsmsJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                peptideMetricCmbActionPerformed(evt);
+                peptidesValidatedPsmsJRadioButtonActionPerformed(evt);
             }
         });
 
-        peptideQCPlotPanel.setOpaque(false);
-        peptideQCPlotPanel.setLayout(new javax.swing.BoxLayout(peptideQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+        peptideButtonGroup.add(peptidesMissedCleavagesJRadioButton);
+        peptidesMissedCleavagesJRadioButton.setText("Missed Cleavages");
+        peptidesMissedCleavagesJRadioButton.setIconTextGap(10);
+        peptidesMissedCleavagesJRadioButton.setOpaque(false);
+        peptidesMissedCleavagesJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptidesMissedCleavagesJRadioButtonActionPerformed(evt);
+            }
+        });
+
+        peptidesQcPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        peptidesQcPlotHelpJButton.setToolTipText("Help");
+        peptidesQcPlotHelpJButton.setBorder(null);
+        peptidesQcPlotHelpJButton.setBorderPainted(false);
+        peptidesQcPlotHelpJButton.setContentAreaFilled(false);
+        peptidesQcPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                peptidesQcPlotHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                peptidesQcPlotHelpJButtonMouseExited(evt);
+            }
+        });
+        peptidesQcPlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptidesQcPlotHelpJButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout proteinPlotTypePanel1Layout = new javax.swing.GroupLayout(proteinPlotTypePanel1);
+        proteinPlotTypePanel1.setLayout(proteinPlotTypePanel1Layout);
+        proteinPlotTypePanel1Layout.setHorizontalGroup(
+            proteinPlotTypePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proteinPlotTypePanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(peptidesValidatedPsmsJRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(peptidesMissedCleavagesJRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 360, Short.MAX_VALUE)
+                .addComponent(peptidesQcPlotHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        proteinPlotTypePanel1Layout.setVerticalGroup(
+            proteinPlotTypePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinPlotTypePanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(proteinPlotTypePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(peptidesQcPlotHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinPlotTypePanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(peptidesValidatedPsmsJRadioButton)
+                        .addComponent(peptidesMissedCleavagesJRadioButton)))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout peptidePanelLayout = new javax.swing.GroupLayout(peptidePanel);
         peptidePanel.setLayout(peptidePanelLayout);
         peptidePanelLayout.setHorizontalGroup(
             peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(peptidePanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(peptideQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
-                    .addGroup(peptidePanelLayout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(peptideMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(peptideQCPlotPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 657, Short.MAX_VALUE)
+                    .addComponent(proteinPlotTypePanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         peptidePanelLayout.setVerticalGroup(
             peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(peptidePanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(peptideMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(peptideQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(peptideQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                .addComponent(proteinPlotTypePanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -219,41 +332,108 @@ public class QCPanel extends javax.swing.JPanel {
 
         proteinPanel.setOpaque(false);
 
-        jLabel1.setText("Metric of Interest:");
+        proteinQCPlotPanel.setOpaque(false);
+        proteinQCPlotPanel.setLayout(new javax.swing.BoxLayout(proteinQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
 
-        proteinMetricCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Number of Validated Peptides", "Spectrum Counting Score", "Sequence Coverage" }));
-        proteinMetricCmb.addActionListener(new java.awt.event.ActionListener() {
+        proteinPlotTypePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plot Type"));
+        proteinPlotTypePanel.setOpaque(false);
+
+        proteinButtonGroup.add(proteinSpectrumCountingScoreJRadioButton);
+        proteinSpectrumCountingScoreJRadioButton.setText("Spectrum Counting Score");
+        proteinSpectrumCountingScoreJRadioButton.setIconTextGap(10);
+        proteinSpectrumCountingScoreJRadioButton.setOpaque(false);
+        proteinSpectrumCountingScoreJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                proteinMetricCmbActionPerformed(evt);
+                proteinSpectrumCountingScoreJRadioButtonActionPerformed(evt);
             }
         });
 
-        proteinQCPlotPanel.setOpaque(false);
-        proteinQCPlotPanel.setLayout(new javax.swing.BoxLayout(proteinQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+        proteinButtonGroup.add(proteinNumberValidatedPeptidesJRadioButton);
+        proteinNumberValidatedPeptidesJRadioButton.setSelected(true);
+        proteinNumberValidatedPeptidesJRadioButton.setText("#Validated Peptides");
+        proteinNumberValidatedPeptidesJRadioButton.setIconTextGap(10);
+        proteinNumberValidatedPeptidesJRadioButton.setOpaque(false);
+        proteinNumberValidatedPeptidesJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proteinNumberValidatedPeptidesJRadioButtonActionPerformed(evt);
+            }
+        });
+
+        proteinButtonGroup.add(proteinSequenceCoverageJRadioButton);
+        proteinSequenceCoverageJRadioButton.setText("Sequence Coverage");
+        proteinSequenceCoverageJRadioButton.setIconTextGap(10);
+        proteinSequenceCoverageJRadioButton.setOpaque(false);
+        proteinSequenceCoverageJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proteinSequenceCoverageJRadioButtonActionPerformed(evt);
+            }
+        });
+
+        proteinQcPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        proteinQcPlotHelpJButton.setToolTipText("Help");
+        proteinQcPlotHelpJButton.setBorder(null);
+        proteinQcPlotHelpJButton.setBorderPainted(false);
+        proteinQcPlotHelpJButton.setContentAreaFilled(false);
+        proteinQcPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                proteinQcPlotHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                proteinQcPlotHelpJButtonMouseExited(evt);
+            }
+        });
+        proteinQcPlotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proteinQcPlotHelpJButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout proteinPlotTypePanelLayout = new javax.swing.GroupLayout(proteinPlotTypePanel);
+        proteinPlotTypePanel.setLayout(proteinPlotTypePanelLayout);
+        proteinPlotTypePanelLayout.setHorizontalGroup(
+            proteinPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(proteinPlotTypePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(proteinNumberValidatedPeptidesJRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(proteinSpectrumCountingScoreJRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(proteinSequenceCoverageJRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 161, Short.MAX_VALUE)
+                .addComponent(proteinQcPlotHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        proteinPlotTypePanelLayout.setVerticalGroup(
+            proteinPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinPlotTypePanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(proteinPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(proteinQcPlotHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                    .addGroup(proteinPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(proteinNumberValidatedPeptidesJRadioButton)
+                        .addComponent(proteinSpectrumCountingScoreJRadioButton)
+                        .addComponent(proteinSequenceCoverageJRadioButton)))
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout proteinPanelLayout = new javax.swing.GroupLayout(proteinPanel);
         proteinPanel.setLayout(proteinPanelLayout);
         proteinPanelLayout.setHorizontalGroup(
             proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(proteinPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(proteinQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 629, Short.MAX_VALUE)
-                    .addGroup(proteinPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(proteinMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(proteinQCPlotPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 657, Short.MAX_VALUE)
+                    .addComponent(proteinPlotTypePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         proteinPanelLayout.setVerticalGroup(
             proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(proteinPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(proteinPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(proteinMetricCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(proteinQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(proteinQCPlotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
+                .addComponent(proteinPlotTypePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -267,7 +447,7 @@ public class QCPanel extends javax.swing.JPanel {
             qcPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(qcPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 682, Short.MAX_VALUE)
                 .addContainerGap())
         );
         qcPanelLayout.setVerticalGroup(
@@ -301,106 +481,247 @@ public class QCPanel extends javax.swing.JPanel {
      * 
      * @param evt 
      */
-    private void proteinMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinMetricCmbActionPerformed
+    private void proteinNumberValidatedPeptidesJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinNumberValidatedPeptidesJRadioButtonActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        if (peptideShakerGUI.getIdentification() != null) {
 
-        new Thread(new Runnable() {
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Loading. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+            new Thread(new Runnable() {
 
-        new Thread("ExportThread") {
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Loading. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
 
-            @Override
-            public void run() {
-                progressDialog.setMax(peptideShakerGUI.getIdentification().getProteinIdentification().size());
-                updateProteinQCPlot(progressDialog);
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-            }
-        }.start();
-    }//GEN-LAST:event_proteinMetricCmbActionPerformed
+            new Thread("UpdatePlotThread") {
+
+                @Override
+                public void run() {
+                    progressDialog.setMax(peptideShakerGUI.getIdentification().getProteinIdentification().size());
+                    updateProteinQCPlot(progressDialog);
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                }
+            }.start();
+        }
+    }//GEN-LAST:event_proteinNumberValidatedPeptidesJRadioButtonActionPerformed
+
+    /**
+     * Update the protein qc plot.
+     * 
+     * @param evt 
+     */
+    private void proteinSpectrumCountingScoreJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinSpectrumCountingScoreJRadioButtonActionPerformed
+        proteinNumberValidatedPeptidesJRadioButtonActionPerformed(evt);
+    }//GEN-LAST:event_proteinSpectrumCountingScoreJRadioButtonActionPerformed
+
+    /**
+     * Update the protein qc plot.
+     * 
+     * @param evt 
+     */
+    private void proteinSequenceCoverageJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinSequenceCoverageJRadioButtonActionPerformed
+        proteinNumberValidatedPeptidesJRadioButtonActionPerformed(evt);
+    }//GEN-LAST:event_proteinSequenceCoverageJRadioButtonActionPerformed
 
     /**
      * Update the peptide qc plot.
      * 
      * @param evt 
      */
-    private void peptideMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideMetricCmbActionPerformed
+    private void peptidesMissedCleavagesJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesMissedCleavagesJRadioButtonActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        if (peptideShakerGUI.getIdentification() != null) {
 
-        new Thread(new Runnable() {
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Loading. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+            new Thread(new Runnable() {
 
-        new Thread("ExportThread") {
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Loading. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
 
-            @Override
-            public void run() {
-                progressDialog.setMax(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
-                updatePeptideQCPlot(progressDialog);
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-            }
-        }.start();
-    }//GEN-LAST:event_peptideMetricCmbActionPerformed
+            new Thread("UpdatePlotThread") {
+
+                @Override
+                public void run() {
+                    progressDialog.setMax(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+                    updatePeptideQCPlot(progressDialog);
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                }
+            }.start();
+        }
+    }//GEN-LAST:event_peptidesMissedCleavagesJRadioButtonActionPerformed
+
+    /**
+     * Update the peptide qc plot.
+     * 
+     * @param evt 
+     */
+    private void peptidesValidatedPsmsJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesValidatedPsmsJRadioButtonActionPerformed
+        peptidesMissedCleavagesJRadioButtonActionPerformed(evt);
+    }//GEN-LAST:event_peptidesValidatedPsmsJRadioButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void proteinQcPlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinQcPlotHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_proteinQcPlotHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void proteinQcPlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinQcPlotHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_proteinQcPlotHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void proteinQcPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinQcPlotHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/ProteinQCPlots.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_proteinQcPlotHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void peptidesQcPlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesQcPlotHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_peptidesQcPlotHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void peptidesQcPlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesQcPlotHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_peptidesQcPlotHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void peptidesQcPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesQcPlotHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PeptidesQCPlots.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_peptidesQcPlotHelpJButtonActionPerformed
 
     /**
      * Update the psm qc plot.
      * 
      * @param evt 
      */
-    private void psmMetricCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmMetricCmbActionPerformed
+    private void psmPrecursorMassErrorJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmPrecursorMassErrorJRadioButtonActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        if (peptideShakerGUI.getIdentification() != null) {
 
-        new Thread(new Runnable() {
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
+            new Thread(new Runnable() {
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Loading. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Loading. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
 
-        new Thread("ExportThread") {
+            new Thread("UpdatePlotThread") {
 
-            @Override
-            public void run() {
-                progressDialog.setMax(peptideShakerGUI.getIdentification().getSpectrumIdentification().size());
-                updatePsmQCPlot(progressDialog);
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-            }
-        }.start();
-    }//GEN-LAST:event_psmMetricCmbActionPerformed
+                @Override
+                public void run() {
+                    progressDialog.setMax(peptideShakerGUI.getIdentification().getSpectrumIdentification().size());
+                    updatePsmQCPlot(progressDialog);
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                }
+            }.start();
+        }
+    }//GEN-LAST:event_psmPrecursorMassErrorJRadioButtonActionPerformed
+
+    /**
+     * Update the psm qc plot.
+     * 
+     * @param evt 
+     */
+    private void psmPrecursorChargeJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmPrecursorChargeJRadioButtonActionPerformed
+        psmPrecursorMassErrorJRadioButtonActionPerformed(evt);
+    }//GEN-LAST:event_psmPrecursorChargeJRadioButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void psmQcPlotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmQcPlotHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_psmQcPlotHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void psmQcPlotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmQcPlotHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_psmQcPlotHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void psmQcPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmQcPlotHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMsQCPlots.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_psmQcPlotHelpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JComboBox peptideMetricCmb;
+    private javax.swing.ButtonGroup peptideButtonGroup;
     private javax.swing.JPanel peptidePanel;
     private javax.swing.JPanel peptideQCPlotPanel;
-    private javax.swing.JComboBox proteinMetricCmb;
+    private javax.swing.JRadioButton peptidesMissedCleavagesJRadioButton;
+    private javax.swing.JButton peptidesQcPlotHelpJButton;
+    private javax.swing.JRadioButton peptidesValidatedPsmsJRadioButton;
+    private javax.swing.ButtonGroup proteinButtonGroup;
+    private javax.swing.JRadioButton proteinNumberValidatedPeptidesJRadioButton;
     private javax.swing.JPanel proteinPanel;
+    private javax.swing.JPanel proteinPlotTypePanel;
+    private javax.swing.JPanel proteinPlotTypePanel1;
+    private javax.swing.JPanel proteinPlotTypePanel2;
     private javax.swing.JPanel proteinQCPlotPanel;
-    private javax.swing.JComboBox psmMetricCmb;
+    private javax.swing.JButton proteinQcPlotHelpJButton;
+    private javax.swing.JRadioButton proteinSequenceCoverageJRadioButton;
+    private javax.swing.JRadioButton proteinSpectrumCountingScoreJRadioButton;
+    private javax.swing.ButtonGroup psmButtonGroup;
     private javax.swing.JPanel psmPanel;
+    private javax.swing.JRadioButton psmPrecursorChargeJRadioButton;
+    private javax.swing.JRadioButton psmPrecursorMassErrorJRadioButton;
     private javax.swing.JPanel psmQCPlotPanel;
+    private javax.swing.JButton psmQcPlotHelpJButton;
     private javax.swing.JPanel qcPanel;
     private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
@@ -422,13 +743,6 @@ public class QCPanel extends javax.swing.JPanel {
      * @param progressDialog a progress dialog. Can be null.
      */
     private void updateProteinQCPlot(ProgressDialogX progressDialog) {
-        if (proteinMetricCmb.getSelectedIndex() == 0) {
-            proteinQCPlot.getDomainAxis().setLabel("Number of Validated Peptides");
-        } else if (proteinMetricCmb.getSelectedIndex() == 1) {
-            proteinQCPlot.getDomainAxis().setLabel("Spectrum Counting");
-        } else if (proteinMetricCmb.getSelectedIndex() == 2) {
-            proteinQCPlot.getDomainAxis().setLabel("Sequence Coverage");
-        }
 
         HistogramInput input = getProteinDataset(progressDialog);
 
@@ -468,10 +782,19 @@ public class QCPanel extends javax.swing.JPanel {
         nonValidatedDecoyRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
         proteinQCPlot.setRenderer(3, nonValidatedDecoyRenderer);
 
-
         JFreeChart proteinChart = new JFreeChart(proteinQCPlot);
         ChartPanel chartPanel = new ChartPanel(proteinChart);
-        proteinChart.setTitle("Protein QC Plot");
+
+        if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
+            proteinQCPlot.getDomainAxis().setLabel("Number of Validated Peptides");
+            proteinChart.setTitle("Protein QC Plot - Number of Validated Peptides");
+        } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+            proteinQCPlot.getDomainAxis().setLabel("Spectrum Counting");
+            proteinChart.setTitle("Protein QC Plot - Spectrum Counting Scores");
+        } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
+            proteinQCPlot.getDomainAxis().setLabel("Sequence Coverage");
+            proteinChart.setTitle("Protein QC Plot - Sequence Coverage");
+        }
 
         // set background color
         proteinChart.getPlot().setBackgroundPaint(Color.WHITE);
@@ -490,11 +813,6 @@ public class QCPanel extends javax.swing.JPanel {
      * @param progressDialog a progress dialog. Can be null.
      */
     private void updatePeptideQCPlot(ProgressDialogX progressDialog) {
-        if (peptideMetricCmb.getSelectedIndex() == 0) {
-            peptideQCPlot.getDomainAxis().setLabel("Number of Validated PSMs");
-        } else if (peptideMetricCmb.getSelectedIndex() == 1) {
-            peptideQCPlot.getDomainAxis().setLabel("Missed Cleavages");
-        }
 
         HistogramInput input = getPeptideDataset(progressDialog);
 
@@ -534,14 +852,20 @@ public class QCPanel extends javax.swing.JPanel {
         nonValidatedDecoyRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
         peptideQCPlot.setRenderer(3, nonValidatedDecoyRenderer);
 
+        JFreeChart peptideChart = new JFreeChart(peptideQCPlot);
+        ChartPanel chartPanel = new ChartPanel(peptideChart);
 
-        JFreeChart proteinChart = new JFreeChart(peptideQCPlot);
-        ChartPanel chartPanel = new ChartPanel(proteinChart);
-        proteinChart.setTitle("Peptides QC Plot");
+        if (peptidesValidatedPsmsJRadioButton.isSelected()) {
+            peptideQCPlot.getDomainAxis().setLabel("Number of Validated PSMs");
+            peptideChart.setTitle("Peptides QC Plot - Number of Validated PSMs");
+        } else if (peptidesMissedCleavagesJRadioButton.isSelected()) {
+            peptideQCPlot.getDomainAxis().setLabel("Missed Cleavages");
+            peptideChart.setTitle("Peptides QC Plot - Missed Cleavages");
+        }
 
         // set background color
-        proteinChart.getPlot().setBackgroundPaint(Color.WHITE);
-        proteinChart.setBackgroundPaint(Color.WHITE);
+        peptideChart.getPlot().setBackgroundPaint(Color.WHITE);
+        peptideChart.setBackgroundPaint(Color.WHITE);
         chartPanel.setBackground(Color.WHITE);
 
         peptideQCPlotPanel.removeAll();
@@ -556,11 +880,6 @@ public class QCPanel extends javax.swing.JPanel {
      * @param progressDialog a progress dialog. Can be null.
      */
     private void updatePsmQCPlot(ProgressDialogX progressDialog) {
-        if (psmMetricCmb.getSelectedIndex() == 0) {
-            psmQCPlot.getDomainAxis().setLabel("Precursor Mass Error");
-        } else if (psmMetricCmb.getSelectedIndex() == 1) {
-            psmQCPlot.getDomainAxis().setLabel("Precursor Charge");
-        }
 
         HistogramInput input = getPsmDataset(progressDialog);
 
@@ -600,14 +919,20 @@ public class QCPanel extends javax.swing.JPanel {
         nonValidatedDecoyRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
         psmQCPlot.setRenderer(3, nonValidatedDecoyRenderer);
 
+        JFreeChart psmChart = new JFreeChart(psmQCPlot);
+        ChartPanel chartPanel = new ChartPanel(psmChart);
 
-        JFreeChart proteinChart = new JFreeChart(psmQCPlot);
-        ChartPanel chartPanel = new ChartPanel(proteinChart);
-        proteinChart.setTitle("PSMs QC Plot");
+        if (psmPrecursorMassErrorJRadioButton.isSelected()) {
+            psmQCPlot.getDomainAxis().setLabel("Precursor Mass Error");
+            psmChart.setTitle("PSMs QC Plot - Precursor Mass Error");
+        } else if (psmPrecursorChargeJRadioButton.isSelected()) {
+            psmQCPlot.getDomainAxis().setLabel("Precursor Charge");
+            psmChart.setTitle("PSMs QC Plot - Precursor Charge");
+        }
 
         // set background color
-        proteinChart.getPlot().setBackgroundPaint(Color.WHITE);
-        proteinChart.setBackgroundPaint(Color.WHITE);
+        psmChart.getPlot().setBackgroundPaint(Color.WHITE);
+        psmChart.setBackgroundPaint(Color.WHITE);
         chartPanel.setBackground(Color.WHITE);
 
         psmQCPlotPanel.removeAll();
@@ -626,7 +951,7 @@ public class QCPanel extends javax.swing.JPanel {
         try {
             PSParameter psParameter = new PSParameter();
             double value, min = -1, max = -1;
-            if (proteinMetricCmb.getSelectedIndex() == 0) {
+            if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
                 // Values for the number of validated peptides
                 ArrayList<Double> validatedValues = new ArrayList<Double>();
                 ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
@@ -674,7 +999,7 @@ public class QCPanel extends javax.swing.JPanel {
                 histogramInput.setNonValidatedValues(nonValidatedValues);
                 histogramInput.setValidatedDecoyValues(validatedDecoyValues);
                 histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
-            } else if (proteinMetricCmb.getSelectedIndex() == 1) {
+            } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
                 // Values for the spectrum counting
                 ArrayList<Double> validatedValues = new ArrayList<Double>();
                 ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
@@ -722,7 +1047,7 @@ public class QCPanel extends javax.swing.JPanel {
                 histogramInput.setNonValidatedValues(nonValidatedValues);
                 histogramInput.setValidatedDecoyValues(validatedDecoyValues);
                 histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
-            } else if (proteinMetricCmb.getSelectedIndex() == 2) {
+            } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
                 // Values for the sequence coverage
                 ArrayList<Double> validatedValues = new ArrayList<Double>();
                 ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
@@ -783,7 +1108,7 @@ public class QCPanel extends javax.swing.JPanel {
         try {
             PSParameter psParameter = new PSParameter();
             double value, min = -1, max = -1;
-            if (peptideMetricCmb.getSelectedIndex() == 0) {
+            if (peptidesMissedCleavagesJRadioButton.isSelected()) {
                 // Values for the number of validated PSMs
                 ArrayList<Double> validatedValues = new ArrayList<Double>();
                 ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
@@ -831,7 +1156,7 @@ public class QCPanel extends javax.swing.JPanel {
                 histogramInput.setNonValidatedValues(nonValidatedValues);
                 histogramInput.setValidatedDecoyValues(validatedDecoyValues);
                 histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
-            } else if (peptideMetricCmb.getSelectedIndex() == 1) {
+            } else if (peptidesValidatedPsmsJRadioButton.isSelected()) {
                 // Values for the missed cleavages
                 ArrayList<Double> validatedValues = new ArrayList<Double>();
                 ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
@@ -895,7 +1220,7 @@ public class QCPanel extends javax.swing.JPanel {
         try {
             PSParameter psParameter = new PSParameter();
             double value, min = -1, max = -1;
-            if (psmMetricCmb.getSelectedIndex() == 0) {
+            if (psmPrecursorMassErrorJRadioButton.isSelected()) {
                 // Values for the precursor mass deviation
                 ArrayList<Double> validatedValues = new ArrayList<Double>();
                 ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
@@ -937,7 +1262,7 @@ public class QCPanel extends javax.swing.JPanel {
                 histogramInput.setNonValidatedValues(nonValidatedValues);
                 histogramInput.setValidatedDecoyValues(validatedDecoyValues);
                 histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
-            } else if (psmMetricCmb.getSelectedIndex() == 1) {
+            } else if (psmPrecursorChargeJRadioButton.isSelected()) {
                 // Values for the precursor charge
                 ArrayList<Double> validatedValues = new ArrayList<Double>();
                 ArrayList<Double> nonValidatedValues = new ArrayList<Double>();

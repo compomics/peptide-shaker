@@ -27,8 +27,9 @@ public class ExportFeatureDialog extends javax.swing.JDialog {
      * @param modal             modal or not
      * @param features          the features to export as a string
      * @param featureType       the fearure type as a string
+     * @param lineWarp          if true the lines are wrapped 
      */
-    public ExportFeatureDialog(PeptideShakerGUI petideShakerGUI, boolean modal, String features, String featureType) {
+    public ExportFeatureDialog(PeptideShakerGUI petideShakerGUI, boolean modal, String features, String featureType, boolean lineWarp) {
         super(petideShakerGUI, modal);
         initComponents();
 
@@ -36,6 +37,11 @@ public class ExportFeatureDialog extends javax.swing.JDialog {
         featuresJTextArea.setCaretPosition(0);
         this.petideShakerGUI = petideShakerGUI;
         this.setTitle("Export " + featureType);
+        
+        if (lineWarp) {
+            featuresJTextArea.setLineWrap(true);
+            featuresJTextArea.setWrapStyleWord(true);
+        }
 
         setLocationRelativeTo(petideShakerGUI);
         setVisible(true);
