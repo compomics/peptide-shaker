@@ -180,6 +180,17 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         mascotTable.getColumn(" ").setMaxWidth(30);
         xTandemTable.getColumn(" ").setMinWidth(30);
         xTandemTable.getColumn(" ").setMaxWidth(30);
+        
+        peptideShakerJTable.getColumn("Confidence").setMaxWidth(90);
+        peptideShakerJTable.getColumn("Confidence").setMinWidth(90);
+        peptideShakerJTable.getColumn("Score").setMaxWidth(90);
+        peptideShakerJTable.getColumn("Score").setMinWidth(90);
+        omssaTable.getColumn("Confidence").setMaxWidth(90);
+        omssaTable.getColumn("Confidence").setMinWidth(90);
+        mascotTable.getColumn("Confidence").setMaxWidth(90);
+        mascotTable.getColumn("Confidence").setMinWidth(90);
+        xTandemTable.getColumn("Confidence").setMaxWidth(90);
+        xTandemTable.getColumn("Confidence").setMinWidth(90);
 
         peptideShakerJTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         peptideShakerJTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
