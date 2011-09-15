@@ -867,7 +867,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "All Proteins");
+                new ExportFeatureDialog(peptideShakerGUI, true, feature, "All Proteins", false);
             }
         }.start();
     }//GEN-LAST:event_proteinExportAllActionPerformed
@@ -1001,7 +1001,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Proteins");
+                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Proteins", false);
             }
         }.start();
     }//GEN-LAST:event_proteinExportValidatedActionPerformed
@@ -1037,7 +1037,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Peptides");
+                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Peptides", false);
             }
         }.start();
     }//GEN-LAST:event_peptideExportValidatedActionPerformed
@@ -1073,7 +1073,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "All Peptides");
+                new ExportFeatureDialog(peptideShakerGUI, true, feature, "All Peptides", false);
             }
         }.start();
     }//GEN-LAST:event_peptideExportAllActionPerformed
@@ -1109,7 +1109,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated PSMs");
+                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated PSMs", false);
             }
         }.start();
     }//GEN-LAST:event_psmExportValidatedActionPerformed
@@ -1145,7 +1145,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "All PSMs");
+                new ExportFeatureDialog(peptideShakerGUI, true, feature, "All PSMs", false);
             }
         }.start();
     }//GEN-LAST:event_psmExportAllActionPerformed
@@ -1181,7 +1181,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Search Engine Results");
+                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Search Engine Results", false);
             }
         }.start();
     }//GEN-LAST:event_assumptionExportAllActionPerformed
@@ -1282,7 +1282,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Proteins");
+                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Proteins", false);
             }
         }.start();
     }//GEN-LAST:event_proteinExportDisplayedActionPerformed
@@ -1319,7 +1319,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Peptides");
+                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Peptides", false);
             }
         }.start();
     }//GEN-LAST:event_peptideExportDisplayedActionPerformed
@@ -1356,7 +1356,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "All PSMs");
+                new ExportFeatureDialog(peptideShakerGUI, true, feature, "All PSMs", false);
             }
         }.start();
     }//GEN-LAST:event_psmExportDisplayedActionPerformed
@@ -1393,7 +1393,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Search Engine Results");
+                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Search Engine Results", false);
             }
         }.start();
     }//GEN-LAST:event_assumptionsExportValidatedActionPerformed
@@ -1431,7 +1431,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Search Engine Results");
+                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Search Engine Results", false);
             }
         }.start();
     }//GEN-LAST:event_assumptionsExportDisplayedActionPerformed

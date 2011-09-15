@@ -213,6 +213,7 @@
         <Component class="javax.swing.JLabel" name="jLabel6">
           <Properties>
             <Property name="text" type="java.lang.String" value="Alt. Names:"/>
+            <Property name="toolTipText" type="java.lang.String" value="Alternative Protein Names"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="altProteinNameJTextField">
@@ -662,7 +663,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;There are numerous sources of protein information, each covering different aspects of protein properties.&#xa;Some of the most common resources are listed below.&#xa;&lt;br&gt;&lt;br&gt;&#xa;To access the annotations of your protein simply click the button corresponding to the wanted resource.&#xa;&lt;br&gt;&lt;br&gt;&#xa;Some resources also allow you to search with a set of proteins. To get the list of all proteins in your project,&#xa;go to the Export menu and select Features &gt; Protein Accession Numbers. This will provide you with the&#xa;list of accession numbers that you can copy and paste into any tool. &#xa;&lt;br&gt;&lt;br&gt;&#xa;To querry a resource using multiple proteins, open the wanted resource in your web browser and follow the&#xa;resource&apos;s instructions for how to perform the search.&#xa;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xa;There are numerous sources of protein information, each covering different aspects of protein properties.&#xa;Some of the most common resources are listed below.&#xa;&lt;br&gt;&lt;br&gt;&#xa;To access the annotations for your protein, simply click the button corresponding to the wanted resource.&#xa;&lt;br&gt;&lt;br&gt;&#xa;Some resources also allow you to search with a set of proteins. To get the list of all proteins in your project,&#xa;go to the &lt;b&gt;Export&lt;/b&gt; menu and select &lt;b&gt;Identification Features&lt;/b&gt;. This will provide you with the&#xa;list of accession numbers that you can copy and paste into any tool. &#xa;&lt;br&gt;&lt;br&gt;&#xa;To querry a resource using multiple proteins, open the wanted resource in your web browser and follow the&#xa;resource&apos;s instructions for how to perform the search.&#xa;&lt;/html&gt;"/>
           </Properties>
         </Component>
       </SubComponents>
