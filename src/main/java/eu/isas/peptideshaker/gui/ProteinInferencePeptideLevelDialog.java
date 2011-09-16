@@ -1,10 +1,14 @@
-
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
@@ -24,59 +28,80 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      * The sequence factory
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
-    
+
     /**
      * Create a new ProteinInferencePeptideLevelDialog.
      * 
      * @param aPeptideShakerGUI     the PeptideShakerGUI parent
      * @param modal                 modal or not modal
-     * @param peptideSequence       the peptide sequence
-     * @param proteins              the list of proteins the peptide maps to
+     * @param peptideMatchKey       the peptide match key
+     * @param proteinMatchKey       the protein match key
      */
-    public ProteinInferencePeptideLevelDialog(PeptideShakerGUI aPeptideShakerGUI, boolean modal, String peptideSequence, ArrayList<String> proteins) {
+    public ProteinInferencePeptideLevelDialog(PeptideShakerGUI aPeptideShakerGUI, boolean modal, String peptideMatchKey, String proteinMatchKey) throws Exception {
         super(aPeptideShakerGUI, modal);
         initComponents();
-        
+
         this.peptideShakerGUI = aPeptideShakerGUI;
-        
+
         // make sure that the scroll panes are see-through
         proteinsJScrollPane.getViewport().setOpaque(false);
-        
+
         // set up the table properties
-        proteinJTable.getTableHeader().setReorderingAllowed(false);
-        proteinJTable.getColumn(" ").setMinWidth(50);
-        proteinJTable.getColumn(" ").setMaxWidth(50);
-        proteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
-        
+        otherProteinJTable.getTableHeader().setReorderingAllowed(false);
+        otherProteinJTable.getColumn(" ").setMinWidth(50);
+        otherProteinJTable.getColumn(" ").setMaxWidth(50);
+        otherProteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+
+
+        // set up the table properties
+        retainedProteinJTable.getTableHeader().setReorderingAllowed(false);
+        retainedProteinJTable.getColumn(" ").setMinWidth(50);
+        retainedProteinJTable.getColumn(" ").setMaxWidth(50);
+        retainedProteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+
         // insert the values
-        peptideSequenceJTextField.setText(peptideSequence);
-        
-        
-        for (int i=0; i<proteins.size(); i++) {
-            
-            String accession = proteins.get(i);
+        peptideSequenceJTextField.setText(Peptide.getSequence(peptideMatchKey));
+
+        PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey);
+        ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins();
+        List<String> retainedProteins = Arrays.asList(ProteinMatch.getAccessions(proteinMatchKey));
+        int possibleCpt = 0, retainedCpt = 0;
+        for (String protein : possibleProteins) {
+
             String description;
             try {
-                description = sequenceFactory.getHeader(accession).getDescription();
+                description = sequenceFactory.getHeader(protein).getDescription();
             } catch (Exception e) {
                 description = "Fasta file Error";
             }
-            
-            ((DefaultTableModel) proteinJTable.getModel()).addRow(new Object[] {
-                (i+1),
-                peptideShakerGUI.addDatabaseLink(proteins.get(i)),
-                description
-            });
+
+            if (retainedProteins.contains(protein)) {
+                ((DefaultTableModel) retainedProteinJTable.getModel()).addRow(new Object[]{
+                            (++retainedCpt),
+                            peptideShakerGUI.addDatabaseLink(protein),
+                            description
+                        });
+            } else {
+                ((DefaultTableModel) otherProteinJTable.getModel()).addRow(new Object[]{
+                            (++possibleCpt),
+                            peptideShakerGUI.addDatabaseLink(protein),
+                            description
+                        });
+            }
         }
-        
+
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
                 // set the preferred size of the accession column
-                int width = peptideShakerGUI.getPreferredColumnWidth(proteinJTable, proteinJTable.getColumn("Accession").getModelIndex(), 6);
-                proteinJTable.getColumn("Accession").setMinWidth(width);
-                proteinJTable.getColumn("Accession").setMaxWidth(width);
+                int width = peptideShakerGUI.getPreferredColumnWidth(otherProteinJTable, otherProteinJTable.getColumn("Accession").getModelIndex(), 6);
+                otherProteinJTable.getColumn("Accession").setMinWidth(width);
+                otherProteinJTable.getColumn("Accession").setMaxWidth(width);
+                // set the preferred size of the accession column
+                width = peptideShakerGUI.getPreferredColumnWidth(retainedProteinJTable, retainedProteinJTable.getColumn("Accession").getModelIndex(), 6);
+                retainedProteinJTable.getColumn("Accession").setMinWidth(width);
+                retainedProteinJTable.getColumn("Accession").setMaxWidth(width);
             }
         });
 
@@ -96,23 +121,26 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         backgroundPanel = new javax.swing.JPanel();
         proteinsPanel = new javax.swing.JPanel();
         proteinsJScrollPane = new javax.swing.JScrollPane();
-        proteinJTable = new javax.swing.JTable();
+        otherProteinJTable = new javax.swing.JTable();
         peptidesPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         peptideSequenceJTextField = new javax.swing.JTextField();
         closeButton = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        retainedProteinJTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Protein Inference - Peptide Level");
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        proteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Proteins"));
+        proteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Other proteins"));
         proteinsPanel.setOpaque(false);
 
         proteinsJScrollPane.setOpaque(false);
 
-        proteinJTable.setModel(new javax.swing.table.DefaultTableModel(
+        otherProteinJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -135,21 +163,21 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
-        proteinJTable.setOpaque(false);
-        proteinJTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        otherProteinJTable.setOpaque(false);
+        otherProteinJTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                proteinJTableMouseExited(evt);
+                otherProteinJTableMouseExited(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                proteinJTableMouseReleased(evt);
+                otherProteinJTableMouseReleased(evt);
             }
         });
-        proteinJTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        otherProteinJTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
-                proteinJTableMouseMoved(evt);
+                otherProteinJTableMouseMoved(evt);
             }
         });
-        proteinsJScrollPane.setViewportView(proteinJTable);
+        proteinsJScrollPane.setViewportView(otherProteinJTable);
 
         javax.swing.GroupLayout proteinsPanelLayout = new javax.swing.GroupLayout(proteinsPanel);
         proteinsPanel.setLayout(proteinsPanelLayout);
@@ -164,7 +192,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                .addComponent(proteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -173,6 +201,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Sequence:");
 
+        peptideSequenceJTextField.setEditable(false);
         peptideSequenceJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
 
         javax.swing.GroupLayout peptidesPanelLayout = new javax.swing.GroupLayout(peptidesPanel);
@@ -203,16 +232,63 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             }
         });
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Retained proteins"));
+        jPanel1.setOpaque(false);
+
+        retainedProteinJTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                " ", "Accession", "Description"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        retainedProteinJTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                retainedProteinJTableMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                retainedProteinJTableMouseReleased(evt);
+            }
+        });
+        jScrollPane1.setViewportView(retainedProteinJTable);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(closeButton)
-                    .addComponent(proteinsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(peptidesPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(peptidesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(proteinsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(closeButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -221,10 +297,12 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(peptidesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(proteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(proteinsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(closeButton)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -235,7 +313,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -256,21 +334,21 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      * 
      * @param evt 
      */
-    private void proteinJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinJTableMouseReleased
-        int row = proteinJTable.getSelectedRow();
-        int column = proteinJTable.getSelectedColumn();
-        
+    private void otherProteinJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_otherProteinJTableMouseReleased
+        int row = otherProteinJTable.getSelectedRow();
+        int column = otherProteinJTable.getSelectedColumn();
+
         if (row != -1) {
-            if (column == proteinJTable.getColumn("Accession").getModelIndex()) {
+            if (column == otherProteinJTable.getColumn("Accession").getModelIndex()) {
 
                 // open protein links in web browser
                 if (evt != null && evt.getButton() == MouseEvent.BUTTON1
-                        && ((String) proteinJTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
-                    peptideShakerGUI.openProteinLinks((String) proteinJTable.getValueAt(row, column));
+                        && ((String) otherProteinJTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
+                    peptideShakerGUI.openProteinLinks((String) otherProteinJTable.getValueAt(row, column));
                 }
             }
         }
-    }//GEN-LAST:event_proteinJTableMouseReleased
+    }//GEN-LAST:event_otherProteinJTableMouseReleased
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an
@@ -278,13 +356,13 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void proteinJTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinJTableMouseMoved
-        int row = proteinJTable.rowAtPoint(evt.getPoint());
-        int column = proteinJTable.columnAtPoint(evt.getPoint());
+    private void otherProteinJTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_otherProteinJTableMouseMoved
+        int row = otherProteinJTable.rowAtPoint(evt.getPoint());
+        int column = otherProteinJTable.columnAtPoint(evt.getPoint());
 
-        if (proteinJTable.getValueAt(row, column) != null) {
-            if (column == proteinJTable.getColumn("Accession").getModelIndex()) {
-                String tempValue = (String) proteinJTable.getValueAt(row, column);
+        if (otherProteinJTable.getValueAt(row, column) != null) {
+            if (column == otherProteinJTable.getColumn("Accession").getModelIndex()) {
+                String tempValue = (String) otherProteinJTable.getValueAt(row, column);
 
                 if (tempValue.lastIndexOf("a href=") != -1) {
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -295,25 +373,51 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         } else {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
-    }//GEN-LAST:event_proteinJTableMouseMoved
+    }//GEN-LAST:event_otherProteinJTableMouseMoved
 
     /**
      * Changes the cursor back to the default cursor.
      *
      * @param evt
      */
-    private void proteinJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinJTableMouseExited
+    private void otherProteinJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_otherProteinJTableMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_proteinJTableMouseExited
+    }//GEN-LAST:event_otherProteinJTableMouseExited
+
+    private void retainedProteinJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_retainedProteinJTableMouseReleased
+        int row = retainedProteinJTable.rowAtPoint(evt.getPoint());
+        int column = retainedProteinJTable.columnAtPoint(evt.getPoint());
+
+        if (retainedProteinJTable.getValueAt(row, column) != null) {
+            if (column == retainedProteinJTable.getColumn("Accession").getModelIndex()) {
+                String tempValue = (String) retainedProteinJTable.getValueAt(row, column);
+
+                if (tempValue.lastIndexOf("a href=") != -1) {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+                } else {
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
+            }
+        } else {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_retainedProteinJTableMouseReleased
+
+    private void retainedProteinJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_retainedProteinJTableMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_retainedProteinJTableMouseExited
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton closeButton;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable otherProteinJTable;
     private javax.swing.JTextField peptideSequenceJTextField;
     private javax.swing.JPanel peptidesPanel;
-    private javax.swing.JTable proteinJTable;
     private javax.swing.JScrollPane proteinsJScrollPane;
     private javax.swing.JPanel proteinsPanel;
+    private javax.swing.JTable retainedProteinJTable;
     // End of variables declaration//GEN-END:variables
 }
