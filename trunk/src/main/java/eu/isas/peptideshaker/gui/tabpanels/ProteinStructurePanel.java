@@ -1029,19 +1029,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     String proteinKey = proteinTableMap.get(getProteinKey(proteinTable.getSelectedRow()));
 
                     String peptideKey = peptideTableMap.get(getPeptideKey(row));
-                    PeptideMatch currentPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
 
-                    ArrayList<String> allProteins = new ArrayList<String>();
-
-                    //  allProteins.add(proteinMatch.getMainMatch());
-                    List<String> proteinProtein = Arrays.asList(ProteinMatch.getAccessions(proteinKey));
-                    for (String peptideProtein : currentPeptideMatch.getTheoreticPeptide().getParentProteins()) {
-                        if (!proteinProtein.contains(peptideProtein)) {
-                            allProteins.add(peptideProtein);
-                        }
-                    }
-
-                    new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, currentPeptideMatch.getTheoreticPeptide().getSequence(), allProteins);
+                    new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, proteinKey);
                 }
             }
         } catch (Exception e) {
