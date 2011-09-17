@@ -38,7 +38,7 @@ public class AnnotationPreferences implements Serializable {
      * The intensity limit used when only the most intense peaks are to be 
      * annotated.
      */
-    private double intensityLimit = 0.25;
+    private double intensityLimit = 0.75;
     /**
      * Shall PeptideShaker use automatic annotation
      */

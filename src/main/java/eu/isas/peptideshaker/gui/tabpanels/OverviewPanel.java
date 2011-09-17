@@ -4,7 +4,6 @@ import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
-import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
@@ -165,8 +164,6 @@ public class OverviewPanel extends javax.swing.JPanel {
         this.displayCoverage = false;
 
         initComponents();
-
-        intensitySlider.setValue((int) (peptideShakerGUI.getAnnotationPreferences().getAnnotationIntensityLimit() * 100));
 
         coverageTableScrollPane.setBorder(null);
 
@@ -869,7 +866,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         intensitySlider.setOrientation(javax.swing.JSlider.VERTICAL);
         intensitySlider.setPaintTicks(true);
         intensitySlider.setToolTipText("Annotation Level");
-        intensitySlider.setValue(25);
+        intensitySlider.setValue(75);
         intensitySlider.setOpaque(false);
         intensitySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {

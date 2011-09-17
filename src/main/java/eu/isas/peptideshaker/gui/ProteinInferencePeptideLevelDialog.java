@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -36,6 +35,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      * @param modal                 modal or not modal
      * @param peptideMatchKey       the peptide match key
      * @param proteinMatchKey       the protein match key
+     * @throws Exception  
      */
     public ProteinInferencePeptideLevelDialog(PeptideShakerGUI aPeptideShakerGUI, boolean modal, String peptideMatchKey, String proteinMatchKey) throws Exception {
         super(aPeptideShakerGUI, modal);
@@ -45,6 +45,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         // make sure that the scroll panes are see-through
         proteinsJScrollPane.getViewport().setOpaque(false);
+        otherProteinsJScrollPane.getViewport().setOpaque(false);
 
         // set up the table properties
         otherProteinJTable.getTableHeader().setReorderingAllowed(false);
@@ -52,8 +53,6 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         otherProteinJTable.getColumn(" ").setMaxWidth(50);
         otherProteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
 
-
-        // set up the table properties
         retainedProteinJTable.getTableHeader().setReorderingAllowed(false);
         retainedProteinJTable.getColumn(" ").setMinWidth(50);
         retainedProteinJTable.getColumn(" ").setMaxWidth(50);
@@ -127,7 +126,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         peptideSequenceJTextField = new javax.swing.JTextField();
         closeButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        otherProteinsJScrollPane = new javax.swing.JScrollPane();
         retainedProteinJTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -135,7 +134,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        proteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Other proteins"));
+        proteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Other Proteins"));
         proteinsPanel.setOpaque(false);
 
         proteinsJScrollPane.setOpaque(false);
@@ -192,7 +191,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 162, Short.MAX_VALUE)
+                .addComponent(proteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -232,7 +231,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             }
         });
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Retained proteins"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Retained Proteins"));
         jPanel1.setOpaque(false);
 
         retainedProteinJTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -259,7 +258,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 retainedProteinJTableMouseReleased(evt);
             }
         });
-        jScrollPane1.setViewportView(retainedProteinJTable);
+        otherProteinsJScrollPane.setViewportView(retainedProteinJTable);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -267,15 +266,15 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE)
+                .addComponent(otherProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 725, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(otherProteinsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
@@ -285,9 +284,9 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(proteinsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(peptidesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(proteinsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(closeButton, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
@@ -297,12 +296,12 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(peptidesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(proteinsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(proteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(closeButton)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -313,7 +312,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -412,8 +411,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
     private javax.swing.JButton closeButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable otherProteinJTable;
+    private javax.swing.JScrollPane otherProteinsJScrollPane;
     private javax.swing.JTextField peptideSequenceJTextField;
     private javax.swing.JPanel peptidesPanel;
     private javax.swing.JScrollPane proteinsJScrollPane;
