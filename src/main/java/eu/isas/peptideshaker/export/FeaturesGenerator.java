@@ -75,12 +75,13 @@ public class FeaturesGenerator {
      * @param nsaf
      * @param score
      * @param confidence
+     * @param includeHeader 
      * @return
      * @throws Exception  
      */
     public String getProteinsOutput(ProgressDialogX progressDialog, ArrayList<String> proteinKeys, boolean onlyValidated, boolean accession, boolean piDetails,
             boolean description, boolean nPeptides, boolean emPAI, boolean sequenceCoverage, boolean nSpectra, boolean nsaf,
-            boolean score, boolean confidence) throws Exception {
+            boolean score, boolean confidence, boolean includeHeader) throws Exception {
 
         if (proteinKeys == null) {
             proteinKeys = identification.getProteinIdentification();
@@ -91,42 +92,45 @@ public class FeaturesGenerator {
         }
 
         String result = "";
-        if (accession) {
-            result += "Accession" + SEPARATOR;
+
+        if (includeHeader) {
+            if (accession) {
+                result += "Accession" + SEPARATOR;
+            }
+            if (piDetails) {
+                result += "Protein Inference Class" + SEPARATOR;
+                result += "Other Protein(s)" + SEPARATOR;
+            }
+            if (description) {
+                result += "Description" + SEPARATOR;
+            }
+            if (sequenceCoverage) {
+                result += "Sequence Coverage" + SEPARATOR;
+            }
+            if (nPeptides) {
+                result += "#Validated Peptides" + SEPARATOR;
+            }
+            if (emPAI) {
+                result += "emPAI" + SEPARATOR;
+            }
+            if (nSpectra) {
+                result += "#Validated Spectra" + SEPARATOR;
+            }
+            if (nsaf) {
+                result += "NSAF" + SEPARATOR;
+            }
+            if (score) {
+                result += "Score" + SEPARATOR;
+            }
+            if (confidence) {
+                result += "Confidence" + SEPARATOR;
+            }
+            if (!onlyValidated) {
+                result += "Validated" + SEPARATOR;
+                result += "Decoy" + SEPARATOR;
+            }
+            result += "\n";
         }
-        if (piDetails) {
-            result += "Protein Inference Class" + SEPARATOR;
-            result += "Other Protein(s)" + SEPARATOR;
-        }
-        if (description) {
-            result += "Description" + SEPARATOR;
-        }
-        if (sequenceCoverage) {
-            result += "Sequence Coverage" + SEPARATOR;
-        }
-        if (nPeptides) {
-            result += "#Validated Peptides" + SEPARATOR;
-        }
-        if (emPAI) {
-            result += "emPAI" + SEPARATOR;
-        }
-        if (nSpectra) {
-            result += "#Validated Spectra" + SEPARATOR;
-        }
-        if (nsaf) {
-            result += "NSAF" + SEPARATOR;
-        }
-        if (score) {
-            result += "Score" + SEPARATOR;
-        }
-        if (confidence) {
-            result += "Confidence" + SEPARATOR;
-        }
-        if (!onlyValidated) {
-            result += "Validated" + SEPARATOR;
-            result += "Decoy" + SEPARATOR;
-        }
-        result += "\n";
 
         PSParameter proteinPSParameter = new PSParameter();
         PSParameter secondaryPSParameter = new PSParameter();
@@ -243,12 +247,13 @@ public class FeaturesGenerator {
      * @param ptmLocations 
      * @param score
      * @param confidence
+     * @param includeHeader 
      * @return
      * @throws Exception  
      */
     public String getPeptidesOutput(ProgressDialogX progressDialog, ArrayList<String> peptideKeys, boolean onlyValidated, boolean accession,
             boolean location, boolean sequence, boolean modifications, boolean ptmLocations,
-            boolean nSpectra, boolean score, boolean confidence) throws Exception {
+            boolean nSpectra, boolean score, boolean confidence, boolean includeHeader) throws Exception {
 
         if (peptideKeys == null) {
             peptideKeys = identification.getPeptideIdentification();
@@ -260,33 +265,36 @@ public class FeaturesGenerator {
 
 
         String result = "";
-        if (accession) {
-            result += "Protein(s)" + SEPARATOR;
+
+        if (includeHeader) {
+            if (accession) {
+                result += "Protein(s)" + SEPARATOR;
+            }
+            if (location) {
+                result += "Peptide Start" + SEPARATOR;
+            }
+            if (sequence) {
+                result += "Sequence" + SEPARATOR;
+            }
+            if (modifications || ptmLocations) {
+                result += "Variable Modification" + SEPARATOR;
+                result += "Modification Location" + SEPARATOR;
+            }
+            if (nSpectra) {
+                result += "#Validated Spectra" + SEPARATOR;
+            }
+            if (score) {
+                result += "Score" + SEPARATOR;
+            }
+            if (confidence) {
+                result += "Confidence" + SEPARATOR;
+            }
+            if (!onlyValidated) {
+                result += "Validated" + SEPARATOR;
+                result += "Decoy" + SEPARATOR;
+            }
+            result += "\n";
         }
-        if (location) {
-            result += "Peptide Start" + SEPARATOR;
-        }
-        if (sequence) {
-            result += "Sequence" + SEPARATOR;
-        }
-        if (modifications || ptmLocations) {
-            result += "Variable Modification" + SEPARATOR;
-            result += "Modification Location" + SEPARATOR;
-        }
-        if (nSpectra) {
-            result += "#Validated Spectra" + SEPARATOR;
-        }
-        if (score) {
-            result += "Score" + SEPARATOR;
-        }
-        if (confidence) {
-            result += "Confidence" + SEPARATOR;
-        }
-        if (!onlyValidated) {
-            result += "Validated" + SEPARATOR;
-            result += "Decoy" + SEPARATOR;
-        }
-        result += "\n";
 
         PSParameter peptidePSParameter = new PSParameter();
         PSParameter secondaryPSParameter = new PSParameter();
@@ -406,11 +414,12 @@ public class FeaturesGenerator {
      * @param precursor
      * @param score
      * @param confidence
+     * @param includeHeader 
      * @return
      * @throws Exception 
      */
     public String getPSMsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean onlyValidated, boolean accessions, boolean sequence, boolean modification,
-            boolean location, boolean file, boolean title, boolean precursor, boolean score, boolean confidence) throws Exception {
+            boolean location, boolean file, boolean title, boolean precursor, boolean score, boolean confidence, boolean includeHeader) throws Exception {
 
         if (psmKeys == null) {
             psmKeys = identification.getSpectrumIdentification();
@@ -422,40 +431,43 @@ public class FeaturesGenerator {
 
 
         String result = "";
-        if (accessions) {
-            result += "Protein(s)" + SEPARATOR;
+
+        if (includeHeader) {
+            if (accessions) {
+                result += "Protein(s)" + SEPARATOR;
+            }
+            if (sequence) {
+                result += "Sequence" + SEPARATOR;
+            }
+            if (modification || location) {
+                result += "Variable Modification(s)" + SEPARATOR;
+                result += "Modification Location" + SEPARATOR;
+            }
+            if (file) {
+                result += "Spectrum File" + SEPARATOR;
+            }
+            if (title) {
+                result += "Spectrum Title" + SEPARATOR;
+            }
+            if (precursor) {
+                result += "Precursor m/z" + SEPARATOR;
+                result += "Precursor Charge" + SEPARATOR;
+                result += "Precursor Retention Time" + SEPARATOR;
+                result += "Peptide Theoretic Mass" + SEPARATOR;
+                result += "Mass Error [ppm]" + SEPARATOR;
+            }
+            if (score) {
+                result += "Score" + SEPARATOR;
+            }
+            if (confidence) {
+                result += "Confidence" + SEPARATOR;
+            }
+            if (!onlyValidated) {
+                result += "Validated" + SEPARATOR;
+                result += "Decoy" + SEPARATOR;
+            }
+            result += "\n";
         }
-        if (sequence) {
-            result += "Sequence" + SEPARATOR;
-        }
-        if (modification || location) {
-            result += "Variable Modification(s)" + SEPARATOR;
-            result += "Modification Location" + SEPARATOR;
-        }
-        if (file) {
-            result += "Spectrum File" + SEPARATOR;
-        }
-        if (title) {
-            result += "Spectrum Title" + SEPARATOR;
-        }
-        if (precursor) {
-            result += "Precursor m/z" + SEPARATOR;
-            result += "Precursor Charge" + SEPARATOR;
-            result += "Precursor Retention Time" + SEPARATOR;
-            result += "Peptide Theoretic Mass" + SEPARATOR;
-            result += "Mass Error [ppm]" + SEPARATOR;
-        }
-        if (score) {
-            result += "Score" + SEPARATOR;
-        }
-        if (confidence) {
-            result += "Confidence" + SEPARATOR;
-        }
-        if (!onlyValidated) {
-            result += "Validated" + SEPARATOR;
-            result += "Decoy" + SEPARATOR;
-        }
-        result += "\n";
 
         PSParameter psParameter = new PSParameter();
         PeptideAssumption bestAssumption;
@@ -554,12 +566,13 @@ public class FeaturesGenerator {
      * @param precursor
      * @param scores
      * @param confidence
+     * @param includeHeader 
      * @return
      * @throws Exception 
      */
     public String getAssumptionsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean onlyValidated,
             boolean accession, boolean sequence, boolean modifications, boolean locations,
-            boolean file, boolean title, boolean precursor, boolean scores, boolean confidence) throws Exception {
+            boolean file, boolean title, boolean precursor, boolean scores, boolean confidence, boolean includeHeader) throws Exception {
 
         if (psmKeys == null) {
             psmKeys = identification.getSpectrumIdentification();
@@ -570,42 +583,45 @@ public class FeaturesGenerator {
         }
 
         String result = "";
-        result += "Search Engine" + SEPARATOR;
-        result += "Rank" + SEPARATOR;
-        if (accession) {
-            result += "Accession" + SEPARATOR;
+
+        if (includeHeader) {
+            result += "Search Engine" + SEPARATOR;
+            result += "Rank" + SEPARATOR;
+            if (accession) {
+                result += "Accession" + SEPARATOR;
+            }
+            if (sequence) {
+                result += "Sequence" + SEPARATOR;
+            }
+            if (modifications || locations) {
+                result += "Variable modifications" + SEPARATOR;
+                result += "Not implemented" + SEPARATOR;
+            }
+            if (file) {
+                result += "Spectrum File" + SEPARATOR;
+            }
+            if (title) {
+                result += "Spectrum Title" + SEPARATOR;
+            }
+            if (precursor) {
+                result += "Prectursor m/z" + SEPARATOR;
+                result += "Precursor charge" + SEPARATOR;
+                result += "Precursor RT" + SEPARATOR;
+                result += "Peptide theoretic mass" + SEPARATOR;
+                result += "Mass error [ppm]" + SEPARATOR;
+            }
+            if (scores) {
+                result += "Mascot e-value" + SEPARATOR;
+                result += "OMSSA e-value" + SEPARATOR;
+                result += "X!Tandem e-value" + SEPARATOR;
+            }
+            if (confidence) {
+                result += "Confidence" + SEPARATOR;
+            }
+            result += "Retained as main PSM" + SEPARATOR;
+            result += "Decoy" + SEPARATOR;
+            result += "\n";
         }
-        if (sequence) {
-            result += "Sequence" + SEPARATOR;
-        }
-        if (modifications || locations) {
-            result += "Variable modifications" + SEPARATOR;
-            result += "Not implemented" + SEPARATOR;
-        }
-        if (file) {
-            result += "Spectrum File" + SEPARATOR;
-        }
-        if (title) {
-            result += "Spectrum Title" + SEPARATOR;
-        }
-        if (precursor) {
-            result += "Prectursor m/z" + SEPARATOR;
-            result += "Precursor charge" + SEPARATOR;
-            result += "Precursor RT" + SEPARATOR;
-            result += "Peptide theoretic mass" + SEPARATOR;
-            result += "Mass error [ppm]" + SEPARATOR;
-        }
-        if (scores) {
-            result += "Mascot e-value" + SEPARATOR;
-            result += "OMSSA e-value" + SEPARATOR;
-            result += "X!Tandem e-value" + SEPARATOR;
-        }
-        if (confidence) {
-            result += "Confidence" + SEPARATOR;
-        }
-        result += "Retained as main PSM" + SEPARATOR;
-        result += "Decoy" + SEPARATOR;
-        result += "\n";
 
         PSParameter psParameter = new PSParameter();
         int rank, progress = 0;
