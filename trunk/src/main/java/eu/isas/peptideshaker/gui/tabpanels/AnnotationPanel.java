@@ -5,6 +5,9 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
+import eu.isas.peptideshaker.export.FeaturesGenerator;
+import eu.isas.peptideshaker.gui.ExportFeatureDialog;
+import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
 import java.io.IOException;
@@ -66,6 +69,8 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jEditorPane1 = new javax.swing.JEditorPane();
         annotationLinksJPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         accessionNumberJTextField = new javax.swing.JTextField();
@@ -82,29 +87,42 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         annotationLinksJPanel1 = new javax.swing.JPanel();
         jLabel5 = new javax.swing.JLabel();
         loadUniProtJButton = new javax.swing.JButton();
+        webUniProtLabel = new javax.swing.JLabel();
         annotationLinksJPanel2 = new javax.swing.JPanel();
         jLabel7 = new javax.swing.JLabel();
         loadDastyJButton = new javax.swing.JButton();
+        webDasty3Label = new javax.swing.JLabel();
         annotationLinksJPanel3 = new javax.swing.JPanel();
         jLabel9 = new javax.swing.JLabel();
         loadReactomeJButton = new javax.swing.JButton();
+        webReactomeLabel = new javax.swing.JLabel();
         annotationLinksJPanel4 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         loadStringJButton = new javax.swing.JButton();
+        webStringLabel = new javax.swing.JLabel();
         annotationLinksJPanel5 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
         loadDavidJButton = new javax.swing.JButton();
+        webDavidLabel = new javax.swing.JLabel();
         annotationLinksJPanel6 = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
         loadIntActJButton = new javax.swing.JButton();
+        webIntActLabel = new javax.swing.JLabel();
         annotationLinksJPanel7 = new javax.swing.JPanel();
         jLabel13 = new javax.swing.JLabel();
         loadQuickGOJButton = new javax.swing.JButton();
+        webQuickGOLabel = new javax.swing.JLabel();
         annotationLinksJPanel8 = new javax.swing.JPanel();
         jLabel14 = new javax.swing.JLabel();
         loadInterProJButton = new javax.swing.JButton();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        webInterProLabel = new javax.swing.JLabel();
+        helpPanel = new javax.swing.JPanel();
+        helpScrollPane = new javax.swing.JScrollPane();
+        helpEditorPane = new javax.swing.JEditorPane();
+        helpJButton = new javax.swing.JButton();
+        warningJLabel = new javax.swing.JLabel();
+
+        jScrollPane1.setViewportView(jEditorPane1);
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -114,7 +132,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         jLabel1.setText("Accession Number:");
 
         accessionNumberJTextField.setEditable(false);
-        accessionNumberJTextField.setText("P02768");
 
         jLabel3.setText("Protein Name:");
 
@@ -152,12 +169,12 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                     .addComponent(jLabel16))
                 .addGap(38, 38, 38)
                 .addGroup(annotationLinksJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(databaseJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-                    .addComponent(taxonomyJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-                    .addComponent(geneNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-                    .addComponent(altProteinNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-                    .addComponent(proteinNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE)
-                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 460, Short.MAX_VALUE))
+                    .addComponent(databaseJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
+                    .addComponent(taxonomyJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
+                    .addComponent(geneNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
+                    .addComponent(altProteinNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
+                    .addComponent(proteinNameJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE)
+                    .addComponent(accessionNumberJTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 458, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -205,6 +222,20 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             }
         });
 
+        webUniProtLabel.setText("<html> <a href=\\\"dummy_link\">web</a></html>");
+        webUniProtLabel.setToolTipText("Open the UniProt web page");
+        webUniProtLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                webUniProtLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                webUniProtLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                webUniProtLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout annotationLinksJPanel1Layout = new javax.swing.GroupLayout(annotationLinksJPanel1);
         annotationLinksJPanel1.setLayout(annotationLinksJPanel1Layout);
         annotationLinksJPanel1Layout.setHorizontalGroup(
@@ -214,7 +245,9 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadUniProtJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5)
-                .addContainerGap(176, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 144, Short.MAX_VALUE)
+                .addComponent(webUniProtLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         annotationLinksJPanel1Layout.setVerticalGroup(
             annotationLinksJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -222,7 +255,8 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addContainerGap()
                 .addGroup(annotationLinksJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(loadUniProtJButton)
-                    .addComponent(jLabel5))
+                    .addComponent(jLabel5)
+                    .addComponent(webUniProtLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -238,6 +272,20 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             }
         });
 
+        webDasty3Label.setText("<html> <a href=\\\"dummy_link\">web</a></html>");
+        webDasty3Label.setToolTipText("Open the Dasty3 web page");
+        webDasty3Label.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                webDasty3LabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                webDasty3LabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                webDasty3LabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout annotationLinksJPanel2Layout = new javax.swing.GroupLayout(annotationLinksJPanel2);
         annotationLinksJPanel2.setLayout(annotationLinksJPanel2Layout);
         annotationLinksJPanel2Layout.setHorizontalGroup(
@@ -247,16 +295,19 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadDastyJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel7)
-                .addContainerGap(133, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 105, Short.MAX_VALUE)
+                .addComponent(webDasty3Label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         annotationLinksJPanel2Layout.setVerticalGroup(
             annotationLinksJPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(annotationLinksJPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(annotationLinksJPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(loadDastyJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabel7)
-                    .addComponent(loadDastyJButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(webDasty3Label, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         annotationLinksJPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Reactome - pathway database"));
@@ -271,6 +322,20 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             }
         });
 
+        webReactomeLabel.setText("<html> <a href=\\\"dummy_link\">web</a></html>");
+        webReactomeLabel.setToolTipText("Open the Reactome web page");
+        webReactomeLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                webReactomeLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                webReactomeLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                webReactomeLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout annotationLinksJPanel3Layout = new javax.swing.GroupLayout(annotationLinksJPanel3);
         annotationLinksJPanel3.setLayout(annotationLinksJPanel3Layout);
         annotationLinksJPanel3Layout.setHorizontalGroup(
@@ -280,7 +345,9 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadReactomeJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel9)
-                .addContainerGap(178, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 146, Short.MAX_VALUE)
+                .addComponent(webReactomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         annotationLinksJPanel3Layout.setVerticalGroup(
             annotationLinksJPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -288,7 +355,8 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addContainerGap()
                 .addGroup(annotationLinksJPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(loadReactomeJButton))
+                    .addComponent(loadReactomeJButton)
+                    .addComponent(webReactomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -304,6 +372,20 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             }
         });
 
+        webStringLabel.setText("<html> <a href=\\\"dummy_link\">web</a></html>");
+        webStringLabel.setToolTipText("Open the STRING web page");
+        webStringLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                webStringLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                webStringLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                webStringLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout annotationLinksJPanel4Layout = new javax.swing.GroupLayout(annotationLinksJPanel4);
         annotationLinksJPanel4.setLayout(annotationLinksJPanel4Layout);
         annotationLinksJPanel4Layout.setHorizontalGroup(
@@ -313,7 +395,9 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadStringJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel10)
-                .addContainerGap(210, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 178, Short.MAX_VALUE)
+                .addComponent(webStringLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         annotationLinksJPanel4Layout.setVerticalGroup(
             annotationLinksJPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -321,7 +405,8 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addContainerGap()
                 .addGroup(annotationLinksJPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(loadStringJButton))
+                    .addComponent(loadStringJButton)
+                    .addComponent(webStringLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -337,6 +422,20 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             }
         });
 
+        webDavidLabel.setText("<html> <a href=\\\"dummy_link\">web</a></html>");
+        webDavidLabel.setToolTipText("Open the DAVID web page");
+        webDavidLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                webDavidLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                webDavidLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                webDavidLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout annotationLinksJPanel5Layout = new javax.swing.GroupLayout(annotationLinksJPanel5);
         annotationLinksJPanel5.setLayout(annotationLinksJPanel5Layout);
         annotationLinksJPanel5Layout.setHorizontalGroup(
@@ -346,7 +445,9 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadDavidJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel11)
-                .addContainerGap(123, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 95, Short.MAX_VALUE)
+                .addComponent(webDavidLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         annotationLinksJPanel5Layout.setVerticalGroup(
             annotationLinksJPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -354,7 +455,8 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addContainerGap()
                 .addGroup(annotationLinksJPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
-                    .addComponent(loadDavidJButton))
+                    .addComponent(loadDavidJButton)
+                    .addComponent(webDavidLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -370,6 +472,20 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             }
         });
 
+        webIntActLabel.setText("<html> <a href=\\\"dummy_link\">web</a></html>");
+        webIntActLabel.setToolTipText("Open the IntAct web page");
+        webIntActLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                webIntActLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                webIntActLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                webIntActLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout annotationLinksJPanel6Layout = new javax.swing.GroupLayout(annotationLinksJPanel6);
         annotationLinksJPanel6.setLayout(annotationLinksJPanel6Layout);
         annotationLinksJPanel6Layout.setHorizontalGroup(
@@ -379,7 +495,9 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadIntActJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel12)
-                .addContainerGap(235, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 207, Short.MAX_VALUE)
+                .addComponent(webIntActLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         annotationLinksJPanel6Layout.setVerticalGroup(
             annotationLinksJPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -387,7 +505,8 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addContainerGap()
                 .addGroup(annotationLinksJPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
-                    .addComponent(loadIntActJButton))
+                    .addComponent(loadIntActJButton)
+                    .addComponent(webIntActLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -403,6 +522,20 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             }
         });
 
+        webQuickGOLabel.setText("<html> <a href=\\\"dummy_link\">web</a></html>");
+        webQuickGOLabel.setToolTipText("Open the QuickGO web page");
+        webQuickGOLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                webQuickGOLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                webQuickGOLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                webQuickGOLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout annotationLinksJPanel7Layout = new javax.swing.GroupLayout(annotationLinksJPanel7);
         annotationLinksJPanel7.setLayout(annotationLinksJPanel7Layout);
         annotationLinksJPanel7Layout.setHorizontalGroup(
@@ -412,7 +545,9 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadQuickGOJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel13)
-                .addContainerGap(228, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 196, Short.MAX_VALUE)
+                .addComponent(webQuickGOLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         annotationLinksJPanel7Layout.setVerticalGroup(
             annotationLinksJPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -420,7 +555,8 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addContainerGap()
                 .addGroup(annotationLinksJPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13)
-                    .addComponent(loadQuickGOJButton))
+                    .addComponent(loadQuickGOJButton)
+                    .addComponent(webQuickGOLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -436,6 +572,20 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             }
         });
 
+        webInterProLabel.setText("<html> <a href=\\\"dummy_link\">web</a></html>");
+        webInterProLabel.setToolTipText("Open the InterPro web page");
+        webInterProLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                webInterProLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                webInterProLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                webInterProLabelMouseExited(evt);
+            }
+        });
+
         javax.swing.GroupLayout annotationLinksJPanel8Layout = new javax.swing.GroupLayout(annotationLinksJPanel8);
         annotationLinksJPanel8.setLayout(annotationLinksJPanel8Layout);
         annotationLinksJPanel8Layout.setHorizontalGroup(
@@ -445,7 +595,9 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addComponent(loadInterProJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jLabel14)
-                .addContainerGap(180, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 152, Short.MAX_VALUE)
+                .addComponent(webInterProLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         annotationLinksJPanel8Layout.setVerticalGroup(
             annotationLinksJPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -453,30 +605,70 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                 .addContainerGap()
                 .addGroup(annotationLinksJPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
-                    .addComponent(loadInterProJButton))
+                    .addComponent(loadInterProJButton)
+                    .addComponent(webInterProLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Annotation - Help"));
-        jPanel1.setOpaque(false);
+        helpPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Annotation - Help"));
+        helpPanel.setOpaque(false);
 
-        jLabel2.setText("<html>\nThere are numerous sources of protein information, each covering different aspects of protein properties.\nSome of the most common resources are listed below.\n<br><br>\nTo access the annotations for your protein, simply click the button corresponding to the wanted resource.\n<br><br>\nSome resources also allow you to search with a set of proteins. To get the list of all proteins in your project,\ngo to the <b>Export</b> menu and select <b>Identification Features</b>. This will provide you with the\nlist of accession numbers that you can copy and paste into any tool. \n<br><br>\nTo querry a resource using multiple proteins, open the wanted resource in your web browser and follow the\nresource's instructions for how to perform the search.\n</html>");
+        helpScrollPane.setBorder(null);
+        helpScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        helpScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        helpEditorPane.setContentType("text/html");
+        helpEditorPane.setEditable(false);
+        helpEditorPane.setText("<html>\n<b>Single Protein</b><br>\nTo access the annotations for the currently selected protein, simply click the button corresponding to the \nwanted resource.\n<br><br><br>\n<b>Multiple Proteins</b><br>\nTo get the list of all validated proteins in your project click <a href=\"validated_proteins\">here</a>.<br>\nAdvanced export options: <i>Export</i> > <i>Identification Features</i>. \n<br><br>\nTo querry using multiple proteins, click the <a href=\"dummy_link\">web</a> link next to the resource and \nfollow the instructions provided at the resource web page.\n</html>");
+        helpEditorPane.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
+            public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {
+                helpEditorPaneHyperlinkUpdate(evt);
+            }
+        });
+        helpScrollPane.setViewportView(helpEditorPane);
+
+        helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        helpJButton.setToolTipText("Help");
+        helpJButton.setBorder(null);
+        helpJButton.setBorderPainted(false);
+        helpJButton.setContentAreaFilled(false);
+        helpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                helpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                helpJButtonMouseExited(evt);
+            }
+        });
+        helpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpJButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout helpPanelLayout = new javax.swing.GroupLayout(helpPanel);
+        helpPanel.setLayout(helpPanelLayout);
+        helpPanelLayout.setHorizontalGroup(
+            helpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(helpPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 456, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(129, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE)
+                .addComponent(helpScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
+                .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
+        helpPanelLayout.setVerticalGroup(
+            helpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(helpPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(helpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(helpJButton)
+                    .addComponent(helpScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+
+        warningJLabel.setFont(warningJLabel.getFont().deriveFont((warningJLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        warningJLabel.setForeground(new java.awt.Color(255, 0, 0));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -485,36 +677,42 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(annotationLinksJPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(annotationLinksJPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(annotationLinksJPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(annotationLinksJPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(annotationLinksJPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(10, 10, 10)
+                        .addComponent(warningJLabel)
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(10, 10, 10))))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(annotationLinksJPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(annotationLinksJPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(annotationLinksJPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(annotationLinksJPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(annotationLinksJPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(annotationLinksJPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(annotationLinksJPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(annotationLinksJPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap())
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(helpPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(10, 10, 10))))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(annotationLinksJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 231, Short.MAX_VALUE)
+                    .addComponent(helpPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(annotationLinksJPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(annotationLinksJPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(annotationLinksJPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -522,13 +720,15 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                         .addComponent(annotationLinksJPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(annotationLinksJPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(annotationLinksJPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(annotationLinksJPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(annotationLinksJPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(114, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(warningJLabel)
+                .addContainerGap(106, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -619,6 +819,325 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/interpro/ISearch?query=" + accessionNumberJTextField.getText());
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_loadInterProJButtonActionPerformed
+
+    /**
+     * Open the Dasty 3 web page.
+     * 
+     * @param evt 
+     */
+    private void webDasty3LabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDasty3LabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/dasty");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webDasty3LabelMouseClicked
+
+    /**
+     * Change the cursor icon to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void webDasty3LabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDasty3LabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_webDasty3LabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     * 
+     * @param evt 
+     */
+    private void webDasty3LabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDasty3LabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webDasty3LabelMouseExited
+
+    /**
+     * Open the UniProt web page.
+     * 
+     * @param evt 
+     */
+    private void webUniProtLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webUniProtLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.uniprot.org");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webUniProtLabelMouseClicked
+
+    /**
+     * Change the cursor icon to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void webUniProtLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webUniProtLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_webUniProtLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     * 
+     * @param evt 
+     */
+    private void webUniProtLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webUniProtLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webUniProtLabelMouseExited
+
+    /**
+     * Open the Reactome web page.
+     * 
+     * @param evt 
+     */
+    private void webReactomeLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webReactomeLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.reactome.org");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webReactomeLabelMouseClicked
+
+    /**
+     * Change the cursor icon to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void webReactomeLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webReactomeLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_webReactomeLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     * 
+     * @param evt 
+     */
+    private void webReactomeLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webReactomeLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webReactomeLabelMouseExited
+
+    /**
+     * Open the STRING web page.
+     * 
+     * @param evt 
+     */
+    private void webStringLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webStringLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://string-db.org");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webStringLabelMouseClicked
+
+    /**
+     * Change the cursor icon to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void webStringLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webStringLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_webStringLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     * 
+     * @param evt 
+     */
+    private void webStringLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webStringLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webStringLabelMouseExited
+
+    /**
+     * Open the QuickGO web page.
+     * 
+     * @param evt 
+     */
+    private void webQuickGOLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webQuickGOLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/QuickGO");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webQuickGOLabelMouseClicked
+
+    /**
+     * Change the cursor icon to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void webQuickGOLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webQuickGOLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_webQuickGOLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     * 
+     * @param evt 
+     */
+    private void webQuickGOLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webQuickGOLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webQuickGOLabelMouseExited
+
+    /**
+     * Open the InterPro web page.
+     * 
+     * @param evt 
+     */
+    private void webInterProLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webInterProLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/interpro");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webInterProLabelMouseClicked
+
+    /**
+     * Change the cursor icon to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void webInterProLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webInterProLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_webInterProLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     * 
+     * @param evt 
+     */
+    private void webInterProLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webInterProLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webInterProLabelMouseExited
+
+    /**
+     * Open the IntAct web page.
+     * 
+     * @param evt 
+     */
+    private void webIntActLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webIntActLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/intact");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webIntActLabelMouseClicked
+
+    /**
+     * Change the cursor icon to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void webIntActLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webIntActLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_webIntActLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     * 
+     * @param evt 
+     */
+    private void webIntActLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webIntActLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webIntActLabelMouseExited
+
+    /**
+     * Enable the hyperlinks in the help panel.
+     * 
+     * @param evt 
+     */
+    private void helpEditorPaneHyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {//GEN-FIRST:event_helpEditorPaneHyperlinkUpdate
+        if (evt.getEventType().toString().equalsIgnoreCase(
+                javax.swing.event.HyperlinkEvent.EventType.ACTIVATED.toString())) {
+
+            if (evt.getDescription().equalsIgnoreCase("validated_proteins")) {
+
+                if (peptideShakerGUI.getIdentification() != null) {
+
+                    progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+                    progressDialog.doNothingOnClose();
+
+                    final AnnotationPanel tempRef = this; // needed due to threading issues
+
+                    new Thread(new Runnable() {
+
+                        public void run() {
+                            progressDialog.setIndeterminate(true);
+                            progressDialog.setTitle("Getting Accession Numbers. Please Wait...");
+                            progressDialog.setVisible(true);
+                        }
+                    }, "ProgressDialog").start();
+
+                    new Thread("AccessionNumberThread") {
+
+                        @Override
+                        public void run() {
+
+                            String feature = "";
+
+                            FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
+
+                            try {
+                                feature = outputGenerator.getProteinsOutput(progressDialog, null, true, true, false,
+                                        false, false, false, false, false,
+                                        false, false, false, false);
+                            } catch (Exception e) {
+                                JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                                e.printStackTrace();
+                                feature = "";
+                            }
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+                            new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Proteins", false);
+                        }
+                    }.start();
+                } else {
+                    JOptionPane.showMessageDialog(peptideShakerGUI, "You have to load a project first!", "No Project", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        }
+    }//GEN-LAST:event_helpEditorPaneHyperlinkUpdate
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void helpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/AnnotationPanel.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_helpJButtonActionPerformed
+
+    /**
+     * Change the cursor back to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void helpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_helpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     * 
+     * @param evt 
+     */
+    private void helpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_helpJButtonMouseExited
+
+    /**
+     * Change the cursor back to the default icon.
+     * 
+     * @param evt 
+     */
+    private void webDavidLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDavidLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webDavidLabelMouseExited
+
+    /**
+     * Change the cursor back to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void webDavidLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDavidLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_webDavidLabelMouseEntered
+
+    /**
+     * Open the DAVID web page.
+     * 
+     * @param evt 
+     */
+    private void webDavidLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_webDavidLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://david.abcc.ncifcrf.gov");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_webDavidLabelMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField accessionNumberJTextField;
     private javax.swing.JTextField altProteinNameJTextField;
@@ -633,6 +1152,11 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     private javax.swing.JPanel annotationLinksJPanel8;
     private javax.swing.JTextField databaseJTextField;
     private javax.swing.JTextField geneNameJTextField;
+    private javax.swing.JEditorPane helpEditorPane;
+    private javax.swing.JButton helpJButton;
+    private javax.swing.JPanel helpPanel;
+    private javax.swing.JScrollPane helpScrollPane;
+    private javax.swing.JEditorPane jEditorPane1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -640,7 +1164,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -648,7 +1171,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton loadDastyJButton;
     private javax.swing.JButton loadDavidJButton;
     private javax.swing.JButton loadIntActJButton;
@@ -659,6 +1182,15 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     private javax.swing.JButton loadUniProtJButton;
     private javax.swing.JTextField proteinNameJTextField;
     private javax.swing.JTextField taxonomyJTextField;
+    private javax.swing.JLabel warningJLabel;
+    private javax.swing.JLabel webDasty3Label;
+    private javax.swing.JLabel webDavidLabel;
+    private javax.swing.JLabel webIntActLabel;
+    private javax.swing.JLabel webInterProLabel;
+    private javax.swing.JLabel webQuickGOLabel;
+    private javax.swing.JLabel webReactomeLabel;
+    private javax.swing.JLabel webStringLabel;
+    private javax.swing.JLabel webUniProtLabel;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -673,7 +1205,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
 
             currentAccessionNumber = aAccessionNumber;
             accessionNumberJTextField.setText(currentAccessionNumber);
-            
+
             progressDialog = new ProgressDialogX(peptideShakerGUI, this, true);
 
             new Thread(new Runnable() {
@@ -718,23 +1250,23 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                                 } else {
                                     proteinNameJTextField.setText("(not available)");
                                 }
-                                
+
                                 List<Name> altNames = uniProtEntry.getProteinDescription().getAlternativeNames();
-                                
+
                                 String altNamesAsString = "";
                                 String altProteinNamesTooltip = "<html>";
-                                
-                                for (int i=0; i<altNames.size(); i++) { 
+
+                                for (int i = 0; i < altNames.size(); i++) {
                                     if (altNames.get(i).getFieldsByType(FieldType.FULL).size() > 0) {
                                         altNamesAsString += altNames.get(i).getFieldsByType(FieldType.FULL).get(0).getValue().toString() + ", ";
                                         altProteinNamesTooltip += altNames.get(i).getFieldsByType(FieldType.FULL).get(0).getValue().toString() + "<br>";
-                                    }    
+                                    }
                                 }
-                                
+
                                 if (altNamesAsString.endsWith(", ")) {
                                     altNamesAsString = altNamesAsString.substring(0, altNamesAsString.length() - 2);
                                 }
-                                
+
                                 if (altNamesAsString.length() > 0) {
                                     altProteinNamesTooltip += "</html>";
                                     altProteinNameJTextField.setToolTipText(altProteinNamesTooltip);
@@ -743,7 +1275,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                                     altProteinNameJTextField.setToolTipText(null);
                                     altProteinNameJTextField.setText("(not available)");
                                 }
-                                
+
                                 geneNameJTextField.setText(uniProtEntry.getGenes().get(0).getGeneName().toString());
 
                                 if (uniProtEntry.getOrganism().hasCommonName()) {
@@ -764,8 +1296,12 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                             } else if (counter == 0) {
                                 JOptionPane.showMessageDialog(peptideShakerGUI, "UniProt Error", "The accession number resulted in 0 hits!", JOptionPane.WARNING_MESSAGE);
                             }
+
+                            warningJLabel.setText("");
                         } else {
+                            warningJLabel.setText("Warning: The annotation resources are not optimal for non-UniProt accession numbers.");
                             proteinNameJTextField.setText("Unknown");
+                            altProteinNameJTextField.setText("Unknown");
                             geneNameJTextField.setText("Unknown");
                             taxonomyJTextField.setText("Unknown");
                         }

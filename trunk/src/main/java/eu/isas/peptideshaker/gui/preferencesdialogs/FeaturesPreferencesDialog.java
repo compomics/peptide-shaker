@@ -4,6 +4,7 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.ExportFeatureDialog;
+import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.io.File;
 import java.util.ArrayList;
@@ -126,6 +127,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionsExportDisplayed = new javax.swing.JButton();
         assumptionsExportValidated = new javax.swing.JButton();
         exitButton = new javax.swing.JButton();
+        helpJButton = new javax.swing.JButton();
 
         setTitle("Export Features");
         setResizable(false);
@@ -152,7 +154,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(exportTextFilesLabel)
                 .addGap(18, 18, 18)
-                .addComponent(exportAll, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+                .addComponent(exportAll, javax.swing.GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE)
                 .addContainerGap())
         );
         projectPanelLayout.setVerticalGroup(
@@ -796,20 +798,41 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
+        helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        helpJButton.setToolTipText("Help");
+        helpJButton.setBorder(null);
+        helpJButton.setBorderPainted(false);
+        helpJButton.setContentAreaFilled(false);
+        helpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                helpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                helpJButtonMouseExited(evt);
+            }
+        });
+        helpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpJButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, backgroundPanelLayout.createSequentialGroup()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
-                                .addGap(1, 1, 1)
-                                .addComponent(projectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(featuresPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(exitButton))
+                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(featuresPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(projectPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 645, Short.MAX_VALUE)
+                        .addComponent(exitButton)))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -820,7 +843,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(featuresPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(exitButton)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(helpJButton)
+                    .addComponent(exitButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -859,7 +884,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 try {
                     feature = outputGenerator.getProteinsOutput(progressDialog, null, false, proteinAccession.isSelected(), proteinPI.isSelected(),
                             proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), proteinNSpectra.isSelected(),
-                            proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected());
+                            proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -993,7 +1018,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 try {
                     feature = outputGenerator.getProteinsOutput(progressDialog, null, true, proteinAccession.isSelected(), proteinPI.isSelected(),
                             proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinSequenceCoverage.isSelected(), proteinEmpai.isSelected(), proteinNSpectra.isSelected(),
-                            proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected());
+                            proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1029,7 +1054,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 try {
                     feature = outputGenerator.getPeptidesOutput(progressDialog, null, true, peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
                             peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(), peptideScore.isSelected(),
-                            peptideConfidence.isSelected());
+                            peptideConfidence.isSelected(), true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1065,7 +1090,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 try {
                     feature = outputGenerator.getPeptidesOutput(progressDialog, null, false, peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
                             peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
-                            peptideScore.isSelected(), peptideConfidence.isSelected());
+                            peptideScore.isSelected(), peptideConfidence.isSelected(), true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1101,7 +1126,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 try {
                     feature = outputGenerator.getPSMsOutput(progressDialog, null, true, psmAccession.isSelected(), psmSequence.isSelected(),
                             psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
-                            psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected());
+                            psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1137,7 +1162,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 try {
                     feature = outputGenerator.getPSMsOutput(progressDialog, null, false, psmAccession.isSelected(), psmSequence.isSelected(),
                             psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
-                            psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected());
+                            psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1173,7 +1198,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 try {
                     feature = outputGenerator.getAssumptionsOutput(progressDialog, null, false, assumptionAccession.isSelected(), assumptionSequence.isSelected(),
                             assumptionModification.isSelected(), assumptionLocation.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
-                            assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected());
+                            assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1274,7 +1299,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     ArrayList<String> selectedProteins = peptideShakerGUI.getDisplayedProteins();
                     feature = outputGenerator.getProteinsOutput(progressDialog, selectedProteins, true, proteinAccession.isSelected(),
                             proteinPI.isSelected(), proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(),
-                            proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected());
+                            proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1311,7 +1336,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     ArrayList<String> selectedPeptides = peptideShakerGUI.getDisplayedPeptides();
                     feature = outputGenerator.getPeptidesOutput(progressDialog, selectedPeptides, true, peptideAccession.isSelected(), peptidePosition.isSelected(),
                             peptideSequence.isSelected(), peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
-                            peptideScore.isSelected(), peptideConfidence.isSelected());
+                            peptideScore.isSelected(), peptideConfidence.isSelected(), true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1348,7 +1373,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     ArrayList<String> selectedPsms = peptideShakerGUI.getDisplayedPSMs();
                     feature = outputGenerator.getPSMsOutput(progressDialog, selectedPsms, false, psmAccession.isSelected(),
                             psmSequence.isSelected(), psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(),
-                            psmTitle.isSelected(), psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected());
+                            psmTitle.isSelected(), psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1385,7 +1410,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     feature = outputGenerator.getAssumptionsOutput(progressDialog, null, true, assumptionAccession.isSelected(),
                             assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionLocation.isSelected(),
                             assumptionFile.isSelected(), assumptionTitle.isSelected(), assumptionPrecursor.isSelected(),
-                            assumptionScores.isSelected(), assumptionConfidence.isSelected());
+                            assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1423,7 +1448,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     feature = outputGenerator.getAssumptionsOutput(progressDialog, psmKeys, false, assumptionAccession.isSelected(),
                             assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionLocation.isSelected(),
                             assumptionFile.isSelected(), assumptionTitle.isSelected(), assumptionPrecursor.isSelected(),
-                            assumptionScores.isSelected(), assumptionConfidence.isSelected());
+                            assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                     e.printStackTrace();
@@ -1439,6 +1464,35 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         dispose();
     }//GEN-LAST:event_exitButtonActionPerformed
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void helpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/FeatureExport.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_helpJButtonActionPerformed
+
+    /**
+     * Change the cursor back to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void helpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_helpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     * 
+     * @param evt 
+     */
+    private void helpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_helpJButtonMouseExited
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox assumptionAccession;
@@ -1460,6 +1514,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton exportAll;
     private javax.swing.JLabel exportTextFilesLabel;
     private javax.swing.JPanel featuresPanel;
+    private javax.swing.JButton helpJButton;
     private javax.swing.JCheckBox peptideAccession;
     private javax.swing.JCheckBox peptideConfidence;
     private javax.swing.JButton peptideExportAll;
