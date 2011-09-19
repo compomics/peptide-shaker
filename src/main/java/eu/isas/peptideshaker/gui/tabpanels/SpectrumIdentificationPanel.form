@@ -798,35 +798,38 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="spectrumChartPanel" pref="662" max="32767" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="intensitySlider" min="-2" pref="26" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="spectrumJToolBar" alignment="0" pref="694" max="32767" attributes="0"/>
+                          <Component id="spectrumChartPanel" pref="657" max="32767" attributes="0"/>
+                          <Component id="spectrumJToolBar" alignment="0" pref="657" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" attributes="0">
+                          <Component id="accuracySlider" min="-2" max="-2" attributes="1"/>
+                          <Component id="intensitySlider" min="-2" max="-2" attributes="1"/>
+                      </Group>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="1" attributes="0">
-                      <Group type="103" groupAlignment="1" attributes="0">
-                          <Group type="102" attributes="0">
-                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                              <Component id="intensitySlider" pref="352" max="32767" attributes="0"/>
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+                              <Component id="accuracySlider" pref="149" max="32767" attributes="0"/>
+                              <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                              <Component id="intensitySlider" pref="150" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
                               <Component id="spectrumChartPanel" pref="361" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -867,7 +870,6 @@
             </Container>
             <Component class="javax.swing.JSlider" name="intensitySlider">
               <Properties>
-                <Property name="maximum" type="int" value="99"/>
                 <Property name="orientation" type="int" value="1"/>
                 <Property name="paintTicks" type="boolean" value="true"/>
                 <Property name="toolTipText" type="java.lang.String" value="Annotation Intensity Level"/>
@@ -877,6 +879,19 @@
               <Events>
                 <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="intensitySliderMouseWheelMoved"/>
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="intensitySliderStateChanged"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JSlider" name="accuracySlider">
+              <Properties>
+                <Property name="orientation" type="int" value="1"/>
+                <Property name="paintTicks" type="boolean" value="true"/>
+                <Property name="toolTipText" type="java.lang.String" value="Annotation Accuracy"/>
+                <Property name="value" type="int" value="100"/>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="accuracySliderMouseWheelMoved"/>
+                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="accuracySliderStateChanged"/>
               </Events>
             </Component>
           </SubComponents>

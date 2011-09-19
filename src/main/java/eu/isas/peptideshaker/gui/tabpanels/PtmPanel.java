@@ -386,6 +386,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumAnnotationMenuPanel = new javax.swing.JPanel();
         spectrumChartJPanel = new javax.swing.JPanel();
         intensitySlider = new javax.swing.JSlider();
+        accuracySlider = new javax.swing.JSlider();
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -745,7 +746,7 @@ public class PtmPanel extends javax.swing.JPanel {
         fragmentIonsJPanel.setLayout(fragmentIonsJPanelLayout);
         fragmentIonsJPanelLayout.setHorizontalGroup(
             fragmentIonsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 504, Short.MAX_VALUE)
+            .addGap(0, 514, Short.MAX_VALUE)
         );
         fragmentIonsJPanelLayout.setVerticalGroup(
             fragmentIonsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -774,9 +775,9 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 504, Short.MAX_VALUE)
+            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
         );
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -790,7 +791,6 @@ public class PtmPanel extends javax.swing.JPanel {
 
         spectrumTabbedPane.setSelectedIndex(1);
 
-        intensitySlider.setMaximum(99);
         intensitySlider.setOrientation(javax.swing.JSlider.VERTICAL);
         intensitySlider.setPaintTicks(true);
         intensitySlider.setToolTipText("Annotation Intensity Level");
@@ -807,28 +807,48 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         });
 
+        accuracySlider.setOrientation(javax.swing.JSlider.VERTICAL);
+        accuracySlider.setPaintTicks(true);
+        accuracySlider.setToolTipText("Annotation Accuracy");
+        accuracySlider.setValue(100);
+        accuracySlider.setOpaque(false);
+        accuracySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                accuracySliderMouseWheelMoved(evt);
+            }
+        });
+        accuracySlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                accuracySliderStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout spectrumAndFragmentIonPanelLayout = new javax.swing.GroupLayout(spectrumAndFragmentIonPanel);
         spectrumAndFragmentIonPanel.setLayout(spectrumAndFragmentIonPanelLayout);
         spectrumAndFragmentIonPanelLayout.setHorizontalGroup(
             spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumAndFragmentIonPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 509, Short.MAX_VALUE)
+                .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(intensitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(intensitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(accuracySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
         spectrumAndFragmentIonPanelLayout.setVerticalGroup(
             spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumAndFragmentIonPanelLayout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                        .addGap(59, 59, 59))
                     .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
                         .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
-                        .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-                        .addGap(35, 35, 35))))
+                        .addContainerGap())))
         );
 
         psmSpectraSplitPane.setRightComponent(spectrumAndFragmentIonPanel);
@@ -1213,15 +1233,38 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
 }//GEN-LAST:event_intensitySliderStateChanged
 
     /**
-     * Updates the slider value when the user scrolls.
+     * Updates the slider values when the user scrolls.
      * 
      * @param evt 
      */
 private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumAndFragmentIonPanelMouseWheelMoved
-    if (evt.getWheelRotation() > 0) { // Down
-        intensitySlider.setValue(intensitySlider.getValue() - 1);
-    } else { // Up
-        intensitySlider.setValue(intensitySlider.getValue() + 1);
+    
+    // @TODO: figure out why the strange special cases are needed... if not included the slider gets stuck at the given values
+
+    if (evt.isAltDown()) {
+        if (evt.getWheelRotation() > 0) { // Down
+            intensitySlider.setValue(intensitySlider.getValue() - 1);
+        } else { // Up
+            if (intensitySlider.getValue() == 28) {
+                intensitySlider.setValue(intensitySlider.getValue() + 2);
+            } else if (intensitySlider.getValue() == 56) {
+                intensitySlider.setValue(intensitySlider.getValue() + 3);
+            } else {
+                intensitySlider.setValue(intensitySlider.getValue() + 1);
+            }
+        }
+    } else {
+        if (evt.getWheelRotation() > 0) { // Down
+            accuracySlider.setValue(accuracySlider.getValue() - 1);
+        } else { // Up
+            if (accuracySlider.getValue() == 28) {
+                accuracySlider.setValue(accuracySlider.getValue() + 2);
+            } else if (accuracySlider.getValue() == 56) {
+                accuracySlider.setValue(accuracySlider.getValue() + 3);
+            } else {
+                accuracySlider.setValue(accuracySlider.getValue() + 1);
+            }
+        }
     }
 }//GEN-LAST:event_spectrumAndFragmentIonPanelMouseWheelMoved
 
@@ -1313,7 +1356,29 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             relatedPsmTable.setToolTipText(null);
         }
     }//GEN-LAST:event_relatedPsmTableMouseMoved
+
+    /**
+     * Update the fragment ion annotation accuracy.
+     * 
+     * @param evt 
+     */
+    private void accuracySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_accuracySliderStateChanged
+        peptideShakerGUI.getAnnotationPreferences().setFragmentIonAccuracy((accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+        peptideShakerGUI.updateSpectrumAnnotations();
+        peptideShakerGUI.setDataSaved(false);
+    }//GEN-LAST:event_accuracySliderStateChanged
+
+    /**
+     * Updates the slider value when the user scrolls.
+     * 
+     * @param evt 
+     */
+    private void accuracySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_accuracySliderMouseWheelMoved
+        spectrumAndFragmentIonPanelMouseWheelMoved(evt);
+    }//GEN-LAST:event_accuracySliderMouseWheelMoved
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel fragmentIonsJPanel;
     private javax.swing.JSlider intensitySlider;
     private javax.swing.JPanel jPanel1;
@@ -2562,6 +2627,15 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     public void setIntensitySliderValue(int value) {
         intensitySlider.setValue(value);
+    }
+    
+    /**
+     * Set the accuracy slider value.
+     * 
+     * @param value the accuracy slider value
+     */
+    public void setAccuracySliderValue(int value) {
+        accuracySlider.setValue(value);
     }
 
     /**

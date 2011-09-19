@@ -2480,9 +2480,11 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
             overviewPanel.updateSpectrum();
         } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
             spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+            spectrumIdentificationPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / searchParameters.getFragmentIonAccuracy()) * 100));
             spectrumIdentificationPanel.updateSpectrum();
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
             ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+            ptmPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / searchParameters.getFragmentIonAccuracy()) * 100));
             ptmPanel.updateSpectra();
         }
     }
@@ -3613,6 +3615,13 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
 
         automaticAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.useAutomaticAnnotation());
         adaptCheckBoxMenuItem.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
+        
+        // disable/enable the neutral loss options
+        h2oIonCheckBoxMenuItem.setEnabled(!annotationPreferences.areNeutralLossesSequenceDependant());
+        nh3IonCheckBoxMenuItem.setEnabled(!annotationPreferences.areNeutralLossesSequenceDependant());
+        hpo3IonCheckBoxMenuItem.setEnabled(!annotationPreferences.areNeutralLossesSequenceDependant());
+        h3po4IonCheckBoxMenuItem.setEnabled(!annotationPreferences.areNeutralLossesSequenceDependant());
+        ch4osIonCheckBoxMenuItem.setEnabled(!annotationPreferences.areNeutralLossesSequenceDependant());
 
         allCheckBoxMenuItem.setSelected(annotationPreferences.showAllPeaks());
 
