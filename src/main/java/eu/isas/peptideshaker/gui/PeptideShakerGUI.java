@@ -495,6 +495,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         openRecentJMenu = new javax.swing.JMenu();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         saveMenuItem = new javax.swing.JMenuItem();
+        jSeparator9 = new javax.swing.JPopupMenu.Separator();
+        projectPropertiesMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
@@ -507,8 +509,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         identificationFeaturesMenu = new javax.swing.JMenuItem();
         followUpAnalysisMenu = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
-        projectPropertiesMenuItem = new javax.swing.JMenuItem();
-        jSeparator9 = new javax.swing.JPopupMenu.Separator();
         overViewTabViewMenu = new javax.swing.JMenu();
         proteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         peptidesAndPsmsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -952,6 +952,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         fileJMenu.add(saveMenuItem);
+        fileJMenu.add(jSeparator9);
+
+        projectPropertiesMenuItem.setText("Project Properties");
+        projectPropertiesMenuItem.setEnabled(false);
+        projectPropertiesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                projectPropertiesMenuItemActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(projectPropertiesMenuItem);
         fileJMenu.add(jSeparator1);
 
         exitJMenuItem.setMnemonic('x');
@@ -1034,16 +1044,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         viewJMenu.setMnemonic('V');
         viewJMenu.setText("View");
-
-        projectPropertiesMenuItem.setText("Project Properties");
-        projectPropertiesMenuItem.setEnabled(false);
-        projectPropertiesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                projectPropertiesMenuItemActionPerformed(evt);
-            }
-        });
-        viewJMenu.add(projectPropertiesMenuItem);
-        viewJMenu.add(jSeparator9);
 
         overViewTabViewMenu.setText("Overview");
 
