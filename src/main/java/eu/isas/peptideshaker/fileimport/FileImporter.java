@@ -79,7 +79,7 @@ public class FileImporter {
     /**
      * Peptide to protein map: peptide sequence -> protein accession
      */
-    private HashMap<String, ArrayList<String>> sequences;
+    private HashMap<String, ArrayList<String>> sequences = new HashMap<String, ArrayList<String>>();
 
     /**
      * Constructor for the importer
@@ -168,8 +168,11 @@ public class FileImporter {
             }
             
             waitingDialog.resetSecondaryProgressBar();
+            waitingDialog.setSecondaryProgressDialogIntermediate(true);
             
-            if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache()) {
+            // db processing disabled only while testing
+            boolean testing = true;
+            if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !testing) { 
                 waitingDialog.appendReport("Creating peptide to protein map.");
                 String sequence;
                 Enzyme enzyme = searchParameters.getEnzyme();
@@ -404,6 +407,7 @@ public class FileImporter {
             this.fastaFile = fastaFile;
             this.idFilter = idFilter;
             this.searchParameters = searchParameters;
+            this.annotationPreferences = annotationPreferences;
 
             for (File file : spectrumFiles) {
                 this.spectrumFiles.put(file.getName(), file);

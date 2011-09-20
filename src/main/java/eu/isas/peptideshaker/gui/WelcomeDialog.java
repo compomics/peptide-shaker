@@ -22,7 +22,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
     /**
      * A reference to the open dialog.
      */
-    private OpenDialog openDialog;
+    private NewDialog openDialog;
 
     /**
      * Create a new WelcomeDialog.
@@ -34,7 +34,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, modal);
         initComponents();
 
-        openDialog = new OpenDialog(peptideShakerGUI, false);
+        openDialog = new NewDialog(peptideShakerGUI, false);
 
         this.peptideShakerGUI = peptideShakerGUI;
         setLocationRelativeTo(peptideShakerGUI);
@@ -239,8 +239,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 }
 
                 this.setVisible(false);
-                openDialog.isPsFile(true);
-                openDialog.importPeptideShakerFile(newFile);
+                peptideShakerGUI.importPeptideShakerFile(newFile);
                 this.dispose();
             }
         }

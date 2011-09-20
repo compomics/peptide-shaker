@@ -16,6 +16,7 @@ import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.myparameters.PSSettings;
+import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -25,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -32,12 +34,12 @@ import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 
 /**
- * A dialog for selecting the identification files to compare and visualize.
+ * A dialog for selecting the files to load.
  *
  * @author  Marc Vaudel
  * @author  Harald Barsnes
  */
-public class OpenDialog extends javax.swing.JDialog implements ProgressDialogParent {
+public class NewDialog extends javax.swing.JDialog implements ProgressDialogParent {
 
     /**
      * The compomics PTM factory.
@@ -88,10 +90,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      */
     private ExperimentIO experimentIO = new ExperimentIO();
     /**
-     * Boolean indicating whether we are opening a peptideshaker file.
-     */
-    private boolean isPsFile = false;
-    /**
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
@@ -111,7 +109,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      * @param peptideShaker a reference to the main frame
      * @param modal         boolean indicating whether the dialog is modal
      */
-    public OpenDialog(PeptideShakerGUI peptideShaker, boolean modal) {
+    public NewDialog(PeptideShakerGUI peptideShaker, boolean modal) {
         super(peptideShaker, modal);
         this.peptideShakerGUI = peptideShaker;
         setUpGui();
@@ -127,7 +125,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
      * @param sample            The sample analyzed
      * @param replicateNumber   The replicate number
      */
-    public OpenDialog(PeptideShakerGUI peptideShaker, boolean modal, MsExperiment experiment, Sample sample, int replicateNumber) {
+    public NewDialog(PeptideShakerGUI peptideShaker, boolean modal, MsExperiment experiment, Sample sample, int replicateNumber) {
         super(peptideShaker, modal);
 
         this.peptideShakerGUI = peptideShaker;
@@ -624,13 +622,14 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
 
             this.setVisible(false);
 
-            if (!idFiles.isEmpty() && !isPsFile) {
-                experiment = new MsExperiment(projectNameIdTxt.getText().trim());
-                sample = new Sample(sampleNameIdtxt.getText().trim());
-                SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(getReplicateNumber()));
-                replicateNumber = getReplicateNumber();
-                experiment.addAnalysisSet(sample, analysisSet);
-            }
+
+            experiment = new MsExperiment(projectNameIdTxt.getText().trim());
+            sample = new Sample(sampleNameIdtxt.getText().trim());
+            SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(getReplicateNumber()));
+            replicateNumber = getReplicateNumber();
+            experiment.addAnalysisSet(sample, analysisSet);
+
+            peptideShakerGUI.setProjectDetails(getProjectDetails());
 
             peptideShaker = new PeptideShaker(experiment, sample, replicateNumber);
 
@@ -647,7 +646,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             boolean needDialog = false;
 
             // load the identification files
-            if (idFiles.size() > 0 && !isPsFile
+            if (idFiles.size() > 0
                     || fastaFile != null
                     || spectrumFiles.size() > 0) {
                 needDialog = true;
@@ -655,10 +654,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
             }
 
             if (needDialog) {
-
-                // @TODO: there's something strange going on here!!
-                //          The try-catch should not be needed, but if not there the tools sometimes crashes when opening an existing project...
-                //          With the try-catch the tool just starts opening the results in the background instead. 
 
                 try {
                     waitingDialog.setVisible(true);
@@ -715,7 +710,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         };
 
         fileChooser.setFileFilter(filter);
-        int returnVal = fileChooser.showDialog(this.getParent(), "Add");
+        int returnVal = fileChooser.showDialog(this.getParent(), "Open");
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             fastaFile = fileChooser.getSelectedFile();
             peptideShakerGUI.setLastSelectedFolder(fastaFile.getAbsolutePath());
@@ -797,13 +792,12 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 return myFile.getName().toLowerCase().endsWith("dat")
                         || myFile.getName().toLowerCase().endsWith("omx")
                         || myFile.getName().toLowerCase().endsWith("xml")
-                        || myFile.getName().toLowerCase().endsWith("cps")
                         || myFile.isDirectory();
             }
 
             @Override
             public String getDescription() {
-                return "Supported formats: Mascot (.dat), OMSSA (.omx), X!Tandem (.xml), Peptide Shaker (.cps)";
+                return "Supported formats: Mascot (.dat), OMSSA (.omx), X!Tandem (.xml)";
             }
         };
 
@@ -818,8 +812,7 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     for (File file : tempFiles) {
                         if (file.getName().toLowerCase().endsWith("dat")
                                 || file.getName().toLowerCase().endsWith("omx")
-                                || file.getName().toLowerCase().endsWith("xml")
-                                || file.getName().toLowerCase().endsWith("cps")) {
+                                || file.getName().toLowerCase().endsWith("xml")) {
                             idFiles.add(file);
                         } else if (file.getName().toLowerCase().endsWith(".properties")) {
                             if (!searchParametersFiles.contains(file)) {
@@ -856,71 +849,10 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     importSuccessfull = importMgfFiles(inputFile);
                 }
             }
-
-            if (idFiles.size() > 1) {
-                for (File file : idFiles) {
-                    if (file.getName().endsWith(".cps")) {
-                        JOptionPane.showMessageDialog(this, "A PeptideShaker file must be imported alone.", "Wrong Identification File.", JOptionPane.ERROR_MESSAGE);
-                        idFiles = new ArrayList<File>();
-                    }
-                }
-            }
             idFilesTxt.setText(idFiles.size() + " file(s) selected");
 
             if (!idFiles.isEmpty()) {
                 openButton.setEnabled(true);
-            }
-
-            if (idFiles.size() == 1 && idFiles.get(0).getName().endsWith(".cps")) {
-
-                importPeptideShakerFile(idFiles.get(0));
-                isPsFile = true;
-                projectNameIdTxt.setEditable(false);
-                sampleNameIdtxt.setEditable(false);
-                replicateNumberIdtxt.setEditable(false);
-                mascotMaxEvalueTxt.setEditable(false);
-                omssaMaxEvalueTxt.setEditable(false);
-                xtandemMaxEvalueTxt.setEditable(false);
-                maxPepLengthTxt.setEditable(false);
-                minPepLengthTxt.setEditable(false);
-                massDeviationTxt.setEditable(false);
-                precMassUnitCmb.setEnabled(false);
-                fastaFileTxt.setText("");
-                browseDbButton.setEnabled(false);
-                clearDbButton.setEnabled(false);
-                editSearchButton.setEnabled(false);
-                searchTxt.setText("");
-            } else {
-                experiment = null;
-                projectNameIdTxt.setEditable(true);
-                sampleNameIdtxt.setEditable(true);
-                replicateNumberIdtxt.setEditable(true);
-                mascotMaxEvalueTxt.setEditable(true);
-                omssaMaxEvalueTxt.setEditable(true);
-                xtandemMaxEvalueTxt.setEditable(true);
-                maxPepLengthTxt.setEditable(true);
-                minPepLengthTxt.setEditable(true);
-                massDeviationTxt.setEditable(true);
-                precMassUnitCmb.setEnabled(true);
-                browseDbButton.setEnabled(true);
-                clearDbButton.setEnabled(true);
-                editSearchButton.setEnabled(true);
-
-                if (isPsFile) {
-                    projectNameIdTxt.setText("New Project");
-                    sampleNameIdtxt.setText("New Sample");
-                    replicateNumberIdtxt.setText("0");
-                    mascotMaxEvalueTxt.setText("10");
-                    omssaMaxEvalueTxt.setText("10");
-                    xtandemMaxEvalueTxt.setText("10");
-                    maxPepLengthTxt.setText("20");
-                    minPepLengthTxt.setText("8");
-                    massDeviationTxt.setText("10");
-                    precMassUnitCmb.setSelectedItem("ppm");
-                    fastaFileTxt.setText(fastaFile.getName());
-                }
-
-                isPsFile = false;
             }
         }
 }//GEN-LAST:event_browseIdActionPerformed
@@ -1063,13 +995,11 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        if (fastaFile == null && !isPsFile) {
+        if (fastaFile == null) {
             JOptionPane.showMessageDialog(null, "Please verify the input for FASTA file.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-
-        peptideShakerGUI.setDataSaved(isPsFile);
 
         return true;
     }
@@ -1199,11 +1129,11 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
                 if (!searchParameters.getModificationProfile().getUtilitiesNames().contains(name)) {
                     searchParameters.getModificationProfile().setPeptideShakerName(name, name);
                     if (!searchParameters.getModificationProfile().getPeptideShakerNames().contains(name)) {
-                        int index = name.length()-1;
+                        int index = name.length() - 1;
                         if (name.lastIndexOf(" ") > 0) {
                             index = name.indexOf(" ");
                         }
-                        if (name.lastIndexOf("-")>0) {
+                        if (name.lastIndexOf("-") > 0) {
                             index = Math.min(index, name.indexOf("-"));
                         }
                         searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
@@ -1363,153 +1293,6 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         return success;
     }
 
-    /**
-     * Loads the new project information
-     */
-    private void loadProject() {
-
-        projectNameIdTxt.setText(experiment.getReference());
-
-        PSSettings experimentSettings = new PSSettings();
-        experimentSettings = (PSSettings) experiment.getUrParam(experimentSettings);
-        peptideShakerGUI.setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
-        peptideShakerGUI.setSearchParameters(experimentSettings.getSearchParameters());
-        peptideShakerGUI.setSpectrumCountingPreferences(experimentSettings.getSpectrumCountingPreferences());
-
-        try {
-            SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile());
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    "An error occured while reading " + experimentSettings.getSearchParameters().getFastaFile() + ".\n",
-                    "File Input Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-
-        ArrayList<String> names = new ArrayList<String>();
-        for (File file : spectrumFiles) {
-            names.add(file.getName());
-        }
-        for (String filePath : experimentSettings.getSearchParameters().getSpectrumFiles()) {
-            try {
-                File newFile = new File(filePath);
-                if (newFile.exists()
-                        && !names.contains(newFile.getName())) {
-                    names.add(newFile.getName());
-                    spectrumFiles.add(newFile);
-                }
-            } catch (Exception e) {
-            }
-        }
-        if (spectrumFiles.size() > 0) {
-            spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
-        }
-
-        ArrayList<Sample> samples = new ArrayList(experiment.getSamples().values());
-        if (samples.size() == 1) {
-            sample = samples.get(0);
-        } else {
-            String[] sampleNames = new String[samples.size()];
-            for (int cpt = 0; cpt < sampleNames.length; cpt++) {
-                sampleNames[cpt] = samples.get(cpt).getReference();
-            }
-            SampleSelection sampleSelection = new SampleSelection(null, true, sampleNames, "sample");
-            sampleSelection.setVisible(true);
-            String choice = sampleSelection.getChoice();
-            for (Sample sampleTemp : samples) {
-                if (sampleTemp.getReference().equals(choice)) {
-                    sample = sampleTemp;
-                    break;
-                }
-            }
-        }
-
-        sampleNameIdtxt.setText(sample.getReference());
-
-        ArrayList<Integer> replicates = new ArrayList(experiment.getAnalysisSet(sample).getReplicateNumberList());
-        if (replicates.size() == 1) {
-            replicateNumber = replicates.get(0);
-        } else {
-            String[] replicateNames = new String[replicates.size()];
-            for (int cpt = 0; cpt < replicateNames.length; cpt++) {
-                replicateNames[cpt] = samples.get(cpt).getReference();
-            }
-            SampleSelection sampleSelection = new SampleSelection(null, true, replicateNames, "replicate");
-            sampleSelection.setVisible(true);
-            Integer choice = new Integer(sampleSelection.getChoice());
-            replicateNumber = choice;
-        }
-
-        replicateNumberIdtxt.setText(replicateNumber + "");
-        mascotMaxEvalueTxt.setText("");
-        omssaMaxEvalueTxt.setText("");
-        xtandemMaxEvalueTxt.setText("");
-        maxPepLengthTxt.setText("");
-        minPepLengthTxt.setText("");
-        massDeviationTxt.setText("");
-    }
-
-    /**
-     * Imports informations from a peptide shaker file.
-     *
-     * @param aPsFile    the peptide shaker file
-     */
-    public void importPeptideShakerFile(File aPsFile) {
-
-        final File psFile = aPsFile;
-
-        final OpenDialog tempRef = this; // needed due to threading issues
-        cancelProgress = false;
-        progressDialog = new ProgressDialogX(this, this, true);
-        progressDialog.doNothingOnClose();
-
-        new Thread(new Runnable() {
-
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Importing Project. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
-
-        new Thread("ImportThread") {
-
-            @Override
-            public void run() {
-
-                try {
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
-                    experiment = experimentIO.loadExperiment(psFile);
-                    loadProject();
-
-                    progressDialog.setVisible(false);
-                    progressDialog.dispose();
-
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                    tempRef.setVisible(false);
-                    tempRef.openButtonActionPerformed(null);
-
-                } catch (Exception e) {
-
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                    progressDialog.setVisible(false);
-                    progressDialog.dispose();
-
-                    JOptionPane.showMessageDialog(tempRef,
-                            "An error occured while reading " + psFile + ".\n"
-                            + "Please verify that the compomics-utilities version used to create\n"
-                            + "the file is compatible with your version of PeptideShaker.",
-                            "File Input Error", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                }
-            }
-        }.start();
-    }
 
     @Override
     public void cancelProgress() {
@@ -1535,7 +1318,20 @@ public class OpenDialog extends javax.swing.JDialog implements ProgressDialogPar
         this.searchParametersFiles = searchParametersFiles;
     }
 
-    public void isPsFile(boolean isPsFile) {
-        this.isPsFile = isPsFile;
+    private ProjectDetails getProjectDetails() {
+        ProjectDetails projectDetails = new ProjectDetails();
+        projectDetails.setCreationDate(new Date());
+        projectDetails.setDbFile(fastaFile);
+        projectDetails.setIdentificationFiles(idFiles);
+        projectDetails.setSpectrumFiles(spectrumFiles);
+        projectDetails.setMascotEValue(getMascotMaxEvalue());
+        projectDetails.setOmssaEValue(getOmssaMaxEvalue());
+        projectDetails.setxTandemEValue(getXtandemMaxEvalue());
+        projectDetails.setNaaMax(getMaxPeptideLength());
+        projectDetails.setnAAmin(getMinPeptideLength());
+        projectDetails.setPrecursorError(getMaxMassDeviation());
+        projectDetails.setPrecursorErrorPpm(precMassUnitCmb.getSelectedIndex() == 0);
+
+        return projectDetails;
     }
 }

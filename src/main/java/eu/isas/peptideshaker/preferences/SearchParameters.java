@@ -83,6 +83,14 @@ public class SearchParameters implements Serializable {
     public ArrayList<String> getSpectrumFiles() {
         return spectrumFiles;
     }
+    
+    /**
+     * Sets a new list of spectrum files
+     * @param spectrumFiles the new list of spectrum files
+     */
+    public void setSpectrumFiles(ArrayList<String> spectrumFiles) {
+        this.spectrumFiles = spectrumFiles;
+    }
 
     /**
      * Adds a spectrum file to the list
