@@ -703,7 +703,7 @@ public class PeptideShaker {
      */
     public void scorePTMs(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
         attachDeltaScore(spectrumMatch);
-        attachAScore(spectrumMatch, searchParameters, annotationPreferences);
+        // attachAScore(spectrumMatch, searchParameters, annotationPreferences);
     }
 
     /**
@@ -775,7 +775,7 @@ public class PeptideShaker {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
         PSParameter psParameter = new PSParameter();
-        double p1, aScore;
+        double p1;
         String modificationName;
         HashMap<String, PTM> modifications;
         PSPtmScores ptmScores;
@@ -795,8 +795,9 @@ public class PeptideShaker {
                 }
             }
             if (!modifications.isEmpty()) {
+                MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
+                annotationPreferences.setCurrentSettings(spectrumMatch.getBestAssumption().getPeptide(), spectrum.getPrecursor().getCharge().value, true);
                 for (String mod : modifications.keySet()) {
-                    MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
                     HashMap<ArrayList<Integer>, Double> aScores = AScore.getAScore(spectrumMatch.getBestAssumption().getPeptide(),
                             modifications.get(mod), spectrum, annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
