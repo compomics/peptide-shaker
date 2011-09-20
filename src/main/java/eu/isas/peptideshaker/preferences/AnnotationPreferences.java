@@ -132,10 +132,17 @@ public class AnnotationPreferences implements Serializable {
         return selectedCharges;
     }
 
+    /**
+     * Clears the selected charges
+     */
     public void clearCharges() {
         selectedCharges.clear();
     }
 
+    /**
+     * Add a charge to take into account when annotating the spectrum
+     * @param selectedCharge a charge to take into account when annotating the spectrum
+     */
     public void addSelectedCharge(int selectedCharge) {
         selectedCharges.add(selectedCharge);
     }
