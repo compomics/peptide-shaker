@@ -1283,7 +1283,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                                 } else {
                                     taxonomyJTextField.setText(uniProtEntry.getOrganism().getScientificName().toString());
                                 }
-
+                                
                                 counter++;
                             }
 
