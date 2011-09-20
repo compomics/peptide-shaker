@@ -2429,11 +2429,11 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                            //@TODO any reason for sorting peptide matches this way?
                             int proteinInferenceType = 0;
-
                             if (otherProteins.size() == 1) {
                                 proteinInferenceType = 1;
-                            } else if (otherProteins.size() > 1 && otherProteins.size() <= 4) {
+                            } else if (otherProteins.size() > 1 && otherProteins.size() <= 4) { 
                                 proteinInferenceType = 2;
                             } else if (otherProteins.size() > 4) {
                                 proteinInferenceType = 3;

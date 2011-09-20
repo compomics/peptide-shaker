@@ -703,7 +703,7 @@ public class PeptideShaker {
      */
     public void scorePTMs(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
         attachDeltaScore(spectrumMatch);
-        //attachAScore(spectrumMatch, searchParameters, annotationPreferences);
+        attachAScore(spectrumMatch, searchParameters, annotationPreferences);
     }
 
     /**
@@ -1043,7 +1043,7 @@ public class PeptideShaker {
     private ArrayList<String> parseDescription(String proteinAccession) {
         String description = "";
         try {
-            sequenceFactory.getHeader(proteinAccession).getDescription();
+            description = sequenceFactory.getHeader(proteinAccession).getDescription();
         } catch (Exception e) {
             e.printStackTrace();
         }

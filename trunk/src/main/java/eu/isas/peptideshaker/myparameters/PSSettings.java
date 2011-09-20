@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 
@@ -24,6 +25,10 @@ public class PSSettings implements UrParameter {
      * The spectrum counting preferences
      */
     private SpectrumCountingPreferences spectrumCountingPreferences;
+    /**
+     * The project details
+     */
+    private ProjectDetails projectDetails;
     
     /**
      * Blank constructor
@@ -38,13 +43,16 @@ public class PSSettings implements UrParameter {
      * @param annotationPreferences         The annotation preferences
      * @param identificationPreferences     The identification preferences
      * @param spectrumCountingPreferences   The spectrum counting preferences
+     * @param projectDetails                The project details
      */
     public PSSettings(SearchParameters searchParameters, 
             AnnotationPreferences annotationPreferences, 
-            SpectrumCountingPreferences spectrumCountingPreferences) {
+            SpectrumCountingPreferences spectrumCountingPreferences,
+            ProjectDetails projectDetails) {
         this.searchParameters = searchParameters;
         this.annotationPreferences = annotationPreferences;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
+        this.projectDetails = projectDetails;
     }
 
     /**
@@ -69,6 +77,14 @@ public class PSSettings implements UrParameter {
      */
     public SpectrumCountingPreferences getSpectrumCountingPreferences() {
         return spectrumCountingPreferences;
+    }
+    
+    /**
+     * Returns the project details
+     * @return the project details
+     */
+    public ProjectDetails getProjectDetails() {
+        return projectDetails;
     }
 
     @Override

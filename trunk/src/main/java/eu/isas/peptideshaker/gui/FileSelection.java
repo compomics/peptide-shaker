@@ -20,7 +20,7 @@ public class FileSelection extends javax.swing.JDialog {
     /**
      * The parent dialog
      */
-    private OpenDialog parent;
+    private NewDialog parent;
     /**
      * A map of the files indexed by their name
      */
@@ -32,7 +32,7 @@ public class FileSelection extends javax.swing.JDialog {
      * @param parent
      * @param files  
      */
-    public FileSelection(OpenDialog parent, ArrayList<File> files) {
+    public FileSelection(NewDialog parent, ArrayList<File> files) {
         super(parent, true);
         this.parent = parent;
         initComponents();

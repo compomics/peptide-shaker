@@ -29,11 +29,13 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.io.filefilters.MgfFileFilter;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FollowupPreferencesDialog;
+import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectDetailsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SpectrumCountingPreferencesDialog;
 import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
@@ -47,6 +49,7 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.ModificationProfile;
+import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import java.awt.Color;
@@ -227,6 +230,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The parameters of the search
      */
     private SearchParameters searchParameters = new SearchParameters();
+    /**
+     * The project details
+     */
+    private ProjectDetails projectDetails = null;
     /**
      * Compomics experiment saver and opener
      */
@@ -488,6 +495,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         openRecentJMenu = new javax.swing.JMenu();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         saveMenuItem = new javax.swing.JMenuItem();
+        projectPropertiesMenu = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
@@ -943,6 +951,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         fileJMenu.add(saveMenuItem);
+
+        projectPropertiesMenu.setText("Project Properties");
+        projectPropertiesMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                projectPropertiesMenuActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(projectPropertiesMenu);
         fileJMenu.add(jSeparator1);
 
         exitJMenuItem.setMnemonic('x');
@@ -1164,16 +1180,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
-                OpenDialog openDialog = new OpenDialog(this, true);
+                NewDialog openDialog = new NewDialog(this, true);
                 openDialog.setVisible(true);
             } else if (value == JOptionPane.CANCEL_OPTION) {
                 // do nothing
             } else { // no option
-                OpenDialog openDialog = new OpenDialog(this, true);
+                NewDialog openDialog = new NewDialog(this, true);
                 openDialog.setVisible(true);
             }
         } else {
-            OpenDialog openDialog = new OpenDialog(this, true);
+            NewDialog openDialog = new NewDialog(this, true);
             openDialog.setVisible(true);
         }
     }//GEN-LAST:event_newJMenuItemActionPerformed
@@ -1263,7 +1279,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     try {
                         // change the peptide shaker icon to a "waiting version"
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences));
+                        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails));
 
                         String folderPath = selectedFile.substring(0, selectedFile.lastIndexOf("."));
                         File newFolder = new File(folderPath + "_cps");
@@ -1647,7 +1663,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 }
             }
         }
-        
+
         // update the basic protein annotation
         if (selectedIndex == ANNOTATION_TAB_INDEX) {
             annotationPanel.updateBasicProteinAnnotation(selectedProteinAccession);
@@ -1754,7 +1770,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void openJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJMenuItemActionPerformed
 
-        boolean openProject = true;
 
         if (!dataSaved && experiment != null) {
             int value = JOptionPane.showConfirmDialog(this,
@@ -1765,63 +1780,59 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
-                openProject = true;
             } else if (value == JOptionPane.CANCEL_OPTION) {
-                openProject = false;
+                return;
             } else { // no option
                 // do nothing
             }
         }
 
-        if (openProject) {
 
-            JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
-            fileChooser.setDialogTitle("Open PeptideShaker Project");
+        JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
+        fileChooser.setDialogTitle("Open PeptideShaker Project");
 
-            FileFilter filter = new FileFilter() {
+        FileFilter filter = new FileFilter() {
 
-                @Override
-                public boolean accept(File myFile) {
-                    return myFile.getName().toLowerCase().endsWith("cps")
-                            || myFile.isDirectory();
-                }
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.getName().toLowerCase().endsWith("cps")
+                        || myFile.isDirectory();
+            }
 
-                @Override
-                public String getDescription() {
-                    return "Supported formats: Peptide Shaker (.cps)";
-                }
-            };
+            @Override
+            public String getDescription() {
+                return "Supported formats: Peptide Shaker (.cps)";
+            }
+        };
 
-            fileChooser.setFileFilter(filter);
-            int returnVal = fileChooser.showDialog(this.getParent(), "Open");
+        fileChooser.setFileFilter(filter);
+        int returnVal = fileChooser.showDialog(this.getParent(), "Open");
 
-            if (returnVal == JFileChooser.APPROVE_OPTION) {
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-                OpenDialog openDialog = new OpenDialog(this, true);
+            NewDialog openDialog = new NewDialog(this, true);
 
-                openDialog.setSearchParamatersFiles(new ArrayList<File>());
-                File newFile = fileChooser.getSelectedFile();
-                setLastSelectedFolder(newFile.getAbsolutePath());
+            openDialog.setSearchParamatersFiles(new ArrayList<File>());
+            File newFile = fileChooser.getSelectedFile();
+            setLastSelectedFolder(newFile.getAbsolutePath());
 
-                if (!newFile.getName().toLowerCase().endsWith("cps")) {
-                    JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
-                            "Wrong File.", JOptionPane.ERROR_MESSAGE);
-                } else {
+            if (!newFile.getName().toLowerCase().endsWith("cps")) {
+                JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
+                        "Wrong File.", JOptionPane.ERROR_MESSAGE);
+            } else {
 
-                    // get the properties files
-                    for (File file : newFile.getParentFile().listFiles()) {
-                        if (file.getName().toLowerCase().endsWith(".properties")) {
-                            if (!openDialog.getSearchParametersFiles().contains(file)) {
-                                openDialog.getSearchParametersFiles().add(file);
-                            }
+                // get the properties files
+                for (File file : newFile.getParentFile().listFiles()) {
+                    if (file.getName().toLowerCase().endsWith(".properties")) {
+                        if (!openDialog.getSearchParametersFiles().contains(file)) {
+                            openDialog.getSearchParametersFiles().add(file);
                         }
                     }
-
-                    updateRecentProjectsList(newFile);
-
-                    openDialog.isPsFile(true);
-                    openDialog.importPeptideShakerFile(newFile);
                 }
+
+                updateRecentProjectsList(newFile);
+
+                importPeptideShakerFile(newFile);
             }
         }
     }//GEN-LAST:event_openJMenuItemActionPerformed
@@ -2067,6 +2078,10 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
     updateAnnotationPreferences();
 }//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
 
+private void projectPropertiesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectPropertiesMenuActionPerformed
+    new ProjectDetailsDialog(this);
+}//GEN-LAST:event_projectPropertiesMenuActionPerformed
+
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
@@ -2160,7 +2175,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
                     }
 
                     allTabsJTabbedPaneStateChanged(null);
-                    
+
                     // make sure that all panels are looking the way they should
                     repaintPanels();
 
@@ -2270,6 +2285,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
     private javax.swing.JPanel overviewJPanel;
     private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem precursorCheckBoxMenuItem;
+    private javax.swing.JMenuItem projectPropertiesMenu;
     private javax.swing.JMenuItem proteinFilterJMenuItem;
     private javax.swing.JPanel proteinStructureJPanel;
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
@@ -2471,7 +2487,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
      * Updates the annotations in the selected tab.
      */
     public void updateSpectrumAnnotations() {
-        
+
         int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
 
         if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
@@ -3777,7 +3793,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
                             if (!new File(filePath).exists()) {
                                 JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
                             } else {
-                                OpenDialog openDialog = new OpenDialog(temp, false);
+                                NewDialog openDialog = new NewDialog(temp, false);
                                 openDialog.setSearchParamatersFiles(new ArrayList<File>());
 
                                 // get the properties files
@@ -3789,8 +3805,7 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
                                     }
                                 }
 
-                                openDialog.isPsFile(true);
-                                openDialog.importPeptideShakerFile(new File(filePath));
+                                importPeptideShakerFile(new File(filePath));
                                 updateRecentProjectsList(new File(filePath));
                                 lastSelectedFolder = new File(filePath).getAbsolutePath();
                             }
@@ -3920,5 +3935,317 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
         }
 
         return tooltip;
+    }
+
+    /**
+     * Returns the project details
+     * @return the project details
+     */
+    public ProjectDetails getProjectDetails() {
+        return projectDetails;
+    }
+
+    /**
+     * Sets the project details
+     * @param projectDetails the project details
+     */
+    public void setProjectDetails(ProjectDetails projectDetails) {
+        this.projectDetails = projectDetails;
+    }
+
+    /**
+     * Imports informations from a peptide shaker file.
+     * Code originally in the NewDialog class: today, I will boost my statistics ;-)
+     *
+     * @param aPsFile    the peptide shaker file
+     */
+    public void importPeptideShakerFile(File aPsFile) {
+
+        final File psFile = aPsFile;
+
+        final PeptideShakerGUI peptideShakerGUI = this; // needed due to threading issues
+        progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Importing Project. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("ImportThread") {
+
+            @Override
+            public void run() {
+
+                try {
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
+                    MsExperiment tempExperiment = experimentIO.loadExperiment(psFile);
+                    Sample tempSample = null;
+                    int tempReplicate = -1;
+
+                    PSSettings experimentSettings = new PSSettings();
+                    experimentSettings = (PSSettings) tempExperiment.getUrParam(experimentSettings);
+                    peptideShakerGUI.setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
+                    peptideShakerGUI.setSearchParameters(experimentSettings.getSearchParameters());
+                    peptideShakerGUI.setSpectrumCountingPreferences(experimentSettings.getSpectrumCountingPreferences());
+                    peptideShakerGUI.setProjectDetails(experimentSettings.getProjectDetails());
+
+                    try {
+                        SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile());
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(peptideShakerGUI,
+                                "An error occured while reading " + experimentSettings.getSearchParameters().getFastaFile() + ".\nPlease select the FASTA file manually.",
+                                "File Input Error", JOptionPane.ERROR_MESSAGE);
+
+                        JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
+                        fileChooser.setDialogTitle("Open Fasta File");
+
+                        FileFilter filter = new FileFilter() {
+
+                            @Override
+                            public boolean accept(File myFile) {
+                                return myFile.getName().toLowerCase().endsWith("fasta")
+                                        || myFile.getName().toLowerCase().endsWith("fast")
+                                        || myFile.getName().toLowerCase().endsWith("fas")
+                                        || myFile.isDirectory();
+                            }
+
+                            @Override
+                            public String getDescription() {
+                                return "Supported formats: FASTA format (.fasta)";
+                            }
+                        };
+
+                        fileChooser.setFileFilter(filter);
+                        int returnVal = fileChooser.showDialog(peptideShakerGUI, "Open");
+
+                        if (returnVal == JFileChooser.APPROVE_OPTION) {
+                            File fastaFile = fileChooser.getSelectedFile();
+                            setLastSelectedFolder(fastaFile.getAbsolutePath());
+                            searchParameters.setFastaFile(fastaFile);
+                            try {
+                                progressDialog.setTitle("Importing fasta file, please wait...");
+                                SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile(), progressDialog.getProgressBar());
+                            } catch (Exception e2) {
+                                e2.printStackTrace();
+                                JOptionPane.showMessageDialog(peptideShakerGUI,
+                                        "An error occured while reading " + experimentSettings.getSearchParameters().getFastaFile() + ".\nOpen cancelled.",
+                                        "File Input Error", JOptionPane.ERROR_MESSAGE);
+                                clearData();
+
+                                progressDialog.setVisible(false);
+                                progressDialog.dispose();
+
+                                // change the peptide shaker icon back to the default version
+                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                return;
+                            }
+
+                        } else {
+                            clearData();
+
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+
+                            // change the peptide shaker icon back to the default version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            return;
+                        }
+                    }
+
+                    ArrayList<String> names = new ArrayList<String>();
+                    ArrayList<String> spectrumFiles = new ArrayList<String>();
+                    for (String filePath : getSearchParameters().getSpectrumFiles()) {
+                        try {
+                            File newFile = new File(filePath);
+                            if (newFile.exists()
+                                    && !names.contains(newFile.getName())) {
+                                names.add(newFile.getName());
+                                spectrumFiles.add(filePath);
+                            } else {
+                                JOptionPane.showMessageDialog(peptideShakerGUI,
+                                        "An error occured while reading " + newFile.getName() + ".\nPlease select the spectrum file or the folder containing it manually.",
+                                        "File Input Error", JOptionPane.ERROR_MESSAGE);
+
+                                JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
+                                fileChooser.setDialogTitle("Open Fasta File");
+
+                                FileFilter filter = new FileFilter() {
+
+                                    @Override
+                                    public boolean accept(File myFile) {
+                                        return myFile.getName().toLowerCase().endsWith("mgf")
+                                                || myFile.isDirectory();
+                                    }
+
+                                    @Override
+                                    public String getDescription() {
+                                        return "Supported formats: Mascot Generic Format (.mgf)";
+                                    }
+                                };
+
+                                fileChooser.setFileFilter(filter);
+                                int returnVal = fileChooser.showDialog(peptideShakerGUI, "Open");
+
+                                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                                    File mgfFolder = fileChooser.getSelectedFile();
+                                    if (!mgfFolder.isDirectory()) {
+                                        mgfFolder = mgfFolder.getParentFile();
+                                    }
+                                    setLastSelectedFolder(mgfFolder.getAbsolutePath());
+                                    boolean found = false;
+                                    for (File file : mgfFolder.listFiles()) {
+                                        for (String filePath2 : getSearchParameters().getSpectrumFiles()) {
+                                            try {
+                                                File newFile2 = new File(filePath2);
+                                                if (newFile2.getName().equals(file.getName())
+                                                        && !names.contains(file.getName())) {
+                                                    names.add(file.getName());
+                                                    spectrumFiles.add(file.getPath());
+                                                }
+                                                if (newFile.getName().equals(newFile2.getName())) {
+                                                    found = true;
+                                                }
+                                            } catch (Exception e) {
+                                            }
+                                        }
+                                    }
+                                    if (!found) {
+                                        JOptionPane.showMessageDialog(peptideShakerGUI,
+                                                newFile.getName() + " was not found in the given folder.",
+                                                "File Input Error", JOptionPane.ERROR_MESSAGE);
+                                        clearData();
+
+                                        progressDialog.setVisible(false);
+                                        progressDialog.dispose();
+
+                                        // change the peptide shaker icon back to the default version
+                                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                        return;
+                                    }
+                                } else {
+                                    clearData();
+
+                                    progressDialog.setVisible(false);
+                                    progressDialog.dispose();
+
+                                    // change the peptide shaker icon back to the default version
+                                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                    return;
+                                }
+
+
+                            }
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(peptideShakerGUI,
+                                    "An error occured while looking for the spectrum files.",
+                                    "File Input Error", JOptionPane.ERROR_MESSAGE);
+                            clearData();
+
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+
+                            // change the peptide shaker icon back to the default version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            e.printStackTrace();
+                            return;
+                        }
+                    }
+                    getSearchParameters().setSpectrumFiles(spectrumFiles);
+
+                    ArrayList<Sample> samples = new ArrayList(tempExperiment.getSamples().values());
+                    if (samples.size() == 1) {
+                        tempSample = samples.get(0);
+                    } else {
+                        String[] sampleNames = new String[samples.size()];
+                        for (int cpt = 0; cpt < sampleNames.length; cpt++) {
+                            sampleNames[cpt] = samples.get(cpt).getReference();
+                        }
+                        SampleSelection sampleSelection = new SampleSelection(null, true, sampleNames, "sample");
+                        sampleSelection.setVisible(true);
+                        String choice = sampleSelection.getChoice();
+                        for (Sample sampleTemp : samples) {
+                            if (sampleTemp.getReference().equals(choice)) {
+                                tempSample = sampleTemp;
+                                break;
+                            }
+                        }
+                    }
+
+                    ArrayList<Integer> replicates = new ArrayList(tempExperiment.getAnalysisSet(tempSample).getReplicateNumberList());
+                    if (replicates.size() == 1) {
+                        tempReplicate = replicates.get(0);
+                    } else {
+                        String[] replicateNames = new String[replicates.size()];
+                        for (int cpt = 0; cpt < replicateNames.length; cpt++) {
+                            replicateNames[cpt] = samples.get(cpt).getReference();
+                        }
+                        SampleSelection sampleSelection = new SampleSelection(null, true, replicateNames, "replicate");
+                        sampleSelection.setVisible(true);
+                        Integer choice = new Integer(sampleSelection.getChoice());
+                        tempReplicate = choice;
+                    }
+
+                    setProject(tempExperiment, tempSample, tempReplicate);
+
+                    File mgfFile;
+                    int cpt = 0;
+                    progressDialog.setTitle("Importing spectrum files, please wait...");
+                    for (String spectrumFile : spectrumFiles) {
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setMax(spectrumFiles.size() + 1);
+                        progressDialog.setValue(++cpt);
+                        try {
+                            mgfFile = new File(spectrumFile);
+                            spectrumFactory.addSpectra(mgfFile, progressDialog.getProgressBar());
+                            progressDialog.incrementValue();
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(peptideShakerGUI,
+                                    "An error occured while importing " + spectrumFile + ".",
+                                    "File Input Error", JOptionPane.ERROR_MESSAGE);
+                            clearData();
+
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+
+                            // change the peptide shaker icon back to the default version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            e.printStackTrace();
+                            return;
+                        }
+                    }
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+
+                    peptideShakerGUI.displayResults(true);
+                    peptideShakerGUI.setFrameTitle(experiment.getReference());
+
+
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                } catch (Exception e) {
+
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+
+                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                            "An error occured while reading " + psFile + ".\n"
+                            + "Please verify that the compomics-utilities version used to create\n"
+                            + "the file is compatible with your version of PeptideShaker.",
+                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 }
