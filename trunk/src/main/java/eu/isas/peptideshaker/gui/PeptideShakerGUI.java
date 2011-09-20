@@ -29,7 +29,6 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
-import com.compomics.util.io.filefilters.MgfFileFilter;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
@@ -494,10 +493,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         openJMenuItem = new javax.swing.JMenuItem();
         openRecentJMenu = new javax.swing.JMenu();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        saveMenuItem = new javax.swing.JMenuItem();
-        jSeparator9 = new javax.swing.JPopupMenu.Separator();
         projectPropertiesMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        saveMenuItem = new javax.swing.JMenuItem();
+        jSeparator9 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
         searchParametersMenu = new javax.swing.JMenuItem();
@@ -942,6 +941,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         fileJMenu.add(openRecentJMenu);
         fileJMenu.add(jSeparator2);
 
+        projectPropertiesMenuItem.setText("Project Properties");
+        projectPropertiesMenuItem.setEnabled(false);
+        projectPropertiesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                projectPropertiesMenuItemActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(projectPropertiesMenuItem);
+        fileJMenu.add(jSeparator1);
+
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveMenuItem.setMnemonic('S');
         saveMenuItem.setText("Save As...");
@@ -953,16 +962,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         fileJMenu.add(saveMenuItem);
         fileJMenu.add(jSeparator9);
-
-        projectPropertiesMenuItem.setText("Project Properties");
-        projectPropertiesMenuItem.setEnabled(false);
-        projectPropertiesMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                projectPropertiesMenuItemActionPerformed(evt);
-            }
-        });
-        fileJMenu.add(projectPropertiesMenuItem);
-        fileJMenu.add(jSeparator1);
 
         exitJMenuItem.setMnemonic('x');
         exitJMenuItem.setText("Exit");
