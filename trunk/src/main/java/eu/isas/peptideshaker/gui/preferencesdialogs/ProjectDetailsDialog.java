@@ -1,13 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
-/*
- * This dialog displays the project properties
- *
- * Created on Sep 16, 2011, 9:40:23 PM
- */
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -15,12 +6,17 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import java.io.File;
 
 /**
- *
- * @author vaudel
+ * This dialog displays the project properties.
+ * 
+ * @author Marc Vaudel
  */
 public class ProjectDetailsDialog extends javax.swing.JDialog {
 
-    /** Creates new form ProjectDetailsDialog */
+    /** 
+     * Creates a dialog to display the project properties.
+     * 
+     * @param parent 
+     */
     public ProjectDetailsDialog(PeptideShakerGUI parent) {
         super(parent, true);
         initComponents();
@@ -28,39 +24,52 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
         ProjectDetails projectDetails = parent.getProjectDetails();
         if (projectDetails != null) {
             
-            String report = "";
+            String report = "<html><br>";
             
-            report += "\n\tExperiment " + parent.getExperiment().getReference();
-            report += " on sample " + parent.getSample().getReference();
-            report += ", replicate number " + parent.getReplicateNumber() + ".\n\n\n";
+            report += "<b>Experiment</b>: " + parent.getExperiment().getReference() + "<br>";
+            report += "<b>Sample:</b> " + parent.getSample().getReference() + "<br>";
+            report += "<b>Replicate number:</b> " + parent.getReplicateNumber() + "<br><br>";
             
-            report += "\tProject created on " + projectDetails.getCreationDate();
-            report += " based on the following identification files:\n";
+            report += "<b>Creation Date:</b> " + projectDetails.getCreationDate() + "<br><br>";
+            
+            report += "<b>Identification Files</b>:<br>";
             for (File idFile : projectDetails.getIdentificationFiles()) {
-                report += idFile.getAbsolutePath() + "\n";
+                report += idFile.getAbsolutePath() + "<br>";
             }
-            report += "\nobtained from the following spectrum files:\n";
-            for (File mgfFile : projectDetails.getSpectrumFiles()) {
-                report += mgfFile.getAbsolutePath() + "\n";
-            }
-            report += "\nsearched agains the following fasta file:\n";
-            report += projectDetails.getDbFile() + "\n\n";
             
-            report += "The following filters were applied to the identification and should be reported in any publication:\n";
-            report += "Maximal Mascot e-value: " + projectDetails.getMascotEValue() + "\n";
-            report += "Maximal OMSSA e-value: " + projectDetails.getOmssaEValue() + "\n";
-            report += "Maximal X!Tandem e-value: " + projectDetails.getxTandemEValue() + "\n";
-            report += "Peptide size from " + projectDetails.getnAAmin() + " to " + projectDetails.getNaaMax() + ".";
-            report += "Maximal precursor mass deviation: " + projectDetails.getPrecursorError();
-            if (projectDetails.isPrecursorErrorPpm()) {
-                report += " ppm\n";
-            } else {
-                report += " Da\n";
+            report += "<br><b>Spectrum Files:</b><br>";
+            for (File mgfFile : projectDetails.getSpectrumFiles()) {
+                report += mgfFile.getAbsolutePath() + "<br>";
             }
-            reportTxt.setText(report);
+            
+            report += "<br><b>FASTA File:</b><br>";
+            report += projectDetails.getDbFile() + "<br>";
+            
+            report += "<br><b>Filters Applied:</b><br>";
+            report += "Maximal Mascot e-value: " + projectDetails.getMascotEValue() + "<br>";
+            report += "Maximal OMSSA e-value: " + projectDetails.getOmssaEValue() + "<br>";
+            report += "Maximal X!Tandem e-value: " + projectDetails.getxTandemEValue() + "<br>";
+            report += "Peptide Length: " + projectDetails.getnAAmin() + " to " + projectDetails.getNaaMax() + "<br>";
+            report += "Maximal Precursor Mass Deviation: " + projectDetails.getPrecursorError();
+            
+            if (projectDetails.isPrecursorErrorPpm()) {
+                report += " ppm<br>";
+            } else {
+                report += " Da<br>";
+            }
+            
+            report += "<br><i>(note: filters used should be reported in publications!)</i>";
+            
+            report += "</html>";
+            
+            projectDetailsJEditorPane.setText(report);
+            projectDetailsJEditorPane.setCaretPosition(0);
+            
+            setTitle("Project Properties - " + parent.getExperiment().getReference());
         } else {
-            reportTxt.setText("No project loaded.");
+            projectDetailsJEditorPane.setText("No project loaded.");
         }
+        setLocationRelativeTo(parent);
         setVisible(true);
     }
 
@@ -74,36 +83,12 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        reportTxt = new javax.swing.JTextArea();
         closeButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        projectDetailsJScrollPane = new javax.swing.JScrollPane();
+        projectDetailsJEditorPane = new javax.swing.JEditorPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Project Properties"));
-
-        reportTxt.setColumns(20);
-        reportTxt.setEditable(false);
-        reportTxt.setRows(5);
-        jScrollPane1.setViewportView(reportTxt);
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
-                .addContainerGap())
-        );
 
         closeButton.setText("Close");
         closeButton.addActionListener(new java.awt.event.ActionListener() {
@@ -112,6 +97,29 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
             }
         });
 
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Details"));
+
+        projectDetailsJEditorPane.setContentType("text/html");
+        projectDetailsJEditorPane.setEditable(false);
+        projectDetailsJScrollPane.setViewportView(projectDetailsJEditorPane);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(projectDetailsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 730, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(projectDetailsJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -119,7 +127,7 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(closeButton))
                 .addContainerGap())
         );
@@ -128,7 +136,7 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(closeButton)
                 .addContainerGap())
         );
@@ -147,6 +155,11 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Close the dialog.
+     * 
+     * @param evt 
+     */
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
         dispose();
     }//GEN-LAST:event_closeButtonActionPerformed
@@ -156,7 +169,7 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
     private javax.swing.JButton closeButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea reportTxt;
+    private javax.swing.JEditorPane projectDetailsJEditorPane;
+    private javax.swing.JScrollPane projectDetailsJScrollPane;
     // End of variables declaration//GEN-END:variables
 }

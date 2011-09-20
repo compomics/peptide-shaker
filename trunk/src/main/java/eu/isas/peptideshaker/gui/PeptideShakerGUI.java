@@ -495,7 +495,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         openRecentJMenu = new javax.swing.JMenu();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         saveMenuItem = new javax.swing.JMenuItem();
-        projectPropertiesMenu = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
@@ -508,6 +507,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         identificationFeaturesMenu = new javax.swing.JMenuItem();
         followUpAnalysisMenu = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
+        projectPropertiesMenuItem = new javax.swing.JMenuItem();
+        jSeparator9 = new javax.swing.JPopupMenu.Separator();
         overViewTabViewMenu = new javax.swing.JMenu();
         proteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         peptidesAndPsmsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -951,14 +952,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         fileJMenu.add(saveMenuItem);
-
-        projectPropertiesMenu.setText("Project Properties");
-        projectPropertiesMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                projectPropertiesMenuActionPerformed(evt);
-            }
-        });
-        fileJMenu.add(projectPropertiesMenu);
         fileJMenu.add(jSeparator1);
 
         exitJMenuItem.setMnemonic('x');
@@ -1041,6 +1034,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         viewJMenu.setMnemonic('V');
         viewJMenu.setText("View");
+
+        projectPropertiesMenuItem.setText("Project Properties");
+        projectPropertiesMenuItem.setEnabled(false);
+        projectPropertiesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                projectPropertiesMenuItemActionPerformed(evt);
+            }
+        });
+        viewJMenu.add(projectPropertiesMenuItem);
+        viewJMenu.add(jSeparator9);
 
         overViewTabViewMenu.setText("Overview");
 
@@ -2078,9 +2081,9 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
     updateAnnotationPreferences();
 }//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
 
-private void projectPropertiesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectPropertiesMenuActionPerformed
+private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectPropertiesMenuItemActionPerformed
     new ProjectDetailsDialog(this);
-}//GEN-LAST:event_projectPropertiesMenuActionPerformed
+}//GEN-LAST:event_projectPropertiesMenuItemActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
@@ -2190,6 +2193,7 @@ private void projectPropertiesMenuActionPerformed(java.awt.event.ActionEvent evt
                     proteinFilterJMenuItem.setEnabled(true);
                     identificationFeaturesMenu.setEnabled(true);
                     followUpAnalysisMenu.setEnabled(true);
+                    projectPropertiesMenuItem.setEnabled(true);
                 }
             }.start();
 
@@ -2271,6 +2275,7 @@ private void projectPropertiesMenuActionPerformed(java.awt.event.ActionEvent evt
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
+    private javax.swing.JPopupMenu.Separator jSeparator9;
     private javax.swing.JMenu lossMenu;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.ButtonGroup modelButtonGroup;
@@ -2285,7 +2290,7 @@ private void projectPropertiesMenuActionPerformed(java.awt.event.ActionEvent evt
     private javax.swing.JPanel overviewJPanel;
     private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem precursorCheckBoxMenuItem;
-    private javax.swing.JMenuItem projectPropertiesMenu;
+    private javax.swing.JMenuItem projectPropertiesMenuItem;
     private javax.swing.JMenuItem proteinFilterJMenuItem;
     private javax.swing.JPanel proteinStructureJPanel;
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
