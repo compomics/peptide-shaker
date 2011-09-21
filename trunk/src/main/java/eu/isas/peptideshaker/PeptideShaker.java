@@ -703,7 +703,7 @@ public class PeptideShaker {
      */
     public void scorePTMs(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
         attachDeltaScore(spectrumMatch);
-        // attachAScore(spectrumMatch, searchParameters, annotationPreferences);
+        attachAScore(spectrumMatch, searchParameters, annotationPreferences);
     }
 
     /**
@@ -785,12 +785,16 @@ public class PeptideShaker {
         p1 = psParameter.getSearchEngineProbability();
         if (p1 < 1) {
             modifications = new HashMap<String, PTM>();
+            HashMap<String, Integer> nMod = new HashMap<String, Integer>();
             for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
                 if (modificationMatch.isVariable()
                         && modificationMatch.getTheoreticPtm().getType() == PTM.MODAA) {
                     modificationName = modificationMatch.getTheoreticPtm().getName();
                     if (!modifications.keySet().contains(modificationName)) {
                         modifications.put(modificationName, modificationMatch.getTheoreticPtm());
+                        nMod.put(modificationName, 1);
+                    } else {
+                        nMod.put(modificationName, nMod.get(modificationName) + 1);
                     }
                 }
             }
@@ -798,16 +802,18 @@ public class PeptideShaker {
                 MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
                 annotationPreferences.setCurrentSettings(spectrumMatch.getBestAssumption().getPeptide(), spectrum.getPrecursor().getCharge().value, true);
                 for (String mod : modifications.keySet()) {
-                    HashMap<ArrayList<Integer>, Double> aScores = AScore.getAScore(spectrumMatch.getBestAssumption().getPeptide(),
-                            modifications.get(mod), spectrum, annotationPreferences.getIonTypes(),
-                            annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                            spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                            searchParameters.getFragmentIonAccuracy());
-                    ptmScoring = new PtmScoring(mod);
-                    for (ArrayList<Integer> modificationProfile : aScores.keySet()) {
-                        ptmScoring.addDeltaScore(modificationProfile, aScores.get(modificationProfile));
+                    if (nMod.get(mod) == 1) {
+                        HashMap<ArrayList<Integer>, Double> aScores = AScore.getAScore(spectrumMatch.getBestAssumption().getPeptide(),
+                                modifications.get(mod), nMod.get(mod), spectrum, annotationPreferences.getIonTypes(),
+                                annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
+                                spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
+                                searchParameters.getFragmentIonAccuracy());
+                        ptmScoring = new PtmScoring(mod);
+                        for (ArrayList<Integer> modificationProfile : aScores.keySet()) {
+                            ptmScoring.addDeltaScore(modificationProfile, aScores.get(modificationProfile));
+                        }
+                        ptmScores.addPtmScoring(mod, ptmScoring);
                     }
-                    ptmScores.addPtmScoring(mod, ptmScoring);
                 }
                 spectrumMatch.addUrParam(ptmScores);
                 identification.setMatchChanged(spectrumMatch);
