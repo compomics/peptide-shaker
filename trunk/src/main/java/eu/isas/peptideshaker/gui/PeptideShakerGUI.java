@@ -51,6 +51,7 @@ import eu.isas.peptideshaker.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Frame;
@@ -2452,7 +2453,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         annotationPreferences.setAnnotationLevel(0.25);
         annotationPreferences.useAutomaticAnnotation(true);
         updateAnnotationPreferencesFromSearchSettings();
-        spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.NSAF);
+        spectrumCountingPreferences.setSelectedMethod(SpectralCountingMethod.NSAF);
         spectrumCountingPreferences.setValidatedHits(true);
     }
 
@@ -3443,43 +3444,52 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @return the spectrum counting score
      */
     public double getSpectrumCounting(ProteinMatch proteinMatch) {
+        
         double result;
         Enzyme enyzme = searchParameters.getEnzyme();
         PSParameter pSParameter = new PSParameter();
-        Protein currentProtein = null;
+        
         try {
-            if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.NSAF) {
-                currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+            Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+            
+            if (spectrumCountingPreferences.getSelectedMethod() == SpectralCountingMethod.NSAF) {
+                
                 if (currentProtein == null) {
                     return 0.0;
                 }
+                
                 result = 0;
-                PeptideMatch peptideMatch;
+                
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                    peptideMatch = identification.getPeptideMatch(peptideKey);
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
                         pSParameter = (PSParameter) identification.getMatchParameter(spectrumMatchKey, pSParameter);
                         if (!spectrumCountingPreferences.isValidatedHits() || pSParameter.isValidated()) {
-                            result = result + 1;
+                            result++;
                         }
                     }
                 }
-                return result = result / currentProtein.getSequence().length();
-            } else {
+                
+                return result / currentProtein.getSequence().length();
+                
+            } else { // emPAI
+                
                 if (spectrumCountingPreferences.isValidatedHits()) {
                     result = 0;
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
                         if (pSParameter.isValidated()) {
-                            result = result + 1;
+                            result++;
                         }
                     }
                 } else {
                     result = proteinMatch.getPeptideCount();
                 }
-                return result = Math.pow(10, result / currentProtein.getNPossiblePeptides(enyzme)) - 1;
+                
+                return Math.pow(10, result / currentProtein.getNPossiblePeptides(enyzme)) - 1;
             }
         } catch (Exception e) {
+            e.printStackTrace();
             return 0.0;
         }
     }

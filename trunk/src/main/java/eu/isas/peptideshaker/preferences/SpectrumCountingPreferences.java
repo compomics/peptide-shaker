@@ -6,29 +6,63 @@ import java.io.Serializable;
  * This class contains the spectrum counting preferences
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class SpectrumCountingPreferences implements Serializable {
 
-    public static final int NSAF = 0;
-    public static final int EMPAI = 1;
-    private int selectedMethod;
+    /**
+     * The spectrum counting methods.
+     */
+    public enum SpectralCountingMethod {
+        NSAF, EMPAI
+    };
+    /**
+     * The currently selected spectrum counting method.
+     */
+    private SpectralCountingMethod selectedMethod;
+    /**
+     * If true, only validated hits are counted.
+     */
     private boolean validatedHits;
 
+    /**
+     * Default constructor.
+     */
     public SpectrumCountingPreferences() {
     }
 
-    public int getSelectedMethod() {
+    /**
+     * Returns the current spectrum counting method.
+     * 
+     * @return the current spectrum counting method
+     */
+    public SpectralCountingMethod getSelectedMethod() {
         return selectedMethod;
     }
 
-    public void setSelectedMethod(int selectedMethod) {
+    /**
+     * Set the current spectrum counting method.
+     * 
+     * @param selectedMethod 
+     */
+    public void setSelectedMethod(SpectralCountingMethod selectedMethod) {
         this.selectedMethod = selectedMethod;
     }
 
+    /**
+     * Returns true if only validated hits are to be counted.
+     * 
+     * @return true if only validated hits are to be counted
+     */
     public boolean isValidatedHits() {
         return validatedHits;
     }
 
+    /**
+     * Set if only validated hits are to be counted.
+     * 
+     * @param validatedHits 
+     */
     public void setValidatedHits(boolean validatedHits) {
         this.validatedHits = validatedHits;
     }
