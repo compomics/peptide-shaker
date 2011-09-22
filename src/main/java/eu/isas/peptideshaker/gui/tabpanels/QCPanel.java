@@ -14,12 +14,17 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.util.ArrayList;
+import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.labels.StandardXYToolTipGenerator;
+import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.DefaultIntervalXYDataset;
 
 /**
@@ -34,10 +39,6 @@ public class QCPanel extends javax.swing.JPanel {
      * The main peptide shaker gui.
      */
     private PeptideShakerGUI peptideShakerGUI;
-    /**
-     * The protein qc plot.
-     */
-    private XYPlot proteinQCPlot = new XYPlot();
     /**
      * The peptide qc plot.
      */
@@ -72,17 +73,11 @@ public class QCPanel extends javax.swing.JPanel {
         histogramColors = new Color[4];
         histogramColors[0] = peptideShakerGUI.getSparklineColor();
         histogramColors[1] = new Color(255, 51, 51);
-        histogramColors[2] = new Color(255, 255, 51);
+        histogramColors[2] = new Color(100, 150, 255);
         histogramColors[3] = Color.lightGray;
 
         // make the tabs in the spectrum tabbed pane go from right to left
         tabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-
-        // Initialize protein QC plot
-        NumberAxis proteinYAxis = new NumberAxis("Amount of Proteins");
-        NumberAxis proteinMetricAxis = new NumberAxis("protein metric");
-        proteinQCPlot.setDomainAxis(proteinMetricAxis);
-        proteinQCPlot.setRangeAxis(0, proteinYAxis);
 
         // Initialize peptide QC plot
         NumberAxis peptideYAxis = new NumberAxis("Amount of Peptides");
@@ -746,53 +741,258 @@ public class QCPanel extends javax.swing.JPanel {
 
         HistogramInput input = getProteinDataset(progressDialog);
 
-        DefaultIntervalXYDataset validated = new DefaultIntervalXYDataset();
-        validated.addSeries("Validated Target Proteins", input.getValidated());
-        proteinQCPlot.setDataset(0, validated);
-        XYBarRenderer validatedRenderer = new XYBarRenderer();
-        validatedRenderer.setShadowVisible(false);
-        validatedRenderer.setSeriesPaint(0, histogramColors[0]);
-        validatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        proteinQCPlot.setRenderer(0, validatedRenderer);
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        DefaultIntervalXYDataset decoyValidated = new DefaultIntervalXYDataset();
-        decoyValidated.addSeries("Validated Decoy Proteins", input.getDecoyValidated());
-        proteinQCPlot.setDataset(1, decoyValidated);
-        XYBarRenderer decoyValidatedRenderer = new XYBarRenderer();
-        decoyValidatedRenderer.setShadowVisible(false);
-        decoyValidatedRenderer.setSeriesPaint(0, histogramColors[1]);
-        decoyValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        proteinQCPlot.setRenderer(1, decoyValidatedRenderer);
+        int[] binData = new int[input.bins.size()];
+        
+        // remove the hard coded bins!!
 
-        DefaultIntervalXYDataset nonValidated = new DefaultIntervalXYDataset();
-        nonValidated.addSeries("Non-Validated Target Proteins", input.getNonValidated());
-        proteinQCPlot.setDataset(2, nonValidated);
-        XYBarRenderer nonValidatedRenderer = new XYBarRenderer();
-        nonValidatedRenderer.setShadowVisible(false);
-        nonValidatedRenderer.setSeriesPaint(0, histogramColors[2]);
-        nonValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        proteinQCPlot.setRenderer(2, nonValidatedRenderer);
+        if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+            binData = new int[5];
+        } else {
+            binData = new int[input.bins.size()];
+        }
 
-        DefaultIntervalXYDataset nonValidatedDecoy = new DefaultIntervalXYDataset();
-        nonValidatedDecoy.addSeries("Non-Validated Decoy Proteins", input.getDecoyNonValidated());
-        proteinQCPlot.setDataset(3, nonValidatedDecoy);
-        XYBarRenderer nonValidatedDecoyRenderer = new XYBarRenderer();
-        nonValidatedDecoyRenderer.setShadowVisible(false);
-        nonValidatedDecoyRenderer.setSeriesPaint(0, histogramColors[3]);
-        nonValidatedDecoyRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        proteinQCPlot.setRenderer(3, nonValidatedDecoyRenderer);
+        for (int i = 0; i < input.validatedValues.size(); i++) {        
+            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+                
+                if (input.validatedValues.get(i) == 0) {
+                    binData[0]++;
+                } else if (input.validatedValues.get(i) > 0 && input.validatedValues.get(i) < 0.25) {
+                    binData[1]++;
+                } else if (input.validatedValues.get(i) >= 0.25 && input.validatedValues.get(i) < 0.5) {
+                    binData[2]++;
+                } else if (input.validatedValues.get(i) >= 0.5 && input.validatedValues.get(i) < 0.75) {
+                    binData[3]++;
+                } else if (input.validatedValues.get(i) >= 0.75) {
+                    binData[4]++;
+                }
 
-        JFreeChart proteinChart = new JFreeChart(proteinQCPlot);
+            } else {
+                binData[input.validatedValues.get(i).intValue()]++;
+            }
+        }
+
+        for (int i = 0; i < binData.length; i++) {
+            
+            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+                
+                if (i == 0) {
+                    dataset.addValue(binData[i], "Validated True Positives", "0.0");
+                } else if (i == 1) {
+                    dataset.addValue(binData[i], "Validated True Positives", "0.0-0.25");
+                } else if (i == 2) {
+                    dataset.addValue(binData[i], "Validated True Positives", "0.25-0.5");
+                } else if (i == 3) {
+                    dataset.addValue(binData[i], "Validated True Positives", "0.5-0.75");
+                } else if (i == 4) {
+                    dataset.addValue(binData[i], "Validated True Positives", ">0.75");
+                }
+      
+            } else {
+                dataset.addValue(binData[i], "Validated True Positives", i + "");
+            }
+        }
+        
+        
+        if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+            binData = new int[5];
+        } else {
+            binData = new int[input.bins.size()];
+        }
+
+        for (int i = 0; i < input.validatedDecoyValues.size(); i++) {        
+            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+                
+                if (input.validatedDecoyValues.get(i) == 0) {
+                    binData[0]++;
+                } else if (input.validatedDecoyValues.get(i) > 0 && input.validatedDecoyValues.get(i) < 0.25) {
+                    binData[1]++;
+                } else if (input.validatedDecoyValues.get(i) >= 0.25 && input.validatedDecoyValues.get(i) < 0.5) {
+                    binData[2]++;
+                } else if (input.validatedDecoyValues.get(i) >= 0.5 && input.validatedDecoyValues.get(i) < 0.75) {
+                    binData[3]++;
+                } else if (input.validatedDecoyValues.get(i) >= 0.75) {
+                    binData[4]++;
+                }
+
+            } else {
+                binData[input.validatedDecoyValues.get(i).intValue()]++;
+            }
+        }
+
+        for (int i = 0; i < binData.length; i++) {
+            
+            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+                
+                if (i == 0) {
+                    dataset.addValue(binData[i], "Validated False Positives", "0.0");
+                } else if (i == 1) {
+                    dataset.addValue(binData[i], "Validated False Positives", "0.0-0.25");
+                } else if (i == 2) {
+                    dataset.addValue(binData[i], "Validated False Positives", "0.25-0.5");
+                } else if (i == 3) {
+                    dataset.addValue(binData[i], "Validated False Positives", "0.5-0.75");
+                } else if (i == 4) {
+                    dataset.addValue(binData[i], "Validated False Positives", ">0.75");
+                }
+      
+            } else {
+                dataset.addValue(binData[i], "Validated False Positives", i + "");
+            }
+        }
+        
+        
+        if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+            binData = new int[5];
+        } else {
+            binData = new int[input.bins.size()];
+        }
+
+        for (int i = 0; i < input.nonValidatedValues.size(); i++) {        
+            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+                
+                if (input.nonValidatedValues.get(i) == 0) {
+                    binData[0]++;
+                } else if (input.nonValidatedValues.get(i) > 0 && input.nonValidatedValues.get(i) < 0.25) {
+                    binData[1]++;
+                } else if (input.nonValidatedValues.get(i) >= 0.25 && input.nonValidatedValues.get(i) < 0.5) {
+                    binData[2]++;
+                } else if (input.nonValidatedValues.get(i) >= 0.5 && input.nonValidatedValues.get(i) < 0.75) {
+                    binData[3]++;
+                } else if (input.nonValidatedValues.get(i) >= 0.75) {
+                    binData[4]++;
+                }
+
+            } else {
+                binData[input.nonValidatedValues.get(i).intValue()]++;
+            }
+        }
+
+        for (int i = 0; i < binData.length; i++) {
+            
+            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+                
+                if (i == 0) {
+                    dataset.addValue(binData[i], "Non-Validated True Positives", "0.0");
+                } else if (i == 1) {
+                    dataset.addValue(binData[i], "Non-Validated True Positives", "0.0-0.25");
+                } else if (i == 2) {
+                    dataset.addValue(binData[i], "Non-Validated True Positives", "0.25-0.5");
+                } else if (i == 3) {
+                    dataset.addValue(binData[i], "Non-Validated True Positives", "0.5-0.75");
+                } else if (i == 4) {
+                    dataset.addValue(binData[i], "Non-Validated True Positives", ">0.75");
+                }
+      
+            } else {
+                dataset.addValue(binData[i], "Non-Validated True Positives", i + "");
+            }
+        }
+        
+        
+        if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+            binData = new int[5];
+        } else {
+            binData = new int[input.bins.size()];
+        }
+
+        for (int i = 0; i < input.nonValidatedDecoyValues.size(); i++) {        
+            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+                
+                if (input.nonValidatedDecoyValues.get(i) == 0) {
+                    binData[0]++;
+                } else if (input.nonValidatedDecoyValues.get(i) > 0 && input.nonValidatedDecoyValues.get(i) < 0.25) {
+                    binData[1]++;
+                } else if (input.nonValidatedDecoyValues.get(i) >= 0.25 && input.nonValidatedDecoyValues.get(i) < 0.5) {
+                    binData[2]++;
+                } else if (input.nonValidatedDecoyValues.get(i) >= 0.5 && input.nonValidatedDecoyValues.get(i) < 0.75) {
+                    binData[3]++;
+                } else if (input.nonValidatedDecoyValues.get(i) >= 0.75) {
+                    binData[4]++;
+                }
+
+            } else {
+                binData[input.nonValidatedDecoyValues.get(i).intValue()]++;
+            }
+        }
+
+        for (int i = 0; i < binData.length; i++) {
+            
+            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+                
+                if (i == 0) {
+                    dataset.addValue(binData[i], "Non-Validated False Positives", "0.0");
+                } else if (i == 1) {
+                    dataset.addValue(binData[i], "Non-Validated False Positives", "0.0-0.25");
+                } else if (i == 2) {
+                    dataset.addValue(binData[i], "Non-Validated False Positives", "0.25-0.5");
+                } else if (i == 3) {
+                    dataset.addValue(binData[i], "Non-Validated False Positives", "0.5-0.75");
+                } else if (i == 4) {
+                    dataset.addValue(binData[i], "Non-Validated False Positives", ">0.75");
+                }
+      
+            } else {
+                dataset.addValue(binData[i], "Non-Validated False Positives", i + "");
+            }
+        }
+
+
+//        binData = new int[input.bins.size()];
+//
+//        for (int i = 0; i < input.validatedDecoyValues.size(); i++) {
+//            binData[input.validatedDecoyValues.get(i).intValue()]++;
+//        }
+//
+//        for (int i = 0; i < binData.length; i++) {
+//            dataset.addValue(binData[i], "Validated False Positives", i + "");
+//        }
+//
+//
+//        binData = new int[input.bins.size()];
+//
+//        for (int i = 0; i < input.nonValidatedValues.size(); i++) {
+//            binData[input.nonValidatedValues.get(i).intValue()]++;
+//        }
+//
+//        for (int i = 0; i < binData.length; i++) {
+//            dataset.addValue(binData[i], "Non-Validated True Positives", i + "");
+//        }
+//
+//
+//        binData = new int[input.bins.size()];
+//
+//        for (int i = 0; i < input.nonValidatedDecoyValues.size(); i++) {
+//            binData[input.nonValidatedDecoyValues.get(i).intValue()]++;
+//        }
+//
+//        for (int i = 0; i < binData.length; i++) {
+//            dataset.addValue(binData[i], "Non-Validated False Positives", i + "");
+//        }
+
+        JFreeChart proteinChart = ChartFactory.createStackedBarChart(null, null, "Amount of Proteins", dataset, PlotOrientation.VERTICAL, true, true, true);
+        //proteinChart.getCategoryPlot().getDomainAxis().setTickLabelsVisible(false);
+
+        StackedBarRenderer renderer = new StackedBarRenderer();
+        renderer.setShadowVisible(false);
+        renderer.setSeriesPaint(0, histogramColors[0]);
+        renderer.setSeriesPaint(1, histogramColors[1]);
+        renderer.setSeriesPaint(2, histogramColors[2]);
+        renderer.setSeriesPaint(3, histogramColors[3]);
+        renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+        proteinChart.getCategoryPlot().setRenderer(0, renderer);
+
         ChartPanel chartPanel = new ChartPanel(proteinChart);
 
         if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
-            proteinQCPlot.getDomainAxis().setLabel("Number of Validated Peptides");
+            proteinChart.getCategoryPlot().getDomainAxis().setLabel("Number of Validated Peptides");
             proteinChart.setTitle("Protein QC Plot - Number of Validated Peptides");
         } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-            proteinQCPlot.getDomainAxis().setLabel("Spectrum Counting");
+            proteinChart.getCategoryPlot().getDomainAxis().setLabel("Spectrum Counting");
             proteinChart.setTitle("Protein QC Plot - Spectrum Counting Scores");
         } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
-            proteinQCPlot.getDomainAxis().setLabel("Sequence Coverage");
+            proteinChart.getCategoryPlot().getDomainAxis().setLabel("Sequence Coverage");
             proteinChart.setTitle("Protein QC Plot - Sequence Coverage");
         }
 
@@ -800,6 +1000,13 @@ public class QCPanel extends javax.swing.JPanel {
         proteinChart.getPlot().setBackgroundPaint(Color.WHITE);
         proteinChart.setBackgroundPaint(Color.WHITE);
         chartPanel.setBackground(Color.WHITE);
+
+        // remove space before/after the domain axis
+        proteinChart.getCategoryPlot().getDomainAxis().setUpperMargin(0);
+        proteinChart.getCategoryPlot().getDomainAxis().setLowerMargin(0);
+
+        // hide the outline
+        proteinChart.getPlot().setOutlineVisible(false);
 
         proteinQCPlotPanel.removeAll();
         proteinQCPlotPanel.add(chartPanel);
@@ -816,50 +1023,70 @@ public class QCPanel extends javax.swing.JPanel {
 
         HistogramInput input = getPeptideDataset(progressDialog);
 
-        DefaultIntervalXYDataset validated = new DefaultIntervalXYDataset();
-        validated.addSeries("Validated Target Peptides", input.getValidated());
-        peptideQCPlot.setDataset(0, validated);
-        XYBarRenderer validatedRenderer = new XYBarRenderer();
-        validatedRenderer.setShadowVisible(false);
-        validatedRenderer.setSeriesPaint(0, histogramColors[0]);
-        validatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        peptideQCPlot.setRenderer(0, validatedRenderer);
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        DefaultIntervalXYDataset decoyValidated = new DefaultIntervalXYDataset();
-        decoyValidated.addSeries("Validated Decoy Peptides", input.getDecoyValidated());
-        peptideQCPlot.setDataset(1, decoyValidated);
-        XYBarRenderer decoyValidatedRenderer = new XYBarRenderer();
-        decoyValidatedRenderer.setShadowVisible(false);
-        decoyValidatedRenderer.setSeriesPaint(0, histogramColors[1]);
-        decoyValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        peptideQCPlot.setRenderer(1, decoyValidatedRenderer);
+        int[] binData = new int[input.bins.size()];
 
-        DefaultIntervalXYDataset nonValidated = new DefaultIntervalXYDataset();
-        nonValidated.addSeries("Non-Validated Target Peptides", input.getNonValidated());
-        peptideQCPlot.setDataset(2, nonValidated);
-        XYBarRenderer nonValidatedRenderer = new XYBarRenderer();
-        nonValidatedRenderer.setShadowVisible(false);
-        nonValidatedRenderer.setSeriesPaint(0, histogramColors[2]);
-        nonValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        peptideQCPlot.setRenderer(2, nonValidatedRenderer);
+        for (int i = 0; i < input.validatedValues.size(); i++) {
+            binData[input.validatedValues.get(i).intValue()]++;
+        }
 
-        DefaultIntervalXYDataset nonValidatedDecoy = new DefaultIntervalXYDataset();
-        nonValidatedDecoy.addSeries("Non-Validated Decoy Peptides", input.getDecoyNonValidated());
-        peptideQCPlot.setDataset(3, nonValidatedDecoy);
-        XYBarRenderer nonValidatedDecoyRenderer = new XYBarRenderer();
-        nonValidatedDecoyRenderer.setShadowVisible(false);
-        nonValidatedDecoyRenderer.setSeriesPaint(0, histogramColors[3]);
-        nonValidatedDecoyRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        peptideQCPlot.setRenderer(3, nonValidatedDecoyRenderer);
+        for (int i = 0; i < binData.length; i++) {
+            dataset.addValue(binData[i], "Validated True Positives", i + "");
+        }
 
-        JFreeChart peptideChart = new JFreeChart(peptideQCPlot);
+
+        binData = new int[input.bins.size()];
+
+        for (int i = 0; i < input.validatedDecoyValues.size(); i++) {
+            binData[input.validatedDecoyValues.get(i).intValue()]++;
+        }
+
+        for (int i = 0; i < binData.length; i++) {
+            dataset.addValue(binData[i], "Validated False Positives", i + "");
+        }
+
+
+        binData = new int[input.bins.size()];
+
+        for (int i = 0; i < input.nonValidatedValues.size(); i++) {
+            binData[input.nonValidatedValues.get(i).intValue()]++;
+        }
+
+        for (int i = 0; i < binData.length; i++) {
+            dataset.addValue(binData[i], "Non-Validated True Positives", i + "");
+        }
+
+
+        binData = new int[input.bins.size()];
+
+        for (int i = 0; i < input.nonValidatedDecoyValues.size(); i++) {
+            binData[input.nonValidatedDecoyValues.get(i).intValue()]++;
+        }
+
+        for (int i = 0; i < binData.length; i++) {
+            dataset.addValue(binData[i], "Non-Validated False Positives", i + "");
+        }
+
+        JFreeChart peptideChart = ChartFactory.createStackedBarChart(null, null, "Amount of Peptides", dataset, PlotOrientation.VERTICAL, true, true, true);
+        //peptideChart.getCategoryPlot().getDomainAxis().setTickLabelsVisible(false);
+
+        StackedBarRenderer renderer = new StackedBarRenderer();
+        renderer.setShadowVisible(false);
+        renderer.setSeriesPaint(0, histogramColors[0]);
+        renderer.setSeriesPaint(1, histogramColors[1]);
+        renderer.setSeriesPaint(2, histogramColors[2]);
+        renderer.setSeriesPaint(3, histogramColors[3]);
+        renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+        peptideChart.getCategoryPlot().setRenderer(0, renderer);
+
         ChartPanel chartPanel = new ChartPanel(peptideChart);
 
         if (peptidesValidatedPsmsJRadioButton.isSelected()) {
-            peptideQCPlot.getDomainAxis().setLabel("Number of Validated PSMs");
+            peptideChart.getCategoryPlot().getDomainAxis().setLabel("Number of Validated PSMs");
             peptideChart.setTitle("Peptides QC Plot - Number of Validated PSMs");
         } else if (peptidesMissedCleavagesJRadioButton.isSelected()) {
-            peptideQCPlot.getDomainAxis().setLabel("Missed Cleavages");
+            peptideChart.getCategoryPlot().getDomainAxis().setLabel("Missed Cleavages");
             peptideChart.setTitle("Peptides QC Plot - Missed Cleavages");
         }
 
@@ -868,10 +1095,76 @@ public class QCPanel extends javax.swing.JPanel {
         peptideChart.setBackgroundPaint(Color.WHITE);
         chartPanel.setBackground(Color.WHITE);
 
+        // remove space before/after the domain axis
+        peptideChart.getCategoryPlot().getDomainAxis().setUpperMargin(0);
+        peptideChart.getCategoryPlot().getDomainAxis().setLowerMargin(0);
+
+        // hide the outline
+        peptideChart.getPlot().setOutlineVisible(false);
+
         peptideQCPlotPanel.removeAll();
         peptideQCPlotPanel.add(chartPanel);
         peptideQCPlotPanel.revalidate();
         peptideQCPlotPanel.repaint();
+
+//        HistogramInput input = getPeptideDataset(progressDialog);
+//
+//        DefaultIntervalXYDataset validated = new DefaultIntervalXYDataset();
+//        validated.addSeries("Validated Target Peptides", input.getValidated());
+//        peptideQCPlot.setDataset(0, validated);
+//        XYBarRenderer validatedRenderer = new XYBarRenderer();
+//        validatedRenderer.setShadowVisible(false);
+//        validatedRenderer.setSeriesPaint(0, histogramColors[0]);
+//        validatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+//        peptideQCPlot.setRenderer(0, validatedRenderer);
+//
+//        DefaultIntervalXYDataset decoyValidated = new DefaultIntervalXYDataset();
+//        decoyValidated.addSeries("Validated Decoy Peptides", input.getDecoyValidated());
+//        peptideQCPlot.setDataset(1, decoyValidated);
+//        XYBarRenderer decoyValidatedRenderer = new XYBarRenderer();
+//        decoyValidatedRenderer.setShadowVisible(false);
+//        decoyValidatedRenderer.setSeriesPaint(0, histogramColors[1]);
+//        decoyValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+//        peptideQCPlot.setRenderer(1, decoyValidatedRenderer);
+//
+//        DefaultIntervalXYDataset nonValidated = new DefaultIntervalXYDataset();
+//        nonValidated.addSeries("Non-Validated Target Peptides", input.getNonValidated());
+//        peptideQCPlot.setDataset(2, nonValidated);
+//        XYBarRenderer nonValidatedRenderer = new XYBarRenderer();
+//        nonValidatedRenderer.setShadowVisible(false);
+//        nonValidatedRenderer.setSeriesPaint(0, histogramColors[2]);
+//        nonValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+//        peptideQCPlot.setRenderer(2, nonValidatedRenderer);
+//
+//        DefaultIntervalXYDataset nonValidatedDecoy = new DefaultIntervalXYDataset();
+//        nonValidatedDecoy.addSeries("Non-Validated Decoy Peptides", input.getDecoyNonValidated());
+//        peptideQCPlot.setDataset(3, nonValidatedDecoy);
+//        XYBarRenderer nonValidatedDecoyRenderer = new XYBarRenderer();
+//        nonValidatedDecoyRenderer.setShadowVisible(false);
+//        nonValidatedDecoyRenderer.setSeriesPaint(0, histogramColors[3]);
+//        nonValidatedDecoyRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+//        peptideQCPlot.setRenderer(3, nonValidatedDecoyRenderer);
+//
+//        JFreeChart peptideChart = new JFreeChart(peptideQCPlot);
+//        ChartPanel chartPanel = new ChartPanel(peptideChart);
+//
+//        if (peptidesValidatedPsmsJRadioButton.isSelected()) {
+//            peptideQCPlot.getDomainAxis().setLabel("Number of Validated PSMs");
+//            peptideChart.setTitle("Peptides QC Plot - Number of Validated PSMs");
+//        } else if (peptidesMissedCleavagesJRadioButton.isSelected()) {
+//            peptideQCPlot.getDomainAxis().setLabel("Missed Cleavages");
+//            peptideChart.setTitle("Peptides QC Plot - Missed Cleavages");
+//        }
+//
+//        // set background color
+//        peptideChart.getPlot().setBackgroundPaint(Color.WHITE);
+//        peptideChart.setBackgroundPaint(Color.WHITE);
+//        chartPanel.setBackground(Color.WHITE);
+//
+//        peptideQCPlotPanel.removeAll();
+//        peptideQCPlotPanel.add(chartPanel);
+//        peptideQCPlotPanel.revalidate();
+//        peptideQCPlotPanel.repaint();
     }
 
     /**
@@ -883,62 +1176,183 @@ public class QCPanel extends javax.swing.JPanel {
 
         HistogramInput input = getPsmDataset(progressDialog);
 
-        DefaultIntervalXYDataset validated = new DefaultIntervalXYDataset();
-        validated.addSeries("Validated Target PSMs", input.getValidated());
-        psmQCPlot.setDataset(0, validated);
-        XYBarRenderer validatedRenderer = new XYBarRenderer();
-        validatedRenderer.setShadowVisible(false);
-        validatedRenderer.setSeriesPaint(0, histogramColors[0]);
-        validatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        psmQCPlot.setRenderer(0, validatedRenderer);
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-        DefaultIntervalXYDataset decoyValidated = new DefaultIntervalXYDataset();
-        decoyValidated.addSeries("Validated Decoy PSMs", input.getDecoyValidated());
-        psmQCPlot.setDataset(1, decoyValidated);
-        XYBarRenderer decoyValidatedRenderer = new XYBarRenderer();
-        decoyValidatedRenderer.setShadowVisible(false);
-        decoyValidatedRenderer.setSeriesPaint(0, histogramColors[1]);
-        decoyValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        psmQCPlot.setRenderer(1, decoyValidatedRenderer);
+        if (psmPrecursorChargeJRadioButton.isSelected()) {
 
-        DefaultIntervalXYDataset nonValidated = new DefaultIntervalXYDataset();
-        nonValidated.addSeries("Non-Validated Target PSMs", input.getNonValidated());
-        psmQCPlot.setDataset(2, nonValidated);
-        XYBarRenderer nonValidatedRenderer = new XYBarRenderer();
-        nonValidatedRenderer.setShadowVisible(false);
-        nonValidatedRenderer.setSeriesPaint(0, histogramColors[2]);
-        nonValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        psmQCPlot.setRenderer(2, nonValidatedRenderer);
+            int maxCharge = 0;
+            
+            for (int i = 0; i < input.validatedValues.size(); i++) {
+                if (input.validatedValues.get(i).intValue() > maxCharge) {
+                    maxCharge = input.validatedValues.get(i).intValue();
+                }
+            }
+            
+            int[] binData = new int[maxCharge+1];
 
-        DefaultIntervalXYDataset nonValidatedDecoy = new DefaultIntervalXYDataset();
-        nonValidatedDecoy.addSeries("Non-Validated Decoy PSMs", input.getDecoyNonValidated());
-        psmQCPlot.setDataset(3, nonValidatedDecoy);
-        XYBarRenderer nonValidatedDecoyRenderer = new XYBarRenderer();
-        nonValidatedDecoyRenderer.setShadowVisible(false);
-        nonValidatedDecoyRenderer.setSeriesPaint(0, histogramColors[3]);
-        nonValidatedDecoyRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-        psmQCPlot.setRenderer(3, nonValidatedDecoyRenderer);
+            for (int i = 0; i < input.validatedValues.size(); i++) {
+                binData[input.validatedValues.get(i).intValue()]++;
+            }
 
-        JFreeChart psmChart = new JFreeChart(psmQCPlot);
-        ChartPanel chartPanel = new ChartPanel(psmChart);
+            for (int i = 1; i < binData.length; i++) {
+                dataset.addValue(binData[i], "Validated True Positives", i + "");
+            }
 
-        if (psmPrecursorMassErrorJRadioButton.isSelected()) {
-            psmQCPlot.getDomainAxis().setLabel("Precursor Mass Error");
-            psmChart.setTitle("PSMs QC Plot - Precursor Mass Error");
-        } else if (psmPrecursorChargeJRadioButton.isSelected()) {
-            psmQCPlot.getDomainAxis().setLabel("Precursor Charge");
-            psmChart.setTitle("PSMs QC Plot - Precursor Charge");
+
+            maxCharge = 0;
+            
+            for (int i = 0; i < input.validatedDecoyValues.size(); i++) {
+                if (input.validatedDecoyValues.get(i).intValue() > maxCharge) {
+                    maxCharge = input.validatedDecoyValues.get(i).intValue();
+                }
+            }
+            
+            binData = new int[maxCharge+1];
+
+            for (int i = 0; i < input.validatedDecoyValues.size(); i++) {
+                binData[input.validatedDecoyValues.get(i).intValue()]++;
+            }
+
+            for (int i = 1; i < binData.length; i++) {
+                dataset.addValue(binData[i], "Validated False Positives", i + "");
+            }
+
+
+            maxCharge = 0;
+            
+            for (int i = 0; i < input.nonValidatedValues.size(); i++) {
+                if (input.nonValidatedValues.get(i).intValue() > maxCharge) {
+                    maxCharge = input.nonValidatedValues.get(i).intValue();
+                }
+            }
+            
+            binData = new int[maxCharge+1];
+
+            for (int i = 0; i < input.nonValidatedValues.size(); i++) {
+                binData[input.nonValidatedValues.get(i).intValue()]++;
+            }
+
+            for (int i = 1; i < binData.length; i++) {
+                dataset.addValue(binData[i], "Non-Validated True Positives", i + "");
+            }
+
+
+            maxCharge = 0;
+            
+            for (int i = 0; i < input.nonValidatedDecoyValues.size(); i++) {
+                if (input.nonValidatedDecoyValues.get(i).intValue() > maxCharge) {
+                    maxCharge = input.nonValidatedDecoyValues.get(i).intValue();
+                }
+            }
+            
+            binData = new int[maxCharge+1];
+
+            for (int i = 0; i < input.nonValidatedDecoyValues.size(); i++) {
+                binData[input.nonValidatedDecoyValues.get(i).intValue()]++;
+            }
+
+            for (int i = 1; i < binData.length; i++) {
+                dataset.addValue(binData[i], "Non-Validated False Positives", i + "");
+            }
+
+            JFreeChart psmChart = ChartFactory.createStackedBarChart(null, null, "Amount of Peptides", dataset, PlotOrientation.VERTICAL, true, true, true);
+            //psmChart.getCategoryPlot().getDomainAxis().setTickLabelsVisible(false);
+
+            StackedBarRenderer renderer = new StackedBarRenderer();
+            renderer.setShadowVisible(false);
+            renderer.setSeriesPaint(0, histogramColors[0]);
+            renderer.setSeriesPaint(1, histogramColors[1]);
+            renderer.setSeriesPaint(2, histogramColors[2]);
+            renderer.setSeriesPaint(3, histogramColors[3]);
+            renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+            psmChart.getCategoryPlot().setRenderer(0, renderer);
+
+            ChartPanel chartPanel = new ChartPanel(psmChart);
+
+            if (psmPrecursorMassErrorJRadioButton.isSelected()) {
+                psmChart.getCategoryPlot().getDomainAxis().setLabel("Precursor Mass Error");
+                psmChart.setTitle("PSMs QC Plot - Precursor Mass Error");
+            } else if (psmPrecursorChargeJRadioButton.isSelected()) {
+                psmChart.getCategoryPlot().getDomainAxis().setLabel("Precursor Charge");
+                psmChart.setTitle("PSMs QC Plot - Precursor Charge");
+            }
+
+            // set background color
+            psmChart.getPlot().setBackgroundPaint(Color.WHITE);
+            psmChart.setBackgroundPaint(Color.WHITE);
+            chartPanel.setBackground(Color.WHITE);
+
+            // remove space before/after the domain axis
+            psmChart.getCategoryPlot().getDomainAxis().setUpperMargin(0);
+            psmChart.getCategoryPlot().getDomainAxis().setLowerMargin(0);
+
+            // hide the outline
+            psmChart.getPlot().setOutlineVisible(false);
+
+            psmQCPlotPanel.removeAll();
+            psmQCPlotPanel.add(chartPanel);
+            psmQCPlotPanel.revalidate();
+            psmQCPlotPanel.repaint();
+            
+        } else {
+
+            DefaultIntervalXYDataset validated = new DefaultIntervalXYDataset();
+            validated.addSeries("Validated Target PSMs", input.getValidated());
+            psmQCPlot.setDataset(0, validated);
+            XYBarRenderer validatedRenderer = new XYBarRenderer();
+            validatedRenderer.setShadowVisible(false);
+            validatedRenderer.setSeriesPaint(0, histogramColors[0]);
+            validatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+            psmQCPlot.setRenderer(0, validatedRenderer);
+
+            DefaultIntervalXYDataset decoyValidated = new DefaultIntervalXYDataset();
+            decoyValidated.addSeries("Validated Decoy PSMs", input.getDecoyValidated());
+            psmQCPlot.setDataset(1, decoyValidated);
+            XYBarRenderer decoyValidatedRenderer = new XYBarRenderer();
+            decoyValidatedRenderer.setShadowVisible(false);
+            decoyValidatedRenderer.setSeriesPaint(0, histogramColors[1]);
+            decoyValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+            psmQCPlot.setRenderer(1, decoyValidatedRenderer);
+
+            DefaultIntervalXYDataset nonValidated = new DefaultIntervalXYDataset();
+            nonValidated.addSeries("Non-Validated Target PSMs", input.getNonValidated());
+            psmQCPlot.setDataset(2, nonValidated);
+            XYBarRenderer nonValidatedRenderer = new XYBarRenderer();
+            nonValidatedRenderer.setShadowVisible(false);
+            nonValidatedRenderer.setSeriesPaint(0, histogramColors[2]);
+            nonValidatedRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+            psmQCPlot.setRenderer(2, nonValidatedRenderer);
+
+            DefaultIntervalXYDataset nonValidatedDecoy = new DefaultIntervalXYDataset();
+            nonValidatedDecoy.addSeries("Non-Validated Decoy PSMs", input.getDecoyNonValidated());
+            psmQCPlot.setDataset(3, nonValidatedDecoy);
+            XYBarRenderer nonValidatedDecoyRenderer = new XYBarRenderer();
+            nonValidatedDecoyRenderer.setShadowVisible(false);
+            nonValidatedDecoyRenderer.setSeriesPaint(0, histogramColors[3]);
+            nonValidatedDecoyRenderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+            psmQCPlot.setRenderer(3, nonValidatedDecoyRenderer);
+
+            JFreeChart psmChart = new JFreeChart(psmQCPlot);
+            ChartPanel chartPanel = new ChartPanel(psmChart);
+
+            if (psmPrecursorMassErrorJRadioButton.isSelected()) {
+                psmQCPlot.getDomainAxis().setLabel("Precursor Mass Error");
+                psmChart.setTitle("PSMs QC Plot - Precursor Mass Error");
+            } else if (psmPrecursorChargeJRadioButton.isSelected()) {
+                psmQCPlot.getDomainAxis().setLabel("Precursor Charge");
+                psmChart.setTitle("PSMs QC Plot - Precursor Charge");
+            }
+
+            // set background color
+            psmChart.getPlot().setBackgroundPaint(Color.WHITE);
+            psmChart.setBackgroundPaint(Color.WHITE);
+            chartPanel.setBackground(Color.WHITE);
+
+            psmQCPlotPanel.removeAll();
+            psmQCPlotPanel.add(chartPanel);
+            psmQCPlotPanel.revalidate();
+            psmQCPlotPanel.repaint();
         }
-
-        // set background color
-        psmChart.getPlot().setBackgroundPaint(Color.WHITE);
-        psmChart.setBackgroundPaint(Color.WHITE);
-        chartPanel.setBackground(Color.WHITE);
-
-        psmQCPlotPanel.removeAll();
-        psmQCPlotPanel.add(chartPanel);
-        psmQCPlotPanel.revalidate();
-        psmQCPlotPanel.repaint();
     }
 
     /**
@@ -1035,13 +1449,18 @@ public class QCPanel extends javax.swing.JPanel {
                         progressDialog.incrementValue();
                     }
                 }
-                int binMin = (int) Math.log10(min) - 1;
-                int binMax = (int) Math.log10(max) + 1;
+//                int binMin = (int) Math.log10(min) - 1;
+//                int binMax = (int) Math.log10(max) + 1;
+//                ArrayList<Double> bins = new ArrayList<Double>();
+//                for (int i = binMin; i <= binMax; i++) {
+//                    bins.add(Math.pow(10, i));
+//                }
+//                bins.add(0.0);
+                int maxBin = (int) max + 1;
                 ArrayList<Double> bins = new ArrayList<Double>();
-                for (int i = binMin; i <= binMax; i++) {
-                    bins.add(Math.pow(10, i));
+                for (int i = 0; i < maxBin; i++) {
+                    bins.add((double) i);
                 }
-                bins.add(0.0);
                 histogramInput.setBins(bins);
                 histogramInput.setValidatedValues(validatedValues);
                 histogramInput.setNonValidatedValues(nonValidatedValues);
@@ -1321,23 +1740,23 @@ public class QCPanel extends javax.swing.JPanel {
         /**
          * The bins of the histogram
          */
-        private ArrayList<Double> bins;
+        public ArrayList<Double> bins;
         /**
          * values of the validated target hits
          */
-        private ArrayList<Double> validatedValues;
+        public ArrayList<Double> validatedValues;
         /**
          * values of the non validated target hits
          */
-        private ArrayList<Double> nonValidatedValues;
+        public ArrayList<Double> nonValidatedValues;
         /**
          * values of the validated decoy hits
          */
-        private ArrayList<Double> validatedDecoyValues;
+        public ArrayList<Double> validatedDecoyValues;
         /**
          * values of the non validated decoy hits
          */
-        private ArrayList<Double> nonValidatedDecoyValues;
+        public ArrayList<Double> nonValidatedDecoyValues;
 
         /**
          * Constructor
