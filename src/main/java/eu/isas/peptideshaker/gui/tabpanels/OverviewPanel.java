@@ -27,6 +27,7 @@ import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -1897,6 +1898,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         annotationPreferences.getValidatedCharges().contains(new Integer(3)) || annotationPreferences.getValidatedCharges().contains(new Integer(4)),
                         selectedIndexes.size() == 1, annotationPreferences.showBars(),
                         peptideShakerGUI.useRelativeError());
+                
+                // hide the outline
+                massErrorBubblePlot.getChartPanel().getChart().getPlot().setOutlineVisible(false);
 
                 bubbleJPanel.removeAll();
                 bubbleJPanel.add(massErrorBubblePlot);
@@ -2492,6 +2496,16 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     public void displayResults(ProgressDialogX progressDialogX) {
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        
+        // update spectrum counting column header tooltip
+        if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.EMPAI) {
+            proteinTableToolTips.set(proteinTable.getColumn("Spectrum Counting").getModelIndex(), "Protein Spectrum Counting Score - emPAI");
+        } else if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF) {
+            proteinTableToolTips.set(proteinTable.getColumn("Spectrum Counting").getModelIndex(), "Protein Spectrum Counting Score - NSAF");
+        } else {
+            proteinTableToolTips.set(proteinTable.getColumn("Spectrum Counting").getModelIndex(), "Protein Spectrum Counting Score");
+        }
+  
         try {
             int index = 0, maxPeptides = 0, maxSpectra = 0;
             double sequenceCoverage = 0;

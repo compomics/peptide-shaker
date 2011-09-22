@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import javax.swing.SwingConstants;
 
 /**
@@ -13,7 +14,13 @@ import javax.swing.SwingConstants;
  */
 public class SpectrumCountingPreferencesDialog extends javax.swing.JDialog {
 
+    /**
+     * The spectrum counting preferences.
+     */
     private SpectrumCountingPreferences spectrumCountingPreferences;
+    /**
+     * The main PeptideShaker frame.
+     */
     private PeptideShakerGUI peptideShakerGUI;
 
     /** 
@@ -174,9 +181,9 @@ public class SpectrumCountingPreferencesDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         setVisible(false);
         if (methodCmb.getSelectedIndex() == 0) {
-            spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.NSAF);
+            spectrumCountingPreferences.setSelectedMethod(SpectralCountingMethod.NSAF);
         } else {
-            spectrumCountingPreferences.setSelectedMethod(SpectrumCountingPreferences.EMPAI);
+            spectrumCountingPreferences.setSelectedMethod(SpectralCountingMethod.EMPAI);
         }
         spectrumCountingPreferences.setValidatedHits(validatedCheck.isSelected());
         peptideShakerGUI.setSpectrumCountingPreferences(spectrumCountingPreferences);
@@ -199,7 +206,7 @@ public class SpectrumCountingPreferencesDialog extends javax.swing.JDialog {
      * Update the gui based on teh spectrum counting preferences
      */
     private void updateGUI() {
-        if (spectrumCountingPreferences.getSelectedMethod() == SpectrumCountingPreferences.NSAF) {
+        if (spectrumCountingPreferences.getSelectedMethod() == SpectralCountingMethod.NSAF) {
             methodCmb.setSelectedIndex(0);
         } else {
             methodCmb.setSelectedIndex(1);
