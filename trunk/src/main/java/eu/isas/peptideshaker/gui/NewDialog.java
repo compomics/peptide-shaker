@@ -622,7 +622,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
             this.setVisible(false);
 
-
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
             sample = new Sample(sampleNameIdtxt.getText().trim());
             SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(getReplicateNumber()));
@@ -997,6 +996,12 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         }
         if (fastaFile == null) {
             JOptionPane.showMessageDialog(null, "Please verify the input for FASTA file.",
+                    "Input Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        
+        if (spectrumFiles.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please verify the input for spectrum file(s).", 
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }

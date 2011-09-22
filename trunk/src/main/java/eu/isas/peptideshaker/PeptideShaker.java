@@ -160,6 +160,8 @@ public class PeptideShaker {
      *
      * @param inputMap          The input map
      * @param waitingDialog     A dialog to display the feedback
+     * @param searchParameters
+     * @param annotationPreferences  
      */
     public void processIdentifications(InputMap inputMap, WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) {
 
@@ -375,8 +377,6 @@ public class PeptideShaker {
 
     /**
      * This method will flag validated identifications
-     * 
-     * @param waitingDialog a reference to the waiting dialog
      */
     public void validateIdentifications() {
 
@@ -609,6 +609,8 @@ public class PeptideShaker {
      * 
      * @param inspectedSpectra
      * @param waitingDialog a reference to the waiting dialog
+     * @param searchParameters 
+     * @param annotationPreferences 
      * @throws Exception  
      */
     public void scorePSMPTMs(ArrayList<String> inspectedSpectra, WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
@@ -699,6 +701,8 @@ public class PeptideShaker {
      * Scores PTM locations for a desired spectrumMatch
      * 
      * @param spectrumMatch The spectrum match of interest
+     * @param searchParameters 
+     * @param annotationPreferences 
      * @throws Exception    exception thrown whenever an error occurred while reading/writing the an identification match
      */
     public void scorePTMs(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
