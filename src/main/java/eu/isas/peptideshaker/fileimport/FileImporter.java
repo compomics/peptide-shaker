@@ -80,6 +80,10 @@ public class FileImporter {
      * Peptide to protein map: peptide sequence -> protein accession
      */
     private HashMap<String, ArrayList<String>> sequences = new HashMap<String, ArrayList<String>>();
+    /**
+    * db processing disabled only while testing
+    */
+    boolean testing = true;
 
     /**
      * Constructor for the importer
@@ -170,8 +174,6 @@ public class FileImporter {
             waitingDialog.resetSecondaryProgressBar();
             waitingDialog.setSecondaryProgressDialogIntermediate(true);
 
-            // db processing disabled only while testing
-            boolean testing = true;
             if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !testing) {
                 waitingDialog.appendReport("Creating peptide to protein map.");
                 String sequence;
@@ -255,7 +257,7 @@ public class FileImporter {
      */
     private ArrayList<String> getProteins(String sequence, WaitingDialog waitingDialog) throws IOException {
         ArrayList<String> result = sequences.get(sequence);
-        boolean inspectAll =false; // 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache();
+        boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !testing;
         if (result == null) {
             result = new ArrayList<String>();
             if (inspectAll) {

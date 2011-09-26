@@ -45,13 +45,13 @@ public class InputMap {
      */
     public void estimateProbabilities(WaitingDialog waitingDialog) {
         
-        int max = inputMap.values().size();
+        int max = getNEntries();
         waitingDialog.setSecondaryProgressDialogIntermediate(false);
         waitingDialog.setMaxSecondaryProgressValue(max);
         
         for (TargetDecoyMap hitmap : inputMap.values()) {
             waitingDialog.increaseSecondaryProgressValue();
-            hitmap.estimateProbabilities();
+            hitmap.estimateProbabilities(waitingDialog);
         }
         
         waitingDialog.setSecondaryProgressDialogIntermediate(true);
@@ -103,5 +103,17 @@ public class InputMap {
             inputMap.put(searchEngine, new TargetDecoyMap());
         }
         inputMap.get(searchEngine).put(eValue, isDecoy);
+    }
+    
+    /**
+     * Returns the number of entries
+     * @return the number of entries
+     */
+    public int getNEntries() {
+        int result = 0;
+        for (TargetDecoyMap targetDecoyMap : inputMap.values()) {
+            result += targetDecoyMap.getMapSize();
+        }
+        return result;
     }
 }

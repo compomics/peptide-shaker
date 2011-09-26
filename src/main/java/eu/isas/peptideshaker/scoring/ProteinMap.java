@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring;
 
+import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import java.io.Serializable;
 
@@ -27,10 +28,19 @@ public class ProteinMap implements Serializable {
     }
 
     /**
-     * estimate the posterior error probabilities
+     * estimate the posterior error probabilities 
+     * 
+     * @param waitingDialog a WaitingDialog to diplay the progress (can be null)
      */
-    public void estimateProbabilities() {
-        proteinMatchMap.estimateProbabilities();
+    public void estimateProbabilities(WaitingDialog waitingDialog) { //@TODO: replace this by a progress bar?
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+            waitingDialog.setMaxSecondaryProgressValue(proteinMatchMap.getMapSize());
+        }
+        proteinMatchMap.estimateProbabilities(waitingDialog);
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        }
     }
 
     /**

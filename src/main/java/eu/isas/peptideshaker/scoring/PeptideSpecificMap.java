@@ -52,9 +52,9 @@ public class PeptideSpecificMap implements Serializable {
      */
     public void estimateProbabilities(WaitingDialog waitingDialog) {
         
-        int max = peptideMaps.keySet().size();
         
         if (waitingDialog != null) {
+        int max = getNEntries();
             waitingDialog.setSecondaryProgressDialogIntermediate(false);
             waitingDialog.setMaxSecondaryProgressValue(max);
         }
@@ -67,7 +67,7 @@ public class PeptideSpecificMap implements Serializable {
             }
             
             if (!groupedMaps.contains(modifications)) {
-                peptideMaps.get(modifications).estimateProbabilities();
+                peptideMaps.get(modifications).estimateProbabilities(waitingDialog);
             }
         }
         
@@ -191,5 +191,17 @@ public class PeptideSpecificMap implements Serializable {
      */
     public TargetDecoyMap getTargetDecoyMap(String key) {
         return peptideMaps.get(key);
+    }
+    
+    /**
+     * Returns the number of entries of the map
+     * @return the number of entries of the map
+     */
+    public int getNEntries() {
+        int result = 0;
+        for (TargetDecoyMap targetDecoyMap : peptideMaps.values()) {
+            result += targetDecoyMap.getMapSize();
+        }
+        return result;
     }
 }

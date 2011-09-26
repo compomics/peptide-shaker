@@ -44,7 +44,7 @@ public class PsmSpecificMap implements Serializable {
      */
     public void estimateProbabilities(WaitingDialog waitingDialog) {
         
-        int max = psmsMaps.keySet().size();
+        int max = getMapsSize();
         waitingDialog.setSecondaryProgressDialogIntermediate(false);
         waitingDialog.setMaxSecondaryProgressValue(max);
         
@@ -53,7 +53,7 @@ public class PsmSpecificMap implements Serializable {
             waitingDialog.increaseSecondaryProgressValue();
             
             if (!grouping.keySet().contains(charge)) {
-                psmsMaps.get(charge).estimateProbabilities();
+                psmsMaps.get(charge).estimateProbabilities(waitingDialog);
             }
         }
         
@@ -201,5 +201,17 @@ public class PsmSpecificMap implements Serializable {
      */
     public TargetDecoyMap getTargetDecoyMap(int key) {
         return psmsMaps.get(key);
+    }
+    
+    /**
+     * Returns the overall number of points in the map
+     * @return the overall number of points in the map
+     */
+    public int getMapsSize() {
+        int result = 0;
+        for (TargetDecoyMap targetDecoyMap : psmsMaps.values()) {
+            result += targetDecoyMap.getMapSize();
+        }
+        return result;
     }
 }
