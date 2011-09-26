@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
+import eu.isas.peptideshaker.gui.WaitingDialog;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -163,8 +164,10 @@ public class TargetDecoyMap implements Serializable {
 
     /**
      * Estimates the posterior error probabilities in this map.
+     * 
+     * @param waitingDialog waiting dialog to display the progress (can be null)
      */
-    public void estimateProbabilities() {
+    public void estimateProbabilities(WaitingDialog waitingDialog) {
         if (scores == null) {
             estimateScores();
         }
@@ -226,6 +229,9 @@ public class TargetDecoyMap implements Serializable {
                 point.p = 1;
             }
             previousPoint = point;
+            if (waitingDialog != null) {
+                waitingDialog.increaseSecondaryProgressValue();
+            }
         }
     }
 
@@ -334,5 +340,13 @@ public class TargetDecoyMap implements Serializable {
      */
     public void setWindowSize(int windowSize) {
         this.windowSize = windowSize;
+    }
+    
+    /**
+     * Returns the size of the map
+     * @return the size of the map
+     */
+    public int getMapSize() {
+        return hitMap.size();
     }
 }

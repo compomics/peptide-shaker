@@ -1496,7 +1496,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(this, "Please verify the given window size. Has to be a positive value.", "Window Error", JOptionPane.WARNING_MESSAGE);
             } else {
                 currentTargetDecoyMap.setWindowSize(newWindow);
-                currentTargetDecoyMap.estimateProbabilities();
+                currentTargetDecoyMap.estimateProbabilities(null);
                 targetDecoySeries = currentTargetDecoyMap.getTargetDecoySeries();
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
                 updateResults();

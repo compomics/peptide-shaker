@@ -179,10 +179,12 @@ public class PeptideShaker {
             inputMap.estimateProbabilities(waitingDialog);
             waitingDialog.appendReport("Adding assumptions probabilities.");
             attachAssumptionsProbabilities(inputMap, waitingDialog);
-            waitingDialog.appendReport("Computing PSMs probabilities.");
-            setFirstHit();
-            ArrayList<String> modifiedPsms = fillPsmMap(inputMap);
+            waitingDialog.appendReport("Selecting best hit per spectrum.");
+            setFirstHit(waitingDialog);
+            waitingDialog.appendReport("Generating PSM map.");
+            ArrayList<String> modifiedPsms = fillPsmMap(inputMap, waitingDialog);
             psmMap.cure();
+            waitingDialog.appendReport("Computing PSM probabilities.");
             psmMap.estimateProbabilities(waitingDialog);
             attachSpectrumProbabilities();
             waitingDialog.appendReport("Computing peptide probabilities.");
@@ -197,7 +199,7 @@ public class PeptideShaker {
             scorePeptidePTMs(waitingDialog);
             waitingDialog.appendReport("Computing protein probabilities.");
             fillProteinMap(waitingDialog);
-            proteinMap.estimateProbabilities();
+            proteinMap.estimateProbabilities(waitingDialog);
             attachProteinProbabilities();
         } catch (Exception e) {
             e.printStackTrace();
@@ -212,7 +214,8 @@ public class PeptideShaker {
             e.printStackTrace();
         }
 
-        proteinMap.estimateProbabilities();
+            waitingDialog.appendReport("Correcting protein probabilities.");
+        proteinMap.estimateProbabilities(waitingDialog);
         attachProteinProbabilities();
 
         waitingDialog.appendReport("Validating identifications at 1% FDR.");
@@ -348,7 +351,7 @@ public class PeptideShaker {
         peptideMap.estimateProbabilities(null);
         attachPeptideProbabilities();
         fillProteinMap(null);
-        proteinMap.estimateProbabilities();
+        proteinMap.estimateProbabilities(null);
         attachProteinProbabilities();
         cleanProteinGroups(null);
     }
@@ -365,7 +368,7 @@ public class PeptideShaker {
         proteinMap = new ProteinMap();
         attachPeptideProbabilities();
         fillProteinMap(null);
-        proteinMap.estimateProbabilities();
+        proteinMap.estimateProbabilities(null);
         attachProteinProbabilities();
         cleanProteinGroups(null);
     }
@@ -423,10 +426,17 @@ public class PeptideShaker {
 
     /**
      * When two different sequences result in the same score for a given search engine, this method will retain the peptide belonging to the protein leading to the most spectra.
-     * This method is typically useful for Isoleucine/Leucine issues.
+     * This method is typically useful for similar peptides issues.
+     * 
+     * @param waitingDialog waiting dialog used to display the progress
      */
-    private void setFirstHit() throws Exception {
+    private void setFirstHit(WaitingDialog waitingDialog) throws Exception {        
+        
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        int max = identification.getSpectrumIdentification().size();        
+        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+        waitingDialog.setMaxSecondaryProgressValue(max);
+        
         ArrayList<String> conflictingPSMs = new ArrayList<String>();
         HashMap<String, Integer> spectrumCounting = new HashMap<String, Integer>();
         boolean conflict;
@@ -449,6 +459,8 @@ public class PeptideShaker {
             }
             if (conflict) {
                 conflictingPSMs.add(spectrumMatch.getKey());
+            } else {
+                waitingDialog.increaseSecondaryProgressValue();
             }
         }
         SpectrumMatch conflictingPSM;
@@ -477,16 +489,23 @@ public class PeptideShaker {
                     }
                 }
             }
+            waitingDialog.increaseSecondaryProgressValue();
         }
+        
+        waitingDialog.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
      * Fills the psm specific map
      *
      * @param inputMap       The input map
+     * @param waitingDialog waiting dialog used to display the progress
      */
-    private ArrayList<String> fillPsmMap(InputMap inputMap) throws Exception {
+    private ArrayList<String> fillPsmMap(InputMap inputMap, WaitingDialog waitingDialog) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        int max = identification.getSpectrumIdentification().size();        
+        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+        waitingDialog.setMaxSecondaryProgressValue(max);
         HashMap<String, Double> identifications;
         HashMap<Double, PeptideAssumption> peptideAssumptions;
         PSParameter psParameter;
@@ -527,6 +546,7 @@ public class PeptideShaker {
                     modifiedPsms.add(spectrumKey);
                 }
                 psmMap.addPoint(pScore, spectrumMatch);
+                waitingDialog.increaseSecondaryProgressValue();
             }
         } else {
             double eValue;
@@ -546,8 +566,10 @@ public class PeptideShaker {
                 }
                 psParameter.setSecificMapKey(psmMap.getKey(spectrumMatch) + "");
                 identification.addMatchParameter(spectrumKey, psParameter);
+                waitingDialog.increaseSecondaryProgressValue();
             }
         }
+        waitingDialog.setSecondaryProgressDialogIntermediate(true);
         return modifiedPsms;
     }
 
