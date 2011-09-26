@@ -159,21 +159,7 @@ public class PeptideSpecificMap implements Serializable {
         for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
             if (modificationMatch.getTheoreticPtm() != null
                     && modificationMatch.isVariable()) {
-                if (modificationMatch.getTheoreticPtm().getType() == PTM.MODMAX) {
-                    String newName = modificationMatch.getTheoreticPtm().getName();
-                    if (!nameCorrectionMap.containsKey(newName)) {
-                        ModificationDialog modificationDialog = new ModificationDialog(null, true, modificationMatch.getTheoreticPtm());
-                        modificationDialog.setVisible(true);
-                        if (!modificationDialog.isCanceled()) {
-                            nameCorrectionMap.put(newName, modificationDialog.getSelectedModification());
-                        } else {
-                            nameCorrectionMap.put(newName, newName);
-                        }
-                    }
-                    modifications.add(nameCorrectionMap.get(newName));
-                } else {
-                    modifications.add(modificationMatch.getTheoreticPtm().getName());
-                }
+                    modifications.add(modificationMatch.getTheoreticPtm());
             }
         }
         Collections.sort(modifications);

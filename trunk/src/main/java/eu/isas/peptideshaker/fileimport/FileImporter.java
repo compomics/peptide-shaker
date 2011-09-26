@@ -166,13 +166,13 @@ public class FileImporter {
                         "No Decoys Found",
                         JOptionPane.INFORMATION_MESSAGE);
             }
-            
+
             waitingDialog.resetSecondaryProgressBar();
             waitingDialog.setSecondaryProgressDialogIntermediate(true);
-            
+
             // db processing disabled only while testing
             boolean testing = true;
-            if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !testing) { 
+            if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !testing) {
                 waitingDialog.appendReport("Creating peptide to protein map.");
                 String sequence;
                 Enzyme enzyme = searchParameters.getEnzyme();
@@ -180,16 +180,16 @@ public class FileImporter {
                 int nMin = idFilter.getMinPeptideLength();
                 int nMax = idFilter.getMaxPeptideLength();
                 sequences = new HashMap<String, ArrayList<String>>();
-                
+
                 int numberOfSequences = sequenceFactory.getAccessions().size();
-                
+
                 waitingDialog.setSecondaryProgressDialogIntermediate(false);
                 waitingDialog.setMaxSecondaryProgressValue(numberOfSequences);
-                
+
                 for (String proteinKey : sequenceFactory.getAccessions()) {
-                    
+
                     waitingDialog.increaseSecondaryProgressValue();
-                    
+
                     sequence = sequenceFactory.getProtein(proteinKey).getSequence();
                     for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
                         if (!sequences.containsKey(peptide)) {
@@ -201,7 +201,7 @@ public class FileImporter {
                         }
                     }
                 }
-                
+
                 waitingDialog.setSecondaryProgressDialogIntermediate(true);
             }
             waitingDialog.appendReport("FASTA file import completed.");
@@ -255,7 +255,7 @@ public class FileImporter {
      */
     private ArrayList<String> getProteins(String sequence, WaitingDialog waitingDialog) throws IOException {
         ArrayList<String> result = sequences.get(sequence);
-        boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache();
+        boolean inspectAll =false; // 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache();
         if (result == null) {
             result = new ArrayList<String>();
             if (inspectAll) {
@@ -274,30 +274,32 @@ public class FileImporter {
     }
 
     /**
-     * Returns a search-engine independent PTM based.
+     * Returns a search-engine independent PTM.
      * @param sePTM             The search engine PTM
      * @param modificationSite  The modified site according to the search engine
      * @param sequence          The sequence of the peptide
      * @param searchParameters  The search parameters used
      * @return the best PTM candidate
      */
-    private PTM getPTM(PTM sePTM, int modificationSite, String sequence, SearchParameters searchParameters) {
+    private String getPTM(String sePTM, int modificationSite, String sequence, SearchParameters searchParameters) {
         // If someone has a better idea, would be great.
         PTM psPTM;
         ArrayList<PTM> possiblePTMs;
-        if (searchParameters.getModificationProfile().getUtilitiesNames().contains(sePTM.getName().toLowerCase())) {
-            return ptmFactory.getPTM(sePTM.getName());
+        if (searchParameters.getModificationProfile().getPeptideShakerNames().contains(sePTM.toLowerCase())) {
+            return ptmFactory.getPTM(sePTM).getName();
         } else {
             possiblePTMs = new ArrayList<PTM>();
-            for (String ptmName : searchParameters.getModificationProfile().getUtilitiesNames()) {
+            String[] parsedName = sePTM.split("@");
+            double seMass = new Double(parsedName[0]);
+            for (String ptmName : searchParameters.getModificationProfile().getPeptideShakerNames()) {
                 psPTM = ptmFactory.getPTM(ptmName);
-                if (Math.abs(psPTM.getMass() - sePTM.getMass()) < 0.01) {
+                if (Math.abs(psPTM.getMass() - seMass) < 0.01) {
                     possiblePTMs.add(psPTM);
                 }
             }
             if (possiblePTMs.size() == 1) {
                 // Single match for this mass, we are lucky
-                return possiblePTMs.get(0);
+                return possiblePTMs.get(0).getName();
             } else if (possiblePTMs.size() > 1) {
                 // More matches, let's see if we can infer something from the position
                 if (modificationSite == 1) {
@@ -305,13 +307,13 @@ public class FileImporter {
                     for (PTM possPtm : possiblePTMs) {
                         if (possPtm.getType() == PTM.MODN
                                 || possPtm.getType() == PTM.MODNP) {
-                            return possPtm;
+                            return possPtm.getName();
                         } else if (possPtm.getType() == PTM.MODAA
                                 || possPtm.getType() == PTM.MODNAA
                                 || possPtm.getType() == PTM.MODNPAA) {
-                            for (String aa : possPtm.getResiduesArray()) {
+                            for (String aa : possPtm.getResidues()) {
                                 if (sequence.startsWith(aa)) {
-                                    return possPtm;
+                                    return possPtm.getName();
                                 }
                             }
                         }
@@ -321,13 +323,13 @@ public class FileImporter {
                     for (PTM possPtm : possiblePTMs) {
                         if (possPtm.getType() == PTM.MODC
                                 || possPtm.getType() == PTM.MODCP) {
-                            return possPtm;
+                            return possPtm.getName();
                         } else if (possPtm.getType() == PTM.MODAA
                                 || possPtm.getType() == PTM.MODCAA
                                 || possPtm.getType() == PTM.MODCPAA) {
-                            for (String aa : possPtm.getResiduesArray()) {
+                            for (String aa : possPtm.getResidues()) {
                                 if (sequence.endsWith(aa)) {
-                                    return possPtm;
+                                    return possPtm.getName();
                                 }
                             }
                         }
@@ -336,9 +338,9 @@ public class FileImporter {
                     for (PTM possPtm : possiblePTMs) {
                         if (possPtm.getType() == PTM.MODAA) {
                             if (modificationSite > 0 && modificationSite <= sequence.length()) {
-                                for (String aa : possPtm.getResiduesArray()) {
+                                for (String aa : possPtm.getResidues()) {
                                     if (aa.equals(sequence.charAt(modificationSite - 1) + "")) {
-                                        return possPtm;
+                                        return possPtm.getName();
                                     }
                                 }
                             } else {
@@ -348,8 +350,7 @@ public class FileImporter {
                     }
                 }
             }
-            
-            return ptmFactory.getPTM(sePTM.getMass(), sePTM.getResiduesArray()[0], sequence);
+            return ptmFactory.getPTM(seMass, parsedName[1], sequence).getName();
         }
     }
 
@@ -440,11 +441,30 @@ public class FileImporter {
             importSequences(waitingDialog, proteomicAnalysis, fastaFile, idFilter, searchParameters);
 
             try {
-
-                for (String modificationName : searchParameters.getModificationProfile().getUtilitiesNames()) {
-                    String peptideShakerName = searchParameters.getModificationProfile().getPeptideShakerName(modificationName);
-                    ptmFactory.getPTM(modificationName).setName(peptideShakerName);
-                    ptmFactory.getPTM(modificationName).setShortName(searchParameters.getModificationProfile().getShortName(peptideShakerName)); 
+                ArrayList<String> residues, utilitiesNames;
+                PTM sePtm, newPTM;
+                for (String peptideShakerName : searchParameters.getModificationProfile().getPeptideShakerNames()) {
+                    residues = new ArrayList<String>();
+                    utilitiesNames = new ArrayList<String>();
+                    int modType = -1;
+                    double mass = -1;
+                    for (String utilitiesName : searchParameters.getModificationProfile().getUtilitiesNames()) {
+                        if (peptideShakerName.equals(searchParameters.getModificationProfile().getPeptideShakerName(utilitiesName))) {
+                            sePtm = ptmFactory.getPTM(utilitiesName);
+                            residues.addAll(sePtm.getResidues());
+                            if (modType == -1) {
+                                modType = sePtm.getType();
+                            } else if (sePtm.getType() != modType) {
+                                modType = PTM.MODAA; // case difficult to handle so used the default AA option
+                            }
+                            mass = sePtm.getMass();
+                            utilitiesNames.add(utilitiesName);
+                        }
+                    }
+                    for (String utilitiesName : utilitiesNames) {
+                        newPTM = new PTM(modType, peptideShakerName, searchParameters.getModificationProfile().getShortName(peptideShakerName), mass, residues);
+                        ptmFactory.replacePTM(utilitiesName, newPTM);
+                    }
                 }
 
                 waitingDialog.appendReport("Reading identification files.");
@@ -465,9 +485,9 @@ public class FileImporter {
                     int numberOfMatches = tempSet.size();
                     waitingDialog.setSecondaryProgressDialogIntermediate(false);
                     waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
-                    
+
                     while (matchIt.hasNext()) {
-                        
+
                         waitingDialog.increaseSecondaryProgressValue();
 
                         SpectrumMatch match = matchIt.next();
@@ -483,7 +503,7 @@ public class FileImporter {
                             for (PeptideAssumption assumptions : match.getAllAssumptions()) {
                                 peptide = assumptions.getPeptide();
                                 for (ModificationMatch seMod : peptide.getModificationMatches()) {
-                                    seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), peptide.getSequence(), searchParameters)); // add shortname
+                                    seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), peptide.getSequence(), searchParameters));
                                 }
                             }
 
@@ -508,7 +528,7 @@ public class FileImporter {
                             return 1;
                         }
                     }
-                    
+
                     waitingDialog.setSecondaryProgressDialogIntermediate(true);
                     waitingDialog.increaseProgressValue();
                 }

@@ -3,6 +3,7 @@ package eu.isas.peptideshaker;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.AScore;
@@ -91,6 +92,10 @@ public class PeptideShaker {
      * The location of the folder used for serialization of matches
      */
     public final static String SERIALIZATION_DIRECTORY = "matches";
+    /**
+     * The compomics PTM factory
+     */
+    private PTMFactory ptmFactory = PTMFactory.getInstance();
 
     /**
      * Constructor without mass specification. Calculation will be done on new maps
@@ -669,11 +674,14 @@ public class PeptideShaker {
         PtmScoring spectrumScoring;
         ArrayList<String> variableModifications = new ArrayList<String>();
         SpectrumMatch spectrumMatch;
+        PTM ptm;
         for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-            if (modificationMatch.isVariable()
-                    && modificationMatch.getTheoreticPtm().getType() == PTM.MODAA
-                    && !variableModifications.contains(modificationMatch.getTheoreticPtm().getName())) {
-                variableModifications.add(modificationMatch.getTheoreticPtm().getName());
+            if (modificationMatch.isVariable()) {
+                ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                if (ptm.getType() == PTM.MODAA
+                        && !variableModifications.contains(modificationMatch.getTheoreticPtm())) {
+                    variableModifications.add(modificationMatch.getTheoreticPtm());
+                }
             }
         }
         if (variableModifications.size() > 0) {
@@ -728,19 +736,22 @@ public class PeptideShaker {
         ptmScores = new PSPtmScores();
         psParameter = (PSParameter) spectrumMatch.getBestAssumption().getUrParam(psParameter);
         p1 = psParameter.getSearchEngineProbability();
+        PTM ptm;
         if (p1 < 1) {
             mainSequence = spectrumMatch.getBestAssumption().getPeptide().getSequence();
             p2 = 1;
             modifications = new ArrayList<String>();
             for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
-                if (modificationMatch.isVariable()
-                        && modificationMatch.getTheoreticPtm().getType() == PTM.MODAA) {
-                    modificationName = modificationMatch.getTheoreticPtm().getName();
-                    if (!modifications.contains(modificationName)) {
-                        modifications.add(modificationName);
-                        modificationProfiles.put(modificationName, new ArrayList<Integer>());
+                if (modificationMatch.isVariable()) {
+                    ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                    if (ptm.getType() == PTM.MODAA) {
+                        modificationName = modificationMatch.getTheoreticPtm();
+                        if (!modifications.contains(modificationName)) {
+                            modifications.add(modificationName);
+                            modificationProfiles.put(modificationName, new ArrayList<Integer>());
+                        }
+                        modificationProfiles.get(modificationName).add(modificationMatch.getModificationSite());
                     }
-                    modificationProfiles.get(modificationName).add(modificationMatch.getModificationSite());
                 }
             }
             if (!modifications.isEmpty()) {
@@ -750,7 +761,7 @@ public class PeptideShaker {
                                 && peptideAssumption.getPeptide().getSequence().equals(mainSequence)) {
                             boolean newLocation = false;
                             for (ModificationMatch modMatch : peptideAssumption.getPeptide().getModificationMatches()) {
-                                if (modMatch.getTheoreticPtm().getName().equals(mod)
+                                if (modMatch.getTheoreticPtm().equals(mod)
                                         && !modificationProfiles.get(mod).contains(modMatch.getModificationSite())) {
                                     newLocation = true;
                                     break;
@@ -787,18 +798,21 @@ public class PeptideShaker {
         ptmScores = new PSPtmScores();
         psParameter = (PSParameter) spectrumMatch.getBestAssumption().getUrParam(psParameter);
         p1 = psParameter.getSearchEngineProbability();
+        PTM ptm;
         if (p1 < 1) {
             modifications = new HashMap<String, PTM>();
             HashMap<String, Integer> nMod = new HashMap<String, Integer>();
             for (ModificationMatch modificationMatch : spectrumMatch.getBestAssumption().getPeptide().getModificationMatches()) {
-                if (modificationMatch.isVariable()
-                        && modificationMatch.getTheoreticPtm().getType() == PTM.MODAA) {
-                    modificationName = modificationMatch.getTheoreticPtm().getName();
-                    if (!modifications.keySet().contains(modificationName)) {
-                        modifications.put(modificationName, modificationMatch.getTheoreticPtm());
-                        nMod.put(modificationName, 1);
-                    } else {
-                        nMod.put(modificationName, nMod.get(modificationName) + 1);
+                if (modificationMatch.isVariable()) {
+                    ptm = ptmFactory.getPTM(modificationMatch.getTheoreticPtm());
+                    if (ptm.getType() == PTM.MODAA) {
+                        modificationName = modificationMatch.getTheoreticPtm();
+                        if (!modifications.keySet().contains(modificationName)) {
+                            modifications.put(modificationName, ptm);
+                            nMod.put(modificationName, 1);
+                        } else {
+                            nMod.put(modificationName, nMod.get(modificationName) + 1);
+                        }
                     }
                 }
             }
@@ -807,11 +821,15 @@ public class PeptideShaker {
                 annotationPreferences.setCurrentSettings(spectrumMatch.getBestAssumption().getPeptide(), spectrum.getPrecursor().getCharge().value, true);
                 for (String mod : modifications.keySet()) {
                     if (nMod.get(mod) == 1) {
+                        boolean debug = false;
+                        if (spectrumMatch.getBestAssumption().getPeptide().getSequence().equals("DKSPSSLLEDAKETCFTR")) {
+                            debug = true;
+                        }
                         HashMap<ArrayList<Integer>, Double> aScores = AScore.getAScore(spectrumMatch.getBestAssumption().getPeptide(),
                                 modifications.get(mod), nMod.get(mod), spectrum, annotationPreferences.getIonTypes(),
                                 annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                                 spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                searchParameters.getFragmentIonAccuracy());
+                                searchParameters.getFragmentIonAccuracy(), debug);
                         ptmScoring = new PtmScoring(mod);
                         for (ArrayList<Integer> modificationProfile : aScores.keySet()) {
                             ptmScoring.addDeltaScore(modificationProfile, aScores.get(modificationProfile));

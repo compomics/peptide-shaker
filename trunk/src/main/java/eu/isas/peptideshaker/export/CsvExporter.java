@@ -282,7 +282,7 @@ public class CsvExporter {
 
         for (ModificationMatch mod : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
             if (mod.isVariable()) {
-                varMods.add(mod.getTheoreticPtm().getName());
+                varMods.add(mod.getTheoreticPtm());
             }
         }
 
@@ -346,7 +346,7 @@ public class CsvExporter {
 
         for (ModificationMatch mod : bestAssumption.getModificationMatches()) {
             if (mod.isVariable()) {
-                line += mod.getTheoreticPtm().getName() + "(" + mod.getModificationSite() + ") ";
+                line += mod.getTheoreticPtm() + "(" + mod.getModificationSite() + ") ";
             }
         }
 
@@ -465,7 +465,7 @@ public class CsvExporter {
 
                     for (ModificationMatch mod : assumption.getPeptide().getModificationMatches()) {
                         if (mod.isVariable()) {
-                            line += mod.getTheoreticPtm().getName() + "(" + mod.getModificationSite() + ") ";
+                            line += mod.getTheoreticPtm() + "(" + mod.getModificationSite() + ") ";
                         }
                     }
 
