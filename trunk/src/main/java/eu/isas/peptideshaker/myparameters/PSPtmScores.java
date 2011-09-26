@@ -16,6 +16,7 @@ import java.util.HashMap;
  */
 public class PSPtmScores implements UrParameter {
     
+    //@TODO: serialization number
     /**
      * A map containing all scores indexed by the modification of interest
      */

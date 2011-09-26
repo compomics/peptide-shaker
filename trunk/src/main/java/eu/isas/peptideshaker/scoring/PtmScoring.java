@@ -11,7 +11,25 @@ import java.util.HashMap;
  * @author Marc
  */
 public class PtmScoring implements Serializable {
+    
+    //@TODO: serialization number
 
+    /**
+     * index for a random location choice
+     */
+    public static final int RANDOM = 0;
+    /**
+     * index for a doubtful assignment
+     */
+    public static final int DOUBTFUL = 1;
+    /**
+     * index for a confident assignment
+     */
+    public static final int CONFIDENT = 3;
+    /**
+     * index for a very confident assignment
+     */
+    public static final int VERY_CONFIDENT = 4;
     /**
      * The delta scores indexed by the modification location possibility
      */
@@ -28,6 +46,14 @@ public class PtmScoring implements Serializable {
      * The separator used to separate locations in the modification location key
      */
     public static final String separator = "|";
+    /**
+     * The retained PTM site assignment
+     */
+    private String ptmLocation;
+    /**
+     * The confidence of the ptm site assignment
+     */
+    private int siteConfidence = RANDOM;
 
     /**
      * Constructor
@@ -113,6 +139,21 @@ public class PtmScoring implements Serializable {
         }
         return bestKey;
     }
+    
+    /**
+     * Returns the best scoring modification profile based on the delta score
+     * @return the best scoring modification profile based on the delta score
+     */
+    public String getBestAScoreLocations() {
+        String bestKey = null;
+        for (String key : aScores.keySet()) {
+            if (bestKey == null || aScores.get(bestKey) < aScores.get(key)) {
+                bestKey = key;
+            }
+        }
+        return bestKey;
+    }
+
 
     /**
      * Returns the implemented locations for the A-score
@@ -150,6 +191,21 @@ public class PtmScoring implements Serializable {
         }
         for (String positions : anotherScore.getAScorePostions()) {
             addAScore(positions, anotherScore.getAScore(positions));
+        }
+        if (siteConfidence < CONFIDENT &&
+                anotherScore.getPtmSiteConfidence() > siteConfidence) {
+            ptmLocation = "";
+            siteConfidence = anotherScore.getPtmSiteConfidence();
+        }
+        if (siteConfidence == anotherScore.getPtmSiteConfidence()) {
+            ArrayList<Integer> locations = getLocations(ptmLocation);
+            ArrayList<Integer> newLocations = getLocations(anotherScore.getPtmLocation());
+            for (int newLocation : newLocations) {
+                if (!locations.contains(newLocation)) {
+                    locations.add(newLocation);
+                }
+            }
+            ptmLocation = getKey(locations);
         }
     }
 
@@ -190,4 +246,31 @@ public class PtmScoring implements Serializable {
         }
         return result;
     }
+    
+    /**
+     * sets the PTM site assignment results
+     * @param location          the location of the PTM
+     * @param ptmSiteConfidence the location confidence as indexed by the static fields
+     */
+    public void setPtmSite(String location, int ptmSiteConfidence) {
+        this.ptmLocation = location;
+        this.siteConfidence = ptmSiteConfidence;
+    }
+    
+    /**
+     * returns the PTM location as a String which can be translated using the static methods
+     * @return the PTM location
+     */
+    public String getPtmLocation() {
+        return ptmLocation;
+    }
+    
+    /**
+     * Returns the PTM location confidence as indexed by the satic fields
+     * @return the PTM location confidence
+     */
+    public int getPtmSiteConfidence() {
+        return siteConfidence;
+    }
+    
 }

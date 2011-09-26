@@ -214,7 +214,7 @@ public class PeptideShaker {
             e.printStackTrace();
         }
 
-            waitingDialog.appendReport("Correcting protein probabilities.");
+        waitingDialog.appendReport("Correcting protein probabilities.");
         proteinMap.estimateProbabilities(waitingDialog);
         attachProteinProbabilities();
 
@@ -430,13 +430,13 @@ public class PeptideShaker {
      * 
      * @param waitingDialog waiting dialog used to display the progress
      */
-    private void setFirstHit(WaitingDialog waitingDialog) throws Exception {        
-        
+    private void setFirstHit(WaitingDialog waitingDialog) throws Exception {
+
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        int max = identification.getSpectrumIdentification().size();        
+        int max = identification.getSpectrumIdentification().size();
         waitingDialog.setSecondaryProgressDialogIntermediate(false);
         waitingDialog.setMaxSecondaryProgressValue(max);
-        
+
         ArrayList<String> conflictingPSMs = new ArrayList<String>();
         HashMap<String, Integer> spectrumCounting = new HashMap<String, Integer>();
         boolean conflict;
@@ -491,7 +491,7 @@ public class PeptideShaker {
             }
             waitingDialog.increaseSecondaryProgressValue();
         }
-        
+
         waitingDialog.setSecondaryProgressDialogIntermediate(true);
     }
 
@@ -503,7 +503,7 @@ public class PeptideShaker {
      */
     private ArrayList<String> fillPsmMap(InputMap inputMap, WaitingDialog waitingDialog) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        int max = identification.getSpectrumIdentification().size();        
+        int max = identification.getSpectrumIdentification().size();
         waitingDialog.setSecondaryProgressDialogIntermediate(false);
         waitingDialog.setMaxSecondaryProgressValue(max);
         HashMap<String, Double> identifications;
@@ -738,6 +738,30 @@ public class PeptideShaker {
     public void scorePTMs(SpectrumMatch spectrumMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
         attachDeltaScore(spectrumMatch);
         attachAScore(spectrumMatch, searchParameters, annotationPreferences);
+        PSPtmScores ptmScores = (PSPtmScores) spectrumMatch.getUrParam(new PSPtmScores());
+        if (ptmScores != null) {
+            PtmScoring ptmScoring;
+            for (String modification : ptmScores.getScoredPTMs()) {
+                ptmScoring = ptmScores.getPtmScoring(modification);
+                String bestKey = ptmScoring.getBestAScoreLocations();
+                int confidence = PtmScoring.RANDOM;
+                if (bestKey == null || ptmScoring.getAScore(bestKey) <= 50) {
+                    bestKey = ptmScoring.getBestDeltaScoreLocations();
+                    if (ptmScoring.getDeltaScore(bestKey) > 50) {
+                        confidence = PtmScoring.DOUBTFUL;
+                    }
+                } else {
+                    if (!bestKey.equals(ptmScoring.getBestDeltaScoreLocations())) {
+                        confidence = PtmScoring.CONFIDENT;
+                    } else {
+                        confidence = PtmScoring.VERY_CONFIDENT;
+                    }
+                }
+                if (bestKey != null) {
+                ptmScoring.setPtmSite(bestKey, confidence);
+                }
+            }
+        }
     }
 
     /**
@@ -756,6 +780,9 @@ public class PeptideShaker {
         PSPtmScores ptmScores;
         PtmScoring ptmScoring;
         ptmScores = new PSPtmScores();
+        if (spectrumMatch.getUrParam(ptmScores) != null) {
+            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+        }
         psParameter = (PSParameter) spectrumMatch.getBestAssumption().getUrParam(psParameter);
         p1 = psParameter.getSearchEngineProbability();
         PTM ptm;
@@ -797,7 +824,10 @@ public class PeptideShaker {
                             }
                         }
                     }
-                    ptmScoring = new PtmScoring(mod);
+                    ptmScoring = ptmScores.getPtmScoring(mod);
+                    if (ptmScoring == null) {
+                        ptmScoring = new PtmScoring(mod);
+                    }
                     ptmScoring.addDeltaScore(modificationProfiles.get(mod), (p2 - p1) * 100);
                     ptmScores.addPtmScoring(mod, ptmScoring);
                 }
@@ -818,6 +848,9 @@ public class PeptideShaker {
         PSPtmScores ptmScores;
         PtmScoring ptmScoring;
         ptmScores = new PSPtmScores();
+        if (spectrumMatch.getUrParam(ptmScores) != null) {
+            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+        }
         psParameter = (PSParameter) spectrumMatch.getBestAssumption().getUrParam(psParameter);
         p1 = psParameter.getSearchEngineProbability();
         PTM ptm;
@@ -852,9 +885,12 @@ public class PeptideShaker {
                                 annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                                 spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                 searchParameters.getFragmentIonAccuracy(), debug);
-                        ptmScoring = new PtmScoring(mod);
+                        ptmScoring = ptmScores.getPtmScoring(mod);
+                        if (ptmScoring == null) {
+                            ptmScoring = new PtmScoring(mod);
+                        }
                         for (ArrayList<Integer> modificationProfile : aScores.keySet()) {
-                            ptmScoring.addDeltaScore(modificationProfile, aScores.get(modificationProfile));
+                            ptmScoring.addAScore(modificationProfile, aScores.get(modificationProfile));
                         }
                         ptmScores.addPtmScoring(mod, ptmScoring);
                     }
