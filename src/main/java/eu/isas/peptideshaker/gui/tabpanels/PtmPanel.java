@@ -1801,7 +1801,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         String name;
         for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
             if (modificationMatch.isVariable()) {
-                name = modificationMatch.getTheoreticPtm().getName();
+                name = modificationMatch.getTheoreticPtm();
                 if (!modificationStatus.containsKey(name)) {
                     modificationStatus.put(name, new ArrayList<Integer>());
                 }

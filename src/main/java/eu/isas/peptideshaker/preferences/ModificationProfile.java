@@ -88,17 +88,19 @@ public class ModificationProfile implements Serializable {
      * @param peptideShakerName the new PeptideShaker name
      */
     public void setPeptideShakerName(String utilitiesName, String peptideShakerName) {
+        String oldKey = modificationNames.get(utilitiesName);
         if (modificationNames.containsKey(utilitiesName)) {
-            String oldKey = modificationNames.get(utilitiesName);
             if (!oldKey.equals(peptideShakerName) && !shortNames.containsKey(peptideShakerName)) {
                 shortNames.put(peptideShakerName, shortNames.get(oldKey));
-                shortNames.remove(oldKey);
                 colors.put(peptideShakerName, colors.get(oldKey));
-                shortNames.remove(oldKey);
-                colors.remove(oldKey);
             }
+
         }
         modificationNames.put(utilitiesName, peptideShakerName);
+        if (!modificationNames.containsValue(oldKey)) {
+            shortNames.remove(oldKey);
+            colors.remove(oldKey);
+        }
     }
 
     /**
@@ -131,11 +133,11 @@ public class ModificationProfile implements Serializable {
             colors.remove(psName);
         }
     }
-    
+
     /**
      * Returns a mapping of the PeptideShaker names to the colors used.
      */
-    public HashMap<String, Color> getPtmColors () {
+    public HashMap<String, Color> getPtmColors() {
         return colors;
     }
 }

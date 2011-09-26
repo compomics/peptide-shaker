@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.PTM;
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -2241,6 +2242,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
         String peptideSequence = Peptide.getSequence(peptideKey);
         String tempSequence = proteinSequence;
+        PTMFactory pmtFactory = PTMFactory.getInstance();
+        PTM ptm;
 
         while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
 
@@ -2283,11 +2286,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
                 for (int j = peptideTempStart; j < peptideTempEnd; j++) {
                     for (int k = 0; k < modifications.size(); k++) {
-                        if (modifications.get(k).getTheoreticPtm().getType() == PTM.MODAA && modifications.get(k).isVariable()) {
+                        ptm = pmtFactory.getPTM(modifications.get(k).getTheoreticPtm());
+                        if (ptm.getType() == PTM.MODAA && modifications.get(k).isVariable()) {
                             if (modifications.get(k).getModificationSite() == (peptideIndex + 1)) {
 
                                 Color ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors().get(
-                                        modifications.get(k).getTheoreticPtm().getName());
+                                        modifications.get(k).getTheoreticPtm());
 
                                 jmolPanel.getViewer().evalString(
                                         "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())
@@ -2299,7 +2303,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                             "select resno =" + (j - chains[selectedChainIndex - 1].getDifference())
                                             + " and chain = " + currentChain + " and *.ca; color ["
                                             + ptmColor.getRed() + "," + ptmColor.getGreen() + "," + ptmColor.getBlue() + "];"
-                                            + "label " + modifications.get(k).getTheoreticPtm().getName());
+                                            + "label " + modifications.get(k).getTheoreticPtm());
                                 }
                             }
                         }

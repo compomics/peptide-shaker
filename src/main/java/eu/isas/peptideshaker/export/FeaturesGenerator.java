@@ -354,7 +354,7 @@ public class FeaturesGenerator {
                             } else {
                                 result += ", ";
                             }
-                            String modName = modificationMatch.getTheoreticPtm().getName();
+                            String modName = modificationMatch.getTheoreticPtm();
                             result += modName + "(" + modificationMatch + ")";
                         }
                     }
@@ -502,7 +502,7 @@ public class FeaturesGenerator {
                             } else {
                                 result += ", ";
                             }
-                            String modName = modificationMatch.getTheoreticPtm().getName();
+                            String modName = modificationMatch.getTheoreticPtm();
                             result += modName + "(" + modificationMatch + ")";
                         }
                     }
@@ -662,7 +662,7 @@ public class FeaturesGenerator {
                                         } else {
                                             result += ", ";
                                         }
-                                        String modName = modificationMatch.getTheoreticPtm().getName();
+                                        String modName = modificationMatch.getTheoreticPtm();
                                         result += modName + "(" + modificationMatch + ")";
                                     }
                                 }

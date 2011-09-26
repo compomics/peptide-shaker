@@ -49,7 +49,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
     /**
      * The tooltips for the expected variable mods.
      */
-    Vector<String> expectedVariableModsTableToolTips; 
+    Vector<String> expectedVariableModsTableToolTips;
     /**
      * The search parameters needed by peptide-shaker
      */
@@ -106,7 +106,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         expectedModificationsTable.getColumn(" ").setMinWidth(40);
         expectedModificationsTable.getColumn("  ").setMaxWidth(40);
         expectedModificationsTable.getColumn("  ").setMinWidth(40);
-        
+
         expectedVariableModsTableToolTips = new Vector<String>();
         expectedVariableModsTableToolTips.add(null);
         expectedVariableModsTableToolTips.add("Modification Color");
@@ -897,10 +897,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * @param evt 
      */
 private void expectedModificationsTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseMoved
-    
+
     int row = expectedModificationsTable.rowAtPoint(evt.getPoint());
     int column = expectedModificationsTable.columnAtPoint(evt.getPoint());
-    
+
     if (row != -1 && column == 1) {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     } else {
@@ -908,25 +908,25 @@ private void expectedModificationsTableMouseMoved(java.awt.event.MouseEvent evt)
     }
 }//GEN-LAST:event_expectedModificationsTableMouseMoved
 
-/**
- * Changes the cursor back to the default cursor.
- * 
- * @param evt 
- */
+    /**
+     * Changes the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
 private void expectedModificationsTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseExited
     this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_expectedModificationsTableMouseExited
 
-/**
- * Opens a file chooser where the color for the ptm can be changed.
- * 
- * @param evt 
- */
+    /**
+     * Opens a file chooser where the color for the ptm can be changed.
+     * 
+     * @param evt 
+     */
 private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_expectedModificationsTableMouseClicked
 
     int row = expectedModificationsTable.rowAtPoint(evt.getPoint());
     int column = expectedModificationsTable.columnAtPoint(evt.getPoint());
-    
+
     if (row != -1 && column == 1) {
         Color newColor = JColorChooser.showDialog(this, "Pick a Color", (Color) expectedModificationsTable.getValueAt(row, column));
 
@@ -936,7 +936,6 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
         }
     }
 }//GEN-LAST:event_expectedModificationsTableMouseClicked
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addModifications;
     private javax.swing.JTable availableModificationsTable;
@@ -1285,6 +1284,22 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
     }
 
     /**
+     * Verifies that this family name is not used by another modification with a different mass
+     * @param utilitiesName     the utilities name to convert
+     * @param peptideShakerName the destination family name
+     * @return true if the family name is not used for another modification with a different mass
+     */
+    private boolean freePSName(String utilitiesName, String peptideShakerName) {
+        for (String ptmName : searchParameters.getModificationProfile().getUtilitiesNames()) {
+            if (searchParameters.getModificationProfile().getPeptideShakerName(ptmName).equals(peptideShakerName)
+                    && ptmFactory.getPTM(ptmName).getMass() != ptmFactory.getPTM(utilitiesName).getMass()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Table model for the modification table.
      */
     private class ModificationTable extends DefaultTableModel {
@@ -1301,7 +1316,7 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
 
         @Override
         public String getColumnName(int column) {
-            switch (column) { 
+            switch (column) {
                 case 1:
                     return "  ";
                 case 2:
@@ -1339,9 +1354,14 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
         public void setValueAt(Object aValue, int row, int column) {
             try {
                 if (column == 3) {
-                    searchParameters.getModificationProfile().setPeptideShakerName(modificationList.get(row), aValue.toString());
+                    if (freePSName(getValueAt(row, 2).toString(), aValue.toString())) {
+                        searchParameters.getModificationProfile().setPeptideShakerName(modificationList.get(row), aValue.toString().trim());
+                    } else {
+                        JOptionPane.showMessageDialog(null, aValue.toString() + " is already used for a modification with a different mass. Please select another name.",
+                                "Input Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 } else if (column == 4) {
-                    searchParameters.getModificationProfile().setShortName(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)), aValue.toString());
+                    searchParameters.getModificationProfile().setShortName(searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)), aValue.toString().trim());
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for " + modificationList.get(row) + " occurrence.",

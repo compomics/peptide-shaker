@@ -3922,14 +3922,18 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         ArrayList<String> alreadyAnnotated = new ArrayList<String>();
 
+        PTM ptm;
+        
         for (int i = 0; i < modifications.size(); i++) {
+            
+            ptm = ptmFactory.getPTM(modifications.get(i).getTheoreticPtm());
 
-            if (modifications.get(i).getTheoreticPtm().getType() == PTM.MODAA && modifications.get(i).isVariable()) { // @TODO: should only PTM.MODAA be included??
+            if (ptm.getType() == PTM.MODAA && modifications.get(i).isVariable()) { // @TODO: should only PTM.MODAA be included??
 
                 int modSite = modifications.get(i).getModificationSite();
-                String modName = modifications.get(i).getTheoreticPtm().getName();
+                String modName = modifications.get(i).getTheoreticPtm();
                 char affectedResidue = peptide.getSequence().charAt(modSite - 1);
-                Color ptmColor = searchParameters.getModificationProfile().getColor(modifications.get(i).getTheoreticPtm().getName());
+                Color ptmColor = searchParameters.getModificationProfile().getColor(modifications.get(i).getTheoreticPtm());
 
                 if (!alreadyAnnotated.contains(modName + "_" + affectedResidue)) {
                     tooltip += "<span style=\"color:#" + Util.color2Hex(Color.WHITE) + ";background:#" + Util.color2Hex(ptmColor) + "\">"
