@@ -1,21 +1,15 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
-import com.compomics.util.gui.events.RescalingEvent;
-import com.compomics.util.gui.interfaces.SpectrumPanelListener;
 import com.compomics.util.gui.protein.SequenceModificationPanel;
-import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
@@ -33,14 +27,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Vector;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -203,14 +193,14 @@ public class PtmPanel extends javax.swing.JPanel {
         ptmConfidenceColorMap.put(PtmScoring.RANDOM, Color.RED);
         ptmConfidenceColorMap.put(PtmScoring.DOUBTFUL, Color.ORANGE);
         ptmConfidenceColorMap.put(PtmScoring.CONFIDENT, Color.YELLOW);
-        ptmConfidenceColorMap.put(PtmScoring.VERY_CONFIDENT, Color.GREEN);
+        ptmConfidenceColorMap.put(PtmScoring.VERY_CONFIDENT, peptideShakerGUI.getSparklineColor());
 
         // set up the PTM confidence tooltip map
         HashMap<Integer, String> ptmConfidenceTooltipMap = new HashMap<Integer, String>();
-        ptmConfidenceTooltipMap.put(PtmScoring.RANDOM, "Random assignment");
-        ptmConfidenceTooltipMap.put(PtmScoring.DOUBTFUL, "Doubtful assignment");
-        ptmConfidenceTooltipMap.put(PtmScoring.CONFIDENT, "Confident assignment");
-        ptmConfidenceTooltipMap.put(PtmScoring.VERY_CONFIDENT, "Very confident assignment");
+        ptmConfidenceTooltipMap.put(PtmScoring.RANDOM, "Random Assignment");
+        ptmConfidenceTooltipMap.put(PtmScoring.DOUBTFUL, "Doubtful Assignment");
+        ptmConfidenceTooltipMap.put(PtmScoring.CONFIDENT, "Confident Assignment");
+        ptmConfidenceTooltipMap.put(PtmScoring.VERY_CONFIDENT, "Very Confident Assignment");
 
         peptidesTable.getColumn("PTM confidence").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
         relatedPeptidesTable.getColumn("PTM confidence").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
@@ -595,7 +585,7 @@ public class PtmPanel extends javax.swing.JPanel {
         psmSpectraSplitPane.setResizeWeight(0.5);
         psmSpectraSplitPane.setOpaque(false);
 
-        psmSplitPane.setBorder(javax.swing.BorderFactory.createTitledBorder("PSM selection"));
+        psmSplitPane.setBorder(javax.swing.BorderFactory.createTitledBorder("PSM Selection"));
         psmSplitPane.setDividerLocation(175);
         psmSplitPane.setDividerSize(0);
         psmSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
@@ -1354,7 +1344,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         selectedPsmTable.revalidate();
         selectedPsmTable.repaint();
-
     }
 
     /**

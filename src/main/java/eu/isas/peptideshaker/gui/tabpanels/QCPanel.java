@@ -1527,7 +1527,7 @@ public class QCPanel extends javax.swing.JPanel {
         try {
             PSParameter psParameter = new PSParameter();
             double value, min = -1, max = -1;
-            if (peptidesMissedCleavagesJRadioButton.isSelected()) {
+            if (peptidesValidatedPsmsJRadioButton.isSelected()) {
                 // Values for the number of validated PSMs
                 ArrayList<Double> validatedValues = new ArrayList<Double>();
                 ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
@@ -1575,7 +1575,7 @@ public class QCPanel extends javax.swing.JPanel {
                 histogramInput.setNonValidatedValues(nonValidatedValues);
                 histogramInput.setValidatedDecoyValues(validatedDecoyValues);
                 histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
-            } else if (peptidesValidatedPsmsJRadioButton.isSelected()) {
+            } else if (peptidesMissedCleavagesJRadioButton.isSelected()) {
                 // Values for the missed cleavages
                 ArrayList<Double> validatedValues = new ArrayList<Double>();
                 ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
