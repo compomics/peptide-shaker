@@ -15,6 +15,10 @@ public class PtmScoring implements Serializable {
     //@TODO: serialization number
 
     /**
+     * index indicating that the modification was not found
+     */
+    public static final int NOT_FOUND = -1;
+    /**
      * index for a random location choice
      */
     public static final int RANDOM = 0;
@@ -49,7 +53,7 @@ public class PtmScoring implements Serializable {
     /**
      * The retained PTM site assignment
      */
-    private String ptmLocation;
+    private String ptmLocation = "";
     /**
      * The confidence of the ptm site assignment
      */

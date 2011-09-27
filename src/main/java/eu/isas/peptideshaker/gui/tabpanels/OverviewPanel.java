@@ -316,7 +316,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         // set up the table header tooltips
         proteinTableToolTips = new ArrayList<String>();
         proteinTableToolTips.add(null);
-        proteinTableToolTips.add("Protein Inference");
+        proteinTableToolTips.add("Protein Inference Class");
         proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Description");
         proteinTableToolTips.add("Protein Seqeunce Coverage (%)");
@@ -329,7 +329,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         peptideTableToolTips = new ArrayList<String>();
         peptideTableToolTips.add(null);
-        peptideTableToolTips.add("Protein Inference");
+        peptideTableToolTips.add("Protein Inference Class");
         peptideTableToolTips.add("Peptide Sequence");
         peptideTableToolTips.add("Peptide Start Index");
         peptideTableToolTips.add("Peptide End Index");
