@@ -3346,7 +3346,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             case OVER_VIEW_TAB_INDEX:
                 return overviewPanel.getDisplayedPsms();
             case MODIFICATIONS_TAB_INDEX:
-                return ptmPanel.getDisplayedAssumptions();
+                return ptmPanel.getDisplayedPsms();
             default:
                 return null;
         }
@@ -3362,7 +3362,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             case OVER_VIEW_TAB_INDEX:
                 return overviewPanel.getDisplayedPsms();
             case MODIFICATIONS_TAB_INDEX:
-                return ptmPanel.getDisplayedAssumptions();
+                return ptmPanel.getDisplayedPsms();
             default:
                 return null;
         }

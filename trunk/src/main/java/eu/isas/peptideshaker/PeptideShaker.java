@@ -690,7 +690,7 @@ public class PeptideShaker {
      * @param peptideMatch
      * @throws Exception  
      */
-    public void scorePTMs(PeptideMatch peptideMatch) throws Exception {
+    public void scorePTMs(PeptideMatch peptideMatch) throws Exception { //@TODO: use only validated PSMs?
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSPtmScores psmScores, peptideScores = new PSPtmScores();
         PtmScoring spectrumScoring;
@@ -876,15 +876,10 @@ public class PeptideShaker {
                 annotationPreferences.setCurrentSettings(spectrumMatch.getBestAssumption().getPeptide(), spectrum.getPrecursor().getCharge().value, true);
                 for (String mod : modifications.keySet()) {
                     if (nMod.get(mod) == 1) {
-                        boolean debug = false;
-                        if (spectrumMatch.getBestAssumption().getPeptide().getSequence().equals("DKSPSSLLEDAKETCFTR")) {
-                            debug = true;
-                        }
                         HashMap<ArrayList<Integer>, Double> aScores = AScore.getAScore(spectrumMatch.getBestAssumption().getPeptide(),
                                 modifications.get(mod), nMod.get(mod), spectrum, annotationPreferences.getIonTypes(),
                                 annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                                spectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                                searchParameters.getFragmentIonAccuracy(), debug);
+                                searchParameters.getFragmentIonAccuracy());
                         ptmScoring = ptmScores.getPtmScoring(mod);
                         if (ptmScoring == null) {
                             ptmScoring = new PtmScoring(mod);
