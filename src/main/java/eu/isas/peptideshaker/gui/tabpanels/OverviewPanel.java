@@ -216,6 +216,10 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTable.getColumn("Confidence").setMinWidth(90);
         peptideTable.getColumn("Confidence").setMaxWidth(90);
         peptideTable.getColumn("Confidence").setMinWidth(90);
+        proteinTable.getColumn("Score").setMaxWidth(90);
+        proteinTable.getColumn("Score").setMinWidth(90);
+        peptideTable.getColumn("Score").setMaxWidth(90);
+        peptideTable.getColumn("Score").setMinWidth(90);
 
         // the validated column
         proteinTable.getColumn("").setMaxWidth(30);
@@ -3103,5 +3107,14 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 "Spectrum & Fragment Ions (" + before + modifiedSequence + after
                 + "   " + currentSpectrum.getPrecursor().getCharge().toString() + "   "
                 + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 4) + " m/z)");
+    }
+
+    /**
+     * Update the protein inference type for the currently selected peptide.
+     * 
+     * @param proteinInferenceType 
+     */
+    public void updatePeptideProteinInference(int proteinInferenceType) {
+        peptideTable.setValueAt(proteinInferenceType, peptideTable.getSelectedRow(), peptideTable.getColumn("PI").getModelIndex());
     }
 }

@@ -1352,6 +1352,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Peptide Confidence").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
 
+        // @TODO: found out why the adding of the sparklines does not work...
+        
         try {
             ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Peptide Score").getCellRenderer()).showNumbers(!showSparkLines);
             ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Peptide Score").getCellRenderer()).showNumbers(!showSparkLines);

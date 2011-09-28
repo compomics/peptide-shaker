@@ -246,6 +246,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         
         proteinTable.getColumn("Confidence").setMaxWidth(90);
         proteinTable.getColumn("Confidence").setMinWidth(90);
+        proteinTable.getColumn("Score").setMaxWidth(90);
+        proteinTable.getColumn("Score").setMinWidth(90);
 
         // set table properties
         proteinTable.getTableHeader().setReorderingAllowed(false);
@@ -2414,5 +2416,14 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         peptideTableMouseReleased(null);
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }
+    
+    /**
+     * Update the protein inference type for the currently selected peptide.
+     * 
+     * @param proteinInferenceType 
+     */
+    public void updatePeptideProteinInference(int proteinInferenceType) {
+        peptideTable.setValueAt(proteinInferenceType, peptideTable.getSelectedRow(), peptideTable.getColumn("PI").getModelIndex());
     }
 }

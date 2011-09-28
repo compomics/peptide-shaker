@@ -1,7 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.Util;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -77,7 +76,6 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * @param peptideShakerGUI
      * @param inspectedMatch 
      * @param identification
-     * @param db  
      */
     public ProteinInferenceDialog(PeptideShakerGUI peptideShakerGUI, String inspectedMatch, Identification identification) {
         super(peptideShakerGUI, true);
@@ -151,10 +149,26 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         // the validated column
         uniqueHitsTable.getColumn(" ").setMaxWidth(30);
         relatedHitsTable.getColumn(" ").setMaxWidth(30);
+        uniqueHitsTable.getColumn(" ").setMinWidth(30);
+        relatedHitsTable.getColumn(" ").setMinWidth(30);
 
         proteinMatchTable.getColumn("").setMaxWidth(30);
         uniqueHitsTable.getColumn("").setMaxWidth(30);
         relatedHitsTable.getColumn("").setMaxWidth(30);
+        proteinMatchTable.getColumn("").setMinWidth(30);
+        uniqueHitsTable.getColumn("").setMinWidth(30);
+        relatedHitsTable.getColumn("").setMinWidth(30);
+        
+        // the score and confidence columns
+        uniqueHitsTable.getColumn("Confidence").setMaxWidth(90);
+        uniqueHitsTable.getColumn("Confidence").setMinWidth(90);
+        uniqueHitsTable.getColumn("Score").setMaxWidth(90);
+        uniqueHitsTable.getColumn("Score").setMinWidth(90);
+        
+        relatedHitsTable.getColumn("Confidence").setMaxWidth(90);
+        relatedHitsTable.getColumn("Confidence").setMinWidth(90);
+        relatedHitsTable.getColumn("Score").setMaxWidth(90);
+        relatedHitsTable.getColumn("Score").setMinWidth(90);
 
         // change the cell renderer to fix a problem in Nimbus and alternating row colors
         proteinMatchTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
@@ -269,11 +283,11 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         matchInfoLbl = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         groupClassJComboBox = new javax.swing.JComboBox();
-        ionTableHelpJButton = new javax.swing.JButton();
+        helpJButton = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Unresolved Protein Inference");
+        setTitle("Protein Inference - Protein Level");
         setResizable(false);
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
@@ -434,25 +448,25 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        ionTableHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
-        ionTableHelpJButton.setToolTipText("Help");
-        ionTableHelpJButton.setBorder(null);
-        ionTableHelpJButton.setBorderPainted(false);
-        ionTableHelpJButton.setContentAreaFilled(false);
-        ionTableHelpJButton.setFocusable(false);
-        ionTableHelpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        ionTableHelpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        ionTableHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        helpJButton.setToolTipText("Help");
+        helpJButton.setBorder(null);
+        helpJButton.setBorderPainted(false);
+        helpJButton.setContentAreaFilled(false);
+        helpJButton.setFocusable(false);
+        helpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        helpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        helpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                ionTableHelpJButtonMouseEntered(evt);
+                helpJButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                ionTableHelpJButtonMouseExited(evt);
+                helpJButtonMouseExited(evt);
             }
         });
-        ionTableHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+        helpJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ionTableHelpJButtonActionPerformed(evt);
+                helpJButtonActionPerformed(evt);
             }
         });
 
@@ -476,10 +490,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                     .addComponent(relatedHitsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(ionTableHelpJButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 574, Short.MAX_VALUE)
+                        .addComponent(helpJButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 586, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)))
                 .addContainerGap())
         );
@@ -496,7 +510,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
                 .addComponent(relatedHitsJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(8, 8, 8)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(ionTableHelpJButton)
+                    .addComponent(helpJButton)
                     .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cancelButton)
                         .addComponent(okButton)))
@@ -511,7 +525,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 577, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -584,29 +598,29 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * 
      * @param evt 
      */
-    private void ionTableHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ionTableHelpJButtonMouseEntered
+    private void helpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-}//GEN-LAST:event_ionTableHelpJButtonMouseEntered
+}//GEN-LAST:event_helpJButtonMouseEntered
 
     /**
      * Change the cursor back to the default cursor.
      * 
      * @param evt 
      */
-    private void ionTableHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ionTableHelpJButtonMouseExited
+    private void helpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_ionTableHelpJButtonMouseExited
+}//GEN-LAST:event_helpJButtonMouseExited
 
     /**
      * Open the help dialog.
      * 
      * @param evt 
      */
-    private void ionTableHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ionTableHelpJButtonActionPerformed
+    private void helpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/ProteinInference.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_ionTableHelpJButtonActionPerformed
+}//GEN-LAST:event_helpJButtonActionPerformed
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an
@@ -761,7 +775,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     private javax.swing.JButton cancelButton;
     private javax.swing.JComboBox groupClassJComboBox;
     private javax.swing.JPanel groupDetalsJPanel;
-    private javax.swing.JButton ionTableHelpJButton;
+    private javax.swing.JButton helpJButton;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel matchInfoLbl;
     private javax.swing.JButton okButton;

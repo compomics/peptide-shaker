@@ -1730,29 +1730,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_errorPlotTypeCheckBoxMenuItemActionPerformed
 
     /**
-     * Extracts the protein accession numbers from the Overview or Structure 
-     * tab and opens a dialog for exporting them to file.
-     * 
-     * @param evt 
-     */
-    /**
-     * Extracts the list of proteins from the Overview or Structure 
-     * tab and opens a dialog for exporting them to file.
-     * 
-     * @param evt 
-     */
-    /**
-     * Extracts the list of peptides from the Overview or Structure 
-     * tab and opens a dialog for exporting them to file.
-     * 
-     * @param evt 
-     */
-    /**
-     * Export all peptide lists and add protein accession number to each line.
-     * 
-     * @param evt 
-     */
-    /**
      * Turns the hiding of the scores columns on or off.
      * 
      * @param evt 
@@ -1772,7 +1749,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt 
      */
     private void openJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openJMenuItemActionPerformed
-
 
         if (!dataSaved && experiment != null) {
             int value = JOptionPane.showConfirmDialog(this,
@@ -2450,7 +2426,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         searchParameters.setIonSearched1("b");
         searchParameters.setIonSearched2("y");
         loadModificationProfile(profileFile);
-        annotationPreferences.setAnnotationLevel(0.25);
+        annotationPreferences.setAnnotationLevel(0.75);
         annotationPreferences.useAutomaticAnnotation(true);
         updateAnnotationPreferencesFromSearchSettings();
         spectrumCountingPreferences.setSelectedMethod(SpectralCountingMethod.NSAF);
@@ -3283,10 +3259,23 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         proteinStructurePanel.updateMainMatch(mainMatch, proteinInferenceType);
     }
     
-    public void updatePeptideProteinInference() {
+    /**
+     * Update the peptide protein inference.
+     * 
+     * @param proteinInferenceType 
+     */
+    public void updatePeptideProteinInference(int proteinInferenceType) {
+        
         ptmPanel.updatePeptideTable();
         ptmPanel.updateRelatedPeptidesTable();
+        
         //@TODO update overview and structure panels
+        
+//        if (allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX ||
+//                allTabsJTabbedPane.getSelectedIndex() == STRUCTURES_TAB_INDEX) {
+//            overviewPanel.updatePeptideProteinInference(proteinInferenceType);
+//            proteinStructurePanel.updatePeptideProteinInference(proteinInferenceType);
+//        }
     }
 
     /**
