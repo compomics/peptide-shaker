@@ -57,25 +57,26 @@ public class PSParameter implements UrParameter {
      */
     private int groupClass = NOT_GROUP;
     /**
-     * Static index for a protein group:
-     * 0- not a group
+     * Static index for a protein inference group:
+     * 0- not a protein group or unique peptide of single protein group
      */
     public static final int NOT_GROUP = 0;
     /**
      * Static index for a protein group:
-     * 1- isoforms
+     * 1- isoforms or peptide of isoform groups (not necessarily unique to the group)
      */
     public static final int ISOFORMS = 1;
     /**
      * Static index for a protein group:
-     * 2- isoforms and a few unrelated proteins (less than 50%)
+     * 2- isoforms and a few unrelated proteins (less than 50%) or peptide shared by isoforms and non isoforms (not necessarily unique to the group)
      */
     public static final int ISOFORMS_UNRELATED = 2;
     /**
      * Static index for a protein group:
-     * 3- unrelated proteins proteins
+     * 3- unrelated proteins proteins or peptide shared by unrelated proteins
      */
     public static final int UNRELATED = 3;
+    
 
     /**
      * Constructor

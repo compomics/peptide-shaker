@@ -234,8 +234,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         // set up the protein inference color map
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
         proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor()); // NOT_GROUP
-        proteinInferenceColorMap.put(PSParameter.ISOFORMS, Color.ORANGE); // ISOFORMS
-        proteinInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.BLUE); // ISOFORMS_UNRELATED
+        proteinInferenceColorMap.put(PSParameter.ISOFORMS, Color.YELLOW); // ISOFORMS
+        proteinInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.ORANGE); // ISOFORMS_UNRELATED
         proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED); // UNRELATED
 
         // set up the protein inference tooltip map
@@ -266,17 +266,17 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         // set up the peptide inference color map
         HashMap<Integer, Color> peptideInferenceColorMap = new HashMap<Integer, Color>();
-        peptideInferenceColorMap.put(0, peptideShakerGUI.getSparklineColor());
-        peptideInferenceColorMap.put(1, Color.ORANGE);
-        peptideInferenceColorMap.put(2, Color.BLUE);
-        peptideInferenceColorMap.put(3, Color.RED);
+        peptideInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor());
+        peptideInferenceColorMap.put(PSParameter.ISOFORMS, Color.YELLOW);
+        peptideInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.ORANGE);
+        peptideInferenceColorMap.put(PSParameter.UNRELATED, Color.RED);
 
         // set up the peptide inference tooltip map
         HashMap<Integer, String> peptideInferenceTooltipMap = new HashMap<Integer, String>();
-        peptideInferenceTooltipMap.put(0, "Unique to Protein/Protein Group");
-        peptideInferenceTooltipMap.put(1, "Maps to 2 Proteins/Protein Groups");
-        peptideInferenceTooltipMap.put(2, "Maps to 3-5 Proteins/Protein Groups");
-        peptideInferenceTooltipMap.put(3, "Maps to >5 Proteins/Protein Groups");
+        peptideInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Unique to a single protein");
+        peptideInferenceTooltipMap.put(PSParameter.ISOFORMS, "Belongs to a group of isoforms");
+        peptideInferenceTooltipMap.put(PSParameter.ISOFORMS_UNRELATED, "Belongs to a group of isoforms and unrelated proteins");
+        peptideInferenceTooltipMap.put(PSParameter.UNRELATED, "Belongs to unrelated proteins");
 
         peptideTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), peptideInferenceColorMap, peptideInferenceTooltipMap));
         peptideTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
@@ -2433,15 +2433,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            //@TODO any reason for sorting peptide matches this way?
-                            int proteinInferenceType = 0;
-                            if (otherProteins.size() == 1) {
-                                proteinInferenceType = 1;
-                            } else if (otherProteins.size() > 1 && otherProteins.size() <= 4) { 
-                                proteinInferenceType = 2;
-                            } else if (otherProteins.size() > 4) {
-                                proteinInferenceType = 3;
-                            }
+                            int proteinInferenceType = probabilities.getGroupClass();
 
                             ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
                                         index + 1,

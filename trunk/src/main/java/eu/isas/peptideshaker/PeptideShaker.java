@@ -758,7 +758,7 @@ public class PeptideShaker {
                     }
                 }
                 if (bestKey != null) {
-                ptmScoring.setPtmSite(bestKey, confidence);
+                    ptmScoring.setPtmSite(bestKey, confidence);
                 }
             }
         }
@@ -999,7 +999,7 @@ public class PeptideShaker {
         double sharedProteinProbabilityScore, uniqueProteinProbabilityScore;
         ArrayList<String> toRemove = new ArrayList<String>();
 
-        int max = identification.getProteinIdentification().size();
+        int max = 2 * identification.getProteinIdentification().size();
 
         if (waitingDialog != null) {
             waitingDialog.setSecondaryProgressDialogIntermediate(false);
@@ -1007,10 +1007,6 @@ public class PeptideShaker {
         }
 
         for (String proteinSharedKey : identification.getProteinIdentification()) {
-
-            if (waitingDialog != null) {
-                waitingDialog.increaseSecondaryProgressValue();
-            }
 
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
                 psParameter = (PSParameter) identification.getMatchParameter(proteinSharedKey, psParameter);
@@ -1034,17 +1030,21 @@ public class PeptideShaker {
                     }
                     if (better) {
                         toRemove.add(proteinSharedKey);
+                    } else if (waitingDialog != null) {
+                        waitingDialog.increaseSecondaryProgressValue();
                     }
                 }
             }
         }
 
-        waitingDialog.setSecondaryProgressDialogIntermediate(true);
 
         for (String proteinKey : toRemove) {
             psParameter = (PSParameter) identification.getMatchParameter(proteinKey, psParameter);
             proteinMap.removePoint(psParameter.getProteinProbabilityScore(), ProteinMatch.isDecoy(proteinKey));
             identification.removeMatch(proteinKey);
+            if (waitingDialog != null) {
+                waitingDialog.increaseSecondaryProgressValue();
+            }
         }
 
         int nSolved = toRemove.size();
@@ -1093,14 +1093,79 @@ public class PeptideShaker {
                     psParameter.setGroupClass(PSParameter.UNRELATED);
                     nGroups++;
                     nLeft++;
+
+                    ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                        psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
+                        psParameter.setGroupClass(PSParameter.UNRELATED);
+                    }
+
                 } else if (!allSimilar) {
                     psParameter.setGroupClass(PSParameter.ISOFORMS_UNRELATED);
                     nGroups++;
                     nSolved++;
+
+                    ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                        psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
+                        psParameter.setGroupClass(PSParameter.ISOFORMS_UNRELATED);
+                    }
+
                 } else {
                     psParameter.setGroupClass(PSParameter.ISOFORMS);
                     nGroups++;
                     nSolved++;
+
+                    ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                    String mainMatch = proteinMatch.getMainMatch();
+                    PeptideMatch peptideMatch;
+                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                        psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
+                        peptideMatch = identification.getPeptideMatch(peptideKey);
+                        boolean unrelated = false;
+                        for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                            if (!proteinKey.contains(protein)) {
+                                primaryDescription = parseDescription(mainMatch);
+                                secondaryDescription = parseDescription(protein);
+                                if (!getSimilarity(primaryDescription, secondaryDescription)) {
+                                    unrelated = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (unrelated) {
+                            psParameter.setGroupClass(PSParameter.ISOFORMS_UNRELATED);
+                        } else {
+                            psParameter.setGroupClass(PSParameter.ISOFORMS);
+                        }
+                    }
+                }
+            } else {
+                ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+                String mainMatch = proteinMatch.getMainMatch();
+                PeptideMatch peptideMatch;
+                for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                    psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
+                    peptideMatch = identification.getPeptideMatch(peptideKey);
+                    boolean unrelated = false;
+                    boolean otherProtein = false;
+                    for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                        if (!proteinKey.contains(protein)) {
+                            otherProtein = true;
+                            primaryDescription = parseDescription(mainMatch);
+                            secondaryDescription = parseDescription(protein);
+                            if (!getSimilarity(primaryDescription, secondaryDescription)) {
+                                unrelated = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (otherProtein) {
+                        psParameter.setGroupClass(PSParameter.ISOFORMS);
+                    }
+                    if (unrelated) {
+                        psParameter.setGroupClass(PSParameter.UNRELATED);
+                    }
                 }
             }
             if (ProteinMatch.getNProteins(proteinKey) > 1) {
@@ -1110,9 +1175,13 @@ public class PeptideShaker {
                     identification.setMatchChanged(proteinMatch);
                 }
             }
+            if (waitingDialog != null) {
+                waitingDialog.increaseSecondaryProgressValue();
+            }
         }
 
         if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(true);
             waitingDialog.appendReport(nSolved + " conflicts resolved. " + nGroups + " protein groups remaining (" + nLeft + " suspicious).");
         }
     }

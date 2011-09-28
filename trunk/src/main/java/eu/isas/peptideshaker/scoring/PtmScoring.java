@@ -12,8 +12,10 @@ import java.util.HashMap;
  */
 public class PtmScoring implements Serializable {
     
-    //@TODO: serialization number
-
+    /**
+     * serial version UID for post-serialization compatibility
+     */
+    static final long serialVersionUID = -3357368272501542941L;
     /**
      * index indicating that the modification was not found
      */

@@ -14,6 +14,10 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 public class PSSettings implements UrParameter {
 
     /**
+     * serial version UID for post-serialization compatibility
+     */
+        static final long serialVersionUID = -3531908843597367812L;
+    /**
      * The parameters linked to the search
      */
     private SearchParameters searchParameters;

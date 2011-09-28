@@ -83,7 +83,7 @@ public class FileImporter {
     /**
     * db processing disabled only while testing
     */
-    boolean testing = false;
+    boolean testing = true;
 
     /**
      * Constructor for the importer

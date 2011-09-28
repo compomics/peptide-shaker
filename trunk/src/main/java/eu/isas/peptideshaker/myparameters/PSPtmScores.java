@@ -16,7 +16,10 @@ import java.util.HashMap;
  */
 public class PSPtmScores implements UrParameter {
     
-    //@TODO: serialization number
+    /**
+     * serial version UID for post-serialization compatibility
+     */
+        static final long serialVersionUID = 7450340838299319636L;
     /**
      * A map containing all scores indexed by the modification of interest
      */

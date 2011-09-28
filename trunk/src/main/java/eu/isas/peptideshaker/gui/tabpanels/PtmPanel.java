@@ -17,6 +17,7 @@ import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import com.compomics.util.gui.protein.ModificationProfile;
+import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -179,10 +180,10 @@ public class PtmPanel extends javax.swing.JPanel {
 
         // set up the protein inference tooltip map
         HashMap<Integer, String> proteinInferenceTooltipMap = new HashMap<Integer, String>();
-        proteinInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Single Protein");
-        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS, "Isoforms");
-        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS_UNRELATED, "Unrelated Isoforms");
-        proteinInferenceTooltipMap.put(PSParameter.UNRELATED, "Unrelated Proteins");
+        proteinInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Unique to a single protein");
+        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS, "Belongs to a group of isoforms");
+        proteinInferenceTooltipMap.put(PSParameter.ISOFORMS_UNRELATED, "Belongs to a group of isoforms and unrelated proteins");
+        proteinInferenceTooltipMap.put(PSParameter.UNRELATED, "Belongs to unrelated proteins");
 
         peptidesTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), proteinInferenceColorMap, proteinInferenceTooltipMap));
         relatedPeptidesTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), proteinInferenceColorMap, proteinInferenceTooltipMap));
@@ -260,7 +261,7 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesTableToolTips.add("PTM Location Confidence");
         relatedPeptidesTableToolTips.add("Peptide Score");
         relatedPeptidesTableToolTips.add("Peptide Confidence");
-        selectedPeptidesTableToolTips.add("Validated");
+        relatedPeptidesTableToolTips.add("Validated");
 
         selectedPsmsTableToolTips = new ArrayList<String>();
         selectedPsmsTableToolTips.add(null);
@@ -900,6 +901,15 @@ public class PtmPanel extends javax.swing.JPanel {
                         peptideShakerGUI.openProteinLinks((String) peptidesTable.getValueAt(row, column));
                     }
                 }
+                // open the protein inference at the petide level dialog
+                if (column == 2) {
+                    try {
+                        String peptideKey = getSelectedPeptide();
+                        new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
+                    }
+                }
             }
         }
     }//GEN-LAST:event_peptidesTableMouseReleased
@@ -933,6 +943,15 @@ public class PtmPanel extends javax.swing.JPanel {
                     if (evt.getButton() == MouseEvent.BUTTON1
                             && ((String) relatedPeptidesTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
                         peptideShakerGUI.openProteinLinks((String) relatedPeptidesTable.getValueAt(row, column));
+                    }
+                }
+                // open the protein inference at the petide level dialog
+                if (column == 2) {
+                    try {
+                        String peptideKey = getSelectedPeptide();
+                        new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null);
+                    } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
                     }
                 }
             }
@@ -983,6 +1002,8 @@ public class PtmPanel extends javax.swing.JPanel {
                     e.printStackTrace();
                 }
 
+            } else if (column == peptidesTable.getColumn("PI").getModelIndex()) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 peptidesTable.setToolTipText(null);
@@ -1045,6 +1066,8 @@ public class PtmPanel extends javax.swing.JPanel {
                     e.printStackTrace();
                 }
 
+            } else if (column == peptidesTable.getColumn("PI").getModelIndex()) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 relatedPeptidesTable.setToolTipText(null);
@@ -1448,7 +1471,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     /**
      * Updates the peptide table.
      */
-    private void updatePeptideTable() {
+    public void updatePeptideTable() {
 
         // @TODO: replace the waiting cursor with a progress bar dialog?
 
@@ -1526,7 +1549,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     /**
      * Updates the related peptides table.
      */
-    private void updateRelatedPeptidesTable() {
+    public void updateRelatedPeptidesTable() {
 
         HashMap<Double, ArrayList<String>> scoreToKeyMap = new HashMap<Double, ArrayList<String>>();
         String peptideKey = displayedPeptides.get(peptidesTable.getSelectedRow());
@@ -1565,7 +1588,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         if (relatedPeptides.size() > 0) {
             relatedPeptidesTable.setRowSelectionInterval(0, 0);
             relatedPeptidesTable.scrollRectToVisible(relatedPeptidesTable.getCellRect(0, 0, false));
-
+            peptideTablesJSplitPane.setDividerLocation(0.66);
             try {
                 PeptideMatch peptideMatch = identification.getPeptideMatch(relatedPeptides.get(relatedPeptidesTable.getSelectedRow()));
                 updateModificationProfile(peptideMatch, false);
@@ -1574,6 +1597,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             }
         } else {
             modificationProfileRelatedPeptideJPanel.removeAll();
+            peptideTablesJSplitPane.setDividerLocation(1.0);
         }
 
         relatedPeptidesTable.revalidate();
@@ -1765,7 +1789,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         return peptideShakerGUI.addDatabaseLinks(
                                 identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getParentProteins());
                     case 2:
-                        return 0;
+                        probabilities = new PSParameter();
+                        probabilities = (PSParameter) identification.getMatchParameter(displayedPeptides.get(row), probabilities);
+                        return probabilities.getGroupClass();
                     case 3:
                         return identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getModifiedSequenceAsHtml(
                                 peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
@@ -1864,7 +1890,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         return peptideShakerGUI.addDatabaseLinks(
                                 identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide().getParentProteins());
                     case 2:
-                        return 0;
+                        probabilities = new PSParameter();
+                        probabilities = (PSParameter) identification.getMatchParameter(relatedPeptides.get(row), probabilities);
+                        return probabilities.getGroupClass();
                     case 3:
                         return identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide().getModifiedSequenceAsHtml(
                                 peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
