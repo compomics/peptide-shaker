@@ -18,6 +18,7 @@ import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import com.compomics.util.gui.protein.ModificationProfile;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
+import eu.isas.peptideshaker.gui.PtmLocationDialog;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -910,6 +911,9 @@ public class PtmPanel extends javax.swing.JPanel {
                         peptideShakerGUI.catchException(e);
                     }
                 }
+                if (column == 4) {
+                    new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(), getSelectedModification(), 0);
+                }
             }
         }
     }//GEN-LAST:event_peptidesTableMouseReleased
@@ -954,6 +958,9 @@ public class PtmPanel extends javax.swing.JPanel {
                         peptideShakerGUI.catchException(e);
                     }
                 }
+                if (column == 4) {
+                    new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(), getSelectedModification(), 0);
+                }
             }
         }
     }//GEN-LAST:event_relatedPeptidesTableMouseReleased
@@ -965,6 +972,14 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void selectedPsmTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectedPsmTableMouseReleased
         updateSpectra();
+        if (evt != null) {
+
+            int row = selectedPsmTable.rowAtPoint(evt.getPoint());
+            int column = selectedPsmTable.columnAtPoint(evt.getPoint());
+            if (column == 2) {
+                new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(), getSelectedModification(), row);
+            }
+        }
     }//GEN-LAST:event_selectedPsmTableMouseReleased
 
     /**
@@ -1003,6 +1018,8 @@ public class PtmPanel extends javax.swing.JPanel {
                 }
 
             } else if (column == peptidesTable.getColumn("PI").getModelIndex()) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else if (column == peptidesTable.getColumn("PTM confidence").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1066,7 +1083,9 @@ public class PtmPanel extends javax.swing.JPanel {
                     e.printStackTrace();
                 }
 
-            } else if (column == peptidesTable.getColumn("PI").getModelIndex()) {
+            } else if (column == relatedPeptidesTable.getColumn("PI").getModelIndex()) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else if (column == relatedPeptidesTable.getColumn("PTM confidence").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1228,6 +1247,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     e.printStackTrace();
                 }
 
+            } else if (column == selectedPsmTable.getColumn("PTM confidence").getModelIndex()) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 selectedPsmTable.setToolTipText(null);
             }
