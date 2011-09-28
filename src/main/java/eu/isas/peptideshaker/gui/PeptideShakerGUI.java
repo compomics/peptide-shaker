@@ -3282,6 +3282,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         overviewPanel.updateMainMatch(mainMatch, proteinInferenceType);
         proteinStructurePanel.updateMainMatch(mainMatch, proteinInferenceType);
     }
+    
+    public void updatePeptideProteinInference() {
+        ptmPanel.updatePeptideTable();
+        ptmPanel.updateRelatedPeptidesTable();
+        //@TODO update overview and structure panels
+    }
 
     /**
      * Set whether the current data has been saved to a cps file or not.
