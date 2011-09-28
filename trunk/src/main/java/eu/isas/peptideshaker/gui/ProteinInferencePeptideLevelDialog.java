@@ -1,14 +1,15 @@
 package eu.isas.peptideshaker.gui;
 
-import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
@@ -17,6 +18,7 @@ import no.uib.jsparklines.extra.HtmlLinksRenderer;
  * A simple dialog for showing the list of proteins a given peptide can map to.
  *  
  * @author Harald Barsnes
+ * @author Marc Vaudel
  */
 public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
@@ -55,6 +57,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideMatch, psParameter);
         protInferenceTypeCmb.setSelectedIndex(psParameter.getGroupClass());
+        
+        protInferenceTypeCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         // make sure that the scroll panes are see-through
         proteinsJScrollPane.getViewport().setOpaque(false);
@@ -72,11 +76,15 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         retainedProteinJTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
 
         // insert the values
-        sequenceTxt.setText(peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey).getTheoreticPeptide().getModifiedSequenceAsHtml(
+        sequenceLabel.setText(peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey).getTheoreticPeptide().getModifiedSequenceAsHtml(
                 peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true));
 
-        PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey);
-        ArrayList<String> possibleProteins = peptideMatch.getTheoreticPeptide().getParentProteins();
+        // set the modification tooltip
+        String tooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey).getTheoreticPeptide());
+        sequenceLabel.setToolTipText(tooltip);
+
+        PeptideMatch tempPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey);
+        ArrayList<String> possibleProteins = tempPeptideMatch.getTheoreticPeptide().getParentProteins();
         List<String> retainedProteins;
         if (proteinMatchKey != null) {
             retainedProteins = Arrays.asList(ProteinMatch.getAccessions(proteinMatchKey));
@@ -100,7 +108,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             try {
                 description = sequenceFactory.getHeader(protein).getDescription();
             } catch (Exception e) {
-                description = "Fasta file Error";
+                description = "FASTA File Error";
             }
 
             if (retainedProteins.contains(protein)) {
@@ -154,12 +162,13 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         protInferenceTypeCmb = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
-        sequenceTxt = new javax.swing.JTextField();
+        sequenceLabel = new javax.swing.JLabel();
         cancelButton = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         otherProteinsJScrollPane = new javax.swing.JScrollPane();
         retainedProteinJTable = new javax.swing.JTable();
         okButton = new javax.swing.JButton();
+        helpJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Protein Inference - Peptide Level");
@@ -232,13 +241,12 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
 
         jLabel1.setText("Type:");
 
-        protInferenceTypeCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Unique to a single protein", "Belongs to a group of isoforms", "Belongs to a group of isoforms and unrelated proteins", "Belongs to a group of unrelated proteins" }));
+        protInferenceTypeCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Unique Protein", "Isoforms", "Isoforms and Unrelated Proteins", "Unrelated Proteins" }));
         protInferenceTypeCmb.setMinimumSize(new java.awt.Dimension(112, 18));
 
         jLabel2.setText("Sequence:");
 
-        sequenceTxt.setEditable(false);
-        sequenceTxt.setText("sequence");
+        sequenceLabel.setText("peptide sequence");
 
         javax.swing.GroupLayout peptidesPanelLayout = new javax.swing.GroupLayout(peptidesPanel);
         peptidesPanel.setLayout(peptidesPanelLayout);
@@ -248,22 +256,22 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(protInferenceTypeCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addComponent(protInferenceTypeCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(35, 35, 35)
                 .addComponent(jLabel2)
                 .addGap(18, 18, 18)
-                .addComponent(sequenceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 341, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addComponent(sequenceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
+                .addContainerGap())
         );
         peptidesPanelLayout.setVerticalGroup(
             peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptidesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
                     .addComponent(protInferenceTypeCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel2)
-                    .addComponent(sequenceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(sequenceLabel)
+                    .addComponent(jLabel1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -327,6 +335,28 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             }
         });
 
+        helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        helpJButton.setToolTipText("Help");
+        helpJButton.setBorder(null);
+        helpJButton.setBorderPainted(false);
+        helpJButton.setContentAreaFilled(false);
+        helpJButton.setFocusable(false);
+        helpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        helpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        helpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                helpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                helpJButtonMouseExited(evt);
+            }
+        });
+        helpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpJButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -338,11 +368,17 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(peptidesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(helpJButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 594, Short.MAX_VALUE)
                         .addComponent(okButton)
-                        .addGap(18, 18, 18)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)))
                 .addContainerGap())
         );
+
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
@@ -353,9 +389,10 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(proteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(okButton)
                     .addComponent(cancelButton)
-                    .addComponent(okButton))
+                    .addComponent(helpJButton))
                 .addContainerGap())
         );
 
@@ -461,20 +498,56 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_retainedProteinJTableMouseExited
 
+    /**
+     * Update the peptide level protein inference type and close the dialog.
+     * 
+     * @param evt 
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         PSParameter psParameter = new PSParameter();
         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideMatch, psParameter);
         if (psParameter.getGroupClass() != protInferenceTypeCmb.getSelectedIndex()) {
             psParameter.setGroupClass(protInferenceTypeCmb.getSelectedIndex());
-            peptideShakerGUI.updatePeptideProteinInference();
+            peptideShakerGUI.updatePeptideProteinInference(protInferenceTypeCmb.getSelectedIndex());
             peptideShakerGUI.setDataSaved(false);
         }
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void helpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_helpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void helpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_helpJButtonMouseEntered
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void helpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/ProteinInferencePeptideLevel.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_helpJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
+    private javax.swing.JButton helpJButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
@@ -486,6 +559,6 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane proteinsJScrollPane;
     private javax.swing.JPanel proteinsPanel;
     private javax.swing.JTable retainedProteinJTable;
-    private javax.swing.JTextField sequenceTxt;
+    private javax.swing.JLabel sequenceLabel;
     // End of variables declaration//GEN-END:variables
 }
