@@ -42,7 +42,9 @@ public class PtmLocationDialog extends javax.swing.JDialog {
      */
     private String originalLocation = "";
 
-    /** Creates new form PtmLocationDialog
+    /** 
+     * Creates new form PtmLocationDialog
+     * 
      * @param peptideShakerGUI
      * @param peptideKey 
      * @param selectedPTM 
@@ -183,7 +185,7 @@ public class PtmLocationDialog extends javax.swing.JDialog {
         jSplitPane1.setDividerLocation(200);
         jSplitPane1.setDividerSize(1);
 
-        jLabel2.setText("PTM scoring:");
+        jLabel2.setText("PTM Scoring:");
 
         jLabel3.setText("Possible Locations:");
 
@@ -208,11 +210,11 @@ public class PtmLocationDialog extends javax.swing.JDialog {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(psmConfidence, 0, 179, Short.MAX_VALUE)
+                    .addComponent(psmConfidence, 0, 180, Short.MAX_VALUE)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(possibleLocationsTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
+                        .addComponent(possibleLocationsTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE))
                     .addComponent(jLabel2))
                 .addContainerGap())
         );
@@ -240,7 +242,7 @@ public class PtmLocationDialog extends javax.swing.JDialog {
         spectrumA.setLayout(spectrumALayout);
         spectrumALayout.setHorizontalGroup(
             spectrumALayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 454, Short.MAX_VALUE)
+            .addGap(0, 453, Short.MAX_VALUE)
         );
         spectrumALayout.setVerticalGroup(
             spectrumALayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -260,7 +262,7 @@ public class PtmLocationDialog extends javax.swing.JDialog {
         spectrumB.setLayout(spectrumBLayout);
         spectrumBLayout.setHorizontalGroup(
             spectrumBLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 454, Short.MAX_VALUE)
+            .addGap(0, 453, Short.MAX_VALUE)
         );
         spectrumBLayout.setVerticalGroup(
             spectrumBLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -286,11 +288,11 @@ public class PtmLocationDialog extends javax.swing.JDialog {
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ptmLocationTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE))
+                        .addComponent(ptmLocationTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(newPtmTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
+                        .addComponent(newPtmTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(applyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
