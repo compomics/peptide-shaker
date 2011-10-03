@@ -1756,8 +1756,18 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private String getSelectedPeptide() {
         if (relatedSelected) {
+            
+            if (relatedPeptidesTable.getSelectedRow() == -1) {
+                return "";
+            }
+            
             return relatedPeptides.get(relatedPeptidesTable.getSelectedRow());
         } else {
+            
+            if (peptidesTable.getSelectedRow() == -1) {
+                return "";
+            }
+            
             return displayedPeptides.get(peptidesTable.getSelectedRow());
         }
     }

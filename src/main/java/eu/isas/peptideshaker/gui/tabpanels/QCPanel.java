@@ -11,6 +11,7 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.util.ArrayList;
@@ -715,202 +716,61 @@ public class QCPanel extends javax.swing.JPanel {
     private void updateProteinQCPlot(ProgressDialogX progressDialog) {
 
         HistogramInput input = getProteinDataset(progressDialog);
-
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
-        int[] binData = new int[input.bins.size()];
-
-        // remove the hard coded bins!!
+        ArrayList<Double> bins = new ArrayList<Double>();
 
         if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-            binData = new int[5];
-        } else {
-            binData = new int[input.bins.size()];
-        }
+            
+            // @TODO: use the maximum spectrum count value??
+            // @TODO: use a "semi-log" scale??
 
-        for (int i = 0; i < input.validatedValues.size(); i++) {
-            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+            bins.add(0.0);
+            bins.add(0.25);
+            bins.add(0.5);
+            bins.add(0.75);
+            bins.add(1.0);
 
-                if (input.validatedValues.get(i) == 0) {
-                    binData[0]++;
-                } else if (input.validatedValues.get(i) > 0 && input.validatedValues.get(i) < 0.25) {
-                    binData[1]++;
-                } else if (input.validatedValues.get(i) >= 0.25 && input.validatedValues.get(i) < 0.5) {
-                    binData[2]++;
-                } else if (input.validatedValues.get(i) >= 0.5 && input.validatedValues.get(i) < 0.75) {
-                    binData[3]++;
-                } else if (input.validatedValues.get(i) >= 0.75) {
-                    binData[4]++;
-                }
+            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", false);
+            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", false);
+            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", false);
+            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", false);
 
-            } else {
-                binData[input.validatedValues.get(i).intValue()]++;
-            }
-        }
+        } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
 
-        for (int i = 0; i < binData.length; i++) {
+            bins.add(0.0);
+            bins.add(10.0);
+            bins.add(20.0);
+            bins.add(30.0);
+            bins.add(40.0);
+            bins.add(50.0);
+            bins.add(60.0);
+            bins.add(70.0);
+            bins.add(80.0);
+            bins.add(90.0);
 
-            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", "%", true);
+            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", "%", true);
+            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", "%", true);
+            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", "%", true);
 
-                if (i == 0) {
-                    dataset.addValue(binData[i], "Validated True Positives", "0.0");
-                } else if (i == 1) {
-                    dataset.addValue(binData[i], "Validated True Positives", "0.0-0.25");
-                } else if (i == 2) {
-                    dataset.addValue(binData[i], "Validated True Positives", "0.25-0.5");
-                } else if (i == 3) {
-                    dataset.addValue(binData[i], "Validated True Positives", "0.5-0.75");
-                } else if (i == 4) {
-                    dataset.addValue(binData[i], "Validated True Positives", ">0.75");
-                }
+        } else if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
 
-            } else {
-                dataset.addValue(binData[i], "Validated True Positives", i + "");
-            }
-        }
+            bins.add(0.0);
+            bins.add(1.0);
+            bins.add(2.0);
+            bins.add(3.0);
+            bins.add(5.0);
+            bins.add(10.0);
+            bins.add(20.0);
+            bins.add(50.0);
+            bins.add(100.0);
+            bins.add(200.0);
+            bins.add(500.0);
 
-
-        if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-            binData = new int[5];
-        } else {
-            binData = new int[input.bins.size()];
-        }
-
-        for (int i = 0; i < input.validatedDecoyValues.size(); i++) {
-            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-
-                if (input.validatedDecoyValues.get(i) == 0) {
-                    binData[0]++;
-                } else if (input.validatedDecoyValues.get(i) > 0 && input.validatedDecoyValues.get(i) < 0.25) {
-                    binData[1]++;
-                } else if (input.validatedDecoyValues.get(i) >= 0.25 && input.validatedDecoyValues.get(i) < 0.5) {
-                    binData[2]++;
-                } else if (input.validatedDecoyValues.get(i) >= 0.5 && input.validatedDecoyValues.get(i) < 0.75) {
-                    binData[3]++;
-                } else if (input.validatedDecoyValues.get(i) >= 0.75) {
-                    binData[4]++;
-                }
-
-            } else {
-                binData[input.validatedDecoyValues.get(i).intValue()]++;
-            }
-        }
-
-        for (int i = 0; i < binData.length; i++) {
-
-            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-
-                if (i == 0) {
-                    dataset.addValue(binData[i], "Validated False Positives", "0.0");
-                } else if (i == 1) {
-                    dataset.addValue(binData[i], "Validated False Positives", "0.0-0.25");
-                } else if (i == 2) {
-                    dataset.addValue(binData[i], "Validated False Positives", "0.25-0.5");
-                } else if (i == 3) {
-                    dataset.addValue(binData[i], "Validated False Positives", "0.5-0.75");
-                } else if (i == 4) {
-                    dataset.addValue(binData[i], "Validated False Positives", ">0.75");
-                }
-
-            } else {
-                dataset.addValue(binData[i], "Validated False Positives", i + "");
-            }
-        }
-
-
-        if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-            binData = new int[5];
-        } else {
-            binData = new int[input.bins.size()];
-        }
-
-        for (int i = 0; i < input.nonValidatedValues.size(); i++) {
-            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-
-                if (input.nonValidatedValues.get(i) == 0) {
-                    binData[0]++;
-                } else if (input.nonValidatedValues.get(i) > 0 && input.nonValidatedValues.get(i) < 0.25) {
-                    binData[1]++;
-                } else if (input.nonValidatedValues.get(i) >= 0.25 && input.nonValidatedValues.get(i) < 0.5) {
-                    binData[2]++;
-                } else if (input.nonValidatedValues.get(i) >= 0.5 && input.nonValidatedValues.get(i) < 0.75) {
-                    binData[3]++;
-                } else if (input.nonValidatedValues.get(i) >= 0.75) {
-                    binData[4]++;
-                }
-
-            } else {
-                binData[input.nonValidatedValues.get(i).intValue()]++;
-            }
-        }
-
-        for (int i = 0; i < binData.length; i++) {
-
-            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-
-                if (i == 0) {
-                    dataset.addValue(binData[i], "Non-Validated True Positives", "0.0");
-                } else if (i == 1) {
-                    dataset.addValue(binData[i], "Non-Validated True Positives", "0.0-0.25");
-                } else if (i == 2) {
-                    dataset.addValue(binData[i], "Non-Validated True Positives", "0.25-0.5");
-                } else if (i == 3) {
-                    dataset.addValue(binData[i], "Non-Validated True Positives", "0.5-0.75");
-                } else if (i == 4) {
-                    dataset.addValue(binData[i], "Non-Validated True Positives", ">0.75");
-                }
-
-            } else {
-                dataset.addValue(binData[i], "Non-Validated True Positives", i + "");
-            }
-        }
-
-
-        if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-            binData = new int[5];
-        } else {
-            binData = new int[input.bins.size()];
-        }
-
-        for (int i = 0; i < input.nonValidatedDecoyValues.size(); i++) {
-            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-
-                if (input.nonValidatedDecoyValues.get(i) == 0) {
-                    binData[0]++;
-                } else if (input.nonValidatedDecoyValues.get(i) > 0 && input.nonValidatedDecoyValues.get(i) < 0.25) {
-                    binData[1]++;
-                } else if (input.nonValidatedDecoyValues.get(i) >= 0.25 && input.nonValidatedDecoyValues.get(i) < 0.5) {
-                    binData[2]++;
-                } else if (input.nonValidatedDecoyValues.get(i) >= 0.5 && input.nonValidatedDecoyValues.get(i) < 0.75) {
-                    binData[3]++;
-                } else if (input.nonValidatedDecoyValues.get(i) >= 0.75) {
-                    binData[4]++;
-                }
-
-            } else {
-                binData[input.nonValidatedDecoyValues.get(i).intValue()]++;
-            }
-        }
-
-        for (int i = 0; i < binData.length; i++) {
-
-            if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-
-                if (i == 0) {
-                    dataset.addValue(binData[i], "Non-Validated False Positives", "0.0");
-                } else if (i == 1) {
-                    dataset.addValue(binData[i], "Non-Validated False Positives", "0.0-0.25");
-                } else if (i == 2) {
-                    dataset.addValue(binData[i], "Non-Validated False Positives", "0.25-0.5");
-                } else if (i == 3) {
-                    dataset.addValue(binData[i], "Non-Validated False Positives", "0.5-0.75");
-                } else if (i == 4) {
-                    dataset.addValue(binData[i], "Non-Validated False Positives", ">0.75");
-                }
-
-            } else {
-                dataset.addValue(binData[i], "Non-Validated False Positives", i + "");
-            }
+            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", true);
+            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", true);
+            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", true);
+            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
         }
 
         JFreeChart proteinChart = ChartFactory.createStackedBarChart(null, null, "Amount of Proteins", dataset, PlotOrientation.VERTICAL, true, true, true);
@@ -930,8 +790,14 @@ public class QCPanel extends javax.swing.JPanel {
             proteinChart.getCategoryPlot().getDomainAxis().setLabel("Number of Validated Peptides");
             proteinChart.setTitle("Protein QC Plot - Number of Validated Peptides");
         } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
-            proteinChart.getCategoryPlot().getDomainAxis().setLabel("Spectrum Counting");
             proteinChart.setTitle("Protein QC Plot - Spectrum Counting Scores");
+
+            if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.EMPAI) {
+                proteinChart.getCategoryPlot().getDomainAxis().setLabel("Spectrum Counting (emPAI)");
+            } else {
+                proteinChart.getCategoryPlot().getDomainAxis().setLabel("Spectrum Counting (NSAF)");
+            }
+
         } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
             proteinChart.getCategoryPlot().getDomainAxis().setLabel("Sequence Coverage");
             proteinChart.setTitle("Protein QC Plot - Sequence Coverage");
@@ -963,50 +829,39 @@ public class QCPanel extends javax.swing.JPanel {
     private void updatePeptideQCPlot(ProgressDialogX progressDialog) {
 
         HistogramInput input = getPeptideDataset(progressDialog);
-
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        ArrayList<Double> bins = new ArrayList<Double>();
 
-        int[] binData = new int[input.bins.size()];
+        if (peptidesValidatedPsmsJRadioButton.isSelected()) {
+            
+            bins.add(0.0);
+            bins.add(1.0);
+            bins.add(2.0);
+            bins.add(3.0);
+            bins.add(5.0);
+            bins.add(10.0);
+            bins.add(20.0);
+            bins.add(50.0);
+            bins.add(100.0);
+            bins.add(200.0);
+            bins.add(500.0);
 
-        for (int i = 0; i < input.validatedValues.size(); i++) {
-            binData[input.validatedValues.get(i).intValue()]++;
-        }
+            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", true);
+            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", true);
+            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", true);
+            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+            
+        } else if (peptidesMissedCleavagesJRadioButton.isSelected()) {
+            
+            bins.add(0.0);
+            bins.add(1.0);
+            bins.add(2.0);
+            bins.add(3.0);
 
-        for (int i = 0; i < binData.length; i++) {
-            dataset.addValue(binData[i], "Validated True Positives", i + "");
-        }
-
-
-        binData = new int[input.bins.size()];
-
-        for (int i = 0; i < input.validatedDecoyValues.size(); i++) {
-            binData[input.validatedDecoyValues.get(i).intValue()]++;
-        }
-
-        for (int i = 0; i < binData.length; i++) {
-            dataset.addValue(binData[i], "Validated False Positives", i + "");
-        }
-
-
-        binData = new int[input.bins.size()];
-
-        for (int i = 0; i < input.nonValidatedValues.size(); i++) {
-            binData[input.nonValidatedValues.get(i).intValue()]++;
-        }
-
-        for (int i = 0; i < binData.length; i++) {
-            dataset.addValue(binData[i], "Non-Validated True Positives", i + "");
-        }
-
-
-        binData = new int[input.bins.size()];
-
-        for (int i = 0; i < input.nonValidatedDecoyValues.size(); i++) {
-            binData[input.nonValidatedDecoyValues.get(i).intValue()]++;
-        }
-
-        for (int i = 0; i < binData.length; i++) {
-            dataset.addValue(binData[i], "Non-Validated False Positives", i + "");
+            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", true);
+            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", true);
+            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", true);
+            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
         }
 
         JFreeChart peptideChart = ChartFactory.createStackedBarChart(null, null, "Amount of Peptides", dataset, PlotOrientation.VERTICAL, true, true, true);
@@ -1056,82 +911,36 @@ public class QCPanel extends javax.swing.JPanel {
     private void updatePsmQCPlot(ProgressDialogX progressDialog) {
 
         HistogramInput input = getPsmDataset(progressDialog);
-
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+        ArrayList<Double> bins = new ArrayList<Double>();
 
-        int maxValue = 0;
+        // @TODO: here we ought to use the max charge and max precursor error!!
 
-        for (int i = 0; i < input.validatedValues.size(); i++) {
-            if (input.validatedValues.get(i).intValue() > maxValue) {
-                maxValue = input.validatedValues.get(i).intValue();
-            }
-        }
+        if (psmPrecursorMassErrorJRadioButton.isSelected()) {
+            bins.add(0.0);
+            bins.add(0.25);
+            bins.add(0.5);
+            bins.add(1.0);
+            bins.add(2.0);
+            bins.add(5.0);
+            bins.add(10.0);
 
-        int[] binData = new int[maxValue + 1];
+            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", false);
+            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", false);
+            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", false);
+            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", false);
+            
+        } else if (psmPrecursorChargeJRadioButton.isSelected()) {
+            bins.add(0.0);
+            bins.add(1.0);
+            bins.add(2.0);
+            bins.add(3.0);
+            bins.add(4.0);
 
-        for (int i = 0; i < input.validatedValues.size(); i++) {
-            binData[input.validatedValues.get(i).intValue()]++;
-        }
-
-        for (int i = 0; i < binData.length; i++) {
-            dataset.addValue(binData[i], "Validated True Positives", i + "");
-        }
-
-
-        maxValue = 0;
-
-        for (int i = 0; i < input.validatedDecoyValues.size(); i++) {
-            if (input.validatedDecoyValues.get(i).intValue() > maxValue) {
-                maxValue = input.validatedDecoyValues.get(i).intValue();
-            }
-        }
-
-        binData = new int[maxValue + 1];
-
-        for (int i = 0; i < input.validatedDecoyValues.size(); i++) {
-            binData[input.validatedDecoyValues.get(i).intValue()]++;
-        }
-
-        for (int i = 0; i < binData.length; i++) {
-            dataset.addValue(binData[i], "Validated False Positives", i + "");
-        }
-
-
-        maxValue = 0;
-
-        for (int i = 0; i < input.nonValidatedValues.size(); i++) {
-            if (input.nonValidatedValues.get(i).intValue() > maxValue) {
-                maxValue = input.nonValidatedValues.get(i).intValue();
-            }
-        }
-
-        binData = new int[maxValue + 1];
-
-        for (int i = 0; i < input.nonValidatedValues.size(); i++) {
-            binData[input.nonValidatedValues.get(i).intValue()]++;
-        }
-
-        for (int i = 0; i < binData.length; i++) {
-            dataset.addValue(binData[i], "Non-Validated True Positives", i + "");
-        }
-
-
-        maxValue = 0;
-
-        for (int i = 0; i < input.nonValidatedDecoyValues.size(); i++) {
-            if (input.nonValidatedDecoyValues.get(i).intValue() > maxValue) {
-                maxValue = input.nonValidatedDecoyValues.get(i).intValue();
-            }
-        }
-
-        binData = new int[maxValue + 1];
-
-        for (int i = 0; i < input.nonValidatedDecoyValues.size(); i++) {
-            binData[input.nonValidatedDecoyValues.get(i).intValue()]++;
-        }
-
-        for (int i = 0; i < binData.length; i++) {
-            dataset.addValue(binData[i], "Non-Validated False Positives", i + "");
+            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", true);
+            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", true);
+            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", true);
+            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
         }
 
         JFreeChart psmChart = ChartFactory.createStackedBarChart(null, null, "Amount of PSMs", dataset, PlotOrientation.VERTICAL, true, true, true);
@@ -1620,6 +1429,96 @@ public class QCPanel extends javax.swing.JPanel {
          */
         public void setValidatedValues(ArrayList<Double> validatedValues) {
             this.validatedValues = validatedValues;
+        }
+    }
+
+    /**
+     * Calculates the number of values in each bin given the values and the 
+     * bin sizes.
+     * 
+     * @param bins          the bins to use
+     * @param values        the values to put into the bins
+     * @param dataset       the dataset to add the values to
+     * @param categoryLabel the category label
+     * @param integerBins   if true the values will be shown as integers
+     */
+    private void getBinData(ArrayList<Double> bins, ArrayList<Double> values, DefaultCategoryDataset dataset, String categoryLabel, boolean integerBins) {
+        getBinData(bins, values, dataset, categoryLabel, "", integerBins);
+    }
+
+    /**
+     * Calculates the number of values in each bin given the values and the 
+     * bin sizes.
+     * 
+     * @param bins          the bins to use
+     * @param values        the values to put into the bins
+     * @param dataset       the dataset to add the values to
+     * @param categoryLabel the category label
+     * @param dataType      added to the bin labels after the values, e.g. % 
+     * @param integerBins   if true the values will be shown as integers
+     */
+    private void getBinData(ArrayList<Double> bins, ArrayList<Double> values, DefaultCategoryDataset dataset, String categoryLabel, String dataType, boolean integerBins) {
+
+        int[] binData = new int[bins.size() + 1];
+
+        boolean binFound = false;
+
+        for (int i = 0; i < values.size(); i++) {
+
+            binFound = false;
+
+            for (int j = 0; j < bins.size() && !binFound; j++) {
+                if (values.get(i) <= bins.get(j)) {
+                    binData[j]++;
+                    binFound = true;
+                }
+            }
+
+            if (!binFound) {
+                binData[binData.length - 1]++;
+            }
+        }
+
+
+        for (int i = 0; i < bins.size() + 1; i++) {
+            if (i == 0) {
+                if (bins.get(i) > 0.0) {
+
+                    if (integerBins) {
+                        dataset.addValue(binData[i], categoryLabel, "<=" + bins.get(i).intValue() + dataType);
+                    } else {
+                        dataset.addValue(binData[i], categoryLabel, "<=" + bins.get(i) + dataType);
+                    }
+
+                } else {
+                    if (integerBins) {
+                        dataset.addValue(binData[i], categoryLabel, "" + bins.get(i).intValue() + dataType);
+                    } else {
+                        dataset.addValue(binData[i], categoryLabel, "" + bins.get(i) + dataType);
+                    }
+
+                }
+            } else if (i == bins.size()) {
+                if (integerBins) {
+                    dataset.addValue(binData[i], categoryLabel, ">" + bins.get(bins.size() - 1).intValue() + dataType);
+                } else {
+                    dataset.addValue(binData[i], categoryLabel, ">" + bins.get(bins.size() - 1) + dataType);
+                }
+
+            } else {
+                if (integerBins) {
+
+                    if (bins.get(i).intValue() == bins.get(i - 1).intValue() + 1) {
+                        dataset.addValue(binData[i], categoryLabel, "" + bins.get(i).intValue() + dataType);
+                    } else {
+                        dataset.addValue(binData[i], categoryLabel, bins.get(i - 1).intValue() + "-" + bins.get(i).intValue() + dataType);
+                    }
+
+                } else {
+                    dataset.addValue(binData[i], categoryLabel, bins.get(i - 1) + "-" + bins.get(i) + dataType);
+                }
+
+            }
         }
     }
 }

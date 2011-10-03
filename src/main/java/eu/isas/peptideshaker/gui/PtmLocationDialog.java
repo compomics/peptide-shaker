@@ -1,13 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * PtmLocationDialog.java
- *
- * Created on Sep 28, 2011, 3:15:57 PM
- */
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.biology.PTM;
@@ -25,8 +15,9 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
- * @author vaudel
+ * PtmLocationDialog
+ * 
+ * @author Marc Vaudel
  */
 public class PtmLocationDialog extends javax.swing.JDialog {
 
@@ -51,7 +42,12 @@ public class PtmLocationDialog extends javax.swing.JDialog {
      */
     private String originalLocation = "";
 
-    /** Creates new form PtmLocationDialog */
+    /** Creates new form PtmLocationDialog
+     * @param peptideShakerGUI
+     * @param peptideKey 
+     * @param selectedPTM 
+     * @param psmSelected  
+     */
     public PtmLocationDialog(PeptideShakerGUI peptideShakerGUI, String peptideKey, String selectedPTM, int psmSelected) {
         super(peptideShakerGUI, true);
 
@@ -117,7 +113,7 @@ public class PtmLocationDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide details"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Details"));
 
         jLabel1.setText("Sequence:");
 
@@ -181,13 +177,15 @@ public class PtmLocationDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected PSM PTM details"));
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected PSM PTM Details"));
 
+        jSplitPane1.setBorder(null);
         jSplitPane1.setDividerLocation(200);
+        jSplitPane1.setDividerSize(1);
 
         jLabel2.setText("PTM scoring:");
 
-        jLabel3.setText("Possible locations:");
+        jLabel3.setText("Possible Locations:");
 
         possibleLocationsTxt.setEditable(false);
 
@@ -214,7 +212,7 @@ public class PtmLocationDialog extends javax.swing.JDialog {
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(possibleLocationsTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 88, Short.MAX_VALUE))
+                        .addComponent(possibleLocationsTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 85, Short.MAX_VALUE))
                     .addComponent(jLabel2))
                 .addContainerGap())
         );
@@ -229,12 +227,12 @@ public class PtmLocationDialog extends javax.swing.JDialog {
                     .addComponent(possibleLocationsTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel2)
-                .addContainerGap(332, Short.MAX_VALUE))
+                .addContainerGap(334, Short.MAX_VALUE))
         );
 
         jSplitPane1.setLeftComponent(jPanel4);
 
-        jLabel5.setText("PTM location:");
+        jLabel5.setText("PTM Location:");
 
         ptmLocationTxt.setEditable(false);
 
@@ -242,14 +240,14 @@ public class PtmLocationDialog extends javax.swing.JDialog {
         spectrumA.setLayout(spectrumALayout);
         spectrumALayout.setHorizontalGroup(
             spectrumALayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 448, Short.MAX_VALUE)
+            .addGap(0, 454, Short.MAX_VALUE)
         );
         spectrumALayout.setVerticalGroup(
             spectrumALayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 148, Short.MAX_VALUE)
         );
 
-        jLabel6.setText("New PTM location:");
+        jLabel6.setText("New PTM Location:");
 
         applyButton.setText("Apply");
         applyButton.addActionListener(new java.awt.event.ActionListener() {
@@ -262,11 +260,11 @@ public class PtmLocationDialog extends javax.swing.JDialog {
         spectrumB.setLayout(spectrumBLayout);
         spectrumBLayout.setHorizontalGroup(
             spectrumBLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 448, Short.MAX_VALUE)
+            .addGap(0, 454, Short.MAX_VALUE)
         );
         spectrumBLayout.setVerticalGroup(
             spectrumBLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 184, Short.MAX_VALUE)
+            .addGap(0, 186, Short.MAX_VALUE)
         );
 
         cancelApplyButton.setText("Cancel");
@@ -288,17 +286,20 @@ public class PtmLocationDialog extends javax.swing.JDialog {
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ptmLocationTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE))
+                        .addComponent(ptmLocationTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(newPtmTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+                        .addComponent(newPtmTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(applyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelApplyButton)))
                 .addContainerGap())
         );
+
+        jPanel5Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {applyButton, cancelApplyButton});
+
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
@@ -371,24 +372,23 @@ public class PtmLocationDialog extends javax.swing.JDialog {
 
     private void ptmCmbMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ptmCmbMouseReleased
         PSPtmScores ptmScores = new PSPtmScores();
-            ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
-            PtmScoring ptmScoring = ptmScores.getPtmScoring(getSelectedModification());
-            if (ptmScoring.getPtmSiteConfidence() == PtmScoring.NOT_FOUND) {
-                peptideConfidence.setText("Not found");
-            } else if (ptmScoring.getPtmSiteConfidence() == PtmScoring.RANDOM) {
-                peptideConfidence.setText("Random assignment");
-            } else if (ptmScoring.getPtmSiteConfidence() == PtmScoring.DOUBTFUL) {
-                peptideConfidence.setText("Doubtful assignment");
-            } else if (ptmScoring.getPtmSiteConfidence() == PtmScoring.CONFIDENT) {
-                peptideConfidence.setText("Confident assignment");
-            } else if (ptmScoring.getPtmSiteConfidence() == PtmScoring.VERY_CONFIDENT) {
-                peptideConfidence.setText("Very confident assignment");
-            }
+        ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+        PtmScoring ptmScoring = ptmScores.getPtmScoring(getSelectedModification());
+        if (ptmScoring.getPtmSiteConfidence() == PtmScoring.NOT_FOUND) {
+            peptideConfidence.setText("Not found");
+        } else if (ptmScoring.getPtmSiteConfidence() == PtmScoring.RANDOM) {
+            peptideConfidence.setText("Random assignment");
+        } else if (ptmScoring.getPtmSiteConfidence() == PtmScoring.DOUBTFUL) {
+            peptideConfidence.setText("Doubtful assignment");
+        } else if (ptmScoring.getPtmSiteConfidence() == PtmScoring.CONFIDENT) {
+            peptideConfidence.setText("Confident assignment");
+        } else if (ptmScoring.getPtmSiteConfidence() == PtmScoring.VERY_CONFIDENT) {
+            peptideConfidence.setText("Very confident assignment");
+        }
         updatePsmTable();
     }//GEN-LAST:event_ptmCmbMouseReleased
 
     private void psmConfidenceMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmConfidenceMouseReleased
-        
     }//GEN-LAST:event_psmConfidenceMouseReleased
 
     private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
@@ -437,7 +437,6 @@ public class PtmLocationDialog extends javax.swing.JDialog {
             peptideShakerGUI.catchException(e);
         }
     }//GEN-LAST:event_psmConfidenceActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JButton cancelApplyButton;
