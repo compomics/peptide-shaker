@@ -121,6 +121,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         helpEditorPane = new javax.swing.JEditorPane();
         helpJButton = new javax.swing.JButton();
         warningJLabel = new javax.swing.JLabel();
+        picrLinkJLabel = new javax.swing.JLabel();
 
         jScrollPane1.setViewportView(jEditorPane1);
 
@@ -669,6 +670,21 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
 
         warningJLabel.setFont(warningJLabel.getFont().deriveFont((warningJLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
         warningJLabel.setForeground(new java.awt.Color(255, 0, 0));
+        warningJLabel.setText(" ");
+
+        picrLinkJLabel.setText("<html><a href=\\\"dummy_link\\\">PICR - Protein Identifier Cross-Reference Service</a></html>");
+        picrLinkJLabel.setToolTipText("<html>\nMap protein identifiers across<br>\nmultiple source databases\n</html>");
+        picrLinkJLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                picrLinkJLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                picrLinkJLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                picrLinkJLabelMouseExited(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -680,6 +696,8 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                     .addGroup(layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(warningJLabel)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(picrLinkJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -727,8 +745,10 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(annotationLinksJPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(warningJLabel)
-                .addContainerGap(106, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(warningJLabel)
+                    .addComponent(picrLinkJLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(92, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1138,6 +1158,35 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_webDavidLabelMouseClicked
 
+    /**
+     * Change the cursor back to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void picrLinkJLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_picrLinkJLabelMouseEntered
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_picrLinkJLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default icon.
+     * 
+     * @param evt 
+     */
+    private void picrLinkJLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_picrLinkJLabelMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_picrLinkJLabelMouseExited
+
+    /**
+     * Open the PICR web page.
+     * 
+     * @param evt 
+     */
+    private void picrLinkJLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_picrLinkJLabelMouseClicked
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/Tools/picr/");
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_picrLinkJLabelMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField accessionNumberJTextField;
     private javax.swing.JTextField altProteinNameJTextField;
@@ -1180,6 +1229,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     private javax.swing.JButton loadReactomeJButton;
     private javax.swing.JButton loadStringJButton;
     private javax.swing.JButton loadUniProtJButton;
+    private javax.swing.JLabel picrLinkJLabel;
     private javax.swing.JTextField proteinNameJTextField;
     private javax.swing.JTextField taxonomyJTextField;
     private javax.swing.JLabel warningJLabel;
@@ -1299,7 +1349,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
 
                             warningJLabel.setText("");
                         } else {
-                            warningJLabel.setText("Warning: The annotation resources are not optimal for non-UniProt accession numbers.");
+                            warningJLabel.setText("Warning: The annotation resources work best with UniProt accession numbers. Try using");
                             proteinNameJTextField.setText("Unknown");
                             altProteinNameJTextField.setText("Unknown");
                             geneNameJTextField.setText("Unknown");

@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
+import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
@@ -47,6 +48,26 @@ public class QCPanel extends javax.swing.JPanel {
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
+    /**
+     * Values of the validated target hits.
+     */
+    public ArrayList<Double> validatedValues;
+    /**
+     * Values of the non validated target hits.
+     */
+    public ArrayList<Double> nonValidatedValues;
+    /**
+     * Values of the validated decoy hits.
+     */
+    public ArrayList<Double> validatedDecoyValues;
+    /**
+     * Values of the non validated decoy hits.
+     */
+    public ArrayList<Double> nonValidatedDecoyValues;
+    /**
+     * The current maxium value to be plotted.
+     */
+    private double maxValue = Double.MAX_VALUE;
 
     /** 
      * Creates a new QCPanel
@@ -715,25 +736,32 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void updateProteinQCPlot(ProgressDialogX progressDialog) {
 
-        HistogramInput input = getProteinDataset(progressDialog);
+        getProteinDataset(progressDialog);
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         ArrayList<Double> bins = new ArrayList<Double>();
 
         if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+
+            // attempt at using a range depending on the max value
+            long intValue = StrictMath.round(maxValue);
             
-            // @TODO: use the maximum spectrum count value??
-            // @TODO: use a "semi-log" scale??
+            if (intValue == 0) {
+                intValue = 1;
+            }
+            
+            double temp = 0;
+            
+            bins.add(Util.roundDouble(temp, 1));
+            
+            while (temp < intValue - ((double) intValue/10)) {     
+                temp += ((double) intValue/10);
+                bins.add(Util.roundDouble(temp, 1));
+            }
 
-            bins.add(0.0);
-            bins.add(0.25);
-            bins.add(0.5);
-            bins.add(0.75);
-            bins.add(1.0);
-
-            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", false);
-            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", false);
-            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", false);
-            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", false);
+            getBinData(bins, validatedValues, dataset, "Validated True Positives", false);
+            getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", false);
+            getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", false);
+            getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", false);
 
         } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
 
@@ -748,10 +776,10 @@ public class QCPanel extends javax.swing.JPanel {
             bins.add(80.0);
             bins.add(90.0);
 
-            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", "%", true);
-            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", "%", true);
-            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", "%", true);
-            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", "%", true);
+            getBinData(bins, validatedValues, dataset, "Validated True Positives", "%", true);
+            getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", "%", true);
+            getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", "%", true);
+            getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", "%", true);
 
         } else if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
 
@@ -767,10 +795,10 @@ public class QCPanel extends javax.swing.JPanel {
             bins.add(200.0);
             bins.add(500.0);
 
-            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", true);
-            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", true);
-            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", true);
-            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+            getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+            getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
+            getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
+            getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
         }
 
         JFreeChart proteinChart = ChartFactory.createStackedBarChart(null, null, "Amount of Proteins", dataset, PlotOrientation.VERTICAL, true, true, true);
@@ -828,12 +856,12 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void updatePeptideQCPlot(ProgressDialogX progressDialog) {
 
-        HistogramInput input = getPeptideDataset(progressDialog);
+        getPeptideDataset(progressDialog);
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         ArrayList<Double> bins = new ArrayList<Double>();
 
         if (peptidesValidatedPsmsJRadioButton.isSelected()) {
-            
+
             bins.add(0.0);
             bins.add(1.0);
             bins.add(2.0);
@@ -846,22 +874,22 @@ public class QCPanel extends javax.swing.JPanel {
             bins.add(200.0);
             bins.add(500.0);
 
-            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", true);
-            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", true);
-            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", true);
-            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
-            
+            getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+            getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
+            getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
+            getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+
         } else if (peptidesMissedCleavagesJRadioButton.isSelected()) {
-            
+
             bins.add(0.0);
             bins.add(1.0);
             bins.add(2.0);
             bins.add(3.0);
 
-            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", true);
-            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", true);
-            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", true);
-            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+            getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+            getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
+            getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
+            getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
         }
 
         JFreeChart peptideChart = ChartFactory.createStackedBarChart(null, null, "Amount of Peptides", dataset, PlotOrientation.VERTICAL, true, true, true);
@@ -910,7 +938,7 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void updatePsmQCPlot(ProgressDialogX progressDialog) {
 
-        HistogramInput input = getPsmDataset(progressDialog);
+        getPsmDataset(progressDialog);
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         ArrayList<Double> bins = new ArrayList<Double>();
 
@@ -925,11 +953,11 @@ public class QCPanel extends javax.swing.JPanel {
             bins.add(5.0);
             bins.add(10.0);
 
-            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", false);
-            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", false);
-            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", false);
-            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", false);
-            
+            getBinData(bins, validatedValues, dataset, "Validated True Positives", false);
+            getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", false);
+            getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", false);
+            getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", false);
+
         } else if (psmPrecursorChargeJRadioButton.isSelected()) {
             bins.add(0.0);
             bins.add(1.0);
@@ -937,10 +965,10 @@ public class QCPanel extends javax.swing.JPanel {
             bins.add(3.0);
             bins.add(4.0);
 
-            getBinData(bins, input.validatedValues, dataset, "Validated True Positives", true);
-            getBinData(bins, input.validatedDecoyValues, dataset, "Validated False Positives", true);
-            getBinData(bins, input.nonValidatedValues, dataset, "Non-Validated True Positives", true);
-            getBinData(bins, input.nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+            getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+            getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
+            getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
+            getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
         }
 
         JFreeChart psmChart = ChartFactory.createStackedBarChart(null, null, "Amount of PSMs", dataset, PlotOrientation.VERTICAL, true, true, true);
@@ -987,30 +1015,29 @@ public class QCPanel extends javax.swing.JPanel {
      * 
      * @param progressDialog a progress dialog. Can be null.
      */
-    private HistogramInput getProteinDataset(ProgressDialogX progressDialog) {
-        HistogramInput histogramInput = new HistogramInput();
+    private void getProteinDataset(ProgressDialogX progressDialog) {
+
         try {
             PSParameter psParameter = new PSParameter();
-            double value, min = -1, max = -1;
+            maxValue = Double.MIN_VALUE;
             if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
                 // Values for the number of validated peptides
-                ArrayList<Double> validatedValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-                min = 0;
-                ProteinMatch proteinMatch;
+                validatedValues = new ArrayList<Double>();
+                nonValidatedValues = new ArrayList<Double>();
+                validatedDecoyValues = new ArrayList<Double>();
+                nonValidatedDecoyValues = new ArrayList<Double>();
+   
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-                    value = 0;
-                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                    double value = 0;
+                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
                         if (psParameter.isValidated()) {
-                            value = value + 1;
+                            value++;
                         }
                     }
-                    if (value > max || max == -1) {
-                        max = value;
+                    if (value > maxValue) {
+                        maxValue = value;
                     }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
                     if (!proteinMatch.isDecoy()) {
@@ -1030,32 +1057,21 @@ public class QCPanel extends javax.swing.JPanel {
                         progressDialog.incrementValue();
                     }
                 }
-                int maxBin = (int) max + 1;
-                ArrayList<Double> bins = new ArrayList<Double>();
-                for (int i = 0; i < maxBin; i++) {
-                    bins.add((double) i);
-                }
-                histogramInput.setBins(bins);
-                histogramInput.setValidatedValues(validatedValues);
-                histogramInput.setNonValidatedValues(nonValidatedValues);
-                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
+
             } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
+                
                 // Values for the spectrum counting
-                ArrayList<Double> validatedValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-                ProteinMatch proteinMatch;
+                validatedValues = new ArrayList<Double>();
+                nonValidatedValues = new ArrayList<Double>();
+                validatedDecoyValues = new ArrayList<Double>();
+                nonValidatedDecoyValues = new ArrayList<Double>();
+                
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                    value = peptideShakerGUI.getSpectrumCounting(proteinMatch);
+                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                    double value = peptideShakerGUI.getSpectrumCounting(proteinMatch);
                     if (value > 0) {
-                        if (value < min || min == -1) {
-                            min = value;
-                        }
-                        if (value > max || max == -1) {
-                            max = value;
+                        if (value > maxValue) {
+                            maxValue  = value;
                         }
                     }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
@@ -1076,38 +1092,20 @@ public class QCPanel extends javax.swing.JPanel {
                         progressDialog.incrementValue();
                     }
                 }
-//                int binMin = (int) Math.log10(min) - 1;
-//                int binMax = (int) Math.log10(max) + 1;
-//                ArrayList<Double> bins = new ArrayList<Double>();
-//                for (int i = binMin; i <= binMax; i++) {
-//                    bins.add(Math.pow(10, i));
-//                }
-//                bins.add(0.0);
-                int maxBin = (int) max + 1;
-                ArrayList<Double> bins = new ArrayList<Double>();
-                for (int i = 0; i < maxBin; i++) {
-                    bins.add((double) i);
-                }
-                histogramInput.setBins(bins);
-                histogramInput.setValidatedValues(validatedValues);
-                histogramInput.setNonValidatedValues(nonValidatedValues);
-                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
             } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
+                
                 // Values for the sequence coverage
-                ArrayList<Double> validatedValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-                Protein currentProtein;
-                min = 0;
-                ProteinMatch proteinMatch;
+                validatedValues = new ArrayList<Double>();
+                nonValidatedValues = new ArrayList<Double>();
+                validatedDecoyValues = new ArrayList<Double>();
+                nonValidatedDecoyValues = new ArrayList<Double>();
+                
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                    currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                    value = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
-                    if (value > max || max == -1) {
-                        max = value;
+                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                    Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                    double value = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
+                    if (value > maxValue) {
+                        maxValue = value;
                     }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
                     if (!proteinMatch.isDecoy()) {
@@ -1127,21 +1125,10 @@ public class QCPanel extends javax.swing.JPanel {
                         progressDialog.incrementValue();
                     }
                 }
-                int maxBin = (int) max + 1;
-                ArrayList<Double> bins = new ArrayList<Double>();
-                for (int i = 0; i < maxBin; i++) {
-                    bins.add((double) i);
-                }
-                histogramInput.setBins(bins);
-                histogramInput.setValidatedValues(validatedValues);
-                histogramInput.setNonValidatedValues(nonValidatedValues);
-                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
-        return histogramInput;
     }
 
     /**
@@ -1149,30 +1136,31 @@ public class QCPanel extends javax.swing.JPanel {
      * 
      * @param progressDialog a progress dialog. Can be null.
      */
-    private HistogramInput getPeptideDataset(ProgressDialogX progressDialog) {
-        HistogramInput histogramInput = new HistogramInput();
+    private void getPeptideDataset(ProgressDialogX progressDialog) {
+
         try {
             PSParameter psParameter = new PSParameter();
-            double value, min = -1, max = -1;
+            maxValue = Double.MIN_VALUE;
+            
             if (peptidesValidatedPsmsJRadioButton.isSelected()) {
+                
                 // Values for the number of validated PSMs
-                ArrayList<Double> validatedValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-                min = 0;
-                PeptideMatch peptideMatch;
+                validatedValues = new ArrayList<Double>();
+                nonValidatedValues = new ArrayList<Double>();
+                validatedDecoyValues = new ArrayList<Double>();
+                nonValidatedDecoyValues = new ArrayList<Double>();
+                
                 for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
-                    value = 0;
-                    peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                    double value = 0;
+                    PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
                         if (psParameter.isValidated()) {
                             value = value + 1;
                         }
                     }
-                    if (value > max || max == -1) {
-                        max = value;
+                    if (value > maxValue) {
+                        maxValue = value;
                     }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
                     if (!peptideMatch.isDecoy()) {
@@ -1192,33 +1180,21 @@ public class QCPanel extends javax.swing.JPanel {
                         progressDialog.incrementValue();
                     }
                 }
-                int maxBin = (int) max + 1;
-                ArrayList<Double> bins = new ArrayList<Double>();
-                for (int i = 0; i < maxBin; i++) {
-                    bins.add((double) i);
-                }
-                histogramInput.setBins(bins);
-                histogramInput.setValidatedValues(validatedValues);
-                histogramInput.setNonValidatedValues(nonValidatedValues);
-                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
             } else if (peptidesMissedCleavagesJRadioButton.isSelected()) {
+                
                 // Values for the missed cleavages
-                ArrayList<Double> validatedValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+                validatedValues = new ArrayList<Double>();
+                nonValidatedValues = new ArrayList<Double>();
+                validatedDecoyValues = new ArrayList<Double>();
+                nonValidatedDecoyValues = new ArrayList<Double>();
                 Enzyme enzyme = peptideShakerGUI.getSearchParameters().getEnzyme();
-                PeptideMatch peptideMatch;
+                
                 for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
-                    peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-                    value = Peptide.getNMissedCleavages(Peptide.getSequence(peptideKey), enzyme);
+                    PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                    double value = Peptide.getNMissedCleavages(Peptide.getSequence(peptideKey), enzyme);
                     if (value > 0) {
-                        if (value < min || min == -1) {
-                            min = value;
-                        }
-                        if (value > max || max == -1) {
-                            max = value;
+                        if (value > maxValue) {
+                            maxValue = value;
                         }
                     }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
@@ -1239,21 +1215,10 @@ public class QCPanel extends javax.swing.JPanel {
                         progressDialog.incrementValue();
                     }
                 }
-                int maxBin = (int) max + 1;
-                ArrayList<Double> bins = new ArrayList<Double>();
-                for (int i = 0; i < maxBin; i++) {
-                    bins.add((double) i);
-                }
-                histogramInput.setBins(bins);
-                histogramInput.setValidatedValues(validatedValues);
-                histogramInput.setNonValidatedValues(nonValidatedValues);
-                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
-        return histogramInput;
     }
 
     /**
@@ -1261,24 +1226,26 @@ public class QCPanel extends javax.swing.JPanel {
      * 
      * @param progressDialog a progress dialog. Can be null.
      */
-    private HistogramInput getPsmDataset(ProgressDialogX progressDialog) {
-        HistogramInput histogramInput = new HistogramInput();
+    private void getPsmDataset(ProgressDialogX progressDialog) {
+
         try {
             PSParameter psParameter = new PSParameter();
-            double value, min = -1, max = -1;
+            maxValue = Double.MIN_VALUE;
+            
             if (psmPrecursorMassErrorJRadioButton.isSelected()) {
+                
                 // Values for the precursor mass deviation
-                ArrayList<Double> validatedValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
-                min = 0;
+                validatedValues = new ArrayList<Double>();
+                nonValidatedValues = new ArrayList<Double>();
+                validatedDecoyValues = new ArrayList<Double>();
+                nonValidatedDecoyValues = new ArrayList<Double>();
                 SpectrumMatch spectrumMatch;
+                
                 for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
                     spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    value = spectrumMatch.getBestAssumption().getDeltaMass();
-                    if (value > max || max == -1) {
-                        max = value;
+                    double value = spectrumMatch.getBestAssumption().getDeltaMass();
+                    if (value > maxValue) {
+                        maxValue = value;
                     }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
                     if (!spectrumMatch.getBestAssumption().isDecoy()) {
@@ -1298,31 +1265,20 @@ public class QCPanel extends javax.swing.JPanel {
                         progressDialog.incrementValue();
                     }
                 }
-                int maxBin = (int) max + 1;
-                ArrayList<Double> bins = new ArrayList<Double>();
-                for (int i = 0; i < maxBin; i++) {
-                    bins.add((double) i);
-                }
-                histogramInput.setBins(bins);
-                histogramInput.setValidatedValues(validatedValues);
-                histogramInput.setNonValidatedValues(nonValidatedValues);
-                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
             } else if (psmPrecursorChargeJRadioButton.isSelected()) {
+                
                 // Values for the precursor charge
-                ArrayList<Double> validatedValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedValues = new ArrayList<Double>();
-                ArrayList<Double> validatedDecoyValues = new ArrayList<Double>();
-                ArrayList<Double> nonValidatedDecoyValues = new ArrayList<Double>();
+                validatedValues = new ArrayList<Double>();
+                nonValidatedValues = new ArrayList<Double>();
+                validatedDecoyValues = new ArrayList<Double>();
+                nonValidatedDecoyValues = new ArrayList<Double>();
                 SpectrumMatch spectrumMatch;
+                
                 for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
                     spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    value = peptideShakerGUI.getPrecursor(spectrumKey).getCharge().value;
-                    if (value < min || min == -1) {
-                        min = value;
-                    }
-                    if (value > max || max == -1) {
-                        max = value;
+                    double value = peptideShakerGUI.getPrecursor(spectrumKey).getCharge().value;
+                    if (value > maxValue) {
+                        maxValue = value;
                     }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
                     if (!spectrumMatch.getBestAssumption().isDecoy()) {
@@ -1342,93 +1298,9 @@ public class QCPanel extends javax.swing.JPanel {
                         progressDialog.incrementValue();
                     }
                 }
-                int maxBin = (int) max + 1;
-                ArrayList<Double> bins = new ArrayList<Double>();
-                for (int i = (int) min; i < maxBin; i++) {
-                    bins.add((double) i);
-                }
-                histogramInput.setBins(bins);
-                histogramInput.setValidatedValues(validatedValues);
-                histogramInput.setNonValidatedValues(nonValidatedValues);
-                histogramInput.setValidatedDecoyValues(validatedDecoyValues);
-                histogramInput.setNonValidatedDecoyValues(nonValidatedDecoyValues);
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
-        }
-        return histogramInput;
-    }
-
-    /**
-     * This class hides the various data structures necessary for a histogram
-     */
-    private class HistogramInput {
-
-        /**
-         * The bins of the histogram
-         */
-        public ArrayList<Double> bins;
-        /**
-         * values of the validated target hits
-         */
-        public ArrayList<Double> validatedValues;
-        /**
-         * values of the non validated target hits
-         */
-        public ArrayList<Double> nonValidatedValues;
-        /**
-         * values of the validated decoy hits
-         */
-        public ArrayList<Double> validatedDecoyValues;
-        /**
-         * values of the non validated decoy hits
-         */
-        public ArrayList<Double> nonValidatedDecoyValues;
-
-        /**
-         * Constructor
-         */
-        public HistogramInput() {
-        }
-
-        /**
-         * Sets the bins to be used for the histogram
-         * @param bins the bins to be used for the histogram
-         */
-        public void setBins(ArrayList<Double> bins) {
-            this.bins = bins;
-        }
-
-        /**
-         * Sets the non validated decoy values
-         * @param nonValidatedDecoyValues the non validated decoy values
-         */
-        public void setNonValidatedDecoyValues(ArrayList<Double> nonValidatedDecoyValues) {
-            this.nonValidatedDecoyValues = nonValidatedDecoyValues;
-        }
-
-        /**
-         * Sets the non validated target values
-         * @param nonValidatedValues the non validated target values
-         */
-        public void setNonValidatedValues(ArrayList<Double> nonValidatedValues) {
-            this.nonValidatedValues = nonValidatedValues;
-        }
-
-        /**
-         * Sets the validated decoy values
-         * @param validatedDecoyValues  the validated decoy values
-         */
-        public void setValidatedDecoyValues(ArrayList<Double> validatedDecoyValues) {
-            this.validatedDecoyValues = validatedDecoyValues;
-        }
-
-        /**
-         * Sets the validated Target values
-         * @param validatedValues 
-         */
-        public void setValidatedValues(ArrayList<Double> validatedValues) {
-            this.validatedValues = validatedValues;
         }
     }
 
@@ -1479,7 +1351,7 @@ public class QCPanel extends javax.swing.JPanel {
             }
         }
 
-
+        
         for (int i = 0; i < bins.size() + 1; i++) {
             if (i == 0) {
                 if (bins.get(i) > 0.0) {
@@ -1517,7 +1389,6 @@ public class QCPanel extends javax.swing.JPanel {
                 } else {
                     dataset.addValue(binData[i], categoryLabel, bins.get(i - 1) + "-" + bins.get(i) + dataType);
                 }
-
             }
         }
     }
