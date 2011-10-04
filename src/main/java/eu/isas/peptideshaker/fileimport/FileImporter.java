@@ -81,8 +81,8 @@ public class FileImporter {
      */
     private HashMap<String, ArrayList<String>> sequences = new HashMap<String, ArrayList<String>>();
     /**
-    * db processing disabled only while testing
-    */
+     * db processing disabled only while testing
+     */
     boolean testing = true;
 
     /**
@@ -443,32 +443,8 @@ public class FileImporter {
             importSequences(waitingDialog, proteomicAnalysis, fastaFile, idFilter, searchParameters);
 
             try {
-                ArrayList<String> residues, utilitiesNames;
-                PTM sePtm, newPTM;
-                for (String peptideShakerName : searchParameters.getModificationProfile().getPeptideShakerNames()) {
-                    residues = new ArrayList<String>();
-                    utilitiesNames = new ArrayList<String>();
-                    int modType = -1;
-                    double mass = -1;
-                    for (String utilitiesName : searchParameters.getModificationProfile().getUtilitiesNames()) {
-                        if (peptideShakerName.equals(searchParameters.getModificationProfile().getPeptideShakerName(utilitiesName))) {
-                            sePtm = ptmFactory.getPTM(utilitiesName);
-                            residues.addAll(sePtm.getResidues());
-                            if (modType == -1) {
-                                modType = sePtm.getType();
-                            } else if (sePtm.getType() != modType) {
-                                modType = PTM.MODAA; // case difficult to handle so used the default AA option
-                            }
-                            mass = sePtm.getMass();
-                            utilitiesNames.add(utilitiesName);
-                        }
-                    }
-                    for (String utilitiesName : utilitiesNames) {
-                        newPTM = new PTM(modType, peptideShakerName, searchParameters.getModificationProfile().getShortName(peptideShakerName), mass, residues);
-                        ptmFactory.replacePTM(utilitiesName, newPTM);
-                    }
-                }
 
+                PeptideShaker.setPeptideShakerPTMs(searchParameters);
                 waitingDialog.appendReport("Reading identification files.");
                 InputMap inputMap = new InputMap();
 

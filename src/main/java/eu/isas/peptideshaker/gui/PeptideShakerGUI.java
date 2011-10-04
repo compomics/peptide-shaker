@@ -1789,9 +1789,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            NewDialog openDialog = new NewDialog(this, true);
 
-            openDialog.setSearchParamatersFiles(new ArrayList<File>());
             File newFile = fileChooser.getSelectedFile();
             setLastSelectedFolder(newFile.getAbsolutePath());
 
@@ -1799,15 +1797,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
                         "Wrong File.", JOptionPane.ERROR_MESSAGE);
             } else {
-
-                // get the properties files
-                for (File file : newFile.getParentFile().listFiles()) {
-                    if (file.getName().toLowerCase().endsWith(".properties")) {
-                        if (!openDialog.getSearchParametersFiles().contains(file)) {
-                            openDialog.getSearchParametersFiles().add(file);
-                        }
-                    }
-                }
 
                 updateRecentProjectsList(newFile);
 
@@ -4005,9 +3994,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     PSSettings experimentSettings = new PSSettings();
                     experimentSettings = (PSSettings) tempExperiment.getUrParam(experimentSettings);
                     peptideShakerGUI.setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
-                    peptideShakerGUI.setSearchParameters(experimentSettings.getSearchParameters());
                     peptideShakerGUI.setSpectrumCountingPreferences(experimentSettings.getSpectrumCountingPreferences());
                     peptideShakerGUI.setProjectDetails(experimentSettings.getProjectDetails());
+                    peptideShakerGUI.setSearchParameters(experimentSettings.getSearchParameters());
+                    PeptideShaker.setPeptideShakerPTMs(searchParameters);
 
                     try {
                         SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile());
