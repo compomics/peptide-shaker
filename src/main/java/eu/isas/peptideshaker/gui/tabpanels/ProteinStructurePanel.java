@@ -182,7 +182,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         proteinTableToolTips.add("Protein Seqeunce Coverage (%)");
         proteinTableToolTips.add("Number of Peptides");
         proteinTableToolTips.add("Number of Spectra");
-        proteinTableToolTips.add("Protein Spectrum Counting Score");
+        proteinTableToolTips.add("Protein MS2 Quantification");
         proteinTableToolTips.add("Protein Score");
         proteinTableToolTips.add("Protein Confidence");
         proteinTableToolTips.add("Validated");
@@ -278,8 +278,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        proteinTable.getColumn("Spectrum Counting").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Spectrum Counting").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        proteinTable.getColumn("MS2 Quantification").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quantification").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth() + 5, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
@@ -452,7 +452,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 pdbHelpJButtonActionPerformed(evt);
             }
         });
-        pdbHelpJButton.setBounds(0, 0, 27, 25);
+        pdbHelpJButton.setBounds(0, 0, 27, 27);
         pdbStructureLayeredPane.add(pdbHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         labelsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/labels_selected.png"))); // NOI18N
@@ -578,7 +578,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             },
             new String [] {
-                " ", "PI", "Accession", "Description", "Coverage", "#Peptides", "#Spectra", "Spectrum Counting", "Score", "Confidence", ""
+                " ", "PI", "Accession", "Description", "Coverage", "#Peptides", "#Spectra", "MS2 Quantification", "Score", "Confidence", ""
             }
         ) {
             Class[] types = new Class [] {
@@ -1800,11 +1800,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         
         // update spectrum counting column header tooltip
         if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.EMPAI) {
-            proteinTableToolTips.set(proteinTable.getColumn("Spectrum Counting").getModelIndex(), "Protein Spectrum Counting Score - emPAI");
+            proteinTableToolTips.set(proteinTable.getColumn("MS2 Quantification").getModelIndex(), "Protein MS2 Quantification - emPAI");
         } else if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF) {
-            proteinTableToolTips.set(proteinTable.getColumn("Spectrum Counting").getModelIndex(), "Protein Spectrum Counting Score - NSAF");
+            proteinTableToolTips.set(proteinTable.getColumn("MS2 Quantification").getModelIndex(), "Protein MS2 Quantification - NSAF");
         } else {
-            proteinTableToolTips.set(proteinTable.getColumn("Spectrum Counting").getModelIndex(), "Protein Spectrum Counting Score");
+            proteinTableToolTips.set(proteinTable.getColumn("MS2 Quantification").getModelIndex(), "Protein MS2 Quantification");
         }
         
         try {
@@ -1948,7 +1948,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
-            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Spectrum Counting").getCellRenderer()).setMaxValue(maxSpectrumCounting);
+            ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quantification").getCellRenderer()).setMaxValue(maxSpectrumCounting);
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).setMaxValue(100.0);
 
             try {
@@ -2145,7 +2145,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      */
     public void showSparkLines(boolean showSparkLines) {
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Spectrum Counting").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quantification").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);

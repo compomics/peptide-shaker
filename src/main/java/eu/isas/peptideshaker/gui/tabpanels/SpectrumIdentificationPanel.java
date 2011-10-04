@@ -14,7 +14,6 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.googlecode.charts4j.Color;
-import com.googlecode.charts4j.Fills;
 import com.googlecode.charts4j.GCharts;
 import com.googlecode.charts4j.VennDiagram;
 import eu.isas.peptideshaker.gui.HelpWindow;
@@ -1695,8 +1694,7 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
         }
 
         chart.setCircleLegends(titleA, titleB, titleC);
-        chart.setCircleColors(Color.YELLOW, Color.RED, Color.BLUE);
-        chart.setBackgroundFill(Fills.newSolidFill(Color.WHITE));
+        chart.setCircleColors(Color.GREEN, Color.RED, Color.BLUE);
 
         try {
             diagramButton.setText("");
