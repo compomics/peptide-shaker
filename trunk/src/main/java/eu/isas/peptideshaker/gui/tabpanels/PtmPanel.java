@@ -1376,8 +1376,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         // @TODO: found out why the adding of the sparklines does not work...
         
         try {
-            ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Peptide Score").getCellRenderer()).showNumbers(!showSparkLines);
-            ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Peptide Score").getCellRenderer()).showNumbers(!showSparkLines);
+//            ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Peptide Score").getCellRenderer()).showNumbers(!showSparkLines);
+//            ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Peptide Score").getCellRenderer()).showNumbers(!showSparkLines);
         } catch (IllegalArgumentException e) {
             // ignore error
         }
@@ -1757,14 +1757,14 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private String getSelectedPeptide() {
         if (relatedSelected) {
             
-            if (relatedPeptidesTable.getSelectedRow() == -1) {
+            if (relatedPeptidesTable.getSelectedRow() == -1 || relatedPeptides.isEmpty()) {
                 return "";
             }
             
             return relatedPeptides.get(relatedPeptidesTable.getSelectedRow());
         } else {
             
-            if (peptidesTable.getSelectedRow() == -1) {
+            if (peptidesTable.getSelectedRow() == -1 || displayedPeptides.isEmpty()) {
                 return "";
             }
             
