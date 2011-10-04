@@ -1227,4 +1227,37 @@ public class PeptideShaker {
         }
         return false;
     }
+
+    /**
+     * Replaces the needed PTMs by Peptide-Shaker PTMs in the factory.
+     * @param searchParameters the search parameters containing the modification profile to use
+     */
+    public static void setPeptideShakerPTMs(SearchParameters searchParameters) {
+        ArrayList<String> residues, utilitiesNames;
+        PTMFactory ptmFactory = PTMFactory.getInstance();
+        PTM sePtm, newPTM;
+        for (String peptideShakerName : searchParameters.getModificationProfile().getPeptideShakerNames()) {
+            residues = new ArrayList<String>();
+            utilitiesNames = new ArrayList<String>();
+            int modType = -1;
+            double mass = -1;
+            for (String utilitiesName : searchParameters.getModificationProfile().getUtilitiesNames()) {
+                if (peptideShakerName.equals(searchParameters.getModificationProfile().getPeptideShakerName(utilitiesName))) {
+                    sePtm = ptmFactory.getPTM(utilitiesName);
+                    residues.addAll(sePtm.getResidues());
+                    if (modType == -1) {
+                        modType = sePtm.getType();
+                    } else if (sePtm.getType() != modType) {
+                        modType = PTM.MODAA; // case difficult to handle so used the default AA option
+                    }
+                    mass = sePtm.getMass();
+                    utilitiesNames.add(utilitiesName);
+                }
+            }
+            for (String utilitiesName : utilitiesNames) {
+                newPTM = new PTM(modType, peptideShakerName, searchParameters.getModificationProfile().getShortName(peptideShakerName), mass, residues);
+                ptmFactory.replacePTM(utilitiesName, newPTM);
+            }
+        }
+    }
 }
