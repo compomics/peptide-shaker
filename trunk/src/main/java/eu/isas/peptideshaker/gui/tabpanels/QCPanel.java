@@ -588,7 +588,7 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void proteinQcPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinQcPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/ProteinQCPlots.html"));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/QCPlots.html"), "ProteinQCPlots");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinQcPlotHelpJButtonActionPerformed
 
@@ -617,7 +617,7 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void peptidesQcPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesQcPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PeptidesQCPlots.html"));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/QCPlots.html"), "PeptideQCPlots");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptidesQcPlotHelpJButtonActionPerformed
 
@@ -688,7 +688,7 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void psmQcPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmQcPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMsQCPlots.html"));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/QCPlots.html"), "PSMQCPlots");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_psmQcPlotHelpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables

@@ -496,7 +496,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="spectrumCountingMenuItem">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Spectrum Counting"/>
+                <Property name="text" type="java.lang.String" value="MS2 Quantification"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spectrumCountingMenuItemActionPerformed"/>
