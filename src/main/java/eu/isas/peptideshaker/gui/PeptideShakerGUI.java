@@ -994,7 +994,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         editMenu.add(annotationPreferencesMenu);
 
-        spectrumCountingMenuItem.setText("Spectrum Counting");
+        spectrumCountingMenuItem.setText("MS2 Quantification");
         spectrumCountingMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 spectrumCountingMenuItemActionPerformed(evt);

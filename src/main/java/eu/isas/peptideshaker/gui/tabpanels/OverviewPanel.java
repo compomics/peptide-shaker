@@ -982,11 +982,6 @@ public class OverviewPanel extends javax.swing.JPanel {
 }//GEN-LAST:event_proteinTableKeyReleased
 
     /**
-     * Resizes the coverage map according to the new width of the screen.
-     *
-     * @param evt
-     */
-    /**
      * Updates tha tables according to the currently selected peptide.
      *
      * @param evt
@@ -1374,6 +1369,7 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
     peptideShakerGUI.getAnnotationPreferences().setAnnotationLevel(intensitySlider.getValue() / 100.0);
     peptideShakerGUI.updateSpectrumAnnotations();
     peptideShakerGUI.setDataSaved(false);
+    intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 }//GEN-LAST:event_intensitySliderStateChanged
 
     /**
@@ -1542,9 +1538,11 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void accuracySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_accuracySliderStateChanged
-        peptideShakerGUI.getAnnotationPreferences().setFragmentIonAccuracy((accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+        peptideShakerGUI.getAnnotationPreferences().setFragmentIonAccuracy(accuracy);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
+        accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
     }//GEN-LAST:event_accuracySliderStateChanged
 
     /**
@@ -2125,11 +2123,13 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             // create and display the fragment ion table
                             if (psmTable.getSelectedRowCount() == 1 && !peptideShakerGUI.getAnnotationPreferences().useIntensityIonTable()) {
                                 fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, annotations, annotationPreferences.getIonTypes(),
+                                        annotationPreferences.getNeutralLosses(),
                                         peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(1)),
                                         peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(2))));
                             } else {
                                 ArrayList<ArrayList<IonMatch>> allAnnotations = getAnnotationsForAllSelectedSpectra();
                                 fragmentIonsJScrollPane.setViewportView(new FragmentIonTable(currentPeptide, allAnnotations, getSelectedSpectra(), annotationPreferences.getIonTypes(),
+                                        annotationPreferences.getNeutralLosses(),
                                         peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(1)),
                                         peptideShakerGUI.getAnnotationPreferences().getValidatedCharges().contains(new Integer(2))));
                             }
@@ -2658,6 +2658,11 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 proteinTableMouseReleased(null);
                 proteinTable.requestFocus();
             }
+            
+            // update the slider tooltips
+            double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+            accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+            intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);

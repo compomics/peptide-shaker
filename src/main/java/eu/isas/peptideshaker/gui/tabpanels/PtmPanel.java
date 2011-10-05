@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
+import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
@@ -1160,6 +1161,7 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
     peptideShakerGUI.getAnnotationPreferences().setAnnotationLevel(((Integer) intensitySlider.getValue()) / 100.0);
     peptideShakerGUI.updateSpectrumAnnotations();
     peptideShakerGUI.setDataSaved(false);
+    intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 }//GEN-LAST:event_intensitySliderStateChanged
 
     /**
@@ -1264,9 +1266,11 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * @param evt 
      */
     private void accuracySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_accuracySliderStateChanged
-        peptideShakerGUI.getAnnotationPreferences().setFragmentIonAccuracy((accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+        peptideShakerGUI.getAnnotationPreferences().setFragmentIonAccuracy(accuracy);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
+        accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
     }//GEN-LAST:event_accuracySliderStateChanged
 
     /**
@@ -1487,6 +1491,11 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             ptmJTable.scrollRectToVisible(ptmJTable.getCellRect(0, 0, false));
             updatePeptideTable();
         }
+        
+        // update the slider tooltips
+        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+        accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+        intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }

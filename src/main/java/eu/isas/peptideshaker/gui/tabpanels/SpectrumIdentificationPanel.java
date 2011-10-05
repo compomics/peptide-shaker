@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
+import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
@@ -1448,6 +1449,7 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
     peptideShakerGUI.getAnnotationPreferences().setAnnotationLevel(((Integer) intensitySlider.getValue()) / 100.0);
     peptideShakerGUI.updateSpectrumAnnotations();
     peptideShakerGUI.setDataSaved(false);
+    intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 }//GEN-LAST:event_intensitySliderStateChanged
 
     /**
@@ -1501,9 +1503,11 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
      * @param evt 
      */
     private void accuracySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_accuracySliderStateChanged
-        peptideShakerGUI.getAnnotationPreferences().setFragmentIonAccuracy((accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy());
+        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+        peptideShakerGUI.getAnnotationPreferences().setFragmentIonAccuracy(accuracy);
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
+        accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
     }//GEN-LAST:event_accuracySliderStateChanged
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1547,12 +1551,14 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
      * @param progressDialog a progress dialog. Can be null.
      */
     public void displayResults(ProgressDialogX progressDialog) {
+        
         try {
             identification = peptideShakerGUI.getIdentification();
             int m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0;
             boolean mascot, omssa, xTandem;
             PSParameter probabilities = new PSParameter();
             SpectrumMatch spectrumMatch;
+            
             for (String spectrumKey : identification.getSpectrumIdentification()) {
                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 mascot = false;
@@ -1652,6 +1658,12 @@ private void spectrumPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {/
 
             fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
             fileSelectionChanged();
+            
+            // update the slider tooltips
+            double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+            accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+            intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
+            
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
