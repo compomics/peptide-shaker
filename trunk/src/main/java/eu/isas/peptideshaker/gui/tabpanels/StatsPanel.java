@@ -20,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.LegendItemCollection;
@@ -147,6 +148,20 @@ public class StatsPanel extends javax.swing.JPanel {
         this.peptideShakerGUI = parent;
 
         initComponents();
+        
+        // add the default values to the group selection
+        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{1, "Proteins"});
+        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{2, "Peptides"});
+        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{3, "PSMs"});
+        
+        groupSelectionScrollPaneScrollPane.getViewport().setOpaque(false);
+        
+        // the index column
+        groupSelectionTable.getColumn(" ").setMaxWidth(30);
+        groupSelectionTable.getColumn(" ").setMinWidth(30);
+        
+        // set table properties
+        groupSelectionTable.getTableHeader().setReorderingAllowed(false);
 
         // for some reason background highlighting with alpha values does not work on the backup look and feel...
         if (UIManager.getLookAndFeel().getName().equalsIgnoreCase("Nimbus")) {
@@ -235,9 +250,9 @@ public class StatsPanel extends javax.swing.JPanel {
 
         groupListJPanel = new javax.swing.JPanel();
         groupSelectionLayeredPane = new javax.swing.JLayeredPane();
-        groupListJScrollPane = new javax.swing.JScrollPane();
-        groupList = new javax.swing.JList();
         groupSelectionHelpJButton = new javax.swing.JButton();
+        groupSelectionScrollPaneScrollPane = new javax.swing.JScrollPane();
+        groupSelectionTable = new javax.swing.JTable();
         idSummaryJPanel = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         nTotalTxt = new javax.swing.JTextField();
@@ -337,27 +352,6 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
-        groupList.setModel(new javax.swing.AbstractListModel() {
-            String[] strings = { "Proteins", "Peptides", "PSMs" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
-        groupList.setEnabled(false);
-        groupList.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                groupListMousePressed(evt);
-            }
-        });
-        groupList.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                groupListKeyReleased(evt);
-            }
-        });
-        groupListJScrollPane.setViewportView(groupList);
-
-        groupListJScrollPane.setBounds(0, 0, 198, 150);
-        groupSelectionLayeredPane.add(groupListJScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
         groupSelectionHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
         groupSelectionHelpJButton.setToolTipText("Help");
         groupSelectionHelpJButton.setBorder(null);
@@ -379,6 +373,47 @@ public class StatsPanel extends javax.swing.JPanel {
         groupSelectionHelpJButton.setBounds(175, 130, 17, 17);
         groupSelectionLayeredPane.add(groupSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
+        groupSelectionScrollPaneScrollPane.setOpaque(false);
+
+        groupSelectionTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                " ", "Type"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        groupSelectionTable.setOpaque(false);
+        groupSelectionTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                groupSelectionTableMouseReleased(evt);
+            }
+        });
+        groupSelectionTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                groupSelectionTableKeyReleased(evt);
+            }
+        });
+        groupSelectionScrollPaneScrollPane.setViewportView(groupSelectionTable);
+
+        groupSelectionScrollPaneScrollPane.setBounds(0, 0, 200, 150);
+        groupSelectionLayeredPane.add(groupSelectionScrollPaneScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
         javax.swing.GroupLayout groupListJPanelLayout = new javax.swing.GroupLayout(groupListJPanel);
         groupListJPanel.setLayout(groupListJPanelLayout);
         groupListJPanelLayout.setHorizontalGroup(
@@ -390,7 +425,7 @@ public class StatsPanel extends javax.swing.JPanel {
         );
         groupListJPanelLayout.setVerticalGroup(
             groupListJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(groupListJPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupListJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(groupSelectionLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
                 .addContainerGap())
@@ -777,11 +812,11 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pepPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(pepPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
+                    .addComponent(pepPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 595, Short.MAX_VALUE)
                     .addGroup(pepPanelLayout.createSequentialGroup()
                         .addComponent(jLabel30)
                         .addGap(18, 18, 18)
-                        .addComponent(sensitivitySlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 446, Short.MAX_VALUE)
+                        .addComponent(sensitivitySlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 454, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel27)))
                 .addContainerGap())
@@ -853,11 +888,11 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(fdrsPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 588, Short.MAX_VALUE)
+                    .addComponent(fdrsPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 580, Short.MAX_VALUE)
                     .addGroup(fdrsPanelLayout.createSequentialGroup()
                         .addComponent(jLabel34)
                         .addGap(18, 18, 18)
-                        .addComponent(sensitivitySlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 447, Short.MAX_VALUE)
+                        .addComponent(sensitivitySlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 439, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel35)))
                 .addContainerGap())
@@ -1035,11 +1070,11 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrFnrPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(fdrPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
+                    .addComponent(fdrPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
                     .addGroup(fdrFnrPanelLayout.createSequentialGroup()
                         .addComponent(jLabel28)
                         .addGap(18, 18, 18)
-                        .addComponent(fdrSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
+                        .addComponent(fdrSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, 213, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel29)))
                 .addContainerGap())
@@ -1113,11 +1148,11 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, benefitCostPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(benefitPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 326, Short.MAX_VALUE)
+                    .addComponent(benefitPlotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE)
                     .addGroup(benefitCostPanelLayout.createSequentialGroup()
                         .addComponent(jLabel32)
                         .addGap(18, 18, 18)
-                        .addComponent(fdrSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
+                        .addComponent(fdrSlider2, javax.swing.GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
                         .addComponent(jLabel33)))
                 .addContainerGap())
@@ -1349,8 +1384,8 @@ public class StatsPanel extends javax.swing.JPanel {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(optimizationJPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                    .addComponent(optimizationJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(groupListJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(idSummaryJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1371,17 +1406,6 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    /**
-     * Update the group selection.
-     *
-     * @param evt
-     */
-    private void groupListMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_groupListMousePressed
-        if (peptideShakerGUI.getIdentification() != null) {
-            groupSelectionChanged();
-        }
-    }//GEN-LAST:event_groupListMousePressed
 
     /**
      * Updates the plots.
@@ -1502,7 +1526,8 @@ public class StatsPanel extends javax.swing.JPanel {
                 updateResults();
                 updateDisplayedComponents();
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                modifiedMaps.put(groupList.getSelectedIndex(), true);
+                //modifiedMaps.put(groupList.getSelectedIndex(), true);
+                modifiedMaps.put(groupSelectionTable.getSelectedRow(), true);
                 applyButton.setEnabled(true);
                 pepWindowApplied = false;
             }
@@ -1550,9 +1575,9 @@ public class StatsPanel extends javax.swing.JPanel {
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-            if (groupList.getSelectedIndex() == 0) {
+            if (groupSelectionTable.getSelectedRow() == 0) {
                 applyProteins();
-            } else if (peptideMap.keySet().contains(groupList.getSelectedIndex())) {
+            } else if (peptideMap.keySet().contains(groupSelectionTable.getSelectedRow())) {
                 recalculateProteins();
             } else {
                 recalculatePeptidesAndProteins();
@@ -1667,17 +1692,6 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
     }//GEN-LAST:event_formComponentResized
-
-    /**
-     * Updates the group selection.
-     *
-     * @param evt
-     */
-    private void groupListKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_groupListKeyReleased
-        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            groupSelectionChanged();
-        }
-    }//GEN-LAST:event_groupListKeyReleased
 
     /**
      * Validate the data using the current settings.
@@ -2260,6 +2274,29 @@ public class StatsPanel extends javax.swing.JPanel {
         groupSelectionLayeredPane.repaint();
 
     }//GEN-LAST:event_groupSelectionLayeredPaneComponentResized
+
+    /**
+     * Update the group selection.
+     *
+     * @param evt
+     */
+    private void groupSelectionTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_groupSelectionTableMouseReleased
+        if (peptideShakerGUI.getIdentification() != null) {
+            groupSelectionChanged();
+        }
+    }//GEN-LAST:event_groupSelectionTableMouseReleased
+
+    /**
+     * Updates the group selection.
+     *
+     * @param evt
+     */
+    private void groupSelectionTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_groupSelectionTableKeyReleased
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            groupSelectionChanged();
+        }
+    }//GEN-LAST:event_groupSelectionTableKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JPanel benefitCostChartPanel;
@@ -2291,11 +2328,11 @@ public class StatsPanel extends javax.swing.JPanel {
     private javax.swing.JLayeredPane fdrsPlotLayeredPane;
     private javax.swing.JButton fnrHelpJButton;
     private javax.swing.JTextField fnrTxt;
-    private javax.swing.JList groupList;
     private javax.swing.JPanel groupListJPanel;
-    private javax.swing.JScrollPane groupListJScrollPane;
     private javax.swing.JButton groupSelectionHelpJButton;
     private javax.swing.JLayeredPane groupSelectionLayeredPane;
+    private javax.swing.JScrollPane groupSelectionScrollPaneScrollPane;
+    private javax.swing.JTable groupSelectionTable;
     private javax.swing.JPanel idSummaryJPanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -2355,12 +2392,17 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     public void displayResults() {
 
-        groupList.setEnabled(true);
+        groupSelectionTable.setEnabled(true);
         confidenceSlider.setEnabled(true);
         fdrSlider1.setEnabled(true);
         fdrSlider2.setEnabled(true);
         sensitivitySlider1.setEnabled(true);
         sensitivitySlider2.setEnabled(true);
+        
+        // empty the group table
+        while (groupSelectionTable.getRowCount() > 0) {
+            ((DefaultTableModel) groupSelectionTable.getModel()).removeRow(0);
+        }
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         PSMaps pSMaps = new PSMaps();
@@ -2368,44 +2410,42 @@ public class StatsPanel extends javax.swing.JPanel {
         ArrayList<String> peptideKeys = pSMaps.getPeptideSpecificMap().getKeys();
         HashMap<Integer, String> psmKeys = pSMaps.getPsmSpecificMap().getKeys();
 
-        int nMaps = 1 + peptideKeys.size() + psmKeys.size();
         int cpt = 0;
-        String[] listContent = new String[nMaps];
-        listContent[cpt] = "Proteins";
+
         modifiedMaps.put(cpt, false);
-        cpt++;
+        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Proteins"});
+        
         if (peptideKeys.size() == 1) {
             peptideMap.put(cpt, peptideKeys.get(0));
-            listContent[cpt] = "Peptides";
             modifiedMaps.put(cpt, false);
-            cpt++;
+            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Peptides"});
         } else {
             for (String pepitdeKey : peptideKeys) {
                 peptideMap.put(cpt, pepitdeKey);
-                if (pepitdeKey.equals("")) {
-                    listContent[cpt] = "Not modified Peptides";
-                } else if (pepitdeKey.equals(PeptideSpecificMap.DUSTBIN)) {
-                    listContent[cpt] = "Other Peptides";
-                } else {
-                    listContent[cpt] = pepitdeKey + " Peptides";
-                }
                 modifiedMaps.put(cpt, false);
-                cpt++;
+                
+                if (pepitdeKey.equals("")) {
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Not modified Peptides"});
+                } else if (pepitdeKey.equals(PeptideSpecificMap.DUSTBIN)) {
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Other Peptides"});
+                } else {
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, pepitdeKey + " Peptides"});
+                }
             }
         }
         for (Integer psmKey : psmKeys.keySet()) {
             psmMap.put(cpt, psmKey);
-            if (psmKeys.size() > 1) {
-                listContent[cpt] = "Charge " + psmKeys.get(psmKey) + " PSMs";
-            } else {
-                listContent[cpt] = "PSMs";
-            }
             modifiedMaps.put(cpt, false);
-            cpt++;
+            if (psmKeys.size() > 1) {
+                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Charge " + psmKeys.get(psmKey) + " PSMs"});
+            } else {
+                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "PSMs"});
+            }
         }
-
-        groupList.setListData(listContent);
-        groupList.setSelectedIndex(0);
+        
+        if (groupSelectionTable.getRowCount() > 0) {
+            groupSelectionTable.setRowSelectionInterval(0, 0);
+        }
 
         groupSelectionChanged();
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -2417,7 +2457,7 @@ public class StatsPanel extends javax.swing.JPanel {
     private void groupSelectionChanged() {
         PSMaps pSMaps = new PSMaps();
         pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-        int selectedGroup = groupList.getSelectedIndex();
+        int selectedGroup = groupSelectionTable.getSelectedRow();
 
         if (selectedGroup == 0) {
             currentTargetDecoyMap = pSMaps.getProteinMap().getTargetDecoyMap();
