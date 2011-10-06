@@ -19,7 +19,6 @@ import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import com.compomics.util.gui.protein.ModificationProfile;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
-import eu.isas.peptideshaker.gui.PtmLocationDialog;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -35,10 +34,9 @@ import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
-import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
@@ -58,14 +56,6 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private int currentPtmRow = -1;
     /**
-     * A reference to the selected peptides score column.
-     */
-    private TableColumn selectedPeptidesScoreColumn;
-    /**
-     * A reference to the related peptides score column.
-     */
-    private TableColumn relatedPeptidesScoreColumn;
-    /**
      * The selected peptides table column header tooltips.
      */
     private ArrayList<String> selectedPeptidesTableToolTips;
@@ -77,6 +67,14 @@ public class PtmPanel extends javax.swing.JPanel {
      * The selected psms table column header tooltips.
      */
     private ArrayList<String> selectedPsmsTableToolTips;
+    /**
+     * The related psms table column header tooltips.
+     */
+    private ArrayList<String> relatedPsmsTableToolTips;
+    /**
+     * PTM table column header tooltips.
+     */
+    private ArrayList<String> ptmTableToolTips;
     /**
      * The spectrum annotator for the first spectrum
      */
@@ -110,10 +108,6 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private boolean relatedSelected = false;
     /**
-     * A map of psm family confidence
-     */
-    private HashMap<String, Double> confidenceMap = new HashMap<String, Double>();
-    /**
      * The current spectrum panel for the upper psm.
      */
     private SpectrumPanel spectrum;
@@ -127,15 +121,18 @@ public class PtmPanel extends javax.swing.JPanel {
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
 
-        selectedPeptidesScoreColumn = peptidesTable.getColumn("Peptide Score");
-        relatedPeptidesScoreColumn = relatedPeptidesTable.getColumn("Peptide Score");
+        peptidesTable.setAutoCreateRowSorter(true);
+        relatedPeptidesTable.setAutoCreateRowSorter(true);
+        selectedPsmsTable.setAutoCreateRowSorter(true);
 
         relatedPeptidesTableJScrollPane.getViewport().setOpaque(false);
         psmsModifiedTableJScrollPane.getViewport().setOpaque(false);
+        psmsRelatedTableJScrollPane.getViewport().setOpaque(false);
         peptidesTableJScrollPane.getViewport().setOpaque(false);
         ptmJScrollPane.getViewport().setOpaque(false);
 
         spectrumTabbedPane.setEnabledAt(0, false);
+        spectrumTabbedPane.setEnabledAt(1, false);
 
         setTableProperties();
 
@@ -150,28 +147,53 @@ public class PtmPanel extends javax.swing.JPanel {
 
         ptmJTable.getColumn(" ").setMaxWidth(35);
         ptmJTable.getColumn(" ").setMinWidth(35);
-        ptmJTable.getColumn("MC").setMaxWidth(35);
-        ptmJTable.getColumn("MC").setMinWidth(35);
+        ptmJTable.getColumn("  ").setMaxWidth(35);
+        ptmJTable.getColumn("  ").setMinWidth(35);
 
-        peptidesTable.getColumn(" ").setMaxWidth(60);
-        peptidesTable.getColumn(" ").setMinWidth(60);
-        relatedPeptidesTable.getColumn(" ").setMaxWidth(60);
-        relatedPeptidesTable.getColumn(" ").setMinWidth(60);
+        peptidesTable.getColumn(" ").setMaxWidth(50);
+        peptidesTable.getColumn(" ").setMinWidth(50);
+        peptidesTable.getColumn("PTM").setMaxWidth(50);
+        peptidesTable.getColumn("PTM").setMinWidth(50);
         peptidesTable.getColumn("  ").setMaxWidth(30);
         peptidesTable.getColumn("  ").setMinWidth(30);
+        peptidesTable.getColumn("PI").setMaxWidth(35);
+        peptidesTable.getColumn("PI").setMinWidth(35);
+        peptidesTable.getColumn("Peptide").setMaxWidth(90);
+        peptidesTable.getColumn("Peptide").setMinWidth(90);
+
+        relatedPeptidesTable.getColumn(" ").setMaxWidth(60);
+        relatedPeptidesTable.getColumn(" ").setMinWidth(60);
+        relatedPeptidesTable.getColumn("PI").setMaxWidth(35);
+        relatedPeptidesTable.getColumn("PI").setMinWidth(35);
         relatedPeptidesTable.getColumn("  ").setMaxWidth(30);
         relatedPeptidesTable.getColumn("  ").setMinWidth(30);
-        peptidesTable.getColumn("PI").setMaxWidth(35);
-        relatedPeptidesTable.getColumn("PI").setMaxWidth(35);
+        relatedPeptidesTable.getColumn("PTM").setMaxWidth(50);
+        relatedPeptidesTable.getColumn("PTM").setMinWidth(50);
+        relatedPeptidesTable.getColumn("Peptide").setMaxWidth(90);
+        relatedPeptidesTable.getColumn("Peptide").setMinWidth(90);
 
-        peptidesTable.getColumn("Peptide Confidence").setMaxWidth(90);
-        peptidesTable.getColumn("Peptide Confidence").setMinWidth(90);
-        relatedPeptidesTable.getColumn("Peptide Confidence").setMaxWidth(90);
-        relatedPeptidesTable.getColumn("Peptide Confidence").setMinWidth(90);
+        selectedPsmsTable.getColumn(" ").setMaxWidth(50);
+        selectedPsmsTable.getColumn(" ").setMinWidth(50);
+        selectedPsmsTable.getColumn("PTM").setMaxWidth(50);
+        selectedPsmsTable.getColumn("PTM").setMinWidth(50);
+        selectedPsmsTable.getColumn("Charge").setMaxWidth(90);
+        selectedPsmsTable.getColumn("Charge").setMinWidth(90);
+        selectedPsmsTable.getColumn("  ").setMaxWidth(30);
+        selectedPsmsTable.getColumn("  ").setMinWidth(30);
+
+        relatedPsmsTable.getColumn(" ").setMaxWidth(50);
+        relatedPsmsTable.getColumn(" ").setMinWidth(50);
+        relatedPsmsTable.getColumn("PTM").setMaxWidth(50);
+        relatedPsmsTable.getColumn("PTM").setMinWidth(50);
+        relatedPsmsTable.getColumn("Charge").setMaxWidth(90);
+        relatedPsmsTable.getColumn("Charge").setMinWidth(90);
+        relatedPsmsTable.getColumn("  ").setMaxWidth(30);
+        relatedPsmsTable.getColumn("  ").setMinWidth(30);
 
         peptidesTable.getTableHeader().setReorderingAllowed(false);
         relatedPeptidesTable.getTableHeader().setReorderingAllowed(false);
-        selectedPsmTable.getTableHeader().setReorderingAllowed(false);
+        selectedPsmsTable.getTableHeader().setReorderingAllowed(false);
+        relatedPsmsTable.getTableHeader().setReorderingAllowed(false);
 
         // set up the protein inference color map
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
@@ -200,76 +222,85 @@ public class PtmPanel extends javax.swing.JPanel {
 
         // set up the PTM confidence tooltip map
         HashMap<Integer, String> ptmConfidenceTooltipMap = new HashMap<Integer, String>();
+        ptmConfidenceTooltipMap.put(-1, "(No PTMs)");
         ptmConfidenceTooltipMap.put(PtmScoring.RANDOM, "Random Assignment");
         ptmConfidenceTooltipMap.put(PtmScoring.DOUBTFUL, "Doubtful Assignment");
         ptmConfidenceTooltipMap.put(PtmScoring.CONFIDENT, "Confident Assignment");
         ptmConfidenceTooltipMap.put(PtmScoring.VERY_CONFIDENT, "Very Confident Assignment");
 
-        peptidesTable.getColumn("PTM confidence").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
-        relatedPeptidesTable.getColumn("PTM confidence").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
-        selectedPsmTable.getColumn("PTM confidence").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
+        peptidesTable.getColumn("PTM").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
+        relatedPeptidesTable.getColumn("PTM").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
+        selectedPsmsTable.getColumn("PTM").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
+        relatedPsmsTable.getColumn("PTM").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
 
-        peptidesTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
-        peptidesTable.getColumn("Peptide Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Peptide Confidence").getCellRenderer()).showNumberAndChart(
+        peptidesTable.getColumn("Peptide").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Peptide").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
         peptidesTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
 
-        relatedPeptidesTable.getColumn("Protein(s)").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
-        relatedPeptidesTable.getColumn("Peptide Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Peptide Confidence").getCellRenderer()).showNumberAndChart(
+        relatedPeptidesTable.getColumn("Peptide").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Peptide").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
         relatedPeptidesTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
 
-        selectedPsmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        selectedPsmsTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) selectedPsmsTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        selectedPsmsTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
+                "Validated", "Not Validated"));
 
-        try {
-            peptidesTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-            ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Score").getCellRenderer()).showNumberAndChart(
-                    true, peptideShakerGUI.getLabelWidth(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-            relatedPeptidesTable.getColumn("Score").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-            ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Score").getCellRenderer()).showNumberAndChart(
-                    true, peptideShakerGUI.getLabelWidth(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-        } catch (IllegalArgumentException e) {
-            // ignore error
-        }
+        relatedPsmsTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) relatedPsmsTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        relatedPsmsTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/accept.png")),
+                new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
+                "Validated", "Not Validated"));
 
         // ptm color coding
-        ptmJTable.getColumn("MC").setCellRenderer(new JSparklinesColorTableCellRenderer());
+        ptmJTable.getColumn("  ").setCellRenderer(new JSparklinesColorTableCellRenderer());
 
         // set up the table header tooltips
         selectedPeptidesTableToolTips = new ArrayList<String>();
         selectedPeptidesTableToolTips.add(null);
-        selectedPeptidesTableToolTips.add("Mapping Protein(s)");
-        selectedPeptidesTableToolTips.add("Protein Inference Class");
+        selectedPeptidesTableToolTips.add("Peptide Inference Class");
         selectedPeptidesTableToolTips.add("Peptide Sequence");
         selectedPeptidesTableToolTips.add("PTM Location Confidence");
-        selectedPeptidesTableToolTips.add("Peptide Score");
         selectedPeptidesTableToolTips.add("Peptide Confidence");
-        selectedPeptidesTableToolTips.add("Validated");
+        selectedPeptidesTableToolTips.add("Peptide Validated");
 
         relatedPeptidesTableToolTips = new ArrayList<String>();
         relatedPeptidesTableToolTips.add(null);
-        relatedPeptidesTableToolTips.add("Mapping Protein(s)");
-        relatedPeptidesTableToolTips.add("Protein Inference Class");
+        relatedPeptidesTableToolTips.add("Peptide Inference Class");
         relatedPeptidesTableToolTips.add("Peptide Sequence");
         relatedPeptidesTableToolTips.add("PTM Location Confidence");
-        relatedPeptidesTableToolTips.add("Peptide Score");
         relatedPeptidesTableToolTips.add("Peptide Confidence");
-        relatedPeptidesTableToolTips.add("Validated");
+        relatedPeptidesTableToolTips.add("Peptide Validated");
 
         selectedPsmsTableToolTips = new ArrayList<String>();
         selectedPsmsTableToolTips.add(null);
         selectedPsmsTableToolTips.add("Peptide Sequence");
         selectedPsmsTableToolTips.add("PTM Location Confidence");
         selectedPsmsTableToolTips.add("Precursor Charge");
+        selectedPsmsTableToolTips.add("PSM Validated");
+
+        relatedPsmsTableToolTips = new ArrayList<String>();
+        relatedPsmsTableToolTips.add(null);
+        relatedPsmsTableToolTips.add("Peptide Sequence");
+        relatedPsmsTableToolTips.add("PTM Location Confidence");
+        relatedPsmsTableToolTips.add("Precursor Charge");
+        relatedPsmsTableToolTips.add("PSM Validated");
+        
+        ptmTableToolTips = new ArrayList<String>();
+        ptmTableToolTips.add(null);
+        ptmTableToolTips.add("PTM Color");
+        ptmTableToolTips.add("PTM Name");
     }
 
     /** This method is called from within the constructor to
@@ -292,7 +323,7 @@ public class PtmPanel extends javax.swing.JPanel {
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        tip = (String) selectedPsmsTableToolTips.get(realIndex);
+                        tip = (String) ptmTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
@@ -336,10 +367,20 @@ public class PtmPanel extends javax.swing.JPanel {
         };
         modificationProfileRelatedPeptideJPanel = new javax.swing.JPanel();
         psmSpectraSplitPane = new javax.swing.JSplitPane();
+        spectrumAndFragmentIonPanel = new javax.swing.JPanel();
+        spectrumTabbedPane = new javax.swing.JTabbedPane();
+        psmModProfileJPanel = new javax.swing.JPanel();
+        fragmentIonsJPanel = new javax.swing.JPanel();
+        spectrumJPanel = new javax.swing.JPanel();
+        spectrumJToolBar = new javax.swing.JToolBar();
+        spectrumAnnotationMenuPanel = new javax.swing.JPanel();
+        spectrumChartJPanel = new javax.swing.JPanel();
+        intensitySlider = new javax.swing.JSlider();
+        accuracySlider = new javax.swing.JSlider();
         psmSplitPane = new javax.swing.JSplitPane();
-        jPanel7 = new javax.swing.JPanel();
+        modPsmsPanel = new javax.swing.JPanel();
         psmsModifiedTableJScrollPane = new javax.swing.JScrollPane();
-        selectedPsmTable = new JTable() {
+        selectedPsmsTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
                     public String getToolTipText(MouseEvent e) {
@@ -353,16 +394,22 @@ public class PtmPanel extends javax.swing.JPanel {
                 };
             }
         };
-        modificationProfilePsmPanel = new javax.swing.JPanel();
-        spectrumAndFragmentIonPanel = new javax.swing.JPanel();
-        spectrumTabbedPane = new javax.swing.JTabbedPane();
-        fragmentIonsJPanel = new javax.swing.JPanel();
-        spectrumJPanel = new javax.swing.JPanel();
-        spectrumJToolBar = new javax.swing.JToolBar();
-        spectrumAnnotationMenuPanel = new javax.swing.JPanel();
-        spectrumChartJPanel = new javax.swing.JPanel();
-        intensitySlider = new javax.swing.JSlider();
-        accuracySlider = new javax.swing.JSlider();
+        relatedPsmsPanel = new javax.swing.JPanel();
+        psmsRelatedTableJScrollPane = new javax.swing.JScrollPane();
+        relatedPsmsTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        String tip = null;
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        tip = (String) selectedPsmsTableToolTips.get(realIndex);
+                        return tip;
+                    }
+                };
+            }
+        };
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -383,7 +430,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "MC", "PTM"
+                " ", "  ", "PTM"
             }
         ) {
             Class[] types = new Class [] {
@@ -447,7 +494,7 @@ public class PtmPanel extends javax.swing.JPanel {
         peptideTablesJSplitPane.setResizeWeight(0.5);
         peptideTablesJSplitPane.setOpaque(false);
 
-        selectedPeptidesJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Peptides"));
+        selectedPeptidesJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Modified Peptides"));
         selectedPeptidesJPanel.setOpaque(false);
 
         selectedPeptidesJSplitPane.setBorder(null);
@@ -458,8 +505,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         peptidesTableJScrollPane.setOpaque(false);
 
-        peptidesTable.setModel(new PeptideTable()
-        );
+        peptidesTable.setModel(new PeptideTable());
         peptidesTable.setOpaque(false);
         peptidesTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         peptidesTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -578,7 +624,7 @@ public class PtmPanel extends javax.swing.JPanel {
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(peptideTablesJSplitPane)
+            .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
@@ -587,73 +633,6 @@ public class PtmPanel extends javax.swing.JPanel {
         psmSpectraSplitPane.setDividerSize(0);
         psmSpectraSplitPane.setResizeWeight(0.5);
         psmSpectraSplitPane.setOpaque(false);
-
-        psmSplitPane.setBorder(javax.swing.BorderFactory.createTitledBorder("PSM Selection"));
-        psmSplitPane.setDividerLocation(175);
-        psmSplitPane.setDividerSize(0);
-        psmSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
-        psmSplitPane.setResizeWeight(0.5);
-        psmSplitPane.setOpaque(false);
-
-        jPanel7.setOpaque(false);
-
-        psmsModifiedTableJScrollPane.setOpaque(false);
-
-        selectedPsmTable.setModel(new SelectedPsmsTable());
-        selectedPsmTable.setOpaque(false);
-        selectedPsmTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        selectedPsmTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                selectedPsmTableMouseReleased(evt);
-            }
-        });
-        selectedPsmTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                selectedPsmTableMouseMoved(evt);
-            }
-        });
-        selectedPsmTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                selectedPsmTableKeyReleased(evt);
-            }
-        });
-        psmsModifiedTableJScrollPane.setViewportView(selectedPsmTable);
-
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 133, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        psmSplitPane.setLeftComponent(jPanel7);
-
-        modificationProfilePsmPanel.setOpaque(false);
-
-        javax.swing.GroupLayout modificationProfilePsmPanelLayout = new javax.swing.GroupLayout(modificationProfilePsmPanel);
-        modificationProfilePsmPanel.setLayout(modificationProfilePsmPanelLayout);
-        modificationProfilePsmPanelLayout.setHorizontalGroup(
-            modificationProfilePsmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 488, Short.MAX_VALUE)
-        );
-        modificationProfilePsmPanelLayout.setVerticalGroup(
-            modificationProfilePsmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 263, Short.MAX_VALUE)
-        );
-
-        psmSplitPane.setRightComponent(modificationProfilePsmPanel);
-
-        psmSpectraSplitPane.setLeftComponent(psmSplitPane);
 
         spectrumAndFragmentIonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum & Fragment Ions"));
         spectrumAndFragmentIonPanel.setOpaque(false);
@@ -666,13 +645,28 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumTabbedPane.setBackground(new java.awt.Color(255, 255, 255));
         spectrumTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
 
+        psmModProfileJPanel.setOpaque(false);
+
+        javax.swing.GroupLayout psmModProfileJPanelLayout = new javax.swing.GroupLayout(psmModProfileJPanel);
+        psmModProfileJPanel.setLayout(psmModProfileJPanelLayout);
+        psmModProfileJPanelLayout.setHorizontalGroup(
+            psmModProfileJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 778, Short.MAX_VALUE)
+        );
+        psmModProfileJPanelLayout.setVerticalGroup(
+            psmModProfileJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 368, Short.MAX_VALUE)
+        );
+
+        spectrumTabbedPane.addTab("Profile", psmModProfileJPanel);
+
         fragmentIonsJPanel.setOpaque(false);
 
         javax.swing.GroupLayout fragmentIonsJPanelLayout = new javax.swing.GroupLayout(fragmentIonsJPanel);
         fragmentIonsJPanel.setLayout(fragmentIonsJPanelLayout);
         fragmentIonsJPanelLayout.setHorizontalGroup(
             fragmentIonsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 514, Short.MAX_VALUE)
+            .addGap(0, 778, Short.MAX_VALUE)
         );
         fragmentIonsJPanelLayout.setVerticalGroup(
             fragmentIonsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -701,9 +695,9 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 494, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 758, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 514, Short.MAX_VALUE)
+            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
         );
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -715,7 +709,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         spectrumTabbedPane.addTab("Spectrum", spectrumJPanel);
 
-        spectrumTabbedPane.setSelectedIndex(1);
+        spectrumTabbedPane.setSelectedIndex(2);
 
         intensitySlider.setOrientation(javax.swing.JSlider.VERTICAL);
         intensitySlider.setPaintTicks(true);
@@ -755,7 +749,7 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumAndFragmentIonPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 519, Short.MAX_VALUE)
+                .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 783, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(intensitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -768,9 +762,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumAndFragmentIonPanelLayout.createSequentialGroup()
                         .addGap(25, 25, 25)
-                        .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                        .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
+                        .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
                         .addGap(59, 59, 59))
                     .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
                         .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
@@ -778,6 +772,103 @@ public class PtmPanel extends javax.swing.JPanel {
         );
 
         psmSpectraSplitPane.setRightComponent(spectrumAndFragmentIonPanel);
+
+        psmSplitPane.setBorder(null);
+        psmSplitPane.setDividerSize(0);
+        psmSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        psmSplitPane.setOpaque(false);
+
+        modPsmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide-Spectrum Matches - Modified Peptide"));
+        modPsmsPanel.setOpaque(false);
+
+        psmsModifiedTableJScrollPane.setOpaque(false);
+
+        selectedPsmsTable.setModel(new SelectedPsmsTable());
+        selectedPsmsTable.setOpaque(false);
+        selectedPsmsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        selectedPsmsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                selectedPsmsTableMouseReleased(evt);
+            }
+        });
+        selectedPsmsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                selectedPsmsTableMouseMoved(evt);
+            }
+        });
+        selectedPsmsTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                selectedPsmsTableKeyReleased(evt);
+            }
+        });
+        psmsModifiedTableJScrollPane.setViewportView(selectedPsmsTable);
+
+        javax.swing.GroupLayout modPsmsPanelLayout = new javax.swing.GroupLayout(modPsmsPanel);
+        modPsmsPanel.setLayout(modPsmsPanelLayout);
+        modPsmsPanelLayout.setHorizontalGroup(
+            modPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(modPsmsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        modPsmsPanelLayout.setVerticalGroup(
+            modPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, modPsmsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        psmSplitPane.setTopComponent(modPsmsPanel);
+
+        relatedPsmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide-Spectrum Matches - Releated Peptide"));
+        relatedPsmsPanel.setOpaque(false);
+
+        psmsRelatedTableJScrollPane.setOpaque(false);
+
+        relatedPsmsTable.setModel(new RelatedPsmsTable());
+        relatedPsmsTable.setOpaque(false);
+        relatedPsmsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        relatedPsmsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                relatedPsmsTableMouseReleased(evt);
+            }
+        });
+        relatedPsmsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                relatedPsmsTableMouseMoved(evt);
+            }
+        });
+        relatedPsmsTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                relatedPsmsTableKeyReleased(evt);
+            }
+        });
+        psmsRelatedTableJScrollPane.setViewportView(relatedPsmsTable);
+
+        javax.swing.GroupLayout relatedPsmsPanelLayout = new javax.swing.GroupLayout(relatedPsmsPanel);
+        relatedPsmsPanel.setLayout(relatedPsmsPanelLayout);
+        relatedPsmsPanelLayout.setHorizontalGroup(
+            relatedPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 224, Short.MAX_VALUE)
+            .addGroup(relatedPsmsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(psmsRelatedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        relatedPsmsPanelLayout.setVerticalGroup(
+            relatedPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 221, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, relatedPsmsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(psmsRelatedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        psmSplitPane.setRightComponent(relatedPsmsPanel);
+
+        psmSpectraSplitPane.setLeftComponent(psmSplitPane);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -809,7 +900,8 @@ public class PtmPanel extends javax.swing.JPanel {
             peptidesTableMouseReleased(null);
 
             try {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(displayedPeptides.get(peptidesTable.getSelectedRow()));
+                PeptideMatch peptideMatch = identification.getPeptideMatch(
+                        displayedPeptides.get((Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1));
                 updateModificationProfile(peptideMatch, true);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -825,7 +917,8 @@ public class PtmPanel extends javax.swing.JPanel {
             relatedPeptidesTableMouseReleased(null);
 
             try {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(relatedPeptides.get(relatedPeptidesTable.getSelectedRow()));
+                PeptideMatch peptideMatch = identification.getPeptideMatch(
+                        relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(relatedPeptidesTable.getSelectedRow(), 0) - 1));
                 updateModificationProfile(peptideMatch, false);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -838,17 +931,17 @@ public class PtmPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void selectedPsmTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_selectedPsmTableKeyReleased
+    private void selectedPsmsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_selectedPsmsTableKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            updateSpectra();
+            try {
+                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
+                updateSpectrum(spectrumKey);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-    }//GEN-LAST:event_selectedPsmTableKeyReleased
+    }//GEN-LAST:event_selectedPsmsTableKeyReleased
 
-    /**
-     * Update the spectra.
-     *
-     * @param evt
-     */
     /**
      * Resize the panels after frame resizing.
      *
@@ -859,11 +952,11 @@ public class PtmPanel extends javax.swing.JPanel {
         // update the splitters
         peptideTablesJSplitPane.setDividerLocation(peptideTablesJSplitPane.getHeight() / 2);
         psmSpectraSplitPane.setDividerLocation(psmSpectraSplitPane.getWidth() / 2);
+        psmSplitPane.setDividerLocation(psmSplitPane.getHeight() / 2);
 
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
-                psmSplitPane.setDividerLocation(psmSplitPane.getHeight() / 2);
                 selectedPeptidesJSplitPane.setDividerLocation(selectedPeptidesJSplitPane.getWidth() / 2);
                 updateUI();
             }
@@ -877,46 +970,46 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void peptidesTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesTableMouseReleased
 
-        relatedSelected = false;
-        updateRelatedPeptidesTable();
-        updateSelectedPsmTable();
-
         if (evt != null) {
 
             int row = peptidesTable.rowAtPoint(evt.getPoint());
             int column = peptidesTable.columnAtPoint(evt.getPoint());
 
+            relatedSelected = false;
+            updateRelatedPeptidesTable();
+            updateSelectedPsmTable();
+            updateRelatedPsmTable(false);
+
             if (row != -1) {
 
+                peptidesTable.setRowSelectionInterval(row, row);
+
                 try {
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(displayedPeptides.get(peptidesTable.getSelectedRow()));
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(displayedPeptides.get((Integer) peptidesTable.getValueAt(row, 0) - 1));
                     updateModificationProfile(peptideMatch, true);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                if (column == 1) {
-
-                    // open protein links in web browser
-                    if (evt.getButton() == MouseEvent.BUTTON1
-                            && ((String) peptidesTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
-                        peptideShakerGUI.openProteinLinks((String) peptidesTable.getValueAt(row, column));
-                    }
-                }
                 // open the protein inference at the petide level dialog
-                if (column == 2) {
+                if (column == peptidesTable.getColumn("PI").getModelIndex()) {
                     try {
-                        String peptideKey = getSelectedPeptide();
+                        String peptideKey = getSelectedPeptide(false);
                         new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                     }
                 }
-                if (column == 4) {
-                    new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(), getSelectedModification(), 0);
-                }
+//                else if (column == peptidesTable.getColumn("PTM").getModelIndex()) {
+//                    new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(false), getSelectedModification(), 0);
+//                }
             }
         }
+
+        relatedSelected = false;
+        updateRelatedPeptidesTable();
+        updateSelectedPsmTable();
+        updateRelatedPsmTable(false);
     }//GEN-LAST:event_peptidesTableMouseReleased
 
     /**
@@ -936,52 +1029,60 @@ public class PtmPanel extends javax.swing.JPanel {
             if (row != -1) {
 
                 try {
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(relatedPeptides.get(relatedPeptidesTable.getSelectedRow()));
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(
+                            relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(relatedPeptidesTable.getSelectedRow(), 0) - 1));
                     updateModificationProfile(peptideMatch, false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                if (column == 1) {
-
-                    // open protein links in web browser
-                    if (evt.getButton() == MouseEvent.BUTTON1
-                            && ((String) relatedPeptidesTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
-                        peptideShakerGUI.openProteinLinks((String) relatedPeptidesTable.getValueAt(row, column));
-                    }
-                }
                 // open the protein inference at the petide level dialog
-                if (column == 2) {
+                if (column == relatedPeptidesTable.getColumn("PI").getModelIndex()) {
                     try {
-                        String peptideKey = getSelectedPeptide();
+                        String peptideKey = getSelectedPeptide(true);
                         new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, null);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
                     }
                 }
-                if (column == 4) {
-                    new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(), getSelectedModification(), 0);
-                }
+//                else if (column == relatedPeptidesTable.getColumn("PTM").getModelIndex()) {
+//                    new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(true), getSelectedModification(), 0);
+//                }
             }
         }
+
+        updateRelatedPsmTable(true);
     }//GEN-LAST:event_relatedPeptidesTableMouseReleased
 
     /**
-     * Update the spectra.
+     * Update the spectrum.
      *
      * @param evt
      */
-    private void selectedPsmTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectedPsmTableMouseReleased
-        updateSpectra();
-        if (evt != null) {
+    private void selectedPsmsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectedPsmsTableMouseReleased
 
-            int row = selectedPsmTable.rowAtPoint(evt.getPoint());
-            int column = selectedPsmTable.columnAtPoint(evt.getPoint());
-            if (column == 2) {
-                new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(), getSelectedModification(), row);
+        if (selectedPsmsTable.getSelectedRow() != -1) {
+
+            try {
+                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
+                updateSpectrum(spectrumKey);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+
+            if (relatedPsmsTable.getSelectedRow() != -1) {
+                relatedPsmsTable.removeRowSelectionInterval(relatedPsmsTable.getSelectedRow(), relatedPsmsTable.getSelectedRow());
+            }
+
+//        if (evt != null) {
+//            int row = selectedPsmTable.rowAtPoint(evt.getPoint());
+//            int column = selectedPsmTable.columnAtPoint(evt.getPoint());
+//            if (column == selectedPsmTable.getColumn("PTM").getModelIndex()) {
+//                new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(false), getSelectedModification(), row);
+//            }
+//        }
         }
-    }//GEN-LAST:event_selectedPsmTableMouseReleased
+    }//GEN-LAST:event_selectedPsmsTableMouseReleased
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an
@@ -995,33 +1096,22 @@ public class PtmPanel extends javax.swing.JPanel {
         int column = peptidesTable.columnAtPoint(evt.getPoint());
 
         if (peptidesTable.getValueAt(row, column) != null) {
-            if (column == peptidesTable.getColumn("Protein(s)").getModelIndex()) {
-
-                String tempValue = (String) peptidesTable.getValueAt(row, column);
-
-                if (tempValue.lastIndexOf("a href=") != -1) {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-                } else {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                }
-
-                peptidesTable.setToolTipText(null);
-
-            } else if (column == peptidesTable.getColumn("Sequence").getModelIndex()) {
+            if (column == peptidesTable.getColumn("Sequence").getModelIndex()) {
 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                 try {
                     peptidesTable.setToolTipText(
-                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide()));
+                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(displayedPeptides.get(
+                            (Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1)).getTheoreticPeptide()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
             } else if (column == peptidesTable.getColumn("PI").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-            } else if (column == peptidesTable.getColumn("PTM confidence").getModelIndex()) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+//            } else if (column == peptidesTable.getColumn("PTM").getModelIndex()) {
+//                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 peptidesTable.setToolTipText(null);
@@ -1061,33 +1151,23 @@ public class PtmPanel extends javax.swing.JPanel {
         int column = relatedPeptidesTable.columnAtPoint(evt.getPoint());
 
         if (relatedPeptidesTable.getValueAt(row, column) != null) {
-            if (column == relatedPeptidesTable.getColumn("Protein(s)").getModelIndex()) {
 
-                String tempValue = (String) relatedPeptidesTable.getValueAt(row, column);
-
-                if (tempValue.lastIndexOf("a href=") != -1) {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-                } else {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                }
-
-                relatedPeptidesTable.setToolTipText(null);
-
-            } else if (column == relatedPeptidesTable.getColumn("Sequence").getModelIndex()) {
+            if (column == relatedPeptidesTable.getColumn("Sequence").getModelIndex()) {
 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                 try {
                     relatedPeptidesTable.setToolTipText(
-                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide()));
+                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(
+                            relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(relatedPeptidesTable.getSelectedRow(), 0) - 1)).getTheoreticPeptide()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
             } else if (column == relatedPeptidesTable.getColumn("PI").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-            } else if (column == relatedPeptidesTable.getColumn("PTM confidence").getModelIndex()) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+//            } else if (column == relatedPeptidesTable.getColumn("PTM").getModelIndex()) {
+//                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 relatedPeptidesTable.setToolTipText(null);
@@ -1171,7 +1251,7 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
      */
 private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumAndFragmentIonPanelMouseWheelMoved
 
-    // @TODO: figure out why the strange special cases are needed... if not included the slider gets stuck at the given values
+    // @TODO: figure out why the strange special cases are needed... if not included the slider gets stuck at the given values!
 
     if (evt.isAltDown()) {
         if (evt.getWheelRotation() > 0) { // Down
@@ -1231,34 +1311,33 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * 
      * @param evt 
      */
-    private void selectedPsmTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectedPsmTableMouseMoved
+    private void selectedPsmsTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_selectedPsmsTableMouseMoved
 
-        int row = selectedPsmTable.rowAtPoint(evt.getPoint());
-        int column = selectedPsmTable.columnAtPoint(evt.getPoint());
+        int row = selectedPsmsTable.rowAtPoint(evt.getPoint());
+        int column = selectedPsmsTable.columnAtPoint(evt.getPoint());
 
-        if (selectedPsmTable.getValueAt(row, column) != null) {
+        if (selectedPsmsTable.getValueAt(row, column) != null) {
 
-            if (column == selectedPsmTable.getColumn("Sequence").getModelIndex()) {
+            if (column == selectedPsmsTable.getColumn("Sequence").getModelIndex()) {
 
                 try {
-                    String spectrumKey = identification.getPeptideMatch(getSelectedPeptide()).getSpectrumMatches().get(row);
+                    String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                    selectedPsmTable.setToolTipText(
+                    selectedPsmsTable.setToolTipText(
                             peptideShakerGUI.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-            } else if (column == selectedPsmTable.getColumn("PTM confidence").getModelIndex()) {
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+//            } else if (column == selectedPsmTable.getColumn("PTM").getModelIndex()) {
+//                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
             } else {
-                selectedPsmTable.setToolTipText(null);
+                selectedPsmsTable.setToolTipText(null);
             }
-
         } else {
-            selectedPsmTable.setToolTipText(null);
+            selectedPsmsTable.setToolTipText(null);
         }
-    }//GEN-LAST:event_selectedPsmTableMouseMoved
+    }//GEN-LAST:event_selectedPsmsTableMouseMoved
 
     /**
      * Update the fragment ion annotation accuracy.
@@ -1281,31 +1360,113 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private void accuracySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_accuracySliderMouseWheelMoved
         spectrumAndFragmentIonPanelMouseWheelMoved(evt);
     }//GEN-LAST:event_accuracySliderMouseWheelMoved
+
+    /**
+     * Update the spectrum.
+     *
+     * @param evt
+     */
+    private void relatedPsmsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPsmsTableMouseReleased
+
+        if (relatedPsmsTable.getSelectedRow() != -1) {
+
+            try {
+                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
+                updateSpectrum(spectrumKey);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            if (selectedPsmsTable.getSelectedRow() != -1) {
+                selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
+            }
+
+//        if (evt != null) {
+//            int row = relatedPsmsTable.rowAtPoint(evt.getPoint());
+//            int column = relatedPsmsTable.columnAtPoint(evt.getPoint());
+//            if (column == relatedPsmsTable.getColumn("PTM").getModelIndex()) {
+//                new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(true), getSelectedModification(), row);
+//            }
+//        }
+        }
+    }//GEN-LAST:event_relatedPsmsTableMouseReleased
+
+    /**
+     * See if we ought to show a tooltip with modification details for the 
+     * sequence column.
+     * 
+     * @param evt 
+     */
+    private void relatedPsmsTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPsmsTableMouseMoved
+        int row = relatedPsmsTable.rowAtPoint(evt.getPoint());
+        int column = relatedPsmsTable.columnAtPoint(evt.getPoint());
+
+        if (relatedPsmsTable.getValueAt(row, column) != null) {
+
+            if (column == relatedPsmsTable.getColumn("Sequence").getModelIndex()) {
+
+                try {
+                    String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                    relatedPsmsTable.setToolTipText(
+                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+//            } else if (column == relatedPsmsTable.getColumn("PTM").getModelIndex()) {
+//                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else {
+                relatedPsmsTable.setToolTipText(null);
+            }
+        } else {
+            relatedPsmsTable.setToolTipText(null);
+        }
+    }//GEN-LAST:event_relatedPsmsTableMouseMoved
+
+    /**
+     * Update the spectra.
+     *
+     * @param evt
+     */
+    private void relatedPsmsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_relatedPsmsTableKeyReleased
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            try {
+                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
+                updateSpectrum(spectrumKey);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_relatedPsmsTableKeyReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel fragmentIonsJPanel;
     private javax.swing.JSlider intensitySlider;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JPanel modificationProfilePsmPanel;
+    private javax.swing.JPanel modPsmsPanel;
     private javax.swing.JPanel modificationProfileRelatedPeptideJPanel;
     private javax.swing.JPanel modificationProfileSelectedPeptideJPanel;
     private javax.swing.JSplitPane peptideTablesJSplitPane;
     private javax.swing.JTable peptidesTable;
     private javax.swing.JScrollPane peptidesTableJScrollPane;
+    private javax.swing.JPanel psmModProfileJPanel;
     private javax.swing.JSplitPane psmSpectraSplitPane;
     private javax.swing.JSplitPane psmSplitPane;
     private javax.swing.JScrollPane psmsModifiedTableJScrollPane;
+    private javax.swing.JScrollPane psmsRelatedTableJScrollPane;
     private javax.swing.JScrollPane ptmJScrollPane;
     private javax.swing.JTable ptmJTable;
     private javax.swing.JPanel relatedPeptidesJPanel;
     private javax.swing.JSplitPane relatedPeptidesJSplitPane;
     private javax.swing.JTable relatedPeptidesTable;
     private javax.swing.JScrollPane relatedPeptidesTableJScrollPane;
+    private javax.swing.JPanel relatedPsmsPanel;
+    private javax.swing.JTable relatedPsmsTable;
     private javax.swing.JPanel selectedPeptidesJPanel;
     private javax.swing.JSplitPane selectedPeptidesJSplitPane;
-    private javax.swing.JTable selectedPsmTable;
+    private javax.swing.JTable selectedPsmsTable;
     private javax.swing.JPanel spectrumAndFragmentIonPanel;
     private javax.swing.JPanel spectrumAnnotationMenuPanel;
     private javax.swing.JPanel spectrumChartJPanel;
@@ -1373,18 +1534,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     public void showSparkLines(boolean showSparkLines) {
 
-        ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Peptide Confidence").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Peptide Confidence").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesBarChartTableCellRenderer) selectedPsmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
-
-        // @TODO: found out why the adding of the sparklines does not work...
-        
-        try {
-//            ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Peptide Score").getCellRenderer()).showNumbers(!showSparkLines);
-//            ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Peptide Score").getCellRenderer()).showNumbers(!showSparkLines);
-        } catch (IllegalArgumentException e) {
-            // ignore error
-        }
+        ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Peptide").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Peptide").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) selectedPsmsTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
 
         peptidesTable.revalidate();
         peptidesTable.repaint();
@@ -1392,8 +1544,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         relatedPeptidesTable.revalidate();
         relatedPeptidesTable.repaint();
 
-        selectedPsmTable.revalidate();
-        selectedPsmTable.repaint();
+        selectedPsmsTable.revalidate();
+        selectedPsmsTable.repaint();
     }
 
     /**
@@ -1491,7 +1643,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             ptmJTable.scrollRectToVisible(ptmJTable.getCellRect(0, 0, false));
             updatePeptideTable();
         }
-        
+
         // update the slider tooltips
         double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
         accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
@@ -1504,10 +1656,15 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * Updates the peptide table.
      */
     public void updatePeptideTable() {
-
-        // @TODO: replace the waiting cursor with a progress bar dialog?
+        
+        // @TODO: replace the waiting cursor with a progress bar?
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        
+        // clear the spectrum
+        spectrumChartJPanel.removeAll();
+        spectrumChartJPanel.revalidate();
+        spectrumChartJPanel.repaint();
 
         try {
             HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<Double, ArrayList<String>>();
@@ -1540,15 +1697,15 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 displayedPeptides.addAll(scoreToPeptideMap.get(score));
             }
 
-            peptidesTable.revalidate();
-            peptidesTable.repaint();
+            ((DefaultTableModel) peptidesTable.getModel()).fireTableDataChanged();
 
             if (peptidesTable.getRowCount() > 0) {
                 peptidesTable.setRowSelectionInterval(0, 0);
                 peptidesTable.scrollRectToVisible(peptidesTable.getCellRect(0, 0, false));
 
                 try {
-                    peptideMatch = identification.getPeptideMatch(displayedPeptides.get(peptidesTable.getSelectedRow()));
+                    peptideMatch = identification.getPeptideMatch(displayedPeptides.get(
+                            (Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1));
                     updateModificationProfile(peptideMatch, true);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1565,13 +1722,20 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 modificationProfileRelatedPeptideJPanel.repaint();
 
                 relatedPeptides = new ArrayList<String>();
-                relatedPeptidesTable.revalidate();
-                relatedPeptidesTable.repaint();
+                ((DefaultTableModel) relatedPeptidesTable.getModel()).fireTableDataChanged();
             }
 
+            ((TitledBorder) selectedPeptidesJPanel.getBorder()).setTitle("Modified Peptides (" + peptidesTable.getRowCount() + ")");
+            selectedPeptidesJPanel.repaint();
+            
+            ((TitledBorder) relatedPeptidesJPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
+            relatedPeptidesJPanel.repaint();
+
             updateSelectedPsmTable();
+            updateRelatedPsmTable(false);
 
         } catch (Exception e) {
+            System.out.println("Exception when updating selected peptides table...");
             peptideShakerGUI.catchException(e);
         }
 
@@ -1584,10 +1748,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     public void updateRelatedPeptidesTable() {
 
         HashMap<Double, ArrayList<String>> scoreToKeyMap = new HashMap<Double, ArrayList<String>>();
-        String peptideKey = displayedPeptides.get(peptidesTable.getSelectedRow());
+        String peptideKey = displayedPeptides.get((Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1);
         String currentSequence, referenceSequence = Peptide.getSequence(peptideKey);
         PSParameter probabilities = new PSParameter();
-        double p;
 
         for (String newKey : identification.getPeptideIdentification()) {
 
@@ -1598,7 +1761,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 if (!newKey.equals(peptideKey)) {
 
                     probabilities = (PSParameter) identification.getMatchParameter(newKey, probabilities);
-                    p = probabilities.getPeptideProbability();
+                    double p = probabilities.getPeptideProbability();
 
                     if (!scoreToKeyMap.containsKey(p)) {
                         scoreToKeyMap.put(p, new ArrayList<String>());
@@ -1617,23 +1780,24 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             relatedPeptides.addAll(scoreToKeyMap.get(score));
         }
 
+        ((DefaultTableModel) relatedPeptidesTable.getModel()).fireTableDataChanged();
+
         if (relatedPeptides.size() > 0) {
             relatedPeptidesTable.setRowSelectionInterval(0, 0);
             relatedPeptidesTable.scrollRectToVisible(relatedPeptidesTable.getCellRect(0, 0, false));
-            peptideTablesJSplitPane.setDividerLocation(0.66);
             try {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(relatedPeptides.get(relatedPeptidesTable.getSelectedRow()));
+                PeptideMatch peptideMatch = identification.getPeptideMatch(relatedPeptides.get(
+                        (Integer) relatedPeptidesTable.getValueAt(relatedPeptidesTable.getSelectedRow(), 0) - 1));
                 updateModificationProfile(peptideMatch, false);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             modificationProfileRelatedPeptideJPanel.removeAll();
-            peptideTablesJSplitPane.setDividerLocation(1.0);
         }
 
-        relatedPeptidesTable.revalidate();
-        relatedPeptidesTable.repaint();
+        ((TitledBorder) relatedPeptidesJPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
+        relatedPeptidesJPanel.repaint();
     }
 
     /**
@@ -1641,68 +1805,123 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private void updateSelectedPsmTable() {
 
-        selectedPsmTable.revalidate();
-        selectedPsmTable.repaint();
+        ((DefaultTableModel) selectedPsmsTable.getModel()).fireTableDataChanged();
 
-        if (selectedPsmTable.getRowCount() > 0) {
-            selectedPsmTable.setRowSelectionInterval(0, 0);
-            selectedPsmTable.scrollRectToVisible(selectedPsmTable.getCellRect(0, 0, false));
-            updateSpectra();
+        if (selectedPsmsTable.getRowCount() > 0) {
+            selectedPsmsTable.setRowSelectionInterval(0, 0);
+            selectedPsmsTable.scrollRectToVisible(selectedPsmsTable.getCellRect(0, 0, false));
+            try {
+                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
+                updateSpectrum(spectrumKey);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-    }
 
-    public void updateAnnotations() {
+        ((TitledBorder) modPsmsPanel.getBorder()).setTitle("Peptide-Spectrum Matches - Modified Peptide (" + selectedPsmsTable.getRowCount() + ")");
+        modPsmsPanel.repaint();
     }
 
     /**
-     * Update the spectra according to the currently selected psms.
+     * Update the related peptides PSM table.
      */
-    public void updateSpectra() {
-        try {
+    private void updateRelatedPsmTable(boolean selectRow) {
 
+        ((DefaultTableModel) relatedPsmsTable.getModel()).fireTableDataChanged();
+
+        if (selectRow) {
+            if (relatedPsmsTable.getRowCount() > 0) {
+                relatedPsmsTable.setRowSelectionInterval(0, 0);
+                relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(0, 0, false));
+                try {
+                    String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
+                    updateSpectrum(spectrumKey);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            if (selectedPsmsTable.getSelectedRow() != -1) {
+                selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
+            }
+        } else {
+            if (relatedPsmsTable.getSelectedRow() != -1) {
+                relatedPsmsTable.removeRowSelectionInterval(relatedPsmsTable.getSelectedRow(), relatedPsmsTable.getSelectedRow());
+            }
+        }
+
+        ((TitledBorder) relatedPsmsPanel.getBorder()).setTitle("Peptide-Spectrum Matches - Related Peptide (" + relatedPsmsTable.getRowCount() + ")");
+        relatedPsmsPanel.repaint();
+    }
+
+    public void updateSpectrum() {
+
+        try {
+            String spectrumKey;
+
+            if (relatedSelected) {
+                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
+            } else {
+                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
+            }
+
+            updateSpectrum(spectrumKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Update the spectra according to the currently selected PSM.
+     * 
+     * @param spectrumKey 
+     */
+    public void updateSpectrum(String spectrumKey) {
+
+        try {
             spectrumChartJPanel.removeAll();
             spectrumChartJPanel.revalidate();
             spectrumChartJPanel.repaint();
 
             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
+            peptideShakerGUI.selectSpectrum(spectrumKey);
 
-            if (selectedPsmTable.getSelectedRow() != -1) {
+            MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
 
-                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide()).getSpectrumMatches().get(selectedPsmTable.getSelectedRow());
-                peptideShakerGUI.selectSpectrum(spectrumKey);
+            if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
 
-                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+                Precursor precursor = currentSpectrum.getPrecursor();
+                spectrum = new SpectrumPanel(
+                        currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
+                        precursor.getMz(), precursor.getCharge().toString(),
+                        "", 40, false, false, false, 2, false);
+                spectrum.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
+                spectrum.setBorder(null);
 
-                if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
+                // get the spectrum annotations
+                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
 
-                    Precursor precursor = currentSpectrum.getPrecursor();
-                    spectrum = new SpectrumPanel(
-                            currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
-                            precursor.getMz(), precursor.getCharge().toString(),
-                            "", 40, false, false, false, 2, false);
-                    spectrum.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
-                    spectrum.setBorder(null);
+                annotationPreferences.setCurrentSettings(currentPeptide,
+                        currentSpectrum.getPrecursor().getCharge().value, true);
+                ArrayList<IonMatch> annotations = annotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
+                        annotationPreferences.getNeutralLosses(),
+                        annotationPreferences.getValidatedCharges(),
+                        currentSpectrum, currentPeptide,
+                        currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
+                        annotationPreferences.getFragmentIonAccuracy());
 
-                    // get the spectrum annotations
-                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
+                // add the spectrum annotations
+                spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
+                spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
+                spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
 
-                    annotationPreferences.setCurrentSettings(currentPeptide,
-                            currentSpectrum.getPrecursor().getCharge().value, true);
-                    ArrayList<IonMatch> annotations = annotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
-                            annotationPreferences.getNeutralLosses(),
-                            annotationPreferences.getValidatedCharges(),
-                            currentSpectrum, currentPeptide,
-                            currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
-                            annotationPreferences.getFragmentIonAccuracy());
+                spectrumChartJPanel.add(spectrum);
 
-                    // add the spectrum annotations
-                    spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
-                    spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
-                    spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
-
-                    spectrumChartJPanel.add(spectrum);
-                }
+                ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(
+                        "Spectrum & Fragment Ions (" + currentPeptide.getModifiedSequenceAsString(true) + ")");
+                spectrumAndFragmentIonPanel.revalidate();
+                spectrumAndFragmentIonPanel.repaint();
             }
 
             spectrumChartJPanel.revalidate();
@@ -1730,6 +1949,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 ModificationProfile tempProfile = new ModificationProfile(ptmName, new double[peptide.getSequence().length()][2], ptmColor);
 
                 PtmScoring locationScoring = scores.getPtmScoring(ptmName);
+                
                 // delta score
                 String bestLocation = locationScoring.getBestDeltaScoreLocations();
                 double bestScore;
@@ -1742,6 +1962,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         }
                     }
                 }
+                
                 // A-score
                 bestLocation = locationScoring.getBestAScoreLocations();
                 if (bestLocation != null) {
@@ -1763,21 +1984,17 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     /**
      * Returns the key of the selected peptide
      */
-    private String getSelectedPeptide() {
-        if (relatedSelected) {
-            
+    private String getSelectedPeptide(boolean relatedPeptide) {
+        if (relatedPeptide) {
             if (relatedPeptidesTable.getSelectedRow() == -1 || relatedPeptides.isEmpty()) {
                 return "";
             }
-            
-            return relatedPeptides.get(relatedPeptidesTable.getSelectedRow());
+            return relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(relatedPeptidesTable.getSelectedRow(), 0) - 1);
         } else {
-            
             if (peptidesTable.getSelectedRow() == -1 || displayedPeptides.isEmpty()) {
                 return "";
             }
-            
-            return displayedPeptides.get(peptidesTable.getSelectedRow());
+            return displayedPeptides.get((Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1);
         }
     }
 
@@ -1793,7 +2010,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         @Override
         public int getColumnCount() {
-            return 8;
+            return 6;
         }
 
         @Override
@@ -1802,18 +2019,14 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 case 0:
                     return " ";
                 case 1:
-                    return "Protein(s)";
-                case 2:
                     return "PI";
-                case 3:
+                case 2:
                     return "Sequence";
+                case 3:
+                    return "PTM";
                 case 4:
-                    return "PTM confidence";
+                    return "Peptide";
                 case 5:
-                    return "Peptide Score";
-                case 6:
-                    return "Peptide Confidence";
-                case 7:
                     return "  ";
                 default:
                     return "";
@@ -1828,16 +2041,13 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     case 0:
                         return row + 1;
                     case 1:
-                        return peptideShakerGUI.addDatabaseLinks(
-                                identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getParentProteins());
-                    case 2:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getMatchParameter(displayedPeptides.get(row), probabilities);
                         return probabilities.getGroupClass();
-                    case 3:
+                    case 2:
                         return identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getModifiedSequenceAsHtml(
                                 peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
-                    case 4:
+                    case 3:
                         PSPtmScores ptmScores = new PSPtmScores();
                         ptmScores = (PSPtmScores) identification.getPeptideMatch(displayedPeptides.get(row)).getUrParam(ptmScores);
                         if (ptmScores != null && ptmScores.getPtmScoring(getSelectedModification()) != null) {
@@ -1845,15 +2055,11 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         } else {
                             return PtmScoring.NOT_FOUND;
                         }
-                    case 5:
-                        probabilities = new PSParameter();
-                        probabilities = (PSParameter) identification.getMatchParameter(displayedPeptides.get(row), probabilities);
-                        return probabilities.getPeptideScore();
-                    case 6:
+                    case 4:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getMatchParameter(displayedPeptides.get(row), probabilities);
                         return probabilities.getPeptideConfidence();
-                    case 7:
+                    case 5:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getMatchParameter(displayedPeptides.get(row), probabilities);
                         return probabilities.isValidated();
@@ -1894,7 +2100,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         @Override
         public int getColumnCount() {
-            return 8;
+            return 6;
         }
 
         @Override
@@ -1903,18 +2109,14 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 case 0:
                     return " ";
                 case 1:
-                    return "Protein(s)";
-                case 2:
                     return "PI";
-                case 3:
+                case 2:
                     return "Sequence";
+                case 3:
+                    return "PTM";
                 case 4:
-                    return "PTM confidence";
+                    return "Peptide";
                 case 5:
-                    return "Peptide Score";
-                case 6:
-                    return "Peptide Confidence";
-                case 7:
                     return "  ";
                 default:
                     return "";
@@ -1925,20 +2127,18 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         public Object getValueAt(int row, int column) {
             try {
                 PSParameter probabilities;
+
                 switch (column) {
                     case 0:
                         return row + 1;
                     case 1:
-                        return peptideShakerGUI.addDatabaseLinks(
-                                identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide().getParentProteins());
-                    case 2:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getMatchParameter(relatedPeptides.get(row), probabilities);
                         return probabilities.getGroupClass();
-                    case 3:
+                    case 2:
                         return identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide().getModifiedSequenceAsHtml(
                                 peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
-                    case 4:
+                    case 3:
                         PSPtmScores ptmScores = new PSPtmScores();
                         ptmScores = (PSPtmScores) identification.getPeptideMatch(relatedPeptides.get(row)).getUrParam(ptmScores);
                         if (ptmScores != null && ptmScores.getPtmScoring(getSelectedModification()) != null) {
@@ -1946,15 +2146,11 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         } else {
                             return PtmScoring.NOT_FOUND;
                         }
-                    case 5:
-                        probabilities = new PSParameter();
-                        probabilities = (PSParameter) identification.getMatchParameter(relatedPeptides.get(row), probabilities);
-                        return probabilities.getPeptideScore();
-                    case 6:
+                    case 4:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getMatchParameter(relatedPeptides.get(row), probabilities);
                         return probabilities.getPeptideConfidence();
-                    case 7:
+                    case 5:
                         probabilities = new PSParameter();
                         probabilities = (PSParameter) identification.getMatchParameter(relatedPeptides.get(row), probabilities);
                         return probabilities.isValidated();
@@ -1984,15 +2180,15 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     }
 
     /**
-     * Table model for the selected peptide PSMs table
+     * Table model for the modified PSMs table
      */
     private class SelectedPsmsTable extends DefaultTableModel {
 
         @Override
         public int getRowCount() {
-            if (ptmJTable.getSelectedRow() != -1) {
+            if (peptidesTable.getSelectedRow() != -1) {
                 try {
-                    return identification.getPeptideMatch(getSelectedPeptide()).getSpectrumCount();
+                    return identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumCount();
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     return 0;
@@ -2004,7 +2200,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         @Override
         public int getColumnCount() {
-            return 4;
+            return 5;
         }
 
         @Override
@@ -2015,9 +2211,11 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 case 1:
                     return "Sequence";
                 case 2:
-                    return "PTM confidence";
+                    return "PTM";
                 case 3:
                     return "Charge";
+                case 4:
+                    return "  ";
                 default:
                     return "";
             }
@@ -2031,11 +2229,11 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     case 0:
                         return row + 1;
                     case 1:
-                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide()).getSpectrumMatches().get(row);
+                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                         return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
                                 peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
                     case 2:
-                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide()).getSpectrumMatches().get(row);
+                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                         PSPtmScores ptmScores = new PSPtmScores();
                         ptmScores = (PSPtmScores) identification.getSpectrumMatch(spectrumKey).getUrParam(ptmScores);
                         if (ptmScores != null && ptmScores.getPtmScoring(getSelectedModification()) != null) {
@@ -2044,8 +2242,108 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                             return PtmScoring.NOT_FOUND;
                         }
                     case 3:
-                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide()).getSpectrumMatches().get(row);
+                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                         return peptideShakerGUI.getPrecursor(spectrumKey).getCharge().value;
+                    case 4:
+                        PSParameter probabilities = new PSParameter();
+                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
+                        probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, probabilities);
+                        return probabilities.isValidated();
+                    default:
+                        return "";
+                }
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+                return "";
+            }
+        }
+
+        @Override
+        public Class getColumnClass(int columnIndex) {
+            for (int i = 0; i < getRowCount(); i++) {
+                if (getValueAt(i, columnIndex) != null) {
+                    return getValueAt(i, columnIndex).getClass();
+                }
+            }
+            return (new Double(0.0)).getClass();
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return false;
+        }
+    }
+
+    /**
+     * Table model for the related PSMs table
+     */
+    private class RelatedPsmsTable extends DefaultTableModel {
+
+        @Override
+        public int getRowCount() {
+            if (relatedPeptidesTable.getSelectedRow() != -1) {
+                try {
+                    return identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumCount();
+                } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
+                    return 0;
+                }
+            } else {
+                return 0;
+            }
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 5;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) { //@TODO: add scores, confidence and validation?
+                case 0:
+                    return " ";
+                case 1:
+                    return "Sequence";
+                case 2:
+                    return "PTM";
+                case 3:
+                    return "Charge";
+                case 4:
+                    return "  ";
+                default:
+                    return "";
+            }
+        }
+
+        @Override
+        public Object getValueAt(int row, int column) {
+            try {
+                String spectrumKey;
+                switch (column) {
+                    case 0:
+                        return row + 1;
+                    case 1:
+                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
+                        return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsHtml(
+                                peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
+                    case 2:
+                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
+                        PSPtmScores ptmScores = new PSPtmScores();
+                        ptmScores = (PSPtmScores) identification.getSpectrumMatch(spectrumKey).getUrParam(ptmScores);
+                        if (ptmScores != null && ptmScores.getPtmScoring(getSelectedModification()) != null) {
+                            return ptmScores.getPtmScoring(getSelectedModification()).getPtmSiteConfidence();
+                        } else {
+                            return PtmScoring.NOT_FOUND;
+                        }
+                    case 3:
+                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
+                        return peptideShakerGUI.getPrecursor(spectrumKey).getCharge().value;
+                    case 4:
+                        PSParameter probabilities = new PSParameter();
+                        spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
+                        probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, probabilities);
+                        return probabilities.isValidated();
                     default:
                         return "";
                 }
@@ -2089,7 +2387,14 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         String spectrumAsMgf = "";
         try {
-            String spectrumKey = identification.getPeptideMatch(getSelectedPeptide()).getSpectrumMatches().get(selectedPsmTable.getSelectedRow());
+            String spectrumKey;
+
+            if (relatedSelected) {
+                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
+            } else {
+                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
+            }
+
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
             spectrumAsMgf += currentSpectrum.asMgf();
 
@@ -2102,29 +2407,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         }
 
         return null;
-    }
-
-    /**
-     * Hides or displays the score columns in the protein and peptide tables.
-     * 
-     * @param hide if true the score columns are hidden.
-     */
-    public void hideScores(boolean hide) {
-
-        try {
-            if (hide) {
-                peptidesTable.removeColumn(peptidesTable.getColumn("Peptide Score"));
-                relatedPeptidesTable.removeColumn(relatedPeptidesTable.getColumn("Peptide Score"));
-            } else {
-                peptidesTable.addColumn(selectedPeptidesScoreColumn);
-                peptidesTable.moveColumn(5, 3);
-
-                relatedPeptidesTable.addColumn(relatedPeptidesScoreColumn);
-                relatedPeptidesTable.moveColumn(5, 3);
-            }
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -2236,10 +2518,10 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     public void updateModificationProfiles() {
         try {
             if (peptidesTable.getSelectedRow() != -1) {
-                updateModificationProfile(identification.getPeptideMatch(displayedPeptides.get(peptidesTable.getSelectedRow())), true);
+                updateModificationProfile(identification.getPeptideMatch(displayedPeptides.get((Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1)), true);
             }
             if (relatedPeptidesTable.getSelectedRow() != -1) {
-                updateModificationProfile(identification.getPeptideMatch(relatedPeptides.get(relatedPeptidesTable.getSelectedRow())), false);
+                updateModificationProfile(identification.getPeptideMatch(relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(relatedPeptidesTable.getSelectedRow(), 0) - 1)), false);
             }
         } catch (Exception e) {
             e.printStackTrace();

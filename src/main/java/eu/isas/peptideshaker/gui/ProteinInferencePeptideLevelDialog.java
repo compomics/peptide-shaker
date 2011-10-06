@@ -242,6 +242,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         jLabel1.setText("Type:");
 
         protInferenceTypeCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Unique Protein", "Isoforms", "Isoforms and Unrelated Proteins", "Unrelated Proteins" }));
+        protInferenceTypeCmb.setEnabled(false);
         protInferenceTypeCmb.setMinimumSize(new java.awt.Dimension(112, 18));
 
         jLabel2.setText("Sequence:");
@@ -504,13 +505,13 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideMatch, psParameter);
-        if (psParameter.getGroupClass() != protInferenceTypeCmb.getSelectedIndex()) {
-            psParameter.setGroupClass(protInferenceTypeCmb.getSelectedIndex());
-            peptideShakerGUI.updatePeptideProteinInference(protInferenceTypeCmb.getSelectedIndex());
-            peptideShakerGUI.setDataSaved(false);
-        }
+//        PSParameter psParameter = new PSParameter();
+//        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideMatch, psParameter);
+//        if (psParameter.getGroupClass() != protInferenceTypeCmb.getSelectedIndex()) {
+//            psParameter.setGroupClass(protInferenceTypeCmb.getSelectedIndex());
+//            peptideShakerGUI.updatePeptideProteinInference(protInferenceTypeCmb.getSelectedIndex());
+//            peptideShakerGUI.setDataSaved(false);
+//        }
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed

@@ -1737,7 +1737,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void scoresJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scoresJCheckBoxMenuItemActionPerformed
         overviewPanel.hideScores(!scoresJCheckBoxMenuItem.isSelected());
         proteinStructurePanel.hideScores(!scoresJCheckBoxMenuItem.isSelected());
-        ptmPanel.hideScores(!scoresJCheckBoxMenuItem.isSelected());
 
         // make sure that the jsparklines are showing correctly
         sparklinesJCheckBoxMenuItemActionPerformed(null);
@@ -2471,7 +2470,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
             ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
             ptmPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / searchParameters.getFragmentIonAccuracy()) * 100));
-            ptmPanel.updateSpectra();
+            ptmPanel.updateSpectrum();
         }
     }
 
