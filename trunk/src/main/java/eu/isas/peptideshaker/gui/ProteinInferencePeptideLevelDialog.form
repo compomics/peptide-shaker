@@ -224,6 +224,7 @@
                     <StringItem index="3" value="Unrelated Proteins"/>
                   </StringArray>
                 </Property>
+                <Property name="enabled" type="boolean" value="false"/>
                 <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
                   <Dimension value="[112, 18]"/>
                 </Property>

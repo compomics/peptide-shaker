@@ -63,9 +63,21 @@ public class PtmLocationDialog extends javax.swing.JDialog {
         }
 
         initComponents();
+        
+        psmTable.getTableHeader().setReorderingAllowed(false);
+        psmTable.getColumn(" ").setMaxWidth(50);
+        psmTable.getColumn(" ").setMinWidth(50);
+        psmTable.getColumn("  ").setMaxWidth(30);
+        psmTable.getColumn("  ").setMinWidth(30);
+        
+        psmTableScrollPane.getViewport().setOpaque(false);
 
-        sequenceTxt.setText(peptideMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
+        sequenceLabel.setText(peptideMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
                 peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true));
+        
+        // set the modification tooltip
+        String tooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(peptideMatch.getTheoreticPeptide());
+        sequenceLabel.setToolTipText(tooltip);
 
         if (selectedPTM != null) {
             ptmCmb.setSelectedItem(selectedPTM);
@@ -75,6 +87,7 @@ public class PtmLocationDialog extends javax.swing.JDialog {
         psmTable.setRowSelectionInterval(psmSelected, psmSelected);
         psmSelectionChanged();
 
+        setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
 
@@ -87,15 +100,16 @@ public class PtmLocationDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
+        backgroundPanel = new javax.swing.JPanel();
+        peptideDetailsPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        sequenceTxt = new javax.swing.JTextField();
         ptmCmb = new javax.swing.JComboBox();
         peptideConfidence = new javax.swing.JTextField();
-        jPanel2 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        sequenceLabel = new javax.swing.JLabel();
+        psmsJPanel = new javax.swing.JPanel();
+        psmTableScrollPane = new javax.swing.JScrollPane();
         psmTable = new javax.swing.JTable();
-        jPanel3 = new javax.swing.JPanel();
+        psrmPtmDetailsPanel = new javax.swing.JPanel();
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel4 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -111,15 +125,17 @@ public class PtmLocationDialog extends javax.swing.JDialog {
         applyButton = new javax.swing.JButton();
         spectrumB = new javax.swing.JPanel();
         cancelApplyButton = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        exitButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("PTM Location");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Details"));
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+
+        peptideDetailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide Details"));
+        peptideDetailsPanel.setOpaque(false);
 
         jLabel1.setText("Sequence:");
-
-        sequenceTxt.setEditable(false);
 
         ptmCmb.setModel(new DefaultComboBoxModel(getPossibleModifications()));
         ptmCmb.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -130,60 +146,67 @@ public class PtmLocationDialog extends javax.swing.JDialog {
 
         peptideConfidence.setEditable(false);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        sequenceLabel.setText("sequence");
+
+        javax.swing.GroupLayout peptideDetailsPanelLayout = new javax.swing.GroupLayout(peptideDetailsPanel);
+        peptideDetailsPanel.setLayout(peptideDetailsPanelLayout);
+        peptideDetailsPanelLayout.setHorizontalGroup(
+            peptideDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peptideDetailsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
-                .addComponent(sequenceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 304, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ptmCmb, 0, 107, Short.MAX_VALUE)
+                .addComponent(sequenceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 312, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ptmCmb, 0, 121, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(peptideConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+        peptideDetailsPanelLayout.setVerticalGroup(
+            peptideDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peptideDetailsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(peptideDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(sequenceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(ptmCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(peptideConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(peptideConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sequenceLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("PSMs"));
+        psmsJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PSMs"));
+        psmsJPanel.setOpaque(false);
 
         psmTable.setModel(new PsmsTable());
-        jScrollPane1.setViewportView(psmTable);
+        psmTableScrollPane.setViewportView(psmTable);
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout psmsJPanelLayout = new javax.swing.GroupLayout(psmsJPanel);
+        psmsJPanel.setLayout(psmsJPanelLayout);
+        psmsJPanelLayout.setHorizontalGroup(
+            psmsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(psmsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 654, Short.MAX_VALUE)
+                .addComponent(psmTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 680, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        psmsJPanelLayout.setVerticalGroup(
+            psmsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(psmsJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(psmTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected PSM PTM Details"));
+        psrmPtmDetailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected PSM PTM Details"));
+        psrmPtmDetailsPanel.setOpaque(false);
 
         jSplitPane1.setBorder(null);
         jSplitPane1.setDividerLocation(200);
         jSplitPane1.setDividerSize(1);
+        jSplitPane1.setOpaque(false);
+
+        jPanel4.setOpaque(false);
 
         jLabel2.setText("PTM Scoring:");
 
@@ -234,15 +257,19 @@ public class PtmLocationDialog extends javax.swing.JDialog {
 
         jSplitPane1.setLeftComponent(jPanel4);
 
+        jPanel5.setOpaque(false);
+
         jLabel5.setText("PTM Location:");
 
         ptmLocationTxt.setEditable(false);
+
+        spectrumA.setOpaque(false);
 
         javax.swing.GroupLayout spectrumALayout = new javax.swing.GroupLayout(spectrumA);
         spectrumA.setLayout(spectrumALayout);
         spectrumALayout.setHorizontalGroup(
             spectrumALayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 453, Short.MAX_VALUE)
+            .addGap(0, 479, Short.MAX_VALUE)
         );
         spectrumALayout.setVerticalGroup(
             spectrumALayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -258,11 +285,13 @@ public class PtmLocationDialog extends javax.swing.JDialog {
             }
         });
 
+        spectrumB.setOpaque(false);
+
         javax.swing.GroupLayout spectrumBLayout = new javax.swing.GroupLayout(spectrumB);
         spectrumB.setLayout(spectrumBLayout);
         spectrumBLayout.setHorizontalGroup(
             spectrumBLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 453, Short.MAX_VALUE)
+            .addGap(0, 479, Short.MAX_VALUE)
         );
         spectrumBLayout.setVerticalGroup(
             spectrumBLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -288,11 +317,11 @@ public class PtmLocationDialog extends javax.swing.JDialog {
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(ptmLocationTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 382, Short.MAX_VALUE))
+                        .addComponent(ptmLocationTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 408, Short.MAX_VALUE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addComponent(jLabel6)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(newPtmTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 208, Short.MAX_VALUE)
+                        .addComponent(newPtmTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 234, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(applyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -324,49 +353,60 @@ public class PtmLocationDialog extends javax.swing.JDialog {
 
         jSplitPane1.setRightComponent(jPanel5);
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 674, Short.MAX_VALUE)
+        javax.swing.GroupLayout psrmPtmDetailsPanelLayout = new javax.swing.GroupLayout(psrmPtmDetailsPanel);
+        psrmPtmDetailsPanel.setLayout(psrmPtmDetailsPanelLayout);
+        psrmPtmDetailsPanelLayout.setHorizontalGroup(
+            psrmPtmDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 700, Short.MAX_VALUE)
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        psrmPtmDetailsPanelLayout.setVerticalGroup(
+            psrmPtmDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jSplitPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
         );
 
-        jButton3.setText("Exit");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        exitButton.setText("Exit");
+        exitButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                exitButtonActionPerformed(evt);
             }
         });
+
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(psrmPtmDetailsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(peptideDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(psmsJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(exitButton))
+                .addContainerGap())
+        );
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(peptideDetailsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(psmsJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(psrmPtmDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(exitButton)
+                .addContainerGap())
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3))
-                .addContainerGap())
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
-                .addContainerGap())
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -423,9 +463,9 @@ public class PtmLocationDialog extends javax.swing.JDialog {
         applyButtonActionPerformed(null);
     }//GEN-LAST:event_cancelApplyButtonActionPerformed
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+    private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         dispose();
-    }//GEN-LAST:event_jButton3ActionPerformed
+    }//GEN-LAST:event_exitButtonActionPerformed
 
     private void psmConfidenceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmConfidenceActionPerformed
         try {
@@ -441,28 +481,29 @@ public class PtmLocationDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_psmConfidenceActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
+    private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelApplyButton;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton exitButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTextField newPtmTxt;
     private javax.swing.JTextField peptideConfidence;
+    private javax.swing.JPanel peptideDetailsPanel;
     private javax.swing.JTextField possibleLocationsTxt;
     private javax.swing.JComboBox psmConfidence;
     private javax.swing.JTable psmTable;
+    private javax.swing.JScrollPane psmTableScrollPane;
+    private javax.swing.JPanel psmsJPanel;
+    private javax.swing.JPanel psrmPtmDetailsPanel;
     private javax.swing.JComboBox ptmCmb;
     private javax.swing.JTextField ptmLocationTxt;
-    private javax.swing.JTextField sequenceTxt;
+    private javax.swing.JLabel sequenceLabel;
     private javax.swing.JPanel spectrumA;
     private javax.swing.JPanel spectrumB;
     // End of variables declaration//GEN-END:variables
@@ -555,17 +596,17 @@ public class PtmLocationDialog extends javax.swing.JDialog {
                 case 1:
                     return "Sequence";
                 case 2:
-                    return "PTM confidence";
+                    return "PTM";
                 case 3:
                     return "Charge";
                 case 4:
-                    return "Precursor error";
+                    return "Error";
                 case 5:
                     return "Score";
                 case 6:
                     return "Confidence";
                 case 7:
-                    return "   ";
+                    return "  ";
                 default:
                     return "";
             }
