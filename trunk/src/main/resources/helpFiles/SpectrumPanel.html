@@ -11,6 +11,7 @@
         <ul>
             <li><a href='#ShowAllPeaks'>Show All Peaks</a></li>
             <li><a href='#Annotation'>Annotation</a></li>
+            <li><a href='#AnnotationAccuracy'>AnnotationAccuracy</a></li>
             <li><a href='#Zooming'>Zooming</a></li>
             <li><a href='#De-novoSequencing'>De-novo Sequencing</a></li>
             <li><a href='#SequenceFragmentation'>Sequence Fragmentation</a></li>
@@ -23,9 +24,9 @@
         <p align="justify">
             As a default only the peaks currently annotated 
             by a fragment ion is shown in the foreground. The other peaks are shown 
-            in grey in the background. Only peaks in the foreground can be selected. 
-            To move all peaks to the foreground click the "All" button below the 
-            spectrum.
+            in grey in the background. Only (red) peaks in the foreground can be selected. 
+            To move all peaks to the foreground click the "Show All Peaks" option in 
+            the menu below the spectrum.
         </p>
         <br>
         <a href="#top">Go to top of page</a>
@@ -34,10 +35,38 @@
         <a name="#Annotation"></a>
         <h3>Annotation</h3>
         <p align="justify">
-            The spectrum is automatically annotated with the 
-            fragment ion types selected below the spectrum. As a default singly 
-            charged b- and y-ions are shown. To annotate other ions simply select 
-            the toggle representing the ion type.
+            <b>PeptideShaker</b> automatically annotates the a spectrum with the 
+            most likely ions given the spectrum and the peptide sequence identified. 
+            This includes the automatic selection of neutral losses. 
+            <br><br>
+            However, the user can override the default annotation by selecting 
+            different ion types in the menu below the spectrum. To change the neutral 
+            losses one first has to uncheck the <i>Adapt</i> option on the <i>Loss</i> menu. 
+            <br><br>
+            To make sure that the same ion types are used for all spectra, the user 
+            can also turn of the automatic annotation completly in the <i>Settings</i> 
+            menu.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+        
+        <a name="#AnnotationAccuracy"></a>
+        <h3>Annotation Accuracy</h3>
+        <p align="justify">
+            In addition to deciding which ion types to use when annotating the spectrum, the 
+            user can also change the required accuracy of the annotations. This is done using 
+            the <i>Annotation Accuracy Slider</i> to the right of the spectrum. Moving this up 
+            or down will decrease or increase the accuracy required to say that a given peak 
+            should be annotated. The maximum value is set to the fragment ion accuracy set 
+            in the Search Parameters tab (found on the Edit menu).
+            <br><br>
+            The <i>Annotation Level Slider</i> lets the user decide how many of the peaks 
+            <b>PeptideShaker</b> should try to annotate. The level is set relative 
+            to the most intense peak, e.g., 80% means that the tool only considers peaks 
+            that have an intensity that is at least 80% of the most intense peak. As 
+            the value is reduced more and more of the low intensity peaks will be 
+            annotated.
         </p>
         <br>
         <a href="#top">Go to top of page</a>
@@ -77,7 +106,7 @@
         <a name="#SequenceFragmentation"></a>
         <h3>Sequence Fragmentation</h3>
         <p align="justify">
-            The plot in the upper right shows the 
+            The plot in the upper left shows the 
             how the peptide sequence is fragmented using the singly charged b- 
             and y-ions. In this plot the blue peaks represent b-ions and red peaks 
             y-ions. Hovering over a given peak will display the fragment ion 
@@ -107,9 +136,8 @@
         <a name="#MassErrorPlot"></a>
         <h3>Mass Error Plot</h3>
         <p align="justify">
-            The plot in the upper right above the spectrum 
-            displays the standard mass error plot with m/z on the x-axis and mass 
-            error (in Da) on the y-axis.
+            The plot in the upper right displays the standard mass error plot with 
+            m/z on the x-axis and mass error (in Da) on the y-axis.
             <br><br>
             Zomming is available by the standard left click and drag approach. Additional 
             options are available via the right click popup menu.

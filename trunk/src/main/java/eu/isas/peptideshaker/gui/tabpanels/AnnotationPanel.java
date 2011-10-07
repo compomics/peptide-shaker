@@ -7,7 +7,6 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.ExportFeatureDialog;
-import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
 import java.io.IOException;
@@ -119,7 +118,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         helpPanel = new javax.swing.JPanel();
         helpScrollPane = new javax.swing.JScrollPane();
         helpEditorPane = new javax.swing.JEditorPane();
-        helpJButton = new javax.swing.JButton();
         warningJLabel = new javax.swing.JLabel();
         picrLinkJLabel = new javax.swing.JLabel();
 
@@ -628,25 +626,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         });
         helpScrollPane.setViewportView(helpEditorPane);
 
-        helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
-        helpJButton.setToolTipText("Help");
-        helpJButton.setBorder(null);
-        helpJButton.setBorderPainted(false);
-        helpJButton.setContentAreaFilled(false);
-        helpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                helpJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                helpJButtonMouseExited(evt);
-            }
-        });
-        helpJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                helpJButtonActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout helpPanelLayout = new javax.swing.GroupLayout(helpPanel);
         helpPanel.setLayout(helpPanelLayout);
         helpPanelLayout.setHorizontalGroup(
@@ -654,17 +633,13 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
             .addGroup(helpPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(helpScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 73, Short.MAX_VALUE)
-                .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(106, Short.MAX_VALUE))
         );
         helpPanelLayout.setVerticalGroup(
             helpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(helpPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(helpPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(helpJButton)
-                    .addComponent(helpScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE))
+                .addComponent(helpScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1101,35 +1076,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     }//GEN-LAST:event_helpEditorPaneHyperlinkUpdate
 
     /**
-     * Open the help dialog.
-     * 
-     * @param evt 
-     */
-    private void helpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/AnnotationPanel.html"));
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_helpJButtonActionPerformed
-
-    /**
-     * Change the cursor back to a hand icon.
-     * 
-     * @param evt 
-     */
-    private void helpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseEntered
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_helpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default icon.
-     * 
-     * @param evt 
-     */
-    private void helpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseExited
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_helpJButtonMouseExited
-
-    /**
      * Change the cursor back to the default icon.
      * 
      * @param evt 
@@ -1202,7 +1148,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     private javax.swing.JTextField databaseJTextField;
     private javax.swing.JTextField geneNameJTextField;
     private javax.swing.JEditorPane helpEditorPane;
-    private javax.swing.JButton helpJButton;
     private javax.swing.JPanel helpPanel;
     private javax.swing.JScrollPane helpScrollPane;
     private javax.swing.JEditorPane jEditorPane1;

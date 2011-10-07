@@ -531,6 +531,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationMenuBar.add(splitterMenu5);
 
         ionsMenu.setText("Ions");
+        ionsMenu.setEnabled(false);
 
         aIonCheckBoxMenuItem.setText("a");
         aIonCheckBoxMenuItem.setToolTipText("a-ions");
@@ -594,6 +595,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationMenuBar.add(splitterMenu);
 
         lossMenu.setText("Loss");
+        lossMenu.setEnabled(false);
 
         h2oIonCheckBoxMenuItem.setText("<html>H<sub>2</sub>O</html>");
         h2oIonCheckBoxMenuItem.setToolTipText("Water Loss");
@@ -657,6 +659,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationMenuBar.add(splitterMenu1);
 
         otherMenu.setText("Other");
+        otherMenu.setEnabled(false);
 
         precursorCheckBoxMenuItem.setText("Precursor");
         precursorCheckBoxMenuItem.setToolTipText("Precursor ions");
@@ -683,6 +686,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationMenuBar.add(splitterMenu2);
 
         chargeMenu.setText("Charge");
+        chargeMenu.setEnabled(false);
 
         singleChargeCheckBoxMenuItem.setText("+");
         singleChargeCheckBoxMenuItem.setToolTipText("Single Charge");
@@ -718,6 +722,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationMenuBar.add(splitterMenu3);
 
         settingsMenu.setText("Settings");
+        settingsMenu.setEnabled(false);
 
         allCheckBoxMenuItem.setText("Show All Peaks");
         allCheckBoxMenuItem.setToolTipText("Show all peaks or just the annotated peaks");
@@ -796,6 +801,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationMenuBar.add(splitterMenu4);
 
         exportGraphicsMenu.setText("Export");
+        exportGraphicsMenu.setEnabled(false);
 
         exportSpectrumGraphicsJMenuItem.setText("Spectrum as Figure");
         exportSpectrumGraphicsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -828,6 +834,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationMenuBar.add(splitterMenu6);
 
         helpJMenu.setText("Help");
+        helpJMenu.setEnabled(false);
 
         helpMenuItem.setText("Help");
         helpMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -995,6 +1002,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu.add(annotationPreferencesMenu);
 
         spectrumCountingMenuItem.setText("MS2 Quantification");
+        spectrumCountingMenuItem.setEnabled(false);
         spectrumCountingMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 spectrumCountingMenuItemActionPerformed(evt);
@@ -2158,6 +2166,14 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     identificationFeaturesMenu.setEnabled(true);
                     followUpAnalysisMenu.setEnabled(true);
                     projectPropertiesMenuItem.setEnabled(true);
+                    spectrumCountingMenuItem.setEnabled(true);
+                    ionsMenu.setEnabled(true);
+                    lossMenu.setEnabled(true);
+                    otherMenu.setEnabled(true);
+                    chargeMenu.setEnabled(true);
+                    settingsMenu.setEnabled(true);
+                    exportGraphicsMenu.setEnabled(true);
+                    helpJMenu.setEnabled(true);
                 }
             }.start();
 
@@ -3246,19 +3262,19 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         overviewPanel.updateMainMatch(mainMatch, proteinInferenceType);
         proteinStructurePanel.updateMainMatch(mainMatch, proteinInferenceType);
     }
-    
+
     /**
      * Update the peptide protein inference.
      * 
      * @param proteinInferenceType 
      */
     public void updatePeptideProteinInference(int proteinInferenceType) {
-        
+
         ptmPanel.updatePeptideTable();
         ptmPanel.updateRelatedPeptidesTable();
-        
+
         //@TODO update overview and structure panels
-        
+
 //        if (allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX ||
 //                allTabsJTabbedPane.getSelectedIndex() == STRUCTURES_TAB_INDEX) {
 //            overviewPanel.updatePeptideProteinInference(proteinInferenceType);
@@ -3427,22 +3443,22 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @return the spectrum counting score
      */
     public double getSpectrumCounting(ProteinMatch proteinMatch) {
-        
+
         double result;
         Enzyme enyzme = searchParameters.getEnzyme();
         PSParameter pSParameter = new PSParameter();
-        
+
         try {
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-            
+
             if (spectrumCountingPreferences.getSelectedMethod() == SpectralCountingMethod.NSAF) {
-                
+
                 if (currentProtein == null) {
                     return 0.0;
                 }
-                
+
                 result = 0;
-                
+
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
@@ -3452,11 +3468,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         }
                     }
                 }
-                
+
                 return result / currentProtein.getSequence().length();
-                
+
             } else { // emPAI
-                
+
                 if (spectrumCountingPreferences.isValidatedHits()) {
                     result = 0;
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
@@ -3468,7 +3484,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 } else {
                     result = proteinMatch.getPeptideCount();
                 }
-                
+
                 return Math.pow(10, result / currentProtein.getNPossiblePeptides(enyzme)) - 1;
             }
         } catch (Exception e) {
@@ -3628,7 +3644,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         automaticAnnotationCheckBoxMenuItem.setSelected(annotationPreferences.useAutomaticAnnotation());
         adaptCheckBoxMenuItem.setSelected(annotationPreferences.areNeutralLossesSequenceDependant());
-        
+
         // disable/enable the neutral loss options
         h2oIonCheckBoxMenuItem.setEnabled(!annotationPreferences.areNeutralLossesSequenceDependant());
         nh3IonCheckBoxMenuItem.setEnabled(!annotationPreferences.areNeutralLossesSequenceDependant());
@@ -3744,7 +3760,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         intensityIonTableRadioButtonMenuItem.setVisible(showIonTableOptions);
         mzIonTableRadioButtonMenuItem.setVisible(showIonTableOptions);
 
-        exportGraphicsMenu.setEnabled(!showIonTableOptions);
+        if (settingsMenu.isEnabled()) {
+            exportGraphicsMenu.setEnabled(!showIonTableOptions);
+        }
     }
 
     /**
@@ -3906,9 +3924,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         ArrayList<String> alreadyAnnotated = new ArrayList<String>();
 
         PTM ptm;
-        
+
         for (int i = 0; i < modifications.size(); i++) {
-            
+
             ptm = ptmFactory.getPTM(modifications.get(i).getTheoreticPtm());
 
             if (ptm.getType() == PTM.MODAA && modifications.get(i).isVariable()) { // @TODO: should only PTM.MODAA be included??
@@ -4222,6 +4240,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             return;
                         }
                     }
+                    
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
 

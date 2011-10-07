@@ -12,6 +12,7 @@
             <li><a href='#Introduction'>Introduction</a></li>
             <li><a href='#IntensityIonTable'>Intensity Ion Table</a></li>
             <li><a href='#Annotation'>Annotation</a></li>
+            <li><a href='#AnnotationAccuracy'>AnnotationAccuracy</a></li>
             <li><a href='#MultipleSpectra'>Multiple Spectra</a></li>
         </ul>
 
@@ -21,7 +22,7 @@
             <b>PeptideShaker</b> supports two types of ion tables. The standard 
             one with the theoretical fragment ion m/z-values, and a novel intensity 
             based approach. The default is the intensity based. To access the 
-            standard ion table click the <i>m/z</i> button below the table.
+            standard ion table open the Settings menu.
         </p>
         <br>
         <a href="#top">Go to top of page</a>
@@ -46,10 +47,38 @@
         <a name="#Annotation"></a>
         <h3>Annotation</h3>
         <p align="justify">
-            Like for the standard spectrum view, the default fragment ions shown 
-            are singly charged b- and y-ions. To display other ions simply select 
-            the toggle representing the wanted ion type, and the table will 
-            update automatically.
+            <b>PeptideShaker</b> automatically annotates the a spectrum with the 
+            most likely ions given the spectrum and the peptide sequence identified. 
+            This includes the automatic selection of neutral losses. 
+            <br><br>
+            However, the user can override the default annotation by selecting 
+            different ion types in the menu below the table. To change the neutral 
+            losses one first has to uncheck the <i>Adapt</i> option on the <i>Loss</i> menu. 
+            <br><br>
+            To make sure that the same ion types are used for all spectra, the user 
+            can also turn of the automatic annotation completly in the <i>Settings</i> 
+            menu.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+        
+        <a name="#AnnotationAccuracy"></a>
+        <h3>Annotation Accuracy</h3>
+        <p align="justify">
+            In addition to deciding which ion types to use when annotating the spectrum, the 
+            user can also change the required accuracy of the annotations. This is done using 
+            the <i>Annotation Accuracy Slider</i> to the right of the table. Moving this up 
+            or down will decrease or increase the accuracy required to say that a given peak 
+            should be annotated. The maximum value is set to the fragment ion accuracy set 
+            in the Search Parameters tab (found on the edit menu).
+            <br><br>
+            The <i>Annotation Level Slider</i> lets the user decide how many of the peaks 
+            <b>PeptideShaker</b> should try to annotate. The level is set relative 
+            to the most intense peak, e.g., 80% means that the tool only considers peaks 
+            that have an intensity that is at least 80% of the most intense peak. As 
+            the value is reduced more and more of the low intensity peaks will be 
+            annotated.
         </p>
         <br>
         <a href="#top">Go to top of page</a>

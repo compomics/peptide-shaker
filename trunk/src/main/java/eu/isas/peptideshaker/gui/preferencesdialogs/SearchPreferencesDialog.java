@@ -95,7 +95,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         this.profileFile = parent.getModificationProfileFile();
         loadModifications();
         initComponents();
-        
+
         // set table properties
         expectedModificationsTable.getTableHeader().setReorderingAllowed(false);
         availableModificationsTable.getTableHeader().setReorderingAllowed(false);
