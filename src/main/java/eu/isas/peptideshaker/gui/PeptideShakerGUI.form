@@ -27,6 +27,7 @@
         <Menu class="javax.swing.JMenu" name="ionsMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Ions"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="aIonCheckBoxMenuItem">
@@ -96,6 +97,7 @@
         <Menu class="javax.swing.JMenu" name="lossMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Loss"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="h2oIonCheckBoxMenuItem">
@@ -165,6 +167,7 @@
         <Menu class="javax.swing.JMenu" name="otherMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Other"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="precursorCheckBoxMenuItem">
@@ -196,6 +199,7 @@
         <Menu class="javax.swing.JMenu" name="chargeMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Charge"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="singleChargeCheckBoxMenuItem">
@@ -236,6 +240,7 @@
         <Menu class="javax.swing.JMenu" name="settingsMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Settings"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="allCheckBoxMenuItem">
@@ -328,6 +333,7 @@
         <Menu class="javax.swing.JMenu" name="exportGraphicsMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Export"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="exportSpectrumGraphicsJMenuItem">
@@ -365,6 +371,7 @@
         <Menu class="javax.swing.JMenu" name="helpJMenu">
           <Properties>
             <Property name="text" type="java.lang.String" value="Help"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="helpMenuItem">
@@ -497,6 +504,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="spectrumCountingMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="MS2 Quantification"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spectrumCountingMenuItemActionPerformed"/>
