@@ -18,6 +18,7 @@ import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import com.compomics.util.gui.protein.ModificationProfile;
+import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
 import java.awt.Color;
 import java.awt.Component;
@@ -31,6 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
@@ -296,7 +298,7 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPsmsTableToolTips.add("PTM Location Confidence");
         relatedPsmsTableToolTips.add("Precursor Charge");
         relatedPsmsTableToolTips.add("PSM Validated");
-        
+
         ptmTableToolTips = new ArrayList<String>();
         ptmTableToolTips.add(null);
         ptmTableToolTips.add("PTM Color");
@@ -312,8 +314,10 @@ public class PtmPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel8 = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
+        ptmAndPeptideSelectionPanel = new javax.swing.JPanel();
+        ptmPanel = new javax.swing.JPanel();
+        ptmLayeredLayeredPane = new javax.swing.JLayeredPane();
+        ptmLayeredPanel = new javax.swing.JPanel();
         ptmJScrollPane = new javax.swing.JScrollPane();
         ptmJTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
@@ -329,7 +333,11 @@ public class PtmPanel extends javax.swing.JPanel {
                 };
             }
         };
+        ptmSelectionHelpJButton = new javax.swing.JButton();
+        contextMenuPtmBackgroundPanel = new javax.swing.JPanel();
         peptideTablesJSplitPane = new javax.swing.JSplitPane();
+        modifiedPeptidesPanel = new javax.swing.JPanel();
+        modifiedPeptidesLayeredPane = new javax.swing.JLayeredPane();
         selectedPeptidesJPanel = new javax.swing.JPanel();
         selectedPeptidesJSplitPane = new javax.swing.JSplitPane();
         peptidesTableJScrollPane = new javax.swing.JScrollPane();
@@ -348,7 +356,12 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         };
         modificationProfileSelectedPeptideJPanel = new javax.swing.JPanel();
+        modificationProfileHelpJButton = new javax.swing.JButton();
+        exportModifiedPeptideProfileJButton = new javax.swing.JButton();
+        contextMenuModifiedPeptidesBackgroundPanel = new javax.swing.JPanel();
         relatedPeptidesJPanel = new javax.swing.JPanel();
+        relatedPeptiesLayeredPane = new javax.swing.JLayeredPane();
+        relatedPeptidesPanel = new javax.swing.JPanel();
         relatedPeptidesJSplitPane = new javax.swing.JSplitPane();
         relatedPeptidesTableJScrollPane = new javax.swing.JScrollPane();
         relatedPeptidesTable = new JTable() {
@@ -366,7 +379,12 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         };
         modificationProfileRelatedPeptideJPanel = new javax.swing.JPanel();
+        relatedProfileHelpJButton = new javax.swing.JButton();
+        exportRelatedPeptideProfileJButton = new javax.swing.JButton();
+        contextMenuRelatedPeptidesBackgroundPanel = new javax.swing.JPanel();
         psmSpectraSplitPane = new javax.swing.JSplitPane();
+        spectrumAndFragmentIonJPanel = new javax.swing.JPanel();
+        spectrumLayeredPane = new javax.swing.JLayeredPane();
         spectrumAndFragmentIonPanel = new javax.swing.JPanel();
         spectrumTabbedPane = new javax.swing.JTabbedPane();
         psmModProfileJPanel = new javax.swing.JPanel();
@@ -375,10 +393,15 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar = new javax.swing.JToolBar();
         spectrumAnnotationMenuPanel = new javax.swing.JPanel();
         spectrumChartJPanel = new javax.swing.JPanel();
-        intensitySlider = new javax.swing.JSlider();
         accuracySlider = new javax.swing.JSlider();
+        intensitySlider = new javax.swing.JSlider();
+        spectrumHelpJButton = new javax.swing.JButton();
+        exportSpectrumJButton = new javax.swing.JButton();
+        contextMenuSpectrumBackgroundPanel = new javax.swing.JPanel();
         psmSplitPane = new javax.swing.JSplitPane();
         modPsmsPanel = new javax.swing.JPanel();
+        psmsModPeptidesLayeredPane = new javax.swing.JLayeredPane();
+        modsPsmsLayeredPanel = new javax.swing.JPanel();
         psmsModifiedTableJScrollPane = new javax.swing.JScrollPane();
         selectedPsmsTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
@@ -394,6 +417,11 @@ public class PtmPanel extends javax.swing.JPanel {
                 };
             }
         };
+        modifiedPsmsHelpJButton = new javax.swing.JButton();
+        exportModifiedPsmsJButton = new javax.swing.JButton();
+        contextMenuModPsmsBackgroundPanel = new javax.swing.JPanel();
+        relatedPsmsJPanel = new javax.swing.JPanel();
+        psmsRelatedPeptidesJLayeredPane = new javax.swing.JLayeredPane();
         relatedPsmsPanel = new javax.swing.JPanel();
         psmsRelatedTableJScrollPane = new javax.swing.JScrollPane();
         relatedPsmsTable = new JTable() {
@@ -410,6 +438,9 @@ public class PtmPanel extends javax.swing.JPanel {
                 };
             }
         };
+        relatedPsmsHelpJButton = new javax.swing.JButton();
+        exportRelatedPsmsJButton = new javax.swing.JButton();
+        contextMenuRelatedPsmsBackgroundPanel = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -418,10 +449,12 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         });
 
-        jPanel8.setOpaque(false);
+        ptmAndPeptideSelectionPanel.setOpaque(false);
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Variable Modifications"));
-        jPanel1.setOpaque(false);
+        ptmPanel.setOpaque(false);
+
+        ptmLayeredPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Variable Modifications"));
+        ptmLayeredPanel.setOpaque(false);
 
         ptmJScrollPane.setOpaque(false);
 
@@ -470,21 +503,79 @@ public class PtmPanel extends javax.swing.JPanel {
         });
         ptmJScrollPane.setViewportView(ptmJTable);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(ptmJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
-                .addContainerGap())
+        javax.swing.GroupLayout ptmLayeredPanelLayout = new javax.swing.GroupLayout(ptmLayeredPanel);
+        ptmLayeredPanel.setLayout(ptmLayeredPanelLayout);
+        ptmLayeredPanelLayout.setHorizontalGroup(
+            ptmLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 273, Short.MAX_VALUE)
+            .addGroup(ptmLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ptmLayeredPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(ptmJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        ptmLayeredPanelLayout.setVerticalGroup(
+            ptmLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 373, Short.MAX_VALUE)
+            .addGroup(ptmLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ptmLayeredPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(ptmJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        ptmLayeredPanel.setBounds(0, 0, 285, 400);
+        ptmLayeredLayeredPane.add(ptmLayeredPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        ptmSelectionHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        ptmSelectionHelpJButton.setToolTipText("Help");
+        ptmSelectionHelpJButton.setBorder(null);
+        ptmSelectionHelpJButton.setBorderPainted(false);
+        ptmSelectionHelpJButton.setContentAreaFilled(false);
+        ptmSelectionHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        ptmSelectionHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                ptmSelectionHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                ptmSelectionHelpJButtonMouseExited(evt);
+            }
+        });
+        ptmSelectionHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ptmSelectionHelpJButtonActionPerformed(evt);
+            }
+        });
+        ptmSelectionHelpJButton.setBounds(270, 0, 10, 25);
+        ptmLayeredLayeredPane.add(ptmSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        contextMenuPtmBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout contextMenuPtmBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuPtmBackgroundPanel);
+        contextMenuPtmBackgroundPanel.setLayout(contextMenuPtmBackgroundPanelLayout);
+        contextMenuPtmBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuPtmBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+        contextMenuPtmBackgroundPanelLayout.setVerticalGroup(
+            contextMenuPtmBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+
+        contextMenuPtmBackgroundPanel.setBounds(260, 0, 20, 20);
+        ptmLayeredLayeredPane.add(contextMenuPtmBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        javax.swing.GroupLayout ptmPanelLayout = new javax.swing.GroupLayout(ptmPanel);
+        ptmPanel.setLayout(ptmPanelLayout);
+        ptmPanelLayout.setHorizontalGroup(
+            ptmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ptmPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ptmJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(ptmLayeredLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE))
+        );
+        ptmPanelLayout.setVerticalGroup(
+            ptmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(ptmLayeredLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
 
         peptideTablesJSplitPane.setBorder(null);
@@ -493,6 +584,8 @@ public class PtmPanel extends javax.swing.JPanel {
         peptideTablesJSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         peptideTablesJSplitPane.setResizeWeight(0.5);
         peptideTablesJSplitPane.setOpaque(false);
+
+        modifiedPeptidesPanel.setOpaque(false);
 
         selectedPeptidesJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Modified Peptides"));
         selectedPeptidesJPanel.setOpaque(false);
@@ -541,7 +634,7 @@ public class PtmPanel extends javax.swing.JPanel {
             selectedPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, selectedPeptidesJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(selectedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
+                .addComponent(selectedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 738, Short.MAX_VALUE)
                 .addContainerGap())
         );
         selectedPeptidesJPanelLayout.setVerticalGroup(
@@ -552,10 +645,90 @@ public class PtmPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        peptideTablesJSplitPane.setLeftComponent(selectedPeptidesJPanel);
+        selectedPeptidesJPanel.setBounds(0, 0, 770, 170);
+        modifiedPeptidesLayeredPane.add(selectedPeptidesJPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        relatedPeptidesJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Related Peptides"));
+        modificationProfileHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        modificationProfileHelpJButton.setToolTipText("Help");
+        modificationProfileHelpJButton.setBorder(null);
+        modificationProfileHelpJButton.setBorderPainted(false);
+        modificationProfileHelpJButton.setContentAreaFilled(false);
+        modificationProfileHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        modificationProfileHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                modificationProfileHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                modificationProfileHelpJButtonMouseExited(evt);
+            }
+        });
+        modificationProfileHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modificationProfileHelpJButtonActionPerformed(evt);
+            }
+        });
+        modificationProfileHelpJButton.setBounds(747, 0, 10, 27);
+        modifiedPeptidesLayeredPane.add(modificationProfileHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        exportModifiedPeptideProfileJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportModifiedPeptideProfileJButton.setToolTipText("Export");
+        exportModifiedPeptideProfileJButton.setBorder(null);
+        exportModifiedPeptideProfileJButton.setBorderPainted(false);
+        exportModifiedPeptideProfileJButton.setContentAreaFilled(false);
+        exportModifiedPeptideProfileJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportModifiedPeptideProfileJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportModifiedPeptideProfileJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportModifiedPeptideProfileJButtonMouseExited(evt);
+            }
+        });
+        exportModifiedPeptideProfileJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportModifiedPeptideProfileJButtonActionPerformed(evt);
+            }
+        });
+        exportModifiedPeptideProfileJButton.setBounds(730, 0, 10, 23);
+        modifiedPeptidesLayeredPane.add(exportModifiedPeptideProfileJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        contextMenuModifiedPeptidesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout contextMenuModifiedPeptidesBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuModifiedPeptidesBackgroundPanel);
+        contextMenuModifiedPeptidesBackgroundPanel.setLayout(contextMenuModifiedPeptidesBackgroundPanelLayout);
+        contextMenuModifiedPeptidesBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuModifiedPeptidesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 30, Short.MAX_VALUE)
+        );
+        contextMenuModifiedPeptidesBackgroundPanelLayout.setVerticalGroup(
+            contextMenuModifiedPeptidesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+
+        contextMenuModifiedPeptidesBackgroundPanel.setBounds(730, 0, 30, 20);
+        modifiedPeptidesLayeredPane.add(contextMenuModifiedPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        javax.swing.GroupLayout modifiedPeptidesPanelLayout = new javax.swing.GroupLayout(modifiedPeptidesPanel);
+        modifiedPeptidesPanel.setLayout(modifiedPeptidesPanelLayout);
+        modifiedPeptidesPanelLayout.setHorizontalGroup(
+            modifiedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 777, Short.MAX_VALUE)
+            .addGroup(modifiedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(modifiedPeptidesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 777, Short.MAX_VALUE))
+        );
+        modifiedPeptidesPanelLayout.setVerticalGroup(
+            modifiedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 170, Short.MAX_VALUE)
+            .addGroup(modifiedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(modifiedPeptidesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE))
+        );
+
+        peptideTablesJSplitPane.setLeftComponent(modifiedPeptidesPanel);
+
         relatedPeptidesJPanel.setOpaque(false);
+
+        relatedPeptidesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Related Peptides"));
+        relatedPeptidesPanel.setOpaque(false);
 
         relatedPeptidesJSplitPane.setBorder(null);
         relatedPeptidesJSplitPane.setDividerLocation(400);
@@ -594,38 +767,116 @@ public class PtmPanel extends javax.swing.JPanel {
         modificationProfileRelatedPeptideJPanel.setLayout(new java.awt.GridLayout(3, 1));
         relatedPeptidesJSplitPane.setRightComponent(modificationProfileRelatedPeptideJPanel);
 
+        javax.swing.GroupLayout relatedPeptidesPanelLayout = new javax.swing.GroupLayout(relatedPeptidesPanel);
+        relatedPeptidesPanel.setLayout(relatedPeptidesPanelLayout);
+        relatedPeptidesPanelLayout.setHorizontalGroup(
+            relatedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 758, Short.MAX_VALUE)
+            .addGroup(relatedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(relatedPeptidesPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(relatedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 738, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        relatedPeptidesPanelLayout.setVerticalGroup(
+            relatedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 203, Short.MAX_VALUE)
+            .addGroup(relatedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(relatedPeptidesPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(relatedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        relatedPeptidesPanel.setBounds(0, 0, 770, 230);
+        relatedPeptiesLayeredPane.add(relatedPeptidesPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        relatedProfileHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        relatedProfileHelpJButton.setToolTipText("Help");
+        relatedProfileHelpJButton.setBorder(null);
+        relatedProfileHelpJButton.setBorderPainted(false);
+        relatedProfileHelpJButton.setContentAreaFilled(false);
+        relatedProfileHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        relatedProfileHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                relatedProfileHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                relatedProfileHelpJButtonMouseExited(evt);
+            }
+        });
+        relatedProfileHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                relatedProfileHelpJButtonActionPerformed(evt);
+            }
+        });
+        relatedProfileHelpJButton.setBounds(750, 0, 10, 25);
+        relatedPeptiesLayeredPane.add(relatedProfileHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        exportRelatedPeptideProfileJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportRelatedPeptideProfileJButton.setToolTipText("Export");
+        exportRelatedPeptideProfileJButton.setBorder(null);
+        exportRelatedPeptideProfileJButton.setBorderPainted(false);
+        exportRelatedPeptideProfileJButton.setContentAreaFilled(false);
+        exportRelatedPeptideProfileJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportRelatedPeptideProfileJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportRelatedPeptideProfileJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportRelatedPeptideProfileJButtonMouseExited(evt);
+            }
+        });
+        exportRelatedPeptideProfileJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportRelatedPeptideProfileJButtonActionPerformed(evt);
+            }
+        });
+        exportRelatedPeptideProfileJButton.setBounds(740, 0, 10, 25);
+        relatedPeptiesLayeredPane.add(exportRelatedPeptideProfileJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        contextMenuRelatedPeptidesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout contextMenuRelatedPeptidesBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuRelatedPeptidesBackgroundPanel);
+        contextMenuRelatedPeptidesBackgroundPanel.setLayout(contextMenuRelatedPeptidesBackgroundPanelLayout);
+        contextMenuRelatedPeptidesBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuRelatedPeptidesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 30, Short.MAX_VALUE)
+        );
+        contextMenuRelatedPeptidesBackgroundPanelLayout.setVerticalGroup(
+            contextMenuRelatedPeptidesBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+
+        contextMenuRelatedPeptidesBackgroundPanel.setBounds(730, 0, 30, 20);
+        relatedPeptiesLayeredPane.add(contextMenuRelatedPeptidesBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+
         javax.swing.GroupLayout relatedPeptidesJPanelLayout = new javax.swing.GroupLayout(relatedPeptidesJPanel);
         relatedPeptidesJPanel.setLayout(relatedPeptidesJPanelLayout);
         relatedPeptidesJPanelLayout.setHorizontalGroup(
             relatedPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, relatedPeptidesJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(relatedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 733, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(relatedPeptiesLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 777, Short.MAX_VALUE)
         );
         relatedPeptidesJPanelLayout.setVerticalGroup(
             relatedPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(relatedPeptidesJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(relatedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 181, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(relatedPeptiesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
         );
 
         peptideTablesJSplitPane.setRightComponent(relatedPeptidesJPanel);
 
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+        javax.swing.GroupLayout ptmAndPeptideSelectionPanelLayout = new javax.swing.GroupLayout(ptmAndPeptideSelectionPanel);
+        ptmAndPeptideSelectionPanel.setLayout(ptmAndPeptideSelectionPanelLayout);
+        ptmAndPeptideSelectionPanelLayout.setHorizontalGroup(
+            ptmAndPeptideSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ptmAndPeptideSelectionPanelLayout.createSequentialGroup()
+                .addComponent(ptmPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 765, Short.MAX_VALUE))
+                .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 777, Short.MAX_VALUE))
         );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        ptmAndPeptideSelectionPanelLayout.setVerticalGroup(
+            ptmAndPeptideSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(ptmPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         psmSpectraSplitPane.setBorder(null);
@@ -634,13 +885,15 @@ public class PtmPanel extends javax.swing.JPanel {
         psmSpectraSplitPane.setResizeWeight(0.5);
         psmSpectraSplitPane.setOpaque(false);
 
-        spectrumAndFragmentIonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum & Fragment Ions"));
-        spectrumAndFragmentIonPanel.setOpaque(false);
-        spectrumAndFragmentIonPanel.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+        spectrumAndFragmentIonJPanel.setOpaque(false);
+        spectrumAndFragmentIonJPanel.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
             public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
-                spectrumAndFragmentIonPanelMouseWheelMoved(evt);
+                spectrumAndFragmentIonJPanelMouseWheelMoved(evt);
             }
         });
+
+        spectrumAndFragmentIonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum & Fragment Ions"));
+        spectrumAndFragmentIonPanel.setOpaque(false);
 
         spectrumTabbedPane.setBackground(new java.awt.Color(255, 255, 255));
         spectrumTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
@@ -651,11 +904,11 @@ public class PtmPanel extends javax.swing.JPanel {
         psmModProfileJPanel.setLayout(psmModProfileJPanelLayout);
         psmModProfileJPanelLayout.setHorizontalGroup(
             psmModProfileJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 778, Short.MAX_VALUE)
+            .addGap(0, 510, Short.MAX_VALUE)
         );
         psmModProfileJPanelLayout.setVerticalGroup(
             psmModProfileJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 368, Short.MAX_VALUE)
+            .addGap(0, 363, Short.MAX_VALUE)
         );
 
         spectrumTabbedPane.addTab("Profile", psmModProfileJPanel);
@@ -666,11 +919,11 @@ public class PtmPanel extends javax.swing.JPanel {
         fragmentIonsJPanel.setLayout(fragmentIonsJPanelLayout);
         fragmentIonsJPanelLayout.setHorizontalGroup(
             fragmentIonsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 778, Short.MAX_VALUE)
+            .addGap(0, 510, Short.MAX_VALUE)
         );
         fragmentIonsJPanelLayout.setVerticalGroup(
             fragmentIonsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 368, Short.MAX_VALUE)
+            .addGap(0, 363, Short.MAX_VALUE)
         );
 
         spectrumTabbedPane.addTab("Ions", fragmentIonsJPanel);
@@ -695,14 +948,14 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 758, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 490, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
+            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
         );
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanelLayout.createSequentialGroup()
-                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -710,22 +963,6 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumTabbedPane.addTab("Spectrum", spectrumJPanel);
 
         spectrumTabbedPane.setSelectedIndex(2);
-
-        intensitySlider.setOrientation(javax.swing.JSlider.VERTICAL);
-        intensitySlider.setPaintTicks(true);
-        intensitySlider.setToolTipText("Annotation Intensity Level");
-        intensitySlider.setValue(75);
-        intensitySlider.setOpaque(false);
-        intensitySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
-            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
-                intensitySliderMouseWheelMoved(evt);
-            }
-        });
-        intensitySlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                intensitySliderStateChanged(evt);
-            }
-        });
 
         accuracySlider.setOrientation(javax.swing.JSlider.VERTICAL);
         accuracySlider.setPaintTicks(true);
@@ -743,43 +980,139 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         });
 
+        intensitySlider.setOrientation(javax.swing.JSlider.VERTICAL);
+        intensitySlider.setPaintTicks(true);
+        intensitySlider.setToolTipText("Annotation Intensity Level");
+        intensitySlider.setValue(75);
+        intensitySlider.setOpaque(false);
+        intensitySlider.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                intensitySliderMouseWheelMoved(evt);
+            }
+        });
+        intensitySlider.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                intensitySliderStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout spectrumAndFragmentIonPanelLayout = new javax.swing.GroupLayout(spectrumAndFragmentIonPanel);
         spectrumAndFragmentIonPanel.setLayout(spectrumAndFragmentIonPanelLayout);
         spectrumAndFragmentIonPanelLayout.setHorizontalGroup(
             spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumAndFragmentIonPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 783, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(intensitySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(accuracySlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
+                .addContainerGap(527, Short.MAX_VALUE)
+                .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(intensitySlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(accuracySlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+            .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(spectrumTabbedPane)
+                    .addGap(33, 33, 33)))
         );
         spectrumAndFragmentIonPanelLayout.setVerticalGroup(
             spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumAndFragmentIonPanelLayout.createSequentialGroup()
-                        .addGap(25, 25, 25)
-                        .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 153, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 152, Short.MAX_VALUE)
-                        .addGap(59, 59, 59))
-                    .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
-                        .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
-                        .addContainerGap())))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumAndFragmentIonPanelLayout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                .addGap(27, 27, 27)
+                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                .addGap(69, 69, 69))
+            .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
 
-        psmSpectraSplitPane.setRightComponent(spectrumAndFragmentIonPanel);
+        spectrumAndFragmentIonPanel.setBounds(0, 0, 570, 440);
+        spectrumLayeredPane.add(spectrumAndFragmentIonPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        spectrumHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        spectrumHelpJButton.setToolTipText("Help");
+        spectrumHelpJButton.setBorder(null);
+        spectrumHelpJButton.setBorderPainted(false);
+        spectrumHelpJButton.setContentAreaFilled(false);
+        spectrumHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        spectrumHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                spectrumHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                spectrumHelpJButtonMouseExited(evt);
+            }
+        });
+        spectrumHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                spectrumHelpJButtonActionPerformed(evt);
+            }
+        });
+        spectrumHelpJButton.setBounds(540, 0, 10, 25);
+        spectrumLayeredPane.add(spectrumHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        exportSpectrumJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportSpectrumJButton.setToolTipText("Export");
+        exportSpectrumJButton.setBorder(null);
+        exportSpectrumJButton.setBorderPainted(false);
+        exportSpectrumJButton.setContentAreaFilled(false);
+        exportSpectrumJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportSpectrumJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportSpectrumJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportSpectrumJButtonMouseExited(evt);
+            }
+        });
+        exportSpectrumJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportSpectrumJButtonActionPerformed(evt);
+            }
+        });
+        exportSpectrumJButton.setBounds(530, 0, 10, 25);
+        spectrumLayeredPane.add(exportSpectrumJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        contextMenuSpectrumBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout contextMenuSpectrumBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuSpectrumBackgroundPanel);
+        contextMenuSpectrumBackgroundPanel.setLayout(contextMenuSpectrumBackgroundPanelLayout);
+        contextMenuSpectrumBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuSpectrumBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 30, Short.MAX_VALUE)
+        );
+        contextMenuSpectrumBackgroundPanelLayout.setVerticalGroup(
+            contextMenuSpectrumBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+
+        contextMenuSpectrumBackgroundPanel.setBounds(530, 0, 30, 20);
+        spectrumLayeredPane.add(contextMenuSpectrumBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        javax.swing.GroupLayout spectrumAndFragmentIonJPanelLayout = new javax.swing.GroupLayout(spectrumAndFragmentIonJPanel);
+        spectrumAndFragmentIonJPanel.setLayout(spectrumAndFragmentIonJPanelLayout);
+        spectrumAndFragmentIonJPanelLayout.setHorizontalGroup(
+            spectrumAndFragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(spectrumAndFragmentIonJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(spectrumLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 568, Short.MAX_VALUE))
+        );
+        spectrumAndFragmentIonJPanelLayout.setVerticalGroup(
+            spectrumAndFragmentIonJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(spectrumLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
+        );
+
+        psmSpectraSplitPane.setRightComponent(spectrumAndFragmentIonJPanel);
 
         psmSplitPane.setBorder(null);
         psmSplitPane.setDividerSize(0);
         psmSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         psmSplitPane.setOpaque(false);
 
-        modPsmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide-Spectrum Matches - Modified Peptide"));
         modPsmsPanel.setOpaque(false);
+
+        modsPsmsLayeredPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide-Spectrum Matches - Modified Peptide"));
+        modsPsmsLayeredPanel.setOpaque(false);
 
         psmsModifiedTableJScrollPane.setOpaque(false);
 
@@ -803,24 +1136,104 @@ public class PtmPanel extends javax.swing.JPanel {
         });
         psmsModifiedTableJScrollPane.setViewportView(selectedPsmsTable);
 
+        javax.swing.GroupLayout modsPsmsLayeredPanelLayout = new javax.swing.GroupLayout(modsPsmsLayeredPanel);
+        modsPsmsLayeredPanel.setLayout(modsPsmsLayeredPanelLayout);
+        modsPsmsLayeredPanelLayout.setHorizontalGroup(
+            modsPsmsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 488, Short.MAX_VALUE)
+            .addGroup(modsPsmsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(modsPsmsLayeredPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        modsPsmsLayeredPanelLayout.setVerticalGroup(
+            modsPsmsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 163, Short.MAX_VALUE)
+            .addGroup(modsPsmsLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(modsPsmsLayeredPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        modsPsmsLayeredPanel.setBounds(0, 0, 500, 190);
+        psmsModPeptidesLayeredPane.add(modsPsmsLayeredPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        modifiedPsmsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        modifiedPsmsHelpJButton.setToolTipText("Help");
+        modifiedPsmsHelpJButton.setBorder(null);
+        modifiedPsmsHelpJButton.setBorderPainted(false);
+        modifiedPsmsHelpJButton.setContentAreaFilled(false);
+        modifiedPsmsHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        modifiedPsmsHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                modifiedPsmsHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                modifiedPsmsHelpJButtonMouseExited(evt);
+            }
+        });
+        modifiedPsmsHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                modifiedPsmsHelpJButtonActionPerformed(evt);
+            }
+        });
+        modifiedPsmsHelpJButton.setBounds(480, 0, 10, 25);
+        psmsModPeptidesLayeredPane.add(modifiedPsmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        exportModifiedPsmsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportModifiedPsmsJButton.setToolTipText("Export");
+        exportModifiedPsmsJButton.setBorder(null);
+        exportModifiedPsmsJButton.setBorderPainted(false);
+        exportModifiedPsmsJButton.setContentAreaFilled(false);
+        exportModifiedPsmsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportModifiedPsmsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportModifiedPsmsJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportModifiedPsmsJButtonMouseExited(evt);
+            }
+        });
+        exportModifiedPsmsJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportModifiedPsmsJButtonActionPerformed(evt);
+            }
+        });
+        exportModifiedPsmsJButton.setBounds(470, 0, 10, 25);
+        psmsModPeptidesLayeredPane.add(exportModifiedPsmsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        contextMenuModPsmsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout contextMenuModPsmsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuModPsmsBackgroundPanel);
+        contextMenuModPsmsBackgroundPanel.setLayout(contextMenuModPsmsBackgroundPanelLayout);
+        contextMenuModPsmsBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuModPsmsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 30, Short.MAX_VALUE)
+        );
+        contextMenuModPsmsBackgroundPanelLayout.setVerticalGroup(
+            contextMenuModPsmsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+
+        contextMenuModPsmsBackgroundPanel.setBounds(460, 0, 30, 20);
+        psmsModPeptidesLayeredPane.add(contextMenuModPsmsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+
         javax.swing.GroupLayout modPsmsPanelLayout = new javax.swing.GroupLayout(modPsmsPanel);
         modPsmsPanel.setLayout(modPsmsPanelLayout);
         modPsmsPanelLayout.setHorizontalGroup(
             modPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(modPsmsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(psmsModPeptidesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
         );
         modPsmsPanelLayout.setVerticalGroup(
             modPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, modPsmsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(psmsModifiedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(psmsModPeptidesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
         );
 
         psmSplitPane.setTopComponent(modPsmsPanel);
+
+        relatedPsmsJPanel.setOpaque(false);
 
         relatedPsmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide-Spectrum Matches - Releated Peptide"));
         relatedPsmsPanel.setOpaque(false);
@@ -851,22 +1264,98 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPsmsPanel.setLayout(relatedPsmsPanelLayout);
         relatedPsmsPanelLayout.setHorizontalGroup(
             relatedPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 224, Short.MAX_VALUE)
-            .addGroup(relatedPsmsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(psmsRelatedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 204, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 488, Short.MAX_VALUE)
+            .addGroup(relatedPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(relatedPsmsPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(psmsRelatedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
         relatedPsmsPanelLayout.setVerticalGroup(
             relatedPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 221, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, relatedPsmsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(psmsRelatedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 199, Short.MAX_VALUE)
-                .addContainerGap())
+            .addGap(0, 223, Short.MAX_VALUE)
+            .addGroup(relatedPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(relatedPsmsPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(psmsRelatedTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
 
-        psmSplitPane.setRightComponent(relatedPsmsPanel);
+        relatedPsmsPanel.setBounds(0, 0, 500, 250);
+        psmsRelatedPeptidesJLayeredPane.add(relatedPsmsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        relatedPsmsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        relatedPsmsHelpJButton.setToolTipText("Help");
+        relatedPsmsHelpJButton.setBorder(null);
+        relatedPsmsHelpJButton.setBorderPainted(false);
+        relatedPsmsHelpJButton.setContentAreaFilled(false);
+        relatedPsmsHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        relatedPsmsHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                relatedPsmsHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                relatedPsmsHelpJButtonMouseExited(evt);
+            }
+        });
+        relatedPsmsHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                relatedPsmsHelpJButtonActionPerformed(evt);
+            }
+        });
+        relatedPsmsHelpJButton.setBounds(480, 0, 10, 25);
+        psmsRelatedPeptidesJLayeredPane.add(relatedPsmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        exportRelatedPsmsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportRelatedPsmsJButton.setToolTipText("Export");
+        exportRelatedPsmsJButton.setBorder(null);
+        exportRelatedPsmsJButton.setBorderPainted(false);
+        exportRelatedPsmsJButton.setContentAreaFilled(false);
+        exportRelatedPsmsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportRelatedPsmsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportRelatedPsmsJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportRelatedPsmsJButtonMouseExited(evt);
+            }
+        });
+        exportRelatedPsmsJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportRelatedPsmsJButtonActionPerformed(evt);
+            }
+        });
+        exportRelatedPsmsJButton.setBounds(470, 0, 10, 25);
+        psmsRelatedPeptidesJLayeredPane.add(exportRelatedPsmsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        contextMenuRelatedPsmsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout contextMenuRelatedPsmsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuRelatedPsmsBackgroundPanel);
+        contextMenuRelatedPsmsBackgroundPanel.setLayout(contextMenuRelatedPsmsBackgroundPanelLayout);
+        contextMenuRelatedPsmsBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuRelatedPsmsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 30, Short.MAX_VALUE)
+        );
+        contextMenuRelatedPsmsBackgroundPanelLayout.setVerticalGroup(
+            contextMenuRelatedPsmsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+
+        contextMenuRelatedPsmsBackgroundPanel.setBounds(460, 0, 30, 20);
+        psmsRelatedPeptidesJLayeredPane.add(contextMenuRelatedPsmsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        javax.swing.GroupLayout relatedPsmsJPanelLayout = new javax.swing.GroupLayout(relatedPsmsJPanel);
+        relatedPsmsJPanel.setLayout(relatedPsmsJPanelLayout);
+        relatedPsmsJPanelLayout.setHorizontalGroup(
+            relatedPsmsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(psmsRelatedPeptidesJLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE)
+        );
+        relatedPsmsJPanelLayout.setVerticalGroup(
+            relatedPsmsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(psmsRelatedPeptidesJLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 247, Short.MAX_VALUE)
+        );
+
+        psmSplitPane.setRightComponent(relatedPsmsJPanel);
 
         psmSpectraSplitPane.setLeftComponent(psmSplitPane);
 
@@ -878,16 +1367,16 @@ public class PtmPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(psmSpectraSplitPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1078, Short.MAX_VALUE)
-                    .addComponent(jPanel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(ptmAndPeptideSelectionPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ptmAndPeptideSelectionPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(psmSpectraSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE)
+                .addComponent(psmSpectraSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 444, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -934,6 +1423,7 @@ public class PtmPanel extends javax.swing.JPanel {
     private void selectedPsmsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_selectedPsmsTableKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
             try {
+                relatedSelected = false;
                 String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
                 updateSpectrum(spectrumKey);
             } catch (Exception e) {
@@ -959,6 +1449,158 @@ public class PtmPanel extends javax.swing.JPanel {
             public void run() {
                 selectedPeptidesJSplitPane.setDividerLocation(selectedPeptidesJSplitPane.getWidth() / 2);
                 updateUI();
+            }
+        });
+
+        
+        // resize the layered panels
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                
+                // move the icons
+                modifiedPeptidesLayeredPane.getComponent(0).setBounds(
+                        modifiedPeptidesLayeredPane.getWidth() - modifiedPeptidesLayeredPane.getComponent(0).getWidth() - 10,
+                        -5,
+                        modifiedPeptidesLayeredPane.getComponent(0).getWidth(),
+                        modifiedPeptidesLayeredPane.getComponent(0).getHeight());
+
+                modifiedPeptidesLayeredPane.getComponent(1).setBounds(
+                        modifiedPeptidesLayeredPane.getWidth() - modifiedPeptidesLayeredPane.getComponent(1).getWidth() - 20,
+                        -3,
+                        modifiedPeptidesLayeredPane.getComponent(1).getWidth(),
+                        modifiedPeptidesLayeredPane.getComponent(1).getHeight());
+                
+                modifiedPeptidesLayeredPane.getComponent(2).setBounds(
+                        modifiedPeptidesLayeredPane.getWidth() - modifiedPeptidesLayeredPane.getComponent(2).getWidth() - 5,
+                        -3,
+                        modifiedPeptidesLayeredPane.getComponent(2).getWidth(),
+                        modifiedPeptidesLayeredPane.getComponent(2).getHeight());
+                
+                // resize the plot area
+                modifiedPeptidesLayeredPane.getComponent(3).setBounds(0, 0, modifiedPeptidesLayeredPane.getWidth(), modifiedPeptidesLayeredPane.getHeight());
+                modifiedPeptidesLayeredPane.revalidate();
+                modifiedPeptidesLayeredPane.repaint();
+                
+                
+                
+                // move the icons
+                relatedPeptiesLayeredPane.getComponent(0).setBounds(
+                        relatedPeptiesLayeredPane.getWidth() - relatedPeptiesLayeredPane.getComponent(0).getWidth() - 10,
+                        -5,
+                        relatedPeptiesLayeredPane.getComponent(0).getWidth(),
+                        relatedPeptiesLayeredPane.getComponent(0).getHeight());
+
+                relatedPeptiesLayeredPane.getComponent(1).setBounds(
+                        relatedPeptiesLayeredPane.getWidth() - relatedPeptiesLayeredPane.getComponent(1).getWidth() - 20,
+                        -5,
+                        relatedPeptiesLayeredPane.getComponent(1).getWidth(),
+                        relatedPeptiesLayeredPane.getComponent(1).getHeight());
+                
+                relatedPeptiesLayeredPane.getComponent(2).setBounds(
+                        relatedPeptiesLayeredPane.getWidth() - relatedPeptiesLayeredPane.getComponent(2).getWidth() - 5,
+                        -3,
+                        relatedPeptiesLayeredPane.getComponent(2).getWidth(),
+                        relatedPeptiesLayeredPane.getComponent(2).getHeight());
+
+                // resize the plot area
+                relatedPeptiesLayeredPane.getComponent(3).setBounds(0, 0, relatedPeptiesLayeredPane.getWidth(), relatedPeptiesLayeredPane.getHeight());
+                relatedPeptiesLayeredPane.revalidate();
+                relatedPeptiesLayeredPane.repaint();
+                
+                
+                // move the icons
+                ptmLayeredLayeredPane.getComponent(0).setBounds(
+                        ptmLayeredLayeredPane.getWidth() - ptmLayeredLayeredPane.getComponent(0).getWidth() - 10,
+                        -5,
+                        ptmLayeredLayeredPane.getComponent(0).getWidth(),
+                        ptmLayeredLayeredPane.getComponent(0).getHeight());
+                
+                ptmLayeredLayeredPane.getComponent(1).setBounds(
+                        ptmLayeredLayeredPane.getWidth() - ptmLayeredLayeredPane.getComponent(1).getWidth() - 5,
+                        -3,
+                        ptmLayeredLayeredPane.getComponent(1).getWidth(),
+                        ptmLayeredLayeredPane.getComponent(1).getHeight());
+                
+                // resize the plot area
+                ptmLayeredLayeredPane.getComponent(2).setBounds(0, 0, ptmLayeredLayeredPane.getWidth(), ptmLayeredLayeredPane.getHeight());
+                ptmLayeredLayeredPane.revalidate();
+                ptmLayeredLayeredPane.repaint();
+                
+                
+                // move the icons
+                psmsModPeptidesLayeredPane.getComponent(0).setBounds(
+                        psmsModPeptidesLayeredPane.getWidth() - psmsModPeptidesLayeredPane.getComponent(0).getWidth() - 10,
+                        -5,
+                        psmsModPeptidesLayeredPane.getComponent(0).getWidth(),
+                        psmsModPeptidesLayeredPane.getComponent(0).getHeight());
+
+                psmsModPeptidesLayeredPane.getComponent(1).setBounds(
+                        psmsModPeptidesLayeredPane.getWidth() - psmsModPeptidesLayeredPane.getComponent(1).getWidth() - 20,
+                        -5,
+                        psmsModPeptidesLayeredPane.getComponent(1).getWidth(),
+                        psmsModPeptidesLayeredPane.getComponent(1).getHeight());
+                
+                psmsModPeptidesLayeredPane.getComponent(2).setBounds(
+                        psmsModPeptidesLayeredPane.getWidth() - psmsModPeptidesLayeredPane.getComponent(2).getWidth() - 5,
+                        -3,
+                        psmsModPeptidesLayeredPane.getComponent(2).getWidth(),
+                        psmsModPeptidesLayeredPane.getComponent(2).getHeight());
+                
+                // resize the plot area
+                psmsModPeptidesLayeredPane.getComponent(3).setBounds(0, 0, psmsModPeptidesLayeredPane.getWidth(), psmsModPeptidesLayeredPane.getHeight());
+                psmsModPeptidesLayeredPane.revalidate();
+                psmsModPeptidesLayeredPane.repaint();
+                
+                
+                // move the icons
+                psmsRelatedPeptidesJLayeredPane.getComponent(0).setBounds(
+                        psmsRelatedPeptidesJLayeredPane.getWidth() - psmsRelatedPeptidesJLayeredPane.getComponent(0).getWidth() - 10,
+                        -5,
+                        psmsRelatedPeptidesJLayeredPane.getComponent(0).getWidth(),
+                        psmsRelatedPeptidesJLayeredPane.getComponent(0).getHeight());
+
+                psmsRelatedPeptidesJLayeredPane.getComponent(1).setBounds(
+                        psmsRelatedPeptidesJLayeredPane.getWidth() - psmsRelatedPeptidesJLayeredPane.getComponent(1).getWidth() - 20,
+                        -5,
+                        psmsRelatedPeptidesJLayeredPane.getComponent(1).getWidth(),
+                        psmsRelatedPeptidesJLayeredPane.getComponent(1).getHeight());
+                
+                psmsRelatedPeptidesJLayeredPane.getComponent(2).setBounds(
+                        psmsRelatedPeptidesJLayeredPane.getWidth() - psmsRelatedPeptidesJLayeredPane.getComponent(2).getWidth() - 5,
+                        -3,
+                        psmsRelatedPeptidesJLayeredPane.getComponent(2).getWidth(),
+                        psmsRelatedPeptidesJLayeredPane.getComponent(2).getHeight());
+                
+                // resize the plot area
+                psmsRelatedPeptidesJLayeredPane.getComponent(3).setBounds(0, 0, psmsRelatedPeptidesJLayeredPane.getWidth(), psmsRelatedPeptidesJLayeredPane.getHeight());
+                psmsRelatedPeptidesJLayeredPane.revalidate();
+                psmsRelatedPeptidesJLayeredPane.repaint();
+                
+ 
+                // move the icons
+                spectrumLayeredPane.getComponent(0).setBounds(
+                        spectrumLayeredPane.getWidth() - spectrumLayeredPane.getComponent(0).getWidth() - 10,
+                        -5,
+                        spectrumLayeredPane.getComponent(0).getWidth(),
+                        spectrumLayeredPane.getComponent(0).getHeight());
+
+                spectrumLayeredPane.getComponent(1).setBounds(
+                        spectrumLayeredPane.getWidth() - spectrumLayeredPane.getComponent(1).getWidth() - 20,
+                        -5,
+                        spectrumLayeredPane.getComponent(1).getWidth(),
+                        spectrumLayeredPane.getComponent(1).getHeight());
+                
+                spectrumLayeredPane.getComponent(2).setBounds(
+                        spectrumLayeredPane.getWidth() - spectrumLayeredPane.getComponent(2).getWidth() - 5,
+                        -3,
+                        spectrumLayeredPane.getComponent(2).getWidth(),
+                        spectrumLayeredPane.getComponent(2).getHeight());
+                
+                // resize the plot area
+                spectrumLayeredPane.getComponent(3).setBounds(0, 0, spectrumLayeredPane.getWidth(), spectrumLayeredPane.getHeight());
+                spectrumLayeredPane.revalidate();
+                spectrumLayeredPane.repaint();   
             }
         });
     }//GEN-LAST:event_formComponentResized
@@ -1064,6 +1706,7 @@ public class PtmPanel extends javax.swing.JPanel {
         if (selectedPsmsTable.getSelectedRow() != -1) {
 
             try {
+                relatedSelected = false;
                 String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
                 updateSpectrum(spectrumKey);
             } catch (Exception e) {
@@ -1229,7 +1872,7 @@ private void ptmJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:even
      * @param evt 
      */
 private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_intensitySliderMouseWheelMoved
-    spectrumAndFragmentIonPanelMouseWheelMoved(evt);
+    spectrumAndFragmentIonJPanelMouseWheelMoved(evt);
 }//GEN-LAST:event_intensitySliderMouseWheelMoved
 
     /**
@@ -1249,7 +1892,7 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
      * 
      * @param evt 
      */
-private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumAndFragmentIonPanelMouseWheelMoved
+private void spectrumAndFragmentIonJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumAndFragmentIonJPanelMouseWheelMoved
 
     // @TODO: figure out why the strange special cases are needed... if not included the slider gets stuck at the given values!
 
@@ -1278,7 +1921,7 @@ private void spectrumAndFragmentIonPanelMouseWheelMoved(java.awt.event.MouseWhee
             }
         }
     }
-}//GEN-LAST:event_spectrumAndFragmentIonPanelMouseWheelMoved
+}//GEN-LAST:event_spectrumAndFragmentIonJPanelMouseWheelMoved
 
     /**
      * Changes the cursor to a hand cursor if over the color column.
@@ -1358,7 +2001,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * @param evt 
      */
     private void accuracySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_accuracySliderMouseWheelMoved
-        spectrumAndFragmentIonPanelMouseWheelMoved(evt);
+        spectrumAndFragmentIonJPanelMouseWheelMoved(evt);
     }//GEN-LAST:event_accuracySliderMouseWheelMoved
 
     /**
@@ -1371,6 +2014,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         if (relatedPsmsTable.getSelectedRow() != -1) {
 
             try {
+                relatedSelected = true;
                 String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
                 updateSpectrum(spectrumKey);
             } catch (Exception e) {
@@ -1432,6 +2076,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private void relatedPsmsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_relatedPsmsTableKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
             try {
+                relatedSelected = true;
                 String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
                 updateSpectrum(spectrumKey);
             } catch (Exception e) {
@@ -1439,39 +2084,378 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             }
         }
     }//GEN-LAST:event_relatedPsmsTableKeyReleased
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void modificationProfileHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificationProfileHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "ModificationProfiles");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_modificationProfileHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void modificationProfileHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_modificationProfileHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_modificationProfileHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void modificationProfileHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_modificationProfileHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_modificationProfileHelpJButtonMouseExited
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void exportModifiedPeptideProfileJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportModifiedPeptideProfileJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportModifiedPeptideProfileJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void exportModifiedPeptideProfileJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportModifiedPeptideProfileJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportModifiedPeptideProfileJButtonMouseExited
+
+    /**
+     * Export the table contents.
+     * 
+     * @param evt 
+     */
+    private void exportModifiedPeptideProfileJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportModifiedPeptideProfileJButtonActionPerformed
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_exportModifiedPeptideProfileJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void relatedProfileHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedProfileHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_relatedProfileHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void relatedProfileHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedProfileHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_relatedProfileHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void relatedProfileHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relatedProfileHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "ModificationProfiles");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_relatedProfileHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void exportRelatedPeptideProfileJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportRelatedPeptideProfileJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportRelatedPeptideProfileJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void exportRelatedPeptideProfileJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportRelatedPeptideProfileJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportRelatedPeptideProfileJButtonMouseExited
+
+    /**
+     * Export the table contents.
+     * 
+     * @param evt 
+     */
+    private void exportRelatedPeptideProfileJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRelatedPeptideProfileJButtonActionPerformed
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_exportRelatedPeptideProfileJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void ptmSelectionHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ptmSelectionHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_ptmSelectionHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void ptmSelectionHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ptmSelectionHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_ptmSelectionHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void ptmSelectionHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ptmSelectionHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "PTMSelection");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_ptmSelectionHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void exportModifiedPsmsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportModifiedPsmsJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportModifiedPsmsJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void exportModifiedPsmsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportModifiedPsmsJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportModifiedPsmsJButtonMouseExited
+
+    /**
+     * Export the table contents.
+     * 
+     * @param evt 
+     */
+    private void exportModifiedPsmsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportModifiedPsmsJButtonActionPerformed
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_exportModifiedPsmsJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void modifiedPsmsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_modifiedPsmsHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_modifiedPsmsHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void modifiedPsmsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_modifiedPsmsHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_modifiedPsmsHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void modifiedPsmsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifiedPsmsHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "PSMs");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_modifiedPsmsHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void exportRelatedPsmsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportRelatedPsmsJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportRelatedPsmsJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void exportRelatedPsmsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportRelatedPsmsJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportRelatedPsmsJButtonMouseExited
+
+    /**
+     * Export the table contents.
+     * 
+     * @param evt 
+     */
+    private void exportRelatedPsmsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRelatedPsmsJButtonActionPerformed
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_exportRelatedPsmsJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void relatedPsmsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPsmsHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_relatedPsmsHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void relatedPsmsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPsmsHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_relatedPsmsHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void relatedPsmsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relatedPsmsHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "PSMs");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_relatedPsmsHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void exportSpectrumJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportSpectrumJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void exportSpectrumJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportSpectrumJButtonMouseExited
+
+    /**
+     * Export the table contents.
+     * 
+     * @param evt 
+     */
+    private void exportSpectrumJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonActionPerformed
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_exportSpectrumJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void spectrumHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_spectrumHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void spectrumHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_spectrumHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void spectrumHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "Spectrum"); // @TODO: show the spectrum panel help instead?
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_spectrumHelpJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
+    private javax.swing.JPanel contextMenuModPsmsBackgroundPanel;
+    private javax.swing.JPanel contextMenuModifiedPeptidesBackgroundPanel;
+    private javax.swing.JPanel contextMenuPtmBackgroundPanel;
+    private javax.swing.JPanel contextMenuRelatedPeptidesBackgroundPanel;
+    private javax.swing.JPanel contextMenuRelatedPsmsBackgroundPanel;
+    private javax.swing.JPanel contextMenuSpectrumBackgroundPanel;
+    private javax.swing.JButton exportModifiedPeptideProfileJButton;
+    private javax.swing.JButton exportModifiedPsmsJButton;
+    private javax.swing.JButton exportRelatedPeptideProfileJButton;
+    private javax.swing.JButton exportRelatedPsmsJButton;
+    private javax.swing.JButton exportSpectrumJButton;
     private javax.swing.JPanel fragmentIonsJPanel;
     private javax.swing.JSlider intensitySlider;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel modPsmsPanel;
+    private javax.swing.JButton modificationProfileHelpJButton;
     private javax.swing.JPanel modificationProfileRelatedPeptideJPanel;
     private javax.swing.JPanel modificationProfileSelectedPeptideJPanel;
+    private javax.swing.JLayeredPane modifiedPeptidesLayeredPane;
+    private javax.swing.JPanel modifiedPeptidesPanel;
+    private javax.swing.JButton modifiedPsmsHelpJButton;
+    private javax.swing.JPanel modsPsmsLayeredPanel;
     private javax.swing.JSplitPane peptideTablesJSplitPane;
     private javax.swing.JTable peptidesTable;
     private javax.swing.JScrollPane peptidesTableJScrollPane;
     private javax.swing.JPanel psmModProfileJPanel;
     private javax.swing.JSplitPane psmSpectraSplitPane;
     private javax.swing.JSplitPane psmSplitPane;
+    private javax.swing.JLayeredPane psmsModPeptidesLayeredPane;
     private javax.swing.JScrollPane psmsModifiedTableJScrollPane;
+    private javax.swing.JLayeredPane psmsRelatedPeptidesJLayeredPane;
     private javax.swing.JScrollPane psmsRelatedTableJScrollPane;
+    private javax.swing.JPanel ptmAndPeptideSelectionPanel;
     private javax.swing.JScrollPane ptmJScrollPane;
     private javax.swing.JTable ptmJTable;
+    private javax.swing.JLayeredPane ptmLayeredLayeredPane;
+    private javax.swing.JPanel ptmLayeredPanel;
+    private javax.swing.JPanel ptmPanel;
+    private javax.swing.JButton ptmSelectionHelpJButton;
     private javax.swing.JPanel relatedPeptidesJPanel;
     private javax.swing.JSplitPane relatedPeptidesJSplitPane;
+    private javax.swing.JPanel relatedPeptidesPanel;
     private javax.swing.JTable relatedPeptidesTable;
     private javax.swing.JScrollPane relatedPeptidesTableJScrollPane;
+    private javax.swing.JLayeredPane relatedPeptiesLayeredPane;
+    private javax.swing.JButton relatedProfileHelpJButton;
+    private javax.swing.JButton relatedPsmsHelpJButton;
+    private javax.swing.JPanel relatedPsmsJPanel;
     private javax.swing.JPanel relatedPsmsPanel;
     private javax.swing.JTable relatedPsmsTable;
     private javax.swing.JPanel selectedPeptidesJPanel;
     private javax.swing.JSplitPane selectedPeptidesJSplitPane;
     private javax.swing.JTable selectedPsmsTable;
+    private javax.swing.JPanel spectrumAndFragmentIonJPanel;
     private javax.swing.JPanel spectrumAndFragmentIonPanel;
     private javax.swing.JPanel spectrumAnnotationMenuPanel;
     private javax.swing.JPanel spectrumChartJPanel;
+    private javax.swing.JButton spectrumHelpJButton;
     private javax.swing.JPanel spectrumJPanel;
     private javax.swing.JToolBar spectrumJToolBar;
+    private javax.swing.JLayeredPane spectrumLayeredPane;
     private javax.swing.JTabbedPane spectrumTabbedPane;
     // End of variables declaration//GEN-END:variables
 
@@ -1656,90 +2640,93 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * Updates the peptide table.
      */
     public void updatePeptideTable() {
-        
-        // @TODO: replace the waiting cursor with a progress bar?
 
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        
-        // clear the spectrum
-        spectrumChartJPanel.removeAll();
-        spectrumChartJPanel.revalidate();
-        spectrumChartJPanel.repaint();
+        if (ptmJTable.getSelectedRow() != -1) {
 
-        try {
-            HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<Double, ArrayList<String>>();
-            PeptideMatch peptideMatch;
-            PSParameter probabilities = new PSParameter();
-            double p;
+            // @TODO: replace the waiting cursor with a progress bar?
 
-            for (String peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), 2))) {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-                peptideMatch = identification.getPeptideMatch(peptideKey);
+            // clear the spectrum
+            spectrumChartJPanel.removeAll();
+            spectrumChartJPanel.revalidate();
+            spectrumChartJPanel.repaint();
 
-                if (!peptideMatch.isDecoy()) {
+            try {
+                HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<Double, ArrayList<String>>();
+                PeptideMatch peptideMatch;
+                PSParameter probabilities = new PSParameter();
+                double p;
 
-                    probabilities = (PSParameter) identification.getMatchParameter(peptideKey, probabilities);
-                    p = probabilities.getPeptideProbability();
+                for (String peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), 2))) {
 
-                    if (!scoreToPeptideMap.containsKey(p)) {
-                        scoreToPeptideMap.put(p, new ArrayList<String>());
+                    peptideMatch = identification.getPeptideMatch(peptideKey);
+
+                    if (!peptideMatch.isDecoy()) {
+
+                        probabilities = (PSParameter) identification.getMatchParameter(peptideKey, probabilities);
+                        p = probabilities.getPeptideProbability();
+
+                        if (!scoreToPeptideMap.containsKey(p)) {
+                            scoreToPeptideMap.put(p, new ArrayList<String>());
+                        }
+
+                        scoreToPeptideMap.get(p).add(peptideKey);
+                    }
+                }
+
+                ArrayList<Double> scores = new ArrayList<Double>(scoreToPeptideMap.keySet());
+                Collections.sort(scores);
+                displayedPeptides = new ArrayList<String>();
+
+                for (double score : scores) {
+                    displayedPeptides.addAll(scoreToPeptideMap.get(score));
+                }
+
+                ((DefaultTableModel) peptidesTable.getModel()).fireTableDataChanged();
+
+                if (peptidesTable.getRowCount() > 0) {
+                    peptidesTable.setRowSelectionInterval(0, 0);
+                    peptidesTable.scrollRectToVisible(peptidesTable.getCellRect(0, 0, false));
+
+                    try {
+                        peptideMatch = identification.getPeptideMatch(displayedPeptides.get(
+                                (Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1));
+                        updateModificationProfile(peptideMatch, true);
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
 
-                    scoreToPeptideMap.get(p).add(peptideKey);
-                }
-            }
+                    updateRelatedPeptidesTable();
+                } else {
+                    modificationProfileSelectedPeptideJPanel.removeAll();
+                    modificationProfileSelectedPeptideJPanel.revalidate();
+                    modificationProfileSelectedPeptideJPanel.repaint();
 
-            ArrayList<Double> scores = new ArrayList<Double>(scoreToPeptideMap.keySet());
-            Collections.sort(scores);
-            displayedPeptides = new ArrayList<String>();
+                    modificationProfileRelatedPeptideJPanel.removeAll();
+                    modificationProfileRelatedPeptideJPanel.revalidate();
+                    modificationProfileRelatedPeptideJPanel.repaint();
 
-            for (double score : scores) {
-                displayedPeptides.addAll(scoreToPeptideMap.get(score));
-            }
-
-            ((DefaultTableModel) peptidesTable.getModel()).fireTableDataChanged();
-
-            if (peptidesTable.getRowCount() > 0) {
-                peptidesTable.setRowSelectionInterval(0, 0);
-                peptidesTable.scrollRectToVisible(peptidesTable.getCellRect(0, 0, false));
-
-                try {
-                    peptideMatch = identification.getPeptideMatch(displayedPeptides.get(
-                            (Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1));
-                    updateModificationProfile(peptideMatch, true);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    relatedPeptides = new ArrayList<String>();
+                    ((DefaultTableModel) relatedPeptidesTable.getModel()).fireTableDataChanged();
                 }
 
-                updateRelatedPeptidesTable();
-            } else {
-                modificationProfileSelectedPeptideJPanel.removeAll();
-                modificationProfileSelectedPeptideJPanel.revalidate();
-                modificationProfileSelectedPeptideJPanel.repaint();
+                ((TitledBorder) selectedPeptidesJPanel.getBorder()).setTitle("Modified Peptides (" + peptidesTable.getRowCount() + ")");
+                selectedPeptidesJPanel.repaint();
 
-                modificationProfileRelatedPeptideJPanel.removeAll();
-                modificationProfileRelatedPeptideJPanel.revalidate();
-                modificationProfileRelatedPeptideJPanel.repaint();
+                ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
+                relatedPeptidesPanel.repaint();
 
-                relatedPeptides = new ArrayList<String>();
-                ((DefaultTableModel) relatedPeptidesTable.getModel()).fireTableDataChanged();
+                updateSelectedPsmTable();
+                updateRelatedPsmTable(false);
+
+            } catch (Exception e) {
+                System.out.println("Exception when updating selected peptides table...");
+                peptideShakerGUI.catchException(e);
             }
 
-            ((TitledBorder) selectedPeptidesJPanel.getBorder()).setTitle("Modified Peptides (" + peptidesTable.getRowCount() + ")");
-            selectedPeptidesJPanel.repaint();
-            
-            ((TitledBorder) relatedPeptidesJPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
-            relatedPeptidesJPanel.repaint();
-
-            updateSelectedPsmTable();
-            updateRelatedPsmTable(false);
-
-        } catch (Exception e) {
-            System.out.println("Exception when updating selected peptides table...");
-            peptideShakerGUI.catchException(e);
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
-
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
     /**
@@ -1796,8 +2783,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             modificationProfileRelatedPeptideJPanel.removeAll();
         }
 
-        ((TitledBorder) relatedPeptidesJPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
-        relatedPeptidesJPanel.repaint();
+        ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
+        relatedPeptidesPanel.repaint();
     }
 
     /**
@@ -1818,8 +2805,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             }
         }
 
-        ((TitledBorder) modPsmsPanel.getBorder()).setTitle("Peptide-Spectrum Matches - Modified Peptide (" + selectedPsmsTable.getRowCount() + ")");
-        modPsmsPanel.repaint();
+        ((TitledBorder) modsPsmsLayeredPanel.getBorder()).setTitle("Peptide-Spectrum Matches - Modified Peptide (" + selectedPsmsTable.getRowCount() + ")");
+        modsPsmsLayeredPanel.repaint();
     }
 
     /**
@@ -1859,13 +2846,14 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         try {
             String spectrumKey;
 
-            if (relatedSelected) {
+            if (relatedSelected && relatedPsmsTable.getSelectedRow() != -1) {
                 spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
-            } else {
+                updateSpectrum(spectrumKey);
+            } else if (selectedPsmsTable.getSelectedRow() != -1) {
                 spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
+                updateSpectrum(spectrumKey);
             }
 
-            updateSpectrum(spectrumKey);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1949,7 +2937,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 ModificationProfile tempProfile = new ModificationProfile(ptmName, new double[peptide.getSequence().length()][2], ptmColor);
 
                 PtmScoring locationScoring = scores.getPtmScoring(ptmName);
-                
+
                 // delta score
                 String bestLocation = locationScoring.getBestDeltaScoreLocations();
                 double bestScore;
@@ -1962,7 +2950,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         }
                     }
                 }
-                
+
                 // A-score
                 bestLocation = locationScoring.getBestAScoreLocations();
                 if (bestLocation != null) {

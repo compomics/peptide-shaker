@@ -130,7 +130,7 @@ public class QCPanel extends javax.swing.JPanel {
 
         tabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
 
-        psmPanel.setOpaque(false);
+        psmPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         psmQCPlotPanel.setOpaque(false);
         psmQCPlotPanel.setLayout(new javax.swing.BoxLayout(psmQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -226,7 +226,7 @@ public class QCPanel extends javax.swing.JPanel {
 
         tabbedPane.addTab("PSMs", psmPanel);
 
-        peptidePanel.setOpaque(false);
+        peptidePanel.setBackground(new java.awt.Color(255, 255, 255));
 
         peptideQCPlotPanel.setOpaque(false);
         peptideQCPlotPanel.setLayout(new javax.swing.BoxLayout(peptideQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
@@ -322,7 +322,7 @@ public class QCPanel extends javax.swing.JPanel {
 
         tabbedPane.addTab("Peptides", peptidePanel);
 
-        proteinPanel.setOpaque(false);
+        proteinPanel.setBackground(new java.awt.Color(255, 255, 255));
 
         proteinQCPlotPanel.setOpaque(false);
         proteinQCPlotPanel.setLayout(new javax.swing.BoxLayout(proteinQCPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
