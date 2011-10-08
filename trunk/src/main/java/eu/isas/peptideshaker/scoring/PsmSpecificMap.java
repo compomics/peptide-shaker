@@ -214,4 +214,18 @@ public class PsmSpecificMap implements Serializable {
         }
         return result;
     }
+
+    /**
+     * Returns the maximal precursor charge observed in the identified spectra
+     * @return the maximal precursor charge observed in the identified spectra 
+     */
+    public int getMaxCharge() {
+        int maxCharge = 0;
+        for (int charge : psmsMaps.keySet()) {
+            if (charge > maxCharge) {
+                maxCharge = charge;
+            }
+        }
+        return maxCharge;
+    }
 }

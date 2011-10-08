@@ -11,9 +11,15 @@ import java.io.Serializable;
 public class SpectrumCountingPreferences implements Serializable {
 
     /**
+     * serial version UID for post-serialization compatibility
+     */
+    static final long serialVersionUID = -8925515082376046312L;
+
+    /**
      * The spectrum counting methods.
      */
     public enum SpectralCountingMethod {
+
         NSAF, EMPAI
     };
     /**

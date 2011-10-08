@@ -15,23 +15,22 @@ import java.util.HashMap;
  * @author Marc
  */
 public class PSPtmScores implements UrParameter {
-    
+
     /**
      * serial version UID for post-serialization compatibility
      */
-        static final long serialVersionUID = 7450340838299319636L;
+    static final long serialVersionUID = 7450340838299319636L;
     /**
      * A map containing all scores indexed by the modification of interest
      */
     private HashMap<String, PtmScoring> ptmMap = new HashMap<String, PtmScoring>();
-    
+
     /**
      * Constructor
      */
     public PSPtmScores() {
-        
     }
-    
+
     /**
      * Adds a scoring result for the modification of interest
      * @param ptmName       the modification of interest
@@ -40,7 +39,7 @@ public class PSPtmScores implements UrParameter {
     public void addPtmScoring(String ptmName, PtmScoring ptmScoring) {
         ptmMap.put(ptmName, ptmScoring);
     }
-    
+
     /**
      * Returns the ptm scoring for the desired modification (null if none found).
      * @param ptmName   the modification of interest
@@ -49,7 +48,7 @@ public class PSPtmScores implements UrParameter {
     public PtmScoring getPtmScoring(String ptmName) {
         return ptmMap.get(ptmName);
     }
-    
+
     /**
      * indicates whether a modification has been already scored
      * @param ptmName the modification of interest
@@ -58,7 +57,7 @@ public class PSPtmScores implements UrParameter {
     public boolean containsPtm(String ptmName) {
         return ptmMap.containsKey(ptmName);
     }
-    
+
     /**
      * Returns a list of scored modifications
      * @return a list of scored modifications
@@ -66,7 +65,7 @@ public class PSPtmScores implements UrParameter {
     public ArrayList<String> getScoredPTMs() {
         return new ArrayList<String>(ptmMap.keySet());
     }
-    
+
     @Override
     public String getFamilyName() {
         return "PeptideShaker";

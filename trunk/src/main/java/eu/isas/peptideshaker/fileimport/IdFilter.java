@@ -90,6 +90,8 @@ public class IdFilter {
         if (isPpm) {
             if (assumption.getDeltaMass() > maxMassDeviation && maxMassDeviation > 0) {
                 return false;
+            } else if (Math.abs(assumption.getPeptide().getMass()-assumption.getMeasuredMass()) > 2) {
+                int debug = 1;
             }
         } else {
             if (Math.abs(assumption.getMeasuredMass() - assumption.getPeptide().getMass()) > maxMassDeviation && maxMassDeviation > 0) {

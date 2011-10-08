@@ -18,8 +18,10 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * This class will generate the output as requested by the user
@@ -276,9 +278,11 @@ public class FeaturesGenerator {
             if (sequence) {
                 result += "Sequence" + SEPARATOR;
             }
-            if (modifications || ptmLocations) {
+            if (modifications) {
                 result += "Variable Modification" + SEPARATOR;
-                result += "Modification Location" + SEPARATOR;
+            }
+            if (ptmLocations) {
+                result += "Location Confidence" + SEPARATOR;
             }
             if (nSpectra) {
                 result += "#Validated Spectra" + SEPARATOR;
@@ -298,7 +302,6 @@ public class FeaturesGenerator {
 
         PSParameter peptidePSParameter = new PSParameter();
         PSParameter secondaryPSParameter = new PSParameter();
-        PSPtmScores ptmScores = new PSPtmScores();
         Peptide peptide;
         PeptideMatch peptideMatch;
         int progress = 0;
@@ -344,22 +347,66 @@ public class FeaturesGenerator {
                 if (sequence) {
                     result += peptide.getSequence() + SEPARATOR;
                 }
-                if (modifications || ptmLocations) {
-                    ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
-                    boolean first = true;
+                if (modifications) {
+                    HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
                     for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
                         if (modificationMatch.isVariable()) {
-                            if (first) {
-                                first = false;
-                            } else {
-                                result += ", ";
+                            if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                                modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                             }
-                            String modName = modificationMatch.getTheoreticPtm();
-                            result += modName + "(" + modificationMatch + ")";
+                            modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
+                        }
+                    }
+                    boolean first = true;
+                    for (String mod : modMap.keySet()) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            result += ", ";
+                        }
+                        for (int aa : modMap.get(mod)) {
+                        result += mod + "(" + aa + ")";
                         }
                     }
                     result += SEPARATOR;
-                    result += "Not implemented" + SEPARATOR;
+                }
+                if (ptmLocations) {
+                    ArrayList<String> modList = new ArrayList<String>();
+                    for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+                        if (modificationMatch.isVariable()) {
+                            if (!modList.contains(modificationMatch.getTheoreticPtm())) {
+                                modList.add(modificationMatch.getTheoreticPtm());
+                            }
+                        }
+                    }
+                        PSPtmScores ptmScores = new PSPtmScores();
+                    boolean first = true;
+                    for (String mod : modList) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            result += ", ";
+                        }
+                        ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+                        result += mod + "(";
+                        if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                            int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
+                            if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                                result += "Not scored"; // Well this should not happen
+                            } else if (ptmConfidence == PtmScoring.RANDOM) {
+                                result += "Random";
+                            } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                                result += "Doubtfull"; 
+                            } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                                result += "Confident";
+                            } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                                result += "Very confident";
+                            }
+                        } else {
+                            result += "Not scored";
+                        }
+                        result += ")";
+                    }
                 }
                 if (nSpectra) {
                     int cpt = 0;
@@ -396,6 +443,7 @@ public class FeaturesGenerator {
                 progressDialog.setValue(progress);
             }
         }
+
         return result;
     }
 
@@ -439,9 +487,11 @@ public class FeaturesGenerator {
             if (sequence) {
                 result += "Sequence" + SEPARATOR;
             }
-            if (modification || location) {
+            if (modification) {
                 result += "Variable Modification(s)" + SEPARATOR;
-                result += "Modification Location" + SEPARATOR;
+            }
+            if (location) {
+                result += "Location Confidence" + SEPARATOR;
             }
             if (file) {
                 result += "Spectrum File" + SEPARATOR;
@@ -493,21 +543,66 @@ public class FeaturesGenerator {
                 if (sequence) {
                     result += bestAssumption.getPeptide().getSequence() + SEPARATOR;
                 }
-                if (modification || location) {
-                    boolean first = true;
+                if (modification) {
+                    HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
                     for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
                         if (modificationMatch.isVariable()) {
-                            if (first) {
-                                first = false;
-                            } else {
-                                result += ", ";
+                            if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                                modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
                             }
-                            String modName = modificationMatch.getTheoreticPtm();
-                            result += modName + "(" + modificationMatch + ")";
+                            modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                         }
                     }
+                    boolean first = true;
+                    for (String mod : modMap.keySet()) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            result += ", ";
+                        }
+                        for (int aa : modMap.get(mod)) {
+                        result += mod + " (" + aa + ")";
+                    }
+                    }
                     result += SEPARATOR;
-                    result += "Not implemented" + SEPARATOR;
+                }
+                if (location) {
+                    ArrayList<String> modList = new ArrayList<String>();
+                    for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
+                        if (modificationMatch.isVariable()) {
+                            if (!modList.contains(modificationMatch.getTheoreticPtm())) {
+                                modList.add(modificationMatch.getTheoreticPtm());
+                            }
+                        }
+                    }
+                        PSPtmScores ptmScores = new PSPtmScores();
+                    boolean first = true;
+                    for (String mod : modList) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            result += ", ";
+                        }
+                        ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+                        result += mod + " (";
+                        if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                            int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
+                            if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                                result += "Not scored"; // Well this should not happen
+                            } else if (ptmConfidence == PtmScoring.RANDOM) {
+                                result += "Random";
+                            } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                                result += "Doubtfull"; 
+                            } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                                result += "Confident";
+                            } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                                result += "Very confident";
+                            }
+                        } else {
+                            result += "Not scored";
+                        }
+                        result += ")";
+                    }
                 }
                 if (file) {
                     result += Spectrum.getSpectrumFile(spectrumMatch.getKey()) + SEPARATOR;

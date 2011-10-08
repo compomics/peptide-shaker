@@ -7,18 +7,52 @@
     <BODY>
         <a name="#top"/>
         <H2>Spectrum Annotation</H2>
+        
+        <ul>
+            <li><a href='#Annotation'>Annotation</a></li>
+            <li><a href='#AnnotationAccuracy'>AnnotationAccuracy</a></li>
+        </ul>
 
+        <a name="#Annotation"></a>
+        <h3>Annotation</h3>
         <p align="justify">
-            Here it is possible to set the settings used for the annotation of spectra. 
+            <b>PeptideShaker</b> automatically annotates the a spectrum with the 
+            most likely ions given the spectrum and the peptide sequence identified. 
+            This includes the automatic selection of neutral losses. 
             <br><br>
-            The m/z accuracy will be used for the MS/MS annotation of the peaks. 
+            However, the user can override the default annotation by selecting 
+            different ion types in this dialog or in the menu below the spectrum. To change the neutral 
+            losses one first has to uncheck the <i>Adapt</i> option on the <i>Loss</i> menu. 
             <br><br>
-            If "Annotate Most Intense Peaks" is selected, only the peaks with 
-            intensities in the first quartile of all spectrum intensities will be annotated.
-            <br><br>
-            <i>If the identification files were generated using <a href="http://searchgui.googlecode.com"><b>SearchGUI</b></a>, 
-                <b>PeptideShaker</b> will load the accuracy automatically!</i>
+            To make sure that the same ion types are used for all spectra, the user 
+            can also turn of the automatic annotation completly by unchecking the 
+            <i>Automatic Annotation</i> option.
         </p>
-        <br><br>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
+        
+        <a name="#AnnotationAccuracy"></a>
+        <h3>Annotation Accuracy</h3>
+        <p align="justify">
+            In addition to deciding which ion types to use when annotating the spectrum, the 
+            user can also change the required accuracy of the annotations. This is done using 
+            the <i>Annotation Accuracy Slider</i> to the right of the spectrum or by changing 
+            the <i>Fragment Ion Accuracy</i> value in this dialog. Chaning this value will 
+            decrease or increase the accuracy required to say that a given peak 
+            should be annotated. The maximum value is set to the fragment ion accuracy set 
+            in the Search Parameters tab (found on the Edit menu).
+            <br><br>
+            The <i>Annotation Level Slider</i> is also found to the right of the spectrum 
+            (or the value can be selected in the <i>Annotation Level</i> value in this dialog) 
+            and lets the user decide how many of the peaks <b>PeptideShaker</b> should try to annotate. 
+            The level is set relative to the most intense peak, e.g., 80% means that the tool only 
+            considers peaks that have an intensity that is at least 80% of the most intense peak. As 
+            the value is reduced more and more of the low intensity peaks will be 
+            annotated.
+        </p>
+        <br>
+        <a href="#top">Go to top of page</a>
+        <br><br><br>
     </BODY>
 </HTML>
