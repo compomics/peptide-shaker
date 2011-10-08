@@ -15,7 +15,11 @@ import java.util.Date;
  * @author marc
  */
 public class ProjectDetails implements Serializable {
-    
+
+    /**
+     * serial version UID for post-serialization compatibility
+     */
+    static final long serialVersionUID = -2635206350852992221L;
     /**
      * List of the identification files loaded
      */
@@ -60,11 +64,11 @@ public class ProjectDetails implements Serializable {
      * The date of creation of the project
      */
     private Date creationDate;
+
     /**
      * Constructor
      */
     public ProjectDetails() {
-        
     }
 
     /**
@@ -242,7 +246,4 @@ public class ProjectDetails implements Serializable {
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
-    
-    
-    
 }

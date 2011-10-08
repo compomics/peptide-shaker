@@ -16,6 +16,10 @@ import java.util.HashMap;
 public class AnnotationPreferences implements Serializable {
 
     /**
+     * serial version UID for post-serialization compatibility
+     */
+    static final long serialVersionUID = 7127816818986024284L;
+    /**
      * If true, the automatic y-axis zoom excludes background peaks. False 
      * includes all peaks in the auto zoom.
      */
@@ -86,10 +90,10 @@ public class AnnotationPreferences implements Serializable {
      * @param newSpectrum
      */
     public void setCurrentSettings(Peptide currentPeptide, int currentPrecursorCharge, boolean newSpectrum) {
-        
+
         this.currentPeptide = currentPeptide;
         this.currentPrecursorCharge = currentPrecursorCharge;
-        
+
         if (newSpectrum && automaticAnnotation) {
             resetAutomaticAnnotation();
         } else if (neutralLossesSequenceDependant) {
@@ -101,7 +105,7 @@ public class AnnotationPreferences implements Serializable {
      * Updates the neutral losses and charge annotation settings
      */
     public void resetAutomaticAnnotation() {
-         
+
         selectedCharges.clear();
         for (int charge = 1; charge < currentPrecursorCharge; charge++) {
             selectedCharges.add(charge);
@@ -122,7 +126,7 @@ public class AnnotationPreferences implements Serializable {
     public void setNeutralLossesSequenceDependant(boolean neutralLossesSequenceDependant) {
         this.neutralLossesSequenceDependant = neutralLossesSequenceDependant;
     }
-    
+
     /**
      * Returns the fragment ion charges considered for the desired precursor charge
      * 
@@ -200,7 +204,7 @@ public class AnnotationPreferences implements Serializable {
      */
     public void useAutomaticAnnotation(boolean automaticAnnotation) {
         this.automaticAnnotation = automaticAnnotation;
-        
+
         if (automaticAnnotation) {
             neutralLossesSequenceDependant = true;
         }
@@ -232,7 +236,7 @@ public class AnnotationPreferences implements Serializable {
     public void setFragmentIonAccuracy(double fragmentIonAccuracy) {
         this.fragmentIonAccuracy = fragmentIonAccuracy;
     }
-    
+
     /**
      * Returns the current precursor charge
      * @return the current precursor charge
@@ -262,7 +266,7 @@ public class AnnotationPreferences implements Serializable {
     public void setAnnotationLevel(double intensityLimit) {
         this.intensityLimit = intensityLimit;
     }
-    
+
     /**
      * If true, all peaks are shown, false displays the annotated peaks, and 
      * the non-annotated in the background.
@@ -272,7 +276,7 @@ public class AnnotationPreferences implements Serializable {
     public boolean showAllPeaks() {
         return showAllPeaks;
     }
-    
+
     /**
      * Set if all peaks or just the annotated ones are to be shown.
      * 
@@ -281,7 +285,7 @@ public class AnnotationPreferences implements Serializable {
     public void setShowAllPeaks(boolean showAllPeaks) {
         this.showAllPeaks = showAllPeaks;
     }
-    
+
     /**
      * If true, bars are shown in the bubble plot highlighting the ions.
      * 
@@ -290,7 +294,7 @@ public class AnnotationPreferences implements Serializable {
     public boolean showBars() {
         return showBars;
     }
-    
+
     /**
      * Set if the bars in the bubble plot are to be shown or not
      * 
@@ -299,7 +303,7 @@ public class AnnotationPreferences implements Serializable {
     public void setShowBars(boolean showBars) {
         this.showBars = showBars;
     }
-    
+
     /**
      * If true, the ion table is shown as an intensity versionm, false displays 
      * the standard Mascot version.
@@ -310,7 +314,7 @@ public class AnnotationPreferences implements Serializable {
     public boolean useIntensityIonTable() {
         return intensityIonTable;
     }
-    
+
     /**
      * Set if the intensity or m/z ion table should be shown.
      * 
@@ -319,7 +323,7 @@ public class AnnotationPreferences implements Serializable {
     public void setIntensityIonTable(boolean intensityIonTable) {
         this.intensityIonTable = intensityIonTable;
     }
-    
+
     /**
      * Returns true if the automatic y-axis zoom excludes background peaks. False 
      * if includes all peaks.

@@ -14,6 +14,10 @@ import java.util.ArrayList;
 public class SearchParameters implements Serializable {
 
     /**
+     * serial version UID for post-serialization compatibility
+     */
+    static final long serialVersionUID = 5456658018168469122L;
+    /**
      * static index for a precursor tolerance unit in ppm
      */
     public static final int PPM = 0;
@@ -83,7 +87,7 @@ public class SearchParameters implements Serializable {
     public ArrayList<String> getSpectrumFiles() {
         return spectrumFiles;
     }
-    
+
     /**
      * Sets a new list of spectrum files
      * @param spectrumFiles the new list of spectrum files
@@ -122,7 +126,7 @@ public class SearchParameters implements Serializable {
     public void setModificationProfile(ModificationProfile modificationProfile) {
         this.modificationProfile = modificationProfile;
     }
-    
+
     /**
      * Returns the ms2 ion m/z tolerance
      * @return the ms2 ion m/z tolerance
