@@ -117,7 +117,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="psmQCPlotPanel" pref="414" max="32767" attributes="0"/>
+                          <Component id="psmQCPlotPanel" pref="412" max="32767" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="proteinPlotTypePanel2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -162,7 +162,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="psmQcPlotHelpJButton" alignment="0" pref="23" max="32767" attributes="1"/>
+                                  <Component id="psmQcPlotHelpJButton" alignment="0" max="32767" attributes="1"/>
                                   <Group type="103" alignment="1" groupAlignment="3" attributes="0">
                                       <Component id="psmPrecursorMassErrorJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="psmPrecursorChargeJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -204,7 +204,7 @@
                     <Component class="javax.swing.JButton" name="psmQcPlotHelpJButton">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                          <Image iconType="3" name="/icons/help.GIF"/>
+                          <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
                         </Property>
                         <Property name="toolTipText" type="java.lang.String" value="Help"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -212,6 +212,9 @@
                         </Property>
                         <Property name="borderPainted" type="boolean" value="false"/>
                         <Property name="contentAreaFilled" type="boolean" value="false"/>
+                        <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/icons/help_no_frame.png"/>
+                        </Property>
                       </Properties>
                       <Events>
                         <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="psmQcPlotHelpJButtonMouseEntered"/>
@@ -254,7 +257,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="peptideQCPlotPanel" pref="414" max="32767" attributes="0"/>
+                          <Component id="peptideQCPlotPanel" pref="412" max="32767" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="proteinPlotTypePanel1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -299,7 +302,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="peptidesQcPlotHelpJButton" alignment="0" pref="23" max="32767" attributes="1"/>
+                                  <Component id="peptidesQcPlotHelpJButton" alignment="0" max="32767" attributes="1"/>
                                   <Group type="103" alignment="1" groupAlignment="3" attributes="0">
                                       <Component id="peptidesValidatedPsmsJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="peptidesMissedCleavagesJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -341,7 +344,7 @@
                     <Component class="javax.swing.JButton" name="peptidesQcPlotHelpJButton">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                          <Image iconType="3" name="/icons/help.GIF"/>
+                          <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
                         </Property>
                         <Property name="toolTipText" type="java.lang.String" value="Help"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -349,6 +352,9 @@
                         </Property>
                         <Property name="borderPainted" type="boolean" value="false"/>
                         <Property name="contentAreaFilled" type="boolean" value="false"/>
+                        <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/icons/help_no_frame.png"/>
+                        </Property>
                       </Properties>
                       <Events>
                         <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptidesQcPlotHelpJButtonMouseEntered"/>
@@ -391,7 +397,7 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="proteinQCPlotPanel" pref="414" max="32767" attributes="0"/>
+                          <Component id="proteinQCPlotPanel" pref="412" max="32767" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="proteinPlotTypePanel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
@@ -438,7 +444,7 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="proteinQcPlotHelpJButton" alignment="1" pref="23" max="32767" attributes="1"/>
+                                  <Component id="proteinQcPlotHelpJButton" alignment="1" max="32767" attributes="1"/>
                                   <Group type="103" alignment="1" groupAlignment="3" attributes="0">
                                       <Component id="proteinNumberValidatedPeptidesJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="proteinSpectrumCountingScoreJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -494,7 +500,7 @@
                     <Component class="javax.swing.JButton" name="proteinQcPlotHelpJButton">
                       <Properties>
                         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                          <Image iconType="3" name="/icons/help.GIF"/>
+                          <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
                         </Property>
                         <Property name="toolTipText" type="java.lang.String" value="Help"/>
                         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -502,6 +508,9 @@
                         </Property>
                         <Property name="borderPainted" type="boolean" value="false"/>
                         <Property name="contentAreaFilled" type="boolean" value="false"/>
+                        <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/icons/help_no_frame.png"/>
+                        </Property>
                       </Properties>
                       <Events>
                         <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinQcPlotHelpJButtonMouseEntered"/>

@@ -352,11 +352,12 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
-        groupSelectionHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        groupSelectionHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         groupSelectionHelpJButton.setToolTipText("Help");
         groupSelectionHelpJButton.setBorder(null);
         groupSelectionHelpJButton.setBorderPainted(false);
         groupSelectionHelpJButton.setContentAreaFilled(false);
+        groupSelectionHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         groupSelectionHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 groupSelectionHelpJButtonMouseEntered(evt);
@@ -370,7 +371,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 groupSelectionHelpJButtonActionPerformed(evt);
             }
         });
-        groupSelectionHelpJButton.setBounds(175, 130, 17, 17);
+        groupSelectionHelpJButton.setBounds(170, 130, 27, 25);
         groupSelectionLayeredPane.add(groupSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         groupSelectionScrollPaneScrollPane.setOpaque(false);
@@ -411,7 +412,7 @@ public class StatsPanel extends javax.swing.JPanel {
         });
         groupSelectionScrollPaneScrollPane.setViewportView(groupSelectionTable);
 
-        groupSelectionScrollPaneScrollPane.setBounds(0, 0, 200, 150);
+        groupSelectionScrollPaneScrollPane.setBounds(0, 0, 200, 170);
         groupSelectionLayeredPane.add(groupSelectionScrollPaneScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         javax.swing.GroupLayout groupListJPanelLayout = new javax.swing.GroupLayout(groupListJPanel);
@@ -427,7 +428,7 @@ public class StatsPanel extends javax.swing.JPanel {
             groupListJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, groupListJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(groupSelectionLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 150, Short.MAX_VALUE)
+                .addComponent(groupSelectionLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 170, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -502,11 +503,12 @@ public class StatsPanel extends javax.swing.JPanel {
         confidenceTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         confidenceTxt.setToolTipText("Minimum Confidence");
 
-        totalTPHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        totalTPHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         totalTPHelpJButton.setToolTipText("Help");
         totalTPHelpJButton.setBorder(null);
         totalTPHelpJButton.setBorderPainted(false);
         totalTPHelpJButton.setContentAreaFilled(false);
+        totalTPHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         totalTPHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 totalTPHelpJButtonMouseEntered(evt);
@@ -521,11 +523,12 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
-        validatedHitsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        validatedHitsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         validatedHitsHelpJButton.setToolTipText("Help");
         validatedHitsHelpJButton.setBorder(null);
         validatedHitsHelpJButton.setBorderPainted(false);
         validatedHitsHelpJButton.setContentAreaFilled(false);
+        validatedHitsHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         validatedHitsHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 validatedHitsHelpJButtonMouseEntered(evt);
@@ -540,11 +543,12 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
-        falsePositivesHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        falsePositivesHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         falsePositivesHelpJButton.setToolTipText("Help");
         falsePositivesHelpJButton.setBorder(null);
         falsePositivesHelpJButton.setBorderPainted(false);
         falsePositivesHelpJButton.setContentAreaFilled(false);
+        falsePositivesHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         falsePositivesHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 falsePositivesHelpJButtonMouseEntered(evt);
@@ -559,11 +563,12 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
-        truePositivesHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        truePositivesHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         truePositivesHelpJButton.setToolTipText("Help");
         truePositivesHelpJButton.setBorder(null);
         truePositivesHelpJButton.setBorderPainted(false);
         truePositivesHelpJButton.setContentAreaFilled(false);
+        truePositivesHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         truePositivesHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 truePositivesHelpJButtonMouseEntered(evt);
@@ -578,11 +583,12 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
-        nMaxHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        nMaxHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         nMaxHelpJButton.setToolTipText("Help");
         nMaxHelpJButton.setBorder(null);
         nMaxHelpJButton.setBorderPainted(false);
         nMaxHelpJButton.setContentAreaFilled(false);
+        nMaxHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         nMaxHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 nMaxHelpJButtonMouseEntered(evt);
@@ -597,11 +603,12 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
-        confidenceHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        confidenceHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         confidenceHelpJButton.setToolTipText("Help");
         confidenceHelpJButton.setBorder(null);
         confidenceHelpJButton.setBorderPainted(false);
         confidenceHelpJButton.setContentAreaFilled(false);
+        confidenceHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         confidenceHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 confidenceHelpJButtonMouseEntered(evt);
@@ -616,11 +623,12 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
-        fdrHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        fdrHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         fdrHelpJButton.setToolTipText("Help");
         fdrHelpJButton.setBorder(null);
         fdrHelpJButton.setBorderPainted(false);
         fdrHelpJButton.setContentAreaFilled(false);
+        fdrHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         fdrHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 fdrHelpJButtonMouseEntered(evt);
@@ -635,11 +643,12 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
-        fnrHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        fnrHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         fnrHelpJButton.setToolTipText("Help");
         fnrHelpJButton.setBorder(null);
         fnrHelpJButton.setBorderPainted(false);
         fnrHelpJButton.setContentAreaFilled(false);
+        fnrHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         fnrHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 fnrHelpJButtonMouseEntered(evt);
@@ -670,36 +679,36 @@ public class StatsPanel extends javax.swing.JPanel {
                             .addComponent(jLabel1)
                             .addComponent(jLabel10))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(nTPlTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(nValidatedTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
                             .addComponent(nFPTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-                            .addComponent(nValidatedTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-                            .addComponent(nTotalTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE))
+                            .addComponent(nTPlTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                            .addComponent(nTotalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(totalTPHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(falsePositivesHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(validatedHitsHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(truePositivesHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(validatedHitsHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(totalTPHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                         .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel36)
                             .addComponent(jLabel13)
                             .addComponent(jLabel23)
-                            .addComponent(jLabel36)
                             .addComponent(jLabel20))
                         .addGap(9, 9, 9)
-                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(fnrTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
-                                .addComponent(fdrTxt)
-                                .addComponent(confidenceTxt))
-                            .addComponent(nMaxTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(nMaxTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)
+                            .addComponent(confidenceTxt, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(fnrTxt)
+                                .addComponent(fdrTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 90, Short.MAX_VALUE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(fdrHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(fnrHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(confidenceHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(nMaxHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(fdrHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(nMaxHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addComponent(jLabel7))
                 .addContainerGap())
         );
@@ -710,38 +719,41 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel2)
-                    .addComponent(nTotalTxt)
-                    .addComponent(totalTPHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-                    .addComponent(nMaxTxt)
-                    .addComponent(nMaxHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-                    .addComponent(jLabel20))
+                    .addComponent(nTotalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(totalTPHelpJButton)
+                    .addComponent(jLabel20)
+                    .addComponent(nMaxTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(nMaxHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
+                    .addComponent(jLabel2))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel1)
-                    .addComponent(nValidatedTxt)
-                    .addComponent(confidenceTxt)
-                    .addComponent(confidenceHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                    .addComponent(nValidatedTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(validatedHitsHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
                     .addComponent(jLabel23)
-                    .addComponent(validatedHitsHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE))
+                    .addComponent(confidenceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(confidenceHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(fdrHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-                    .addComponent(fdrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(falsePositivesHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-                    .addComponent(nFPTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3)
-                    .addComponent(jLabel13))
+                    .addComponent(nFPTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(falsePositivesHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
+                    .addComponent(jLabel13)
+                    .addComponent(fdrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(fdrHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel10)
-                    .addComponent(nTPlTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(truePositivesHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-                    .addComponent(fnrTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(fnrHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-                    .addComponent(jLabel36))
+                .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(truePositivesHelpJButton, javax.swing.GroupLayout.Alignment.CENTER, javax.swing.GroupLayout.PREFERRED_SIZE, 22, Short.MAX_VALUE)
+                    .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(nTPlTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel10))
+                    .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(fnrHelpJButton, javax.swing.GroupLayout.Alignment.LEADING, 0, 0, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(fnrTxt)
+                            .addComponent(jLabel36))))
                 .addContainerGap())
         );
 
@@ -784,11 +796,12 @@ public class StatsPanel extends javax.swing.JPanel {
         pepChartPanel.setBounds(0, 90, 587, 168);
         pepPlotLayeredPane.add(pepChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        pepPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        pepPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         pepPlotHelpJButton.setToolTipText("Help");
         pepPlotHelpJButton.setBorder(null);
         pepPlotHelpJButton.setBorderPainted(false);
         pepPlotHelpJButton.setContentAreaFilled(false);
+        pepPlotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         pepPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pepPlotHelpJButtonMouseEntered(evt);
@@ -802,7 +815,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 pepPlotHelpJButtonActionPerformed(evt);
             }
         });
-        pepPlotHelpJButton.setBounds(560, 10, 17, 17);
+        pepPlotHelpJButton.setBounds(560, 10, 27, 25);
         pepPlotLayeredPane.add(pepPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout pepPanelLayout = new javax.swing.GroupLayout(pepPanel);
@@ -825,7 +838,7 @@ public class StatsPanel extends javax.swing.JPanel {
             pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pepPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pepPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                .addComponent(pepPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pepPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel30)
@@ -860,11 +873,12 @@ public class StatsPanel extends javax.swing.JPanel {
         fdrsChartPanel.setBounds(0, 80, 588, 173);
         fdrsPlotLayeredPane.add(fdrsChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        fdrsPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        fdrsPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         fdrsPlotHelpJButton.setToolTipText("Help");
         fdrsPlotHelpJButton.setBorder(null);
         fdrsPlotHelpJButton.setBorderPainted(false);
         fdrsPlotHelpJButton.setContentAreaFilled(false);
+        fdrsPlotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         fdrsPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 fdrsPlotHelpJButtonMouseEntered(evt);
@@ -878,7 +892,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 fdrsPlotHelpJButtonActionPerformed(evt);
             }
         });
-        fdrsPlotHelpJButton.setBounds(560, 10, 17, 17);
+        fdrsPlotHelpJButton.setBounds(560, 10, 27, 25);
         fdrsPlotLayeredPane.add(fdrsPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout fdrsPanelLayout = new javax.swing.GroupLayout(fdrsPanel);
@@ -901,7 +915,7 @@ public class StatsPanel extends javax.swing.JPanel {
             fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fdrsPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                .addComponent(fdrsPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fdrsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(sensitivitySlider2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -920,7 +934,7 @@ public class StatsPanel extends javax.swing.JPanel {
         );
         estimatorOptimizationTabLayout.setVerticalGroup(
             estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
+            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
         );
 
         optimizationTabbedPane.addTab("Estimators", estimatorOptimizationTab);
@@ -958,11 +972,12 @@ public class StatsPanel extends javax.swing.JPanel {
         confidenceChartPanel.setBounds(0, 0, 500, 460);
         confidencePlotLayeredPane.add(confidenceChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        confidencePlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        confidencePlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         confidencePlotHelpJButton.setToolTipText("Help");
         confidencePlotHelpJButton.setBorder(null);
         confidencePlotHelpJButton.setBorderPainted(false);
         confidencePlotHelpJButton.setContentAreaFilled(false);
+        confidencePlotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         confidencePlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 confidencePlotHelpJButtonMouseEntered(evt);
@@ -976,7 +991,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 confidencePlotHelpJButtonActionPerformed(evt);
             }
         });
-        confidencePlotHelpJButton.setBounds(480, 0, 17, 17);
+        confidencePlotHelpJButton.setBounds(480, 0, 27, 25);
         confidencePlotLayeredPane.add(confidencePlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout confidencePanelLayout = new javax.swing.GroupLayout(confidencePanel);
@@ -999,7 +1014,7 @@ public class StatsPanel extends javax.swing.JPanel {
             confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, confidencePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(confidencePlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                .addComponent(confidencePlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(confidencePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(confidenceSlider, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1042,11 +1057,12 @@ public class StatsPanel extends javax.swing.JPanel {
         fdrFnrChartPanel.setBounds(0, 3, 320, 450);
         fdrPlotLayeredPane.add(fdrFnrChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        fdrPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        fdrPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         fdrPlotHelpJButton.setToolTipText("Help");
         fdrPlotHelpJButton.setBorder(null);
         fdrPlotHelpJButton.setBorderPainted(false);
         fdrPlotHelpJButton.setContentAreaFilled(false);
+        fdrPlotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         fdrPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 fdrPlotHelpJButtonMouseEntered(evt);
@@ -1060,7 +1076,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 fdrPlotHelpJButtonActionPerformed(evt);
             }
         });
-        fdrPlotHelpJButton.setBounds(300, 10, 17, 17);
+        fdrPlotHelpJButton.setBounds(300, 10, 27, 25);
         fdrPlotLayeredPane.add(fdrPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout fdrFnrPanelLayout = new javax.swing.GroupLayout(fdrFnrPanel);
@@ -1083,7 +1099,7 @@ public class StatsPanel extends javax.swing.JPanel {
             fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, fdrFnrPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fdrPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                .addComponent(fdrPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(fdrFnrPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(fdrSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1120,11 +1136,12 @@ public class StatsPanel extends javax.swing.JPanel {
         benefitCostChartPanel.setBounds(0, -4, 326, 450);
         benefitPlotLayeredPane.add(benefitCostChartPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        benefitPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        benefitPlotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         benefitPlotHelpJButton.setToolTipText("Help");
         benefitPlotHelpJButton.setBorder(null);
         benefitPlotHelpJButton.setBorderPainted(false);
         benefitPlotHelpJButton.setContentAreaFilled(false);
+        benefitPlotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         benefitPlotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 benefitPlotHelpJButtonMouseEntered(evt);
@@ -1138,7 +1155,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 benefitPlotHelpJButtonActionPerformed(evt);
             }
         });
-        benefitPlotHelpJButton.setBounds(300, 10, 17, 17);
+        benefitPlotHelpJButton.setBounds(300, 10, 27, 25);
         benefitPlotLayeredPane.add(benefitPlotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout benefitCostPanelLayout = new javax.swing.GroupLayout(benefitCostPanel);
@@ -1161,7 +1178,7 @@ public class StatsPanel extends javax.swing.JPanel {
             benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, benefitCostPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(benefitPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 457, Short.MAX_VALUE)
+                .addComponent(benefitPlotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(benefitCostPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel32)
@@ -1182,7 +1199,7 @@ public class StatsPanel extends javax.swing.JPanel {
         );
         thresholdOptimizationTabLayout.setVerticalGroup(
             thresholdOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 508, Short.MAX_VALUE)
+            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
         );
 
         optimizationTabbedPane.addTab("Thresholds", thresholdOptimizationTab);
@@ -1201,7 +1218,7 @@ public class StatsPanel extends javax.swing.JPanel {
         optimizationJPanelLayout.setVerticalGroup(
             optimizationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optimizationJPanelLayout.createSequentialGroup()
-                .addComponent(optimizationTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 536, Short.MAX_VALUE)
+                .addComponent(optimizationTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1275,11 +1292,12 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel8.setText("Threshold (%):");
         jLabel8.setToolTipText("Threshold in percent");
 
-        thresholdHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        thresholdHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         thresholdHelpJButton.setToolTipText("Help");
         thresholdHelpJButton.setBorder(null);
         thresholdHelpJButton.setBorderPainted(false);
         thresholdHelpJButton.setContentAreaFilled(false);
+        thresholdHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         thresholdHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 thresholdHelpJButtonMouseEntered(evt);
@@ -1294,11 +1312,12 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
-        pepHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        pepHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         pepHelpJButton.setToolTipText("Help");
         pepHelpJButton.setBorder(null);
         pepHelpJButton.setBorderPainted(false);
         pepHelpJButton.setContentAreaFilled(false);
+        pepHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
         pepHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 pepHelpJButtonMouseEntered(evt);
@@ -1355,23 +1374,24 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(thresholdHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(thresholdTypeCmb, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(thresholdInput, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-                        .addComponent(jLabel8)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(validateButton)
-                .addGap(11, 11, 11)
-                .addComponent(jLabel5)
+                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(jLabel8)
+                    .addComponent(thresholdInput, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                    .addComponent(thresholdTypeCmb)
+                    .addComponent(thresholdHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(windowTxt)
-                        .addComponent(jLabel22))
-                    .addComponent(pepHelpJButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
-                    .addComponent(fdrCombo1, javax.swing.GroupLayout.Alignment.LEADING))
+                    .addGroup(parametersJPanelLayout.createSequentialGroup()
+                        .addComponent(validateButton)
+                        .addGap(11, 11, 11)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(windowTxt)
+                                .addComponent(jLabel22))
+                            .addComponent(fdrCombo1, javax.swing.GroupLayout.Alignment.LEADING)))
+                    .addComponent(pepHelpJButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(applyButton)
                 .addGap(34, 34, 34))
@@ -1400,7 +1420,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(groupListJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(idSummaryJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(parametersJPanel, 0, 199, Short.MAX_VALUE))
+                    .addComponent(parametersJPanel, 0, 219, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(optimizationJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -1629,7 +1649,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 // move the help icon
                 confidencePlotLayeredPane.getComponent(0).setBounds(
                         confidencePlotLayeredPane.getWidth() - confidencePlotLayeredPane.getComponent(0).getWidth() - 10,
-                        confidencePlotLayeredPane.getComponent(0).getHeight() / 2 - 2,
+                        confidencePlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
                         confidencePlotLayeredPane.getComponent(0).getWidth(),
                         confidencePlotLayeredPane.getComponent(0).getHeight());
 
@@ -1642,7 +1662,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 // move the help icon
                 fdrPlotLayeredPane.getComponent(0).setBounds(
                         fdrPlotLayeredPane.getWidth() - fdrPlotLayeredPane.getComponent(0).getWidth() - 10,
-                        fdrPlotLayeredPane.getComponent(0).getHeight() / 2 - 2,
+                        fdrPlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
                         fdrPlotLayeredPane.getComponent(0).getWidth(),
                         fdrPlotLayeredPane.getComponent(0).getHeight());
 
@@ -1655,7 +1675,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 // move the help icon
                 benefitPlotLayeredPane.getComponent(0).setBounds(
                         benefitPlotLayeredPane.getWidth() - benefitPlotLayeredPane.getComponent(0).getWidth() - 10,
-                        benefitPlotLayeredPane.getComponent(0).getHeight() / 2 - 2,
+                        benefitPlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
                         benefitPlotLayeredPane.getComponent(0).getWidth(),
                         benefitPlotLayeredPane.getComponent(0).getHeight());
 
@@ -1668,7 +1688,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 // move the help icon
                 pepPlotLayeredPane.getComponent(0).setBounds(
                         pepPlotLayeredPane.getWidth() - pepPlotLayeredPane.getComponent(0).getWidth() - 10,
-                        pepPlotLayeredPane.getComponent(0).getHeight() / 2 - 2,
+                        pepPlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
                         pepPlotLayeredPane.getComponent(0).getWidth(),
                         pepPlotLayeredPane.getComponent(0).getHeight());
 
@@ -1681,7 +1701,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 // move the help icon
                 fdrsPlotLayeredPane.getComponent(0).setBounds(
                         fdrsPlotLayeredPane.getWidth() - fdrsPlotLayeredPane.getComponent(0).getWidth() - 10,
-                        fdrsPlotLayeredPane.getComponent(0).getHeight() / 2 - 2,
+                        fdrsPlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
                         fdrsPlotLayeredPane.getComponent(0).getWidth(),
                         fdrsPlotLayeredPane.getComponent(0).getHeight());
 
@@ -2264,7 +2284,7 @@ public class StatsPanel extends javax.swing.JPanel {
         // move the help icon
         groupSelectionLayeredPane.getComponent(0).setBounds(
                 groupSelectionLayeredPane.getWidth() - groupSelectionLayeredPane.getComponent(0).getWidth() - 8,
-                (groupSelectionLayeredPane.getHeight() / 8) * 7,
+                groupSelectionLayeredPane.getHeight() - 35,
                 groupSelectionLayeredPane.getComponent(0).getWidth(),
                 groupSelectionLayeredPane.getComponent(0).getHeight());
 

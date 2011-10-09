@@ -47,7 +47,7 @@
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="groupListJPanel" alignment="0" max="32767" attributes="1"/>
                   <Component id="idSummaryJPanel" alignment="0" max="32767" attributes="1"/>
-                  <Component id="parametersJPanel" alignment="0" min="0" pref="199" max="32767" attributes="1"/>
+                  <Component id="parametersJPanel" alignment="0" min="0" pref="219" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="optimizationJPanel" max="32767" attributes="0"/>
@@ -81,7 +81,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="groupSelectionLayeredPane" pref="150" max="32767" attributes="0"/>
+                  <Component id="groupSelectionLayeredPane" pref="170" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -98,7 +98,7 @@
             <Component class="javax.swing.JButton" name="groupSelectionHelpJButton">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="3" name="/icons/help.GIF"/>
+                  <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
                 </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Help"/>
                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -106,6 +106,9 @@
                 </Property>
                 <Property name="borderPainted" type="boolean" value="false"/>
                 <Property name="contentAreaFilled" type="boolean" value="false"/>
+                <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/icons/help_no_frame.png"/>
+                </Property>
               </Properties>
               <Events>
                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="groupSelectionHelpJButtonMouseEntered"/>
@@ -114,7 +117,7 @@
               </Events>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                  <JLayeredPaneConstraints x="175" y="130" width="-1" height="-1" layer="300" position="-1"/>
+                  <JLayeredPaneConstraints x="170" y="130" width="-1" height="-1" layer="300" position="-1"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -127,7 +130,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                  <JLayeredPaneConstraints x="0" y="0" width="200" height="150" layer="0" position="-1"/>
+                  <JLayeredPaneConstraints x="0" y="0" width="200" height="170" layer="0" position="-1"/>
                 </Constraint>
               </Constraints>
 
@@ -177,44 +180,44 @@
                               <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="nTPlTxt" pref="93" max="32767" attributes="1"/>
-                              <Component id="nFPTxt" alignment="0" pref="93" max="32767" attributes="1"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
                               <Component id="nValidatedTxt" alignment="0" pref="93" max="32767" attributes="1"/>
-                              <Component id="nTotalTxt" alignment="0" pref="93" max="32767" attributes="1"/>
+                              <Component id="nFPTxt" alignment="1" pref="93" max="32767" attributes="1"/>
+                              <Component id="nTPlTxt" alignment="1" pref="93" max="32767" attributes="1"/>
+                              <Component id="nTotalTxt" min="-2" pref="93" max="-2" attributes="1"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="totalTPHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="falsePositivesHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                              <Component id="truePositivesHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="validatedHitsHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="truePositivesHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="totalTPHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="27" max="32767" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="jLabel36" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel13" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel23" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel36" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                                  <Component id="fnrTxt" alignment="0" pref="90" max="32767" attributes="3"/>
-                                  <Component id="fdrTxt" alignment="0" max="32767" attributes="3"/>
-                                  <Component id="confidenceTxt" alignment="0" max="32767" attributes="3"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Component id="nMaxTxt" pref="90" max="32767" attributes="3"/>
+                              <Component id="confidenceTxt" alignment="0" max="32767" attributes="3"/>
+                              <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="fnrTxt" max="32767" attributes="3"/>
+                                  <Component id="fdrTxt" alignment="1" pref="90" max="32767" attributes="3"/>
                               </Group>
-                              <Component id="nMaxTxt" min="-2" pref="90" max="-2" attributes="2"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="fdrHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="fnrHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="confidenceHelpJButton" alignment="0" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="nMaxHelpJButton" alignment="0" min="-2" pref="23" max="-2" attributes="0"/>
-                              <Component id="fdrHelpJButton" alignment="0" min="-2" pref="23" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -230,41 +233,47 @@
                   <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="jLabel2" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="nTotalTxt" alignment="2" max="32767" attributes="1"/>
-                      <Component id="totalTPHelpJButton" alignment="2" pref="20" max="32767" attributes="1"/>
-                      <Component id="nMaxTxt" alignment="2" max="32767" attributes="1"/>
-                      <Component id="nMaxHelpJButton" alignment="2" pref="20" max="32767" attributes="1"/>
+                      <Component id="nTotalTxt" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="totalTPHelpJButton" alignment="2" min="-2" max="-2" attributes="1"/>
                       <Component id="jLabel20" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="nMaxTxt" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="nMaxHelpJButton" alignment="2" pref="26" max="32767" attributes="1"/>
+                      <Component id="jLabel2" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="jLabel1" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="nValidatedTxt" alignment="2" max="32767" attributes="1"/>
-                      <Component id="confidenceTxt" alignment="2" max="32767" attributes="1"/>
-                      <Component id="confidenceHelpJButton" alignment="2" pref="20" max="32767" attributes="1"/>
+                      <Component id="nValidatedTxt" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="validatedHitsHelpJButton" alignment="2" pref="26" max="32767" attributes="1"/>
                       <Component id="jLabel23" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="validatedHitsHelpJButton" alignment="2" pref="20" max="32767" attributes="1"/>
+                      <Component id="confidenceTxt" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="confidenceHelpJButton" alignment="2" pref="26" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="fdrHelpJButton" alignment="2" pref="20" max="32767" attributes="1"/>
-                      <Component id="fdrTxt" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="falsePositivesHelpJButton" alignment="2" pref="20" max="32767" attributes="1"/>
-                      <Component id="nFPTxt" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel3" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="nFPTxt" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="falsePositivesHelpJButton" alignment="2" pref="26" max="32767" attributes="1"/>
                       <Component id="jLabel13" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="fdrTxt" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="fdrHelpJButton" alignment="2" min="-2" pref="25" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="jLabel10" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="nTPlTxt" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="truePositivesHelpJButton" alignment="2" pref="20" max="32767" attributes="1"/>
-                      <Component id="fnrTxt" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="fnrHelpJButton" alignment="2" pref="20" max="32767" attributes="1"/>
-                      <Component id="jLabel36" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="truePositivesHelpJButton" alignment="2" pref="22" max="32767" attributes="1"/>
+                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                          <Component id="nTPlTxt" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="fnrHelpJButton" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
+                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
+                              <Component id="fnrTxt" alignment="0" max="32767" attributes="1"/>
+                              <Component id="jLabel36" alignment="3" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -417,7 +426,7 @@
         <Component class="javax.swing.JButton" name="totalTPHelpJButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help.GIF"/>
+              <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Help"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -425,6 +434,9 @@
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help_no_frame.png"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="totalTPHelpJButtonMouseEntered"/>
@@ -435,7 +447,7 @@
         <Component class="javax.swing.JButton" name="validatedHitsHelpJButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help.GIF"/>
+              <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Help"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -443,6 +455,9 @@
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help_no_frame.png"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="validatedHitsHelpJButtonMouseEntered"/>
@@ -453,7 +468,7 @@
         <Component class="javax.swing.JButton" name="falsePositivesHelpJButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help.GIF"/>
+              <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Help"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -461,6 +476,9 @@
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help_no_frame.png"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="falsePositivesHelpJButtonMouseEntered"/>
@@ -471,7 +489,7 @@
         <Component class="javax.swing.JButton" name="truePositivesHelpJButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help.GIF"/>
+              <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Help"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -479,6 +497,9 @@
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help_no_frame.png"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="truePositivesHelpJButtonMouseEntered"/>
@@ -489,7 +510,7 @@
         <Component class="javax.swing.JButton" name="nMaxHelpJButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help.GIF"/>
+              <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Help"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -497,6 +518,9 @@
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help_no_frame.png"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="nMaxHelpJButtonMouseEntered"/>
@@ -507,7 +531,7 @@
         <Component class="javax.swing.JButton" name="confidenceHelpJButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help.GIF"/>
+              <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Help"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -515,6 +539,9 @@
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help_no_frame.png"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="confidenceHelpJButtonMouseEntered"/>
@@ -525,7 +552,7 @@
         <Component class="javax.swing.JButton" name="fdrHelpJButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help.GIF"/>
+              <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Help"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -533,6 +560,9 @@
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help_no_frame.png"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fdrHelpJButtonMouseEntered"/>
@@ -543,7 +573,7 @@
         <Component class="javax.swing.JButton" name="fnrHelpJButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help.GIF"/>
+              <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Help"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -551,6 +581,9 @@
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help_no_frame.png"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fnrHelpJButtonMouseEntered"/>
@@ -583,7 +616,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <Component id="optimizationTabbedPane" pref="536" max="32767" attributes="0"/>
+                  <Component id="optimizationTabbedPane" pref="516" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -623,7 +656,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="estimatorsPlotSplitPane" alignment="0" pref="508" max="32767" attributes="0"/>
+                      <Component id="estimatorsPlotSplitPane" alignment="0" pref="488" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -676,7 +709,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="pepPlotLayeredPane" pref="457" max="32767" attributes="0"/>
+                                  <Component id="pepPlotLayeredPane" pref="437" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="2" attributes="0">
                                       <Component id="jLabel30" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -731,7 +764,7 @@
                             <Component class="javax.swing.JButton" name="pepPlotHelpJButton">
                               <Properties>
                                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                                  <Image iconType="3" name="/icons/help.GIF"/>
+                                  <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
                                 </Property>
                                 <Property name="toolTipText" type="java.lang.String" value="Help"/>
                                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -739,6 +772,9 @@
                                 </Property>
                                 <Property name="borderPainted" type="boolean" value="false"/>
                                 <Property name="contentAreaFilled" type="boolean" value="false"/>
+                                <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                  <Image iconType="3" name="/icons/help_no_frame.png"/>
+                                </Property>
                               </Properties>
                               <Events>
                                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="pepPlotHelpJButtonMouseEntered"/>
@@ -788,7 +824,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="fdrsPlotLayeredPane" pref="457" max="32767" attributes="0"/>
+                                  <Component id="fdrsPlotLayeredPane" pref="437" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="2" attributes="0">
                                       <Component id="sensitivitySlider2" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -840,7 +876,7 @@
                             <Component class="javax.swing.JButton" name="fdrsPlotHelpJButton">
                               <Properties>
                                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                                  <Image iconType="3" name="/icons/help.GIF"/>
+                                  <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
                                 </Property>
                                 <Property name="toolTipText" type="java.lang.String" value="Help"/>
                                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -848,6 +884,9 @@
                                 </Property>
                                 <Property name="borderPainted" type="boolean" value="false"/>
                                 <Property name="contentAreaFilled" type="boolean" value="false"/>
+                                <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                  <Image iconType="3" name="/icons/help_no_frame.png"/>
+                                </Property>
                               </Properties>
                               <Events>
                                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fdrsPlotHelpJButtonMouseEntered"/>
@@ -890,7 +929,7 @@
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="leftPlotSplitPane" alignment="0" pref="508" max="32767" attributes="0"/>
+                      <Component id="leftPlotSplitPane" alignment="0" pref="488" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -943,7 +982,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="confidencePlotLayeredPane" pref="457" max="32767" attributes="0"/>
+                                  <Component id="confidencePlotLayeredPane" pref="437" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="2" attributes="0">
                                       <Component id="confidenceSlider" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -998,7 +1037,7 @@
                             <Component class="javax.swing.JButton" name="confidencePlotHelpJButton">
                               <Properties>
                                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                                  <Image iconType="3" name="/icons/help.GIF"/>
+                                  <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
                                 </Property>
                                 <Property name="toolTipText" type="java.lang.String" value="Help"/>
                                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -1006,6 +1045,9 @@
                                 </Property>
                                 <Property name="borderPainted" type="boolean" value="false"/>
                                 <Property name="contentAreaFilled" type="boolean" value="false"/>
+                                <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                  <Image iconType="3" name="/icons/help_no_frame.png"/>
+                                </Property>
                               </Properties>
                               <Events>
                                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="confidencePlotHelpJButtonMouseEntered"/>
@@ -1075,7 +1117,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="fdrPlotLayeredPane" pref="457" max="32767" attributes="0"/>
+                                      <Component id="fdrPlotLayeredPane" pref="437" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="2" attributes="0">
                                           <Component id="fdrSlider1" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -1130,7 +1172,7 @@
                                 <Component class="javax.swing.JButton" name="fdrPlotHelpJButton">
                                   <Properties>
                                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                                      <Image iconType="3" name="/icons/help.GIF"/>
+                                      <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
                                     </Property>
                                     <Property name="toolTipText" type="java.lang.String" value="Help"/>
                                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -1138,6 +1180,9 @@
                                     </Property>
                                     <Property name="borderPainted" type="boolean" value="false"/>
                                     <Property name="contentAreaFilled" type="boolean" value="false"/>
+                                    <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                      <Image iconType="3" name="/icons/help_no_frame.png"/>
+                                    </Property>
                                   </Properties>
                                   <Events>
                                     <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="fdrPlotHelpJButtonMouseEntered"/>
@@ -1187,7 +1232,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="benefitPlotLayeredPane" pref="457" max="32767" attributes="0"/>
+                                      <Component id="benefitPlotLayeredPane" pref="437" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="2" attributes="0">
                                           <Component id="jLabel32" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -1240,7 +1285,7 @@
                                 <Component class="javax.swing.JButton" name="benefitPlotHelpJButton">
                                   <Properties>
                                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                                      <Image iconType="3" name="/icons/help.GIF"/>
+                                      <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
                                     </Property>
                                     <Property name="toolTipText" type="java.lang.String" value="Help"/>
                                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -1248,6 +1293,9 @@
                                     </Property>
                                     <Property name="borderPainted" type="boolean" value="false"/>
                                     <Property name="contentAreaFilled" type="boolean" value="false"/>
+                                    <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                      <Image iconType="3" name="/icons/help_no_frame.png"/>
+                                    </Property>
                                   </Properties>
                                   <Events>
                                     <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="benefitPlotHelpJButtonMouseEntered"/>
@@ -1315,7 +1363,7 @@
                               <Component id="applyButton" linkSize="20" min="-2" pref="110" max="-2" attributes="1"/>
                               <Component id="fdrCombo1" linkSize="20" alignment="0" pref="110" max="32767" attributes="3"/>
                           </Group>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Component id="pepHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -1329,26 +1377,28 @@
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="thresholdHelpJButton" max="32767" attributes="1"/>
-                      <Component id="thresholdTypeCmb" alignment="1" max="32767" attributes="1"/>
-                      <Group type="103" alignment="1" groupAlignment="3" attributes="0">
-                          <Component id="thresholdInput" alignment="3" pref="20" max="32767" attributes="1"/>
-                          <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="jLabel8" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="thresholdInput" alignment="2" pref="20" max="32767" attributes="1"/>
+                      <Component id="thresholdTypeCmb" alignment="2" max="32767" attributes="1"/>
+                      <Component id="thresholdHelpJButton" alignment="2" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Component id="validateButton" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
-                  <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="1" attributes="0">
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="windowTxt" alignment="3" max="32767" attributes="1"/>
-                          <Component id="jLabel22" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="validateButton" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
+                          <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="1" attributes="0">
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="windowTxt" alignment="3" max="32767" attributes="1"/>
+                                  <Component id="jLabel22" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <Component id="fdrCombo1" alignment="0" max="32767" attributes="1"/>
+                          </Group>
                       </Group>
-                      <Component id="pepHelpJButton" alignment="0" pref="20" max="32767" attributes="1"/>
-                      <Component id="fdrCombo1" alignment="0" max="32767" attributes="1"/>
+                      <Component id="pepHelpJButton" alignment="1" min="-2" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="applyButton" min="-2" max="-2" attributes="0"/>
@@ -1459,7 +1509,7 @@
         <Component class="javax.swing.JButton" name="thresholdHelpJButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help.GIF"/>
+              <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Help"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -1467,6 +1517,9 @@
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help_no_frame.png"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="thresholdHelpJButtonMouseEntered"/>
@@ -1477,7 +1530,7 @@
         <Component class="javax.swing.JButton" name="pepHelpJButton">
           <Properties>
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="3" name="/icons/help.GIF"/>
+              <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
             </Property>
             <Property name="toolTipText" type="java.lang.String" value="Help"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -1485,6 +1538,9 @@
             </Property>
             <Property name="borderPainted" type="boolean" value="false"/>
             <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help_no_frame.png"/>
+            </Property>
           </Properties>
           <Events>
             <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="pepHelpJButtonMouseEntered"/>
