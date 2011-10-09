@@ -1243,7 +1243,8 @@ public class QCPanel extends javax.swing.JPanel {
                 
                 for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
                     spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    double value = spectrumMatch.getBestAssumption().getDeltaMass();
+                    double value = Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(
+                            peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                     if (value > maxValue) {
                         maxValue = value;
                     }

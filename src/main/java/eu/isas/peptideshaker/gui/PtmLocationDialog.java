@@ -638,7 +638,8 @@ public class PtmLocationDialog extends javax.swing.JDialog {
                         return peptideShakerGUI.getPrecursor(spectrumKey).getCharge().value;
                     case 4:
                         spectrumKey = peptideMatch.getSpectrumMatches().get(row);
-                        return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getDeltaMass();
+                        return Math.abs(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getDeltaMass(
+                                peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                     case 5:
                         spectrumKey = peptideMatch.getSpectrumMatches().get(row);
                         psParameter = new PSParameter();

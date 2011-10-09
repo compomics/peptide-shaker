@@ -504,7 +504,12 @@ public class FeaturesGenerator {
                 result += "Precursor Charge" + SEPARATOR;
                 result += "Precursor Retention Time" + SEPARATOR;
                 result += "Peptide Theoretic Mass" + SEPARATOR;
-                result += "Mass Error [ppm]" + SEPARATOR;
+
+                if (peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) {
+                    result += "Mass Error [ppm]" + SEPARATOR;
+                } else {
+                    result += "Mass Error [Da]" + SEPARATOR;
+                }
             }
             if (score) {
                 result += "Score" + SEPARATOR;
@@ -616,7 +621,7 @@ public class FeaturesGenerator {
                     result += prec.getCharge() + SEPARATOR;
                     result += prec.getRt() + SEPARATOR;
                     result += bestAssumption.getPeptide().getMass() + SEPARATOR;
-                    result += bestAssumption.getDeltaMass() + SEPARATOR;
+                    result += Math.abs(bestAssumption.getDeltaMass(peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR;
                 }
                 if (score) {
                     result += psParameter.getPsmScore() + SEPARATOR;
@@ -703,7 +708,13 @@ public class FeaturesGenerator {
                 result += "Precursor charge" + SEPARATOR;
                 result += "Precursor RT" + SEPARATOR;
                 result += "Peptide theoretic mass" + SEPARATOR;
-                result += "Mass error [ppm]" + SEPARATOR;
+                
+                if (peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) {
+                    result += "Mass Error [ppm]" + SEPARATOR;
+                } else {
+                    result += "Mass Error [Da]" + SEPARATOR;
+                }
+ 
             }
             if (scores) {
                 result += "Mascot e-value" + SEPARATOR;
@@ -776,7 +787,7 @@ public class FeaturesGenerator {
                                 result += prec.getCharge() + SEPARATOR;
                                 result += prec.getRt() + SEPARATOR;
                                 result += peptideAssumption.getPeptide().getMass() + SEPARATOR;
-                                result += peptideAssumption.getDeltaMass() + SEPARATOR;
+                                result += Math.abs(peptideAssumption.getDeltaMass(peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR;
                             }
                             if (scores) {
                                 if (se == Advocate.MASCOT) {

@@ -20,6 +20,7 @@ import eu.isas.peptideshaker.scoring.PtmScoring;
 import com.compomics.util.gui.protein.ModificationProfile;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
+import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
@@ -252,14 +253,14 @@ public class PtmPanel extends javax.swing.JPanel {
                 "Validated", "Not Validated"));
 
         selectedPsmsTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) selectedPsmsTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        ((JSparklinesBarChartTableCellRenderer) selectedPsmsTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() - 30);
         selectedPsmsTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
 
         relatedPsmsTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) relatedPsmsTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        ((JSparklinesBarChartTableCellRenderer) relatedPsmsTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() - 30);
         relatedPsmsTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
@@ -2633,6 +2634,11 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
         intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 
+        ((JSparklinesBarChartTableCellRenderer) selectedPsmsTable.getColumn("Charge").getCellRenderer()).setMaxValue(
+                    (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge());
+        ((JSparklinesBarChartTableCellRenderer) relatedPsmsTable.getColumn("Charge").getCellRenderer()).setMaxValue(
+                    (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge());
+        
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 

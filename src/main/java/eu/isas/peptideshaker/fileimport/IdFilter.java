@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.fileimport;
 
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -88,7 +87,7 @@ public class IdFilter {
      */
     public boolean validateId(PeptideAssumption assumption) {
         if (isPpm) {
-            if (assumption.getDeltaMass() > maxMassDeviation && maxMassDeviation > 0) {
+            if (Math.abs(assumption.getDeltaMass(isPpm)) > maxMassDeviation && maxMassDeviation > 0) {
                 return false;
             } else if (Math.abs(assumption.getPeptide().getMass()-assumption.getMeasuredMass()) > 2) {
                 int debug = 1;
