@@ -1990,6 +1990,11 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         spectrumJTabbedPaneMouseWheelMoved(evt);
     }//GEN-LAST:event_accuracySliderMouseWheelMoved
 
+    /**
+     * Update the layered panes.
+     * 
+     * @param evt 
+     */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
         // resize the layered panels
         SwingUtilities.invokeLater(new Runnable() {
