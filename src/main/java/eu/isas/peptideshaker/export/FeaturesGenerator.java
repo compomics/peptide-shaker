@@ -365,7 +365,7 @@ public class FeaturesGenerator {
                             result += ", ";
                         }
                         for (int aa : modMap.get(mod)) {
-                        result += mod + "(" + aa + ")";
+                            result += mod + "(" + aa + ")";
                         }
                     }
                     result += SEPARATOR;
@@ -379,7 +379,7 @@ public class FeaturesGenerator {
                             }
                         }
                     }
-                        PSPtmScores ptmScores = new PSPtmScores();
+                    PSPtmScores ptmScores = new PSPtmScores();
                     boolean first = true;
                     for (String mod : modList) {
                         if (first) {
@@ -388,25 +388,26 @@ public class FeaturesGenerator {
                             result += ", ";
                         }
                         ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
-                        result += mod + "(";
+                        result += mod + " (";
                         if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                             int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
                             if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                                result += "Not scored"; // Well this should not happen
+                                result += "Not Scored"; // Well this should not happen
                             } else if (ptmConfidence == PtmScoring.RANDOM) {
                                 result += "Random";
                             } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                                result += "Doubtfull"; 
+                                result += "Doubtfull";
                             } else if (ptmConfidence == PtmScoring.CONFIDENT) {
                                 result += "Confident";
                             } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                                result += "Very confident";
+                                result += "Very Confident";
                             }
                         } else {
-                            result += "Not scored";
+                            result += "Not Scored";
                         }
                         result += ")";
                     }
+                    result += SEPARATOR;
                 }
                 if (nSpectra) {
                     int cpt = 0;
@@ -477,7 +478,6 @@ public class FeaturesGenerator {
             progressDialog.setMax(psmKeys.size());
         }
 
-
         String result = "";
 
         if (includeHeader) {
@@ -503,7 +503,7 @@ public class FeaturesGenerator {
                 result += "Precursor m/z" + SEPARATOR;
                 result += "Precursor Charge" + SEPARATOR;
                 result += "Precursor Retention Time" + SEPARATOR;
-                result += "Peptide Theoretic Mass" + SEPARATOR;
+                result += "Peptide Theoretical Mass" + SEPARATOR;
 
                 if (peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) {
                     result += "Mass Error [ppm]" + SEPARATOR;
@@ -566,8 +566,8 @@ public class FeaturesGenerator {
                             result += ", ";
                         }
                         for (int aa : modMap.get(mod)) {
-                        result += mod + " (" + aa + ")";
-                    }
+                            result += mod + " (" + aa + ")";
+                        }
                     }
                     result += SEPARATOR;
                 }
@@ -580,7 +580,7 @@ public class FeaturesGenerator {
                             }
                         }
                     }
-                        PSPtmScores ptmScores = new PSPtmScores();
+                    PSPtmScores ptmScores = new PSPtmScores();
                     boolean first = true;
                     for (String mod : modList) {
                         if (first) {
@@ -593,21 +593,22 @@ public class FeaturesGenerator {
                         if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
                             int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
                             if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                                result += "Not scored"; // Well this should not happen
+                                result += "Not Scored"; // Well this should not happen
                             } else if (ptmConfidence == PtmScoring.RANDOM) {
                                 result += "Random";
                             } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                                result += "Doubtfull"; 
+                                result += "Doubtfull";
                             } else if (ptmConfidence == PtmScoring.CONFIDENT) {
                                 result += "Confident";
                             } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                                result += "Very confident";
+                                result += "Very Confident";
                             }
                         } else {
-                            result += "Not scored";
+                            result += "Not Scored";
                         }
                         result += ")";
                     }
+                    result += SEPARATOR;
                 }
                 if (file) {
                     result += Spectrum.getSpectrumFile(spectrumMatch.getKey()) + SEPARATOR;
@@ -694,8 +695,8 @@ public class FeaturesGenerator {
                 result += "Sequence" + SEPARATOR;
             }
             if (modifications || locations) {
-                result += "Variable modifications" + SEPARATOR;
-                result += "Not implemented" + SEPARATOR;
+                result += "Variable Modifications" + SEPARATOR;
+                result += "Modification Location" + SEPARATOR;
             }
             if (file) {
                 result += "Spectrum File" + SEPARATOR;
@@ -705,16 +706,16 @@ public class FeaturesGenerator {
             }
             if (precursor) {
                 result += "Prectursor m/z" + SEPARATOR;
-                result += "Precursor charge" + SEPARATOR;
+                result += "Precursor Charge" + SEPARATOR;
                 result += "Precursor RT" + SEPARATOR;
-                result += "Peptide theoretic mass" + SEPARATOR;
-                
+                result += "Peptide Theoretical Mass" + SEPARATOR;
+
                 if (peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()) {
                     result += "Mass Error [ppm]" + SEPARATOR;
                 } else {
                     result += "Mass Error [Da]" + SEPARATOR;
                 }
- 
+
             }
             if (scores) {
                 result += "Mascot e-value" + SEPARATOR;
@@ -724,7 +725,7 @@ public class FeaturesGenerator {
             if (confidence) {
                 result += "Confidence" + SEPARATOR;
             }
-            result += "Retained as main PSM" + SEPARATOR;
+            result += "Retained As Main PSM" + SEPARATOR;
             result += "Decoy" + SEPARATOR;
             result += "\n";
         }
@@ -773,7 +774,7 @@ public class FeaturesGenerator {
                                     }
                                 }
                                 result += SEPARATOR;
-                                result += "Not implemented" + SEPARATOR;
+                                result += "Not Implemented" + SEPARATOR;
                             }
                             if (file) {
                                 result += Spectrum.getSpectrumFile(spectrumMatch.getKey()) + SEPARATOR;
