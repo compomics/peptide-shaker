@@ -6,7 +6,6 @@ import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
-import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
@@ -15,11 +14,9 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
-import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
-import java.awt.Toolkit;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -999,9 +996,9 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        
+
         if (spectrumFiles.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please verify the input for spectrum file(s).", 
+            JOptionPane.showMessageDialog(this, "Please verify the input for spectrum file(s).",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
@@ -1102,9 +1099,14 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * @param waitingDialog a dialog to display feedback to the user
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
-        boolean precTolUnit = ((String) precMassUnitCmb.getSelectedItem()).equals("ppm");
+        boolean precTolUnitIsPpm = ((String) precMassUnitCmb.getSelectedItem()).equals("ppm");
         peptideShakerGUI.getSearchParameters().setPrecursorAccuracy(getMaxMassDeviation());
-        IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue(), getMaxMassDeviation(), precTolUnit);
+        if (precTolUnitIsPpm) {
+            peptideShakerGUI.getSearchParameters().setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.PPM);
+        } else {
+            peptideShakerGUI.getSearchParameters().setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.DA);
+        }
+        IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue(), getMaxMassDeviation(), precTolUnitIsPpm);
         peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
     }
 
@@ -1178,7 +1180,12 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                     unit = new Integer(temp.trim());
                 } catch (Exception e) {
                 }
-                searchParameters.setPrecursorAccuracyUnit(unit);
+
+                if (unit == 0) {
+                    searchParameters.setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.PPM);
+                } else {
+                    searchParameters.setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.DA);
+                }
             }
 
             temp = props.getProperty(IdentificationParametersReader.MISSED_CLEAVAGES);
@@ -1297,7 +1304,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
         return success;
     }
-
 
     @Override
     public void cancelProgress() {

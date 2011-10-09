@@ -2425,7 +2425,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         searchParameters = new SearchParameters();
         searchParameters.setEnzyme(enzymeFactory.getEnzyme("Trypsin"));
         searchParameters.setFragmentIonAccuracy(0.5);
-        searchParameters.setPrecursorAccuracyUnit(0);
+        searchParameters.setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.PPM);
         searchParameters.setPrecursorAccuracy(10);
         searchParameters.setIonSearched1("b");
         searchParameters.setIonSearched2("y");

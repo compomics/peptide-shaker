@@ -607,7 +607,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             searchParameters.setEnzyme(enzymeFactory.getEnzyme((String) enzymesCmb.getSelectedItem()));
             searchParameters.setIonSearched1((String) ion1Cmb.getSelectedItem());
             searchParameters.setIonSearched2((String) ion2Cmb.getSelectedItem());
-            searchParameters.setPrecursorAccuracyUnit(precursorUnit.getSelectedIndex());
+            
+            if (((String) precursorUnit.getSelectedItem()).equalsIgnoreCase("ppm")) {
+                searchParameters.setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.PPM);
+            } else { // Da
+                searchParameters.setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.DA);
+            }
+            
             searchParameters.setPrecursorAccuracy(new Double(precursorAccuracy.getText()));
             peptideShakerGUI.setSearchParameters(searchParameters);
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
@@ -1148,7 +1154,13 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
         enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         enzymesCmb.setSelectedItem(searchParameters.getEnzyme().getName());
         missedCleavagesTxt.setText(searchParameters.getnMissedCleavages() + "");
-        precursorUnit.setSelectedIndex(searchParameters.getPrecursorAccuracyUnit());
+        
+        if (searchParameters.getPrecursorAccuracyType() == SearchParameters.PrecursorAccuracyType.PPM) {
+            precursorUnit.setSelectedItem("ppm");
+        } else { // Dalton
+            precursorUnit.setSelectedItem("Da");
+        }
+        
         precursorAccuracy.setText(searchParameters.getPrecursorAccuracy() + "");
         setIons();
         if (searchParameters.getParametersFile() != null) {

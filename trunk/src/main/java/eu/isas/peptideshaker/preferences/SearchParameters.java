@@ -9,7 +9,8 @@ import java.util.ArrayList;
 /**
  * This class will compile the search options
  *
- * @author Marc
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class SearchParameters implements Serializable {
 
@@ -18,13 +19,13 @@ public class SearchParameters implements Serializable {
      */
     static final long serialVersionUID = 5456658018168469122L;
     /**
-     * static index for a precursor tolerance unit in ppm
+     * Precursor accuracy types.
      */
-    public static final int PPM = 0;
+    public enum PrecursorAccuracyType {PPM, DA};
     /**
-     * static index for a precursor tolerance unit in Da
+     * The current precursor accuracy type,
      */
-    public static final int DA = 1;
+    private PrecursorAccuracyType currentPrecursorAccuracyType = PrecursorAccuracyType.PPM;
     /**
      * The ms2 ion tolerance
      */
@@ -65,10 +66,6 @@ public class SearchParameters implements Serializable {
      * Convenience Array for ion type selection
      */
     private String[] ions = {"a", "b", "c", "x", "y", "z"};
-    /**
-     * The precursor tolerance unit
-     */
-    private int precursorToleranceUnit;
     /**
      * The precursor tolerance
      */
@@ -245,7 +242,7 @@ public class SearchParameters implements Serializable {
 
     /**
      * Setter for the second kind of ion searched
-     * @param ionSearched1 the second kind of ion searched 
+     * @param ionSearched2 the second kind of ion searched 
      */
     public void setIonSearched2(String ionSearched2) {
         if (ionSearched2.equals("a")) {
@@ -288,18 +285,29 @@ public class SearchParameters implements Serializable {
     }
 
     /**
-     * Returns the precursor tolerance unit as defined in the static fields
-     * @return the precursor tolerance unit 
+     * Returns the precursor accuracy type.
+     * 
+     * @return the precursor accuracy type 
      */
-    public int getPrecursorAccuracyUnit() {
-        return precursorToleranceUnit;
+    public PrecursorAccuracyType getPrecursorAccuracyType() {
+        return currentPrecursorAccuracyType;
     }
 
     /**
-     * Setts the precursor tolerance unit as defined in the static fields
-     * @param precursorToleranceUnit the precursor tolerance unit 
+     * Sets the precursor accuracy type.
+     * 
+     * @param currentPrecursorAccuracyType the precursor accuracy type
      */
-    public void setPrecursorAccuracyUnit(int precursorToleranceUnit) {
-        this.precursorToleranceUnit = precursorToleranceUnit;
+    public void setPrecursorAccuracyType(PrecursorAccuracyType currentPrecursorAccuracyType) {
+        this.currentPrecursorAccuracyType = currentPrecursorAccuracyType;
+    }
+    
+    /**
+     * Returns true if the current precursor accuracy type is ppm.
+     * 
+     * @return true if the current precursor accuracy type is ppm
+     */
+    public boolean isPrecursorAccuracyTypePpm() {
+        return currentPrecursorAccuracyType == PrecursorAccuracyType.PPM;
     }
 }
