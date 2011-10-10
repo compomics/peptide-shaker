@@ -91,22 +91,22 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
 
         buttonGroup.add(pngJRadioButton);
         pngJRadioButton.setSelected(true);
-        pngJRadioButton.setText("PNG");
+        pngJRadioButton.setText("PNG (Portable Network Graphics)");
         pngJRadioButton.setIconTextGap(15);
         pngJRadioButton.setOpaque(false);
 
         buttonGroup.add(tiffJRadioButton);
-        tiffJRadioButton.setText("TIFF");
+        tiffJRadioButton.setText("TIFF (Tagged Image File Format)");
         tiffJRadioButton.setIconTextGap(15);
         tiffJRadioButton.setOpaque(false);
 
         buttonGroup.add(pdfJRadioButton);
-        pdfJRadioButton.setText("PDF");
+        pdfJRadioButton.setText("PDF (Portable Document Format)");
         pdfJRadioButton.setIconTextGap(15);
         pdfJRadioButton.setOpaque(false);
 
         buttonGroup.add(svgJRadioButton);
-        svgJRadioButton.setText("SVG");
+        svgJRadioButton.setText("SVG (Scalable Vector Graphics)");
         svgJRadioButton.setIconTextGap(15);
         svgJRadioButton.setOpaque(false);
 
@@ -121,7 +121,7 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
                     .addComponent(pdfJRadioButton)
                     .addComponent(tiffJRadioButton)
                     .addComponent(pngJRadioButton))
-                .addContainerGap(95, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         plottingTypeJPanelLayout.setVerticalGroup(
             plottingTypeJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -150,9 +150,11 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(exportJButton)
-                    .addComponent(plottingTypeJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(plottingTypeJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap(164, Short.MAX_VALUE)
+                .addComponent(exportJButton)
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -160,16 +162,16 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(plottingTypeJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(exportJButton)
-                .addContainerGap())
+                .addGap(11, 11, 11))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

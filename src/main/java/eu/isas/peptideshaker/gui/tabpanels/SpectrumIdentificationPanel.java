@@ -2281,6 +2281,8 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
             accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
             intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
             
+            formComponentResized(null);
+            
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }

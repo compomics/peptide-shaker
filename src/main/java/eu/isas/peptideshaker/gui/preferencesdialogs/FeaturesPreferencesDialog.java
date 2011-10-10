@@ -882,7 +882,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getProteinsOutput(progressDialog, null, false, proteinAccession.isSelected(), proteinPI.isSelected(),
+                    feature = outputGenerator.getProteinsOutput(progressDialog, null, true, false, proteinAccession.isSelected(), proteinPI.isSelected(),
                             proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), proteinNSpectra.isSelected(),
                             proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true);
                 } catch (Exception e) {
@@ -1016,7 +1016,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getProteinsOutput(progressDialog, null, true, proteinAccession.isSelected(), proteinPI.isSelected(),
+                    feature = outputGenerator.getProteinsOutput(progressDialog, null, true, true, proteinAccession.isSelected(), proteinPI.isSelected(),
                             proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinSequenceCoverage.isSelected(), proteinEmpai.isSelected(), proteinNSpectra.isSelected(),
                             proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true);
                 } catch (Exception e) {
@@ -1052,7 +1052,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getPeptidesOutput(progressDialog, null, true, peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
+                    feature = outputGenerator.getPeptidesOutput(progressDialog, null, true, true, peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
                             peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(), peptideScore.isSelected(),
                             peptideConfidence.isSelected(), true);
                 } catch (Exception e) {
@@ -1088,7 +1088,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getPeptidesOutput(progressDialog, null, false, peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
+                    feature = outputGenerator.getPeptidesOutput(progressDialog, null, true, false, peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
                             peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
                             peptideScore.isSelected(), peptideConfidence.isSelected(), true);
                 } catch (Exception e) {
@@ -1124,7 +1124,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getPSMsOutput(progressDialog, null, true, psmAccession.isSelected(), psmSequence.isSelected(),
+                    feature = outputGenerator.getPSMsOutput(progressDialog, null, true, true, psmAccession.isSelected(), psmSequence.isSelected(),
                             psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
                             psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true);
                 } catch (Exception e) {
@@ -1160,7 +1160,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             @Override
             public void run() {
                 try {
-                    feature = outputGenerator.getPSMsOutput(progressDialog, null, false, psmAccession.isSelected(), psmSequence.isSelected(),
+                    feature = outputGenerator.getPSMsOutput(progressDialog, null, true, false, psmAccession.isSelected(), psmSequence.isSelected(),
                             psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
                             psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true);
                 } catch (Exception e) {
@@ -1297,7 +1297,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             public void run() {
                 try {
                     ArrayList<String> selectedProteins = peptideShakerGUI.getDisplayedProteins();
-                    feature = outputGenerator.getProteinsOutput(progressDialog, selectedProteins, true, proteinAccession.isSelected(),
+                    feature = outputGenerator.getProteinsOutput(progressDialog, selectedProteins, true, true, proteinAccession.isSelected(),
                             proteinPI.isSelected(), proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(),
                             proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true);
                 } catch (Exception e) {
@@ -1334,7 +1334,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             public void run() {
                 try {
                     ArrayList<String> selectedPeptides = peptideShakerGUI.getDisplayedPeptides();
-                    feature = outputGenerator.getPeptidesOutput(progressDialog, selectedPeptides, true, peptideAccession.isSelected(), peptidePosition.isSelected(),
+                    feature = outputGenerator.getPeptidesOutput(progressDialog, selectedPeptides, true, true, peptideAccession.isSelected(), peptidePosition.isSelected(),
                             peptideSequence.isSelected(), peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
                             peptideScore.isSelected(), peptideConfidence.isSelected(), true);
                 } catch (Exception e) {
@@ -1371,7 +1371,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             public void run() {
                 try {
                     ArrayList<String> selectedPsms = peptideShakerGUI.getDisplayedPSMs();
-                    feature = outputGenerator.getPSMsOutput(progressDialog, selectedPsms, false, psmAccession.isSelected(),
+                    feature = outputGenerator.getPSMsOutput(progressDialog, selectedPsms, true, false, psmAccession.isSelected(),
                             psmSequence.isSelected(), psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(),
                             psmTitle.isSelected(), psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true);
                 } catch (Exception e) {

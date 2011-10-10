@@ -1055,7 +1055,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                             FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
 
                             try {
-                                feature = outputGenerator.getProteinsOutput(progressDialog, null, true, true, false,
+                                feature = outputGenerator.getProteinsOutput(progressDialog, null, true, true, true, false,
                                         false, false, false, false, false,
                                         false, false, false, false);
                             } catch (Exception e) {

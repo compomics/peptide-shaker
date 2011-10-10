@@ -56,6 +56,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.Transferable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -93,7 +96,7 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  * @author  Harald Barsnes
  * @author  Marc Vaudel
  */
-public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDialogParent {
+public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDialogParent, ClipboardOwner {
 
     /**
      * The currently selected protein accession number.
@@ -4268,5 +4271,31 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 }
             }
         }.start();
+    }
+
+    @Override
+    public void lostOwnership(Clipboard clipboard, Transferable contents) {
+        // do nothing
+    }
+    
+    /**
+     * Export the current spectrum as an mgf.
+     */
+    public void exportSpectrumAsMgf () {
+        exportSpectrumValuesJMenuItemActionPerformed(null);
+    }
+    
+    /**
+     * Export the current spectrum as a figure.
+     */
+    public void exportSpectrumAsFigure() {
+        exportSpectrumGraphicsJMenuItemActionPerformed(null);
+    }
+    
+    /**
+     * Export the current bubble plot as a figure.
+     */
+    public void exportBubblePlotAsFigure() {
+        bubblePlotJMenuItemActionPerformed(null);
     }
 }
