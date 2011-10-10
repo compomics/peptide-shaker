@@ -21,6 +21,7 @@ import com.compomics.util.gui.spectrum.MassErrorBubblePlot;
 import com.compomics.util.gui.spectrum.MassErrorPlot;
 import com.compomics.util.gui.spectrum.SequenceFragmentationPanel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
+import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.ExportFeatureDialog;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -34,8 +35,12 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,6 +75,14 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class OverviewPanel extends javax.swing.JPanel {
 
+    /**
+     * Indexes for the three main data tables.
+     */
+    private enum TableIndex {
+
+        PROTEIN_TABLE, PEPTIDE_TABLE, PSM_TABLE
+    };
+    private ProgressDialogX progressDialog;
     /**
      * The current spectrum key.
      */
@@ -534,6 +547,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             }
         });
         proteinScrollPane.setViewportView(proteinTable);
+        proteinTable.getAccessibleContext().setAccessibleName("ProteinTable");
 
         javax.swing.GroupLayout proteinsLayeredPanelLayout = new javax.swing.GroupLayout(proteinsLayeredPanel);
         proteinsLayeredPanel.setLayout(proteinsLayeredPanelLayout);
@@ -2024,8 +2038,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 proteinsLayeredPane.getComponent(3).setBounds(0, 0, proteinsLayeredPane.getWidth(), proteinsLayeredPane.getHeight());
                 proteinsLayeredPane.revalidate();
                 proteinsLayeredPane.repaint();
-                
-                
+
+
                 // move the icons
                 peptidesLayeredPane.getComponent(0).setBounds(
                         peptidesLayeredPane.getWidth() - peptidesLayeredPane.getComponent(0).getWidth() - 10,
@@ -2048,9 +2062,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 // resize the plot area
                 peptidesLayeredPane.getComponent(3).setBounds(0, 0, peptidesLayeredPane.getWidth(), peptidesLayeredPane.getHeight());
                 peptidesLayeredPane.revalidate();
-                peptidesLayeredPane.repaint();  
-                
-                
+                peptidesLayeredPane.repaint();
+
+
                 // move the icons
                 psmsLayeredPane.getComponent(0).setBounds(
                         psmsLayeredPane.getWidth() - psmsLayeredPane.getComponent(0).getWidth() - 10,
@@ -2073,9 +2087,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 // resize the plot area
                 psmsLayeredPane.getComponent(3).setBounds(0, 0, psmsLayeredPane.getWidth(), psmsLayeredPane.getHeight());
                 psmsLayeredPane.revalidate();
-                psmsLayeredPane.repaint(); 
-                
-                
+                psmsLayeredPane.repaint();
+
+
                 // move the icons
                 spectrumLayeredPane.getComponent(0).setBounds(
                         spectrumLayeredPane.getWidth() - spectrumLayeredPane.getComponent(0).getWidth() - 10,
@@ -2098,9 +2112,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 // resize the plot area
                 spectrumLayeredPane.getComponent(3).setBounds(0, 0, spectrumLayeredPane.getWidth(), spectrumLayeredPane.getHeight());
                 spectrumLayeredPane.revalidate();
-                spectrumLayeredPane.repaint(); 
-                
-                
+                spectrumLayeredPane.repaint();
+
+
                 // move the icons
                 sequenceCoverageLayeredPane.getComponent(0).setBounds(
                         sequenceCoverageLayeredPane.getWidth() - sequenceCoverageLayeredPane.getComponent(0).getWidth() - 10,
@@ -2123,7 +2137,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 // resize the plot area
                 sequenceCoverageLayeredPane.getComponent(3).setBounds(0, 0, sequenceCoverageLayeredPane.getWidth(), sequenceCoverageLayeredPane.getHeight());
                 sequenceCoverageLayeredPane.revalidate();
-                sequenceCoverageLayeredPane.repaint(); 
+                sequenceCoverageLayeredPane.repaint();
             }
         });
     }//GEN-LAST:event_formComponentResized
@@ -2134,7 +2148,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void proteinsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinsHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_proteinsHelpJButtonMouseEntered
 
     /**
@@ -2143,7 +2157,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void proteinsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinsHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinsHelpJButtonMouseExited
 
     /**
@@ -2152,9 +2166,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void proteinsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinsHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OverviewTab.html"), "Proteins");              
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OverviewTab.html"), "Proteins");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinsHelpJButtonActionPerformed
 
     /**
@@ -2163,7 +2177,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportProteinsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportProteinsJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportProteinsJButtonMouseEntered
 
     /**
@@ -2172,7 +2186,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportProteinsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportProteinsJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportProteinsJButtonMouseExited
 
     /**
@@ -2181,7 +2195,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportProteinsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProteinsJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);     
+        copyTableContentToClipboard(TableIndex.PROTEIN_TABLE);
     }//GEN-LAST:event_exportProteinsJButtonActionPerformed
 
     /**
@@ -2190,7 +2204,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void peptidesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); 
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_peptidesHelpJButtonMouseEntered
 
     /**
@@ -2199,7 +2213,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void peptidesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));   
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptidesHelpJButtonMouseExited
 
     /**
@@ -2208,8 +2222,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void peptidesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OverviewTab.html"), "Peptides");              
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OverviewTab.html"), "Peptides");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptidesHelpJButtonActionPerformed
 
@@ -2228,7 +2242,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportPeptidesJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPeptidesJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportPeptidesJButtonMouseExited
 
     /**
@@ -2237,7 +2251,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportPeptidesJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPeptidesJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);   
+        copyTableContentToClipboard(TableIndex.PEPTIDE_TABLE);
     }//GEN-LAST:event_exportPeptidesJButtonActionPerformed
 
     /**
@@ -2246,7 +2260,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void psmsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmsHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); 
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_psmsHelpJButtonMouseEntered
 
     /**
@@ -2255,7 +2269,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void psmsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmsHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_psmsHelpJButtonMouseExited
 
     /**
@@ -2264,8 +2278,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void psmsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmsHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OverviewTab.html"), "PSMs");              
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OverviewTab.html"), "PSMs");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_psmsHelpJButtonActionPerformed
 
@@ -2275,7 +2289,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportPsmsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPsmsJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); 
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportPsmsJButtonMouseEntered
 
     /**
@@ -2284,7 +2298,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportPsmsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPsmsJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportPsmsJButtonMouseExited
 
     /**
@@ -2293,7 +2307,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportPsmsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPsmsJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);   
+        copyTableContentToClipboard(TableIndex.PSM_TABLE);
     }//GEN-LAST:event_exportPsmsJButtonActionPerformed
 
     /**
@@ -2302,7 +2316,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void spectrumHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); 
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_spectrumHelpJButtonMouseEntered
 
     /**
@@ -2311,7 +2325,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void spectrumHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumHelpJButtonMouseExited
 
     /**
@@ -2320,8 +2334,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void spectrumHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OverviewTab.html"), "Spectrum");              
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OverviewTab.html"), "Spectrum");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumHelpJButtonActionPerformed
 
@@ -2331,7 +2345,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportSpectrumJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); 
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportSpectrumJButtonMouseEntered
 
     /**
@@ -2340,16 +2354,73 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportSpectrumJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportSpectrumJButtonMouseExited
 
     /**
-     * Export the table contents.
+     * Export the spectrum to mgf or figure format.
      * 
      * @param evt 
      */
     private void exportSpectrumJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);   
+
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        int index = spectrumJTabbedPane.getSelectedIndex();
+
+        if (index == 0) { // fragment ion
+            JMenuItem menuItem = new JMenuItem("Spectrum As MGF");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsMgf();
+                }
+            });
+
+            popupMenu.add(menuItem);
+        } else if (index == 1) { // bubble plot
+            JMenuItem menuItem = new JMenuItem("Bubble Plot As Figure");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportBubblePlotAsFigure();
+                }
+            });
+
+            popupMenu.add(menuItem);
+            
+            menuItem = new JMenuItem("Spectrum As MGF");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsMgf();
+                }
+            });
+
+            popupMenu.add(menuItem);
+        } else if (index == 2) { // spectrum
+            JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsFigure();
+                }
+            });
+
+            popupMenu.add(menuItem);
+            
+            menuItem = new JMenuItem("Spectrum As MGF");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsMgf();
+                }
+            });
+
+            popupMenu.add(menuItem);
+        }
+
+        popupMenu.show(exportSpectrumJButton, exportSpectrumJButton.getX(), exportSpectrumJButton.getY());
     }//GEN-LAST:event_exportSpectrumJButtonActionPerformed
 
     /**
@@ -2358,7 +2429,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void sequenceCoveragetHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sequenceCoveragetHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); 
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_sequenceCoveragetHelpJButtonMouseEntered
 
     /**
@@ -2367,7 +2438,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void sequenceCoveragetHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sequenceCoveragetHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_sequenceCoveragetHelpJButtonMouseExited
 
     /**
@@ -2376,8 +2447,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void sequenceCoveragetHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceCoveragetHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OverviewTab.html"), "Coverage");              
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OverviewTab.html"), "Coverage");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_sequenceCoveragetHelpJButtonActionPerformed
 
@@ -2387,7 +2458,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportSequenceCoverageContextJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSequenceCoverageContextJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR)); 
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportSequenceCoverageContextJButtonMouseEntered
 
     /**
@@ -2396,7 +2467,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportSequenceCoverageContextJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSequenceCoverageContextJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportSequenceCoverageContextJButtonMouseExited
 
     /**
@@ -2405,9 +2476,20 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param evt 
      */
     private void exportSequenceCoverageContextJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSequenceCoverageContextJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);   
-    }//GEN-LAST:event_exportSequenceCoverageContextJButtonActionPerformed
+        try {
+            String proteinKey = proteinTableMap.get(getProteinKey(proteinTable.getSelectedRow()));
+            Protein protein = sequenceFactory.getProtein(proteinKey);
 
+            String clipboardString = protein.getSequence();
+            StringSelection stringSelection = new StringSelection(clipboardString);
+            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+            clipboard.setContents(stringSelection, peptideShakerGUI);
+
+            JOptionPane.showMessageDialog(peptideShakerGUI, "Protein sequence copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_exportSequenceCoverageContextJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel bubbleAnnotationMenuPanel;
@@ -2688,7 +2770,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         updatePeptidesAndPsmsSeparator();
         peptidesPsmJSplitPane.setDividerLocation(peptidesPsmJSplitPane.getHeight() / 2);
         formComponentResized(null);
-        
+
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -2700,7 +2782,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 formComponentResized(null);
             }
         });
-        
+
         formComponentResized(null);
     }
 
@@ -4008,5 +4090,74 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      */
     public void updatePeptideProteinInference(int proteinInferenceType) {
         peptideTable.setValueAt(proteinInferenceType, peptideTable.getSelectedRow(), peptideTable.getColumn("PI").getModelIndex());
+    }
+
+    /**
+     * Export the table contents to the clipboard.
+     * 
+     * @param index 
+     */
+    private void copyTableContentToClipboard(TableIndex index) {
+
+        final TableIndex tableIndex = index;
+
+        if (tableIndex == TableIndex.PROTEIN_TABLE
+                || tableIndex == TableIndex.PEPTIDE_TABLE) {
+
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Copying to Clipboard. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        String clipboardString = "";
+                        FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
+
+                        if (tableIndex == TableIndex.PROTEIN_TABLE) {
+                            ArrayList<String> selectedProteins = getDisplayedProteins();
+                            clipboardString = outputGenerator.getProteinsOutput(
+                                    progressDialog, selectedProteins, true, false, true, true,
+                                    true, true, true, true, true,
+                                    true, true, true, true);
+                        } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
+                            ArrayList<String> selectedPeptides = getDisplayedPeptides();
+                            clipboardString = outputGenerator.getPeptidesOutput(
+                                    progressDialog, selectedPeptides, true, false, true, true,
+                                    true, true, true, true, true, true, true);
+                        } else if (tableIndex == TableIndex.PSM_TABLE) {
+                            ArrayList<String> selectedPsms = getDisplayedPsms();
+                            clipboardString = outputGenerator.getPSMsOutput(
+                                    progressDialog, selectedPsms, true, false, true, true, true,
+                                    true, true, true, true, true, true, true);
+                        }
+
+                        StringSelection stringSelection = new StringSelection(clipboardString);
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(stringSelection, peptideShakerGUI);
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+
+                    } catch (Exception e) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
     }
 }

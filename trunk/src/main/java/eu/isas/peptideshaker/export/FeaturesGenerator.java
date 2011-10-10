@@ -66,6 +66,7 @@ public class FeaturesGenerator {
      * 
      * @param progressDialog the progress dialog (can be null)
      * @param proteinKeys 
+     * @param indexes 
      * @param onlyValidated
      * @param accession
      * @param piDetails
@@ -81,7 +82,7 @@ public class FeaturesGenerator {
      * @return
      * @throws Exception  
      */
-    public String getProteinsOutput(ProgressDialogX progressDialog, ArrayList<String> proteinKeys, boolean onlyValidated, boolean accession, boolean piDetails,
+    public String getProteinsOutput(ProgressDialogX progressDialog, ArrayList<String> proteinKeys, boolean indexes, boolean onlyValidated, boolean accession, boolean piDetails,
             boolean description, boolean nPeptides, boolean emPAI, boolean sequenceCoverage, boolean nSpectra, boolean nsaf,
             boolean score, boolean confidence, boolean includeHeader) throws Exception {
 
@@ -96,6 +97,9 @@ public class FeaturesGenerator {
         String result = "";
 
         if (includeHeader) {
+            if (indexes) {
+                result += SEPARATOR;
+            }
             if (accession) {
                 result += "Accession" + SEPARATOR;
             }
@@ -112,12 +116,12 @@ public class FeaturesGenerator {
             if (nPeptides) {
                 result += "#Validated Peptides" + SEPARATOR;
             }
-            if (emPAI) {
-                result += "emPAI" + SEPARATOR;
-            }
             if (nSpectra) {
                 result += "#Validated Spectra" + SEPARATOR;
             }
+            if (emPAI) {
+                result += "emPAI" + SEPARATOR;
+            } 
             if (nsaf) {
                 result += "NSAF" + SEPARATOR;
             }
@@ -136,11 +140,17 @@ public class FeaturesGenerator {
 
         PSParameter proteinPSParameter = new PSParameter();
         PSParameter secondaryPSParameter = new PSParameter();
-        int cpt, progress = 0;
+        int cpt, progress = 0, proteinCounter = 0;
         ProteinMatch proteinMatch;
         for (String proteinKey : proteinKeys) {
+            
             proteinPSParameter = (PSParameter) identification.getMatchParameter(proteinKey, proteinPSParameter);
             if (!onlyValidated || proteinPSParameter.isValidated() && !ProteinMatch.isDecoy(proteinKey)) {
+                
+                if (indexes) {
+                    result += ++proteinCounter + SEPARATOR;
+                }
+                
                 proteinMatch = identification.getProteinMatch(proteinKey);
                 if (accession) {
                     result += proteinMatch.getMainMatch() + SEPARATOR;
@@ -166,6 +176,10 @@ public class FeaturesGenerator {
                 if (sequenceCoverage) {
                     result += peptideShakerGUI.estimateSequenceCoverage(proteinMatch, sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence()) + SEPARATOR;
                 }
+                
+                double emPAIScore = 0.0;
+                double nsafScore = 0.0;
+                
                 if (nPeptides || emPAI) {
                     Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                     cpt = 0;
@@ -182,7 +196,7 @@ public class FeaturesGenerator {
                         double pai = cpt;
                         pai = pai / mainMatch.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
                         double empai = Math.pow(10, pai) - 1;
-                        result += empai + SEPARATOR;
+                        emPAIScore = empai; 
                     }
                 }
                 if (nSpectra || nsaf) {
@@ -204,9 +218,17 @@ public class FeaturesGenerator {
                     if (nsaf) {
                         double index = cpt;
                         index = index / mainMatch.getSequence().length();
-                        result += index + SEPARATOR;
+                        nsafScore = index;
                     }
                 }
+                
+                if (emPAI) {
+                    result += emPAIScore + SEPARATOR;
+                }
+                if (nsaf) {
+                    result += nsafScore + SEPARATOR;
+                }
+                
                 if (score) {
                     result += proteinPSParameter.getProteinScore() + SEPARATOR;
                 }
@@ -240,6 +262,7 @@ public class FeaturesGenerator {
      * 
      * @param progressDialog the progress dialog (can be null)
      * @param peptideKeys
+     * @param indexes 
      * @param onlyValidated
      * @param accession
      * @param location 
@@ -253,7 +276,7 @@ public class FeaturesGenerator {
      * @return
      * @throws Exception  
      */
-    public String getPeptidesOutput(ProgressDialogX progressDialog, ArrayList<String> peptideKeys, boolean onlyValidated, boolean accession,
+    public String getPeptidesOutput(ProgressDialogX progressDialog, ArrayList<String> peptideKeys, boolean indexes, boolean onlyValidated, boolean accession,
             boolean location, boolean sequence, boolean modifications, boolean ptmLocations,
             boolean nSpectra, boolean score, boolean confidence, boolean includeHeader) throws Exception {
 
@@ -269,14 +292,17 @@ public class FeaturesGenerator {
         String result = "";
 
         if (includeHeader) {
+            if (indexes) {
+                result += SEPARATOR;
+            }
             if (accession) {
                 result += "Protein(s)" + SEPARATOR;
             }
-            if (location) {
-                result += "Peptide Start" + SEPARATOR;
-            }
             if (sequence) {
                 result += "Sequence" + SEPARATOR;
+            }
+            if (location) {
+                result += "Peptide Start" + SEPARATOR;
             }
             if (modifications) {
                 result += "Variable Modification" + SEPARATOR;
@@ -304,11 +330,18 @@ public class FeaturesGenerator {
         PSParameter secondaryPSParameter = new PSParameter();
         Peptide peptide;
         PeptideMatch peptideMatch;
-        int progress = 0;
+        int progress = 0, peptideCounter = 0;
+        
         for (String peptideKey : peptideKeys) {
+            
             peptideMatch = identification.getPeptideMatch(peptideKey);
             peptidePSParameter = (PSParameter) identification.getMatchParameter(peptideKey, peptidePSParameter);
             if (!onlyValidated || peptidePSParameter.isValidated() && !peptideMatch.isDecoy()) {
+                
+                if (indexes) {
+                    result += ++peptideCounter + SEPARATOR;
+                }
+                
                 peptide = peptideMatch.getTheoreticPeptide();
                 if (accession) {
                     boolean first = true;
@@ -322,6 +355,11 @@ public class FeaturesGenerator {
                     }
                     result += SEPARATOR;
                 }
+                
+                if (sequence) {
+                    result += peptide.getSequence() + SEPARATOR;
+                }
+                
                 if (location) {
                     if (peptide.getParentProteins().size() == 1) {
                         ArrayList<Integer> positions = new ArrayList<Integer>();
@@ -344,9 +382,7 @@ public class FeaturesGenerator {
                     }
                     result += SEPARATOR;
                 }
-                if (sequence) {
-                    result += peptide.getSequence() + SEPARATOR;
-                }
+                
                 if (modifications) {
                     HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
                     for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
@@ -453,6 +489,7 @@ public class FeaturesGenerator {
      * 
      * @param progressDialog the progress dialog (can be null)
      * @param psmKeys
+     * @param indexes 
      * @param onlyValidated
      * @param accessions
      * @param sequence
@@ -467,7 +504,7 @@ public class FeaturesGenerator {
      * @return
      * @throws Exception 
      */
-    public String getPSMsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean onlyValidated, boolean accessions, boolean sequence, boolean modification,
+    public String getPSMsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean indexes, boolean onlyValidated, boolean accessions, boolean sequence, boolean modification,
             boolean location, boolean file, boolean title, boolean precursor, boolean score, boolean confidence, boolean includeHeader) throws Exception {
 
         if (psmKeys == null) {
@@ -481,6 +518,9 @@ public class FeaturesGenerator {
         String result = "";
 
         if (includeHeader) {
+            if (indexes) {
+                result += SEPARATOR;
+            }
             if (accessions) {
                 result += "Protein(s)" + SEPARATOR;
             }
@@ -527,12 +567,18 @@ public class FeaturesGenerator {
         PSParameter psParameter = new PSParameter();
         PeptideAssumption bestAssumption;
         SpectrumMatch spectrumMatch;
-        int progress = 0;
+        int progress = 0, psmCounter = 0;
         for (String psmKey : psmKeys) {
+            
             spectrumMatch = identification.getSpectrumMatch(psmKey);
             psParameter = (PSParameter) identification.getMatchParameter(psmKey, psParameter);
             bestAssumption = spectrumMatch.getBestAssumption();
             if (!onlyValidated || psParameter.isValidated() && !bestAssumption.isDecoy()) {
+                
+                if (indexes) {
+                    result += ++psmCounter + SEPARATOR;
+                }
+                
                 if (accessions) {
                     boolean first = true;
                     for (String protein : bestAssumption.getPeptide().getParentProteins()) {
