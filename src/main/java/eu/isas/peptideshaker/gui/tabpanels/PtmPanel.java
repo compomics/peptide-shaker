@@ -2717,7 +2717,13 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     ((DefaultTableModel) relatedPeptidesTable.getModel()).fireTableDataChanged();
                 }
 
-                ((TitledBorder) selectedPeptidesJPanel.getBorder()).setTitle("Modified Peptides (" + peptidesTable.getRowCount() + ")");
+                String selectedPTM = "";
+                
+                if (ptmJTable.getSelectedRow() != -1) {
+                    selectedPTM = " - " + ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()) + " ";
+                }
+                
+                ((TitledBorder) selectedPeptidesJPanel.getBorder()).setTitle("Modified Peptides " + selectedPTM + "(" + peptidesTable.getRowCount() + ")");
                 selectedPeptidesJPanel.repaint();
 
                 ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
