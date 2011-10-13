@@ -19,6 +19,8 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.experiment.refinementparameters.MascotScore;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -26,6 +28,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -124,11 +127,11 @@ public class CsvExporter {
                     + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR + "Description" + "\n";
             proteinWriter.write(content);
 
-            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR
+            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "PTM location confidence" + SEPARATOR
                     + "n Spectra" + SEPARATOR + "n Spectra Validated" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
             peptideWriter.write(content);
 
-            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR
+            content = "Protein(s)" + SEPARATOR + "Sequence" + SEPARATOR + "Variable Modification(s)" + SEPARATOR + "PTM location confidence" + SEPARATOR
                     + "Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
                     + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
                     + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
@@ -230,7 +233,7 @@ public class CsvExporter {
                 }
             }
         }
-        
+
         line += nSpectra + SEPARATOR;
         line += nValidatedPeptides + SEPARATOR + nValidatedPsms + SEPARATOR;
         line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getNPossiblePeptides(enzyme) + SEPARATOR;
@@ -254,7 +257,7 @@ public class CsvExporter {
         } else {
             line += "0" + SEPARATOR;
         }
-        
+
         line += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
 
         line += "\n";
@@ -278,19 +281,66 @@ public class CsvExporter {
         line += SEPARATOR;
         line += peptideMatch.getTheoreticPeptide().getSequence() + SEPARATOR;
 
-        ArrayList<String> varMods = new ArrayList<String>();
-
-        for (ModificationMatch mod : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
-            if (mod.isVariable()) {
-                varMods.add(mod.getTheoreticPtm());
+        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+        for (ModificationMatch modificationMatch : peptideMatch.getTheoreticPeptide().getModificationMatches()) {
+            if (modificationMatch.isVariable()) {
+                if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                    modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                }
+                modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
             }
         }
-
-        Collections.sort(varMods);
-
-        for (String varMod : varMods) {
-            line += varMod + " ";
+        boolean first = true, first2;
+        ArrayList<String> modifications = new ArrayList<String>(modMap.keySet());
+        Collections.sort(modifications);
+        for (String mod : modifications) {
+            if (first) {
+                first = false;
+            } else {
+                line += ", ";
+            }
+            first2 = true;
+            line += mod + "(";
+            for (int aa : modMap.get(mod)) {
+                if (first2) {
+                    first2 = false;
+                } else {
+                line += ", ";
+                }
+                line += aa;
+            }
+            line += ")";
         }
+        line += SEPARATOR;
+        PSPtmScores ptmScores = new PSPtmScores();
+        first = true;
+        for (String mod : modifications) {
+            if (first) {
+                first = false;
+            } else {
+                line += ", ";
+            }
+            ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+            line += mod + " (";
+            if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
+                if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                    line += "Not Scored"; // Well this should not happen
+                } else if (ptmConfidence == PtmScoring.RANDOM) {
+                    line += "Random";
+                } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                    line += "Doubtfull";
+                } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                    line += "Confident";
+                } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                    line += "Very Confident";
+                }
+            } else {
+                line += "Not Scored";
+            }
+            line += ")";
+        }
+        line += SEPARATOR;
 
         line += SEPARATOR;
         line += peptideMatch.getSpectrumCount() + SEPARATOR;
@@ -337,6 +387,7 @@ public class CsvExporter {
 
         Peptide bestAssumption = spectrumMatch.getBestAssumption().getPeptide();
 
+
         for (String protein : bestAssumption.getParentProteins()) {
             line += protein + " ";
         }
@@ -344,12 +395,65 @@ public class CsvExporter {
         line += SEPARATOR;
         line += bestAssumption.getSequence() + SEPARATOR;
 
-        for (ModificationMatch mod : bestAssumption.getModificationMatches()) {
-            if (mod.isVariable()) {
-                line += mod.getTheoreticPtm() + "(" + mod.getModificationSite() + ") ";
+        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+        for (ModificationMatch modificationMatch : bestAssumption.getModificationMatches()) {
+            if (modificationMatch.isVariable()) {
+                if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                    modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                }
+                modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
             }
         }
-
+        boolean first = true, first2;
+        ArrayList<String> modifications = new ArrayList<String>(modMap.keySet());
+        Collections.sort(modifications);
+        for (String mod : modifications) {
+            if (first) {
+                first = false;
+            } else {
+                line += ", ";
+            }
+            first2 = true;
+            line += mod + "(";
+            for (int aa : modMap.get(mod)) {
+                if (first2) {
+                    first2 = false;
+                } else {
+                line += ", ";
+                }
+                line += aa;
+            }
+            line += ")";
+        }
+        line += SEPARATOR;
+        PSPtmScores ptmScores = new PSPtmScores();
+        first = true;
+        for (String mod : modifications) {
+            if (first) {
+                first = false;
+            } else {
+                line += ", ";
+            }
+            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+            line += mod + " (";
+            if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
+                if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                    line += "Not Scored"; // Well this should not happen
+                } else if (ptmConfidence == PtmScoring.RANDOM) {
+                    line += "Random";
+                } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                    line += "Doubtfull";
+                } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                    line += "Confident";
+                } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                    line += "Very Confident";
+                }
+            } else {
+                line += "Not Scored";
+            }
+            line += ")";
+        }
         line += SEPARATOR;
         String fileName = Spectrum.getSpectrumFile(spectrumMatch.getKey());
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getKey());
