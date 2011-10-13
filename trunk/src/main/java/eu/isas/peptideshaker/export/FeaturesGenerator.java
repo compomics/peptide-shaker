@@ -393,16 +393,26 @@ public class FeaturesGenerator {
                             modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                         }
                     }
-                    boolean first = true;
-                    for (String mod : modMap.keySet()) {
+                    boolean first = true, first2;
+                    ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+                    Collections.sort(mods);
+                    for (String mod : mods) {
                         if (first) {
                             first = false;
                         } else {
                             result += ", ";
                         }
+                        first2 = true;
+                        result += mod + "(";
                         for (int aa : modMap.get(mod)) {
-                            result += mod + "(" + aa + ")";
+                            if (first2) {
+                                first2 = false;
+                            } else {
+                                result += ", ";
+                            }
+                            result += aa;
                         }
+                        result += ")";
                     }
                     result += SEPARATOR;
                 }
@@ -415,6 +425,7 @@ public class FeaturesGenerator {
                             }
                         }
                     }
+                    Collections.sort(modList);
                     PSPtmScores ptmScores = new PSPtmScores();
                     boolean first = true;
                     for (String mod : modList) {
@@ -604,16 +615,26 @@ public class FeaturesGenerator {
                             modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                         }
                     }
-                    boolean first = true;
-                    for (String mod : modMap.keySet()) {
+                    boolean first = true, first2;
+                    ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+                    Collections.sort(mods);
+                    for (String mod : mods) {
                         if (first) {
                             first = false;
                         } else {
                             result += ", ";
                         }
+                        first2 = true;
+                        result += mod + "(";
                         for (int aa : modMap.get(mod)) {
-                            result += mod + " (" + aa + ")";
+                            if (first2) {
+                                first2 = false;
+                            } else {
+                                result += ", ";
+                            }
+                            result += aa;
                         }
+                        result += ")";
                     }
                     result += SEPARATOR;
                 }
@@ -626,6 +647,7 @@ public class FeaturesGenerator {
                             }
                         }
                     }
+                    Collections.sort(modList);
                     PSPtmScores ptmScores = new PSPtmScores();
                     boolean first = true;
                     for (String mod : modList) {
@@ -816,7 +838,7 @@ public class FeaturesGenerator {
                                             result += ", ";
                                         }
                                         String modName = modificationMatch.getTheoreticPtm();
-                                        result += modName + "(" + modificationMatch + ")";
+                                        result += modName + "(" + modificationMatch.getModificationSite() + ")";
                                     }
                                 }
                                 result += SEPARATOR;
