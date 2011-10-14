@@ -32,7 +32,9 @@ import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
@@ -181,7 +183,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         mascotTable.getColumn(" ").setMaxWidth(30);
         xTandemTable.getColumn(" ").setMinWidth(30);
         xTandemTable.getColumn(" ").setMaxWidth(30);
-        
+
         peptideShakerJTable.getColumn("Confidence").setMaxWidth(90);
         peptideShakerJTable.getColumn("Confidence").setMinWidth(90);
         peptideShakerJTable.getColumn("Score").setMaxWidth(90);
@@ -560,7 +562,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginesJLayeredPane.add(searchEnginesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportSearchEnginePerformanceJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportSearchEnginePerformanceJButton.setToolTipText("Export");
+        exportSearchEnginePerformanceJButton.setToolTipText("Copy to Clipboard");
         exportSearchEnginePerformanceJButton.setBorder(null);
         exportSearchEnginePerformanceJButton.setBorderPainted(false);
         exportSearchEnginePerformanceJButton.setContentAreaFilled(false);
@@ -927,11 +929,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 psmsHelpJButtonActionPerformed(evt);
             }
         });
-        psmsHelpJButton.setBounds(1280, 0, 10, 25);
+        psmsHelpJButton.setBounds(1290, 0, 10, 25);
         psmsLayeredPane.add(psmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPsmsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportPsmsJButton.setToolTipText("Export");
+        exportPsmsJButton.setToolTipText("Copy to Clipboard");
         exportPsmsJButton.setBorder(null);
         exportPsmsJButton.setBorderPainted(false);
         exportPsmsJButton.setContentAreaFilled(false);
@@ -949,7 +951,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 exportPsmsJButtonActionPerformed(evt);
             }
         });
-        exportPsmsJButton.setBounds(1290, 0, 10, 25);
+        exportPsmsJButton.setBounds(1280, 0, 10, 25);
         psmsLayeredPane.add(exportPsmsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPsmsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1085,7 +1087,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumSelectionLayeredPane.add(spectrumSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportSpectrumSelectionJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportSpectrumSelectionJButton.setToolTipText("Export");
+        exportSpectrumSelectionJButton.setToolTipText("Copy to Clipboard");
         exportSpectrumSelectionJButton.setBorder(null);
         exportSpectrumSelectionJButton.setBorderPainted(false);
         exportSpectrumSelectionJButton.setContentAreaFilled(false);
@@ -1365,8 +1367,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             public void run() {
                 spectrumJSplitPane.setDividerLocation(spectrumJSplitPane.getWidth() / 2);
-                
-                
+
+
                 // move the icons
                 psmsLayeredPane.getComponent(0).setBounds(
                         psmsLayeredPane.getWidth() - psmsLayeredPane.getComponent(0).getWidth() - 10,
@@ -1379,19 +1381,19 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         -3,
                         psmsLayeredPane.getComponent(1).getWidth(),
                         psmsLayeredPane.getComponent(1).getHeight());
-                
+
                 psmsLayeredPane.getComponent(2).setBounds(
                         psmsLayeredPane.getWidth() - psmsLayeredPane.getComponent(2).getWidth() - 5,
                         -3,
                         psmsLayeredPane.getComponent(2).getWidth(),
                         psmsLayeredPane.getComponent(2).getHeight());
-                
+
                 // resize the plot area
                 psmsLayeredPane.getComponent(3).setBounds(0, 0, psmsLayeredPane.getWidth(), psmsLayeredPane.getHeight());
                 psmsLayeredPane.revalidate();
                 psmsLayeredPane.repaint();
-                
-                
+
+
                 // move the icons
                 searchEnginesJLayeredPane.getComponent(0).setBounds(
                         searchEnginesJLayeredPane.getWidth() - searchEnginesJLayeredPane.getComponent(0).getWidth() - 10,
@@ -1404,19 +1406,19 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         -3,
                         searchEnginesJLayeredPane.getComponent(1).getWidth(),
                         searchEnginesJLayeredPane.getComponent(1).getHeight());
-                
+
                 searchEnginesJLayeredPane.getComponent(2).setBounds(
                         searchEnginesJLayeredPane.getWidth() - searchEnginesJLayeredPane.getComponent(2).getWidth() - 5,
                         -3,
                         searchEnginesJLayeredPane.getComponent(2).getWidth(),
                         searchEnginesJLayeredPane.getComponent(2).getHeight());
-                
+
                 // resize the plot area
                 searchEnginesJLayeredPane.getComponent(3).setBounds(0, 0, searchEnginesJLayeredPane.getWidth(), searchEnginesJLayeredPane.getHeight());
                 searchEnginesJLayeredPane.revalidate();
                 searchEnginesJLayeredPane.repaint();
-                
-                
+
+
                 // move the icons
                 spectrumSelectionLayeredPane.getComponent(0).setBounds(
                         spectrumSelectionLayeredPane.getWidth() - spectrumSelectionLayeredPane.getComponent(0).getWidth() - 10,
@@ -1429,19 +1431,19 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         -3,
                         spectrumSelectionLayeredPane.getComponent(1).getWidth(),
                         spectrumSelectionLayeredPane.getComponent(1).getHeight());
-                
+
                 spectrumSelectionLayeredPane.getComponent(2).setBounds(
                         spectrumSelectionLayeredPane.getWidth() - spectrumSelectionLayeredPane.getComponent(2).getWidth() - 5,
                         -3,
                         spectrumSelectionLayeredPane.getComponent(2).getWidth(),
                         spectrumSelectionLayeredPane.getComponent(2).getHeight());
-                
+
                 // resize the plot area
                 spectrumSelectionLayeredPane.getComponent(3).setBounds(0, 0, spectrumSelectionLayeredPane.getWidth(), spectrumSelectionLayeredPane.getHeight());
                 spectrumSelectionLayeredPane.revalidate();
                 spectrumSelectionLayeredPane.repaint();
-                
-                
+
+
                 // move the icons
                 spectrumLayeredPane.getComponent(0).setBounds(
                         spectrumLayeredPane.getWidth() - spectrumLayeredPane.getComponent(0).getWidth() - 10,
@@ -1454,13 +1456,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                         -3,
                         spectrumLayeredPane.getComponent(1).getWidth(),
                         spectrumLayeredPane.getComponent(1).getHeight());
-                
+
                 spectrumLayeredPane.getComponent(2).setBounds(
                         spectrumLayeredPane.getWidth() - spectrumLayeredPane.getComponent(2).getWidth() - 5,
                         -3,
                         spectrumLayeredPane.getComponent(2).getWidth(),
                         spectrumLayeredPane.getComponent(2).getHeight());
-                
+
                 // resize the plot area
                 spectrumLayeredPane.getComponent(3).setBounds(0, 0, spectrumLayeredPane.getWidth(), spectrumLayeredPane.getHeight());
                 spectrumLayeredPane.revalidate();
@@ -1726,9 +1728,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 } else {
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 }
-                
+
                 omssaTable.setToolTipText(null);
-                
+
             } else if (column == omssaTable.getColumn("Sequence").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 omssaTable.setToolTipText(omssaTablePeptideTooltips.get((Integer) omssaTable.getValueAt(row, 0)));
@@ -1763,9 +1765,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 } else {
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 }
-                
+
                 xTandemTable.setToolTipText(null);
-                
+
             } else if (column == xTandemTable.getColumn("Sequence").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 xTandemTable.setToolTipText(xTandemTablePeptideTooltips.get((Integer) xTandemTable.getValueAt(row, 0)));
@@ -1800,9 +1802,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 } else {
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 }
-                
+
                 mascotTable.setToolTipText(null);
-                
+
             } else if (column == mascotTable.getColumn("Sequence").getModelIndex()) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 mascotTable.setToolTipText(mascotTablePeptideTooltips.get((Integer) mascotTable.getValueAt(row, 0)));
@@ -1842,7 +1844,7 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
      * @param evt 
      */
 private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumJPanelMouseWheelMoved
-    
+
     // @TODO: figure out why the strange special cases are needed... if not included the slider gets stuck at the given values
 
     if (evt.isAltDown()) {
@@ -1895,11 +1897,11 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
     }//GEN-LAST:event_accuracySliderStateChanged
 
     private void psmsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmsHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_psmsHelpJButtonMouseEntered
 
     private void psmsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmsHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_psmsHelpJButtonMouseExited
 
     /**
@@ -1908,9 +1910,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void psmsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmsHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));       
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_psmsHelpJButtonActionPerformed
 
     /**
@@ -1919,7 +1921,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportPsmsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPsmsJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportPsmsJButtonMouseEntered
 
     /**
@@ -1928,7 +1930,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportPsmsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPsmsJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportPsmsJButtonMouseExited
 
     /**
@@ -1937,7 +1939,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportPsmsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPsmsJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);     
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_exportPsmsJButtonActionPerformed
 
     /**
@@ -1946,7 +1948,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void searchEnginesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchEnginesHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_searchEnginesHelpJButtonMouseEntered
 
     /**
@@ -1955,7 +1957,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void searchEnginesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchEnginesHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_searchEnginesHelpJButtonMouseExited
 
     /**
@@ -1964,9 +1966,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void searchEnginesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchEnginesHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));       
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_searchEnginesHelpJButtonActionPerformed
 
     /**
@@ -1975,7 +1977,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportSearchEnginePerformanceJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSearchEnginePerformanceJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportSearchEnginePerformanceJButtonMouseEntered
 
     /**
@@ -1984,7 +1986,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportSearchEnginePerformanceJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSearchEnginePerformanceJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportSearchEnginePerformanceJButtonMouseExited
 
     /**
@@ -1993,7 +1995,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportSearchEnginePerformanceJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSearchEnginePerformanceJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);     
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_exportSearchEnginePerformanceJButtonActionPerformed
 
     /**
@@ -2002,7 +2004,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void spectrumSelectionHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumSelectionHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_spectrumSelectionHelpJButtonMouseEntered
 
     /**
@@ -2011,7 +2013,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void spectrumSelectionHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumSelectionHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumSelectionHelpJButtonMouseExited
 
     /**
@@ -2020,9 +2022,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void spectrumSelectionHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumSelectionHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));       
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumSelectionHelpJButtonActionPerformed
 
     /**
@@ -2031,7 +2033,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportSpectrumSelectionJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSpectrumSelectionJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportSpectrumSelectionJButtonMouseEntered
 
     /**
@@ -2040,7 +2042,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportSpectrumSelectionJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSpectrumSelectionJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportSpectrumSelectionJButtonMouseExited
 
     /**
@@ -2049,7 +2051,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportSpectrumSelectionJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumSelectionJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);     
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_exportSpectrumSelectionJButtonActionPerformed
 
     /**
@@ -2058,7 +2060,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void spectrumHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_spectrumHelpJButtonMouseEntered
 
     /**
@@ -2067,7 +2069,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void spectrumHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumHelpJButtonMouseExited
 
     /**
@@ -2076,9 +2078,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void spectrumHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));       
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumHelpJButtonActionPerformed
 
     /**
@@ -2087,7 +2089,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportSpectrumJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportSpectrumJButtonMouseEntered
 
     /**
@@ -2096,18 +2098,41 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportSpectrumJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportSpectrumJButtonMouseExited
 
     /**
-     * Export the table contents.
+     * Export the spectrum.
      * 
      * @param evt 
      */
     private void exportSpectrumJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);     
-    }//GEN-LAST:event_exportSpectrumJButtonActionPerformed
 
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptideShakerGUI.exportSpectrumAsFigure();
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        menuItem = new JMenuItem("Spectrum As MGF");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptideShakerGUI.exportSpectrumAsMgf();
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        popupMenu.show(exportSpectrumJButton, exportSpectrumJButton.getX(), exportSpectrumJButton.getY());
+
+    }//GEN-LAST:event_exportSpectrumJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel contextMenuPsmsBackgroundPanel;
@@ -2168,14 +2193,14 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param progressDialog a progress dialog. Can be null.
      */
     public void displayResults(ProgressDialogX progressDialog) {
-        
+
         try {
             identification = peptideShakerGUI.getIdentification();
             int m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0;
             boolean mascot, omssa, xTandem;
             PSParameter probabilities = new PSParameter();
             SpectrumMatch spectrumMatch;
-            
+
             for (String spectrumKey : identification.getSpectrumIdentification()) {
                 spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                 mascot = false;
@@ -2275,14 +2300,14 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
             fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
             fileSelectionChanged();
-            
+
             // update the slider tooltips
             double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
             accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
             intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
-            
+
             formComponentResized(null);
-            
+
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
@@ -2478,7 +2503,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 while (xTandemTable.getRowCount() > 0) {
                     ((DefaultTableModel) xTandemTable.getModel()).removeRow(0);
                 }
-                
+
                 omssaTablePeptideTooltips = new HashMap<Integer, String>();
                 xTandemTablePeptideTooltips = new HashMap<Integer, String>();
                 mascotTablePeptideTooltips = new HashMap<Integer, String>();
@@ -2811,7 +2836,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
     public void setIntensitySliderValue(int value) {
         intensitySlider.setValue(value);
     }
-    
+
     /**
      * Set the accuracy slider value.
      * 

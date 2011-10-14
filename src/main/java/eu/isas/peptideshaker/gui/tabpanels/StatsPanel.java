@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import com.compomics.util.Util;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
@@ -2485,7 +2486,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void pepPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pepPlotExportJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);  
+        new ExportGraphicsDialog(peptideShakerGUI, true, pepChartPanel);
     }//GEN-LAST:event_pepPlotExportJButtonActionPerformed
 
     /**
@@ -2512,7 +2513,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void fdrPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrPlotExportJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);  
+        new ExportGraphicsDialog(peptideShakerGUI, true, fdrsChartPanel);
     }//GEN-LAST:event_fdrPlotExportJButtonActionPerformed
 
     /**
@@ -2539,7 +2540,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void confidencePlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confidencePlotExportJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);  
+        new ExportGraphicsDialog(peptideShakerGUI, true, confidenceChartPanel);
     }//GEN-LAST:event_confidencePlotExportJButtonActionPerformed
 
     /**
@@ -2566,7 +2567,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void fdrFnrPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrFnrPlotExportJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);  
+        new ExportGraphicsDialog(peptideShakerGUI, true, fdrFnrChartPanel);
     }//GEN-LAST:event_fdrFnrPlotExportJButtonActionPerformed
 
     /**
@@ -2593,7 +2594,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void benefitPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_benefitPlotExportJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);  
+        new ExportGraphicsDialog(peptideShakerGUI, true, benefitCostChartPanel);
     }//GEN-LAST:event_benefitPlotExportJButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

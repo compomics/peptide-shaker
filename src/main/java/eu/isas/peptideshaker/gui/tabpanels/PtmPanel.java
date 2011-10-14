@@ -33,8 +33,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
@@ -668,11 +670,11 @@ public class PtmPanel extends javax.swing.JPanel {
                 modificationProfileHelpJButtonActionPerformed(evt);
             }
         });
-        modificationProfileHelpJButton.setBounds(747, 0, 10, 27);
+        modificationProfileHelpJButton.setBounds(747, 0, 10, 25);
         modifiedPeptidesLayeredPane.add(modificationProfileHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportModifiedPeptideProfileJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportModifiedPeptideProfileJButton.setToolTipText("Export");
+        exportModifiedPeptideProfileJButton.setToolTipText("Copy to Clipboard");
         exportModifiedPeptideProfileJButton.setBorder(null);
         exportModifiedPeptideProfileJButton.setBorderPainted(false);
         exportModifiedPeptideProfileJButton.setContentAreaFilled(false);
@@ -690,7 +692,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 exportModifiedPeptideProfileJButtonActionPerformed(evt);
             }
         });
-        exportModifiedPeptideProfileJButton.setBounds(730, 0, 10, 23);
+        exportModifiedPeptideProfileJButton.setBounds(730, 0, 10, 25);
         modifiedPeptidesLayeredPane.add(exportModifiedPeptideProfileJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuModifiedPeptidesBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -815,7 +817,7 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptiesLayeredPane.add(relatedProfileHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportRelatedPeptideProfileJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportRelatedPeptideProfileJButton.setToolTipText("Export");
+        exportRelatedPeptideProfileJButton.setToolTipText("Copy to Clipboard");
         exportRelatedPeptideProfileJButton.setBorder(null);
         exportRelatedPeptideProfileJButton.setBorderPainted(false);
         exportRelatedPeptideProfileJButton.setContentAreaFilled(false);
@@ -1184,7 +1186,7 @@ public class PtmPanel extends javax.swing.JPanel {
         psmsModPeptidesLayeredPane.add(modifiedPsmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportModifiedPsmsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportModifiedPsmsJButton.setToolTipText("Export");
+        exportModifiedPsmsJButton.setToolTipText("Copy to Clipboard");
         exportModifiedPsmsJButton.setBorder(null);
         exportModifiedPsmsJButton.setBorderPainted(false);
         exportModifiedPsmsJButton.setContentAreaFilled(false);
@@ -1308,7 +1310,7 @@ public class PtmPanel extends javax.swing.JPanel {
         psmsRelatedPeptidesJLayeredPane.add(relatedPsmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportRelatedPsmsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportRelatedPsmsJButton.setToolTipText("Export");
+        exportRelatedPsmsJButton.setToolTipText("Copy to Clipboard");
         exportRelatedPsmsJButton.setBorder(null);
         exportRelatedPsmsJButton.setBorderPainted(false);
         exportRelatedPsmsJButton.setContentAreaFilled(false);
@@ -2358,12 +2360,42 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     }//GEN-LAST:event_exportSpectrumJButtonMouseExited
 
     /**
-     * Export the table contents.
+     * Export the spectrum to mgf or figure format.
      * 
      * @param evt 
      */
     private void exportSpectrumJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+        
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        int index = spectrumTabbedPane.getSelectedIndex();
+
+        if (index == 2) { // spectrum
+            JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsFigure();
+                }
+            });
+
+            popupMenu.add(menuItem);
+            
+            menuItem = new JMenuItem("Spectrum As MGF");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsMgf();
+                }
+            });
+
+            popupMenu.add(menuItem);
+        } else {
+            // @TODO: implement the other options!
+        }
+
+        popupMenu.show(exportSpectrumJButton, exportSpectrumJButton.getX(), exportSpectrumJButton.getY());
+        
     }//GEN-LAST:event_exportSpectrumJButtonActionPerformed
 
     /**
@@ -2720,7 +2752,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 String selectedPTM = "";
                 
                 if (ptmJTable.getSelectedRow() != -1) {
-                    selectedPTM = " - " + ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()) + " ";
+                    selectedPTM = "- " + ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()) + " ";
                 }
                 
                 ((TitledBorder) selectedPeptidesJPanel.getBorder()).setTitle("Modified Peptides " + selectedPTM + "(" + peptidesTable.getRowCount() + ")");
@@ -3390,9 +3422,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             String spectrumKey;
 
             if (relatedSelected) {
-                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
+                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
             } else {
-                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
+                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
             }
 
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);

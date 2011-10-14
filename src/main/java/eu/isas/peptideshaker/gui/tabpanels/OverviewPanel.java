@@ -596,7 +596,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinsLayeredPane.add(proteinsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportProteinsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportProteinsJButton.setToolTipText("Export");
+        exportProteinsJButton.setToolTipText("Copy to Clipboard");
         exportProteinsJButton.setBorder(null);
         exportProteinsJButton.setBorderPainted(false);
         exportProteinsJButton.setContentAreaFilled(false);
@@ -658,7 +658,6 @@ public class OverviewPanel extends javax.swing.JPanel {
         sequenceCoveragePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Sequence Coverage"));
         sequenceCoveragePanel.setOpaque(false);
 
-        sequenceCoverageTableScrollPane.setBorder(null);
         sequenceCoverageTableScrollPane.setOpaque(false);
 
         coverageTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -738,7 +737,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         sequenceCoverageLayeredPane.add(sequenceCoveragetHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportSequenceCoverageContextJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportSequenceCoverageContextJButton.setToolTipText("Export");
+        exportSequenceCoverageContextJButton.setToolTipText("Copy to Clipboard");
         exportSequenceCoverageContextJButton.setBorder(null);
         exportSequenceCoverageContextJButton.setBorderPainted(false);
         exportSequenceCoverageContextJButton.setContentAreaFilled(false);
@@ -900,7 +899,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         peptidesLayeredPane.add(peptidesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPeptidesJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportPeptidesJButton.setToolTipText("Export");
+        exportPeptidesJButton.setToolTipText("Copy to Clipboard");
         exportPeptidesJButton.setBorder(null);
         exportPeptidesJButton.setBorderPainted(false);
         exportPeptidesJButton.setContentAreaFilled(false);
@@ -1048,7 +1047,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         psmsLayeredPane.add(psmsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPsmsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportPsmsJButton.setToolTipText("Export");
+        exportPsmsJButton.setToolTipText("Copy to Clipboard");
         exportPsmsJButton.setBorder(null);
         exportPsmsJButton.setBorderPainted(false);
         exportPsmsJButton.setContentAreaFilled(false);

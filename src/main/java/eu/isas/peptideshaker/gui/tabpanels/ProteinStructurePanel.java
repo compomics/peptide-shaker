@@ -346,12 +346,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         pdbStructureJPanel = new javax.swing.JPanel();
         pdbStructureLayeredPane = new javax.swing.JLayeredPane();
+        pdbOuterPanel = new javax.swing.JPanel();
+        pdbLayeredPane = new javax.swing.JLayeredPane();
         pdbPanel = new javax.swing.JPanel();
-        pdbHelpJButton = new javax.swing.JButton();
         labelsJButton = new javax.swing.JButton();
         ribbonJButton = new javax.swing.JButton();
         backboneJButton = new javax.swing.JButton();
         playJButton = new javax.swing.JButton();
+        pdbStructureHelpJButton = new javax.swing.JButton();
+        exportPdbStructureJButton = new javax.swing.JButton();
+        contextMenuPdbStructureBackgroundPanel = new javax.swing.JPanel();
         proteinsJPanel = new javax.swing.JPanel();
         proteinsLayeredPane = new javax.swing.JLayeredPane();
         proteinsPanel = new javax.swing.JPanel();
@@ -444,42 +448,20 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             }
         });
 
-        pdbStructureJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PDB Structure"));
         pdbStructureJPanel.setOpaque(false);
 
-        pdbStructureLayeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+        pdbOuterPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PDB Structure"));
+        pdbOuterPanel.setOpaque(false);
+
+        pdbLayeredPane.addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
-                pdbStructureLayeredPaneComponentResized(evt);
+                pdbLayeredPaneComponentResized(evt);
             }
         });
 
         pdbPanel.setLayout(new javax.swing.BoxLayout(pdbPanel, javax.swing.BoxLayout.LINE_AXIS));
         pdbPanel.setBounds(0, 0, 435, 440);
-        pdbStructureLayeredPane.add(pdbPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
-
-        pdbHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.png"))); // NOI18N
-        pdbHelpJButton.setToolTipText("Help");
-        pdbHelpJButton.setBorder(null);
-        pdbHelpJButton.setBorderPainted(false);
-        pdbHelpJButton.setContentAreaFilled(false);
-        pdbHelpJButton.setFocusable(false);
-        pdbHelpJButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        pdbHelpJButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        pdbHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                pdbHelpJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                pdbHelpJButtonMouseExited(evt);
-            }
-        });
-        pdbHelpJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                pdbHelpJButtonActionPerformed(evt);
-            }
-        });
-        pdbHelpJButton.setBounds(0, 0, 27, 27);
-        pdbStructureLayeredPane.add(pdbHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbLayeredPane.add(pdbPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         labelsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/labels_selected.png"))); // NOI18N
         labelsJButton.setToolTipText("Hide Modification Labels");
@@ -503,7 +485,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             }
         });
         labelsJButton.setBounds(0, 0, 25, 25);
-        pdbStructureLayeredPane.add(labelsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbLayeredPane.add(labelsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         ribbonJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/ribbon_selected.png"))); // NOI18N
         ribbonJButton.setToolTipText("Ribbon Model");
@@ -527,7 +509,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             }
         });
         ribbonJButton.setBounds(0, 0, 25, 25);
-        pdbStructureLayeredPane.add(ribbonJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbLayeredPane.add(ribbonJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         backboneJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/backbone.png"))); // NOI18N
         backboneJButton.setToolTipText("Backbone Model");
@@ -551,7 +533,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             }
         });
         backboneJButton.setBounds(0, 0, 25, 25);
-        pdbStructureLayeredPane.add(backboneJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbLayeredPane.add(backboneJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         playJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/pause.png"))); // NOI18N
         playJButton.setToolTipText("Stop Rotation");
@@ -575,23 +557,101 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             }
         });
         playJButton.setBounds(0, 0, 21, 21);
-        pdbStructureLayeredPane.add(playJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        pdbLayeredPane.add(playJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        javax.swing.GroupLayout pdbOuterPanelLayout = new javax.swing.GroupLayout(pdbOuterPanel);
+        pdbOuterPanel.setLayout(pdbOuterPanelLayout);
+        pdbOuterPanelLayout.setHorizontalGroup(
+            pdbOuterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 448, Short.MAX_VALUE)
+            .addGroup(pdbOuterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(pdbOuterPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(pdbLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 428, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+        pdbOuterPanelLayout.setVerticalGroup(
+            pdbOuterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 463, Short.MAX_VALUE)
+            .addGroup(pdbOuterPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, pdbOuterPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(pdbLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 441, Short.MAX_VALUE)
+                    .addContainerGap()))
+        );
+
+        pdbOuterPanel.setBounds(0, 0, 460, 490);
+        pdbStructureLayeredPane.add(pdbOuterPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        pdbStructureHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        pdbStructureHelpJButton.setToolTipText("Help");
+        pdbStructureHelpJButton.setBorder(null);
+        pdbStructureHelpJButton.setBorderPainted(false);
+        pdbStructureHelpJButton.setContentAreaFilled(false);
+        pdbStructureHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        pdbStructureHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                pdbStructureHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                pdbStructureHelpJButtonMouseExited(evt);
+            }
+        });
+        pdbStructureHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                pdbStructureHelpJButtonActionPerformed(evt);
+            }
+        });
+        pdbStructureHelpJButton.setBounds(440, 0, 10, 25);
+        pdbStructureLayeredPane.add(pdbStructureHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        exportPdbStructureJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPdbStructureJButton.setToolTipText("Export");
+        exportPdbStructureJButton.setBorder(null);
+        exportPdbStructureJButton.setBorderPainted(false);
+        exportPdbStructureJButton.setContentAreaFilled(false);
+        exportPdbStructureJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportPdbStructureJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportPdbStructureJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportPdbStructureJButtonMouseExited(evt);
+            }
+        });
+        exportPdbStructureJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportPdbStructureJButtonActionPerformed(evt);
+            }
+        });
+        exportPdbStructureJButton.setBounds(430, 0, 10, 25);
+        pdbStructureLayeredPane.add(exportPdbStructureJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        contextMenuPdbStructureBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout contextMenuPdbStructureBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuPdbStructureBackgroundPanel);
+        contextMenuPdbStructureBackgroundPanel.setLayout(contextMenuPdbStructureBackgroundPanelLayout);
+        contextMenuPdbStructureBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuPdbStructureBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 30, Short.MAX_VALUE)
+        );
+        contextMenuPdbStructureBackgroundPanelLayout.setVerticalGroup(
+            contextMenuPdbStructureBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+
+        contextMenuPdbStructureBackgroundPanel.setBounds(420, 0, 30, 20);
+        pdbStructureLayeredPane.add(contextMenuPdbStructureBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout pdbStructureJPanelLayout = new javax.swing.GroupLayout(pdbStructureJPanel);
         pdbStructureJPanel.setLayout(pdbStructureJPanelLayout);
         pdbStructureJPanelLayout.setHorizontalGroup(
             pdbStructureJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pdbStructureJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pdbStructureLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(pdbStructureLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 466, Short.MAX_VALUE)
         );
         pdbStructureJPanelLayout.setVerticalGroup(
             pdbStructureJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(pdbStructureJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(pdbStructureLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 437, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(pdbStructureLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 486, Short.MAX_VALUE)
         );
 
         proteinsJPanel.setOpaque(false);
@@ -693,7 +753,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         proteinsLayeredPane.add(proteinsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportProteinsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportProteinsJButton.setToolTipText("Export");
+        exportProteinsJButton.setToolTipText("Copy to Clipboard");
         exportProteinsJButton.setBorder(null);
         exportProteinsJButton.setBorderPainted(false);
         exportProteinsJButton.setContentAreaFilled(false);
@@ -840,7 +900,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         peptidesLayeredPane.add(peptidesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPeptidesJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportPeptidesJButton.setToolTipText("Export");
+        exportPeptidesJButton.setToolTipText("Copy to Clipboard");
         exportPeptidesJButton.setBorder(null);
         exportPeptidesJButton.setBorderPainted(false);
         exportPeptidesJButton.setContentAreaFilled(false);
@@ -881,7 +941,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         peptidesJPanel.setLayout(peptidesJPanelLayout);
         peptidesJPanelLayout.setHorizontalGroup(
             peptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(peptidesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
+            .addComponent(peptidesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
         );
         peptidesJPanelLayout.setVerticalGroup(
             peptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -987,7 +1047,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         pdbMatchesLayeredPane.add(pdbMatchesHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPdbMatchesJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportPdbMatchesJButton.setToolTipText("Export");
+        exportPdbMatchesJButton.setToolTipText("Copy to Clipboard");
         exportPdbMatchesJButton.setBorder(null);
         exportPdbMatchesJButton.setBorderPainted(false);
         exportPdbMatchesJButton.setContentAreaFilled(false);
@@ -1028,7 +1088,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         pdbMatchesJPanel.setLayout(pdbMatchesJPanelLayout);
         pdbMatchesJPanelLayout.setHorizontalGroup(
             pdbMatchesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pdbMatchesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
+            .addComponent(pdbMatchesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
         );
         pdbMatchesJPanelLayout.setVerticalGroup(
             pdbMatchesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1126,7 +1186,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         pdbChainsLayeredPane.add(pdbChainHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportPdbChainsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportPdbChainsJButton.setToolTipText("Export");
+        exportPdbChainsJButton.setToolTipText("Copy to Clipboard");
         exportPdbChainsJButton.setBorder(null);
         exportPdbChainsJButton.setBorderPainted(false);
         exportPdbChainsJButton.setContentAreaFilled(false);
@@ -1167,7 +1227,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         pdbChainsJPanel.setLayout(pdbChainsJPanelLayout);
         pdbChainsJPanelLayout.setHorizontalGroup(
             pdbChainsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pdbChainsLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 479, Short.MAX_VALUE)
+            .addComponent(pdbChainsLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 485, Short.MAX_VALUE)
         );
         pdbChainsJPanelLayout.setVerticalGroup(
             pdbChainsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1320,8 +1380,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     jmolStructureShown = false;
                     currentlyDisplayedPdbFile = null;
 
-                    ((TitledBorder) pdbStructureJPanel.getBorder()).setTitle("PDB Structure");
-                    pdbStructureJPanel.repaint();
+                    ((TitledBorder) pdbOuterPanel.getBorder()).setTitle("PDB Structure");
+                    pdbOuterPanel.repaint();
                 }
 
                 // update the peptide selection
@@ -1436,8 +1496,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 jmolStructureShown = false;
                 currentlyDisplayedPdbFile = null;
 
-                ((TitledBorder) pdbStructureJPanel.getBorder()).setTitle("PDB Structure");
-                pdbStructureJPanel.repaint();
+                ((TitledBorder) pdbOuterPanel.getBorder()).setTitle("PDB Structure");
+                pdbOuterPanel.repaint();
             }
 
             // get the protein length
@@ -1562,8 +1622,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     spinModel(spinModel);
                     jmolStructureShown = true;
 
-                    ((TitledBorder) pdbStructureJPanel.getBorder()).setTitle("PDB Structure (" + lParam.getPdbaccession() + ")");
-                    pdbStructureJPanel.repaint();
+                    ((TitledBorder) pdbOuterPanel.getBorder()).setTitle("PDB Structure (" + lParam.getPdbaccession() + ")");
+                    pdbOuterPanel.repaint();
 
                     progressDialog.setTitle("Mapping Peptides. Please Wait...");
 
@@ -1635,75 +1695,40 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * 
      * @param evt 
      */
-    private void pdbStructureLayeredPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_pdbStructureLayeredPaneComponentResized
+    private void pdbLayeredPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_pdbLayeredPaneComponentResized
 
         int componentIndex = 0;
 
         // move the icons
-        pdbStructureLayeredPane.getComponent(componentIndex++).setBounds(
-                pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth() - 5,
-                pdbStructureLayeredPane.getComponent(0).getHeight() / 10 - 2,
-                pdbStructureLayeredPane.getComponent(0).getWidth(),
-                pdbStructureLayeredPane.getComponent(0).getHeight());
+        pdbLayeredPane.getComponent(componentIndex++).setBounds(
+                pdbLayeredPane.getWidth() - pdbLayeredPane.getComponent(0).getWidth() * componentIndex - 10,
+                pdbLayeredPane.getComponent(0).getHeight() / 10 - 2,
+                pdbLayeredPane.getComponent(0).getWidth(),
+                pdbLayeredPane.getComponent(0).getHeight());
 
-        pdbStructureLayeredPane.getComponent(componentIndex++).setBounds(
-                pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth() * componentIndex - 10,
-                pdbStructureLayeredPane.getComponent(0).getHeight() / 10 - 2,
-                pdbStructureLayeredPane.getComponent(0).getWidth(),
-                pdbStructureLayeredPane.getComponent(0).getHeight());
+        pdbLayeredPane.getComponent(componentIndex++).setBounds(
+                pdbLayeredPane.getWidth() - pdbLayeredPane.getComponent(0).getWidth() * componentIndex - 15,
+                pdbLayeredPane.getComponent(0).getHeight() / 10 - 2,
+                pdbLayeredPane.getComponent(0).getWidth(),
+                pdbLayeredPane.getComponent(0).getHeight());
 
-        pdbStructureLayeredPane.getComponent(componentIndex++).setBounds(
-                pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth() * componentIndex - 15,
-                pdbStructureLayeredPane.getComponent(0).getHeight() / 10 - 2,
-                pdbStructureLayeredPane.getComponent(0).getWidth(),
-                pdbStructureLayeredPane.getComponent(0).getHeight());
+        pdbLayeredPane.getComponent(componentIndex++).setBounds(
+                pdbLayeredPane.getWidth() - pdbLayeredPane.getComponent(0).getWidth() * componentIndex - 10,
+                pdbLayeredPane.getComponent(0).getHeight() / 10 - 2,
+                pdbLayeredPane.getComponent(0).getWidth(),
+                pdbLayeredPane.getComponent(0).getHeight());
 
-        pdbStructureLayeredPane.getComponent(componentIndex++).setBounds(
-                pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth() * componentIndex - 10,
-                pdbStructureLayeredPane.getComponent(0).getHeight() / 10 - 2,
-                pdbStructureLayeredPane.getComponent(0).getWidth(),
-                pdbStructureLayeredPane.getComponent(0).getHeight());
-
-        pdbStructureLayeredPane.getComponent(componentIndex++).setBounds(
-                pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth() * componentIndex - 15,
-                pdbStructureLayeredPane.getComponent(0).getHeight() / 10,
-                pdbStructureLayeredPane.getComponent(0).getWidth(),
-                pdbStructureLayeredPane.getComponent(0).getHeight());
+        pdbLayeredPane.getComponent(componentIndex++).setBounds(
+                pdbLayeredPane.getWidth() - pdbLayeredPane.getComponent(0).getWidth() * componentIndex - 15,
+                pdbLayeredPane.getComponent(0).getHeight() / 10,
+                pdbLayeredPane.getComponent(0).getWidth(),
+                pdbLayeredPane.getComponent(0).getHeight());
 
         // resize the plot area
-        pdbStructureLayeredPane.getComponent(componentIndex++).setBounds(0, 0, pdbStructureLayeredPane.getWidth(), pdbStructureLayeredPane.getHeight());
-        pdbStructureLayeredPane.revalidate();
-        pdbStructureLayeredPane.repaint();
-    }//GEN-LAST:event_pdbStructureLayeredPaneComponentResized
-
-    /**
-     * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
-     */
-    private void pdbHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-}//GEN-LAST:event_pdbHelpJButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
-     */
-    private void pdbHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_pdbHelpJButtonMouseExited
-
-    /**
-     * Open the help dialog.
-     * 
-     * @param evt 
-     */
-    private void pdbHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdbHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-}//GEN-LAST:event_pdbHelpJButtonActionPerformed
+        pdbLayeredPane.getComponent(componentIndex++).setBounds(0, 0, pdbLayeredPane.getWidth(), pdbLayeredPane.getHeight());
+        pdbLayeredPane.revalidate();
+        pdbLayeredPane.repaint();
+    }//GEN-LAST:event_pdbLayeredPaneComponentResized
 
     /**
      * Changes the cursor back to the default cursor.
@@ -2069,6 +2094,31 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 pdbChainsLayeredPane.getComponent(3).setBounds(0, 0, pdbChainsLayeredPane.getWidth(), pdbChainsLayeredPane.getHeight());
                 pdbChainsLayeredPane.revalidate();
                 pdbChainsLayeredPane.repaint(); 
+                
+                
+                // move the icons
+                pdbStructureLayeredPane.getComponent(0).setBounds(
+                        pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth() - 10,
+                        -3,
+                        pdbStructureLayeredPane.getComponent(0).getWidth(),
+                        pdbStructureLayeredPane.getComponent(0).getHeight());
+
+                pdbStructureLayeredPane.getComponent(1).setBounds(
+                        pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(1).getWidth() - 20,
+                        -3,
+                        pdbStructureLayeredPane.getComponent(1).getWidth(),
+                        pdbStructureLayeredPane.getComponent(1).getHeight());
+                
+                pdbStructureLayeredPane.getComponent(2).setBounds(
+                        pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(2).getWidth() - 5,
+                        -3,
+                        pdbStructureLayeredPane.getComponent(2).getWidth(),
+                        pdbStructureLayeredPane.getComponent(2).getHeight());
+                
+                // resize the plot area
+                pdbStructureLayeredPane.getComponent(3).setBounds(0, 0, pdbStructureLayeredPane.getWidth(), pdbStructureLayeredPane.getHeight());
+                pdbStructureLayeredPane.revalidate();
+                pdbStructureLayeredPane.repaint(); 
             }
         });
     }//GEN-LAST:event_formComponentResized
@@ -2241,14 +2291,72 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);    
     }//GEN-LAST:event_exportPdbChainsJButtonActionPerformed
 
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void pdbStructureHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbStructureHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));   
+    }//GEN-LAST:event_pdbStructureHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void pdbStructureHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbStructureHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));   
+    }//GEN-LAST:event_pdbStructureHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void pdbStructureHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdbStructureHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));         
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR)); 
+    }//GEN-LAST:event_pdbStructureHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void exportPdbStructureJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPdbStructureJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));   
+    }//GEN-LAST:event_exportPdbStructureJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void exportPdbStructureJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPdbStructureJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));   
+    }//GEN-LAST:event_exportPdbStructureJButtonMouseExited
+
+    /**
+     * Export the pdb structure.
+     * 
+     * @param evt 
+     */
+    private void exportPdbStructureJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPdbStructureJButtonActionPerformed
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);    
+    }//GEN-LAST:event_exportPdbStructureJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backboneJButton;
     private javax.swing.JPanel contextMenuPdbChainsBackgroundPanel;
     private javax.swing.JPanel contextMenuPdbMatchesBackgroundPanel;
+    private javax.swing.JPanel contextMenuPdbStructureBackgroundPanel;
     private javax.swing.JPanel contextMenuPeptidesBackgroundPanel;
     private javax.swing.JPanel contextMenuProteinsBackgroundPanel;
     private javax.swing.JButton exportPdbChainsJButton;
     private javax.swing.JButton exportPdbMatchesJButton;
+    private javax.swing.JButton exportPdbStructureJButton;
     private javax.swing.JButton exportPeptidesJButton;
     private javax.swing.JButton exportProteinsJButton;
     private javax.swing.JButton labelsJButton;
@@ -2258,14 +2366,16 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     private javax.swing.JTable pdbChainsJTable;
     private javax.swing.JLayeredPane pdbChainsLayeredPane;
     private javax.swing.JPanel pdbChainsPanel;
-    private javax.swing.JButton pdbHelpJButton;
     private javax.swing.JScrollPane pdbJScrollPane;
+    private javax.swing.JLayeredPane pdbLayeredPane;
     private javax.swing.JButton pdbMatchesHelpJButton;
     private javax.swing.JPanel pdbMatchesJPanel;
     private javax.swing.JTable pdbMatchesJTable;
     private javax.swing.JLayeredPane pdbMatchesLayeredPane;
     private javax.swing.JPanel pdbMatchesPanel;
+    private javax.swing.JPanel pdbOuterPanel;
     private javax.swing.JPanel pdbPanel;
+    private javax.swing.JButton pdbStructureHelpJButton;
     private javax.swing.JPanel pdbStructureJPanel;
     private javax.swing.JLayeredPane pdbStructureLayeredPane;
     private javax.swing.JScrollPane peptideScrollPane;
