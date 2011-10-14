@@ -36,47 +36,84 @@
         <a name="#Proteins"></a>
         <h3>Proteins</h3>
         <p align="justify">
-            (to be added...)
-        </p>
-        <br>
-        <a href="#top">More on the Overview tab</a>
-        <br><br><br>
-        
-        <a name="#Peptides"></a>
-        <h3>Peptides</h3>
-        <p align="justify">
-            (to be added...)
-        </p>
-        <br>
-        <a href="#top">More on the Overview tab</a>
-        <br><br><br>
-        
-        <a name="#PSMs"></a>
-        <h3>PSMs</h3>
-        <p align="justify">
-            (to be added...)
-        </p>
-        <br>
-        <a href="#top">More on the Overview tab</a>
-        <br><br><br>
-        
-        <a name="#Spectrum"></a>
-        <h3>Spectrum</h3>
-        <p align="justify">
-            (to be added...)
-        </p>
-        <br>
-        <a href="#top">More on the Overview tab</a>
-        <br><br><br>
-        
-        <a name="#SequenceCoverage"></a>
-        <h3>Sequence Coverage</h3>
-        <p align="justify">
-            (to be added...)
-        </p>
-        <br>
-        <a href="#top">More on the Overview tab</a>
-        <br><br><br>
+            PeptideShaker is designed for the robust identification of peptides and proteins in shotgun gel free experiments. The protein table lists all proteins which were found in the experiment.
+            <br><br>
+            For each protein, the protein inference status is color coded. If you click on the colored square, more details about the protein inference issue will be given with the corresponding help.
+            <br>
+            The accession and protein description are given afterward as parsed from the fasta file. We strongly encourage the use of UniprotKB databases. Then, clicking on the protein accession links directly to the Uniprot protein summary. The protein description is also given as parsed from the fasta file. Once again, unrecognized databases can be source of issues.
+            <br>
+            PeptideShaker estimates the protein coverage, number of peptides and spectra linking to this protein based on the validated peptides and PSMs. The validation of peptides and PSMs can be customized in the validation tab.
+            <br><br>
+            Two protein protein quantification metrics are available in PeptideShaker:
+    <u1>
+        <li> EmPAI: The exponentially modified protein abundance index is based on the number of validated peptides with respect to the theoretic number of peptides for a given protein. see <a href="http://www.ncbi.nlm.nih.gov/pubmed/15958392">Ishihama et al</a> for more details.</li> 
+        <li> NSAF: The normalized spectrum abundance factor is based on the number of validated spectra normalized by the protein size. See <a href="http://www.ncbi.nlm.nih.gov/pubmed/17138671">Paoletti et al</a> for more details.</li>
+    </u1>
+    <br>
+    You can select your favorite spectrum quantification method in the Edit menu.
+    <br>
+    These protein quantification methods are based on the validated identifications. It is important to note that these metrics are absolutely not precise and can be biased toward validation methods, normalization methods and shared peptides. They can however be normalized by known protein abundances and give a rough estimate of the protein abundance.
+    <br><br>
+    The confidence in protein identification is given in the last column. It important to stress here as well that the confidence should not be taken for granted. The confidence estimation is based on the Target/Decoy hits and thus suffers from accuracy limitations inherent in the method. Confidence estimation accuracy can be proofed in the validation panel. If doubts in the confidence estimation accuracy remain, it is advised to verify the protein scores which can be accessed via the "view" menu.
+    <br>
+    The last column shows whether the protein has been validated or not, the validation criteria can be set in the validation panel.
+</p>
+<br>
+<a href="#top">More on the Overview tab</a>
+<br><br><br>
 
-    </BODY>
+<a name="#Peptides"></a>
+<h3>Peptides</h3>
+<p align="justify">
+    PeptideShaker displays in this table the peptides identified which can be linked to the selected protein.
+    <br>
+    For each peptide the Protein Inference status is color coded. It can be that a peptide is shared between several proteins in the dataset and it is possible to inspect all cases by clicking on the given color.
+    <br>
+    The sequence of the peptide is displayed with the identified termini. The modifications are color coded using the colors set in the search parameters accessible in the Edit menu. For more information about post translational modifications see the Modifications tab.
+    The start and end amino acids of the first peptide occurence in the protein sequence are also given and displayed in the sequence coverage pane at the bottom of the panel.
+    <br>
+    The number of validated PSMs supporting the peptide as well as the confidence and validation status are given in the three last columns. Like for proteins it is important to note that these are sensitive to the validation settings which can be fine tuned in the validation tab.
+</p>
+<br>
+<a href="#top">More on the Overview tab</a>
+<br><br><br>
+
+<a name="#PSMs"></a>
+<h3>PSMs</h3>
+<p align="justify">
+    The Peptide to Spectrum Matches (PSMs) supporting the selected peptide are displayed in this table. The peptide sequence with termini and colored modifications is displayed similarly as in the peptide table. Note that PSMs with different modification locations will link to the same peptide. The modification status of the peptide based on the PSMs can be optimized in the Modifications tab.
+    <br>
+    The charge of the precursor as found in the mgf file is given in this table. It is important to note that it might not correspond to the charge assigned to the PSM by the search engine.
+    <br>
+    The difference in ppm between the measured precursor mass and the theoretic peptide mass is given. Note that PSMs with large precursor mass deviations are filtered out when loading the data.
+</p>
+<br>
+<a href="#top">More on the Overview tab</a>
+<br><br><br>
+
+<a name="#Spectrum"></a>
+<h3>Spectrum</h3>
+<p align="justify">
+    The spectrum corresponding to the PSM is searched in the mgf file and dispayed by PeptideShaker. The spectrum annotation is independent of the search engine and the corresponding settings can be fine tuned in the menu bar. On the right two slide bars allow you to restrain the intensity threshold and peak error threshold. Depending on the peaks annotated, the peptide sequence coverage by the selected ion series is displayed with the corresponding ion intensities. An histogram displays the various peak intensities with annotated peaks in green and non-annotated peaks in gray. Finally, the mass error of the various peak annotations can be seen on the top right.
+    <br>
+    If one clicks on the bubble plot, peaks will be materialized by a circle centered on the annotation mass error versus the fragment ion mass. The size of the so-called bubble represents the intensity of the ion. This display allows you to compare different PSMs. To do so, select different PSMs in the PSM table.
+    <br>
+    The ion table shows which ions were found with the corresponding intensity. Note that it is here also possible to select different PSMs, the intensity variability will then be displayed with error bars. Note that fragment ion intensities of correct PSMs are usually highly reproducible.
+    <br><br>
+    For more help about the spectra display and annotation see the help accessible in the menu bar.
+</p>
+<br>
+<a href="#top">More on the Overview tab</a>
+<br><br><br>
+
+<a name="#SequenceCoverage"></a>
+<h3>Sequence Coverage</h3>
+<p align="justify">
+    The sequence coverage is displayed for the selected protein. The validated peptides are displayed in green and the selected peptide in the peptide table is in red. You can access the peptide by clicking on the corresponding peptide. In case of overlapping peptides you can select the peptide of interest using the appearing contextual menu.
+</p>
+<br>
+<a href="#top">More on the Overview tab</a>
+<br><br><br>
+
+</BODY>
 </HTML>

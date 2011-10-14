@@ -8,9 +8,91 @@
         <a name="#top"/>
         <H2>Modification Analysis</H2>
 
+        <ul>
+            <li><a href='#Introduction'>Introduction</a></li>
+            <li><a href='#Selection'>Modification selection</a></li>
+            <li><a href='#Peptides'>Peptides</a></li>
+            <li><a href='#RelatedPeptides'>Related Peptides</a></li>
+            <li><a href='#PSMs'>PSMs</a></li>
+            <li><a href='#RelatedPSMs'>Related PSMs</a></li>
+            <li><a href='#Spectrum'>Spectrum and fragment ions</a></li>
+        </ul>
+
+        <a name="#Introduction"></a>
+        <h3>Introduction</h3>
         <p align="justify">
-            (to be added...)
+            The modifications tab is dedicated to peptide-level post translational modifications (PTM) analysis. The PTM of interest can be selected on the top left of the panel and the modified peptides present in the dataset will be displayed.
+            <br>
+            The PTM location displayed here is also displayed in the overview panel and the structure panel. For example, it is possible to verify here the correctness of the phosphorylation status of a peptide and to visualize it on the sequence in the overview table or in the 3D structure in the Structure table. Finally, you can confront your results with data in UniprotKB using the annotation tab.
         </p>
-        <br><br>
-    </BODY>
+        <br><br><br>
+
+        <a name="#Selection"></a>
+        <h3>Modification selection</h3>
+        <p align="justify">
+            The modification of choice can be selected. Note that only variable modifications are displayed in PeptideShaker for the sake of simplicity. The modifications are color coded and the color can be edited in this table or editing the search preferences accessible from the edit menu.
+        </p>
+        <br>
+        <a href="#top">More on the Modifications tab</a>
+        <br><br><br>
+
+        <a name="#Peptides"></a>
+        <h3>Modified peptides</h3>
+        <p align="justify">
+            All peptides found in the dataset with the selected variable modification are listed in the Modified peptide table. The protein inference status is displayed like in the Overview panel. Then, the sequence is displayed with the selected PTM location color coded. Note that the peptide modification status is deduced from the PSMs modification status.
+            <br>
+            The confidence in the PTM site assignment is color coded based on the PTM location scores:
+    <u1>
+        <li> delta score: the delta score indicates the confidence in the site assignment by the search engine.</li>
+        <li> A-score: the A-score tries to find the most likely modification site and then estimates a score relative to the second likely modification site. The A-score is computed only for singly modified peptides and strongly relies on the annotation settings used for spectrum annotation. The spectrum annotation settings can be accessed from the Edit menu. For more information about the A-score see <a href="http://www.ncbi.nlm.nih.gov/pubmed/16964243">Beausoleil et al</a>.</li> 
+    </u1>
+    <br><br>
+    When both scores confidently agree on the PTM site, the PTM is labeled as "very confident"; if the A-score is confident but disagrees with the search engine's best assumption, the PTM is labeled as "confident"; if the A-score is not confident and the delta score is, the location is labeled as "doubtful"; finally if no score is confident, the modification is labeled as "random".
+    <br>
+    The scores are annotated on the sequence on the right of the table, the delta score on the top of the selected amino acid and the A-score under it.
+    <br>
+    <br>
+    The confidence and validation status of the selected peptide is diplayed as in the Overview table.
+</p>
+<br>
+<a href="#top">More on the Modifications tab</a>
+<br><br><br>
+
+<a name="#RelatedPeptides"></a>
+<h3>Related peptides</h3>
+<p align="justify">
+    Whenever a peptide sequence contains or is contained by the selected peptide sequence, this peptide is displayed in the related peptide table. For instance, non-modified peptides or miscleaved peptides will be displayed and may help to validate the identification and modification status of the selected peptide.
+    <br>
+    The structure of the related peptide table is similar to the peptide table.
+</p>
+<br>
+<a href="#top">More on the Modifications tab</a>
+<br><br><br>
+
+<a name="#PSMs"></a>
+<h3>Peptide to Spectrum Matches</h3>
+<p align="justify">
+    The Peptide to Spectrum Matches (PSMs) linking to the selected peptide are displayed in the PSM table. The PTM location score of these PSMs will make the peptide score. If you select a line in the PSM table, the corresponding spectrum will be displayed.
+</p>
+<br>
+<a href="#top">More on the Modifications tab</a>
+<br><br><br>
+
+<a name="#RelatedPSMs"></a>
+<h3>Related Peptide to Spectrum Matches</h3>
+<p align="justify">
+    The Peptide to Spectrum Matches (PSMs) linking to the selected related peptide are displayed in the related PSM table. The spectrum of the PSM can be displayed when clicking on line of interest.
+</p>
+<br>
+<a href="#top">More on the Modifications tab</a>
+<br><br><br>
+
+<a name="#Spectrum"></a>
+<h3>Spectrum and fragment ions</h3>
+<p align="justify">
+    The spectrum of the selected PSM will be displayed with the peaks annotated according to the ion annotation settings. Note that the peak annotation has a dramatic effect on the A-score. It is important to carefully tune the annotation settings when inspecting a doubtful peptide.</p>
+<br>
+<a href="#top">More on the Modifications tab</a>
+<br><br>
+</BODY>
 </HTML>

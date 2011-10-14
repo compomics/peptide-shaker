@@ -80,7 +80,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinSelectAll = new javax.swing.JButton();
         proteinUnselectAll = new javax.swing.JButton();
         proteinExportValidated = new javax.swing.JButton();
-        proteinExportDisplayed = new javax.swing.JButton();
         proteinSequenceCoverage = new javax.swing.JCheckBox();
         peptidesPanel = new javax.swing.JPanel();
         peptideAccession = new javax.swing.JCheckBox();
@@ -92,7 +91,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideUnselectAll = new javax.swing.JButton();
         peptideExportAll = new javax.swing.JButton();
         peptideExportValidated = new javax.swing.JButton();
-        peptideExportDisplayed = new javax.swing.JButton();
         peptideSequence = new javax.swing.JCheckBox();
         peptidePosition = new javax.swing.JCheckBox();
         peptideLocation = new javax.swing.JCheckBox();
@@ -110,7 +108,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         psmUnselectAll = new javax.swing.JButton();
         psmExportAll = new javax.swing.JButton();
         psmExportValidated = new javax.swing.JButton();
-        psmExportDisplayed = new javax.swing.JButton();
         searchEnginePanel = new javax.swing.JPanel();
         assumptionAccession = new javax.swing.JCheckBox();
         assumptionSequence = new javax.swing.JCheckBox();
@@ -124,7 +121,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionsExportAll = new javax.swing.JButton();
         assumptionUnselectAll = new javax.swing.JButton();
         assumptionExportAll = new javax.swing.JButton();
-        assumptionsExportDisplayed = new javax.swing.JButton();
         assumptionsExportValidated = new javax.swing.JButton();
         exitButton = new javax.swing.JButton();
         helpJButton = new javax.swing.JButton();
@@ -237,13 +233,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        proteinExportDisplayed.setText("Export Displayed");
-        proteinExportDisplayed.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                proteinExportDisplayedActionPerformed(evt);
-            }
-        });
-
         proteinSequenceCoverage.setText("Sequence Coverage");
         proteinSequenceCoverage.setIconTextGap(10);
         proteinSequenceCoverage.setOpaque(false);
@@ -279,9 +268,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(proteinSelectAll)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinUnselectAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
-                        .addComponent(proteinExportDisplayed)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 264, Short.MAX_VALUE)
                         .addComponent(proteinExportValidated)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinExportAll)))
@@ -292,7 +279,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {proteinSelectAll, proteinUnselectAll});
 
-        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {proteinExportAll, proteinExportDisplayed, proteinExportValidated});
+        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {proteinExportAll, proteinExportValidated});
 
         proteinsPanelLayout.setVerticalGroup(
             proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -318,8 +305,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(proteinSelectAll)
                     .addComponent(proteinUnselectAll)
                     .addComponent(proteinExportAll)
-                    .addComponent(proteinExportValidated)
-                    .addComponent(proteinExportDisplayed))
+                    .addComponent(proteinExportValidated))
                 .addContainerGap())
         );
 
@@ -379,13 +365,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        peptideExportDisplayed.setText("Export Displayed");
-        peptideExportDisplayed.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                peptideExportDisplayedActionPerformed(evt);
-            }
-        });
-
         peptideSequence.setSelected(true);
         peptideSequence.setText("Peptide Sequence");
         peptideSequence.setIconTextGap(10);
@@ -427,9 +406,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(peptideSelectAll)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(peptideUnselectAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
-                        .addComponent(peptideExportDisplayed)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 264, Short.MAX_VALUE)
                         .addComponent(peptideExportValidated)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(peptideExportAll)))
@@ -438,7 +415,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         peptidesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {peptideAccession, peptideConfidence, peptideLocation, peptideModification, peptideNSpectra, peptidePosition, peptideScore, peptideSequence});
 
-        peptidesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {peptideExportAll, peptideExportDisplayed, peptideExportValidated});
+        peptidesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {peptideExportAll, peptideExportValidated});
 
         peptidesPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {peptideSelectAll, peptideUnselectAll});
 
@@ -463,8 +440,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(peptideSelectAll)
                     .addComponent(peptideUnselectAll)
                     .addComponent(peptideExportAll)
-                    .addComponent(peptideExportValidated)
-                    .addComponent(peptideExportDisplayed))
+                    .addComponent(peptideExportValidated))
                 .addContainerGap())
         );
 
@@ -542,13 +518,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        psmExportDisplayed.setText("Export Displayed");
-        psmExportDisplayed.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                psmExportDisplayedActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout psmPanelLayout = new javax.swing.GroupLayout(psmPanel);
         psmPanel.setLayout(psmPanelLayout);
         psmPanelLayout.setHorizontalGroup(
@@ -577,9 +546,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(psmSelectAll)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(psmUnselectAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
-                        .addComponent(psmExportDisplayed)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 264, Short.MAX_VALUE)
                         .addComponent(psmExportValidated)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(psmExportAll)))
@@ -588,7 +555,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         psmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {psmAccession, psmConfidence, psmFile, psmLocation, psmModification, psmPrecursor, psmScore, psmSequence, psmTitle});
 
-        psmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {psmExportAll, psmExportDisplayed, psmExportValidated});
+        psmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {psmExportAll, psmExportValidated});
 
         psmPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {psmSelectAll, psmUnselectAll});
 
@@ -614,8 +581,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(psmSelectAll)
                     .addComponent(psmUnselectAll)
                     .addComponent(psmExportAll)
-                    .addComponent(psmExportValidated)
-                    .addComponent(psmExportDisplayed))
+                    .addComponent(psmExportValidated))
                 .addContainerGap())
         );
 
@@ -687,13 +653,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        assumptionsExportDisplayed.setText("Export Displayed");
-        assumptionsExportDisplayed.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                assumptionsExportDisplayedActionPerformed(evt);
-            }
-        });
-
         assumptionsExportValidated.setText("Export Validated");
         assumptionsExportValidated.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -729,9 +688,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(assumptionsExportAll)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(assumptionUnselectAll)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
-                        .addComponent(assumptionsExportDisplayed)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 264, Short.MAX_VALUE)
                         .addComponent(assumptionsExportValidated)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(assumptionExportAll)))
@@ -740,7 +697,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         searchEnginePanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {assumptionAccession, assumptionConfidence, assumptionFile, assumptionLocation, assumptionModification, assumptionPrecursor, assumptionSequence, assumptionTitle});
 
-        searchEnginePanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {assumptionExportAll, assumptionsExportDisplayed, assumptionsExportValidated});
+        searchEnginePanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {assumptionExportAll, assumptionsExportValidated});
 
         searchEnginePanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {assumptionUnselectAll, assumptionsExportAll});
 
@@ -766,8 +723,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(assumptionsExportAll)
                     .addComponent(assumptionUnselectAll)
                     .addComponent(assumptionExportAll)
-                    .addComponent(assumptionsExportValidated)
-                    .addComponent(assumptionsExportDisplayed))
+                    .addComponent(assumptionsExportValidated))
                 .addContainerGap())
         );
 
@@ -1275,117 +1231,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         }.start();
     }//GEN-LAST:event_exportAllActionPerformed
 
-    private void proteinExportDisplayedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinExportDisplayedActionPerformed
-
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
-
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
-
-        new Thread(new Runnable() {
-
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
-
-        new Thread("ExportThread") {
-
-            @Override
-            public void run() {
-                try {
-                    ArrayList<String> selectedProteins = peptideShakerGUI.getDisplayedProteins();
-                    feature = outputGenerator.getProteinsOutput(progressDialog, selectedProteins, true, true, proteinAccession.isSelected(),
-                            proteinPI.isSelected(), proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(),
-                            proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    feature = "";
-                }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Proteins", false);
-            }
-        }.start();
-    }//GEN-LAST:event_proteinExportDisplayedActionPerformed
-
-    private void peptideExportDisplayedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideExportDisplayedActionPerformed
-
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
-
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
-
-        new Thread(new Runnable() {
-
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
-
-        new Thread("ExportThread") {
-
-            @Override
-            public void run() {
-                try {
-                    ArrayList<String> selectedPeptides = peptideShakerGUI.getDisplayedPeptides();
-                    feature = outputGenerator.getPeptidesOutput(progressDialog, selectedPeptides, true, true, peptideAccession.isSelected(), peptidePosition.isSelected(),
-                            peptideSequence.isSelected(), peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
-                            peptideScore.isSelected(), peptideConfidence.isSelected(), true);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    feature = "";
-                }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Peptides", false);
-            }
-        }.start();
-    }//GEN-LAST:event_peptideExportDisplayedActionPerformed
-
-    private void psmExportDisplayedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmExportDisplayedActionPerformed
-
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
-
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
-
-        new Thread(new Runnable() {
-
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
-
-        new Thread("ExportThread") {
-
-            @Override
-            public void run() {
-                try {
-                    ArrayList<String> selectedPsms = peptideShakerGUI.getDisplayedPSMs();
-                    feature = outputGenerator.getPSMsOutput(progressDialog, selectedPsms, true, false, psmAccession.isSelected(),
-                            psmSequence.isSelected(), psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(),
-                            psmTitle.isSelected(), psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    feature = "";
-                }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "All PSMs", false);
-            }
-        }.start();
-    }//GEN-LAST:event_psmExportDisplayedActionPerformed
-
     private void assumptionsExportValidatedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assumptionsExportValidatedActionPerformed
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
@@ -1422,44 +1267,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         }.start();
     }//GEN-LAST:event_assumptionsExportValidatedActionPerformed
-
-    private void assumptionsExportDisplayedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assumptionsExportDisplayedActionPerformed
-
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
-
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
-
-        new Thread(new Runnable() {
-
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
-
-        new Thread("ExportThread") {
-
-            @Override
-            public void run() {
-                try {
-                    ArrayList<String> psmKeys = peptideShakerGUI.getDisplayedAssumptions();
-                    feature = outputGenerator.getAssumptionsOutput(progressDialog, psmKeys, false, assumptionAccession.isSelected(),
-                            assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionLocation.isSelected(),
-                            assumptionFile.isSelected(), assumptionTitle.isSelected(), assumptionPrecursor.isSelected(),
-                            assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    feature = "";
-                }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Search Engine Results", false);
-            }
-        }.start();
-    }//GEN-LAST:event_assumptionsExportDisplayedActionPerformed
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
         dispose();
@@ -1507,7 +1314,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox assumptionTitle;
     private javax.swing.JButton assumptionUnselectAll;
     private javax.swing.JButton assumptionsExportAll;
-    private javax.swing.JButton assumptionsExportDisplayed;
     private javax.swing.JButton assumptionsExportValidated;
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton exitButton;
@@ -1518,7 +1324,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox peptideAccession;
     private javax.swing.JCheckBox peptideConfidence;
     private javax.swing.JButton peptideExportAll;
-    private javax.swing.JButton peptideExportDisplayed;
     private javax.swing.JButton peptideExportValidated;
     private javax.swing.JCheckBox peptideLocation;
     private javax.swing.JCheckBox peptideModification;
@@ -1535,7 +1340,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox proteinDescription;
     private javax.swing.JCheckBox proteinEmpai;
     private javax.swing.JButton proteinExportAll;
-    private javax.swing.JButton proteinExportDisplayed;
     private javax.swing.JButton proteinExportValidated;
     private javax.swing.JCheckBox proteinNPeptides;
     private javax.swing.JCheckBox proteinNSpectra;
@@ -1549,7 +1353,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox psmAccession;
     private javax.swing.JCheckBox psmConfidence;
     private javax.swing.JButton psmExportAll;
-    private javax.swing.JButton psmExportDisplayed;
     private javax.swing.JButton psmExportValidated;
     private javax.swing.JCheckBox psmFile;
     private javax.swing.JCheckBox psmLocation;

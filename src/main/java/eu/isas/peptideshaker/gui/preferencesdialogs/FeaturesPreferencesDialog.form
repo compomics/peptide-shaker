@@ -216,9 +216,7 @@
                                       <Component id="proteinSelectAll" linkSize="12" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinUnselectAll" linkSize="12" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="141" max="32767" attributes="0"/>
-                                      <Component id="proteinExportDisplayed" linkSize="13" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace pref="264" max="32767" attributes="0"/>
                                       <Component id="proteinExportValidated" linkSize="13" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinExportAll" linkSize="13" min="-2" max="-2" attributes="0"/>
@@ -256,7 +254,6 @@
                                   <Component id="proteinUnselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinExportValidated" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="proteinExportDisplayed" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -360,14 +357,6 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinExportValidatedActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="proteinExportDisplayed">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Export Displayed"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinExportDisplayedActionPerformed"/>
-                      </Events>
-                    </Component>
                     <Component class="javax.swing.JCheckBox" name="proteinSequenceCoverage">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Sequence Coverage"/>
@@ -423,9 +412,7 @@
                                       <Component id="peptideSelectAll" linkSize="9" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="peptideUnselectAll" linkSize="9" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="141" max="32767" attributes="0"/>
-                                      <Component id="peptideExportDisplayed" linkSize="8" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace pref="264" max="32767" attributes="0"/>
                                       <Component id="peptideExportValidated" linkSize="8" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="peptideExportAll" linkSize="8" min="-2" max="-2" attributes="0"/>
@@ -459,7 +446,6 @@
                                   <Component id="peptideUnselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="peptideExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="peptideExportValidated" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="peptideExportDisplayed" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -536,14 +522,6 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideExportValidatedActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="peptideExportDisplayed">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Export Displayed"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideExportDisplayedActionPerformed"/>
-                      </Events>
-                    </Component>
                     <Component class="javax.swing.JCheckBox" name="peptideSequence">
                       <Properties>
                         <Property name="selected" type="boolean" value="true"/>
@@ -614,9 +592,7 @@
                                       <Component id="psmSelectAll" linkSize="10" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="psmUnselectAll" linkSize="10" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="141" max="32767" attributes="0"/>
-                                      <Component id="psmExportDisplayed" linkSize="7" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace pref="264" max="32767" attributes="0"/>
                                       <Component id="psmExportValidated" linkSize="7" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="psmExportAll" linkSize="7" min="-2" max="-2" attributes="0"/>
@@ -651,7 +627,6 @@
                                   <Component id="psmUnselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="psmExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="psmExportValidated" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="psmExportDisplayed" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -758,14 +733,6 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmExportValidatedActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="psmExportDisplayed">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Export Displayed"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmExportDisplayedActionPerformed"/>
-                      </Events>
-                    </Component>
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JPanel" name="searchEnginePanel">
@@ -814,9 +781,7 @@
                                       <Component id="assumptionsExportAll" linkSize="11" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="assumptionUnselectAll" linkSize="11" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="141" max="32767" attributes="0"/>
-                                      <Component id="assumptionsExportDisplayed" linkSize="6" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace pref="264" max="32767" attributes="0"/>
                                       <Component id="assumptionsExportValidated" linkSize="6" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="assumptionExportAll" linkSize="6" min="-2" max="-2" attributes="0"/>
@@ -851,7 +816,6 @@
                                   <Component id="assumptionUnselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="assumptionExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="assumptionsExportValidated" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="assumptionsExportDisplayed" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -949,14 +913,6 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionExportAllActionPerformed"/>
-                      </Events>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="assumptionsExportDisplayed">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Export Displayed"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionsExportDisplayedActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="assumptionsExportValidated">

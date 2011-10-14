@@ -6,11 +6,70 @@
     </HEAD>
     <BODY>
         <a name="#top"/>
-        <H2>Quality Control Plots</H2>
+        <H2>Quality Control Analysis</H2>
 
+        <ul>
+            <li><a href='#Introduction'>Introduction</a></li>
+            <li><a href='#Protein'>Protein QC</a></li>
+            <li><a href='#Peptide'>Peptide QC</a></li>
+            <li><a href='#PSM'>PSM QC</a></li>
+        </ul>
+
+        <a name="#Introduction"></a>
+        <h3>Introduction</h3>
         <p align="justify">
-            (to be added...)
-        </p>
-        <br><br>
-    </BODY>
+            In a shotgun experiment, it is vital to verify key quality control metrics in order to be sure that nothing went wrong in the identification process. PeptideShaker allows you to screen metrics at the protein, peptide and peptide to spectrum match level. Note that if a metric of interest is missing, you can contact the developers and we will add it right away.
+            <br>
+            PeptideShaker sorts the selected population according to the selected metric. Matches are separated into four classes:
+    <u1>
+        <li> Validated true positives: the amount of validated true positives. Note that the validation settings can be tuned in the validation tab.</li>
+        <li> Validated false positives: the amount of false positives validated. Note that this estimation can be biased by the Target/Decoy method. Indeed, decoy hits may not robustly indicate the amount of false positives in each bin. Also, for multiple pass search engines like X!Tandem, the amount of false positive PSMs might be underestimated.</li>
+        <li> Non-validated true positives: rough estimate of the amount of false negatives. Note that all identifications are considered here, this metric might be biased for low scored identifications (confidence=0).</li>
+        <li> Non-validated false positives: rough estimate of the amount of non-validated false positives. Here as well the estimation might not be robust.
+    </u1>
+    <br> These plots will also help you defining thresholds for downstream analysis like inclusion/exclusion lists generation, quantification analysis or PTM investigations.
+</p>
+<br><br><br>
+
+<a name="#Protein"></a>
+<h3>Protein QC</h3>
+<p align="justify">
+    For all proteins, it is possible to inspect:
+<u1>
+    <li> The amount of validated peptides: one should only trust protein matches with many different peptides. The more peptides per protein, the better the identification. Proteins presenting many confident peptides will be particularly interesting for following-up analysis like quantification studies or can be excluded of downstream research using exclusion lists.</li>
+    <li> The spectrum counting score: proteins are usually present in a high dynamic range, indicated by the spread in spectrum counting score. The higher the spread, the higher the quantification dynamic range. Note that both spectrum counting methods usually present similar QC plots.</li>
+    <li> Sequence coverage: a protein heavily covered is more confident. Also, its coverage will be interesting for further processing like PTM screening.</li>
+</u1>
+</p>
+<br>
+<a href="#top">More on the quality control tab</a>
+<br><br><br>
+
+<a name="#Peptide"></a>
+<h3>Peptide QC</h3>
+<p align="justify">
+    For all peptides, it is possible to inspect:
+<u1>
+    <li> Similarly to the protein, it is possible to inspect the amount of Peptide to Spectrum Matches (PSMs) per peptide. If this number is too low, the confidence in peptide identification might be limited. This is especially dangerous for PTM analysis. If this metric is too high, the amount of different peptides found might be limited. The correct balance is typically tuned using the number of most intense peaks selected for fragmentation and the exclusion time set after a spectrum record.</li>
+    <li> Missed Cleavages: The amount of missed cleavages found per peptide informs about the quality of the digestion. Note however that the amount of false positives will be underestimated for PSMs generated in the secon pass search of X!Tandem.
+</u1>
+</p>
+<br>
+<a href="#top">More on the quality control tab</a>
+<br><br><br>
+
+<a name="#PSM"></a>
+<h3>PSM QC</h3>
+<p align="justify">
+    For all Peptide to Spectrum Match (PSM), it is possible to inspect:
+<u1>
+    <li> The precursor mass error: this plot can indicate a problem in the instrument calibration. Also, it can help fine tuning the search settings as detailed in <a href="http://www.ncbi.nlm.nih.gov/pubmed/21500347">Vaudel et al: Peptide identification quality control, 
+            Proteomics 2011;11(10):2105-14</a>.</li>
+    <li> The precursor charge: the precursor charge plot will allow you to verify the quality of the peptide ionization. Modifications like iTRAQ or phorphorylation might have an impact on the precursor ability to carry a charge. This plot will also allow you to fine tune your search settings. Not that PSMs found in second pass searches (typically high charges) are not compatible with Target/Decoy analysis. The amount of false positive PSMs is thus underestimated!                        
+</u1>
+</p>
+<br>
+<a href="#top">More on the quality control tab</a>
+<br><br><br>
+</BODY>
 </HTML>
