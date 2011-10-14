@@ -2095,7 +2095,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private void modificationProfileHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modificationProfileHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "ModificationProfiles");
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "#Peptides");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_modificationProfileHelpJButtonActionPerformed
 
@@ -2169,7 +2169,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private void relatedProfileHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relatedProfileHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "ModificationProfiles");
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "#RelatedPeptides");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_relatedProfileHelpJButtonActionPerformed
 
@@ -2225,7 +2225,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private void ptmSelectionHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ptmSelectionHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "PTMSelection");
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "#Selection");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_ptmSelectionHelpJButtonActionPerformed
 
@@ -2281,7 +2281,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private void modifiedPsmsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_modifiedPsmsHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "PSMs");
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "#PSMs");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_modifiedPsmsHelpJButtonActionPerformed
 
@@ -2337,7 +2337,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private void relatedPsmsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_relatedPsmsHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "PSMs");
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "#RelatedPSMs");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_relatedPsmsHelpJButtonActionPerformed
 
@@ -2423,7 +2423,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private void spectrumHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "Spectrum"); // @TODO: show the spectrum panel help instead?
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PtmPanel.html"), "#Spectrum");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumHelpJButtonActionPerformed
 
