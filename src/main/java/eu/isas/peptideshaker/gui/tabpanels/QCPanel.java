@@ -829,7 +829,7 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void peptidesPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/QCPlots.html"), "#peptide");
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/QCPlots.html"), "#Peptide");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptidesPlotHelpJButtonActionPerformed
 
@@ -917,7 +917,7 @@ public class QCPanel extends javax.swing.JPanel {
      */
     private void proteinsPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinsPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/QCPlots.html"), "#protein");
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/QCPlots.html"), "#Protein");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinsPlotHelpJButtonActionPerformed
 

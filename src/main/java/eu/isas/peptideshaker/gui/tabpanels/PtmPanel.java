@@ -1464,7 +1464,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 // move the icons
                 modifiedPeptidesLayeredPane.getComponent(0).setBounds(
                         modifiedPeptidesLayeredPane.getWidth() - modifiedPeptidesLayeredPane.getComponent(0).getWidth() - 10,
-                        -5,
+                        -3,
                         modifiedPeptidesLayeredPane.getComponent(0).getWidth(),
                         modifiedPeptidesLayeredPane.getComponent(0).getHeight());
 
