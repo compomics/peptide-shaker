@@ -3,17 +3,19 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.export.FeaturesGenerator;
-import eu.isas.peptideshaker.gui.ExportFeatureDialog;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 /**
- *
+ * Dialog for exporting protein, peptide, psms and search engine features.
+ * 
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
@@ -817,42 +819,75 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Export the protein features to file.
+     * 
+     * @param evt 
+     */
     private void proteinExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinExportAllActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        final File saveFile = getSaveFile();
 
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
+        if (saveFile != null) {
 
-        new Thread(new Runnable() {
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+            final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
 
-        new Thread("ExportThread") {
+            new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    feature = outputGenerator.getProteinsOutput(progressDialog, null, true, false, proteinAccession.isSelected(), proteinPI.isSelected(),
-                            proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), proteinNSpectra.isSelected(),
-                            proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    feature = "";
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Getting Features. Please Wait...");
+                    progressDialog.setVisible(true);
                 }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "All Proteins", false);
-            }
-        }.start();
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        feature = outputGenerator.getProteinsOutput(progressDialog, null, false, false, proteinAccession.isSelected(), proteinPI.isSelected(),
+                                proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), proteinNSpectra.isSelected(),
+                                proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true);
+
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Saving File. Please Wait...");
+
+                        FileWriter f = new FileWriter(saveFile);
+                        BufferedWriter b = new BufferedWriter(f);
+                        b.write(feature);
+                        b.close();
+                        f.close();
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+
+                    if (progressDialog != null) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                    }
+                }
+            }.start();
+        }
     }//GEN-LAST:event_proteinExportAllActionPerformed
 
+    /**
+     * Select all protein features.
+     * 
+     * @param evt 
+     */
     private void proteinSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinSelectAllActionPerformed
         proteinAccession.setSelected(true);
         proteinPI.setSelected(true);
@@ -866,6 +901,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinSequenceCoverage.setSelected(true);
     }//GEN-LAST:event_proteinSelectAllActionPerformed
 
+    /**
+     * Deselect all protein features.
+     * 
+     * @param evt 
+     */
     private void proteinUnselectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinUnselectAllActionPerformed
         proteinAccession.setSelected(false);
         proteinPI.setSelected(false);
@@ -879,6 +919,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinSequenceCoverage.setSelected(false);
     }//GEN-LAST:event_proteinUnselectAllActionPerformed
 
+    /**
+     * Select all peptide features.
+     * 
+     * @param evt 
+     */
     private void peptideSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideSelectAllActionPerformed
         peptideAccession.setSelected(true);
         peptideSequence.setSelected(true);
@@ -891,6 +936,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptidePosition.setSelected(true);
     }//GEN-LAST:event_peptideSelectAllActionPerformed
 
+    /**
+     * Deselect all peptide features.
+     * 
+     * @param evt 
+     */
     private void peptideUnselectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideUnselectAllActionPerformed
         peptideAccession.setSelected(false);
         peptideSequence.setSelected(false);
@@ -903,6 +953,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptidePosition.setSelected(false);
     }//GEN-LAST:event_peptideUnselectAllActionPerformed
 
+    /**
+     * Select all psm features.
+     * 
+     * @param evt 
+     */
     private void psmSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmSelectAllActionPerformed
         psmAccession.setSelected(true);
         psmSequence.setSelected(true);
@@ -915,6 +970,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         psmConfidence.setSelected(true);
     }//GEN-LAST:event_psmSelectAllActionPerformed
 
+    /**
+     * Deselect all psm features.
+     * 
+     * @param evt 
+     */
     private void psmUnselectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmUnselectAllActionPerformed
         psmAccession.setSelected(false);
         psmSequence.setSelected(false);
@@ -927,6 +987,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         psmConfidence.setSelected(false);
     }//GEN-LAST:event_psmUnselectAllActionPerformed
 
+    /**
+     * Select all search engine features.
+     * 
+     * @param evt 
+     */
     private void assumptionsExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assumptionsExportAllActionPerformed
         assumptionAccession.setSelected(true);
         assumptionSequence.setSelected(true);
@@ -939,6 +1004,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionConfidence.setSelected(true);
     }//GEN-LAST:event_assumptionsExportAllActionPerformed
 
+    /**
+     * Deselect all search engine features.
+     * 
+     * @param evt 
+     */
     private void assumptionUnselectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assumptionUnselectAllActionPerformed
         assumptionAccession.setSelected(false);
         assumptionSequence.setSelected(false);
@@ -951,324 +1021,532 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionConfidence.setSelected(false);
     }//GEN-LAST:event_assumptionUnselectAllActionPerformed
 
+    /**
+     * Export the validated protein features to file.
+     * 
+     * @param evt 
+     */
     private void proteinExportValidatedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinExportValidatedActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        final File saveFile = getSaveFile();
 
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
+        if (saveFile != null) {
 
-        new Thread(new Runnable() {
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+            final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
 
-        new Thread("ExportThread") {
+            new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    feature = outputGenerator.getProteinsOutput(progressDialog, null, true, true, proteinAccession.isSelected(), proteinPI.isSelected(),
-                            proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinSequenceCoverage.isSelected(), proteinEmpai.isSelected(), proteinNSpectra.isSelected(),
-                            proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    feature = "";
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Getting Features. Please Wait...");
+                    progressDialog.setVisible(true);
                 }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Proteins", false);
-            }
-        }.start();
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        feature = outputGenerator.getProteinsOutput(progressDialog, null, false, true, proteinAccession.isSelected(), proteinPI.isSelected(),
+                                proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinSequenceCoverage.isSelected(), proteinEmpai.isSelected(), proteinNSpectra.isSelected(),
+                                proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true);
+
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Saving File. Please Wait...");
+
+                        FileWriter f = new FileWriter(saveFile);
+                        BufferedWriter b = new BufferedWriter(f);
+                        b.write(feature);
+                        b.close();
+                        f.close();
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+
+                    if (progressDialog != null) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                    }
+                }
+            }.start();
+        }
     }//GEN-LAST:event_proteinExportValidatedActionPerformed
 
+    /**
+     * Export the validated peptide features to file.
+     * 
+     * @param evt 
+     */
     private void peptideExportValidatedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideExportValidatedActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        final File saveFile = getSaveFile();
 
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
+        if (saveFile != null) {
 
-        new Thread(new Runnable() {
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+            final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
 
-        new Thread("ExportThread") {
+            new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    feature = outputGenerator.getPeptidesOutput(progressDialog, null, true, true, peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
-                            peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(), peptideScore.isSelected(),
-                            peptideConfidence.isSelected(), true);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    feature = "";
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Getting Features. Please Wait...");
+                    progressDialog.setVisible(true);
                 }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Peptides", false);
-            }
-        }.start();
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        feature = outputGenerator.getPeptidesOutput(progressDialog, null, false, true, peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
+                                peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(), peptideScore.isSelected(),
+                                peptideConfidence.isSelected(), true);
+
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Saving File. Please Wait...");
+
+                        FileWriter f = new FileWriter(saveFile);
+                        BufferedWriter b = new BufferedWriter(f);
+                        b.write(feature);
+                        b.close();
+                        f.close();
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+
+                    if (progressDialog != null) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                    }
+                }
+            }.start();
+        }
     }//GEN-LAST:event_peptideExportValidatedActionPerformed
 
+    /**
+     * Export all peptide features to file.
+     * 
+     * @param evt 
+     */
     private void peptideExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideExportAllActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        final File saveFile = getSaveFile();
 
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
+        if (saveFile != null) {
 
-        new Thread(new Runnable() {
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+            final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
 
-        new Thread("ExportThread") {
+            new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    feature = outputGenerator.getPeptidesOutput(progressDialog, null, true, false, peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
-                            peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
-                            peptideScore.isSelected(), peptideConfidence.isSelected(), true);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    feature = "";
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Getting Features. Please Wait...");
+                    progressDialog.setVisible(true);
                 }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "All Peptides", false);
-            }
-        }.start();
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        feature = outputGenerator.getPeptidesOutput(progressDialog, null, false, false, peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
+                                peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
+                                peptideScore.isSelected(), peptideConfidence.isSelected(), true);
+
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Saving File. Please Wait...");
+
+                        FileWriter f = new FileWriter(saveFile);
+                        BufferedWriter b = new BufferedWriter(f);
+                        b.write(feature);
+                        b.close();
+                        f.close();
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+
+                    if (progressDialog != null) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                    }
+                }
+            }.start();
+        }
     }//GEN-LAST:event_peptideExportAllActionPerformed
 
+    /**
+     * Export the validated psm features to file.
+     * 
+     * @param evt 
+     */
     private void psmExportValidatedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmExportValidatedActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        final File saveFile = getSaveFile();
 
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
+        if (saveFile != null) {
 
-        new Thread(new Runnable() {
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+            final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
 
-        new Thread("ExportThread") {
+            new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    feature = outputGenerator.getPSMsOutput(progressDialog, null, true, true, psmAccession.isSelected(), psmSequence.isSelected(),
-                            psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
-                            psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    feature = "";
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Getting Features. Please Wait...");
+                    progressDialog.setVisible(true);
                 }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated PSMs", false);
-            }
-        }.start();
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        feature = outputGenerator.getPSMsOutput(progressDialog, null, false, true, psmAccession.isSelected(), psmSequence.isSelected(),
+                                psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
+                                psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true);
+
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Saving File. Please Wait...");
+
+                        FileWriter f = new FileWriter(saveFile);
+                        BufferedWriter b = new BufferedWriter(f);
+                        b.write(feature);
+                        b.close();
+                        f.close();
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+
+                    if (progressDialog != null) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                    }
+                }
+            }.start();
+        }
     }//GEN-LAST:event_psmExportValidatedActionPerformed
 
+    /**
+     * Export all psm features to file.
+     * 
+     * @param evt 
+     */
     private void psmExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmExportAllActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        final File saveFile = getSaveFile();
 
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
+        if (saveFile != null) {
 
-        new Thread(new Runnable() {
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+            final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
 
-        new Thread("ExportThread") {
+            new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    feature = outputGenerator.getPSMsOutput(progressDialog, null, true, false, psmAccession.isSelected(), psmSequence.isSelected(),
-                            psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
-                            psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    feature = "";
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Getting Features. Please Wait...");
+                    progressDialog.setVisible(true);
                 }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "All PSMs", false);
-            }
-        }.start();
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        feature = outputGenerator.getPSMsOutput(progressDialog, null, false, false, psmAccession.isSelected(), psmSequence.isSelected(),
+                                psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
+                                psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true);
+
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Saving File. Please Wait...");
+
+                        FileWriter f = new FileWriter(saveFile);
+                        BufferedWriter b = new BufferedWriter(f);
+                        b.write(feature);
+                        b.close();
+                        f.close();
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+
+                    if (progressDialog != null) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                    }
+                }
+            }.start();
+        }
     }//GEN-LAST:event_psmExportAllActionPerformed
 
+    /**
+     * Export all search engine features to file.
+     * 
+     * @param evt 
+     */
     private void assumptionExportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assumptionExportAllActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        final File saveFile = getSaveFile();
 
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
+        if (saveFile != null) {
 
-        new Thread(new Runnable() {
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+            final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
 
-        new Thread("ExportThread") {
+            new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    feature = outputGenerator.getAssumptionsOutput(progressDialog, null, false, assumptionAccession.isSelected(), assumptionSequence.isSelected(),
-                            assumptionModification.isSelected(), assumptionLocation.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
-                            assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    feature = "";
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Getting Features. Please Wait...");
+                    progressDialog.setVisible(true);
                 }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Search Engine Results", false);
-            }
-        }.start();
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        feature = outputGenerator.getAssumptionsOutput(progressDialog, null, false, assumptionAccession.isSelected(), assumptionSequence.isSelected(),
+                                assumptionModification.isSelected(), assumptionLocation.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
+                                assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
+
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Saving File. Please Wait...");
+
+                        FileWriter f = new FileWriter(saveFile);
+                        BufferedWriter b = new BufferedWriter(f);
+                        b.write(feature);
+                        b.close();
+                        f.close();
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+
+                    if (progressDialog != null) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                    }
+                }
+            }.start();
+        }
     }//GEN-LAST:event_assumptionExportAllActionPerformed
 
+    /**
+     * Export all features to file.
+     * 
+     * @param evt 
+     */
     private void exportAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportAllActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        fileChooser.setDialogTitle("Select Result Folder");
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
-
-        new Thread(new Runnable() {
-
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
-
-        new Thread("SaveThread") {
+        FileFilter filter = new FileFilter() {
 
             @Override
-            public void run() {
-                final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-                fileChooser.setDialogTitle("Select Result Folder");
-                fileChooser.setMultiSelectionEnabled(false);
-                fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            public boolean accept(File myFile) {
+                return myFile.isDirectory();
+            }
 
-                FileFilter filter = new FileFilter() {
+            @Override
+            public String getDescription() {
+                return "(Tab separated text file) *.txt";
+            }
+        };
 
-                    @Override
-                    public boolean accept(File myFile) {
-                        return myFile.isDirectory();
-                    }
+        fileChooser.setFileFilter(filter);
 
-                    @Override
-                    public String getDescription() {
-                        return "(Tab separated text file) *.txt";
-                    }
-                };
+        int returnVal = fileChooser.showSaveDialog(this);
 
-                fileChooser.setFileFilter(filter);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-                int returnVal = fileChooser.showSaveDialog(tempRef);
+            peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
 
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-                    peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
+            final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
 
-                    CsvExporter exporter = new CsvExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), 
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Exporting. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("SaveThread") {
+
+                @Override
+                public void run() {
+
+                    CsvExporter exporter = new CsvExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(),
                             peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getSearchParameters().getEnzyme());
                     boolean exported = exporter.exportResults(progressDialog, fileChooser.getSelectedFile());
-                    
+
                     if (exported) {
-                        JOptionPane.showMessageDialog(tempRef, "Identification results saved to folder \'" + fileChooser.getSelectedFile().getName() + "\'.", 
+                        JOptionPane.showMessageDialog(tempRef, "Identification results saved to folder \'" + fileChooser.getSelectedFile().getName() + "\'.",
                                 "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(tempRef, "An error occured during saving. See conf/PeptideShaker.log for details.", "Save Error", JOptionPane.ERROR_MESSAGE);
                     }
-                    
+
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
                 }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-            }
-        }.start();
+            }.start();
+        }
     }//GEN-LAST:event_exportAllActionPerformed
 
+    /**
+     * Export the validated search engine features to file.
+     * 
+     * @param evt 
+     */
     private void assumptionsExportValidatedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_assumptionsExportValidatedActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        final File saveFile = getSaveFile();
 
-        final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
+        if (saveFile != null) {
 
-        new Thread(new Runnable() {
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+            final FeaturesPreferencesDialog tempRef = this; // needed due to threading issues
 
-        new Thread("ExportThread") {
+            new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    feature = outputGenerator.getAssumptionsOutput(progressDialog, null, true, assumptionAccession.isSelected(),
-                            assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionLocation.isSelected(),
-                            assumptionFile.isSelected(), assumptionTitle.isSelected(), assumptionPrecursor.isSelected(),
-                            assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                    feature = "";
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Getting Features. Please Wait...");
+                    progressDialog.setVisible(true);
                 }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-                new ExportFeatureDialog(peptideShakerGUI, true, feature, "Search Engine Results", false);
-            }
-        }.start();
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        feature = outputGenerator.getAssumptionsOutput(progressDialog, null, true, assumptionAccession.isSelected(),
+                                assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionLocation.isSelected(),
+                                assumptionFile.isSelected(), assumptionTitle.isSelected(), assumptionPrecursor.isSelected(),
+                                assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
+
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Saving File. Please Wait...");
+
+                        FileWriter f = new FileWriter(saveFile);
+                        BufferedWriter b = new BufferedWriter(f);
+                        b.write(feature);
+                        b.close();
+                        f.close();
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+
+                    if (progressDialog != null) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                    }
+                }
+            }.start();
+        }
     }//GEN-LAST:event_assumptionsExportValidatedActionPerformed
 
+    /**
+     * Close the dialog.
+     * 
+     * @param evt 
+     */
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
+        setVisible(false);
         dispose();
     }//GEN-LAST:event_exitButtonActionPerformed
 
@@ -1300,7 +1578,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private void helpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonMouseExited
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox assumptionAccession;
     private javax.swing.JCheckBox assumptionConfidence;
@@ -1367,4 +1644,48 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel searchEnginePanel;
     private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * Opens a file chooser where the user can select the file to save the 
+     * features to. Returns the file to save to.
+     * 
+     * @return the file to save to, or null of save as aborted
+     */
+    private File getSaveFile() {
+
+        final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        fileChooser.setDialogTitle("Save As...");
+        fileChooser.setMultiSelectionEnabled(false);
+
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.getName().toLowerCase().endsWith("txt") || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "(Tab separated text file) *.txt";
+            }
+        };
+
+        fileChooser.setFileFilter(filter);
+
+        int returnVal = fileChooser.showSaveDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
+
+            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+
+            if (!filePath.endsWith(".txt")) {
+                filePath = filePath + ".txt";
+            }
+
+            return new File(filePath);
+        } else {
+            return null;
+        }
+    }
 }
