@@ -6,9 +6,11 @@ import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.export.FeaturesGenerator;
-import eu.isas.peptideshaker.gui.ExportFeatureDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -1055,7 +1057,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                             FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
 
                             try {
-                                feature = outputGenerator.getProteinsOutput(progressDialog, null, true, true, true, false,
+                                feature = outputGenerator.getProteinsOutput(progressDialog, null, false, true, true, false,
                                         false, false, false, false, false,
                                         false, false, false, false);
                             } catch (Exception e) {
@@ -1063,9 +1065,14 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                                 e.printStackTrace();
                                 feature = "";
                             }
+
+                            StringSelection stringSelection = new StringSelection(feature);
+                            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                            clipboard.setContents(stringSelection, peptideShakerGUI);
+
                             progressDialog.setVisible(false);
                             progressDialog.dispose();
-                            new ExportFeatureDialog(peptideShakerGUI, true, feature, "Validated Proteins", false);
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "Accession numbers copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
                         }
                     }.start();
                 } else {
@@ -1132,7 +1139,6 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
         BareBonesBrowserLaunch.openURL("http://www.ebi.ac.uk/Tools/picr/");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_picrLinkJLabelMouseClicked
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField accessionNumberJTextField;
     private javax.swing.JTextField altProteinNameJTextField;
@@ -1278,7 +1284,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                                 } else {
                                     taxonomyJTextField.setText(uniProtEntry.getOrganism().getScientificName().toString());
                                 }
-                                
+
                                 counter++;
                             }
 

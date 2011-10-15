@@ -4101,7 +4101,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         final TableIndex tableIndex = index;
 
         if (tableIndex == TableIndex.PROTEIN_TABLE
-                || tableIndex == TableIndex.PEPTIDE_TABLE) {
+                || tableIndex == TableIndex.PEPTIDE_TABLE
+                || tableIndex == TableIndex.PSM_TABLE) {
 
             progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
             progressDialog.doNothingOnClose();

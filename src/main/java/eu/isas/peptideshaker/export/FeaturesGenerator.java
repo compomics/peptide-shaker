@@ -249,11 +249,13 @@ public class FeaturesGenerator {
                 }
                 result += "\n";
             }
+            
+            progress++;
+            if (progressDialog != null) {
+                progressDialog.setValue(progress);
+            }
         }
-        progress++;
-        if (progressDialog != null) {
-            progressDialog.setValue(progress);
-        }
+        
         return result;
     }
 

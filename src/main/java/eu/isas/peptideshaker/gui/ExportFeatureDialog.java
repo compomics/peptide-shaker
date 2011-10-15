@@ -18,7 +18,7 @@ public class ExportFeatureDialog extends javax.swing.JDialog {
     /**
      * The PeptideShakerGUI parent.
      */
-    private PeptideShakerGUI petideShakerGUI;
+    private PeptideShakerGUI peptideShakerGUI;
 
     /** 
      * Creates a new ExportFeatureDialog.
@@ -35,7 +35,7 @@ public class ExportFeatureDialog extends javax.swing.JDialog {
 
         featuresJTextArea.setText(features);
         featuresJTextArea.setCaretPosition(0);
-        this.petideShakerGUI = petideShakerGUI;
+        this.peptideShakerGUI = petideShakerGUI;
         this.setTitle("Export " + featureType);
         
         if (lineWarp) {
@@ -165,7 +165,7 @@ public class ExportFeatureDialog extends javax.swing.JDialog {
      */
     private void saveJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveJButtonActionPerformed
 
-        final JFileChooser fileChooser = new JFileChooser(petideShakerGUI.getLastSelectedFolder());
+        final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         fileChooser.setDialogTitle("Save As...");
         fileChooser.setMultiSelectionEnabled(false);
 
@@ -188,7 +188,7 @@ public class ExportFeatureDialog extends javax.swing.JDialog {
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-            petideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
+            peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
 
             try {
                 FileWriter f = new FileWriter(fileChooser.getSelectedFile());
