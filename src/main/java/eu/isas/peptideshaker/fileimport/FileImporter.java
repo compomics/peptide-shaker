@@ -212,8 +212,16 @@ public class FileImporter {
             waitingDialog.appendReport("File " + fastaFile + " was not found. Please select a different FASTA file.");
             e.printStackTrace();
             waitingDialog.setRunCanceled();
-        } catch (Exception e) {
+        } catch (IOException e) {
             waitingDialog.appendReport("An error occured while loading " + fastaFile + ".");
+            e.printStackTrace();
+            waitingDialog.setRunCanceled();
+        } catch (IllegalArgumentException e) {
+            waitingDialog.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com.");
+            e.printStackTrace();
+            waitingDialog.setRunCanceled();
+        } catch (ClassNotFoundException e) {
+            waitingDialog.appendReport("Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry.\nIf the error occurs again please report bug at http://peptide-shaker.googlecode.com.");
             e.printStackTrace();
             waitingDialog.setRunCanceled();
         }
@@ -255,22 +263,32 @@ public class FileImporter {
      * @param waitingDialog the waiting dialog
      * @return          a list of corresponding proteins found in the database
      */
-    private ArrayList<String> getProteins(String sequence, WaitingDialog waitingDialog) throws IOException {
+    private ArrayList<String> getProteins(String sequence, WaitingDialog waitingDialog) {
         ArrayList<String> result = sequences.get(sequence);
         boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !testing;
         if (result == null) {
             result = new ArrayList<String>();
             if (inspectAll) {
-                for (String proteinKey : sequenceFactory.getAccessions()) {
-                    if (sequenceFactory.getProtein(proteinKey).getSequence().contains(sequence)) {
-                        result.add(proteinKey);
+                try {
+                    for (String proteinKey : sequenceFactory.getAccessions()) {
+                        if (sequenceFactory.getProtein(proteinKey).getSequence().contains(sequence)) {
+                            result.add(proteinKey);
+                        }
+                        if (waitingDialog.isRunCanceled()) {
+                            return new ArrayList<String>();
+                        }
                     }
-                    if (waitingDialog.isRunCanceled()) {
-                        return new ArrayList<String>();
-                    }
+                } catch (IOException e) {
+                    waitingDialog.appendReport("An error occured while accessing the fasta file. \nProtein to peptide link will be incomplete. Please restart the analysis.");
+                    e.printStackTrace();
+                    waitingDialog.setRunCanceled();
+                } catch (IllegalArgumentException e) {
+                    waitingDialog.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com. \nProtein to peptide link will be incomplete. Please restart the analysis.");
+                    e.printStackTrace();
+                    waitingDialog.setRunCanceled();
                 }
+                sequences.put(sequence, result);
             }
-            sequences.put(sequence, result);
         }
         return result;
     }

@@ -108,6 +108,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             try {
                 description = sequenceFactory.getHeader(protein).getDescription();
             } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
                 description = "FASTA File Error";
             }
 

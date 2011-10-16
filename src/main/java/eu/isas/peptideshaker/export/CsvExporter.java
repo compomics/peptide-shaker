@@ -236,9 +236,13 @@ public class CsvExporter {
 
         line += nSpectra + SEPARATOR;
         line += nValidatedPeptides + SEPARATOR + nValidatedPsms + SEPARATOR;
+        try {
         line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getNPossiblePeptides(enzyme) + SEPARATOR;
         line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence().length() + SEPARATOR;
-
+        } catch (Exception e) {
+            line+= "protein not found " + SEPARATOR + SEPARATOR;
+        }
+        
         try {
             line += probabilities.getProteinProbabilityScore() + SEPARATOR
                     + probabilities.getProteinProbability() + SEPARATOR;
@@ -257,9 +261,11 @@ public class CsvExporter {
         } else {
             line += "0" + SEPARATOR;
         }
-
+        try {
         line += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
-
+        } catch (Exception e) {
+            line += "Protein not found";
+        }
         line += "\n";
         return line;
     }
