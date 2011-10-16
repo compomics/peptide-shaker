@@ -1307,10 +1307,13 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                             taxonomyJTextField.setText("Unknown");
                         }
                     } catch (IOException e) {
+                        peptideShakerGUI.catchException(e);
                         e.printStackTrace();
                     } catch (RemoteDataAccessException e) {
+                        peptideShakerGUI.catchException(e);
                         e.printStackTrace();
                     } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
                         e.printStackTrace();
                     }
 

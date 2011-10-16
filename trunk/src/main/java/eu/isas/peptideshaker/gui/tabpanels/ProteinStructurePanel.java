@@ -2558,6 +2558,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                 peptideStart = tempProteinSequence.lastIndexOf(peptideSequence) + 1;
                                 peptideEnd = peptideStart + peptideSequence.length() - 1;
                             } catch (Exception e) {
+                                peptideShakerGUI.catchException(e);
                                 e.printStackTrace();
                             }
                             int proteinInferenceType = 0;
@@ -3162,6 +3163,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         try {
             description = sequenceFactory.getHeader(mainMatch).getDescription();
         } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
         }
         proteinTable.setValueAt(description, proteinTable.getSelectedRow(), proteinTable.getColumn("Description").getModelIndex());
     }

@@ -2957,6 +2957,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 }
             }
         } catch (Exception e) {
+            catchException(e);
         }
 
         return accessionNumberWithLink;
@@ -3491,8 +3492,22 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 return Math.pow(10, result / currentProtein.getNPossiblePeptides(enyzme)) - 1;
             }
         } catch (Exception e) {
+            catchException(e);
             e.printStackTrace();
             return 0.0;
+        }
+    }
+
+    private String getExceptionType(Exception e) {
+        if (e.getLocalizedMessage()==null) {
+            return "null pointer";
+        } else if (e.getLocalizedMessage().startsWith("Protein not found")) {
+            return "Protein not found";
+        } else if (e.getLocalizedMessage().startsWith("Error while loading")
+                || e.getLocalizedMessage().startsWith("Error while writing")) {
+            return "Serialization";
+        } else {
+            return e.getLocalizedMessage();
         }
     }
 
@@ -3501,14 +3516,27 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param e the exception caught
      */
     public void catchException(Exception e) {
-        e.printStackTrace();
-        if (!exceptionCaught.contains(e.getLocalizedMessage())) {
-            exceptionCaught.add(e.getLocalizedMessage());
-            JOptionPane.showMessageDialog(this,
-                    "An error occured while reading "
-                    + e.getLocalizedMessage(),
-                    "Error",
-                    JOptionPane.ERROR_MESSAGE);
+        if (!exceptionCaught.contains(getExceptionType(e))) {
+            e.printStackTrace();
+            exceptionCaught.add(getExceptionType(e));
+            if (getExceptionType(e).equals("Protein not found")) {
+                JOptionPane.showMessageDialog(this,
+                        e.getLocalizedMessage() + "\nPlease refer to the troubleshooting section in http://peptide-shaker.googlecode.com.\nThis message will appear only once.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            } else if (getExceptionType(e).equals("Serialization")) {
+                JOptionPane.showMessageDialog(this,
+                        e.getLocalizedMessage() + "\nPlease refer to the troubleshooting section in http://peptide-shaker.googlecode.com.\nThis message will appear only once.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "An error occured: "
+                        + e.getLocalizedMessage()
+                        + ".\nPlease contact the developpers.",
+                        "Error",
+                        JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 
@@ -4243,7 +4271,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             return;
                         }
                     }
-                    
+
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
 
@@ -4277,21 +4305,21 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void lostOwnership(Clipboard clipboard, Transferable contents) {
         // do nothing
     }
-    
+
     /**
      * Export the current spectrum as an mgf.
      */
-    public void exportSpectrumAsMgf () {
+    public void exportSpectrumAsMgf() {
         exportSpectrumValuesJMenuItemActionPerformed(null);
     }
-    
+
     /**
      * Export the current spectrum as a figure.
      */
     public void exportSpectrumAsFigure() {
         exportSpectrumGraphicsJMenuItemActionPerformed(null);
     }
-    
+
     /**
      * Export the current bubble plot as a figure.
      */

@@ -171,16 +171,25 @@ public class FeaturesGenerator {
                     result += SEPARATOR;
                 }
                 if (description) {
+                    try {
                     result += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR;
+                    }catch (Exception e) {
+                        result += "Protein not found" + SEPARATOR;
+                    }
                 }
                 if (sequenceCoverage) {
+                    try {
                     result += peptideShakerGUI.estimateSequenceCoverage(proteinMatch, sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence()) + SEPARATOR;
+                    }catch (Exception e) {
+                        result += "Protein not found" + SEPARATOR;
+                    }
                 }
                 
                 double emPAIScore = 0.0;
                 double nsafScore = 0.0;
                 
                 if (nPeptides || emPAI) {
+                    try {
                     Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                     cpt = 0;
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
@@ -196,10 +205,17 @@ public class FeaturesGenerator {
                         double pai = cpt;
                         pai = pai / mainMatch.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
                         double empai = Math.pow(10, pai) - 1;
-                        emPAIScore = empai; 
+                        emPAIScore = empai;
+                    }
+                } catch (Exception e) {
+                    if (nPeptides) {
+                        result += "Protein not found" + SEPARATOR;
+                        emPAIScore = -1;
                     }
                 }
+                }
                 if (nSpectra || nsaf) {
+                    try {
                     Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                     cpt = 0;
                     PeptideMatch peptideMatch;
@@ -220,8 +236,13 @@ public class FeaturesGenerator {
                         index = index / mainMatch.getSequence().length();
                         nsafScore = index;
                     }
+                } catch (Exception e) {
+                    if (nSpectra) {
+                        result += "Protein not found" + SEPARATOR;
+                        nsafScore = -1;
+                    }
                 }
-                
+                }
                 if (emPAI) {
                     result += emPAIScore + SEPARATOR;
                 }
@@ -364,6 +385,7 @@ public class FeaturesGenerator {
                 
                 if (location) {
                     if (peptide.getParentProteins().size() == 1) {
+                        try {
                         ArrayList<Integer> positions = new ArrayList<Integer>();
                         String tempSequence = sequenceFactory.getProtein(peptide.getParentProteins().get(0)).getSequence();
                         int index = tempSequence.indexOf(peptide.getSequence());
@@ -380,6 +402,9 @@ public class FeaturesGenerator {
                                 result += ", ";
                             }
                             result += position;
+                        }
+                        } catch (Exception e) {
+                            result += "Error";
                         }
                     }
                     result += SEPARATOR;

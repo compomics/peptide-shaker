@@ -102,7 +102,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     /**
      * The current protein sequence;
      */
-    private String currentProteinSequence;
+    private String currentProteinSequence = "";
     /**
      * The maximum sequence length for display in the sequence coverage panel.
      */
@@ -1924,6 +1924,7 @@ private void coverageTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
                         Protein protein = sequenceFactory.getProtein(proteinKey);
                         new ExportFeatureDialog(peptideShakerGUI, true, protein.getSequence(), "Sequence", true);
                     } catch (Exception e) {
+                        peptideShakerGUI.catchException(e);
                         e.printStackTrace();
                     }
                 }
@@ -2496,6 +2497,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
             JOptionPane.showMessageDialog(peptideShakerGUI, "Protein sequence copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
+            peptideShakerGUI.catchException(e);
             e.printStackTrace();
         }
     }//GEN-LAST:event_exportSequenceCoverageContextJButtonActionPerformed
@@ -3005,6 +3007,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 sequenceCoveragePanel.repaint();
             }
         } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
             e.printStackTrace();
         }
     }
