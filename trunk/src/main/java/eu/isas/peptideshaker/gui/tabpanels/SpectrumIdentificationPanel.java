@@ -566,6 +566,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         exportSearchEnginePerformanceJButton.setBorder(null);
         exportSearchEnginePerformanceJButton.setBorderPainted(false);
         exportSearchEnginePerformanceJButton.setContentAreaFilled(false);
+        exportSearchEnginePerformanceJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportSearchEnginePerformanceJButton.setEnabled(false);
         exportSearchEnginePerformanceJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportSearchEnginePerformanceJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -937,6 +939,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         exportPsmsJButton.setBorder(null);
         exportPsmsJButton.setBorderPainted(false);
         exportPsmsJButton.setContentAreaFilled(false);
+        exportPsmsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPsmsJButton.setEnabled(false);
         exportPsmsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportPsmsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -1091,6 +1095,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         exportSpectrumSelectionJButton.setBorder(null);
         exportSpectrumSelectionJButton.setBorderPainted(false);
         exportSpectrumSelectionJButton.setContentAreaFilled(false);
+        exportSpectrumSelectionJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportSpectrumSelectionJButton.setEnabled(false);
         exportSpectrumSelectionJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportSpectrumSelectionJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -1257,6 +1263,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         exportSpectrumJButton.setBorder(null);
         exportSpectrumJButton.setBorderPainted(false);
         exportSpectrumJButton.setContentAreaFilled(false);
+        exportSpectrumJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportSpectrumJButton.setEnabled(false);
         exportSpectrumJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportSpectrumJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -2307,6 +2315,12 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
             intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
 
             formComponentResized(null);
+
+            // enable the contextual export options
+            exportSearchEnginePerformanceJButton.setEnabled(true);
+            exportSpectrumSelectionJButton.setEnabled(true);
+            exportSpectrumJButton.setEnabled(true);
+            exportPsmsJButton.setEnabled(true);
 
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
