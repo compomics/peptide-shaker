@@ -225,6 +225,8 @@ public class QCPanel extends javax.swing.JPanel {
         exportPsmPlotJButton.setBorder(null);
         exportPsmPlotJButton.setBorderPainted(false);
         exportPsmPlotJButton.setContentAreaFilled(false);
+        exportPsmPlotJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPsmPlotJButton.setEnabled(false);
         exportPsmPlotJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportPsmPlotJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -356,6 +358,8 @@ public class QCPanel extends javax.swing.JPanel {
         exportPeptidesPlotJButton.setBorder(null);
         exportPeptidesPlotJButton.setBorderPainted(false);
         exportPeptidesPlotJButton.setContentAreaFilled(false);
+        exportPeptidesPlotJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPeptidesPlotJButton.setEnabled(false);
         exportPeptidesPlotJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportPeptidesPlotJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -442,6 +446,8 @@ public class QCPanel extends javax.swing.JPanel {
         exportProteinsPlotJButton.setBorder(null);
         exportProteinsPlotJButton.setBorderPainted(false);
         exportProteinsPlotJButton.setContentAreaFilled(false);
+        exportProteinsPlotJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportProteinsPlotJButton.setEnabled(false);
         exportProteinsPlotJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportProteinsPlotJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -979,7 +985,6 @@ public class QCPanel extends javax.swing.JPanel {
             }
         });
     }//GEN-LAST:event_proteinsPlotLayeredPaneComponentResized
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton exportPeptidesPlotJButton;
     private javax.swing.JButton exportProteinsPlotJButton;
@@ -1022,6 +1027,11 @@ public class QCPanel extends javax.swing.JPanel {
         updateProteinQCPlot(progressDialog);
         updatePeptideQCPlot(progressDialog);
         updatePsmQCPlot(progressDialog);
+
+        // enable the contextual export options
+        exportPsmPlotJButton.setEnabled(true);
+        exportPeptidesPlotJButton.setEnabled(true);
+        exportProteinsPlotJButton.setEnabled(true);
     }
 
     /**

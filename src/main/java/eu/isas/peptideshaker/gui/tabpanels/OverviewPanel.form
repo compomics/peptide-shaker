@@ -311,6 +311,10 @@
                         </Property>
                         <Property name="borderPainted" type="boolean" value="false"/>
                         <Property name="contentAreaFilled" type="boolean" value="false"/>
+                        <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                          <Image iconType="3" name="/icons/export_no_frame_grey.png"/>
+                        </Property>
+                        <Property name="enabled" type="boolean" value="false"/>
                         <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                           <Image iconType="3" name="/icons/export_no_frame.png"/>
                         </Property>
@@ -566,6 +570,10 @@
                             </Property>
                             <Property name="borderPainted" type="boolean" value="false"/>
                             <Property name="contentAreaFilled" type="boolean" value="false"/>
+                            <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                              <Image iconType="3" name="/icons/export_no_frame_grey.png"/>
+                            </Property>
+                            <Property name="enabled" type="boolean" value="false"/>
                             <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                               <Image iconType="3" name="/icons/export_no_frame.png"/>
                             </Property>
@@ -844,6 +852,10 @@
                                     </Property>
                                     <Property name="borderPainted" type="boolean" value="false"/>
                                     <Property name="contentAreaFilled" type="boolean" value="false"/>
+                                    <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                      <Image iconType="3" name="/icons/export_no_frame_grey.png"/>
+                                    </Property>
+                                    <Property name="enabled" type="boolean" value="false"/>
                                     <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                                       <Image iconType="3" name="/icons/export_no_frame.png"/>
                                     </Property>
@@ -1093,6 +1105,10 @@
                                     </Property>
                                     <Property name="borderPainted" type="boolean" value="false"/>
                                     <Property name="contentAreaFilled" type="boolean" value="false"/>
+                                    <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                      <Image iconType="3" name="/icons/export_no_frame_grey.png"/>
+                                    </Property>
+                                    <Property name="enabled" type="boolean" value="false"/>
                                     <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                                       <Image iconType="3" name="/icons/export_no_frame.png"/>
                                     </Property>
@@ -1544,6 +1560,10 @@
                                 </Property>
                                 <Property name="borderPainted" type="boolean" value="false"/>
                                 <Property name="contentAreaFilled" type="boolean" value="false"/>
+                                <Property name="disabledIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                  <Image iconType="3" name="/icons/export_no_frame_grey.png"/>
+                                </Property>
+                                <Property name="enabled" type="boolean" value="false"/>
                                 <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                                   <Image iconType="3" name="/icons/export_no_frame.png"/>
                                 </Property>

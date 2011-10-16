@@ -610,6 +610,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         exportPdbStructureJButton.setBorder(null);
         exportPdbStructureJButton.setBorderPainted(false);
         exportPdbStructureJButton.setContentAreaFilled(false);
+        exportPdbStructureJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPdbStructureJButton.setEnabled(false);
         exportPdbStructureJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportPdbStructureJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -757,6 +759,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         exportProteinsJButton.setBorder(null);
         exportProteinsJButton.setBorderPainted(false);
         exportProteinsJButton.setContentAreaFilled(false);
+        exportProteinsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportProteinsJButton.setEnabled(false);
         exportProteinsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportProteinsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -904,6 +908,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         exportPeptidesJButton.setBorder(null);
         exportPeptidesJButton.setBorderPainted(false);
         exportPeptidesJButton.setContentAreaFilled(false);
+        exportPeptidesJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPeptidesJButton.setEnabled(false);
         exportPeptidesJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportPeptidesJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -1051,6 +1057,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         exportPdbMatchesJButton.setBorder(null);
         exportPdbMatchesJButton.setBorderPainted(false);
         exportPdbMatchesJButton.setContentAreaFilled(false);
+        exportPdbMatchesJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPdbMatchesJButton.setEnabled(false);
         exportPdbMatchesJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportPdbMatchesJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -1190,6 +1198,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         exportPdbChainsJButton.setBorder(null);
         exportPdbChainsJButton.setBorderPainted(false);
         exportPdbChainsJButton.setContentAreaFilled(false);
+        exportPdbChainsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPdbChainsJButton.setEnabled(false);
         exportPdbChainsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportPdbChainsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -1939,11 +1949,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportProteinsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportProteinsJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportProteinsJButtonMouseEntered
 
     private void exportProteinsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportProteinsJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportProteinsJButtonMouseExited
 
     /**
@@ -1952,7 +1962,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportProteinsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProteinsJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);     
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_exportProteinsJButtonActionPerformed
 
     /**
@@ -1961,7 +1971,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void proteinsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinsHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_proteinsHelpJButtonMouseEntered
 
     /**
@@ -1970,7 +1980,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void proteinsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinsHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinsHelpJButtonMouseExited
 
     /**
@@ -1979,9 +1989,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void proteinsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinsHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));         
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_proteinsHelpJButtonActionPerformed
 
     /**
@@ -2019,8 +2029,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 proteinsLayeredPane.getComponent(3).setBounds(0, 0, proteinsLayeredPane.getWidth(), proteinsLayeredPane.getHeight());
                 proteinsLayeredPane.revalidate();
                 proteinsLayeredPane.repaint();
-                
-                
+
+
                 // move the icons
                 peptidesLayeredPane.getComponent(0).setBounds(
                         peptidesLayeredPane.getWidth() - peptidesLayeredPane.getComponent(0).getWidth() - 10,
@@ -2043,9 +2053,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 // resize the plot area
                 peptidesLayeredPane.getComponent(3).setBounds(0, 0, peptidesLayeredPane.getWidth(), peptidesLayeredPane.getHeight());
                 peptidesLayeredPane.revalidate();
-                peptidesLayeredPane.repaint();  
-                
-                
+                peptidesLayeredPane.repaint();
+
+
                 // move the icons
                 pdbMatchesLayeredPane.getComponent(0).setBounds(
                         pdbMatchesLayeredPane.getWidth() - pdbMatchesLayeredPane.getComponent(0).getWidth() - 10,
@@ -2068,9 +2078,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 // resize the plot area
                 pdbMatchesLayeredPane.getComponent(3).setBounds(0, 0, pdbMatchesLayeredPane.getWidth(), pdbMatchesLayeredPane.getHeight());
                 pdbMatchesLayeredPane.revalidate();
-                pdbMatchesLayeredPane.repaint();  
-                
-                
+                pdbMatchesLayeredPane.repaint();
+
+
                 // move the icons
                 pdbChainsLayeredPane.getComponent(0).setBounds(
                         pdbChainsLayeredPane.getWidth() - pdbChainsLayeredPane.getComponent(0).getWidth() - 10,
@@ -2093,9 +2103,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 // resize the plot area
                 pdbChainsLayeredPane.getComponent(3).setBounds(0, 0, pdbChainsLayeredPane.getWidth(), pdbChainsLayeredPane.getHeight());
                 pdbChainsLayeredPane.revalidate();
-                pdbChainsLayeredPane.repaint(); 
-                
-                
+                pdbChainsLayeredPane.repaint();
+
+
                 // move the icons
                 pdbStructureLayeredPane.getComponent(0).setBounds(
                         pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(0).getWidth() - 10,
@@ -2108,17 +2118,17 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                         -3,
                         pdbStructureLayeredPane.getComponent(1).getWidth(),
                         pdbStructureLayeredPane.getComponent(1).getHeight());
-                
+
                 pdbStructureLayeredPane.getComponent(2).setBounds(
                         pdbStructureLayeredPane.getWidth() - pdbStructureLayeredPane.getComponent(2).getWidth() - 5,
                         -3,
                         pdbStructureLayeredPane.getComponent(2).getWidth(),
                         pdbStructureLayeredPane.getComponent(2).getHeight());
-                
+
                 // resize the plot area
                 pdbStructureLayeredPane.getComponent(3).setBounds(0, 0, pdbStructureLayeredPane.getWidth(), pdbStructureLayeredPane.getHeight());
                 pdbStructureLayeredPane.revalidate();
-                pdbStructureLayeredPane.repaint(); 
+                pdbStructureLayeredPane.repaint();
             }
         });
     }//GEN-LAST:event_formComponentResized
@@ -2129,7 +2139,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void peptidesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_peptidesHelpJButtonMouseEntered
 
     /**
@@ -2138,7 +2148,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void peptidesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptidesHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptidesHelpJButtonMouseExited
 
     /**
@@ -2147,9 +2157,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void peptidesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));         
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_peptidesHelpJButtonActionPerformed
 
     /**
@@ -2158,7 +2168,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPeptidesJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPeptidesJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportPeptidesJButtonMouseEntered
 
     /**
@@ -2167,7 +2177,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPeptidesJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPeptidesJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));     
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportPeptidesJButtonMouseExited
 
     /**
@@ -2176,7 +2186,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPeptidesJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPeptidesJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);     
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_exportPeptidesJButtonActionPerformed
 
     /**
@@ -2185,7 +2195,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void pdbMatchesHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbMatchesHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_pdbMatchesHelpJButtonMouseEntered
 
     /**
@@ -2194,7 +2204,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void pdbMatchesHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbMatchesHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));   
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pdbMatchesHelpJButtonMouseExited
 
     /**
@@ -2203,9 +2213,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void pdbMatchesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdbMatchesHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));         
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR)); 
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pdbMatchesHelpJButtonActionPerformed
 
     /**
@@ -2214,7 +2224,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPdbMatchesJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPdbMatchesJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportPdbMatchesJButtonMouseEntered
 
     /**
@@ -2223,7 +2233,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPdbMatchesJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPdbMatchesJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));   
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportPdbMatchesJButtonMouseExited
 
     /**
@@ -2232,7 +2242,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPdbMatchesJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPdbMatchesJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);    
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_exportPdbMatchesJButtonActionPerformed
 
     /**
@@ -2241,7 +2251,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void pdbChainHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbChainHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_pdbChainHelpJButtonMouseEntered
 
     /**
@@ -2250,7 +2260,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void pdbChainHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbChainHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));   
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pdbChainHelpJButtonMouseExited
 
     /**
@@ -2259,9 +2269,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void pdbChainHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdbChainHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));         
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR)); 
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pdbChainHelpJButtonActionPerformed
 
     /**
@@ -2270,7 +2280,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPdbChainsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPdbChainsJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));  
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportPdbChainsJButtonMouseEntered
 
     /**
@@ -2279,7 +2289,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPdbChainsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPdbChainsJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));   
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportPdbChainsJButtonMouseExited
 
     /**
@@ -2288,7 +2298,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPdbChainsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPdbChainsJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);    
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_exportPdbChainsJButtonActionPerformed
 
     /**
@@ -2297,7 +2307,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void pdbStructureHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbStructureHelpJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));   
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_pdbStructureHelpJButtonMouseEntered
 
     /**
@@ -2306,7 +2316,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void pdbStructureHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_pdbStructureHelpJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));   
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pdbStructureHelpJButtonMouseExited
 
     /**
@@ -2315,9 +2325,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void pdbStructureHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pdbStructureHelpJButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));         
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));         
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR)); 
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PDB.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pdbStructureHelpJButtonActionPerformed
 
     /**
@@ -2326,7 +2336,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPdbStructureJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPdbStructureJButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));   
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_exportPdbStructureJButtonMouseEntered
 
     /**
@@ -2335,7 +2345,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPdbStructureJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPdbStructureJButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));   
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportPdbStructureJButtonMouseExited
 
     /**
@@ -2344,9 +2354,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPdbStructureJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPdbStructureJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);    
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_exportPdbStructureJButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backboneJButton;
     private javax.swing.JPanel contextMenuPdbChainsBackgroundPanel;
@@ -2772,6 +2781,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 proteinTableMouseReleased(null);
                 proteinTable.requestFocus();
             }
+
+            // enable the contextual export options
+            exportPdbStructureJButton.setEnabled(true);
+            exportProteinsJButton.setEnabled(true);
+            exportPeptidesJButton.setEnabled(true);
+            exportPdbMatchesJButton.setEnabled(true);
+            exportPdbChainsJButton.setEnabled(true);
 
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);

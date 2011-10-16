@@ -600,6 +600,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         exportProteinsJButton.setBorder(null);
         exportProteinsJButton.setBorderPainted(false);
         exportProteinsJButton.setContentAreaFilled(false);
+        exportProteinsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportProteinsJButton.setEnabled(false);
         exportProteinsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportProteinsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -741,6 +743,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         exportSequenceCoverageContextJButton.setBorder(null);
         exportSequenceCoverageContextJButton.setBorderPainted(false);
         exportSequenceCoverageContextJButton.setContentAreaFilled(false);
+        exportSequenceCoverageContextJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportSequenceCoverageContextJButton.setEnabled(false);
         exportSequenceCoverageContextJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportSequenceCoverageContextJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -903,6 +907,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         exportPeptidesJButton.setBorder(null);
         exportPeptidesJButton.setBorderPainted(false);
         exportPeptidesJButton.setContentAreaFilled(false);
+        exportPeptidesJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPeptidesJButton.setEnabled(false);
         exportPeptidesJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportPeptidesJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -1051,6 +1057,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         exportPsmsJButton.setBorder(null);
         exportPsmsJButton.setBorderPainted(false);
         exportPsmsJButton.setContentAreaFilled(false);
+        exportPsmsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPsmsJButton.setEnabled(false);
         exportPsmsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportPsmsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -1330,6 +1338,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         exportSpectrumJButton.setBorder(null);
         exportSpectrumJButton.setBorderPainted(false);
         exportSpectrumJButton.setContentAreaFilled(false);
+        exportSpectrumJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportSpectrumJButton.setEnabled(false);
         exportSpectrumJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         exportSpectrumJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -2387,7 +2397,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             });
 
             popupMenu.add(menuItem);
-            
+
             menuItem = new JMenuItem("Spectrum As MGF");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
@@ -2407,7 +2417,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             });
 
             popupMenu.add(menuItem);
-            
+
             menuItem = new JMenuItem("Spectrum As MGF");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
@@ -3629,6 +3639,13 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             } else {
                 psmTableToolTips.set(3, "Mass Error (Da)");
             }
+
+            // enable the contextual export options
+            exportProteinsJButton.setEnabled(true);
+            exportPeptidesJButton.setEnabled(true);
+            exportPsmsJButton.setEnabled(true);
+            exportSpectrumJButton.setEnabled(true);
+            exportSequenceCoverageContextJButton.setEnabled(true);
 
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);

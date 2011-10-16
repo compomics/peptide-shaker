@@ -149,18 +149,18 @@ public class StatsPanel extends javax.swing.JPanel {
         this.peptideShakerGUI = parent;
 
         initComponents();
-        
+
         // add the default values to the group selection
         ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{1, "Proteins"});
         ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{2, "Peptides"});
         ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{3, "PSMs"});
-        
+
         groupSelectionScrollPaneScrollPane.getViewport().setOpaque(false);
-        
+
         // the index column
         groupSelectionTable.getColumn(" ").setMaxWidth(30);
         groupSelectionTable.getColumn(" ").setMinWidth(30);
-        
+
         // set table properties
         groupSelectionTable.getTableHeader().setReorderingAllowed(false);
 
@@ -172,7 +172,7 @@ public class StatsPanel extends javax.swing.JPanel {
             fdrTxt.setBackground(confidenceTxt.getBackground());
             fnrTxt.setBackground(confidenceTxt.getBackground());
         }
-        
+
         // Initialize confidence plot
         scoreAxis = new LogAxis("Probabilistic Score");
         NumberAxis confidenceAxis = new NumberAxis("Confidence [%]");
@@ -828,6 +828,8 @@ public class StatsPanel extends javax.swing.JPanel {
         pepPlotExportJButton.setBorder(null);
         pepPlotExportJButton.setBorderPainted(false);
         pepPlotExportJButton.setContentAreaFilled(false);
+        pepPlotExportJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        pepPlotExportJButton.setEnabled(false);
         pepPlotExportJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         pepPlotExportJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -927,6 +929,8 @@ public class StatsPanel extends javax.swing.JPanel {
         fdrPlotExportJButton.setBorder(null);
         fdrPlotExportJButton.setBorderPainted(false);
         fdrPlotExportJButton.setContentAreaFilled(false);
+        fdrPlotExportJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        fdrPlotExportJButton.setEnabled(false);
         fdrPlotExportJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         fdrPlotExportJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -1048,6 +1052,8 @@ public class StatsPanel extends javax.swing.JPanel {
         confidencePlotExportJButton.setBorder(null);
         confidencePlotExportJButton.setBorderPainted(false);
         confidencePlotExportJButton.setContentAreaFilled(false);
+        confidencePlotExportJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        confidencePlotExportJButton.setEnabled(false);
         confidencePlotExportJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         confidencePlotExportJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -1155,6 +1161,8 @@ public class StatsPanel extends javax.swing.JPanel {
         fdrFnrPlotExportJButton.setBorder(null);
         fdrFnrPlotExportJButton.setBorderPainted(false);
         fdrFnrPlotExportJButton.setContentAreaFilled(false);
+        fdrFnrPlotExportJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        fdrFnrPlotExportJButton.setEnabled(false);
         fdrFnrPlotExportJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         fdrFnrPlotExportJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -1256,6 +1264,8 @@ public class StatsPanel extends javax.swing.JPanel {
         benefitPlotExportJButton.setBorder(null);
         benefitPlotExportJButton.setBorderPainted(false);
         benefitPlotExportJButton.setContentAreaFilled(false);
+        benefitPlotExportJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        benefitPlotExportJButton.setEnabled(false);
         benefitPlotExportJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
         benefitPlotExportJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -2596,7 +2606,6 @@ public class StatsPanel extends javax.swing.JPanel {
     private void benefitPlotExportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_benefitPlotExportJButtonActionPerformed
         new ExportGraphicsDialog(peptideShakerGUI, true, benefitCostChartPanel);
     }//GEN-LAST:event_benefitPlotExportJButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton applyButton;
     private javax.swing.JPanel benefitCostChartPanel;
@@ -2703,7 +2712,7 @@ public class StatsPanel extends javax.swing.JPanel {
         fdrSlider2.setEnabled(true);
         sensitivitySlider1.setEnabled(true);
         sensitivitySlider2.setEnabled(true);
-        
+
         // empty the group table
         while (groupSelectionTable.getRowCount() > 0) {
             ((DefaultTableModel) groupSelectionTable.getModel()).removeRow(0);
@@ -2719,7 +2728,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
         modifiedMaps.put(cpt, false);
         ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Proteins"});
-        
+
         if (peptideKeys.size() == 1) {
             peptideMap.put(cpt, peptideKeys.get(0));
             modifiedMaps.put(cpt, false);
@@ -2728,7 +2737,7 @@ public class StatsPanel extends javax.swing.JPanel {
             for (String pepitdeKey : peptideKeys) {
                 peptideMap.put(cpt, pepitdeKey);
                 modifiedMaps.put(cpt, false);
-                
+
                 if (pepitdeKey.equals("")) {
                     ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Not modified Peptides"});
                 } else if (pepitdeKey.equals(PeptideSpecificMap.DUSTBIN)) {
@@ -2747,12 +2756,20 @@ public class StatsPanel extends javax.swing.JPanel {
                 ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "PSMs"});
             }
         }
-        
+
         if (groupSelectionTable.getRowCount() > 0) {
             groupSelectionTable.setRowSelectionInterval(0, 0);
         }
 
         groupSelectionChanged();
+
+        // enable the contextual export options
+        pepPlotExportJButton.setEnabled(true);
+        fdrPlotExportJButton.setEnabled(true);
+        confidencePlotExportJButton.setEnabled(true);
+        fdrFnrPlotExportJButton.setEnabled(true);
+        benefitPlotExportJButton.setEnabled(true);
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }
 
@@ -2879,7 +2896,7 @@ public class StatsPanel extends javax.swing.JPanel {
             sensitivitySlider1.setValue(newPosition.intValue());
             thresholdTypeCmb.setSelectedIndex(lastThresholdType);
             thresholdInput.setText(lastThreshold + "");
-            
+
             if (currentResults.isClassicalEstimators()) {
                 fdrCombo1.setSelectedIndex(0);
             } else {
@@ -2925,7 +2942,7 @@ public class StatsPanel extends javax.swing.JPanel {
         if (minScore > 0) {
             scoreAxis.setSmallestValue(minScore);
         }
-        
+
         classicalAxis.setRange(0, maxFDR);
         probaAxis.setRange(0, maxFDR);
 
