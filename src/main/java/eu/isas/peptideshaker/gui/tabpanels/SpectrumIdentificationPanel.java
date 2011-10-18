@@ -17,12 +17,17 @@ import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.googlecode.charts4j.Color;
 import com.googlecode.charts4j.GCharts;
 import com.googlecode.charts4j.VennDiagram;
+import eu.isas.peptideshaker.export.FeaturesGenerator;
+import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import java.awt.Component;
 import java.awt.MediaTracker;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.URL;
@@ -54,6 +59,18 @@ import org.jfree.chart.plot.PlotOrientation;
  */
 public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
+    /**
+     * The progress dialog.
+     */
+    private ProgressDialogX progressDialog;
+
+    /**
+     * Indexes for the three main data tables.
+     */
+    private enum TableIndex {
+
+        SEARCH_ENGINE_PERFORMANCE, SPECTRUM_FILES, PSM_TABLES
+    };
     /**
      * The peptide sequence tooltips for the OMSSA table.
      */
@@ -1947,7 +1964,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportPsmsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPsmsJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+        copyTableContentToClipboard(TableIndex.PSM_TABLES);
     }//GEN-LAST:event_exportPsmsJButtonActionPerformed
 
     /**
@@ -2003,7 +2020,30 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportSearchEnginePerformanceJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSearchEnginePerformanceJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem menuItem = new JMenuItem("Table to Clipboard");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyTableContentToClipboard(TableIndex.SEARCH_ENGINE_PERFORMANCE);
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        menuItem = new JMenuItem("Venn Diagram");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                new ExportGraphicsDialog(peptideShakerGUI, true, vennDiagramButton);
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        popupMenu.show(exportSearchEnginePerformanceJButton, exportSearchEnginePerformanceJButton.getX(), exportSearchEnginePerformanceJButton.getY());
     }//GEN-LAST:event_exportSearchEnginePerformanceJButtonActionPerformed
 
     /**
@@ -2059,7 +2099,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param evt 
      */
     private void exportSpectrumSelectionJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumSelectionJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+        copyTableContentToClipboard(TableIndex.SPECTRUM_FILES);
     }//GEN-LAST:event_exportSpectrumSelectionJButtonActionPerformed
 
     /**
@@ -2870,5 +2910,158 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         spectrumSelectionChanged();
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }
+
+    /**
+     * Export the table contents to the clipboard.
+     * 
+     * @param index 
+     */
+    private void copyTableContentToClipboard(TableIndex index) {
+
+        final TableIndex tableIndex = index;
+
+        if (tableIndex == TableIndex.SEARCH_ENGINE_PERFORMANCE
+                || tableIndex == TableIndex.SPECTRUM_FILES
+                || tableIndex == TableIndex.PSM_TABLES) {
+
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Copying to Clipboard. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        String clipboardString = "";
+
+                        if (tableIndex == TableIndex.SEARCH_ENGINE_PERFORMANCE) {
+                            clipboardString = Util.tableToText(searchEngineTable, "\t", progressDialog, true);
+                        } else if (tableIndex == TableIndex.SPECTRUM_FILES) {
+                            clipboardString = Util.tableToText(spectrumTable, "\t", progressDialog, true);
+                        } else if (tableIndex == TableIndex.PSM_TABLES) {
+
+                            clipboardString += "PeptideShaker\n\n";
+                            clipboardString += "\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\tScore\tConfidence\tValidated\n";
+
+                            try {
+                                // the PeptideShaker PSM table
+                                String key = Spectrum.getSpectrumKey((String) fileNamesCmb.getSelectedItem(), (String) spectrumTable.getValueAt(spectrumTable.getSelectedRow(), 1));
+                                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
+                                PSParameter probabilities = new PSParameter();
+                                probabilities = (PSParameter) identification.getMatchParameter(key, probabilities);
+
+                                clipboardString += "1\t";
+
+                                ArrayList<String> parentProteins = spectrumMatch.getBestAssumption().getPeptide().getParentProteins();
+
+                                clipboardString += parentProteins.get(0);
+
+                                for (int i = 1; i < parentProteins.size(); i++) {
+                                    clipboardString += ", " + parentProteins.get(i);
+                                }
+
+                                clipboardString += "\t";
+
+                                clipboardString += spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsString(true) + "\t";
+                                clipboardString += FeaturesGenerator.getPeptideModificationsAsString(spectrumMatch.getBestAssumption().getPeptide()) + "\t";
+                                clipboardString += FeaturesGenerator.getPeptideModificationLocations(spectrumMatch.getBestAssumption().getPeptide(),
+                                        identification.getPeptideMatch(spectrumMatch.getBestAssumption().getPeptide().getKey())) + "\t";
+                                clipboardString += probabilities.getPsmScore() + "\t";
+                                clipboardString += probabilities.getPsmConfidence() + "\t";
+                                clipboardString += probabilities.isValidated() + "\n";
+
+
+                                // the search engine tables
+                                clipboardString += "\n\nOMSSA\n\n";
+                                clipboardString += "\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence\n";
+                                clipboardString += getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.OMSSA);
+                                
+                                clipboardString += "\n\nX!Tandem\n\n";
+                                clipboardString += "\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence\n";
+                                clipboardString += getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.XTANDEM);
+                                
+                                clipboardString += "\n\nMascot\n\n";
+                                clipboardString += "\tProtein(s)\tSequence\tVariable Modification\tLocation Confidence\te-value\tConfidence\n";
+                                clipboardString += getSearchEnginePsmTableAsString(spectrumMatch, probabilities, Advocate.MASCOT);
+                            
+                            } catch (Exception e) {
+                                peptideShakerGUI.catchException(e);
+                            }
+
+                        }
+
+                        StringSelection stringSelection = new StringSelection(clipboardString);
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(stringSelection, peptideShakerGUI);
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+
+                    } catch (Exception e) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+    }
+
+    /**
+     * Returns the contents of the given search engine psm table as a string.
+     * 
+     * @param spectrumMatch     the current spectrum match
+     * @param probabilities     the current probabilities
+     * @param advocate          the type, OMSSA, XTandem or Mascot, as coded in the Advocate class
+     * @return                  the contents of the given search engine psm table as a string
+     */
+    private String getSearchEnginePsmTableAsString(SpectrumMatch spectrumMatch, PSParameter probabilities, int advocate) {
+
+        String result = "";
+        
+        if (spectrumMatch.getAllAssumptions(advocate) != null) {
+
+            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(advocate).keySet());
+            Collections.sort(eValues);
+            int rank = 0;
+            for (double eValue : eValues) {
+                for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(advocate).get(eValue)) {
+                    probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
+
+                    result += ++rank + "\t";
+
+                    ArrayList<String> parentProteins = currentAssumption.getPeptide().getParentProteins();
+                    result += parentProteins.get(0);
+
+                    for (int i = 1; i < parentProteins.size(); i++) {
+                        result += ", " + parentProteins.get(i);
+                    }
+
+                    result += "\t";
+
+                    result += currentAssumption.getPeptide().getModifiedSequenceAsString(true) + "\t";
+                    result += FeaturesGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide()) + "\t";
+                    result += FeaturesGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),
+                            identification.getPeptideMatch(currentAssumption.getPeptide().getKey())) + "\t";
+
+                    result += currentAssumption.getEValue() + "\t";
+                    result += probabilities.getSearchEngineConfidence() + "\t";
+                }
+            }
+        }
+
+        return result;
     }
 }

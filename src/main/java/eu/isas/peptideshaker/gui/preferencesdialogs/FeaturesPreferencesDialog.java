@@ -1115,9 +1115,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
-                        feature = outputGenerator.getPeptidesOutput(progressDialog, null, false, true, peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
-                                peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(), peptideScore.isSelected(),
-                                peptideConfidence.isSelected(), true);
+                        feature = outputGenerator.getPeptidesOutput(progressDialog, null, null, false, true, 
+                                peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
+                                peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(), 
+                                peptideScore.isSelected(), peptideConfidence.isSelected(), true);
 
                         progressDialog.setIndeterminate(true);
                         progressDialog.setTitle("Saving File. Please Wait...");
@@ -1179,7 +1180,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
-                        feature = outputGenerator.getPeptidesOutput(progressDialog, null, false, false, peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
+                        feature = outputGenerator.getPeptidesOutput(progressDialog, null, null, false, false, 
+                                peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
                                 peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
                                 peptideScore.isSelected(), peptideConfidence.isSelected(), true);
 

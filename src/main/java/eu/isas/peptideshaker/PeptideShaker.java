@@ -35,6 +35,7 @@ import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -166,9 +167,12 @@ public class PeptideShaker {
      * @param inputMap          The input map
      * @param waitingDialog     A dialog to display the feedback
      * @param searchParameters
-     * @param annotationPreferences  
+     * @param annotationPreferences
+     * @throws IllegalArgumentException
+     * @throws IOException  
      */
-    public void processIdentifications(InputMap inputMap, WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) {
+    public void processIdentifications(InputMap inputMap, WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) 
+        throws IllegalArgumentException, IOException {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         if (!identification.memoryCheck()) {
@@ -209,11 +213,14 @@ public class PeptideShaker {
         try {
             waitingDialog.appendReport("Trying to resolve protein inference issues.");
             cleanProteinGroups(waitingDialog);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             waitingDialog.appendReport("An error occured while trying to resolve protein inference issues.");
-            e.printStackTrace();
+            throw e;
+        } catch (IOException e) {
+            waitingDialog.appendReport("An error occured while trying to resolve protein inference issues.");
+            throw e;
         }
-
+        
         waitingDialog.appendReport("Correcting protein probabilities.");
         proteinMap.estimateProbabilities(waitingDialog);
         attachProteinProbabilities();
@@ -990,7 +997,7 @@ public class PeptideShaker {
      * Solves protein inference issues when possible.
      * @throws Exception    exception thrown whenever it is attempted to attach two different spectrum matches to the same spectrum from the same search engine.
      */
-    private void cleanProteinGroups(WaitingDialog waitingDialog) throws Exception {
+    private void cleanProteinGroups(WaitingDialog waitingDialog) throws IOException, IllegalArgumentException {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
@@ -1191,13 +1198,9 @@ public class PeptideShaker {
      * @param proteinAccession the accession of the inspected protein
      * @return description words longer than 3 characters
      */
-    private ArrayList<String> parseDescription(String proteinAccession) {
-        String description = "";
-        try {
-            description = sequenceFactory.getHeader(proteinAccession).getDescription();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private ArrayList<String> parseDescription(String proteinAccession) throws IOException, IllegalArgumentException {
+        String description = sequenceFactory.getHeader(proteinAccession).getDescription();
+       
         ArrayList<String> result = new ArrayList<String>();
         for (String component : description.split(" ")) {
             if (component.length() > 3) {
@@ -1229,7 +1232,7 @@ public class PeptideShaker {
     }
 
     /**
-     * Replaces the needed PTMs by Peptide-Shaker PTMs in the factory.
+     * Replaces the needed PTMs by PeptideShaker PTMs in the factory.
      * @param searchParameters the search parameters containing the modification profile to use
      */
     public static void setPeptideShakerPTMs(SearchParameters searchParameters) {
@@ -1248,7 +1251,7 @@ public class PeptideShaker {
                     if (modType == -1) {
                         modType = sePtm.getType();
                     } else if (sePtm.getType() != modType) {
-                        modType = PTM.MODAA; // case difficult to handle so used the default AA option
+                        modType = PTM.MODAA; // case difficult to handle so use the default AA option
                     }
                     mass = sePtm.getMass();
                     utilitiesNames.add(utilitiesName);

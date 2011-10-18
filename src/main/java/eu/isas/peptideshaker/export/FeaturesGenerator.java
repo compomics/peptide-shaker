@@ -111,7 +111,7 @@ public class FeaturesGenerator {
                 result += "Description" + SEPARATOR;
             }
             if (sequenceCoverage) {
-                result += "Sequence Coverage" + SEPARATOR;
+                result += "Sequence Coverage (%)" + SEPARATOR;
             }
             if (nPeptides) {
                 result += "#Validated Peptides" + SEPARATOR;
@@ -121,7 +121,7 @@ public class FeaturesGenerator {
             }
             if (emPAI) {
                 result += "emPAI" + SEPARATOR;
-            } 
+            }
             if (nsaf) {
                 result += "NSAF" + SEPARATOR;
             }
@@ -143,14 +143,14 @@ public class FeaturesGenerator {
         int cpt, progress = 0, proteinCounter = 0;
         ProteinMatch proteinMatch;
         for (String proteinKey : proteinKeys) {
-            
+
             proteinPSParameter = (PSParameter) identification.getMatchParameter(proteinKey, proteinPSParameter);
             if (!onlyValidated || proteinPSParameter.isValidated() && !ProteinMatch.isDecoy(proteinKey)) {
-                
+
                 if (indexes) {
                     result += ++proteinCounter + SEPARATOR;
                 }
-                
+
                 proteinMatch = identification.getProteinMatch(proteinKey);
                 if (accession) {
                     result += proteinMatch.getMainMatch() + SEPARATOR;
@@ -172,76 +172,76 @@ public class FeaturesGenerator {
                 }
                 if (description) {
                     try {
-                    result += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR;
-                    }catch (Exception e) {
+                        result += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR;
+                    } catch (Exception e) {
                         result += "Protein not found" + SEPARATOR;
                     }
                 }
                 if (sequenceCoverage) {
                     try {
-                    result += peptideShakerGUI.estimateSequenceCoverage(proteinMatch, sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence()) + SEPARATOR;
-                    }catch (Exception e) {
+                        result += peptideShakerGUI.estimateSequenceCoverage(proteinMatch, sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence()) * 100 + SEPARATOR;
+                    } catch (Exception e) {
                         result += "Protein not found" + SEPARATOR;
                     }
                 }
-                
+
                 double emPAIScore = 0.0;
                 double nsafScore = 0.0;
-                
+
                 if (nPeptides || emPAI) {
                     try {
-                    Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                    cpt = 0;
-                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                        secondaryPSParameter = (PSParameter) identification.getMatchParameter(peptideKey, secondaryPSParameter);
-                        if (secondaryPSParameter.isValidated()) {
-                            cpt++;
-                        }
-                    }
-                    if (nPeptides) {
-                        result += cpt + SEPARATOR;
-                    }
-                    if (emPAI) {
-                        double pai = cpt;
-                        pai = pai / mainMatch.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
-                        double empai = Math.pow(10, pai) - 1;
-                        emPAIScore = empai;
-                    }
-                } catch (Exception e) {
-                    if (nPeptides) {
-                        result += "Protein not found" + SEPARATOR;
-                        emPAIScore = -1;
-                    }
-                }
-                }
-                if (nSpectra || nsaf) {
-                    try {
-                    Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                    cpt = 0;
-                    PeptideMatch peptideMatch;
-                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                        peptideMatch = identification.getPeptideMatch(peptideKey);
-                        for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                            secondaryPSParameter = (PSParameter) identification.getMatchParameter(spectrumKey, secondaryPSParameter);
+                        Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                        cpt = 0;
+                        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                            secondaryPSParameter = (PSParameter) identification.getMatchParameter(peptideKey, secondaryPSParameter);
                             if (secondaryPSParameter.isValidated()) {
                                 cpt++;
                             }
                         }
-                    }
-                    if (nSpectra) {
-                        result += cpt + SEPARATOR;
-                    }
-                    if (nsaf) {
-                        double index = cpt;
-                        index = index / mainMatch.getSequence().length();
-                        nsafScore = index;
-                    }
-                } catch (Exception e) {
-                    if (nSpectra) {
-                        result += "Protein not found" + SEPARATOR;
-                        nsafScore = -1;
+                        if (nPeptides) {
+                            result += cpt + SEPARATOR;
+                        }
+                        if (emPAI) {
+                            double pai = cpt;
+                            pai = pai / mainMatch.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
+                            double empai = Math.pow(10, pai) - 1;
+                            emPAIScore = empai;
+                        }
+                    } catch (Exception e) {
+                        if (nPeptides) {
+                            result += "Protein not found" + SEPARATOR;
+                            emPAIScore = -1;
+                        }
                     }
                 }
+                if (nSpectra || nsaf) {
+                    try {
+                        Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                        cpt = 0;
+                        PeptideMatch peptideMatch;
+                        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                            peptideMatch = identification.getPeptideMatch(peptideKey);
+                            for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                                secondaryPSParameter = (PSParameter) identification.getMatchParameter(spectrumKey, secondaryPSParameter);
+                                if (secondaryPSParameter.isValidated()) {
+                                    cpt++;
+                                }
+                            }
+                        }
+                        if (nSpectra) {
+                            result += cpt + SEPARATOR;
+                        }
+                        if (nsaf) {
+                            double index = cpt;
+                            index = index / mainMatch.getSequence().length();
+                            nsafScore = index;
+                        }
+                    } catch (Exception e) {
+                        if (nSpectra) {
+                            result += "Protein not found" + SEPARATOR;
+                            nsafScore = -1;
+                        }
+                    }
                 }
                 if (emPAI) {
                     result += emPAIScore + SEPARATOR;
@@ -249,7 +249,7 @@ public class FeaturesGenerator {
                 if (nsaf) {
                     result += nsafScore + SEPARATOR;
                 }
-                
+
                 if (score) {
                     result += proteinPSParameter.getProteinScore() + SEPARATOR;
                 }
@@ -270,13 +270,13 @@ public class FeaturesGenerator {
                 }
                 result += "\n";
             }
-            
+
             progress++;
             if (progressDialog != null) {
                 progressDialog.setValue(progress);
             }
         }
-        
+
         return result;
     }
 
@@ -285,6 +285,7 @@ public class FeaturesGenerator {
      * 
      * @param progressDialog the progress dialog (can be null)
      * @param peptideKeys
+     * @param peptidePdbArray   peptides mapping to the current pdb file, can be null
      * @param indexes 
      * @param onlyValidated
      * @param accession
@@ -299,7 +300,8 @@ public class FeaturesGenerator {
      * @return
      * @throws Exception  
      */
-    public String getPeptidesOutput(ProgressDialogX progressDialog, ArrayList<String> peptideKeys, boolean indexes, boolean onlyValidated, boolean accession,
+    public String getPeptidesOutput(ProgressDialogX progressDialog, ArrayList<String> peptideKeys,
+            ArrayList<String> peptidePdbArray, boolean indexes, boolean onlyValidated, boolean accession,
             boolean location, boolean sequence, boolean modifications, boolean ptmLocations,
             boolean nSpectra, boolean score, boolean confidence, boolean includeHeader) throws Exception {
 
@@ -336,6 +338,9 @@ public class FeaturesGenerator {
             if (nSpectra) {
                 result += "#Validated Spectra" + SEPARATOR;
             }
+            if (peptidePdbArray != null) {
+                result += "PDB" + SEPARATOR;
+            }
             if (score) {
                 result += "Score" + SEPARATOR;
             }
@@ -354,17 +359,17 @@ public class FeaturesGenerator {
         Peptide peptide;
         PeptideMatch peptideMatch;
         int progress = 0, peptideCounter = 0;
-        
+
         for (String peptideKey : peptideKeys) {
-            
+
             peptideMatch = identification.getPeptideMatch(peptideKey);
             peptidePSParameter = (PSParameter) identification.getMatchParameter(peptideKey, peptidePSParameter);
             if (!onlyValidated || peptidePSParameter.isValidated() && !peptideMatch.isDecoy()) {
-                
+
                 if (indexes) {
                     result += ++peptideCounter + SEPARATOR;
                 }
-                
+
                 peptide = peptideMatch.getTheoreticPeptide();
                 if (accession) {
                     boolean first = true;
@@ -378,109 +383,44 @@ public class FeaturesGenerator {
                     }
                     result += SEPARATOR;
                 }
-                
+
                 if (sequence) {
                     result += peptide.getSequence() + SEPARATOR;
                 }
-                
+
                 if (location) {
                     if (peptide.getParentProteins().size() == 1) {
                         try {
-                        ArrayList<Integer> positions = new ArrayList<Integer>();
-                        String tempSequence = sequenceFactory.getProtein(peptide.getParentProteins().get(0)).getSequence();
-                        int index = tempSequence.indexOf(peptide.getSequence());
-                        while (index >= 0 && tempSequence.length() > 1) {
-                            positions.add(index);
-                            tempSequence = tempSequence.substring(index + peptide.getSequence().length());
-                            index = tempSequence.indexOf(peptide.getSequence());
-                        }
-                        boolean first = true;
-                        for (int position : positions) {
-                            if (first) {
-                                first = false;
-                            } else {
-                                result += ", ";
+                            ArrayList<Integer> positions = new ArrayList<Integer>();
+                            String tempSequence = sequenceFactory.getProtein(peptide.getParentProteins().get(0)).getSequence();
+                            int index = tempSequence.indexOf(peptide.getSequence());
+                            while (index >= 0 && tempSequence.length() > 1) {
+                                positions.add(index);
+                                tempSequence = tempSequence.substring(index + peptide.getSequence().length());
+                                index = tempSequence.indexOf(peptide.getSequence());
                             }
-                            result += position;
-                        }
+                            boolean first = true;
+                            for (int position : positions) {
+                                if (first) {
+                                    first = false;
+                                } else {
+                                    result += ", ";
+                                }
+                                result += position;
+                            }
                         } catch (Exception e) {
                             result += "Error";
                         }
                     }
                     result += SEPARATOR;
                 }
-                
+
                 if (modifications) {
-                    HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
-                    for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                        if (modificationMatch.isVariable()) {
-                            if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                                modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
-                            }
-                            modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
-                        }
-                    }
-                    boolean first = true, first2;
-                    ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
-                    Collections.sort(mods);
-                    for (String mod : mods) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            result += ", ";
-                        }
-                        first2 = true;
-                        result += mod + "(";
-                        for (int aa : modMap.get(mod)) {
-                            if (first2) {
-                                first2 = false;
-                            } else {
-                                result += ", ";
-                            }
-                            result += aa;
-                        }
-                        result += ")";
-                    }
+                    result += getPeptideModificationsAsString(peptide);
                     result += SEPARATOR;
                 }
                 if (ptmLocations) {
-                    ArrayList<String> modList = new ArrayList<String>();
-                    for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
-                        if (modificationMatch.isVariable()) {
-                            if (!modList.contains(modificationMatch.getTheoreticPtm())) {
-                                modList.add(modificationMatch.getTheoreticPtm());
-                            }
-                        }
-                    }
-                    Collections.sort(modList);
-                    PSPtmScores ptmScores = new PSPtmScores();
-                    boolean first = true;
-                    for (String mod : modList) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            result += ", ";
-                        }
-                        ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
-                        result += mod + " (";
-                        if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                            int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
-                            if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                                result += "Not Scored"; // Well this should not happen
-                            } else if (ptmConfidence == PtmScoring.RANDOM) {
-                                result += "Random";
-                            } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                                result += "Doubtfull";
-                            } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                                result += "Confident";
-                            } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                                result += "Very Confident";
-                            }
-                        } else {
-                            result += "Not Scored";
-                        }
-                        result += ")";
-                    }
+                    result += getPeptideModificationLocations(peptide, peptideMatch);
                     result += SEPARATOR;
                 }
                 if (nSpectra) {
@@ -492,6 +432,9 @@ public class FeaturesGenerator {
                         }
                     }
                     result += cpt + SEPARATOR;
+                }
+                if (peptidePdbArray != null) {
+                    result += peptidePdbArray.contains(peptideKey) + SEPARATOR;
                 }
                 if (score) {
                     result += peptidePSParameter.getPeptideScore() + SEPARATOR;
@@ -607,16 +550,16 @@ public class FeaturesGenerator {
         SpectrumMatch spectrumMatch;
         int progress = 0, psmCounter = 0;
         for (String psmKey : psmKeys) {
-            
+
             spectrumMatch = identification.getSpectrumMatch(psmKey);
             psParameter = (PSParameter) identification.getMatchParameter(psmKey, psParameter);
             bestAssumption = spectrumMatch.getBestAssumption();
             if (!onlyValidated || psParameter.isValidated() && !bestAssumption.isDecoy()) {
-                
+
                 if (indexes) {
                     result += ++psmCounter + SEPARATOR;
                 }
-                
+
                 if (accessions) {
                     boolean first = true;
                     for (String protein : bestAssumption.getPeptide().getParentProteins()) {
@@ -924,6 +867,102 @@ public class FeaturesGenerator {
                 progressDialog.setValue(progress);
             }
         }
+        return result;
+    }
+
+    /**
+     * Returns the peptide modifications as a string.
+     * 
+     * @param peptide   the peptide
+     * @return          the peptide modifications as a string
+     */
+    public static String getPeptideModificationsAsString(Peptide peptide) {
+
+        String result = "";
+
+        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+            if (modificationMatch.isVariable()) {
+                if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                    modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                }
+                modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
+            }
+        }
+        boolean first = true, first2;
+        ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+        Collections.sort(mods);
+        for (String mod : mods) {
+            if (first) {
+                first = false;
+            } else {
+                result += ", ";
+            }
+            first2 = true;
+            result += mod + "(";
+            for (int aa : modMap.get(mod)) {
+                if (first2) {
+                    first2 = false;
+                } else {
+                    result += ", ";
+                }
+                result += aa;
+            }
+            result += ")";
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns the peptide modification location confidence as a string.
+     * 
+     * @param peptide       the peptide
+     * @param peptideMatch  the peptide match
+     * @return              the peptide modification location confidence as a string.
+     */
+    public static String getPeptideModificationLocations(Peptide peptide, PeptideMatch peptideMatch) {
+        
+        String result = "";
+        
+        ArrayList<String> modList = new ArrayList<String>();
+        for (ModificationMatch modificationMatch : peptide.getModificationMatches()) {
+            if (modificationMatch.isVariable()) {
+                if (!modList.contains(modificationMatch.getTheoreticPtm())) {
+                    modList.add(modificationMatch.getTheoreticPtm());
+                }
+            }
+        }
+        Collections.sort(modList);
+        PSPtmScores ptmScores = new PSPtmScores();
+        boolean first = true;
+        for (String mod : modList) {
+            if (first) {
+                first = false;
+            } else {
+                result += ", ";
+            }
+            ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+            result += mod + " (";
+            if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
+                if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                    result += "Not Scored"; // Well this should not happen
+                } else if (ptmConfidence == PtmScoring.RANDOM) {
+                    result += "Random";
+                } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                    result += "Doubtfull";
+                } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                    result += "Confident";
+                } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                    result += "Very Confident";
+                }
+            } else {
+                result += "Not Scored";
+            }
+            result += ")";
+        }
+
         return result;
     }
 }

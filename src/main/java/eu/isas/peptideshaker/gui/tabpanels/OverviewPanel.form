@@ -1465,7 +1465,7 @@
 
                                           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
                                           <SubComponents>
-                                            <Container class="javax.swing.JPanel" name="sequenceFragmentIonPlotsJPanel">
+                                            <Container class="javax.swing.JPanel" name="secondarySpectrumPlotsJPanel">
                                               <Properties>
                                                 <Property name="opaque" type="boolean" value="false"/>
                                               </Properties>
