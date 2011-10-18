@@ -259,19 +259,21 @@ public class FileImporter {
     /**
      * Returns the list of proteins which contain in their sequence the given peptide sequence.
      * 
-     * @param sequence  the tested peptide sequence
-     * @param waitingDialog the waiting dialog
-     * @return          a list of corresponding proteins found in the database
+     * @param peptideSequence   the tested peptide sequence
+     * @param waitingDialog     the waiting dialog
+     * @return                  a list of corresponding proteins found in the database
      */
-    private ArrayList<String> getProteins(String sequence, WaitingDialog waitingDialog) {
-        ArrayList<String> result = sequences.get(sequence);
+    private ArrayList<String> getProteins(String peptideSequence, WaitingDialog waitingDialog) {
+        
+        ArrayList<String> result = sequences.get(peptideSequence);
         boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !testing;
+
         if (result == null) {
             result = new ArrayList<String>();
             if (inspectAll) {
                 try {
                     for (String proteinKey : sequenceFactory.getAccessions()) {
-                        if (sequenceFactory.getProtein(proteinKey).getSequence().contains(sequence)) {
+                        if (sequenceFactory.getProtein(proteinKey).getSequence().contains(peptideSequence)) {
                             result.add(proteinKey);
                         }
                         if (waitingDialog.isRunCanceled()) {
@@ -279,15 +281,17 @@ public class FileImporter {
                         }
                     }
                 } catch (IOException e) {
-                    waitingDialog.appendReport("An error occured while accessing the fasta file. \nProtein to peptide link will be incomplete. Please restart the analysis.");
+                    waitingDialog.appendReport("An error occured while accessing the FASTA file."
+                            + "\nProtein to peptide link will be incomplete. Please restart the analysis.");
                     e.printStackTrace();
                     waitingDialog.setRunCanceled();
                 } catch (IllegalArgumentException e) {
-                    waitingDialog.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com. \nProtein to peptide link will be incomplete. Please restart the analysis.");
+                    waitingDialog.appendReport(e.getLocalizedMessage() + "\n" + "Please refer to the troubleshooting section at http://peptide-shaker.googlecode.com."
+                            + "\nProtein to peptide link will be incomplete. Please restart the analysis.");
                     e.printStackTrace();
                     waitingDialog.setRunCanceled();
                 }
-                sequences.put(sequence, result);
+                sequences.put(peptideSequence, result);
             }
         }
         return result;
@@ -672,7 +676,7 @@ public class FileImporter {
                 waitingDialog.setRunFinished();
 
             } catch (Exception e) {
-                waitingDialog.appendReport("An error occured while loading the identification files:");
+                waitingDialog.appendReport("An error occured while importing spectra:");
                 waitingDialog.appendReport(e.getLocalizedMessage());
                 waitingDialog.setRunCanceled();
                 e.printStackTrace();

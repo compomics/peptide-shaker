@@ -54,7 +54,9 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
@@ -86,6 +88,8 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -473,7 +477,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         errorPlotTypeCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         splitterMenu4 = new javax.swing.JMenu();
         exportGraphicsMenu = new javax.swing.JMenu();
+        exportSpectrumMenu = new javax.swing.JMenu();
         exportSpectrumGraphicsJMenuItem = new javax.swing.JMenuItem();
+        exportSequenceFragmentationGraphicsJMenuItem = new javax.swing.JMenuItem();
+        exportIntensityHistogramGraphicsJMenuItem = new javax.swing.JMenuItem();
+        exportMassErrorPlotGraphicsJMenuItem = new javax.swing.JMenuItem();
         bubblePlotJMenuItem = new javax.swing.JMenuItem();
         exportSpectrumValuesJMenuItem = new javax.swing.JMenuItem();
         splitterMenu6 = new javax.swing.JMenu();
@@ -806,13 +814,41 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         exportGraphicsMenu.setText("Export");
         exportGraphicsMenu.setEnabled(false);
 
-        exportSpectrumGraphicsJMenuItem.setText("Spectrum as Figure");
+        exportSpectrumMenu.setText("Figure");
+
+        exportSpectrumGraphicsJMenuItem.setText("Spectrum");
         exportSpectrumGraphicsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportSpectrumGraphicsJMenuItemActionPerformed(evt);
             }
         });
-        exportGraphicsMenu.add(exportSpectrumGraphicsJMenuItem);
+        exportSpectrumMenu.add(exportSpectrumGraphicsJMenuItem);
+
+        exportSequenceFragmentationGraphicsJMenuItem.setText("Sequence Fragmentation");
+        exportSequenceFragmentationGraphicsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportSequenceFragmentationGraphicsJMenuItemActionPerformed(evt);
+            }
+        });
+        exportSpectrumMenu.add(exportSequenceFragmentationGraphicsJMenuItem);
+
+        exportIntensityHistogramGraphicsJMenuItem.setText("Intensity Histogram");
+        exportIntensityHistogramGraphicsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportIntensityHistogramGraphicsJMenuItemActionPerformed(evt);
+            }
+        });
+        exportSpectrumMenu.add(exportIntensityHistogramGraphicsJMenuItem);
+
+        exportMassErrorPlotGraphicsJMenuItem.setText("Mass Error Plot");
+        exportMassErrorPlotGraphicsJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportMassErrorPlotGraphicsJMenuItemActionPerformed(evt);
+            }
+        });
+        exportSpectrumMenu.add(exportMassErrorPlotGraphicsJMenuItem);
+
+        exportGraphicsMenu.add(exportSpectrumMenu);
 
         bubblePlotJMenuItem.setText("Bubble Plot");
         bubblePlotJMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1185,6 +1221,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void newJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newJMenuItemActionPerformed
+
+        // reset enzymes, ptms and preferences
+        loadEnzymes();
+        loadModifications();
+        setDefaultPreferences();
+
         if (!dataSaved && experiment != null) {
             int value = JOptionPane.showConfirmDialog(this,
                     "Do you want to save the changes to " + experiment.getReference() + "?",
@@ -1799,7 +1841,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-
             File newFile = fileChooser.getSelectedFile();
             setLastSelectedFolder(newFile.getAbsolutePath());
 
@@ -1807,9 +1848,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
                         "Wrong File.", JOptionPane.ERROR_MESSAGE);
             } else {
-
                 updateRecentProjectsList(newFile);
-
                 importPeptideShakerFile(newFile);
             }
         }
@@ -2061,6 +2100,81 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 }//GEN-LAST:event_projectPropertiesMenuItemActionPerformed
 
     /**
+     * Export the sequence fragmentation as a figure.
+     * 
+     * @param evt 
+     */
+    private void exportSequenceFragmentationGraphicsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSequenceFragmentationGraphicsJMenuItemActionPerformed
+
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            new ExportGraphicsDialog(this, true, (Component) overviewPanel.getSequenceFragmentationPlot());
+        }
+//        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+//            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
+//        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+//            new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
+//        }
+
+        // @TODO: add export support for the other tabs
+    }//GEN-LAST:event_exportSequenceFragmentationGraphicsJMenuItemActionPerformed
+
+    /**
+     * Export the intensity histogram as a figure.
+     * 
+     * @param evt 
+     */
+    private void exportIntensityHistogramGraphicsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportIntensityHistogramGraphicsJMenuItemActionPerformed
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+
+            ChartPanel chartPanel = overviewPanel.getIntensityHistogramPlot().getChartPanel();
+            ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart());
+            tempChartPanel.setBounds(new Rectangle(chartPanel.getBounds().width * 5, chartPanel.getBounds().height * 5));
+
+            new ExportGraphicsDialog(this, true, tempChartPanel);
+        }
+//        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+//            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
+//        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+//            new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
+//        }
+
+        // @TODO: add export support for the other tabs
+    }//GEN-LAST:event_exportIntensityHistogramGraphicsJMenuItemActionPerformed
+
+    /**
+     * Export the mass error plot as a figure.
+     * 
+     * @param evt 
+     */
+    private void exportMassErrorPlotGraphicsJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMassErrorPlotGraphicsJMenuItemActionPerformed
+        int selectedTabIndex = allTabsJTabbedPane.getSelectedIndex();
+
+        if (selectedTabIndex == OVER_VIEW_TAB_INDEX) {
+            if (overviewPanel.getMassErrorPlot() != null) {
+
+                ChartPanel chartPanel = overviewPanel.getMassErrorPlot().getChartPanel();
+                ChartPanel tempChartPanel = new ChartPanel(chartPanel.getChart());
+                tempChartPanel.setBounds(new Rectangle(chartPanel.getBounds().width * 5, chartPanel.getBounds().height * 5));
+
+                new ExportGraphicsDialog(this, true, tempChartPanel);
+            } else {
+                JOptionPane.showMessageDialog(this, "No mass error plot to export!", "Export Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+//        else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
+//            new ExportGraphicsDialog(this, true, (Component) spectrumIdentificationPanel.getSpectrum());
+//        } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
+//            new ExportGraphicsDialog(this, true, (Component) ptmPanel.getSpectrum());
+//        }
+
+        // @TODO: add export support for the other tabs
+    }//GEN-LAST:event_exportMassErrorPlotGraphicsJMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
     private void loadEnzymes() {
@@ -2120,19 +2234,19 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     // change the peptide shaker icon to a "waiting version"
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-                    if (displaySpectrum) {
-                        progressDialog.setTitle("Loading Spectrum ID Tab. Please Wait...");
-                        spectrumIdentificationPanel.displayResults(progressDialog);
-                        progressDialog.setTitle("Loading Modifications Tab. Please Wait...");
-                        ptmPanel.displayResults(progressDialog);
-                    } else {
-                        spectrumJPanel.setEnabled(false);
-                        ptmPanel.setEnabled(false);
-                        progressDialog.setValue(identification.getPeptideIdentification().size() + identification.getSpectrumIdentification().size());
-                    }
-
-
                     try {
+
+                        if (displaySpectrum) {
+                            progressDialog.setTitle("Loading Spectrum ID Tab. Please Wait...");
+                            spectrumIdentificationPanel.displayResults(progressDialog);
+                            progressDialog.setTitle("Loading Modifications Tab. Please Wait...");
+                            ptmPanel.displayResults(progressDialog);
+                        } else {
+                            spectrumJPanel.setEnabled(false);
+                            ptmPanel.setEnabled(false);
+                            progressDialog.setValue(identification.getPeptideIdentification().size() + identification.getSpectrumIdentification().size());
+                        }
+
                         progressDialog.setTitle("Loading Overview Tab. Please Wait...");
                         overviewPanel.displayResults(progressDialog);
 
@@ -2147,42 +2261,51 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                         progressDialog.setTitle("Loading QC Plots Tab. Please Wait...");
                         qcPanel.displayResults(progressDialog);
+
+
+                        allTabsJTabbedPaneStateChanged(null);
+
+                        // make sure that all panels are looking the way they should
+                        repaintPanels();
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        // return the peptide shaker icon to the standard version
+                        tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                        // enable the menu items depending on a project being open
+                        saveMenuItem.setEnabled(true);
+                        proteinFilterJMenuItem.setEnabled(true);
+                        identificationFeaturesMenu.setEnabled(true);
+                        followUpAnalysisMenu.setEnabled(true);
+                        projectPropertiesMenuItem.setEnabled(true);
+                        spectrumCountingMenuItem.setEnabled(true);
+                        ionsMenu.setEnabled(true);
+                        lossMenu.setEnabled(true);
+                        otherMenu.setEnabled(true);
+                        chargeMenu.setEnabled(true);
+                        settingsMenu.setEnabled(true);
+                        exportGraphicsMenu.setEnabled(true);
+                        helpJMenu.setEnabled(true);
                     } catch (Exception e) {
+
+                        if (progressDialog != null) {
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+                        }
+
                         e.printStackTrace();
-                        JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\nSee /conf/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
+                        catchException(e);
+                        JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\n"
+                                + "See /conf/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
                     }
-
-                    allTabsJTabbedPaneStateChanged(null);
-
-                    // make sure that all panels are looking the way they should
-                    repaintPanels();
-
-                    progressDialog.setVisible(false);
-                    progressDialog.dispose();
-
-                    // return the peptide shaker icon to the standard version
-                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                    // enable the menu items depending on a project being open
-                    saveMenuItem.setEnabled(true);
-                    proteinFilterJMenuItem.setEnabled(true);
-                    identificationFeaturesMenu.setEnabled(true);
-                    followUpAnalysisMenu.setEnabled(true);
-                    projectPropertiesMenuItem.setEnabled(true);
-                    spectrumCountingMenuItem.setEnabled(true);
-                    ionsMenu.setEnabled(true);
-                    lossMenu.setEnabled(true);
-                    otherMenu.setEnabled(true);
-                    chargeMenu.setEnabled(true);
-                    settingsMenu.setEnabled(true);
-                    exportGraphicsMenu.setEnabled(true);
-                    helpJMenu.setEnabled(true);
                 }
             }.start();
 
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "A problem occured while displaying results. Please send the log file to the developers.", "Display problem", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "A problem occured while displaying results. Please send the log file to the developers.", "Display Problem", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -2231,8 +2354,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JCheckBoxMenuItem errorPlotTypeCheckBoxMenuItem;
     private javax.swing.JMenuItem exitJMenuItem;
     private javax.swing.JMenu exportGraphicsMenu;
+    private javax.swing.JMenuItem exportIntensityHistogramGraphicsJMenuItem;
     private javax.swing.JMenu exportJMenu;
+    private javax.swing.JMenuItem exportMassErrorPlotGraphicsJMenuItem;
+    private javax.swing.JMenuItem exportSequenceFragmentationGraphicsJMenuItem;
     private javax.swing.JMenuItem exportSpectrumGraphicsJMenuItem;
+    private javax.swing.JMenu exportSpectrumMenu;
     private javax.swing.JMenuItem exportSpectrumValuesJMenuItem;
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JMenu filterMenu;
@@ -3498,8 +3625,14 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         }
     }
 
+    /**
+     * Returns the exception type.
+     * 
+     * @param e the exception to get the type fro
+     * @return  the exception type as a string
+     */
     private String getExceptionType(Exception e) {
-        if (e.getLocalizedMessage()==null) {
+        if (e.getLocalizedMessage() == null) {
             return "null pointer";
         } else if (e.getLocalizedMessage().startsWith("Protein not found")) {
             return "Protein not found";
@@ -3783,7 +3916,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void updateAnnotationMenuBarVisableOptions(boolean showSpectrumOptions, boolean showBubblePlotOptions, boolean showIonTableOptions) {
         allCheckBoxMenuItem.setVisible(showSpectrumOptions);
         exportSpectrumGraphicsJMenuItem.setVisible(showSpectrumOptions);
-
+        exportSpectrumMenu.setVisible(showSpectrumOptions);
+        
+       // @TODO: remove this when the other tabs also use the extended spectrum panel!
+        exportSequenceFragmentationGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
+        exportIntensityHistogramGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
+        exportMassErrorPlotGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
+            
         barsCheckBoxMenuItem.setVisible(showBubblePlotOptions);
         bubblePlotJMenuItem.setVisible(showBubblePlotOptions);
         bubbleScaleJMenuItem.setVisible(showBubblePlotOptions);
@@ -4005,7 +4144,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
     /**
      * Imports informations from a peptide shaker file.
-     * Code originally in the NewDialog class: today, I will boost my statistics ;-)
      *
      * @param aPsFile    the peptide shaker file
      */
@@ -4032,6 +4170,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             public void run() {
 
                 try {
+                    // reset enzymes, ptms and preferences
+                    loadEnzymes();
+                    loadModifications();
+                    setDefaultPreferences();
+
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
@@ -4055,7 +4198,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
 
                         JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
-                        fileChooser.setDialogTitle("Open Fasta File");
+                        fileChooser.setDialogTitle("Open FASTA File");
 
                         FileFilter filter = new FileFilter() {
 
@@ -4081,7 +4224,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             setLastSelectedFolder(fastaFile.getAbsolutePath());
                             searchParameters.setFastaFile(fastaFile);
                             try {
-                                progressDialog.setTitle("Importing fasta file, please wait...");
+                                progressDialog.setTitle("Importing FASTA File. Please Wait...");
                                 SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile(), progressDialog.getProgressBar());
                             } catch (Exception e2) {
                                 e2.printStackTrace();
@@ -4247,7 +4390,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     File mgfFile;
                     int cpt = 0;
-                    progressDialog.setTitle("Importing spectrum files, please wait...");
+                    progressDialog.setTitle("Importing Spectrum Files. Please Wait...");
                     for (String spectrumFile : spectrumFiles) {
                         progressDialog.setIndeterminate(false);
                         progressDialog.setMax(spectrumFiles.size() + 1);
@@ -4318,6 +4461,27 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public void exportSpectrumAsFigure() {
         exportSpectrumGraphicsJMenuItemActionPerformed(null);
+    }
+    
+    /**
+     * Export the current sequence fragmentation as a figure.
+     */
+    public void exportSequenceFragmentationAsFigure() {
+        exportSequenceFragmentationGraphicsJMenuItemActionPerformed(null);
+    }
+    
+    /**
+     * Export the current intensity histogram as a figure.
+     */
+    public void exportIntensityHistogramAsFigure() {
+        exportIntensityHistogramGraphicsJMenuItemActionPerformed(null);
+    }
+    
+    /**
+     * Export the current mass error plot as a figure.
+     */
+    public void exportMassErrorPlotAsFigure() {
+        exportMassErrorPlotGraphicsJMenuItemActionPerformed(null);
     }
 
     /**

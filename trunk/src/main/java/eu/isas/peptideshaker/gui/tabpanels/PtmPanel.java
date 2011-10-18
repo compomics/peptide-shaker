@@ -18,6 +18,8 @@ import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import com.compomics.util.gui.protein.ModificationProfile;
+import eu.isas.peptideshaker.export.FeaturesGenerator;
+import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -25,6 +27,9 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -56,6 +61,18 @@ import org.jfree.chart.plot.PlotOrientation;
  */
 public class PtmPanel extends javax.swing.JPanel {
 
+    /**
+     * The progress dialog.
+     */
+    private ProgressDialogX progressDialog;
+
+    /**
+     * Indexes for the data tables.
+     */
+    private enum TableIndex {
+
+        MODIFIED_PEPTIDES_TABLE, RELATED_PEPTIDES_TABLE, MODIFIED_PSMS_TABLE, RELATED_PSMS_TABLE
+    };
     /**
      * The currently selected row in the PTM table.
      */
@@ -116,6 +133,14 @@ public class PtmPanel extends javax.swing.JPanel {
      * The current spectrum panel for the upper psm.
      */
     private SpectrumPanel spectrum;
+    /**
+     * Protein inference map, key: pi type, element: pi as a string.
+     */
+    private HashMap<Integer, String> proteinInferenceTooltipMap;
+    /**
+     * PTM confidence tooltip map, key: ptm confidence type, element: ptm confidence as a string.
+     */
+    private HashMap<Integer, String> ptmConfidenceTooltipMap;
 
     /**
      * Creates a new PTM tab.
@@ -208,7 +233,7 @@ public class PtmPanel extends javax.swing.JPanel {
         proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED); // UNRELATED
 
         // set up the protein inference tooltip map
-        HashMap<Integer, String> proteinInferenceTooltipMap = new HashMap<Integer, String>();
+        proteinInferenceTooltipMap = new HashMap<Integer, String>();
         proteinInferenceTooltipMap.put(PSParameter.NOT_GROUP, "Unique to a single protein");
         proteinInferenceTooltipMap.put(PSParameter.ISOFORMS, "Belongs to a group of isoforms");
         proteinInferenceTooltipMap.put(PSParameter.ISOFORMS_UNRELATED, "Belongs to a group of isoforms and unrelated proteins");
@@ -226,7 +251,7 @@ public class PtmPanel extends javax.swing.JPanel {
         ptmConfidenceColorMap.put(PtmScoring.VERY_CONFIDENT, peptideShakerGUI.getSparklineColor());
 
         // set up the PTM confidence tooltip map
-        HashMap<Integer, String> ptmConfidenceTooltipMap = new HashMap<Integer, String>();
+        ptmConfidenceTooltipMap = new HashMap<Integer, String>();
         ptmConfidenceTooltipMap.put(-1, "(No PTMs)");
         ptmConfidenceTooltipMap.put(PtmScoring.RANDOM, "Random Assignment");
         ptmConfidenceTooltipMap.put(PtmScoring.DOUBTFUL, "Doubtful Assignment");
@@ -674,7 +699,7 @@ public class PtmPanel extends javax.swing.JPanel {
         modifiedPeptidesLayeredPane.add(modificationProfileHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportModifiedPeptideProfileJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportModifiedPeptideProfileJButton.setToolTipText("Copy to Clipboard");
+        exportModifiedPeptideProfileJButton.setToolTipText("Export");
         exportModifiedPeptideProfileJButton.setBorder(null);
         exportModifiedPeptideProfileJButton.setBorderPainted(false);
         exportModifiedPeptideProfileJButton.setContentAreaFilled(false);
@@ -819,7 +844,7 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptiesLayeredPane.add(relatedProfileHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         exportRelatedPeptideProfileJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportRelatedPeptideProfileJButton.setToolTipText("Copy to Clipboard");
+        exportRelatedPeptideProfileJButton.setToolTipText("Export");
         exportRelatedPeptideProfileJButton.setBorder(null);
         exportRelatedPeptideProfileJButton.setBorderPainted(false);
         exportRelatedPeptideProfileJButton.setContentAreaFilled(false);
@@ -2151,7 +2176,30 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * @param evt 
      */
     private void exportModifiedPeptideProfileJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportModifiedPeptideProfileJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem menuItem = new JMenuItem("Table to Clipboard");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyTableContentToClipboard(TableIndex.MODIFIED_PEPTIDES_TABLE);
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        menuItem = new JMenuItem("Modification Profile Plot");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                new ExportGraphicsDialog(peptideShakerGUI, true, modificationProfileSelectedPeptideJPanel.getComponent(1));
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        popupMenu.show(exportModifiedPeptideProfileJButton, exportModifiedPeptideProfileJButton.getX(), exportModifiedPeptideProfileJButton.getY());
     }//GEN-LAST:event_exportModifiedPeptideProfileJButtonActionPerformed
 
     /**
@@ -2207,7 +2255,33 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * @param evt 
      */
     private void exportRelatedPeptideProfileJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRelatedPeptideProfileJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem menuItem = new JMenuItem("Table to Clipboard");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyTableContentToClipboard(TableIndex.RELATED_PEPTIDES_TABLE);
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        if (modificationProfileRelatedPeptideJPanel.getComponentCount() == 2) {
+
+            menuItem = new JMenuItem("Modification Profile Plot");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    new ExportGraphicsDialog(peptideShakerGUI, true, modificationProfileRelatedPeptideJPanel.getComponent(1));
+                }
+            });
+
+            popupMenu.add(menuItem);
+        }
+
+        popupMenu.show(exportRelatedPeptideProfileJButton, exportRelatedPeptideProfileJButton.getX(), exportRelatedPeptideProfileJButton.getY());
     }//GEN-LAST:event_exportRelatedPeptideProfileJButtonActionPerformed
 
     /**
@@ -2263,7 +2337,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * @param evt 
      */
     private void exportModifiedPsmsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportModifiedPsmsJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+        copyTableContentToClipboard(TableIndex.MODIFIED_PSMS_TABLE);
     }//GEN-LAST:event_exportModifiedPsmsJButtonActionPerformed
 
     /**
@@ -2319,7 +2393,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * @param evt 
      */
     private void exportRelatedPsmsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRelatedPsmsJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+        copyTableContentToClipboard(TableIndex.RELATED_PSMS_TABLE);
     }//GEN-LAST:event_exportRelatedPsmsJButtonActionPerformed
 
     /**
@@ -3478,20 +3552,24 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
             if (selectedPeptideProfile) {
                 modificationProfileSelectedPeptideJPanel.removeAll();
-                sequenceModificationPanel.setOpaque(false);
+                sequenceModificationPanel.setOpaque(true);
+                sequenceModificationPanel.setBackground(Color.WHITE);
                 sequenceModificationPanel.setMinimumSize(new Dimension(sequenceModificationPanel.getPreferredSize().width, sequenceModificationPanel.getHeight()));
                 JPanel tempPanel = new JPanel();
-                tempPanel.setOpaque(false);
+                tempPanel.setBackground(Color.WHITE);
+                tempPanel.setOpaque(true);
                 modificationProfileSelectedPeptideJPanel.add(tempPanel);
                 modificationProfileSelectedPeptideJPanel.add(sequenceModificationPanel);
                 modificationProfileSelectedPeptideJPanel.revalidate();
                 modificationProfileSelectedPeptideJPanel.repaint();
             } else {
                 modificationProfileRelatedPeptideJPanel.removeAll();
-                sequenceModificationPanel.setOpaque(false);
+                sequenceModificationPanel.setOpaque(true);
+                sequenceModificationPanel.setBackground(Color.WHITE);
                 sequenceModificationPanel.setMinimumSize(new Dimension(sequenceModificationPanel.getPreferredSize().width, sequenceModificationPanel.getHeight()));
                 JPanel tempPanel = new JPanel();
-                tempPanel.setOpaque(false);
+                tempPanel.setBackground(Color.WHITE);
+                tempPanel.setOpaque(true);
                 modificationProfileRelatedPeptideJPanel.add(tempPanel);
                 modificationProfileRelatedPeptideJPanel.add(sequenceModificationPanel);
                 modificationProfileRelatedPeptideJPanel.revalidate();
@@ -3574,5 +3652,164 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Export the table contents to the clipboard.
+     * 
+     * @param index 
+     */
+    private void copyTableContentToClipboard(TableIndex index) {
+
+        final TableIndex tableIndex = index;
+
+        if (tableIndex == TableIndex.MODIFIED_PEPTIDES_TABLE
+                || tableIndex == TableIndex.RELATED_PEPTIDES_TABLE
+                || tableIndex == TableIndex.MODIFIED_PSMS_TABLE
+                || tableIndex == TableIndex.RELATED_PSMS_TABLE) {
+
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Copying to Clipboard. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        String clipboardString = "";
+
+                        if (tableIndex == TableIndex.MODIFIED_PEPTIDES_TABLE) {
+                            clipboardString = getPeptidesTableAsString(true);
+                        } else if (tableIndex == TableIndex.RELATED_PEPTIDES_TABLE) {
+                            clipboardString = getPeptidesTableAsString(false);
+                        } else if (tableIndex == TableIndex.MODIFIED_PSMS_TABLE) {
+                            clipboardString = getPsmTableAsString(true);
+                        } else if (tableIndex == TableIndex.RELATED_PSMS_TABLE) {
+                            clipboardString = getPsmTableAsString(false);
+                        }
+
+                        StringSelection stringSelection = new StringSelection(clipboardString);
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(stringSelection, peptideShakerGUI);
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+
+                    } catch (Exception e) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
+    }
+
+    /**
+     * Returns the given peptides table as a string.
+     * 
+     * @param modifiedPeptides  if true the modified peptides table is converted, 
+     *                          false converts the related peptides table.
+     * @return                  the peptide table convered to a string
+     */
+    private String getPeptidesTableAsString(boolean modifiedPeptides) {
+
+        String results = "\tPI\tSequence\tVariable Modification\tLocation Confidence\tPeptide Confidence\tPeptide Validated\n";
+
+        JTable table;
+        ArrayList<String> peptides;
+
+        if (modifiedPeptides) {
+            table = peptidesTable;
+            peptides = displayedPeptides;
+        } else {
+            table = relatedPeptidesTable;
+            peptides = relatedPeptides;
+        }
+
+        progressDialog.setMax(table.getRowCount());
+
+        for (int i = 0; i < table.getRowCount(); i++) {
+            results += (i + 1) + "\t";
+            progressDialog.incrementValue();
+
+            PSParameter probabilities = new PSParameter();
+            probabilities = (PSParameter) identification.getMatchParameter(peptides.get(i), probabilities);
+            results += proteinInferenceTooltipMap.get(probabilities.getGroupClass()) + "\t";
+
+            results += identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide().getModifiedSequenceAsString(true) + "\t";
+            results += FeaturesGenerator.getPeptideModificationsAsString(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide()) + "\t";
+            results += FeaturesGenerator.getPeptideModificationLocations(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide(),
+                    identification.getPeptideMatch(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide().getKey())) + "\t";
+
+            probabilities = new PSParameter();
+            probabilities = (PSParameter) identification.getMatchParameter(peptides.get(i), probabilities);
+            results += probabilities.getPeptideConfidence() + "\t";
+
+            probabilities = new PSParameter();
+            probabilities = (PSParameter) identification.getMatchParameter(peptides.get(i), probabilities);
+            results += probabilities.isValidated() + "\n";
+        }
+
+        return results;
+    }
+
+    /**
+     * Returns the given psm table as a string.
+     * 
+     * @param modifiedPeptides  if true the modified psms table is converted, 
+     *                          false converts the related psms table.
+     * @return                  the psm table convered to a string
+     */
+    private String getPsmTableAsString(boolean modifiedPeptides) {
+
+        String results = "\tSequence\tVariable Modification\tLocation Confidence\tCharge\tPSM Validated\n";
+
+        try {
+
+            JTable table;
+
+            if (modifiedPeptides) {
+                table = selectedPsmsTable;
+            } else {
+                table = relatedPsmsTable;
+            }
+
+            progressDialog.setMax(table.getRowCount());
+
+            for (int i = 0; i < table.getRowCount(); i++) {
+                results += (i + 1) + "\t";
+                progressDialog.incrementValue();
+
+                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(!modifiedPeptides)).getSpectrumMatches().get(i);
+                results += identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsString(true) + "\t";
+                results += FeaturesGenerator.getPeptideModificationsAsString(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide()) + "\t";
+                results += FeaturesGenerator.getPeptideModificationLocations(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide(),
+                        identification.getPeptideMatch(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getKey())) + "\t";
+
+                results += peptideShakerGUI.getPrecursor(spectrumKey).getCharge().value + "\t";
+
+                PSParameter probabilities = new PSParameter();
+                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(!modifiedPeptides)).getSpectrumMatches().get(i);
+                probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, probabilities);
+                results += probabilities.isValidated() + "\n";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            peptideShakerGUI.catchException(e);
+        }
+
+        return results;
     }
 }

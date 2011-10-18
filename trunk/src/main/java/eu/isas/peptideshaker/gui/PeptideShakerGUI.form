@@ -336,14 +336,45 @@
             <Property name="enabled" type="boolean" value="false"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="exportSpectrumGraphicsJMenuItem">
+            <Menu class="javax.swing.JMenu" name="exportSpectrumMenu">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Spectrum as Figure"/>
+                <Property name="text" type="java.lang.String" value="Figure"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportSpectrumGraphicsJMenuItemActionPerformed"/>
-              </Events>
-            </MenuItem>
+              <SubComponents>
+                <MenuItem class="javax.swing.JMenuItem" name="exportSpectrumGraphicsJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Spectrum"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportSpectrumGraphicsJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="exportSequenceFragmentationGraphicsJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Sequence Fragmentation"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportSequenceFragmentationGraphicsJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="exportIntensityHistogramGraphicsJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Intensity Histogram"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportIntensityHistogramGraphicsJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+                <MenuItem class="javax.swing.JMenuItem" name="exportMassErrorPlotGraphicsJMenuItem">
+                  <Properties>
+                    <Property name="text" type="java.lang.String" value="Mass Error Plot"/>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportMassErrorPlotGraphicsJMenuItemActionPerformed"/>
+                  </Events>
+                </MenuItem>
+              </SubComponents>
+            </Menu>
             <MenuItem class="javax.swing.JMenuItem" name="bubblePlotJMenuItem">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Bubble Plot"/>

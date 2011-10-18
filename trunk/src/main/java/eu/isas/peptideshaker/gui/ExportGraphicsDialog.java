@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.Export;
 import com.compomics.util.enumeration.ImageType;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +30,10 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
      * The PeptideShaker parent. 
      */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The progress dialog.
+     */
+    private ProgressDialogX progressDialog;
 
     /**
      * Create and open a new ExportGraphicsDialog.
@@ -45,7 +50,7 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
-    
+
     /**
      * Create and open a new ExportPlot dialog.
      *
@@ -79,6 +84,7 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
         pdfJRadioButton = new javax.swing.JRadioButton();
         svgJRadioButton = new javax.swing.JRadioButton();
         exportJButton = new javax.swing.JButton();
+        cancelJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Export Plot");
@@ -144,6 +150,13 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
             }
         });
 
+        cancelJButton.setText("Cancel");
+        cancelJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cancelJButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -153,18 +166,25 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
                 .addComponent(plottingTypeJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
-                .addContainerGap(164, Short.MAX_VALUE)
+                .addContainerGap(93, Short.MAX_VALUE)
                 .addComponent(exportJButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cancelJButton)
                 .addContainerGap())
         );
+
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelJButton, exportJButton});
+
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(plottingTypeJPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(exportJButton)
-                .addGap(11, 11, 11))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelJButton)
+                    .addComponent(exportJButton))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -189,9 +209,8 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
      */
     private void exportJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportJButtonActionPerformed
 
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         this.setVisible(false);
-
-        peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         
         final JFileChooser chooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
 
@@ -203,13 +222,23 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
             savePanel(selectedFile, true);
         }
 
-        peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-        
-        this.dispose();
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportJButtonActionPerformed
+
+    /**
+     * Close the dialog.
+     * 
+     * @param evt 
+     */
+    private void cancelJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelJButtonActionPerformed
+        this.setVisible(false);
+        this.dispose();
+    }//GEN-LAST:event_cancelJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.ButtonGroup buttonGroup;
+    private javax.swing.JButton cancelJButton;
     private javax.swing.JButton exportJButton;
     private javax.swing.JRadioButton pdfJRadioButton;
     private javax.swing.JPanel plottingTypeJPanel;
@@ -225,75 +254,104 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
      * @param selectedFile      the file to export the chart to
      * @param showSavedMessage  if true, a message will be when the export is complete
      */
-    private void savePanel(String selectedFile, boolean showSavedMessage) {
+    private void savePanel(String selectedFile, boolean aShowSavedMessage) {
 
-        try {
+        final boolean showSavedMessage = aShowSavedMessage;
 
-            if (pngJRadioButton.isSelected()) {
-                if (!selectedFile.endsWith(ImageType.PNG.getExtension())) {
-                    selectedFile += ImageType.PNG.getExtension();
-                }
-            } else if (tiffJRadioButton.isSelected()) {
-                if (!selectedFile.endsWith(ImageType.TIFF.getExtension())) {
-                    selectedFile += ImageType.TIFF.getExtension();
-                }
-            } else if (pdfJRadioButton.isSelected()) {
-                if (!selectedFile.endsWith(ImageType.PDF.getExtension())) {
-                    selectedFile += ImageType.PDF.getExtension();
-                }
-            } else if (svgJRadioButton.isSelected()) {
-                if (!selectedFile.endsWith(ImageType.SVG.getExtension())) {
-                    selectedFile += ImageType.SVG.getExtension();
-                }
+        if (pngJRadioButton.isSelected()) {
+            if (!selectedFile.endsWith(ImageType.PNG.getExtension())) {
+                selectedFile += ImageType.PNG.getExtension();
             }
-
-            boolean saveFile = true;
-
-            if (new File(selectedFile).exists()) {
-                int option = JOptionPane.showConfirmDialog(this,
-                        "The file " + selectedFile + " already exists. Overwrite?",
-                        "Overwrite?", JOptionPane.YES_NO_CANCEL_OPTION);
-
-                if (option != JOptionPane.YES_OPTION) {
-                    saveFile = false;
-                }
+        } else if (tiffJRadioButton.isSelected()) {
+            if (!selectedFile.endsWith(ImageType.TIFF.getExtension())) {
+                selectedFile += ImageType.TIFF.getExtension();
             }
-
-            if (saveFile) {
-                setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-                ImageType currentImageType;
-
-                if (pngJRadioButton.isSelected()) {
-                    currentImageType = ImageType.PNG;
-                } else if (tiffJRadioButton.isSelected()) {
-                    currentImageType = ImageType.TIFF;
-                } else if (pdfJRadioButton.isSelected()) {
-                    currentImageType = ImageType.PDF;
-                } else { // svg selected
-                    currentImageType = ImageType.SVG;
-                }
-                
-                if (chartPanel != null) {
-                    Export.exportChart(chartPanel.getChart(), chartPanel.getBounds(), new File(selectedFile), currentImageType);
-                } else {
-                    Export.exportComponent(graphicsPanel, graphicsPanel.getBounds(), new File(selectedFile), currentImageType);
-                }
-
-                setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-                if (showSavedMessage) {
-                    JOptionPane.showMessageDialog(this, "Plot saved to " + selectedFile, "Plot Saved", JOptionPane.INFORMATION_MESSAGE);
-                }
+        } else if (pdfJRadioButton.isSelected()) {
+            if (!selectedFile.endsWith(ImageType.PDF.getExtension())) {
+                selectedFile += ImageType.PDF.getExtension();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Unable to export plot: " + e.getMessage(), "Error Exporting Plot", JOptionPane.INFORMATION_MESSAGE);
-        } catch (TranscoderException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Unable to export plot: " + e.getMessage(), "Error Exporting Plot", JOptionPane.INFORMATION_MESSAGE);
+        } else if (svgJRadioButton.isSelected()) {
+            if (!selectedFile.endsWith(ImageType.SVG.getExtension())) {
+                selectedFile += ImageType.SVG.getExtension();
+            }
+        }
+
+        boolean saveFile = true;
+
+        if (new File(selectedFile).exists()) {
+            int option = JOptionPane.showConfirmDialog(this,
+                    "The file " + selectedFile + " already exists. Overwrite?",
+                    "Overwrite?", JOptionPane.YES_NO_CANCEL_OPTION);
+
+            if (option != JOptionPane.YES_OPTION) {
+                saveFile = false;
+            }
+        }
+
+        if (saveFile) {
+            
+            peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            peptideShakerGUI.setLastSelectedFolder(selectedFile);
+
+            final String finalSelectedFile = selectedFile;
+            final ExportGraphicsDialog tempRef = this;
+
+            progressDialog = new ProgressDialogX(tempRef, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Saving Figure. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("SaveFigureThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        ImageType currentImageType;
+
+                        if (pngJRadioButton.isSelected()) {
+                            currentImageType = ImageType.PNG;
+                        } else if (tiffJRadioButton.isSelected()) {
+                            currentImageType = ImageType.TIFF;
+                        } else if (pdfJRadioButton.isSelected()) {
+                            currentImageType = ImageType.PDF;
+                        } else { // svg selected
+                            currentImageType = ImageType.SVG;
+                        }
+
+                        if (chartPanel != null) {
+                            Export.exportChart(chartPanel.getChart(), chartPanel.getBounds(), new File(finalSelectedFile), currentImageType);
+                        } else {
+                            Export.exportComponent(graphicsPanel, graphicsPanel.getBounds(), new File(finalSelectedFile), currentImageType);
+                        }
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                        
+                        if (showSavedMessage) {
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "Plot saved to " + finalSelectedFile, "Plot Saved", JOptionPane.INFORMATION_MESSAGE);
+                            tempRef.dispose();
+                        }
+                    } catch (IOException e) {
+                        tempRef.setVisible(false);
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(tempRef, "Unable to export plot: " + e.getMessage(), "Error Exporting Plot", JOptionPane.INFORMATION_MESSAGE);
+                        tempRef.dispose();
+                    } catch (TranscoderException e) {
+                        tempRef.setVisible(false);
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(tempRef, "Unable to export plot: " + e.getMessage(), "Error Exporting Plot", JOptionPane.INFORMATION_MESSAGE);
+                        tempRef.dispose();
+                    }
+                }
+            }.start();
         }
     }
 }

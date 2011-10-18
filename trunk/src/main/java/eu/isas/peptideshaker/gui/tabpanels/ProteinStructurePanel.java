@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
+import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
@@ -14,6 +15,8 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.pdbfinder.FindPdbForUniprotAccessions;
 import com.compomics.util.pdbfinder.pdb.PdbBlock;
 import com.compomics.util.pdbfinder.pdb.PdbParameter;
+import eu.isas.peptideshaker.export.FeaturesGenerator;
+import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
@@ -24,6 +27,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -58,6 +64,18 @@ import org.jmol.api.JmolViewer;
  */
 public class ProteinStructurePanel extends javax.swing.JPanel implements ProgressDialogParent {
 
+    /**
+     * Peptide keys that can be mapped to the current pdb file.
+     */
+    private ArrayList<String> peptidePdbArray;
+
+    /**
+     * Indexes for the three main data tables.
+     */
+    private enum TableIndex {
+
+        PROTEIN_TABLE, PEPTIDE_TABLE, PDB_MATCHES, PDB_CHAINS
+    };
     /**
      * If true, labels are shown for the modifications in the 3D structure.
      */
@@ -1962,7 +1980,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportProteinsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProteinsJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+        copyTableContentToClipboard(TableIndex.PROTEIN_TABLE);
     }//GEN-LAST:event_exportProteinsJButtonActionPerformed
 
     /**
@@ -2186,7 +2204,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPeptidesJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPeptidesJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+        copyTableContentToClipboard(TableIndex.PEPTIDE_TABLE);
     }//GEN-LAST:event_exportPeptidesJButtonActionPerformed
 
     /**
@@ -2242,7 +2260,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPdbMatchesJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPdbMatchesJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+        copyTableContentToClipboard(TableIndex.PDB_MATCHES);
     }//GEN-LAST:event_exportPdbMatchesJButtonActionPerformed
 
     /**
@@ -2298,7 +2316,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPdbChainsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPdbChainsJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+        copyTableContentToClipboard(TableIndex.PDB_CHAINS);
     }//GEN-LAST:event_exportPdbChainsJButtonActionPerformed
 
     /**
@@ -2354,7 +2372,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param evt 
      */
     private void exportPdbStructureJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPdbStructureJButtonActionPerformed
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+        new ExportGraphicsDialog(peptideShakerGUI, true, pdbPanel);
+
+        // @TODO: use Jmol's export options...
     }//GEN-LAST:event_exportPdbStructureJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton backboneJButton;
@@ -3041,6 +3061,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         int selectedChainIndex = (Integer) pdbChainsJTable.getValueAt(pdbChainsJTable.getSelectedRow(), 0);
         String currentChain = chains[selectedChainIndex - 1].getBlock();
 
+        peptidePdbArray = new ArrayList<String>();
 
         // iterate the peptide table and highlight the covered areas
         for (int i = 0; i < peptideTable.getRowCount(); i++) {
@@ -3061,6 +3082,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
                 if (chainSequence.indexOf(peptideSequence) != -1) {
                     peptideTable.setValueAt(true, i, peptideTable.getColumn("PDB").getModelIndex());
+                    peptidePdbArray.add(peptideKey);
                 }
             }
         }
@@ -3252,5 +3274,84 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      */
     public void updatePeptideProteinInference(int proteinInferenceType) {
         peptideTable.setValueAt(proteinInferenceType, peptideTable.getSelectedRow(), peptideTable.getColumn("PI").getModelIndex());
+    }
+
+    /**
+     * Export the table contents to the clipboard.
+     * 
+     * @param index 
+     */
+    private void copyTableContentToClipboard(TableIndex index) {
+
+        final TableIndex tableIndex = index;
+
+        if (tableIndex == TableIndex.PROTEIN_TABLE
+                || tableIndex == TableIndex.PEPTIDE_TABLE
+                || tableIndex == TableIndex.PDB_MATCHES
+                || tableIndex == TableIndex.PDB_CHAINS) {
+
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Copying to Clipboard. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("ExportThread") {
+
+                @Override
+                public void run() {
+                    try {
+                        String clipboardString = "";
+                        FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
+
+                        if (tableIndex == TableIndex.PROTEIN_TABLE) {
+                            ArrayList<String> selectedProteins = getDisplayedProteins();
+                            clipboardString = outputGenerator.getProteinsOutput(
+                                    progressDialog, selectedProteins, true, false, true, true,
+                                    true, true, true, true, true,
+                                    true, true, true, true);
+                        } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
+                            ArrayList<String> selectedPeptides = getDisplayedPeptides();
+                            clipboardString = outputGenerator.getPeptidesOutput(
+                                    progressDialog, selectedPeptides, peptidePdbArray, true, false, true, true,
+                                    true, true, true, true, true, true, true);
+                        } else if (tableIndex == TableIndex.PDB_MATCHES) {
+                            clipboardString = Util.tableToText(pdbMatchesJTable, "\t", progressDialog, true);
+                        } else if (tableIndex == TableIndex.PDB_CHAINS) {
+
+                            clipboardString += "\tChain\tPDB-Start\tPDB-End\tCoverage\n";
+
+                            for (int i = 0; i < pdbChainsJTable.getRowCount(); i++) {
+                                clipboardString += pdbChainsJTable.getValueAt(i, 0) + "\t";
+                                clipboardString += pdbChainsJTable.getValueAt(i, 1) + "\t";
+                                XYDataPoint[] pdbCoverage = (XYDataPoint[]) pdbChainsJTable.getValueAt(i, 2);
+                                clipboardString += pdbCoverage[0].getX() + "\t" + pdbCoverage[0].getY() + "\t";
+                                clipboardString += pdbChainsJTable.getValueAt(i, 3) + "\n";
+                            }
+                        }
+
+                        StringSelection stringSelection = new StringSelection(clipboardString);
+                        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(stringSelection, peptideShakerGUI);
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+
+                    } catch (Exception e) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
     }
 }

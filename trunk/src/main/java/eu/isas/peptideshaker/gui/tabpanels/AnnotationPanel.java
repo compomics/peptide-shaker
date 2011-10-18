@@ -1307,13 +1307,19 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
                             taxonomyJTextField.setText("Unknown");
                         }
                     } catch (IOException e) {
-                        peptideShakerGUI.catchException(e);
+                        JOptionPane.showMessageDialog(peptideShakerGUI, 
+                                "Could not access the UniProt web site. Check your Internet connection.", 
+                                "UniProt Not Available", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     } catch (RemoteDataAccessException e) {
-                        peptideShakerGUI.catchException(e);
+                        JOptionPane.showMessageDialog(peptideShakerGUI, 
+                                "Could not access the UniProt web site. Check your Internet connection.", 
+                                "UniProt Not Available", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     } catch (Exception e) {
-                        peptideShakerGUI.catchException(e);
+                        JOptionPane.showMessageDialog(peptideShakerGUI, 
+                                "Could not access the UniProt web site. Check your Internet connection.", 
+                                "UniProt Not Available", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
 
