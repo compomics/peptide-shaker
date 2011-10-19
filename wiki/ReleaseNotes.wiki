@@ -16,8 +16,8 @@
  * NEW FEATURE: The 10 last recently opened projects can now be opened directly from the File menu.
  * NEW FEATURE: Simpe export of identification features, and contextual exports for each panel.
  * NEW FEATURE: FASTA and spectrum files are now indexed and not loaded into memory anymore.
+ * NEW FEATURE: Identification matches are stored in a separate folder and not loaded in the memory anymore.
  * NEW FEATURE: Annotation intensity level slider and annotation accuracy sliders added to the spectrum plots.
- * NEW FEATURE: identification matches are stored in a separate folder and not loaded in the memory anymore.
  * FEATURE IMPROVEMENT: A global maximum is now used for the sparklines for all charge and mass error columns.
  * FEATURE IMPROVEMENT: Updated most of the help texts.
  * FEATURE IMPROVEMENT: The peptides are now sorted according to their number of spectra.
