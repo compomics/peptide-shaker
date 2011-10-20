@@ -54,7 +54,6 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -89,7 +88,6 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.xy.StandardXYBarPainter;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
@@ -3284,7 +3282,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         qcPanel.revalidate();
         qcPanel.repaint();
-
     }
 
     /**
@@ -3917,12 +3914,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         allCheckBoxMenuItem.setVisible(showSpectrumOptions);
         exportSpectrumGraphicsJMenuItem.setVisible(showSpectrumOptions);
         exportSpectrumMenu.setVisible(showSpectrumOptions);
-        
-       // @TODO: remove this when the other tabs also use the extended spectrum panel!
+
+        // @TODO: remove this when the other tabs also use the extended spectrum panel!
         exportSequenceFragmentationGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
         exportIntensityHistogramGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
         exportMassErrorPlotGraphicsJMenuItem.setVisible(allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX);
-            
+
         barsCheckBoxMenuItem.setVisible(showBubblePlotOptions);
         bubblePlotJMenuItem.setVisible(showBubblePlotOptions);
         bubbleScaleJMenuItem.setVisible(showBubblePlotOptions);
@@ -4462,21 +4459,21 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void exportSpectrumAsFigure() {
         exportSpectrumGraphicsJMenuItemActionPerformed(null);
     }
-    
+
     /**
      * Export the current sequence fragmentation as a figure.
      */
     public void exportSequenceFragmentationAsFigure() {
         exportSequenceFragmentationGraphicsJMenuItemActionPerformed(null);
     }
-    
+
     /**
      * Export the current intensity histogram as a figure.
      */
     public void exportIntensityHistogramAsFigure() {
         exportIntensityHistogramGraphicsJMenuItemActionPerformed(null);
     }
-    
+
     /**
      * Export the current mass error plot as a figure.
      */
@@ -4489,5 +4486,25 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public void exportBubblePlotAsFigure() {
         bubblePlotJMenuItemActionPerformed(null);
+    }
+
+    /**
+     * Update the display options for the overview tab.
+     * 
+     * @param displayProteins
+     * @param displayPeptidesAndPsms
+     * @param displayCoverage
+     * @param displaySpectrum 
+     */
+    public void setDisplayOptions(boolean displayProteins, boolean displayPeptidesAndPsms,
+            boolean displayCoverage, boolean displaySpectrum) {
+        proteinsJCheckBoxMenuItem.setSelected(displayProteins);
+        peptidesAndPsmsJCheckBoxMenuItem.setSelected(displayPeptidesAndPsms);
+        sequenceCoverageJCheckBoxMenuItem.setSelected(displayCoverage);
+        spectrumJCheckBoxMenuItem.setSelected(displaySpectrum);
+        
+        overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
+        overviewPanel.updateSeparators();
     }
 }
