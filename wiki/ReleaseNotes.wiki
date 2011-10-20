@@ -3,6 +3,12 @@
 
 ----
 
+*Changes in PeptideShaker 0.10.1 (October 20. 2011):*
+ * NEW FEATURE: Added hide options to all the contextual menus in the Overview tab.
+ * LIBRARY UPDATE: Updated uniprotjapi to version 2011.10, fixing a problem with the UniProt connection.
+
+----
+
 *Changes in PeptideShaker 0.10.0 (October 19. 2011):*
  * NEW FEATURE: QC plot tab added.
  * NEW FEATURE: Annotation tab with links to other protein resources.
@@ -38,6 +44,8 @@
  * LIBRARY UPDATE: Updated xtandem parser to version 1.3.5. 
  * LIBRARY UPDATE: Updated xtandem parser to version 1.4.6. 
  * LIBRARY UPDATE: Updated mascotdatfile to version 3.2.6.
+
+Download Count: 5
 
 ----
 
