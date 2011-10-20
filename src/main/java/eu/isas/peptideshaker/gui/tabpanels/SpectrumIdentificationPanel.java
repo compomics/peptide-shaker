@@ -1387,6 +1387,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
 
+        spectrumJSplitPane.setDividerLocation(spectrumJSplitPane.getWidth() / 2);
+        
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
 

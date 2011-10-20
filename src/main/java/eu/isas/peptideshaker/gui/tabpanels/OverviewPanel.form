@@ -1273,10 +1273,7 @@
                           <Layout>
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="spectrumLayeredPane" pref="500" max="32767" attributes="0"/>
-                                  </Group>
+                                  <Component id="spectrumLayeredPane" alignment="1" pref="510" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                             <DimensionLayout dim="1">

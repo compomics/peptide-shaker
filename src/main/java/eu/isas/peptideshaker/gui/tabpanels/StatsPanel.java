@@ -1745,6 +1745,10 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
 
+        leftPlotSplitPane.setDividerLocation(leftPlotSplitPane.getWidth() / 3);
+        estimatorsPlotSplitPane.setDividerLocation(estimatorsPlotSplitPane.getWidth() / 2);
+        rightPlotSplitPane.setDividerLocation(rightPlotSplitPane.getWidth() / 2);
+        
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
