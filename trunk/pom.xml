@@ -12,7 +12,7 @@
 
     <!-- Set the version number for the whole project -->
     <properties>
-        <version.number>0.10.0</version.number>
+        <version.number>0.10.1</version.number>
     </properties>
 
 
@@ -397,7 +397,7 @@
         <dependency>
             <groupId>uk.ac.ebi.uniprot.kraken</groupId>
             <artifactId>uniprotjapi</artifactId>
-            <version>2011.09</version>
+            <version>2011.10</version>
         </dependency>
         
     </dependencies>
