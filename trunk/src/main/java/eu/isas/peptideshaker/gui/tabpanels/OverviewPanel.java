@@ -1507,9 +1507,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         spectrumMainJPanel.setLayout(spectrumMainJPanelLayout);
         spectrumMainJPanelLayout.setHorizontalGroup(
             spectrumMainJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(spectrumMainJPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(spectrumLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 500, Short.MAX_VALUE))
+            .addComponent(spectrumLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
         );
         spectrumMainJPanelLayout.setVerticalGroup(
             spectrumMainJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

@@ -1425,14 +1425,6 @@ public class PtmPanel extends javax.swing.JPanel {
     private void peptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptidesTableKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
             peptidesTableMouseReleased(null);
-
-            try {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(
-                        displayedPeptides.get((Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1));
-                updateModificationProfile(peptideMatch, true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }//GEN-LAST:event_peptidesTableKeyReleased
 
@@ -1442,14 +1434,6 @@ public class PtmPanel extends javax.swing.JPanel {
     private void relatedPeptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_relatedPeptidesTableKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
             relatedPeptidesTableMouseReleased(null);
-
-            try {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(
-                        relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(relatedPeptidesTable.getSelectedRow(), 0) - 1));
-                updateModificationProfile(peptideMatch, false);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         }
     }//GEN-LAST:event_relatedPeptidesTableKeyReleased
 
@@ -1663,14 +1647,7 @@ public class PtmPanel extends javax.swing.JPanel {
             if (row != -1) {
 
                 peptidesTable.setRowSelectionInterval(row, row);
-
-                try {
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(displayedPeptides.get((Integer) peptidesTable.getValueAt(row, 0) - 1));
-                    updateModificationProfile(peptideMatch, true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+                
                 // open the protein inference at the petide level dialog
                 if (column == peptidesTable.getColumn("PI").getModelIndex()) {
                     try {
@@ -1690,6 +1667,7 @@ public class PtmPanel extends javax.swing.JPanel {
         updateRelatedPeptidesTable();
         updateSelectedPsmTable();
         updateRelatedPsmTable(false);
+        updateModificationProfiles();
     }//GEN-LAST:event_peptidesTableMouseReleased
 
     /**
@@ -1708,14 +1686,8 @@ public class PtmPanel extends javax.swing.JPanel {
 
             if (row != -1) {
 
-                try {
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(
-                            relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(relatedPeptidesTable.getSelectedRow(), 0) - 1));
-                    updateModificationProfile(peptideMatch, false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
+                relatedPeptidesTable.setRowSelectionInterval(row, row);
+                
                 // open the protein inference at the petide level dialog
                 if (column == relatedPeptidesTable.getColumn("PI").getModelIndex()) {
                     try {
@@ -1732,6 +1704,7 @@ public class PtmPanel extends javax.swing.JPanel {
         }
 
         updateRelatedPsmTable(true);
+        updateModificationProfiles();
     }//GEN-LAST:event_relatedPeptidesTableMouseReleased
 
     /**
@@ -2816,16 +2789,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 if (peptidesTable.getRowCount() > 0) {
                     peptidesTable.setRowSelectionInterval(0, 0);
                     peptidesTable.scrollRectToVisible(peptidesTable.getCellRect(0, 0, false));
-
-                    try {
-                        peptideMatch = identification.getPeptideMatch(displayedPeptides.get(
-                                (Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1));
-                        updateModificationProfile(peptideMatch, true);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
                     updateRelatedPeptidesTable();
+                    updateModificationProfiles();
                 } else {
                     modificationProfileSelectedPeptideJPanel.removeAll();
                     modificationProfileSelectedPeptideJPanel.revalidate();
@@ -2906,13 +2871,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         if (relatedPeptides.size() > 0) {
             relatedPeptidesTable.setRowSelectionInterval(0, 0);
             relatedPeptidesTable.scrollRectToVisible(relatedPeptidesTable.getCellRect(0, 0, false));
-            try {
-                PeptideMatch peptideMatch = identification.getPeptideMatch(relatedPeptides.get(
-                        (Integer) relatedPeptidesTable.getValueAt(relatedPeptidesTable.getSelectedRow(), 0) - 1));
-                updateModificationProfile(peptideMatch, false);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            updateModificationProfiles();
         } else {
             modificationProfileRelatedPeptideJPanel.removeAll();
         }
@@ -3575,9 +3534,17 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 modificationProfileRelatedPeptideJPanel.revalidate();
                 modificationProfileRelatedPeptideJPanel.repaint();
             }
-
+            
             double selectedPeptideProfileWidth = 1 - (sequenceModificationPanel.getPreferredSize().getWidth() / selectedPeptidesJSplitPane.getSize().getWidth());
             double relatedPeptideProfileWidth = 1 - (sequenceModificationPanel.getPreferredSize().getWidth() / relatedPeptidesJSplitPane.getSize().getWidth());
+            
+            if (modificationProfileSelectedPeptideJPanel.getComponentCount() == 2) { 
+                selectedPeptideProfileWidth = 1 - (modificationProfileSelectedPeptideJPanel.getComponent(1).getPreferredSize().getWidth() / selectedPeptidesJSplitPane.getSize().getWidth());
+            }
+            
+            if (modificationProfileRelatedPeptideJPanel.getComponentCount() == 2) { 
+                relatedPeptideProfileWidth = 1 - (modificationProfileRelatedPeptideJPanel.getComponent(1).getPreferredSize().getWidth() / relatedPeptidesJSplitPane.getSize().getWidth());
+            }
 
             double splitterLocation = Math.min(selectedPeptideProfileWidth, relatedPeptideProfileWidth);
 
