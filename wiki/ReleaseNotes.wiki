@@ -3,11 +3,19 @@
 
 ----
 
+*Changes in PeptideShaker 0.10.3 (October 24. 2011):*
+ * BUG FIX: The help text in the Modifications tab is now visible.
+ * LIBRARY UPDATE: Updated utilities to version 3.2.22, which now also supports the special amino acid Selenocysteine (U).
+
+----
+
 *Changes in PeptideShaker 0.10.2 (October 21. 2011):*
  * BUG FIX: Fixed a minor GUI issue related to the left hand part of the spectrum panel not aligning correctly when the peptide/psm panel was hidden.
  * BUG FIX: Fixed some resizing issues for modification profile plots in the modification tab where part of the profile could be cut off if one profile was longer than the other.
  * BUG FIX: Fixed some resizing issues in the Spectrum ID and Validation tabs.
  * LIBRARY UPDATE: Updated utilities to version 3.2.21, which now supports the special Mascot amino acids B, Z and X.
+
+Download Count: 4
 
 ----
 
