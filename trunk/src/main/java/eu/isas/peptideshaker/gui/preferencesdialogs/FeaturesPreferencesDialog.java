@@ -5,6 +5,7 @@ import eu.isas.peptideshaker.export.CsvExporter;
 import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -114,7 +115,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionAccession = new javax.swing.JCheckBox();
         assumptionSequence = new javax.swing.JCheckBox();
         assumptionModification = new javax.swing.JCheckBox();
-        assumptionLocation = new javax.swing.JCheckBox();
         assumptionFile = new javax.swing.JCheckBox();
         assumptionTitle = new javax.swing.JCheckBox();
         assumptionPrecursor = new javax.swing.JCheckBox();
@@ -607,10 +607,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionModification.setIconTextGap(10);
         assumptionModification.setOpaque(false);
 
-        assumptionLocation.setText("Location Scores");
-        assumptionLocation.setIconTextGap(10);
-        assumptionLocation.setOpaque(false);
-
         assumptionFile.setText("Spectrum File");
         assumptionFile.setIconTextGap(10);
         assumptionFile.setOpaque(false);
@@ -674,9 +670,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(assumptionAccession, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(assumptionSequence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
-                        .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(assumptionModification, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(assumptionLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(assumptionModification, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(assumptionTitle, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -697,7 +691,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        searchEnginePanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {assumptionAccession, assumptionConfidence, assumptionFile, assumptionLocation, assumptionModification, assumptionPrecursor, assumptionSequence, assumptionTitle});
+        searchEnginePanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {assumptionAccession, assumptionConfidence, assumptionFile, assumptionModification, assumptionPrecursor, assumptionSequence, assumptionTitle});
 
         searchEnginePanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {assumptionExportAll, assumptionsExportValidated});
 
@@ -716,7 +710,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(assumptionConfidence)
                     .addComponent(assumptionSequence)
-                    .addComponent(assumptionLocation)
                     .addComponent(assumptionTitle))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(assumptionPrecursor)
@@ -729,7 +722,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap())
         );
 
-        searchEnginePanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {assumptionAccession, assumptionConfidence, assumptionFile, assumptionLocation, assumptionModification, assumptionPrecursor, assumptionScores, assumptionSequence, assumptionTitle});
+        searchEnginePanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {assumptionAccession, assumptionConfidence, assumptionFile, assumptionModification, assumptionPrecursor, assumptionScores, assumptionSequence, assumptionTitle});
 
         tabbedPane.addTab("Search Engine Results", searchEnginePanel);
 
@@ -996,7 +989,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionAccession.setSelected(true);
         assumptionSequence.setSelected(true);
         assumptionModification.setSelected(true);
-        assumptionLocation.setSelected(true);
         assumptionFile.setSelected(true);
         assumptionTitle.setSelected(true);
         assumptionPrecursor.setSelected(true);
@@ -1013,7 +1005,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionAccession.setSelected(false);
         assumptionSequence.setSelected(false);
         assumptionModification.setSelected(false);
-        assumptionLocation.setSelected(false);
         assumptionFile.setSelected(false);
         assumptionTitle.setSelected(false);
         assumptionPrecursor.setSelected(false);
@@ -1115,9 +1106,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
-                        feature = outputGenerator.getPeptidesOutput(progressDialog, null, null, false, true, 
+                        feature = outputGenerator.getPeptidesOutput(progressDialog, null, null, false, true,
                                 peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
-                                peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(), 
+                                peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
                                 peptideScore.isSelected(), peptideConfidence.isSelected(), true);
 
                         progressDialog.setIndeterminate(true);
@@ -1180,7 +1171,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
-                        feature = outputGenerator.getPeptidesOutput(progressDialog, null, null, false, false, 
+                        feature = outputGenerator.getPeptidesOutput(progressDialog, null, null, false, false,
                                 peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
                                 peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
                                 peptideScore.isSelected(), peptideConfidence.isSelected(), true);
@@ -1373,8 +1364,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
+                        // change the peptide shaker icon to a "waiting version"
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
                         feature = outputGenerator.getAssumptionsOutput(progressDialog, null, false, assumptionAccession.isSelected(), assumptionSequence.isSelected(),
-                                assumptionModification.isSelected(), assumptionLocation.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
+                                assumptionModification.isSelected(), assumptionFile.isSelected(), assumptionTitle.isSelected(),
                                 assumptionPrecursor.isSelected(), assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
 
                         progressDialog.setIndeterminate(true);
@@ -1389,11 +1383,18 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
 
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
                         JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                     } catch (IOException e) {
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     } catch (Exception e) {
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
@@ -1458,11 +1459,17 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
                 @Override
                 public void run() {
+                    
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     CsvExporter exporter = new CsvExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(),
                             peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getSearchParameters().getEnzyme());
                     boolean exported = exporter.exportResults(progressDialog, fileChooser.getSelectedFile());
 
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    
                     if (exported) {
                         JOptionPane.showMessageDialog(tempRef, "Identification results saved to folder \'" + fileChooser.getSelectedFile().getName() + "\'.",
                                 "Save Complete", JOptionPane.INFORMATION_MESSAGE);
@@ -1507,8 +1514,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
+                        // change the peptide shaker icon to a "waiting version"
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
                         feature = outputGenerator.getAssumptionsOutput(progressDialog, null, true, assumptionAccession.isSelected(),
-                                assumptionSequence.isSelected(), assumptionModification.isSelected(), assumptionLocation.isSelected(),
+                                assumptionSequence.isSelected(), assumptionModification.isSelected(),
                                 assumptionFile.isSelected(), assumptionTitle.isSelected(), assumptionPrecursor.isSelected(),
                                 assumptionScores.isSelected(), assumptionConfidence.isSelected(), true);
 
@@ -1524,11 +1534,18 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
 
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
                         JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                     } catch (IOException e) {
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     } catch (Exception e) {
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
@@ -1585,7 +1602,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox assumptionConfidence;
     private javax.swing.JButton assumptionExportAll;
     private javax.swing.JCheckBox assumptionFile;
-    private javax.swing.JCheckBox assumptionLocation;
     private javax.swing.JCheckBox assumptionModification;
     private javax.swing.JCheckBox assumptionPrecursor;
     private javax.swing.JCheckBox assumptionScores;

@@ -761,10 +761,7 @@
                                           <Component id="assumptionSequence" linkSize="5" min="-2" pref="150" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="assumptionModification" linkSize="5" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="assumptionLocation" linkSize="5" min="-2" pref="150" max="-2" attributes="0"/>
-                                      </Group>
+                                      <Component id="assumptionModification" linkSize="5" min="-2" pref="150" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="assumptionTitle" linkSize="5" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
@@ -805,7 +802,6 @@
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="assumptionConfidence" linkSize="18" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="assumptionSequence" linkSize="18" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="assumptionLocation" linkSize="18" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="assumptionTitle" linkSize="18" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -842,13 +838,6 @@
                     <Component class="javax.swing.JCheckBox" name="assumptionModification">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Modification Status"/>
-                        <Property name="iconTextGap" type="int" value="10"/>
-                        <Property name="opaque" type="boolean" value="false"/>
-                      </Properties>
-                    </Component>
-                    <Component class="javax.swing.JCheckBox" name="assumptionLocation">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Location Scores"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
