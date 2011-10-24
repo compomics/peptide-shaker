@@ -710,7 +710,7 @@ public class FeaturesGenerator {
      * @throws Exception 
      */
     public String getAssumptionsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean onlyValidated,
-            boolean accession, boolean sequence, boolean modifications, boolean locations,
+            boolean accession, boolean sequence, boolean modifications,
             boolean file, boolean title, boolean precursor, boolean scores, boolean confidence, boolean includeHeader) throws Exception {
 
         if (psmKeys == null) {
@@ -732,9 +732,8 @@ public class FeaturesGenerator {
             if (sequence) {
                 result += "Sequence" + SEPARATOR;
             }
-            if (modifications || locations) {
+            if (modifications) {
                 result += "Variable Modifications" + SEPARATOR;
-                result += "Modification Location" + SEPARATOR;
             }
             if (file) {
                 result += "Spectrum File" + SEPARATOR;
@@ -798,7 +797,7 @@ public class FeaturesGenerator {
                             if (sequence) {
                                 result += peptideAssumption.getPeptide().getSequence() + SEPARATOR;
                             }
-                            if (modifications || locations) {
+                            if (modifications) {
                                 boolean first = true;
                                 for (ModificationMatch modificationMatch : peptideAssumption.getPeptide().getModificationMatches()) {
                                     if (modificationMatch.isVariable()) {
@@ -812,7 +811,6 @@ public class FeaturesGenerator {
                                     }
                                 }
                                 result += SEPARATOR;
-                                result += "Not Implemented" + SEPARATOR;
                             }
                             if (file) {
                                 result += Spectrum.getSpectrumFile(spectrumMatch.getKey()) + SEPARATOR;

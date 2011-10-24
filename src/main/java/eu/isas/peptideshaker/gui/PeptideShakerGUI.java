@@ -434,7 +434,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        modelButtonGroup = new javax.swing.ButtonGroup();
         annotationMenuBar = new javax.swing.JMenuBar();
         splitterMenu5 = new javax.swing.JMenu();
         ionsMenu = new javax.swing.JMenu();
@@ -526,8 +525,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        jSeparator4 = new javax.swing.JPopupMenu.Separator();
-        separatorsCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
         aboutJMenuItem = new javax.swing.JMenuItem();
@@ -1159,17 +1156,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         viewJMenu.add(scoresJCheckBoxMenuItem);
-        viewJMenu.add(jSeparator4);
-
-        separatorsCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        separatorsCheckBoxMenuItem.setText("Separators");
-        separatorsCheckBoxMenuItem.setToolTipText("Enable resizing of the components ");
-        separatorsCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                separatorsCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        viewJMenu.add(separatorsCheckBoxMenuItem);
 
         menuBar.add(viewJMenu);
 
@@ -1749,15 +1735,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     private void bubblePlotJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bubblePlotJMenuItemActionPerformed
         new ExportGraphicsDialog(this, true, (Component) overviewPanel.getBubblePlot());
     }//GEN-LAST:event_bubblePlotJMenuItemActionPerformed
-
-    /**
-     * Enable or disable the separators.
-     * 
-     * @param evt 
-     */
-    private void separatorsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_separatorsCheckBoxMenuItemActionPerformed
-        overviewPanel.showSeparators(separatorsCheckBoxMenuItem.isSelected());
-    }//GEN-LAST:event_separatorsCheckBoxMenuItemActionPerformed
 
     /**
      * Test if there are unsaved changes and if so asks the user if he/she 
@@ -2378,7 +2355,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
-    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
@@ -2386,7 +2362,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JPopupMenu.Separator jSeparator9;
     private javax.swing.JMenu lossMenu;
     private javax.swing.JMenuBar menuBar;
-    private javax.swing.ButtonGroup modelButtonGroup;
     private javax.swing.JCheckBoxMenuItem moreThanTwoChargesCheckBoxMenuItem;
     private javax.swing.JRadioButtonMenuItem mzIonTableRadioButtonMenuItem;
     private javax.swing.JMenuItem newJMenuItem;
@@ -2407,7 +2382,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JCheckBoxMenuItem scoresJCheckBoxMenuItem;
     private javax.swing.JMenuItem searchParametersMenu;
-    private javax.swing.JCheckBoxMenuItem separatorsCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
     private javax.swing.JMenu settingsMenu;
     private javax.swing.JCheckBoxMenuItem singleChargeCheckBoxMenuItem;
