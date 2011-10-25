@@ -149,8 +149,7 @@ public class FileImporter {
 
         try {
             waitingDialog.appendReport("Importing sequences from " + fastaFile.getName() + ".");
-            waitingDialog.setSecondaryProgressDialogIntermediate(false);
-            waitingDialog.resetSecondaryProgressBar();
+            waitingDialog.setSecondaryProgressDialogIntermediate(true);
             sequenceFactory.loadFastaFile(fastaFile, waitingDialog.getSecondaryProgressBar());
 
             String firstAccession = sequenceFactory.getAccessions().get(0);
@@ -564,7 +563,16 @@ public class FileImporter {
                     waitingDialog.increaseProgressValue(mgfNames.size() - mgfImported.size());
                     importSpectra(waitingDialog, mgfImported);
                 } else {
-                    waitingDialog.increaseProgressValue(mgfNames.size());
+                    
+                    String mgfFileMissing = "Mgf files missing: ";
+                    
+                    for (int i=0; i < mgfMissing.size() - 1; i++) {
+                        mgfFileMissing += mgfMissing.get(i) + ", ";
+                    }
+                    
+                    mgfFileMissing += mgfMissing.get(mgfMissing.size() - 1);
+                    
+                    throw new IllegalArgumentException(mgfFileMissing);
                 }
 
                 peptideShaker.processIdentifications(inputMap, waitingDialog, searchParameters, annotationPreferences);

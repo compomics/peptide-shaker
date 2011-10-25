@@ -172,7 +172,7 @@ public class PeptideShaker {
      * @throws IOException  
      */
     public void processIdentifications(InputMap inputMap, WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) 
-        throws IllegalArgumentException, IOException {
+        throws IllegalArgumentException, IOException, Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         if (!identification.memoryCheck()) {
@@ -206,8 +206,7 @@ public class PeptideShaker {
             proteinMap.estimateProbabilities(waitingDialog);
             attachProteinProbabilities();
         } catch (Exception e) {
-            e.printStackTrace();
-            waitingDialog.appendReport("An error occurred while working on the identification. See the log file for more details.");
+            throw e;
         }
 
         try {
