@@ -1,22 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * ImportSettingsDialog.java
- *
- * Created on Oct 25, 2011, 6:36:15 PM
- */
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
+import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.fileimport.IdFilter;
+import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
 
 /**
- *
- * @author vaudel
+ * The import settings dialog.
+ * 
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class ImportSettingsDialog extends javax.swing.JDialog {
 
@@ -24,18 +19,26 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
      * PeptideShaker GUI
      */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * If true the user can edit the settings.
+     */
+    private boolean editable;
 
     /**
-     * Creates a new dialog
+     * Creates a new ImportSettingsDialog.
+     * 
      * @param peptideShakerGUI the PeptideShaker GUI
      * @param editable boolean indicating whether the parameters can be editable
      */
     public ImportSettingsDialog(PeptideShakerGUI peptideShakerGUI, boolean editable) {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
-        
+        this.editable = editable;
+
         initComponents();
-        
+
+        unitCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+
         IdFilter idFilter = peptideShakerGUI.getIdFilter();
         omssaEvalueTxt.setText(idFilter.getOmssaMaxEvalue() + "");
         xtandemEvalueTxt.setText(idFilter.getXtandemMaxEvalue() + "");
@@ -43,67 +46,69 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
         nAAminTxt.setText(idFilter.getMinPepLength() + "");
         nAAmaxTxt.setText(idFilter.getMaxPepLength() + "");
         precDevTxt.setText(idFilter.getMaxMassDeviation() + "");
+
         if (idFilter.isIsPpm()) {
             unitCmb.setSelectedIndex(0);
         } else {
             unitCmb.setSelectedIndex(1);
         }
-         
+
         omssaEvalueTxt.setEditable(editable);
         xtandemEvalueTxt.setEditable(editable);
         mascotEvalueTxt.setEditable(editable);
         nAAminTxt.setEditable(editable);
         nAAmaxTxt.setEditable(editable);
         precDevTxt.setEditable(editable);
-        unitCmb.setEditable(editable);
+        unitCmb.setEnabled(editable);
         cancelButton.setEnabled(editable);
-        
+
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
-    
+
     /**
-     * Indicates whether the input is correct
+     * Indicates whether the input is correct.
+     * 
      * @return a boolean indicating whether the input is correct
      */
     private boolean validateInput() {
         try {
-            double test = new Double(omssaEvalueTxt.getText());
+            new Double(omssaEvalueTxt.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please verify the input for OMSSA maximal e-value.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         try {
-            double test = new Double(mascotEvalueTxt.getText());
+            new Double(mascotEvalueTxt.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please verify the input for Mascot maximal e-value.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         try {
-            double test = new Double(xtandemEvalueTxt.getText());
+            new Double(xtandemEvalueTxt.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please verify the input for X!Tandem maximal e-value.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         try {
-            int test = new Integer(nAAminTxt.getText());
+            new Integer(nAAminTxt.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please verify the input for the minimal peptide length.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         try {
-            int test = new Integer(nAAmaxTxt.getText());
+            new Integer(nAAmaxTxt.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please verify the input for the maximal peptide length.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
         try {
-            double test = new Double(precDevTxt.getText());
+            new Double(precDevTxt.getText());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "Please verify the input for the precursor maximal deviation.",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -138,39 +143,47 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
         mascotEvalueTxt = new javax.swing.JTextField();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
+        helpJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Import Filters");
         setBackground(new java.awt.Color(230, 230, 230));
 
         jPanel2.setBackground(new java.awt.Color(230, 230, 230));
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Import filters"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Filters"));
         jPanel1.setOpaque(false);
 
-        jLabel1.setText("OMSSA max e-value:");
+        jLabel1.setText("OMSSA Max e-value:");
 
-        jLabel2.setText("X!Tandem max e-value:");
+        jLabel2.setText("X!Tandem Max e-value:");
 
-        jLabel3.setText("Mascot max e-value:");
+        jLabel3.setText("Mascot Max e-value:");
 
+        nAAmaxTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nAAmaxTxt.setText("jTextField1");
 
         jLabel4.setText("-");
 
+        nAAminTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         nAAminTxt.setText("jTextField2");
 
         jLabel5.setText("Peptide Length:");
 
         unitCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "ppm", "Da" }));
 
+        precDevTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         precDevTxt.setText("jTextField3");
 
-        jLabel6.setText("Maximal precursor mass deviation:");
+        jLabel6.setText("Precursor Accuracy:");
 
+        xtandemEvalueTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         xtandemEvalueTxt.setText("jTextField4");
 
+        omssaEvalueTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         omssaEvalueTxt.setText("jTextField5");
 
+        mascotEvalueTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         mascotEvalueTxt.setText("jTextField6");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -180,58 +193,62 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addGap(18, 18, 18)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(mascotEvalueTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                    .addComponent(omssaEvalueTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
-                    .addComponent(xtandemEvalueTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE))
-                .addGap(72, 72, 72)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(jLabel6))
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(precDevTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(unitCmb, 0, 46, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(nAAminTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(xtandemEvalueTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                            .addComponent(omssaEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(38, 38, 38)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel6))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(precDevTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
+                            .addComponent(nAAminTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(nAAmaxTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(unitCmb, 0, 122, Short.MAX_VALUE)
+                            .addComponent(nAAmaxTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE))
+                        .addContainerGap())
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(mascotEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(411, 411, 411))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
-                    .addComponent(nAAmaxTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4)
-                    .addComponent(nAAminTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(omssaEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(unitCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(precDevTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
-                    .addComponent(xtandemEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(mascotEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(nAAmaxTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(nAAminTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(unitCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(precDevTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel6)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel1)
+                            .addComponent(omssaEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(xtandemEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(mascotEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -249,6 +266,25 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
             }
         });
 
+        helpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        helpJButton.setToolTipText("Help");
+        helpJButton.setBorder(null);
+        helpJButton.setBorderPainted(false);
+        helpJButton.setContentAreaFilled(false);
+        helpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                helpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                helpJButtonMouseExited(evt);
+            }
+        });
+        helpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                helpJButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -259,10 +295,12 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
                         .addContainerGap()
                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGap(524, 524, 524)
-                        .addComponent(okButton, javax.swing.GroupLayout.DEFAULT_SIZE, 74, Short.MAX_VALUE)
+                        .addGap(20, 20, 20)
+                        .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(481, 481, 481)
+                        .addComponent(okButton, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 75, Short.MAX_VALUE)))
+                        .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -270,11 +308,12 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(helpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                    .addComponent(okButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -291,26 +330,69 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Closes the dialog.
+     * 
+     * @param evt 
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Update the settings.
+     * 
+     * @param evt 
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        if (validateInput()) {
-            peptideShakerGUI.setIdFilter(new IdFilter(
-                    new Integer(nAAminTxt.getText()), 
-                    new Integer(nAAmaxTxt.getText()), 
-                    new Double(mascotEvalueTxt.getText()), 
-                    new Double(omssaEvalueTxt.getText()), 
-                    new Double(xtandemEvalueTxt.getText()), 
-                    new Double(precDevTxt.getText()), 
-                    unitCmb.getSelectedIndex()==0));
+        if (editable) {
+            if (validateInput()) {
+                peptideShakerGUI.setIdFilter(new IdFilter(
+                        new Integer(nAAminTxt.getText()),
+                        new Integer(nAAmaxTxt.getText()),
+                        new Double(mascotEvalueTxt.getText()),
+                        new Double(omssaEvalueTxt.getText()),
+                        new Double(xtandemEvalueTxt.getText()),
+                        new Double(precDevTxt.getText()),
+                        unitCmb.getSelectedIndex() == 0));
+                dispose();
+            }
+        } else {
             dispose();
         }
     }//GEN-LAST:event_okButtonActionPerformed
 
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void helpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_helpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void helpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_helpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_helpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void helpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/FilterSettings.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_helpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
+    private javax.swing.JButton helpJButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
