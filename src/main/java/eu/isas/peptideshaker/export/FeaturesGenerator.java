@@ -62,7 +62,7 @@ public class FeaturesGenerator {
     }
 
     /**
-     * Returns the desired protein output based on the elements needed as provided in arguments
+     * Returns the desired protein output based on the elements needed as provided in arguments.
      * 
      * @param progressDialog the progress dialog (can be null)
      * @param proteinKeys 
@@ -79,7 +79,7 @@ public class FeaturesGenerator {
      * @param score
      * @param confidence
      * @param includeHeader 
-     * @return
+     * @return he desired protein output based on the elements needed as provided in arguments
      * @throws Exception  
      */
     public String getProteinsOutput(ProgressDialogX progressDialog, ArrayList<String> proteinKeys, boolean indexes, boolean onlyValidated, boolean accession, boolean piDetails,
@@ -297,7 +297,7 @@ public class FeaturesGenerator {
      * @param score
      * @param confidence
      * @param includeHeader 
-     * @return
+     * @return the peptide output based on the given arguments
      * @throws Exception  
      */
     public String getPeptidesOutput(ProgressDialogX progressDialog, ArrayList<String> peptideKeys,
@@ -466,7 +466,7 @@ public class FeaturesGenerator {
     }
 
     /**
-     * returns the PSM output based on the given argument
+     * Returns the PSM output based on the given argument.
      * 
      * @param progressDialog the progress dialog (can be null)
      * @param psmKeys
@@ -482,7 +482,7 @@ public class FeaturesGenerator {
      * @param score
      * @param confidence
      * @param includeHeader 
-     * @return
+     * @return the PSM output based on the given argument
      * @throws Exception 
      */
     public String getPSMsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean indexes, boolean onlyValidated, boolean accessions, boolean sequence, boolean modification,
@@ -699,14 +699,13 @@ public class FeaturesGenerator {
      * @param accession
      * @param sequence
      * @param modifications
-     * @param locations
      * @param file
      * @param title
      * @param precursor
      * @param scores
      * @param confidence
      * @param includeHeader 
-     * @return
+     * @return the assumption output based on the given arguments
      * @throws Exception 
      */
     public String getAssumptionsOutput(ProgressDialogX progressDialog, ArrayList<String> psmKeys, boolean onlyValidated,

@@ -258,11 +258,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 }
                             }
                         } else {
-                            System.out.println("not found: " + mainAccession);
+                            // ignore, does not map to any go terms in the current go slim
                         }
-
                     }
-
                 } catch (IllegalArgumentException e) {
                     e.printStackTrace();
                 }

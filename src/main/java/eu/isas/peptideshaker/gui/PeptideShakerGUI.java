@@ -3447,15 +3447,17 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the selected tab as indexed by the static fields
-     * @return 
+     * Returns the selected tab as indexed by the static fields.
+     * 
+     * @return the selected tab as indexed by the static fields
      */
     public int getSelectedTab() {
         return allTabsJTabbedPane.getSelectedIndex();
     }
 
     /**
-     * Returns a list of keys of the currently displayed proteins
+     * Returns a list of keys of the currently displayed proteins.
+     * 
      * @return a list of keys of the currently displayed proteins
      */
     public ArrayList<String> getDisplayedProteins() {
@@ -4107,7 +4109,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * modification details.
      * 
      * @param peptide
-     * @return 
+     * @return a String with the HTML tooltip for the peptide
      */
     public String getPeptideModificationTooltipAsHtml(Peptide peptide) {
 
