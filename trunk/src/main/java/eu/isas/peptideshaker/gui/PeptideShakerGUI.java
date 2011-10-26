@@ -2278,7 +2278,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         qcPanel.displayResults(progressDialog);
                         
                         progressDialog.setTitle("Loading GO Analysis Tab. Please Wait...");
-                        goPanel.displayResults(progressDialog);
+                        goPanel.displayResults(progressDialog, false);
 
 
                         allTabsJTabbedPaneStateChanged(null);

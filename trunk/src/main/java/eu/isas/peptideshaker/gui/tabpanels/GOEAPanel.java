@@ -3,11 +3,13 @@ package eu.isas.peptideshaker.gui.tabpanels;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
+import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,12 +20,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.Vector;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import no.uib.jsparklines.data.JSparklinesDataSeries;
+import no.uib.jsparklines.data.JSparklinesDataset;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
+import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
+import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
 import no.uib.jsparklines.renderers.util.BarChartColorRenderer;
 import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
 import org.jfree.chart.ChartFactory;
@@ -43,7 +55,19 @@ import org.jfree.data.category.DefaultCategoryDataset;
  */
 public class GOEAPanel extends javax.swing.JPanel {
 
+    /**
+     * The progress dialog.
+     */
+    private ProgressDialogX progressDialog;
+    /**
+     * PeptideShaker GUI parent.
+     */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * The GO mappings table column header tooltips.
+     */
+    private ArrayList<String> mappingsTableToolTips;
+    TreeMap<String, Integer> totalGoTermUsage;
 
     /** 
      * Creates a new GOEAPanel.
@@ -55,91 +79,180 @@ public class GOEAPanel extends javax.swing.JPanel {
         this.peptideShakerGUI = peptideShakerGUI;
 
         initComponents();
+        setupGUI();
+
+        // load the go mapping files
+        loadMappingFiles();
+    }
+
+    /**
+     * Set up the GUI details.
+     */
+    private void setupGUI() {
+
+        JTableHeader header = goMappingsTable.getTableHeader();
+        header.addMouseListener(new MouseAdapter() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                super.mouseClicked(e);
+
+                if (peptideShakerGUI.getIdentification() != null) {
+                    updateGoPlots();
+                }
+            }
+        });
+
+
+        goMappingFilesJComboBox.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
 
         proteinGoMappingsScrollPane.getViewport().setOpaque(false);
-        proteinGoMappingsTable.getTableHeader().setReorderingAllowed(false);
-        proteinGoMappingsTable.setAutoCreateRowSorter(true);
+        goMappingsTable.getTableHeader().setReorderingAllowed(false);
+        goMappingsTable.setAutoCreateRowSorter(true);
 
         // the index column
-        proteinGoMappingsTable.getColumn("").setMaxWidth(60);
-        proteinGoMappingsTable.getColumn("").setMinWidth(60);
-        proteinGoMappingsTable.getColumn(" ").setMaxWidth(30);
-        proteinGoMappingsTable.getColumn(" ").setMinWidth(30);
+        goMappingsTable.getColumn("").setMaxWidth(60);
+        goMappingsTable.getColumn("").setMinWidth(60);
+        goMappingsTable.getColumn(" ").setMaxWidth(30);
+        goMappingsTable.getColumn(" ").setMinWidth(30);
+        goMappingsTable.getColumn("  ").setMaxWidth(30);
+        goMappingsTable.getColumn("  ").setMinWidth(30);
 
-        proteinGoMappingsTable.getColumn(" ").setCellRenderer(new TrueFalseIconRenderer(
+        // cell renderers
+        goMappingsTable.getColumn(" ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 null,
                 "Significant", "Not Significant"));
-
-
-        proteinGoMappingsTable.getColumn("GO Term").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
-
-        proteinGoMappingsTable.getColumn("Frequency All (%)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinGoMappingsTable.getColumn("Frequency All (%)").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-
-        proteinGoMappingsTable.getColumn("Frequency Dataset (%)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinGoMappingsTable.getColumn("Frequency Dataset (%)").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-
-        proteinGoMappingsTable.getColumn("p-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) proteinGoMappingsTable.getColumn("p-value").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-
-        proteinGoMappingsTable.getColumn("Log2 Diff").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
+        goMappingsTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
+        goMappingsTable.getColumn("GO Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+        goMappingsTable.getColumn("Frequency All (%)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, Color.RED));
+        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Frequency All (%)").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        goMappingsTable.getColumn("Frequency Dataset (%)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Frequency Dataset (%)").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        goMappingsTable.getColumn("p-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("p-value").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        goMappingsTable.getColumn("Log2 Diff").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
                 PlotOrientation.HORIZONTAL, -10.0, 10.0, Color.RED, peptideShakerGUI.getSparklineColor(), Color.GRAY, 0));
-        ((JSparklinesBarChartTableCellRenderer) proteinGoMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        goMappingsTable.getColumn("Frequency (%)").setCellRenderer(new JSparklinesTableCellRenderer(
+                JSparklinesTableCellRenderer.PlotType.barChart,
+                PlotOrientation.HORIZONTAL, 0.0, 100.0));
 
         // make the tabs in the tabbed pane go from right to left
         goPlotsTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+
+        // set up the table header tooltips
+        mappingsTableToolTips = new ArrayList<String>();
+        mappingsTableToolTips.add(null);
+        mappingsTableToolTips.add("Gene Ontology Accession");
+        mappingsTableToolTips.add("Gene Ontology Term");
+        mappingsTableToolTips.add("Gene Ontology Domain");
+        mappingsTableToolTips.add("Frequency All (%)");
+        mappingsTableToolTips.add("Frequency Dataset (%)");
+        mappingsTableToolTips.add("Log2 Difference (Dataset / All)");
+        mappingsTableToolTips.add("Hypergeometic Test p-value");
+        mappingsTableToolTips.add("Significance after Multiple Hypothesis Testing Correction");
+        mappingsTableToolTips.add("Selected for Plots");
     }
 
-    public void displayResults(ProgressDialogX progressDialog) {
+    /**
+     * Load the mapping files.
+     */
+    private void loadMappingFiles() {
 
-        // clear old table
-        while (proteinGoMappingsTable.getRowCount() > 0) {
-            ((DefaultTableModel) proteinGoMappingsTable.getModel()).removeRow(0);
+        String mappingsFolderPath = peptideShakerGUI.getJarFilePath() + File.separator + "conf"
+                + File.separator + "gene_ontology" + File.separator;
+
+        File mappingsFolder = new File(mappingsFolderPath);
+        File[] files = mappingsFolder.listFiles();
+
+        Vector<String> mappingFiles = new Vector<String>();
+
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].getAbsolutePath().endsWith(".go_mappings")) {
+                mappingFiles.add(files[i].getName());
+            }
         }
 
+        goMappingFilesJComboBox.setModel(new DefaultComboBoxModel(mappingFiles));
+    }
+
+    /**
+     * Update the GO mappings.
+     * 
+     * @param progressDialog    the progress dialog
+     * @param closeProgressBar  if true the progress bar will be closed when the method finishes
+     */
+    public void displayResults(ProgressDialogX progressDialog, boolean closeProgressBar) {
+
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Getting GO Mapping Files. Please Wait...");
+
+        // clear old table
+        while (goMappingsTable.getRowCount() > 0) {
+            ((DefaultTableModel) goMappingsTable.getModel()).removeRow(0);
+        }
+
+        String selectedMappings = (String) goMappingFilesJComboBox.getSelectedItem();
         String goMappingsPath = peptideShakerGUI.getJarFilePath() + File.separator + "conf"
-                + File.separator + "gene_ontology" + File.separator + "ensembl_26062011.txt";
-        
-        String goFamiliesPath = peptideShakerGUI.getJarFilePath() + File.separator + "conf"
-                + File.separator + "gene_ontology" + File.separator + "ensembl_26062011_go_families.txt";
-        
-                                                        
+                + File.separator + "gene_ontology" + File.separator + selectedMappings;
+        String selectedGoDomains = selectedMappings.substring(0, selectedMappings.indexOf(".")) + ".go_domains";
+        String goDomainsPath = peptideShakerGUI.getJarFilePath() + File.separator + "conf"
+                + File.separator + "gene_ontology" + File.separator + selectedGoDomains;
+
+
         File goMappingsFile = new File(goMappingsPath);
 
-        TreeMap<String, Integer> totalGoTermUsage = new TreeMap<String, Integer>();
+        if (!goMappingsFile.exists()) {
+            JOptionPane.showMessageDialog(this, "Mapping file \"" + goMappingsFile.getName() + "\" not found!", "File Not Found", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        totalGoTermUsage = new TreeMap<String, Integer>();
         TreeMap<String, Integer> datasetGoTermUsage = new TreeMap<String, Integer>();
-        HashMap<String, String> goNameToAccessionMap = new HashMap<String, String>();
+        HashMap<String, String> goTermToAccessionMap = new HashMap<String, String>();
         HashMap<String, ArrayList<String>> proteinToGoMappings = new HashMap<String, ArrayList<String>>();
-        HashMap<String, String> goFamiliesMap = new HashMap<String, String>();
+        HashMap<String, String> goDomainMap = new HashMap<String, String>();
 
         int totalNumberOfProteins = 0;
 
         try {
-            // read the GO families
-            FileReader r = new FileReader(goFamiliesPath);
-            BufferedReader br = new BufferedReader(r);
-            
-            String line = br.readLine();
 
-            while (line != null) {   
-                String[] elements = line.split(",");
-                goFamiliesMap.put(elements[0], elements[1]);
-                line = br.readLine();
+            File goDomainsFile = new File(goDomainsPath);
+
+            if (!goDomainsFile.exists()) {
+                JOptionPane.showMessageDialog(this, "GO domains file \"" + goDomainsFile.getName() + "\" not found!\n"
+                        + "Continuing without GO domains.", "File Not Found", JOptionPane.ERROR_MESSAGE);
+            } else {
+
+                progressDialog.setTitle("Getting GO Domains. Please Wait...");
+
+                // read the GO domains
+                FileReader r = new FileReader(goDomainsPath);
+                BufferedReader br = new BufferedReader(r);
+
+                String line = br.readLine();
+
+                while (line != null) {
+                    String[] elements = line.split(",");
+                    goDomainMap.put(elements[0], elements[1]);
+                    line = br.readLine();
+                }
+
+                br.close();
+                r.close();
             }
-                        
-            br.close();
-            r.close();
-            
-            
+
+            progressDialog.setTitle("Getting GO Mappings. Please Wait...");
+
             // read the GO mappings
-            r = new FileReader(goMappingsFile);
-            br = new BufferedReader(r);
+            FileReader r = new FileReader(goMappingsFile);
+            BufferedReader br = new BufferedReader(r);
 
             // read and ignore the header
             br.readLine();
 
-            line = br.readLine();
+            String line = br.readLine();
 
             while (line != null) {
 
@@ -149,30 +262,23 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                     if (elements.length == 3 && !line.endsWith("\",")) {
                         String goAccession = elements[0];
-                        String goName = elements[1].toLowerCase();
+                        String goTerm = elements[1].toLowerCase();
                         String proteinAccession = elements[2];
 
                         if (!proteinToGoMappings.containsKey(proteinAccession)) {
                             ArrayList<String> proteinGoMappings = new ArrayList<String>();
-                            proteinGoMappings.add(goName);
+                            proteinGoMappings.add(goTerm);
                             proteinToGoMappings.put(proteinAccession, proteinGoMappings);
                         } else {
-                            proteinToGoMappings.get(proteinAccession).add(goName);
+                            proteinToGoMappings.get(proteinAccession).add(goTerm);
                         }
 
-//                        ((DefaultTableModel) proteinGoMappingsTable.getModel()).addRow(new Object[]{
-//                                    proteinGoMappingsTable.getRowCount() + 1,
-//                                    proteinAccession,
-//                                    goAccession,
-//                                    goName
-//                                });
+                        goTermToAccessionMap.put(goTerm, goAccession);
 
-                        goNameToAccessionMap.put(goName, goAccession);
-
-                        if (totalGoTermUsage.containsKey(goName)) {
-                            totalGoTermUsage.put(goName, totalGoTermUsage.get(goName) + 1);
+                        if (totalGoTermUsage.containsKey(goTerm)) {
+                            totalGoTermUsage.put(goTerm, totalGoTermUsage.get(goTerm) + 1);
                         } else {
-                            totalGoTermUsage.put(goName, 1);
+                            totalGoTermUsage.put(goTerm, 1);
                         }
 
                         totalNumberOfProteins++;
@@ -182,38 +288,31 @@ public class GOEAPanel extends javax.swing.JPanel {
                         if (!line.endsWith("\",")) {
 
                             String goAccession = line.substring(0, line.indexOf(","));
-                            String goName = line.substring(line.indexOf(",") + 1, line.lastIndexOf(",")).toLowerCase();
+                            String goTerm = line.substring(line.indexOf(",") + 1, line.lastIndexOf(",")).toLowerCase();
 
-                            if (goName.startsWith("\"")) {
-                                goName = goName.substring(1);
+                            if (goTerm.startsWith("\"")) {
+                                goTerm = goTerm.substring(1);
                             }
-                            if (goName.endsWith("\"")) {
-                                goName = goName.substring(0, goName.length() - 1);
+                            if (goTerm.endsWith("\"")) {
+                                goTerm = goTerm.substring(0, goTerm.length() - 1);
                             }
 
                             String proteinAccession = line.substring(line.lastIndexOf(",") + 1);
 
                             if (!proteinToGoMappings.containsKey(proteinAccession)) {
                                 ArrayList<String> proteinGoMappings = new ArrayList<String>();
-                                proteinGoMappings.add(goName);
+                                proteinGoMappings.add(goTerm);
                                 proteinToGoMappings.put(proteinAccession, proteinGoMappings);
                             } else {
-                                proteinToGoMappings.get(proteinAccession).add(goName);
+                                proteinToGoMappings.get(proteinAccession).add(goTerm);
                             }
 
-//                            ((DefaultTableModel) proteinGoMappingsTable.getModel()).addRow(new Object[]{
-//                                        proteinGoMappingsTable.getRowCount() + 1,
-//                                        proteinAccession,
-//                                        goAccession,
-//                                        goName
-//                                    });
-                            
-                            goNameToAccessionMap.put(goName, goAccession);
+                            goTermToAccessionMap.put(goTerm, goAccession);
 
-                            if (totalGoTermUsage.containsKey(goName)) {
-                                totalGoTermUsage.put(goName, totalGoTermUsage.get(goName) + 1);
+                            if (totalGoTermUsage.containsKey(goTerm)) {
+                                totalGoTermUsage.put(goTerm, totalGoTermUsage.get(goTerm) + 1);
                             } else {
-                                totalGoTermUsage.put(goName, 1);
+                                totalGoTermUsage.put(goTerm, 1);
                             }
 
                             totalNumberOfProteins++;
@@ -235,7 +334,15 @@ public class GOEAPanel extends javax.swing.JPanel {
             PSParameter proteinPSParameter = new PSParameter();
             String mainAccession;
 
+            progressDialog.setTitle("Mapping GO Terms. Please Wait...");
+            progressDialog.setIndeterminate(false);
+            progressDialog.setValue(0);
+            progressDialog.setMax(identification.getProteinIdentification().size());
+
+
             for (String matchKey : identification.getProteinIdentification()) {
+
+                progressDialog.incrementValue();
 
                 try {
                     proteinPSParameter = (PSParameter) identification.getMatchParameter(matchKey, proteinPSParameter);
@@ -258,7 +365,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 }
                             }
                         } else {
-                            // ignore, does not map to any go terms in the current go slim
+                            // ignore, does not map to any GO terms in the current GO slim
                         }
                     }
                 } catch (IllegalArgumentException e) {
@@ -266,25 +373,28 @@ public class GOEAPanel extends javax.swing.JPanel {
                 }
             }
 
+            progressDialog.setTitle("Creating GO Plots. Please Wait...");
+            progressDialog.setValue(0);
+            progressDialog.setMax(totalGoTermUsage.entrySet().size());
 
 
-            // display the plot
-            DefaultCategoryDataset frquencyPlotDataset = new DefaultCategoryDataset();
-            DefaultCategoryDataset significancePlotDataset = new DefaultCategoryDataset();
 
-            ArrayList<Color> significanceColors = new ArrayList<Color>();
+            // update the table
             Double maxLog2Diff = 0.0;
 
             for (Map.Entry<String, Integer> entry : totalGoTermUsage.entrySet()) {
-                String goName = entry.getKey();
+
+                progressDialog.incrementValue();
+
+                String goTerm = entry.getKey();
                 Integer frequencyAll = entry.getValue();
 
-                String goAccession = goNameToAccessionMap.get(goName);
+                String goAccession = goTermToAccessionMap.get(goTerm);
                 Integer frequencyDataset = 0;
                 Double percentDataset = 0.0;
 
-                if (datasetGoTermUsage.get(goName) != null) {
-                    frequencyDataset = datasetGoTermUsage.get(goName);
+                if (datasetGoTermUsage.get(goTerm) != null) {
+                    frequencyDataset = datasetGoTermUsage.get(goTerm);
                     percentDataset = ((double) frequencyDataset / allProjectProteins.size()) * 100;
                 }
 
@@ -296,30 +406,131 @@ public class GOEAPanel extends javax.swing.JPanel {
                     maxLog2Diff = Math.abs(log2Diff);
                 }
 
-                Double significanceLevel = 0.05;
+                String goDomain = "-";
 
-                ((DefaultTableModel) proteinGoMappingsTable.getModel()).addRow(new Object[]{
-                            proteinGoMappingsTable.getRowCount() + 1,
-                            addGoLink(goAccession),
-                            goName,
-                            goFamiliesMap.get(goAccession),
-                            percentAll,
-                            percentDataset,
-                            log2Diff,
-                            pValue,
-                            pValue < significanceLevel / totalGoTermUsage.keySet().size()
-                        });
-
-                frquencyPlotDataset.addValue(percentAll, "All", goName);
-                frquencyPlotDataset.addValue(percentDataset, "Dataset", goName);
-
-                if (!log2Diff.isInfinite()) {
-                    significancePlotDataset.addValue(log2Diff, "Difference", goName);
-                } else {
-                    significancePlotDataset.addValue(0, "Difference", goName);
+                if (goDomainMap.get(goAccession) != null) {
+                    goDomain = goDomainMap.get(goAccession);
                 }
 
-                if (pValue < significanceLevel / totalGoTermUsage.keySet().size()) {
+                // add the data points for the first data series 
+                ArrayList<Double> dataAll = new ArrayList<Double>();
+                dataAll.add(percentAll);
+                ArrayList<Double> dataDataset = new ArrayList<Double>();
+                dataDataset.add(percentDataset);
+
+                // create a JSparklineDataSeries  
+                JSparklinesDataSeries sparklineDataseriesAll = new JSparklinesDataSeries(dataAll, Color.RED, "All");
+                JSparklinesDataSeries sparklineDataseriesDataset = new JSparklinesDataSeries(dataDataset, peptideShakerGUI.getSparklineColor(), "Dataset");
+
+                // add the data series to JSparklineDataset 
+                ArrayList<JSparklinesDataSeries> sparkLineDataSeries = new ArrayList<JSparklinesDataSeries>();
+                sparkLineDataSeries.add(sparklineDataseriesAll);
+                sparkLineDataSeries.add(sparklineDataseriesDataset);
+
+                JSparklinesDataset dataset = new JSparklinesDataset(sparkLineDataSeries);
+
+                ((DefaultTableModel) goMappingsTable.getModel()).addRow(new Object[]{
+                            goMappingsTable.getRowCount() + 1,
+                            addGoLink(goAccession),
+                            goTerm,
+                            goDomain,
+                            percentAll,
+                            percentDataset,
+                            dataset,
+                            log2Diff,
+                            pValue,
+                            pValue < (Double) significanceJSpinner.getValue() / totalGoTermUsage.keySet().size(),
+                            true
+                        });
+            }
+
+            br.close();
+            r.close();
+
+            progressDialog.setIndeterminate(true);
+
+            // invoke later to give time for components to update
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                    // set the preferred size of the accession column
+                    int width = peptideShakerGUI.getPreferredColumnWidth(goMappingsTable, goMappingsTable.getColumn("GO Accession").getModelIndex(), 6);
+                    goMappingsTable.getColumn("GO Accession").setMinWidth(width);
+                    goMappingsTable.getColumn("GO Accession").setMaxWidth(width);
+                }
+            });
+
+            maxLog2Diff = Math.ceil(maxLog2Diff);
+
+            goMappingsTable.getColumn("Log2 Diff").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
+                    PlotOrientation.HORIZONTAL, -maxLog2Diff, maxLog2Diff, Color.RED, peptideShakerGUI.getSparklineColor(), Color.GRAY, 0));
+            ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+
+            // update the plots
+            updateGoPlots();
+
+
+            if (progressDialog != null) {
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+
+            if (progressDialog != null) {
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+
+            if (progressDialog != null) {
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+            }
+        } catch (IndexOutOfBoundsException e) {
+            // ignore as this only happens when the gui cannot keep up with the user
+
+            if (progressDialog != null) {
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+            }
+        }
+    }
+
+    /**
+     * Update the GO plots.
+     */
+    private void updateGoPlots() {
+
+        DefaultCategoryDataset frquencyPlotDataset = new DefaultCategoryDataset();
+        DefaultCategoryDataset significancePlotDataset = new DefaultCategoryDataset();
+        ArrayList<Color> significanceColors = new ArrayList<Color>();
+        Double maxLog2Diff = 0.0;
+
+        for (int i = 0; i < goMappingsTable.getRowCount(); i++) {
+
+            boolean selected = (Boolean) goMappingsTable.getValueAt(i, goMappingsTable.getColumn("  ").getModelIndex());
+
+            if (selected) {
+
+                String goTerm = (String) goMappingsTable.getValueAt(i, goMappingsTable.getColumn("GO Term").getModelIndex());
+                Double percentAll = (Double) goMappingsTable.getValueAt(i, goMappingsTable.getColumn("Frequency All (%)").getModelIndex());
+                Double percentDataset = (Double) goMappingsTable.getValueAt(i, goMappingsTable.getColumn("Frequency Dataset (%)").getModelIndex());
+                Double log2Diff = (Double) goMappingsTable.getValueAt(i, goMappingsTable.getColumn("Log2 Diff").getModelIndex());
+                Double pValue = (Double) goMappingsTable.getValueAt(i, goMappingsTable.getColumn("p-value").getModelIndex());
+
+                frquencyPlotDataset.addValue(percentAll, "All", goTerm);
+                frquencyPlotDataset.addValue(percentDataset, "Dataset", goTerm);
+
+                if (!log2Diff.isInfinite()) {
+                    significancePlotDataset.addValue(log2Diff, "Difference", goTerm);
+                } else {
+                    significancePlotDataset.addValue(0, "Difference", goTerm);
+                }
+
+                if (pValue < (Double) significanceJSpinner.getValue() / totalGoTermUsage.keySet().size()) {
                     if (log2Diff > 0) {
                         significanceColors.add(peptideShakerGUI.getSparklineColor());
                     } else {
@@ -328,81 +539,68 @@ public class GOEAPanel extends javax.swing.JPanel {
                 } else {
                     significanceColors.add(Color.lightGray);
                 }
-            }
 
-            // invoke later to give time for components to update
-            SwingUtilities.invokeLater(new Runnable() {
-
-                public void run() {
-                    // set the preferred size of the accession column
-                    int width = peptideShakerGUI.getPreferredColumnWidth(proteinGoMappingsTable, proteinGoMappingsTable.getColumn("GO Term").getModelIndex(), 6);
-                    proteinGoMappingsTable.getColumn("GO Term").setMinWidth(width);
-                    proteinGoMappingsTable.getColumn("GO Term").setMaxWidth(width);
+                if (!log2Diff.isInfinite() && Math.abs(log2Diff) > maxLog2Diff) {
+                    maxLog2Diff = Math.abs(log2Diff);
                 }
-            });
-
-            maxLog2Diff = Math.ceil(maxLog2Diff);
-
-            proteinGoMappingsTable.getColumn("Log2 Diff").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
-                    PlotOrientation.HORIZONTAL, -maxLog2Diff, maxLog2Diff, Color.RED, peptideShakerGUI.getSparklineColor(), Color.GRAY, 0));
-            ((JSparklinesBarChartTableCellRenderer) proteinGoMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-
-            JFreeChart barChart = ChartFactory.createBarChart(null, "GO Terms", "Frequency (%)", frquencyPlotDataset, PlotOrientation.VERTICAL, false, true, true);
-            ChartPanel chartPanel = new ChartPanel(barChart);
-
-            ((CategoryPlot) chartPanel.getChart().getPlot()).getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_90);
-
-            BarRenderer3D renderer = new BarRenderer3D(0, 0);
-            renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
-            barChart.getCategoryPlot().setRenderer(renderer);
-
-
-            // set background color
-            barChart.getPlot().setBackgroundPaint(Color.WHITE);
-            barChart.setBackgroundPaint(Color.WHITE);
-            chartPanel.setBackground(Color.WHITE);
-
-            // hide the outline
-            barChart.getPlot().setOutlineVisible(false);
-
-            goFrequencyPlotPanel.removeAll();
-            goFrequencyPlotPanel.add(chartPanel);
-
-
-
-            JFreeChart significanceChart = ChartFactory.createBarChart(null, "GO Terms", "Log2 Difference", significancePlotDataset, PlotOrientation.VERTICAL, false, true, true);
-            ChartPanel signChartPanel = new ChartPanel(significanceChart);
-
-            ((CategoryPlot) signChartPanel.getChart().getPlot()).getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_90);
-
-            ((CategoryPlot) signChartPanel.getChart().getPlot()).getRangeAxis().setUpperBound(maxLog2Diff);
-            ((CategoryPlot) signChartPanel.getChart().getPlot()).getRangeAxis().setLowerBound(-maxLog2Diff);
-
-            BarChartColorRenderer signRenderer = new BarChartColorRenderer(significanceColors);
-            signRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
-            significanceChart.getCategoryPlot().setRenderer(signRenderer);
-
-
-
-            // set background color
-            significanceChart.getPlot().setBackgroundPaint(Color.WHITE);
-            significanceChart.setBackgroundPaint(Color.WHITE);
-            signChartPanel.setBackground(Color.WHITE);
-
-            // hide the outline
-            significanceChart.getPlot().setOutlineVisible(false);
-
-            goSignificancePlotPanel.removeAll();
-            goSignificancePlotPanel.add(signChartPanel);
-            
-            br.close();
-            r.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+            }
         }
 
+        maxLog2Diff = Math.ceil(maxLog2Diff);
+
+
+        JFreeChart barChart = ChartFactory.createBarChart(null, "GO Terms", "Frequency (%)", frquencyPlotDataset, PlotOrientation.VERTICAL, false, true, true);
+        ChartPanel chartPanel = new ChartPanel(barChart);
+
+        ((CategoryPlot) chartPanel.getChart().getPlot()).getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_90);
+
+        BarRenderer3D renderer = new BarRenderer3D(0, 0);
+        renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+        renderer.setSeriesPaint(0, Color.RED);
+        renderer.setSeriesPaint(1, peptideShakerGUI.getSparklineColor());
+        barChart.getCategoryPlot().setRenderer(renderer);
+
+        // set background color
+        barChart.getPlot().setBackgroundPaint(Color.WHITE);
+        barChart.setBackgroundPaint(Color.WHITE);
+        chartPanel.setBackground(Color.WHITE);
+
+        // hide the outline
+        barChart.getPlot().setOutlineVisible(false);
+
+        goFrequencyPlotPanel.removeAll();
+        goFrequencyPlotPanel.add(chartPanel);
+        goFrequencyPlotPanel.revalidate();
+        goFrequencyPlotPanel.repaint();
+
+
+
+        JFreeChart significanceChart = ChartFactory.createBarChart(null, "GO Terms", "Log2 Difference", significancePlotDataset, PlotOrientation.VERTICAL, false, true, true);
+        ChartPanel signChartPanel = new ChartPanel(significanceChart);
+
+        ((CategoryPlot) signChartPanel.getChart().getPlot()).getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_90);
+
+        ((CategoryPlot) signChartPanel.getChart().getPlot()).getRangeAxis().setUpperBound(maxLog2Diff);
+        ((CategoryPlot) signChartPanel.getChart().getPlot()).getRangeAxis().setLowerBound(-maxLog2Diff);
+
+        BarChartColorRenderer signRenderer = new BarChartColorRenderer(significanceColors);
+        signRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+        significanceChart.getCategoryPlot().setRenderer(signRenderer);
+
+
+
+        // set background color
+        significanceChart.getPlot().setBackgroundPaint(Color.WHITE);
+        significanceChart.setBackgroundPaint(Color.WHITE);
+        signChartPanel.setBackground(Color.WHITE);
+
+        // hide the outline
+        significanceChart.getPlot().setOutlineVisible(false);
+
+        goSignificancePlotPanel.removeAll();
+        goSignificancePlotPanel.add(signChartPanel);
+        goSignificancePlotPanel.revalidate();
+        goSignificancePlotPanel.repaint();
     }
 
     /** This method is called from within the constructor to
@@ -414,32 +612,77 @@ public class GOEAPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        selectTermsJPopupMenu = new javax.swing.JPopupMenu();
+        selectAllMenuItem = new javax.swing.JMenuItem();
+        deselectAllMenuItem = new javax.swing.JMenuItem();
+        selectSignificantMenuItem = new javax.swing.JMenuItem();
         proteinGoMappingsPanel = new javax.swing.JPanel();
         proteinGoMappingsScrollPane = new javax.swing.JScrollPane();
-        proteinGoMappingsTable = new javax.swing.JTable();
+        goMappingsTable = new JTable() {
+            protected JTableHeader createDefaultTableHeader() {
+                return new JTableHeader(columnModel) {
+                    public String getToolTipText(MouseEvent e) {
+                        String tip = null;
+                        java.awt.Point p = e.getPoint();
+                        int index = columnModel.getColumnIndexAtX(p.x);
+                        int realIndex = columnModel.getColumn(index).getModelIndex();
+                        tip = (String) mappingsTableToolTips.get(realIndex);
+                        return tip;
+                    }
+                };
+            }
+        };
+        goMappingsFileJLabel = new javax.swing.JLabel();
+        goMappingFilesJComboBox = new javax.swing.JComboBox();
+        significanceJLabel = new javax.swing.JLabel();
+        significanceJSpinner = new javax.swing.JSpinner();
         plotPanel = new javax.swing.JPanel();
         goPlotsTabbedPane = new javax.swing.JTabbedPane();
         goFrequencyPlotPanel = new javax.swing.JPanel();
         goSignificancePlotPanel = new javax.swing.JPanel();
+
+        selectAllMenuItem.setText("Select All");
+        selectAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAllMenuItemActionPerformed(evt);
+            }
+        });
+        selectTermsJPopupMenu.add(selectAllMenuItem);
+
+        deselectAllMenuItem.setText("Deselect All");
+        deselectAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deselectAllMenuItemActionPerformed(evt);
+            }
+        });
+        selectTermsJPopupMenu.add(deselectAllMenuItem);
+
+        selectSignificantMenuItem.setText("Select Significant");
+        selectSignificantMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectSignificantMenuItemActionPerformed(evt);
+            }
+        });
+        selectTermsJPopupMenu.add(selectSignificantMenuItem);
 
         setBackground(new java.awt.Color(255, 255, 255));
 
         proteinGoMappingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology Mappings"));
         proteinGoMappingsPanel.setOpaque(false);
 
-        proteinGoMappingsTable.setModel(new javax.swing.table.DefaultTableModel(
+        goMappingsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "", "GO Term", "GO Name", "GO Type", "Frequency All (%)", "Frequency Dataset (%)", "Log2 Diff", "p-value", " "
+                "", "GO Accession", "GO Term", "GO Domain", "Frequency All (%)", "Frequency Dataset (%)", "Frequency (%)", "Log2 Diff", "p-value", " ", "  "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Object.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -450,35 +693,63 @@ public class GOEAPanel extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
-        proteinGoMappingsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        goMappingsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                proteinGoMappingsTableMouseExited(evt);
+                goMappingsTableMouseExited(evt);
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
-                proteinGoMappingsTableMouseReleased(evt);
+                goMappingsTableMouseReleased(evt);
             }
         });
-        proteinGoMappingsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+        goMappingsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
-                proteinGoMappingsTableMouseMoved(evt);
+                goMappingsTableMouseMoved(evt);
             }
         });
-        proteinGoMappingsScrollPane.setViewportView(proteinGoMappingsTable);
+        proteinGoMappingsScrollPane.setViewportView(goMappingsTable);
+
+        goMappingsFileJLabel.setText("GO Mappings File:");
+
+        goMappingFilesJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+
+        significanceJLabel.setText("Significance Level:");
+
+        significanceJSpinner.setModel(new javax.swing.SpinnerNumberModel(0.05d, 0.0d, 1.0d, 0.01d));
+        significanceJSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                significanceJSpinnerStateChanged(evt);
+            }
+        });
 
         javax.swing.GroupLayout proteinGoMappingsPanelLayout = new javax.swing.GroupLayout(proteinGoMappingsPanel);
         proteinGoMappingsPanel.setLayout(proteinGoMappingsPanelLayout);
         proteinGoMappingsPanelLayout.setHorizontalGroup(
             proteinGoMappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(proteinGoMappingsPanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinGoMappingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 987, Short.MAX_VALUE)
+                .addGroup(proteinGoMappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 987, Short.MAX_VALUE)
+                    .addGroup(proteinGoMappingsPanelLayout.createSequentialGroup()
+                        .addComponent(goMappingsFileJLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(goMappingFilesJComboBox, 0, 690, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(significanceJLabel)
+                        .addGap(18, 18, 18)
+                        .addComponent(significanceJSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         proteinGoMappingsPanelLayout.setVerticalGroup(
             proteinGoMappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinGoMappingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 313, Short.MAX_VALUE)
+                .addGroup(proteinGoMappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(goMappingsFileJLabel)
+                    .addComponent(goMappingFilesJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(significanceJLabel)
+                    .addComponent(significanceJSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -495,6 +766,8 @@ public class GOEAPanel extends javax.swing.JPanel {
         goSignificancePlotPanel.setLayout(new javax.swing.BoxLayout(goSignificancePlotPanel, javax.swing.BoxLayout.LINE_AXIS));
         goPlotsTabbedPane.addTab("Significance", goSignificancePlotPanel);
 
+        goPlotsTabbedPane.setSelectedIndex(1);
+
         javax.swing.GroupLayout plotPanelLayout = new javax.swing.GroupLayout(plotPanel);
         plotPanel.setLayout(plotPanelLayout);
         plotPanelLayout.setHorizontalGroup(
@@ -507,7 +780,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         plotPanelLayout.setVerticalGroup(
             plotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(plotPanelLayout.createSequentialGroup()
-                .addComponent(goPlotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 337, Short.MAX_VALUE)
+                .addComponent(goPlotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -538,9 +811,9 @@ public class GOEAPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void proteinGoMappingsTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinGoMappingsTableMouseExited
+    private void goMappingsTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_goMappingsTableMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_proteinGoMappingsTableMouseExited
+    }//GEN-LAST:event_goMappingsTableMouseExited
 
     /**
      * Changes the cursor into a hand cursor if the table cell contains an
@@ -548,13 +821,13 @@ public class GOEAPanel extends javax.swing.JPanel {
      *
      * @param evt
      */
-    private void proteinGoMappingsTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinGoMappingsTableMouseMoved
-        int row = proteinGoMappingsTable.rowAtPoint(evt.getPoint());
-        int column = proteinGoMappingsTable.columnAtPoint(evt.getPoint());
+    private void goMappingsTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_goMappingsTableMouseMoved
+        int row = goMappingsTable.rowAtPoint(evt.getPoint());
+        int column = goMappingsTable.columnAtPoint(evt.getPoint());
 
-        if (column == proteinGoMappingsTable.getColumn("GO Term").getModelIndex() && proteinGoMappingsTable.getValueAt(row, column) != null) {
+        if (column == goMappingsTable.getColumn("GO Accession").getModelIndex() && goMappingsTable.getValueAt(row, column) != null) {
 
-            String tempValue = (String) proteinGoMappingsTable.getValueAt(row, column);
+            String tempValue = (String) goMappingsTable.getValueAt(row, column);
 
             if (tempValue.lastIndexOf("<html>") != -1) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
@@ -564,45 +837,131 @@ public class GOEAPanel extends javax.swing.JPanel {
         } else {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
-    }//GEN-LAST:event_proteinGoMappingsTableMouseMoved
+    }//GEN-LAST:event_goMappingsTableMouseMoved
 
     /**
      * If the user clicks the go term column the go term is opened in the web browser.
      *
      * @param evt
      */
-    private void proteinGoMappingsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinGoMappingsTableMouseReleased
+    private void goMappingsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_goMappingsTableMouseReleased
 
-        int row = proteinGoMappingsTable.getSelectedRow();
-        int column = proteinGoMappingsTable.getSelectedColumn();
+        int row = goMappingsTable.getSelectedRow();
+        int column = goMappingsTable.getSelectedColumn();
 
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-            // open protein link in web browser
-            if (column == proteinGoMappingsTable.getColumn("GO Term").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
-                    && ((String) proteinGoMappingsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+            if (evt.getButton() == MouseEvent.BUTTON1) {
 
-                String link = (String) proteinGoMappingsTable.getValueAt(row, column);
-                link = link.substring(link.indexOf("\"") + 1);
-                link = link.substring(0, link.indexOf("\""));
+                // open protein link in web browser
+                if (column == goMappingsTable.getColumn("GO Accession").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
+                        && ((String) goMappingsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
 
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                BareBonesBrowserLaunch.openURL(link);
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                    String link = (String) goMappingsTable.getValueAt(row, column);
+                    link = link.substring(link.indexOf("\"") + 1);
+                    link = link.substring(0, link.indexOf("\""));
+
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    BareBonesBrowserLaunch.openURL(link);
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                } else if (column == goMappingsTable.getColumn("  ").getModelIndex()) {
+                    updateGoPlots();
+                }
             }
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
-    }//GEN-LAST:event_proteinGoMappingsTableMouseReleased
+        
+        if (goMappingsTable.getRowCount() > 0 && evt.getButton() == MouseEvent.BUTTON3) {
+            //selectTermsJPopupMenu.show(this, evt.getX() + 30, evt.getY() + 115); // @TODO: no idea why the addition is needed...
+            selectTermsJPopupMenu.show(goMappingsTable, evt.getX(), evt.getY()); // @TODO: no idea why the addition is needed...
+        }
+    }//GEN-LAST:event_goMappingsTableMouseReleased
+
+    private void significanceJSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_significanceJSpinnerStateChanged
+        if (peptideShakerGUI.getIdentification() != null) {
+
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
+
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("GO Analysis. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            new Thread("GoAnalysisThread") {
+
+                @Override
+                public void run() {
+                    displayResults(progressDialog, true);
+                }
+            }.start();
+        }
+    }//GEN-LAST:event_significanceJSpinnerStateChanged
+
+    /**
+     * Select all the mappings and update the plot.
+     * 
+     * @param evt 
+     */
+    private void selectAllMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllMenuItemActionPerformed
+        for (int i = 0; i < goMappingsTable.getRowCount(); i++) {
+            ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(true, i, goMappingsTable.getColumn("  ").getModelIndex());
+        }
+
+        updateGoPlots();
+    }//GEN-LAST:event_selectAllMenuItemActionPerformed
+
+    /**
+     * Deselect all the mappings and update the plot.
+     * 
+     * @param evt 
+     */
+    private void deselectAllMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectAllMenuItemActionPerformed
+        for (int i = 0; i < goMappingsTable.getRowCount(); i++) {
+            ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(false, i, goMappingsTable.getColumn("  ").getModelIndex());
+        }
+
+        updateGoPlots();
+    }//GEN-LAST:event_deselectAllMenuItemActionPerformed
+
+    /**
+     * Select all the significant mappings and update the plot.
+     * 
+     * @param evt 
+     */
+    private void selectSignificantMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectSignificantMenuItemActionPerformed
+        for (int i = 0; i < goMappingsTable.getRowCount(); i++) {
+            if ((Boolean) goMappingsTable.getModel().getValueAt(i, goMappingsTable.getColumn(" ").getModelIndex())) {
+                ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(true, i, goMappingsTable.getColumn("  ").getModelIndex());
+            } else {
+                ((DefaultTableModel) goMappingsTable.getModel()).setValueAt(false, i, goMappingsTable.getColumn("  ").getModelIndex());
+            }
+        }
+
+        updateGoPlots();
+    }//GEN-LAST:event_selectSignificantMenuItemActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem deselectAllMenuItem;
     private javax.swing.JPanel goFrequencyPlotPanel;
+    private javax.swing.JComboBox goMappingFilesJComboBox;
+    private javax.swing.JLabel goMappingsFileJLabel;
+    private javax.swing.JTable goMappingsTable;
     private javax.swing.JTabbedPane goPlotsTabbedPane;
     private javax.swing.JPanel goSignificancePlotPanel;
     private javax.swing.JPanel plotPanel;
     private javax.swing.JPanel proteinGoMappingsPanel;
     private javax.swing.JScrollPane proteinGoMappingsScrollPane;
-    private javax.swing.JTable proteinGoMappingsTable;
+    private javax.swing.JMenuItem selectAllMenuItem;
+    private javax.swing.JMenuItem selectSignificantMenuItem;
+    private javax.swing.JPopupMenu selectTermsJPopupMenu;
+    private javax.swing.JLabel significanceJLabel;
+    private javax.swing.JSpinner significanceJSpinner;
     // End of variables declaration//GEN-END:variables
 
     /**
