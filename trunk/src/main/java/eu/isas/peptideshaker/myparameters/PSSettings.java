@@ -9,7 +9,7 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 /**
  * This class will be used to save all settings needed in PeptideShaker
  *
- * @author vaudel
+ * @author Marc Vaudel
  */
 public class PSSettings implements UrParameter {
 
@@ -42,10 +42,10 @@ public class PSSettings implements UrParameter {
     }
     
     /**
-     * Constructor for a Peptide Shaker Settings class
+     * Constructor for a Peptide Shaker Settings class.
+     * 
      * @param searchParameters              The parameters linked to the search
      * @param annotationPreferences         The annotation preferences
-     * @param identificationPreferences     The identification preferences
      * @param spectrumCountingPreferences   The spectrum counting preferences
      * @param projectDetails                The project details
      */
@@ -60,7 +60,8 @@ public class PSSettings implements UrParameter {
     }
 
     /**
-     * Returns the annotation preferences
+     * Returns the annotation preferences.
+     * 
      * @return the annotation preferences 
      */
     public AnnotationPreferences getAnnotationPreferences() {

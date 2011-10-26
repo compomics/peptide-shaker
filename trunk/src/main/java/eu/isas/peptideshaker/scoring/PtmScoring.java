@@ -8,10 +8,10 @@ import java.util.HashMap;
 /**
  * This class contains score about the PTM localization scoring
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PtmScoring implements Serializable {
-    
+
     /**
      * serial version UID for post-serialization compatibility
      */
@@ -62,7 +62,8 @@ public class PtmScoring implements Serializable {
     private int siteConfidence = RANDOM;
 
     /**
-     * Constructor
+     * Constructor.
+     * 
      * @param ptmName the name of the PTM of interest
      */
     public PtmScoring(String ptmName) {
@@ -70,7 +71,8 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the name of the inspected protein
+     * Returns the name of the inspected protein.
+     * 
      * @return the name of the inspected protein 
      */
     public String getName() {
@@ -78,7 +80,8 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Adds a delta score for the given locations combination
+     * Adds a delta score for the given locations combination.
+     * 
      * @param locations     the combination of locations
      * @param deltaScore    The corresponding delta score
      */
@@ -87,21 +90,21 @@ public class PtmScoring implements Serializable {
         addDeltaScore(locationsKey, deltaScore);
     }
 
-
     /**
-     * Adds an A-score for the given locations combination
+     * Adds an A-score for the given locations combination.
+     * 
      * @param locations     the combination of locations
-     * @param deltaScore    The corresponding A-score
+     * @param aScore    The corresponding A-score
      */
     public void addAScore(ArrayList<Integer> locations, double aScore) {
         String locationsKey = getKey(locations);
         addAScore(locationsKey, aScore);
     }
 
-
     /**
-     * Adds a delta score for the given locations combination given as a key
-     * @param locations     the combination of locations
+     * Adds a delta score for the given locations combination given as a key.
+     * 
+     * @param locationsKey     the combination of locations
      * @param deltaScore    The corresponding delta score
      */
     public void addDeltaScore(String locationsKey, double deltaScore) {
@@ -111,11 +114,11 @@ public class PtmScoring implements Serializable {
         }
     }
 
-
     /**
-     * Adds an A score for the given locations combination given as a key
-     * @param locations     the combination of locations
-     * @param deltaScore    The corresponding A-score
+     * Adds an A score for the given locations combination given as a key.
+     * 
+     * @param locationsKey     the combination of locations
+     * @param aScore    The corresponding A-score
      */
     public void addAScore(String locationsKey, double aScore) {
         if (!aScores.containsKey(locationsKey)
@@ -125,15 +128,17 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the implemented locations possibilities for delta scores
+     * Returns the implemented locations possibilities for delta scores.
+     * 
      * @return the implemented locations possibilities for delta scores
      */
     public ArrayList<String> getDeltaScorelocations() {
         return new ArrayList<String>(deltaScores.keySet());
     }
-    
+
     /**
-     * Returns the best scoring modification profile based on the delta score
+     * Returns the best scoring modification profile based on the delta score.
+     * 
      * @return the best scoring modification profile based on the delta score
      */
     public String getBestDeltaScoreLocations() {
@@ -145,9 +150,10 @@ public class PtmScoring implements Serializable {
         }
         return bestKey;
     }
-    
+
     /**
-     * Returns the best scoring modification profile based on the delta score
+     * Returns the best scoring modification profile based on the delta score.
+     * 
      * @return the best scoring modification profile based on the delta score
      */
     public String getBestAScoreLocations() {
@@ -160,9 +166,9 @@ public class PtmScoring implements Serializable {
         return bestKey;
     }
 
-
     /**
-     * Returns the implemented locations for the A-score
+     * Returns the implemented locations for the A-score.
+     * 
      * @return the implemented locations for the A-score
      */
     public ArrayList<String> getAScorePostions() {
@@ -170,7 +176,8 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the delta score for the specified locations possibility given as a key
+     * Returns the delta score for the specified locations possibility given as a key.
+     * 
      * @param locationsKey the locations possibility given as a key
      * @return the delta score 
      */
@@ -179,7 +186,8 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the A-score for the specified locations possibility given as a key
+     * Returns the A-score for the specified locations possibility given as a key.
+     * 
      * @param locationsKey the locations possibility given as a key
      * @return the A-score 
      */
@@ -188,7 +196,8 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * adds all scorings from another score
+     * Adds all scorings from another score.
+     * 
      * @param anotherScore another score
      */
     public void addAll(PtmScoring anotherScore) {
@@ -198,8 +207,8 @@ public class PtmScoring implements Serializable {
         for (String positions : anotherScore.getAScorePostions()) {
             addAScore(positions, anotherScore.getAScore(positions));
         }
-        if (siteConfidence < CONFIDENT &&
-                anotherScore.getPtmSiteConfidence() > siteConfidence) {
+        if (siteConfidence < CONFIDENT
+                && anotherScore.getPtmSiteConfidence() > siteConfidence) {
             ptmLocation = "";
             siteConfidence = anotherScore.getPtmSiteConfidence();
         }
@@ -216,7 +225,8 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the modification locations from a key
+     * Returns the modification locations from a key.
+     * 
      * @param locationsKey the modification locations key
      * @return the modification locations as an ArrayList containing all possible locations
      */
@@ -240,7 +250,8 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the key corresponding to modification possible locations
+     * Returns the key corresponding to modification possible locations.
+     * 
      * @param locations the possible modification locations in the sequence
      * @return the corresponding key
      */
@@ -252,9 +263,10 @@ public class PtmScoring implements Serializable {
         }
         return result;
     }
-    
+
     /**
-     * sets the PTM site assignment results
+     * Sets the PTM site assignment results.
+     * 
      * @param location          the location of the PTM
      * @param ptmSiteConfidence the location confidence as indexed by the static fields
      */
@@ -262,21 +274,22 @@ public class PtmScoring implements Serializable {
         this.ptmLocation = location;
         this.siteConfidence = ptmSiteConfidence;
     }
-    
+
     /**
-     * returns the PTM location as a String which can be translated using the static methods
+     * Returns the PTM location as a String which can be translated using the static methods.
+     * 
      * @return the PTM location
      */
     public String getPtmLocation() {
         return ptmLocation;
     }
-    
+
     /**
-     * Returns the PTM location confidence as indexed by the satic fields
+     * Returns the PTM location confidence as indexed by the satic fields.
+     * 
      * @return the PTM location confidence
      */
     public int getPtmSiteConfidence() {
         return siteConfidence;
     }
-    
 }

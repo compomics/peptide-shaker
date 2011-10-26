@@ -13,7 +13,7 @@ import java.util.HashMap;
 /**
  * This map will store target decoy informations about the psms grouped according to their precursor charge.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PsmSpecificMap implements Serializable {
 
@@ -32,13 +32,12 @@ public class PsmSpecificMap implements Serializable {
 
     /**
      * Constructor
-     * @param spectrumCollection the spectrum collection where spectra are stored
      */
     public PsmSpecificMap() {
     }
 
     /**
-     * estimate the posterior error probabilities of the psms
+     * Estimate the posterior error probabilities of the psms.
      * 
      * @param waitingDialog a reference to the waiting dialog
      */
@@ -160,8 +159,9 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the key (here the charge) associated to the corresponding spectrum match after curation
-     * @param spectrumMatch the spectrum match of interest
+     * Returns the key (here the charge) associated to the corresponding spectrum match after curation.
+     * 
+     * @param specificKey the spectrum match of interest
      * @return the corresponding key
      */
     public Integer getCorrectedKey(int specificKey) {
@@ -172,8 +172,9 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the key (here the charge) associated to the corresponding spectrum match after curation
-     * @param spectrumMatch the spectrum match of interest
+     * Returns the key (here the charge) associated to the corresponding spectrum match after curation.
+     * 
+     * @param specificKey the spectrum match of interest
      * @return the corresponding key
      */
     public Integer getCorrectedKey(String specificKey) {
@@ -181,7 +182,8 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the key (here the charge) associated to the corresponding spectrum match
+     * Returns the key (here the charge) associated to the corresponding spectrum match.
+     * 
      * @param spectrumMatch the spectrum match of interest
      * @return the corresponding key
      */
@@ -195,7 +197,8 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the desired target decoy map
+     * Returns the desired target decoy map.
+     * 
      * @param key   the key of the desired map
      * @return      the corresponding target decoy map
      */
@@ -204,7 +207,8 @@ public class PsmSpecificMap implements Serializable {
     }
     
     /**
-     * Returns the overall number of points in the map
+     * Returns the overall number of points in the map.
+     * 
      * @return the overall number of points in the map
      */
     public int getMapsSize() {
@@ -216,7 +220,8 @@ public class PsmSpecificMap implements Serializable {
     }
 
     /**
-     * Returns the maximal precursor charge observed in the identified spectra
+     * Returns the maximal precursor charge observed in the identified spectra.
+     * 
      * @return the maximal precursor charge observed in the identified spectra 
      */
     public int getMaxCharge() {
