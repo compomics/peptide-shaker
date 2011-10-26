@@ -45,21 +45,6 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
             report += "<br><b>FASTA File:</b><br>";
             report += projectDetails.getDbFile() + "<br>";
             
-            report += "<br><b>Filters Applied:</b><br>";
-            report += "Maximal Mascot e-value: " + projectDetails.getMascotEValue() + "<br>";
-            report += "Maximal OMSSA e-value: " + projectDetails.getOmssaEValue() + "<br>";
-            report += "Maximal X!Tandem e-value: " + projectDetails.getxTandemEValue() + "<br>";
-            report += "Peptide Length: " + projectDetails.getnAAmin() + " to " + projectDetails.getNaaMax() + "<br>";
-            report += "Maximal Precursor Mass Deviation: " + projectDetails.getPrecursorError();
-            
-            if (projectDetails.isPrecursorErrorPpm()) {
-                report += " ppm<br>";
-            } else {
-                report += " Da<br>";
-            }
-            
-            report += "<br><i>(note: filters used should be reported in publications!)</i>";
-            
             report += "</html>";
             
             projectDetailsJEditorPane.setText(report);

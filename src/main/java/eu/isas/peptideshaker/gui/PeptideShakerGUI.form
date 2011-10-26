@@ -514,6 +514,14 @@
             <Property name="text" type="java.lang.String" value="Edit"/>
           </Properties>
           <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="importFilterMenu">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Import Filter"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="importFilterMenuActionPerformed"/>
+              </Events>
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="searchParametersMenu">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Search Parameters"/>

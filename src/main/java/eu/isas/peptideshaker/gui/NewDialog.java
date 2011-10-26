@@ -13,6 +13,7 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
+import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
@@ -141,7 +142,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
-        precMassUnitCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
     }
 
     /** This method is called from within the constructor to
@@ -165,22 +165,12 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         sampleNameIdtxt = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        minPepLengthTxt = new javax.swing.JTextField();
-        maxPepLengthTxt = new javax.swing.JTextField();
-        jLabel11 = new javax.swing.JLabel();
-        massDeviationTxt = new javax.swing.JTextField();
-        precMassUnitCmb = new javax.swing.JComboBox();
+        importFilterTxt = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        mascotMaxEvalueTxt = new javax.swing.JTextField();
-        xtandemMaxEvalueTxt = new javax.swing.JTextField();
-        omssaMaxEvalueTxt = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
         searchTxt = new javax.swing.JTextField();
         editSearchButton = new javax.swing.JButton();
+        editImportFilterButton = new javax.swing.JButton();
         projectDetailsPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         idFilesTxt = new javax.swing.JTextField();
@@ -278,42 +268,14 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Processing Parameters"));
         jPanel1.setOpaque(false);
 
-        minPepLengthTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        minPepLengthTxt.setText("8");
-        minPepLengthTxt.setToolTipText("Minimum Peptide Length");
+        importFilterTxt.setEditable(false);
+        importFilterTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        importFilterTxt.setText("Default");
+        importFilterTxt.setToolTipText("Minimum Peptide Length");
 
-        maxPepLengthTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        maxPepLengthTxt.setText("20");
-        maxPepLengthTxt.setToolTipText("Maximum Peptide Length");
+        jLabel7.setText("Import Filter:");
 
-        jLabel11.setText("Precursor Accuracy:");
-
-        massDeviationTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        massDeviationTxt.setText("10");
-        massDeviationTxt.setToolTipText("Precursor Ion Mass Accuracy");
-
-        precMassUnitCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "ppm", "Da" }));
-
-        jLabel7.setText("Peptide Length:");
-
-        jLabel4.setText("OMSSA Max E-Value:");
-
-        jLabel5.setText("X!Tandem Max E-Value:");
-
-        mascotMaxEvalueTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        mascotMaxEvalueTxt.setText("10");
-
-        xtandemMaxEvalueTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        xtandemMaxEvalueTxt.setText("10");
-
-        omssaMaxEvalueTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        omssaMaxEvalueTxt.setText("10");
-
-        jLabel3.setText("Mascot Max E-Value:");
-
-        jLabel13.setText("-");
-
-        jLabel6.setText("Search Parameters:");
+        jLabel4.setText("Search Parameters:");
 
         searchTxt.setEditable(false);
         searchTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -326,43 +288,30 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             }
         });
 
+        editImportFilterButton.setText("Edit");
+        editImportFilterButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editImportFilterButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(omssaMaxEvalueTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(xtandemMaxEvalueTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(mascotMaxEvalueTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 225, Short.MAX_VALUE)))
-                .addGap(50, 50, 50)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel6))
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(searchTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
-                    .addComponent(massDeviationTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE)
-                    .addComponent(minPepLengthTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 107, Short.MAX_VALUE))
+                .addComponent(searchTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel13)
+                .addComponent(editSearchButton, javax.swing.GroupLayout.DEFAULT_SIZE, 112, Short.MAX_VALUE)
+                .addGap(56, 56, 56)
+                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(precMassUnitCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, 106, Short.MAX_VALUE)
-                    .addComponent(maxPepLengthTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
-                    .addComponent(editSearchButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE))
+                .addComponent(importFilterTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 103, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(editImportFilterButton, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -371,25 +320,11 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(omssaMaxEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7)
-                    .addComponent(maxPepLengthTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel13)
-                    .addComponent(minPepLengthTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(xtandemMaxEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5)
-                    .addComponent(precMassUnitCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(massDeviationTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel11))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE, false)
-                    .addComponent(jLabel3)
-                    .addComponent(mascotMaxEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel6)
+                    .addComponent(importFilterTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(editSearchButton))
+                    .addComponent(editSearchButton)
+                    .addComponent(editImportFilterButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -548,7 +483,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                             .addComponent(jPanel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(projectDetailsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(sampleDetailsPanelLayout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, sampleDetailsPanelLayout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(jLabel12)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -577,8 +512,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                         .addComponent(jLabel12)
                         .addComponent(exitButton)
                         .addComponent(openButton))
-                    .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE))
+                .addGap(67, 67, 67))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -859,7 +794,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * @param evt 
      */
     private void editSearchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSearchButtonActionPerformed
-        new SearchPreferencesDialog(peptideShakerGUI);
+        new SearchPreferencesDialog(peptideShakerGUI, true);
     }//GEN-LAST:event_editSearchButtonActionPerformed
 
     /**
@@ -890,6 +825,12 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OpenDialog.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
+
+    private void editImportFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editImportFilterButtonActionPerformed
+        new ImportSettingsDialog(peptideShakerGUI, true);
+        importFilterTxt.setText("User Edit");
+    }//GEN-LAST:event_editImportFilterButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
@@ -897,34 +838,25 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     private javax.swing.JButton clearDbButton;
     private javax.swing.JButton clearId;
     private javax.swing.JButton clearSpectra;
+    private javax.swing.JButton editImportFilterButton;
     private javax.swing.JButton editSearchButton;
     private javax.swing.JButton exitButton;
     private javax.swing.JTextField fastaFileTxt;
     private javax.swing.JTextField idFilesTxt;
+    private javax.swing.JTextField importFilterTxt;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JTextField mascotMaxEvalueTxt;
-    private javax.swing.JTextField massDeviationTxt;
-    private javax.swing.JTextField maxPepLengthTxt;
-    private javax.swing.JTextField minPepLengthTxt;
-    private javax.swing.JTextField omssaMaxEvalueTxt;
     private javax.swing.JButton openButton;
     private javax.swing.JButton openDialogHelpJButton;
-    private javax.swing.JComboBox precMassUnitCmb;
     private javax.swing.JPanel projectDetailsPanel;
     private javax.swing.JTextField projectNameIdTxt;
     private javax.swing.JTextField replicateNumberIdtxt;
@@ -932,7 +864,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     private javax.swing.JTextField sampleNameIdtxt;
     private javax.swing.JTextField searchTxt;
     private javax.swing.JTextField spectrumFilesTxt;
-    private javax.swing.JTextField xtandemMaxEvalueTxt;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -941,49 +872,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * @return true if the input is valid, false otherwise.
      */
     private boolean validateInput() {
-
-        try {
-            getMaxMassDeviation();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for max mass deviation.",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        try {
-            getMinPeptideLength();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for min peptide length.",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        try {
-            getMaxPeptideLength();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for max peptide length.",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        try {
-            getMascotMaxEvalue();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for Mascot max e-value.",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        try {
-            getOmssaMaxEvalue();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for OMSSA max e-value.",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        try {
-            getXtandemMaxEvalue();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for X!Tandem max e-value.",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
         try {
             getReplicateNumber();
         } catch (Exception e) {
@@ -1007,84 +895,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     }
 
     /**
-     * Returns the minimum peptide length.
-     *
-     * @return the minimum peptide length
-     */
-    private int getMinPeptideLength() {
-        String input = minPepLengthTxt.getText().trim();
-        if (input == null || input.equals("")) {
-            input = "0";
-        }
-        return new Integer(input);
-    }
-
-    /**
-     * Returns the maximum peptide length.
-     *
-     * @return  the maximum peptide length
-     */
-    private int getMaxPeptideLength() {
-        String input = maxPepLengthTxt.getText().trim();
-        if (input == null || input.equals("")) {
-            input = "0";
-        }
-        return new Integer(input);
-    }
-
-    /**
-     * Returns the maximal mass deviation allowed.
-     * 
-     * @return the maximal mass deviation allowed
-     */
-    private double getMaxMassDeviation() {
-        String input = massDeviationTxt.getText().trim();
-        if (input == null || input.equals("")) {
-            input = "0";
-        }
-        return new Double(input);
-    }
-
-    /**
-     * Returns the Mascot max e-value.
-     *
-     * @return the Mascot max e-value
-     */
-    private double getMascotMaxEvalue() {
-        String input = mascotMaxEvalueTxt.getText().trim();
-        if (input == null || input.equals("")) {
-            input = "0";
-        }
-        return new Double(input);
-    }
-
-    /**
-     * Returns the OMSSA max e-value.
-     *
-     * @return the OMSSA max e-value
-     */
-    private double getOmssaMaxEvalue() {
-        String input = omssaMaxEvalueTxt.getText().trim();
-        if (input == null || input.equals("")) {
-            input = "0";
-        }
-        return new Double(input);
-    }
-
-    /**
-     * Returns the XTandem max e-value.
-     *
-     * @return the XTandem max e-value
-     */
-    private double getXtandemMaxEvalue() {
-        String input = xtandemMaxEvalueTxt.getText().trim();
-        if (input == null || input.equals("")) {
-            input = "0";
-        }
-        return new Double(input);
-    }
-
-    /**
      * Returns the replicate number.
      *
      * @return the replicate number
@@ -1099,15 +909,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * @param waitingDialog a dialog to display feedback to the user
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
-        boolean precTolUnitIsPpm = ((String) precMassUnitCmb.getSelectedItem()).equals("ppm");
-        peptideShakerGUI.getSearchParameters().setPrecursorAccuracy(getMaxMassDeviation());
-        if (precTolUnitIsPpm) {
-            peptideShakerGUI.getSearchParameters().setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.PPM);
-        } else {
-            peptideShakerGUI.getSearchParameters().setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.DA);
-        }
-        IdFilter idFilter = new IdFilter(getMinPeptideLength(), getMaxPeptideLength(), getMascotMaxEvalue(), getOmssaMaxEvalue(), getXtandemMaxEvalue(), getMaxMassDeviation(), precTolUnitIsPpm);
-        peptideShaker.importFiles(waitingDialog, idFilter, idFiles, spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
+        peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles, spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
     }
 
     /**
@@ -1164,9 +966,9 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             temp = props.getProperty(IdentificationParametersReader.PRECURSOR_MASS_TOLERANCE);
 
             if (temp != null) {
-                massDeviationTxt.setText(temp);
                 try {
                     searchParameters.setPrecursorAccuracy(new Double(temp.trim()));
+                    peptideShakerGUI.getIdFilter().setMaxMassDeviation(new Double(temp.trim()));
                 } catch (Exception e) {
                 }
             }
@@ -1174,7 +976,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             temp = props.getProperty(IdentificationParametersReader.PRECURSOR_MASS_ACCURACY_UNIT);
 
             if (temp != null) {
-                precMassUnitCmb.setSelectedItem(temp);
                 int unit = 0;
                 try {
                     unit = new Integer(temp.trim());
@@ -1183,8 +984,10 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
                 if (unit == 0) {
                     searchParameters.setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.PPM);
+                    peptideShakerGUI.getIdFilter().setIsPpm(true);
                 } else {
                     searchParameters.setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.DA);
+                    peptideShakerGUI.getIdFilter().setIsPpm(false);
                 }
             }
 
@@ -1197,13 +1000,21 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             temp = props.getProperty(IdentificationParametersReader.MIN_PEPTIDE_SIZE);
 
             if (temp != null && temp.length() > 0) {
-                minPepLengthTxt.setText(temp);
+                try {
+                    searchParameters.setPrecursorAccuracy(new Double(temp.trim()));
+                    peptideShakerGUI.getIdFilter().setMinPepLength(new Integer(temp.trim()));
+                } catch (Exception e) {
+                }
             }
 
             temp = props.getProperty(IdentificationParametersReader.MAX_PEPTIDE_SIZE);
 
             if (temp != null && temp.length() > 0) {
-                maxPepLengthTxt.setText(temp);
+                try {
+                    searchParameters.setPrecursorAccuracy(new Double(temp.trim()));
+                    peptideShakerGUI.getIdFilter().setMaxPepLength(new Integer(temp.trim()));
+                } catch (Exception e) {
+                }
             }
 
             temp = props.getProperty(IdentificationParametersReader.FRAGMENT_ION_TYPE_1);
@@ -1237,6 +1048,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                 JOptionPane.showMessageDialog(this, "FASTA file \'" + temp + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
             }
             searchTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
+            importFilterTxt.setText(searchGUIFile.getName().substring(0, searchGUIFile.getName().lastIndexOf(".")));
             peptideShakerGUI.setSearchParameters(searchParameters);
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
         } catch (FileNotFoundException e) {
@@ -1335,13 +1147,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         projectDetails.setDbFile(fastaFile);
         projectDetails.setIdentificationFiles(idFiles);
         projectDetails.setSpectrumFiles(spectrumFiles);
-        projectDetails.setMascotEValue(getMascotMaxEvalue());
-        projectDetails.setOmssaEValue(getOmssaMaxEvalue());
-        projectDetails.setxTandemEValue(getXtandemMaxEvalue());
-        projectDetails.setNaaMax(getMaxPeptideLength());
-        projectDetails.setnAAmin(getMinPeptideLength());
-        projectDetails.setPrecursorError(getMaxMassDeviation());
-        projectDetails.setPrecursorErrorPpm(precMassUnitCmb.getSelectedIndex() == 0);
 
         return projectDetails;
     }

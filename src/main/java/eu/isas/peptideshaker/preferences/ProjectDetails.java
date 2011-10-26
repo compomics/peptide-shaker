@@ -33,35 +33,7 @@ public class ProjectDetails implements Serializable {
      */
     private File dbFile;
     /**
-     * The Mascot e-value limit used for the import
-     */
-    private double mascotEValue;
-    /**
-     * The OMSSA e-value limit used for the import
-     */
-    private double omssaEValue;
-    /**
-     * The X!Tandem e-value limit used for the import
-     */
-    private double xTandemEValue;
-    /**
-     * The precursor mass limit used for the import
-     */
-    private double precursorError;
-    /**
-     * The unit of the precursor limit used
-     */
-    private boolean precursorErrorPpm;
-    /**
-     * The minimal number of amino acid used
-     */
-    private int nAAmin;
-    /**
-     * The maximal number of amino acid used
-     */
-    private int naaMax;
-    /**
-     * The date of creation of the project
+     * When the project was created
      */
     private Date creationDate;
 
@@ -104,102 +76,6 @@ public class ProjectDetails implements Serializable {
     }
 
     /**
-     * Getter for the maximal Mascot e-value allowed
-     * @return the maximal Mascot e-value allowed
-     */
-    public double getMascotEValue() {
-        return mascotEValue;
-    }
-
-    /**
-     * Setter for the maximal Mascot e-value allowed
-     * @param mascotEValue the maximal Mascot e-value allowed
-     */
-    public void setMascotEValue(double mascotEValue) {
-        this.mascotEValue = mascotEValue;
-    }
-
-    /**
-     * Getter for the minimal peptide length imported
-     * @return the minimal peptide length imported
-     */
-    public int getnAAmin() {
-        return nAAmin;
-    }
-
-    /**
-     * Setter for the minimal peptide length imported
-     * @param nAAmin the minimal peptide length imported
-     */
-    public void setnAAmin(int nAAmin) {
-        this.nAAmin = nAAmin;
-    }
-
-    /**
-     * Getter for the maximal peptide length imported
-     * @return the maximal peptide length imported
-     */
-    public int getNaaMax() {
-        return naaMax;
-    }
-
-    /**
-     * Setter for the maximal peptide length imported
-     * @param naaMax the maximal peptide length imported
-     */
-    public void setNaaMax(int naaMax) {
-        this.naaMax = naaMax;
-    }
-
-    /**
-     * Getter for the maximal OMSSA e-value imported
-     * @return the maximal OMSSA e-value imported
-     */
-    public double getOmssaEValue() {
-        return omssaEValue;
-    }
-
-    /**
-     * Setter for the maximal OMSSA e-value imported
-     * @param omssaEValue the maximal OMSSA e-value imported
-     */
-    public void setOmssaEValue(double omssaEValue) {
-        this.omssaEValue = omssaEValue;
-    }
-
-    /**
-     * Getter for the maximal precursor mass deviation allowed
-     * @return the maximal precursor mass deviation allowed
-     */
-    public double getPrecursorError() {
-        return precursorError;
-    }
-
-    /**
-     * Setter for the maximal precursor mass deviation allowed
-     * @param precursorError the maximal precursor mass deviation allowed
-     */
-    public void setPrecursorError(double precursorError) {
-        this.precursorError = precursorError;
-    }
-
-    /**
-     * Returns true if the maximal precursor mass deviation is in ppm
-     * @return true if the maximal precursor mass deviation is in ppm
-     */
-    public boolean isPrecursorErrorPpm() {
-        return precursorErrorPpm;
-    }
-
-    /**
-     * Sets whether the maximal precursor mass deviation is in ppm
-     * @param precursorErrorPpm a boolean indicating whether the maximal precursor mass deviation is in ppm
-     */
-    public void setPrecursorErrorPpm(boolean precursorErrorPpm) {
-        this.precursorErrorPpm = precursorErrorPpm;
-    }
-
-    /**
      * Getter for the spectrum files used
      * @return the spectrum files used
      */
@@ -213,22 +89,6 @@ public class ProjectDetails implements Serializable {
      */
     public void setSpectrumFiles(ArrayList<File> spectrumFiles) {
         this.spectrumFiles = spectrumFiles;
-    }
-
-    /**
-     * Getter for the X!Tandem maximal e-value allowed during the import
-     * @return the X!Tandem maximal e-value allowed during the import
-     */
-    public double getxTandemEValue() {
-        return xTandemEValue;
-    }
-
-    /**
-     * Setter for the X!Tandem maximal e-value allowed during the import
-     * @param xTandemEValue the X!Tandem maximal e-value allowed during the import
-     */
-    public void setxTandemEValue(double xTandemEValue) {
-        this.xTandemEValue = xTandemEValue;
     }
 
     /**
