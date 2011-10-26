@@ -85,20 +85,23 @@
             <Component class="javax.swing.JTable" name="proteinGoMappingsTable">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="10" rowCount="0">
+                  <Table columnCount="8" rowCount="0">
                     <Column editable="false" title="" type="java.lang.Integer"/>
                     <Column editable="false" title="GO Term" type="java.lang.String"/>
                     <Column editable="false" title="GO Name" type="java.lang.String"/>
-                    <Column editable="false" title="Frequency All" type="java.lang.Double"/>
-                    <Column editable="false" title="Percent All" type="java.lang.Double"/>
-                    <Column editable="false" title="Frequency Dataset" type="java.lang.Double"/>
-                    <Column editable="false" title="Percent Dataset" type="java.lang.Double"/>
+                    <Column editable="false" title="Frequency All (%)" type="java.lang.Double"/>
+                    <Column editable="false" title="Frequency Dataset (%)" type="java.lang.Double"/>
                     <Column editable="false" title="Log2 Diff" type="java.lang.Double"/>
                     <Column editable="false" title="p-value" type="java.lang.Double"/>
                     <Column editable="false" title=" " type="java.lang.Boolean"/>
                   </Table>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinGoMappingsTableMouseExited"/>
+                <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinGoMappingsTableMouseReleased"/>
+                <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="proteinGoMappingsTableMouseMoved"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
