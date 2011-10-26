@@ -5,8 +5,10 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,8 +19,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
+import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
+import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.util.BarChartColorRenderer;
 import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
 import org.jfree.chart.ChartFactory;
@@ -40,7 +45,11 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     private PeptideShakerGUI peptideShakerGUI;
 
-    /** Creates new form GOEAPanel */
+    /** 
+     * Creates a new GOEAPanel.
+     * 
+     * @param peptideShakerGUI 
+     */
     public GOEAPanel(PeptideShakerGUI peptideShakerGUI) {
 
         this.peptideShakerGUI = peptideShakerGUI;
@@ -56,11 +65,27 @@ public class GOEAPanel extends javax.swing.JPanel {
         proteinGoMappingsTable.getColumn("").setMinWidth(60);
         proteinGoMappingsTable.getColumn(" ").setMaxWidth(30);
         proteinGoMappingsTable.getColumn(" ").setMinWidth(30);
-        
+
         proteinGoMappingsTable.getColumn(" ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 null,
                 "Validated", "Not Validated"));
+
+
+        proteinGoMappingsTable.getColumn("GO Term").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
+
+        proteinGoMappingsTable.getColumn("Frequency All (%)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) proteinGoMappingsTable.getColumn("Frequency All (%)").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+
+        proteinGoMappingsTable.getColumn("Frequency Dataset (%)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) proteinGoMappingsTable.getColumn("Frequency Dataset (%)").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+
+        proteinGoMappingsTable.getColumn("p-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) proteinGoMappingsTable.getColumn("p-value").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+
+        proteinGoMappingsTable.getColumn("Log2 Diff").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
+                PlotOrientation.HORIZONTAL, -10.0, 10.0, Color.RED, peptideShakerGUI.getSparklineColor(), Color.GRAY, 0));
+        ((JSparklinesBarChartTableCellRenderer) proteinGoMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
         // make the tabs in the tabbed pane go from right to left
         goPlotsTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
@@ -181,7 +206,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                 line = br.readLine();
             }
 
-            
+
             // get go term for dataset
             Identification identification = peptideShakerGUI.getIdentification();
             ArrayList<String> allProjectProteins = identification.getProteinIdentification();
@@ -193,7 +218,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                     proteinPSParameter = (PSParameter) identification.getMatchParameter(allProjectProteins.get(i), proteinPSParameter);
 
                     // @TODO: what about protein groups?? use main match?
-                    
+
                     if (proteinPSParameter.isValidated() && !ProteinMatch.isDecoy(allProjectProteins.get(i))) {
 
                         if (proteinToGoMappings.containsKey(allProjectProteins.get(i))) {
@@ -217,14 +242,15 @@ public class GOEAPanel extends javax.swing.JPanel {
                     e.printStackTrace();
                 }
             }
-            
-            
+
+
 
             // display the plot
             DefaultCategoryDataset frquencyPlotDataset = new DefaultCategoryDataset();
             DefaultCategoryDataset significancePlotDataset = new DefaultCategoryDataset();
-            
+
             ArrayList<Color> significanceColors = new ArrayList<Color>();
+            Double maxLog2Diff = 0.0;
 
             for (Map.Entry<String, Integer> entry : totalGoTermUsage.entrySet()) {
                 String goName = entry.getKey();
@@ -233,40 +259,42 @@ public class GOEAPanel extends javax.swing.JPanel {
                 String goAccession = goNameToAccessionMap.get(goName);
                 Integer frequencyDataset = 0;
                 Double percentDataset = 0.0;
-                
+
                 if (datasetGoTermUsage.get(goName) != null) {
                     frequencyDataset = datasetGoTermUsage.get(goName);
                     percentDataset = ((double) frequencyDataset / allProjectProteins.size()) * 100;
                 }
-                
+
                 Double percentAll = ((double) frequencyAll / proteinToGoMappings.size()) * 100;
                 Double pValue = new HypergeometricDistributionImpl(proteinToGoMappings.size(), frequencyAll, allProjectProteins.size()).probability(frequencyDataset);
-                Double log2Diff = Math.log(percentAll / percentDataset) / Math.log(2);
-                
+                Double log2Diff = Math.log(percentDataset / percentAll) / Math.log(2);
+
+                if (!log2Diff.isInfinite() && Math.abs(log2Diff) > maxLog2Diff) {
+                    maxLog2Diff = Math.abs(log2Diff);
+                }
+
                 Double significanceLevel = 0.05;
 
                 ((DefaultTableModel) proteinGoMappingsTable.getModel()).addRow(new Object[]{
                             proteinGoMappingsTable.getRowCount() + 1,
-                            goAccession,
+                            addGoLink(goAccession),
                             goName,
-                            frequencyAll,
                             percentAll,
-                            frequencyDataset,
                             percentDataset,
                             log2Diff,
                             pValue,
                             pValue < significanceLevel / totalGoTermUsage.keySet().size()
                         });
-                
+
                 frquencyPlotDataset.addValue(percentAll, "All", goName);
                 frquencyPlotDataset.addValue(percentDataset, "Dataset", goName);
-                
+
                 if (!log2Diff.isInfinite()) {
                     significancePlotDataset.addValue(log2Diff, "Difference", goName);
                 } else {
                     significancePlotDataset.addValue(0, "Difference", goName);
                 }
-                
+
                 if (pValue < significanceLevel / totalGoTermUsage.keySet().size()) {
                     if (log2Diff > 0) {
                         significanceColors.add(peptideShakerGUI.getSparklineColor());
@@ -277,7 +305,24 @@ public class GOEAPanel extends javax.swing.JPanel {
                     significanceColors.add(Color.lightGray);
                 }
             }
-            
+
+            // invoke later to give time for components to update
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                    // set the preferred size of the accession column
+                    int width = peptideShakerGUI.getPreferredColumnWidth(proteinGoMappingsTable, proteinGoMappingsTable.getColumn("GO Term").getModelIndex(), 6);
+                    proteinGoMappingsTable.getColumn("GO Term").setMinWidth(width);
+                    proteinGoMappingsTable.getColumn("GO Term").setMaxWidth(width);
+                }
+            });
+
+            maxLog2Diff = Math.ceil(maxLog2Diff);
+
+            proteinGoMappingsTable.getColumn("Log2 Diff").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
+                    PlotOrientation.HORIZONTAL, -maxLog2Diff, maxLog2Diff, Color.RED, peptideShakerGUI.getSparklineColor(), Color.GRAY, 0));
+            ((JSparklinesBarChartTableCellRenderer) proteinGoMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+
             JFreeChart barChart = ChartFactory.createBarChart(null, "GO Terms", "Frequency (%)", frquencyPlotDataset, PlotOrientation.VERTICAL, false, true, true);
             ChartPanel chartPanel = new ChartPanel(barChart);
 
@@ -298,17 +343,21 @@ public class GOEAPanel extends javax.swing.JPanel {
 
             goFrequencyPlotPanel.removeAll();
             goFrequencyPlotPanel.add(chartPanel);
-            
-            
-            
+
+
+
             JFreeChart significanceChart = ChartFactory.createBarChart(null, "GO Terms", "Log2 Difference", significancePlotDataset, PlotOrientation.VERTICAL, false, true, true);
             ChartPanel signChartPanel = new ChartPanel(significanceChart);
 
             ((CategoryPlot) signChartPanel.getChart().getPlot()).getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
+            ((CategoryPlot) signChartPanel.getChart().getPlot()).getRangeAxis().setUpperBound(maxLog2Diff);
+            ((CategoryPlot) signChartPanel.getChart().getPlot()).getRangeAxis().setLowerBound(-maxLog2Diff);
+
             BarChartColorRenderer signRenderer = new BarChartColorRenderer(significanceColors);
             signRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
             significanceChart.getCategoryPlot().setRenderer(signRenderer);
+
 
 
             // set background color
@@ -357,14 +406,14 @@ public class GOEAPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                "", "GO Term", "GO Name", "Frequency All", "Percent All", "Frequency Dataset", "Percent Dataset", "Log2 Diff", "p-value", " "
+                "", "GO Term", "GO Name", "Frequency All (%)", "Frequency Dataset (%)", "Log2 Diff", "p-value", " "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -373,6 +422,19 @@ public class GOEAPanel extends javax.swing.JPanel {
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
+            }
+        });
+        proteinGoMappingsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                proteinGoMappingsTableMouseExited(evt);
+            }
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                proteinGoMappingsTableMouseReleased(evt);
+            }
+        });
+        proteinGoMappingsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                proteinGoMappingsTableMouseMoved(evt);
             }
         });
         proteinGoMappingsScrollPane.setViewportView(proteinGoMappingsTable);
@@ -444,6 +506,70 @@ public class GOEAPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * Changes the cursor back to the default cursor a hand.
+     *
+     * @param evt
+     */
+    private void proteinGoMappingsTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinGoMappingsTableMouseExited
+        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_proteinGoMappingsTableMouseExited
+
+    /**
+     * Changes the cursor into a hand cursor if the table cell contains an
+     * html link.
+     *
+     * @param evt
+     */
+    private void proteinGoMappingsTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinGoMappingsTableMouseMoved
+        int row = proteinGoMappingsTable.rowAtPoint(evt.getPoint());
+        int column = proteinGoMappingsTable.columnAtPoint(evt.getPoint());
+
+        if (column == proteinGoMappingsTable.getColumn("GO Term").getModelIndex() && proteinGoMappingsTable.getValueAt(row, column) != null) {
+
+            String tempValue = (String) proteinGoMappingsTable.getValueAt(row, column);
+
+            if (tempValue.lastIndexOf("<html>") != -1) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        } else {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_proteinGoMappingsTableMouseMoved
+
+    /**
+     * If the user clicks the go term column the go term is opened in the web browser.
+     *
+     * @param evt
+     */
+    private void proteinGoMappingsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinGoMappingsTableMouseReleased
+        
+        int row = proteinGoMappingsTable.getSelectedRow();
+        int column = proteinGoMappingsTable.getSelectedColumn();
+
+        if (row != -1) {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            
+            // open protein link in web browser
+            if (column == proteinGoMappingsTable.getColumn("GO Term").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
+                    && ((String) proteinGoMappingsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                String link = (String) proteinGoMappingsTable.getValueAt(row, column);
+                link = link.substring(link.indexOf("\"") + 1);
+                link = link.substring(0, link.indexOf("\""));
+
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                BareBonesBrowserLaunch.openURL(link);
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+            
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_proteinGoMappingsTableMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel goFrequencyPlotPanel;
     private javax.swing.JTabbedPane goPlotsTabbedPane;
@@ -453,4 +579,28 @@ public class GOEAPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane proteinGoMappingsScrollPane;
     private javax.swing.JTable proteinGoMappingsTable;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * Returns the GO accession number as a web link to the given 
+     * GO term at AmiGO.
+     * 
+     * @param goAccession
+     * @return 
+     */
+    private String addGoLink(String goAccession) {
+        return "<html><a href=\"" + getGoAccessionLink(goAccession)
+                + "\"><font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
+                + goAccession + "</font></a></html>";
+    }
+
+    /**
+     * Returns the GO accession number as a web link to the given 
+     * GO term at AmiGO.
+     * 
+     * @param goAccession  the GO accession number
+     * @return             the GO accession web link
+     */
+    private String getGoAccessionLink(String goAccession) {
+        return "http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=" + goAccession;
+    }
 }
