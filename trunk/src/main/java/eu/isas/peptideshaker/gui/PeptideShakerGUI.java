@@ -31,9 +31,11 @@ import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FollowupPreferencesDialog;
+import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectDetailsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SpectrumCountingPreferencesDialog;
@@ -235,6 +237,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The parameters of the search
      */
     private SearchParameters searchParameters = new SearchParameters();
+    /**
+     * The identification filter used for this project
+     */
+    private IdFilter idFilter = new IdFilter(); 
     /**
      * The project details
      */
@@ -508,6 +514,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
+        importFilterMenu = new javax.swing.JMenuItem();
         searchParametersMenu = new javax.swing.JMenuItem();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         spectrumCountingMenuItem = new javax.swing.JMenuItem();
@@ -1019,6 +1026,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu.setMnemonic('E');
         editMenu.setText("Edit");
 
+        importFilterMenu.setText("Import Filter");
+        importFilterMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importFilterMenuActionPerformed(evt);
+            }
+        });
+        editMenu.add(importFilterMenu);
+
         searchParametersMenu.setText("Search Parameters");
         searchParametersMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1415,7 +1430,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void searchParametersMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchParametersMenuActionPerformed
-        new SearchPreferencesDialog(this);
+        new SearchPreferencesDialog(this, false);
     }//GEN-LAST:event_searchParametersMenuActionPerformed
 
     /**
@@ -2149,6 +2164,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         // @TODO: add export support for the other tabs
     }//GEN-LAST:event_exportMassErrorPlotGraphicsJMenuItemActionPerformed
 
+    private void importFilterMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFilterMenuActionPerformed
+        new ImportSettingsDialog(this, false);
+    }//GEN-LAST:event_importFilterMenuActionPerformed
+
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
@@ -2349,6 +2368,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JCheckBoxMenuItem hpo3IonCheckBoxMenuItem;
     private javax.swing.JMenuItem identificationFeaturesMenu;
     private javax.swing.JCheckBoxMenuItem immoniumCheckBoxMenuItem;
+    private javax.swing.JMenuItem importFilterMenu;
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
@@ -4480,5 +4500,21 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
                 sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
+    }
+
+    /**
+     * Returns the identification filter used
+     * @return the identification filter used
+     */
+    public IdFilter getIdFilter() {
+        return idFilter;
+    }
+
+    /**
+     * Setsthe identification filter used
+     * @param idFilter the identification filter used
+     */
+    public void setIdFilter(IdFilter idFilter) {
+        this.idFilter = idFilter;
     }
 }

@@ -82,14 +82,19 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * A simple progress dialog.
      */
     private static ProgressDialogX progressDialog;
+    /**
+     * boolean indicating whether import-related data can be edited
+     */
+    private boolean editable;
 
     /**
      * Create a new SearchPreferencesDialog.
      *
      * @param parent the PeptideShaker parent
      */
-    public SearchPreferencesDialog(PeptideShakerGUI parent) {
+    public SearchPreferencesDialog(PeptideShakerGUI parent, boolean editable) {
         super(parent, true);
+        this.editable = editable;
         this.peptideShakerGUI = parent;
         this.searchParameters = parent.getSearchParameters();
         this.profileFile = parent.getModificationProfileFile();
@@ -1369,7 +1374,7 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
         @Override
         public void setValueAt(Object aValue, int row, int column) {
             try {
-                if (column == 3) {
+                if (column == 3 && editable) {
                     if (freePSName(getValueAt(row, 2).toString(), aValue.toString())) {
                         searchParameters.getModificationProfile().setPeptideShakerName(modificationList.get(row), aValue.toString().trim());
                     } else {
@@ -1399,7 +1404,7 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
         @Override
         public boolean isCellEditable(int row, int column) {
 
-            if (column == 1 || column == 3 || column == 4) {
+            if (column == 1 || column == 3 && editable || column == 4) {
                 return true;
             } else {
                 return false;

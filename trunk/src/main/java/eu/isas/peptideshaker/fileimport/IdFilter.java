@@ -3,13 +3,14 @@ package eu.isas.peptideshaker.fileimport;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import java.io.Serializable;
 
 /**
  * This class achieves a pre-filtering of the identifications
  *
  * @author Marc Vaudel
  */
-public class IdFilter {
+public class IdFilter implements Serializable {
 
     /**
      * The minimal peptide length allowed
@@ -39,6 +40,19 @@ public class IdFilter {
      * Boolean indicating the unit of the allowed mass deviation (true: ppm, false: Da)
      */
     private boolean isPpm;
+    
+    /**
+     * Constructor with default settings
+     */
+    public IdFilter() {
+        minPepLength = 6;
+        maxPepLength = 20;
+        mascotMaxEvalue = 10;
+        omssaMaxEvalue = 10;
+        xtandemMaxEvalue = 10;
+        maxMassDeviation = 10;
+        isPpm = true;
+    }
 
     /**
      * Constructor for an Identification filter
@@ -59,24 +73,6 @@ public class IdFilter {
         this.xtandemMaxEvalue = xtandemMaxEvalue;
         this.maxMassDeviation = maxMassDeviation;
         this.isPpm = isPpm;
-    }
-    
-    /**
-     * Returns the minimum peptide length.
-     * 
-     * @return the minimum peptide length
-     */
-    public int getMinPeptideLength () {
-        return minPepLength;
-    }
-    
-    /**
-     * Returns the maxium peptide length.
-     * 
-     * @return the maxium peptide length
-     */
-    public int getMaxPeptideLength () {
-        return maxPepLength;
     }
 
     /**
@@ -130,4 +126,118 @@ public class IdFilter {
         
         return true;
     }
+
+    /**
+     * Indicates whether the mass tolerance is in ppm (true) or Dalton (false)
+     * @return a boolean indicating whether the mass tolerance is in ppm (true) or Dalton (false)
+     */
+    public boolean isIsPpm() {
+        return isPpm;
+    }
+
+    /**
+     * Sets whether the mass tolerance is in ppm (true) or Dalton (false)
+     * @param isPpm a boolean indicating whether the mass tolerance is in ppm (true) or Dalton (false)
+     */
+    public void setIsPpm(boolean isPpm) {
+        this.isPpm = isPpm;
+    }
+
+    /**
+     * Returns the maximal Mascot e-value allowed
+     * @return the maximal Mascot e-value allowed 
+     */
+    public double getMascotMaxEvalue() {
+        return mascotMaxEvalue;
+    }
+
+    /**
+     * Sets  the maximal Mascot e-value allowed
+     * @param mascotMaxEvalue  the maximal Mascot e-value allowed
+     */
+    public void setMascotMaxEvalue(double mascotMaxEvalue) {
+        this.mascotMaxEvalue = mascotMaxEvalue;
+    }
+
+    /**
+     * Returns the maximal mass deviation allowed
+     * @return the maximal mass deviation allowed 
+     */
+    public double getMaxMassDeviation() {
+        return maxMassDeviation;
+    }
+
+    /**
+     * Sets  the maximal mass deviation allowed
+     * @param maxMassDeviation  the maximal mass deviation allowed
+     */
+    public void setMaxMassDeviation(double maxMassDeviation) {
+        this.maxMassDeviation = maxMassDeviation;
+    }
+
+    /**
+     * Returns the maximal peptide length allowed
+     * @return the maximal peptide length allowed 
+     */
+    public int getMaxPepLength() {
+        return maxPepLength;
+    }
+
+    /**
+     * Sets the maximal peptide length allowed
+     * @param maxPepLength  the maximal peptide length allowed
+     */
+    public void setMaxPepLength(int maxPepLength) {
+        this.maxPepLength = maxPepLength;
+    }
+
+    /**
+     * Returns the maximal peptide length allowed
+     * @return the maximal peptide length allowed 
+     */
+    public int getMinPepLength() {
+        return minPepLength;
+    }
+
+    /**
+     * Sets the maximal peptide length allowed
+     * @param minPepLength  the maximal peptide length allowed
+     */
+    public void setMinPepLength(int minPepLength) {
+        this.minPepLength = minPepLength;
+    }
+
+    /**
+     * Returns the OMSSA maximal e-value allowed
+     * @return the OMSSA maximal e-value allowed 
+     */
+    public double getOmssaMaxEvalue() {
+        return omssaMaxEvalue;
+    }
+
+    /**
+     * Sets the OMSSA maximal e-value allowed
+     * @param omssaMaxEvalue  the OMSSA maximal e-value allowed
+     */
+    public void setOmssaMaxEvalue(double omssaMaxEvalue) {
+        this.omssaMaxEvalue = omssaMaxEvalue;
+    }
+
+    /**
+     * Returns the maximal X!Tandem e-value allowed
+     * @return  the OMSSA maximal e-value allowed
+     */
+    public double getXtandemMaxEvalue() {
+        return xtandemMaxEvalue;
+    }
+
+    /**
+     * Sets the OMSSA maximal e-value allowed
+     * @param xtandemMaxEvalue  the OMSSA maximal e-value allowed
+     */
+    public void setXtandemMaxEvalue(double xtandemMaxEvalue) {
+        this.xtandemMaxEvalue = xtandemMaxEvalue;
+    }
+    
+    
 }
