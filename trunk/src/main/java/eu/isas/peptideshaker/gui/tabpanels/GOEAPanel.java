@@ -211,19 +211,22 @@ public class GOEAPanel extends javax.swing.JPanel {
             Identification identification = peptideShakerGUI.getIdentification();
             ArrayList<String> allProjectProteins = identification.getProteinIdentification();
             PSParameter proteinPSParameter = new PSParameter();
+            String mainAccession;
 
-            for (int i = 0; i < allProjectProteins.size(); i++) {
+            for (String matchKey : identification.getProteinIdentification()) {
 
                 try {
-                    proteinPSParameter = (PSParameter) identification.getMatchParameter(allProjectProteins.get(i), proteinPSParameter);
+                    proteinPSParameter = (PSParameter) identification.getMatchParameter(matchKey, proteinPSParameter);
 
-                    // @TODO: what about protein groups?? use main match?
+                    if (proteinPSParameter.isValidated() && !ProteinMatch.isDecoy(matchKey)) {
+                        if (ProteinMatch.getNProteins(matchKey) > 1) {
+                            mainAccession = identification.getProteinMatch(matchKey).getMainMatch();
+                        } else {
+                            mainAccession = matchKey;
+                        }
+                        if (proteinToGoMappings.containsKey(mainAccession)) {
 
-                    if (proteinPSParameter.isValidated() && !ProteinMatch.isDecoy(allProjectProteins.get(i))) {
-
-                        if (proteinToGoMappings.containsKey(allProjectProteins.get(i))) {
-
-                            ArrayList<String> goTerms = proteinToGoMappings.get(allProjectProteins.get(i));
+                            ArrayList<String> goTerms = proteinToGoMappings.get(mainAccession);
 
                             for (int j = 0; j < goTerms.size(); j++) {
                                 if (datasetGoTermUsage.containsKey(goTerms.get(j))) {
@@ -233,7 +236,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 }
                             }
                         } else {
-                            System.out.println("not found: " + allProjectProteins.get(i));
+                            System.out.println("not found: " + mainAccession);
                         }
 
                     }
@@ -546,13 +549,13 @@ public class GOEAPanel extends javax.swing.JPanel {
      * @param evt
      */
     private void proteinGoMappingsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinGoMappingsTableMouseReleased
-        
+
         int row = proteinGoMappingsTable.getSelectedRow();
         int column = proteinGoMappingsTable.getSelectedColumn();
 
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            
+
             // open protein link in web browser
             if (column == proteinGoMappingsTable.getColumn("GO Term").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
                     && ((String) proteinGoMappingsTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
@@ -565,11 +568,10 @@ public class GOEAPanel extends javax.swing.JPanel {
                 BareBonesBrowserLaunch.openURL(link);
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
-            
+
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_proteinGoMappingsTableMouseReleased
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel goFrequencyPlotPanel;
     private javax.swing.JTabbedPane goPlotsTabbedPane;
