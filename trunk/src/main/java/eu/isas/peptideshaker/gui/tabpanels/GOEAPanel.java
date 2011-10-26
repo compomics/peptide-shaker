@@ -69,7 +69,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         proteinGoMappingsTable.getColumn(" ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 null,
-                "Validated", "Not Validated"));
+                "Significant", "Not Significant"));
 
 
         proteinGoMappingsTable.getColumn("GO Term").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
@@ -98,26 +98,48 @@ public class GOEAPanel extends javax.swing.JPanel {
             ((DefaultTableModel) proteinGoMappingsTable.getModel()).removeRow(0);
         }
 
-        String path = peptideShakerGUI.getJarFilePath() + File.separator + "conf"
+        String goMappingsPath = peptideShakerGUI.getJarFilePath() + File.separator + "conf"
                 + File.separator + "gene_ontology" + File.separator + "ensembl_26062011.txt";
-
-        File goMappingsFile = new File(path);
+        
+        String goFamiliesPath = peptideShakerGUI.getJarFilePath() + File.separator + "conf"
+                + File.separator + "gene_ontology" + File.separator + "ensembl_26062011_go_families.txt";
+        
+                                                        
+        File goMappingsFile = new File(goMappingsPath);
 
         TreeMap<String, Integer> totalGoTermUsage = new TreeMap<String, Integer>();
         TreeMap<String, Integer> datasetGoTermUsage = new TreeMap<String, Integer>();
         HashMap<String, String> goNameToAccessionMap = new HashMap<String, String>();
         HashMap<String, ArrayList<String>> proteinToGoMappings = new HashMap<String, ArrayList<String>>();
+        HashMap<String, String> goFamiliesMap = new HashMap<String, String>();
 
         int totalNumberOfProteins = 0;
 
         try {
-            FileReader r = new FileReader(goMappingsFile);
+            // read the GO families
+            FileReader r = new FileReader(goFamiliesPath);
             BufferedReader br = new BufferedReader(r);
+            
+            String line = br.readLine();
+
+            while (line != null) {   
+                String[] elements = line.split(",");
+                goFamiliesMap.put(elements[0], elements[1]);
+                line = br.readLine();
+            }
+                        
+            br.close();
+            r.close();
+            
+            
+            // read the GO mappings
+            r = new FileReader(goMappingsFile);
+            br = new BufferedReader(r);
 
             // read and ignore the header
             br.readLine();
 
-            String line = br.readLine();
+            line = br.readLine();
 
             while (line != null) {
 
@@ -185,8 +207,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 //                                        goAccession,
 //                                        goName
 //                                    });
-
-                            goNameToAccessionMap.put(goAccession, goName);
+                            
+                            goNameToAccessionMap.put(goName, goAccession);
 
                             if (totalGoTermUsage.containsKey(goName)) {
                                 totalGoTermUsage.put(goName, totalGoTermUsage.get(goName) + 1);
@@ -282,6 +304,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             proteinGoMappingsTable.getRowCount() + 1,
                             addGoLink(goAccession),
                             goName,
+                            goFamiliesMap.get(goAccession),
                             percentAll,
                             percentDataset,
                             log2Diff,
@@ -373,7 +396,9 @@ public class GOEAPanel extends javax.swing.JPanel {
 
             goSignificancePlotPanel.removeAll();
             goSignificancePlotPanel.add(signChartPanel);
-
+            
+            br.close();
+            r.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -409,14 +434,14 @@ public class GOEAPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                "", "GO Term", "GO Name", "Frequency All (%)", "Frequency Dataset (%)", "Log2 Diff", "p-value", " "
+                "", "GO Term", "GO Name", "GO Type", "Frequency All (%)", "Frequency Dataset (%)", "Log2 Diff", "p-value", " "
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
