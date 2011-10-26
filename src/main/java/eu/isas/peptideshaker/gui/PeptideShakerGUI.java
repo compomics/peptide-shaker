@@ -40,6 +40,7 @@ import eu.isas.peptideshaker.gui.preferencesdialogs.ProjectDetailsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SpectrumCountingPreferencesDialog;
 import eu.isas.peptideshaker.gui.tabpanels.AnnotationPanel;
+import eu.isas.peptideshaker.gui.tabpanels.GOEAPanel;
 import eu.isas.peptideshaker.gui.tabpanels.OverviewPanel;
 import eu.isas.peptideshaker.gui.tabpanels.ProteinStructurePanel;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
@@ -130,6 +131,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The Validation tab index.
      */
     private final int VALIDATION_TAB_INDEX = 5;
+    /**
+     * The QC Plots tab index.
+     */
+    private final int QC_PLOTS_TAB_INDEX = 6;
+    /**
+     * The GO Analysis tab index.
+     */
+    private final int GO_ANALYSIS_TAB_INDEX = 7;
     /**
      * The decimal format use for the score and confidence columns.
      */
@@ -285,6 +294,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The QC panel
      */
     private QCPanel qcPanel;
+    /**
+     * The GO Analysis panel
+     */
+    private GOEAPanel goPanel;
     /**
      * The spectrum factory
      */
@@ -501,6 +514,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationsJPanel = new javax.swing.JPanel();
         statsJPanel = new javax.swing.JPanel();
         qcJPanel = new javax.swing.JPanel();
+        goJPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
@@ -514,8 +528,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
-        importFilterMenu = new javax.swing.JMenuItem();
         searchParametersMenu = new javax.swing.JMenuItem();
+        importFilterMenu = new javax.swing.JMenuItem();
+        jSeparator4 = new javax.swing.JPopupMenu.Separator();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         spectrumCountingMenuItem = new javax.swing.JMenuItem();
         filterMenu = new javax.swing.JMenu();
@@ -940,8 +955,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
         allTabsJTabbedPane.addTab("Validation", statsJPanel);
 
+        qcJPanel.setOpaque(false);
         qcJPanel.setLayout(new javax.swing.BoxLayout(qcJPanel, javax.swing.BoxLayout.LINE_AXIS));
         allTabsJTabbedPane.addTab("QC Plots", qcJPanel);
+
+        goJPanel.setOpaque(false);
+        goJPanel.setLayout(new javax.swing.BoxLayout(goJPanel, javax.swing.BoxLayout.LINE_AXIS));
+        allTabsJTabbedPane.addTab("GO Analysis", goJPanel);
 
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
@@ -1026,14 +1046,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu.setMnemonic('E');
         editMenu.setText("Edit");
 
-        importFilterMenu.setText("Import Filter");
-        importFilterMenu.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                importFilterMenuActionPerformed(evt);
-            }
-        });
-        editMenu.add(importFilterMenu);
-
         searchParametersMenu.setText("Search Parameters");
         searchParametersMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1041,6 +1053,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         editMenu.add(searchParametersMenu);
+
+        importFilterMenu.setText("Import Filters");
+        importFilterMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importFilterMenuActionPerformed(evt);
+            }
+        });
+        editMenu.add(importFilterMenu);
+        editMenu.add(jSeparator4);
 
         annotationPreferencesMenu.setText("Spectrum Annotations");
         annotationPreferencesMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -2255,6 +2276,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                         progressDialog.setTitle("Loading QC Plots Tab. Please Wait...");
                         qcPanel.displayResults(progressDialog);
+                        
+                        progressDialog.setTitle("Loading GO Analysis Tab. Please Wait...");
+                        goPanel.displayResults(progressDialog);
 
 
                         allTabsJTabbedPaneStateChanged(null);
@@ -2358,6 +2382,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu fileJMenu;
     private javax.swing.JMenu filterMenu;
     private javax.swing.JMenuItem followUpAnalysisMenu;
+    private javax.swing.JPanel goJPanel;
     private javax.swing.JPanel gradientPanel;
     private javax.swing.JCheckBoxMenuItem h2oIonCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem h3po4IonCheckBoxMenuItem;
@@ -2375,6 +2400,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
+    private javax.swing.JPopupMenu.Separator jSeparator4;
     private javax.swing.JPopupMenu.Separator jSeparator5;
     private javax.swing.JPopupMenu.Separator jSeparator6;
     private javax.swing.JPopupMenu.Separator jSeparator7;
@@ -2527,7 +2553,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      *
      * @return the path to the jar file
      */
-    private String getJarFilePath() {
+    public String getJarFilePath() {
         String path = this.getClass().getResource("PeptideShakerGUI.class").getPath();
 
         if (path.lastIndexOf("/PeptideShaker-") != -1) {
@@ -3220,6 +3246,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         proteinStructurePanel = new ProteinStructurePanel(this);
         annotationPanel = new AnnotationPanel(this);
         qcPanel = new QCPanel(this);
+        goPanel = new GOEAPanel(this);
 
         overviewJPanel.removeAll();
         overviewJPanel.add(overviewPanel);
@@ -3238,6 +3265,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         qcJPanel.removeAll();
         qcJPanel.add(qcPanel);
+        
+        goJPanel.removeAll();
+        goJPanel.add(goPanel);
 
         // hide/show the score columns
         scoresJCheckBoxMenuItemActionPerformed(null);
@@ -3276,6 +3306,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         qcPanel.revalidate();
         qcPanel.repaint();
+        
+        goPanel.revalidate();
+        goPanel.repaint();
     }
 
     /**

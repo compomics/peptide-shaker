@@ -179,7 +179,7 @@ public class FileImporter {
                 Enzyme enzyme = searchParameters.getEnzyme();
                 int nMissedCleavages = searchParameters.getnMissedCleavages();
                 int nMin = idFilter.getMinPepLength();
-                int nMax = idFilter.getMinPepLength();
+                int nMax = idFilter.getMaxPepLength();
                 sequences = new HashMap<String, ArrayList<String>>();
 
                 int numberOfSequences = sequenceFactory.getAccessions().size();
