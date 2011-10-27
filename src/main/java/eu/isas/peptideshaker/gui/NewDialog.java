@@ -10,9 +10,7 @@ import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.io.identifications.IdentificationParametersReader;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
-import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -28,7 +26,6 @@ import java.util.Date;
 import java.util.Properties;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.SwingConstants;
 import javax.swing.filechooser.FileFilter;
 
 /**
@@ -829,8 +826,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
 
     private void editImportFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editImportFilterButtonActionPerformed
-        new ImportSettingsDialog(peptideShakerGUI, true);
-        importFilterTxt.setText("User Edit");
+        new ImportSettingsDialog(peptideShakerGUI, this, true);
     }//GEN-LAST:event_editImportFilterButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -868,6 +864,15 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     private javax.swing.JTextField spectrumFilesTxt;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * Sets the fileter settings field to the given text.
+     * 
+     * @param text 
+     */
+    public void updateFilterSettingsField(String text) {
+        importFilterTxt.setText(text);
+    }
+    
     /**
      * Validates the input parameters.
      *
@@ -978,13 +983,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             temp = props.getProperty(IdentificationParametersReader.PRECURSOR_MASS_ACCURACY_UNIT);
 
             if (temp != null) {
-                int unit = 0;
-                try {
-                    unit = new Integer(temp.trim());
-                } catch (Exception e) {
-                }
-
-                if (unit == 0) {
+                if (temp.equalsIgnoreCase("ppm")) {
                     searchParameters.setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.PPM);
                     peptideShakerGUI.getIdFilter().setIsPpm(true);
                 } else {

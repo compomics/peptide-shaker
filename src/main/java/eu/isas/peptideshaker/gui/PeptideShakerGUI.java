@@ -2185,8 +2185,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         // @TODO: add export support for the other tabs
     }//GEN-LAST:event_exportMassErrorPlotGraphicsJMenuItemActionPerformed
 
+    /**
+     * Opens the filter settings dialog.
+     * 
+     * @param evt 
+     */
     private void importFilterMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importFilterMenuActionPerformed
-        new ImportSettingsDialog(this, false);
+        new ImportSettingsDialog(this, null, false);
     }//GEN-LAST:event_importFilterMenuActionPerformed
 
     /**
