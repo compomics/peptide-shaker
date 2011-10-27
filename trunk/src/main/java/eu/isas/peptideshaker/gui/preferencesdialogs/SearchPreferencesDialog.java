@@ -91,6 +91,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      * Create a new SearchPreferencesDialog.
      *
      * @param parent the PeptideShaker parent
+     * @param editable  
      */
     public SearchPreferencesDialog(PeptideShakerGUI parent, boolean editable) {
         super(parent, true);
@@ -128,6 +129,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         ion1Cmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         ion2Cmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        precursorUnit.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         loadValues();
         updateModificationLists();
         setLocationRelativeTo(parent);
@@ -695,6 +697,22 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
         JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.getName().toLowerCase().endsWith("properties") || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "(SearchGUI properties file) *.properties";
+            }
+        };
+
+        fc.setFileFilter(filter);
+        
         int result = fc.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
@@ -734,6 +752,22 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void loadProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadProfileBtnActionPerformed
         JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.getName().toLowerCase().endsWith("psm") || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "(Profile psm file) *.psm";
+            }
+        };
+
+        fc.setFileFilter(filter);
+        
         int result = fc.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
@@ -1099,14 +1133,11 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
         }
 
         temp = aProps.getProperty(IdentificationParametersReader.PRECURSOR_MASS_ACCURACY_UNIT);
-        int unit = 0;
+ 
         if (temp != null) {
-            try {
-                unit = new Integer(temp.trim());
-            } catch (Exception e) {
-            }
+            precursorUnit.setSelectedItem(temp);
         }
-        precursorUnit.setSelectedItem(unit);
+        
 
         temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_ION_MASS_ACCURACY);
 

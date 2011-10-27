@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.HelpWindow;
+import eu.isas.peptideshaker.gui.NewDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
@@ -23,16 +24,22 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
      * If true the user can edit the settings.
      */
     private boolean editable;
+    /**
+     * A reference to the NewDialog.
+     */
+    private NewDialog newDialog;
 
     /**
      * Creates a new ImportSettingsDialog.
      * 
      * @param peptideShakerGUI the PeptideShaker GUI
+     * @param newDialog the NewDialog, can be null
      * @param editable boolean indicating whether the parameters can be editable
      */
-    public ImportSettingsDialog(PeptideShakerGUI peptideShakerGUI, boolean editable) {
+    public ImportSettingsDialog(PeptideShakerGUI peptideShakerGUI, NewDialog newDialog, boolean editable) {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
+        this.newDialog = newDialog;
         this.editable = editable;
 
         initComponents();
@@ -355,6 +362,11 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
                         new Double(xtandemEvalueTxt.getText()),
                         new Double(precDevTxt.getText()),
                         unitCmb.getSelectedIndex() == 0));
+                
+                if (newDialog != null) {
+                    newDialog.updateFilterSettingsField("User Edit");
+                }
+                
                 dispose();
             }
         } else {

@@ -278,6 +278,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("MS2 Quantification").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quantification").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        proteinTable.getColumn("MW").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
@@ -350,6 +352,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTableToolTips.add("Number of Peptides");
         proteinTableToolTips.add("Number of Spectra");
         proteinTableToolTips.add("MS2 Quantification");
+        proteinTableToolTips.add("Protein Molecular Weight (kDa)");
         proteinTableToolTips.add("Protein Score");
         proteinTableToolTips.add("Protein Confidence");
         proteinTableToolTips.add("Validated");
@@ -528,14 +531,14 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "PI", "Accession", "Description", "Coverage", "#Peptides", "#Spectra", "MS2 Quantification", "Score", "Confidence", ""
+                " ", "PI", "Accession", "Description", "Coverage", "#Peptides", "#Spectra", "MS2 Quantification", "MW", "Score", "Confidence", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -3103,6 +3106,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     public void showSparkLines(boolean showSparkLines) {
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quantification").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
@@ -3965,7 +3969,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
         int index = 0, maxPeptides = 0, maxSpectra = 0;
         double sequenceCoverage = 0;
-        double spectrumCounting = 0, maxSpectrumCounting = 0;
+        double spectrumCounting = 0, maxSpectrumCounting = 0, maxMW = 0;
         String description = "";
 
         // sort the proteins according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
@@ -4054,6 +4058,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     -currentNP,
                                     -currentNS,
                                     spectrumCounting,
+                                    currentProtein.computeMolecularWeight() / 1000,
                                     probabilities.getProteinScore(),
                                     probabilities.getProteinConfidence(),
                                     probabilities.isValidated()
@@ -4067,6 +4072,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         }
                         if (maxSpectrumCounting < spectrumCounting) {
                             maxSpectrumCounting = spectrumCounting;
+                        }
+                        if (maxMW < currentProtein.computeMolecularWeight() / 1000) {
+                            maxMW = currentProtein.computeMolecularWeight() / 1000;
                         }
                         if (progressDialogX != null) {
                             progressDialogX.incrementValue();
@@ -4099,6 +4107,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quantification").getCellRenderer()).setMaxValue(maxSpectrumCounting);
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(maxMW);
 
         try {
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).setMaxValue(100.0);
@@ -4475,7 +4484,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 peptideTable.removeColumn(peptideTable.getColumn("Score"));
             } else {
                 proteinTable.addColumn(proteinScoreColumn);
-                proteinTable.moveColumn(10, 8);
+                proteinTable.moveColumn(11, 9);
 
                 peptideTable.addColumn(peptideScoreColumn);
                 peptideTable.moveColumn(8, 6);
