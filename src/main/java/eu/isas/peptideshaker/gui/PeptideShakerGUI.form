@@ -588,11 +588,33 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="followUpAnalysisMenu">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Follow-up Analysis"/>
+                <Property name="text" type="java.lang.String" value="Follow-Up Analysis"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="followUpAnalysisMenuActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator10">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="exportProjectMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="PeptideShaker Project"/>
+                <Property name="toolTipText" type="java.lang.String" value="Export a PeptideShaker project as a single zip file"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportProjectMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="exportPrideXmlMenuItem">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="PRIDE XML"/>
+                <Property name="toolTipText" type="java.lang.String" value="Export a PeptideShaker project as a PRIDE XML file"/>
+                <Property name="enabled" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportPrideXmlMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
