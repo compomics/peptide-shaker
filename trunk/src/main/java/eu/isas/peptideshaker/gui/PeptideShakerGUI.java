@@ -249,7 +249,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     /**
      * The identification filter used for this project
      */
-    private IdFilter idFilter = new IdFilter(); 
+    private IdFilter idFilter = new IdFilter();
     /**
      * The project details
      */
@@ -2281,7 +2281,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                         progressDialog.setTitle("Loading QC Plots Tab. Please Wait...");
                         qcPanel.displayResults(progressDialog);
-                        
+
                         progressDialog.setTitle("Loading GO Analysis Tab. Please Wait...");
                         goPanel.displayResults(progressDialog, false);
 
@@ -2311,11 +2311,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         settingsMenu.setEnabled(true);
                         exportGraphicsMenu.setEnabled(true);
                         helpJMenu.setEnabled(true);
-                        
+
                         // return the peptide shaker icon to the standard version
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     } catch (Exception e) {
-                        
+
                         // return the peptide shaker icon to the standard version
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -3276,7 +3276,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         qcJPanel.removeAll();
         qcJPanel.add(qcPanel);
-        
+
         goJPanel.removeAll();
         goJPanel.add(goPanel);
 
@@ -3317,7 +3317,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         qcPanel.revalidate();
         qcPanel.repaint();
-        
+
         goPanel.revalidate();
         goPanel.repaint();
     }
@@ -4228,10 +4228,22 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     PeptideShaker.setPeptideShakerPTMs(searchParameters);
 
                     try {
-                        SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile());
+                        File providedFastaLocation = experimentSettings.getSearchParameters().getFastaFile();
+                        String fileName = providedFastaLocation.getName();
+                        File projectFolder = psFile.getParentFile();
+                        File dataFolder = new File(projectFolder, "data");
+
+                        // try to locate the FASTA file
+                        if (providedFastaLocation.exists()) {
+                            SequenceFactory.getInstance().loadFastaFile(providedFastaLocation);
+                        } else if (new File(projectFolder, fileName).exists()) {
+                            SequenceFactory.getInstance().loadFastaFile(new File(projectFolder, fileName));
+                        } else if (new File(dataFolder, fileName).exists()) {
+                            SequenceFactory.getInstance().loadFastaFile(new File(dataFolder, fileName));
+                        }
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "An error occured while reading " + experimentSettings.getSearchParameters().getFastaFile() + ".\nPlease select the FASTA file manually.",
+                                "An error occured while reading:\n" + experimentSettings.getSearchParameters().getFastaFile() + ".\nPlease select the FASTA file manually.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
 
                         JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
@@ -4292,20 +4304,32 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     ArrayList<String> names = new ArrayList<String>();
                     ArrayList<String> spectrumFiles = new ArrayList<String>();
+                    
                     for (String filePath : getSearchParameters().getSpectrumFiles()) {
                         try {
-                            File newFile = new File(filePath);
-                            if (newFile.exists()
-                                    && !names.contains(newFile.getName())) {
-                                names.add(newFile.getName());
-                                spectrumFiles.add(filePath);
+                            File providedSpectrumLocation = new File(filePath);
+                            String fileName = providedSpectrumLocation.getName();
+                            File projectFolder = psFile.getParentFile();
+                            File dataFolder = new File(projectFolder, "data");
+                            
+                            // try to locate the spectrum file
+                            if (providedSpectrumLocation.exists() && !names.contains(providedSpectrumLocation.getName())) { 
+                                names.add(providedSpectrumLocation.getName());
+                                spectrumFiles.add(providedSpectrumLocation.getAbsolutePath());
+                            } else if (new File(projectFolder, fileName).exists() && !names.contains(new File(projectFolder, fileName).getName())) {
+                                names.add(new File(projectFolder, fileName).getName());
+                                spectrumFiles.add(new File(projectFolder, fileName).getAbsolutePath());
+                            } else if (new File(dataFolder, fileName).exists() && !names.contains(new File(dataFolder, fileName).getName())) {
+                                names.add(new File(dataFolder, fileName).getName());
+                                spectrumFiles.add(new File(dataFolder, fileName).getAbsolutePath());
                             } else {
                                 JOptionPane.showMessageDialog(peptideShakerGUI,
-                                        "An error occured while reading " + newFile.getName() + ".\nPlease select the spectrum file or the folder containing it manually.",
+                                        "An error occured while reading:\n" + new File(filePath).getName() + ".\n"
+                                        + "Please select the spectrum file or the folder containing it manually.",
                                         "File Input Error", JOptionPane.ERROR_MESSAGE);
 
                                 JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
-                                fileChooser.setDialogTitle("Open Fasta File");
+                                fileChooser.setDialogTitle("Open Spectrum File");
 
                                 FileFilter filter = new FileFilter() {
 
@@ -4340,16 +4364,17 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                                     names.add(file.getName());
                                                     spectrumFiles.add(file.getPath());
                                                 }
-                                                if (newFile.getName().equals(newFile2.getName())) {
+                                                if (new File(filePath).getName().equals(newFile2.getName())) {
                                                     found = true;
                                                 }
                                             } catch (Exception e) {
+                                                // ignore
                                             }
                                         }
                                     }
                                     if (!found) {
                                         JOptionPane.showMessageDialog(peptideShakerGUI,
-                                                newFile.getName() + " was not found in the given folder.",
+                                                new File(filePath).getName() + " was not found in the given folder.",
                                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                                         clearData();
 
@@ -4370,8 +4395,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                                     return;
                                 }
-
-
                             }
                         } catch (Exception e) {
                             JOptionPane.showMessageDialog(peptideShakerGUI,
@@ -4542,7 +4565,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         peptidesAndPsmsJCheckBoxMenuItem.setSelected(displayPeptidesAndPsms);
         sequenceCoverageJCheckBoxMenuItem.setSelected(displayCoverage);
         spectrumJCheckBoxMenuItem.setSelected(displaySpectrum);
-        
+
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
                 sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
