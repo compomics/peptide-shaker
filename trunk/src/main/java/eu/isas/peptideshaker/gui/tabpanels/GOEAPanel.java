@@ -1,15 +1,21 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
+import com.compomics.util.Util;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
+import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.BufferedReader;
@@ -485,6 +491,10 @@ public class GOEAPanel extends javax.swing.JPanel {
             // update the plots
             updateGoPlots();
 
+            // enable the contextual export options
+            exportMappingsJButton.setEnabled(true);
+            exportPlotsJButton.setEnabled(true);
+
 
             if (progressDialog != null) {
                 progressDialog.setVisible(false);
@@ -634,7 +644,8 @@ public class GOEAPanel extends javax.swing.JPanel {
         selectAllMenuItem = new javax.swing.JMenuItem();
         deselectAllMenuItem = new javax.swing.JMenuItem();
         selectSignificantMenuItem = new javax.swing.JMenuItem();
-        proteinGoMappingsPanel = new javax.swing.JPanel();
+        mappingsTableLayeredPane = new javax.swing.JLayeredPane();
+        mappingsPanel = new javax.swing.JPanel();
         proteinGoMappingsScrollPane = new javax.swing.JScrollPane();
         goMappingsTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
@@ -654,10 +665,17 @@ public class GOEAPanel extends javax.swing.JPanel {
         goMappingFilesJComboBox = new javax.swing.JComboBox();
         significanceJLabel = new javax.swing.JLabel();
         significanceJSpinner = new javax.swing.JSpinner();
+        mappingsHelpJButton = new javax.swing.JButton();
+        exportMappingsJButton = new javax.swing.JButton();
+        contextMenuMappingsBackgroundPanel = new javax.swing.JPanel();
+        plotLayeredPane = new javax.swing.JLayeredPane();
         plotPanel = new javax.swing.JPanel();
         goPlotsTabbedPane = new javax.swing.JTabbedPane();
         goFrequencyPlotPanel = new javax.swing.JPanel();
         goSignificancePlotPanel = new javax.swing.JPanel();
+        plotHelpJButton = new javax.swing.JButton();
+        exportPlotsJButton = new javax.swing.JButton();
+        contextMenuPlotsBackgroundPanel = new javax.swing.JPanel();
 
         selectAllMenuItem.setText("Select All");
         selectAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -684,9 +702,14 @@ public class GOEAPanel extends javax.swing.JPanel {
         selectTermsJPopupMenu.add(selectSignificantMenuItem);
 
         setBackground(new java.awt.Color(255, 255, 255));
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
 
-        proteinGoMappingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology Mappings"));
-        proteinGoMappingsPanel.setOpaque(false);
+        mappingsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology Mappings"));
+        mappingsPanel.setOpaque(false);
 
         goMappingsTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -745,15 +768,15 @@ public class GOEAPanel extends javax.swing.JPanel {
             }
         });
 
-        javax.swing.GroupLayout proteinGoMappingsPanelLayout = new javax.swing.GroupLayout(proteinGoMappingsPanel);
-        proteinGoMappingsPanel.setLayout(proteinGoMappingsPanelLayout);
-        proteinGoMappingsPanelLayout.setHorizontalGroup(
-            proteinGoMappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinGoMappingsPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout mappingsPanelLayout = new javax.swing.GroupLayout(mappingsPanel);
+        mappingsPanel.setLayout(mappingsPanelLayout);
+        mappingsPanelLayout.setHorizontalGroup(
+            mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mappingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(proteinGoMappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 987, Short.MAX_VALUE)
-                    .addGroup(proteinGoMappingsPanelLayout.createSequentialGroup()
+                    .addGroup(mappingsPanelLayout.createSequentialGroup()
                         .addComponent(goMappingsFileJLabel)
                         .addGap(18, 18, 18)
                         .addComponent(goMappingFilesJComboBox, 0, 690, Short.MAX_VALUE)
@@ -763,11 +786,11 @@ public class GOEAPanel extends javax.swing.JPanel {
                         .addComponent(significanceJSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
-        proteinGoMappingsPanelLayout.setVerticalGroup(
-            proteinGoMappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(proteinGoMappingsPanelLayout.createSequentialGroup()
+        mappingsPanelLayout.setVerticalGroup(
+            mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mappingsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(proteinGoMappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(goMappingsFileJLabel)
                     .addComponent(goMappingFilesJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(significanceJLabel)
@@ -776,6 +799,71 @@ public class GOEAPanel extends javax.swing.JPanel {
                 .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 281, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        mappingsPanel.setBounds(0, 0, 1019, 368);
+        mappingsTableLayeredPane.add(mappingsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        mappingsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        mappingsHelpJButton.setToolTipText("Help");
+        mappingsHelpJButton.setBorder(null);
+        mappingsHelpJButton.setBorderPainted(false);
+        mappingsHelpJButton.setContentAreaFilled(false);
+        mappingsHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        mappingsHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                mappingsHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                mappingsHelpJButtonMouseExited(evt);
+            }
+        });
+        mappingsHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mappingsHelpJButtonActionPerformed(evt);
+            }
+        });
+        mappingsHelpJButton.setBounds(990, 0, 10, 25);
+        mappingsTableLayeredPane.add(mappingsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        exportMappingsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportMappingsJButton.setToolTipText("Copy to Clipboard");
+        exportMappingsJButton.setBorder(null);
+        exportMappingsJButton.setBorderPainted(false);
+        exportMappingsJButton.setContentAreaFilled(false);
+        exportMappingsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportMappingsJButton.setEnabled(false);
+        exportMappingsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportMappingsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportMappingsJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportMappingsJButtonMouseExited(evt);
+            }
+        });
+        exportMappingsJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportMappingsJButtonActionPerformed(evt);
+            }
+        });
+        exportMappingsJButton.setBounds(980, 0, 10, 25);
+        mappingsTableLayeredPane.add(exportMappingsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        contextMenuMappingsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout contextMenuMappingsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuMappingsBackgroundPanel);
+        contextMenuMappingsBackgroundPanel.setLayout(contextMenuMappingsBackgroundPanelLayout);
+        contextMenuMappingsBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuMappingsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 30, Short.MAX_VALUE)
+        );
+        contextMenuMappingsBackgroundPanelLayout.setVerticalGroup(
+            contextMenuMappingsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+
+        contextMenuMappingsBackgroundPanel.setBounds(980, 0, 30, 20);
+        mappingsTableLayeredPane.add(contextMenuMappingsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         plotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology - Enrichment Analysis"));
         plotPanel.setOpaque(false);
@@ -803,29 +891,95 @@ public class GOEAPanel extends javax.swing.JPanel {
         );
         plotPanelLayout.setVerticalGroup(
             plotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(plotPanelLayout.createSequentialGroup()
-                .addComponent(goPlotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 331, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, plotPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(goPlotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        plotPanel.setBounds(0, 0, 1019, 370);
+        plotLayeredPane.add(plotPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        plotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+        plotHelpJButton.setToolTipText("Help");
+        plotHelpJButton.setBorder(null);
+        plotHelpJButton.setBorderPainted(false);
+        plotHelpJButton.setContentAreaFilled(false);
+        plotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+        plotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                plotHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                plotHelpJButtonMouseExited(evt);
+            }
+        });
+        plotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                plotHelpJButtonActionPerformed(evt);
+            }
+        });
+        plotHelpJButton.setBounds(990, 0, 10, 25);
+        plotLayeredPane.add(plotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        exportPlotsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPlotsJButton.setToolTipText("Copy to Clipboard");
+        exportPlotsJButton.setBorder(null);
+        exportPlotsJButton.setBorderPainted(false);
+        exportPlotsJButton.setContentAreaFilled(false);
+        exportPlotsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+        exportPlotsJButton.setEnabled(false);
+        exportPlotsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+        exportPlotsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                exportPlotsJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                exportPlotsJButtonMouseExited(evt);
+            }
+        });
+        exportPlotsJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportPlotsJButtonActionPerformed(evt);
+            }
+        });
+        exportPlotsJButton.setBounds(980, 0, 10, 25);
+        plotLayeredPane.add(exportPlotsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        contextMenuPlotsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout contextMenuPlotsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuPlotsBackgroundPanel);
+        contextMenuPlotsBackgroundPanel.setLayout(contextMenuPlotsBackgroundPanelLayout);
+        contextMenuPlotsBackgroundPanelLayout.setHorizontalGroup(
+            contextMenuPlotsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 30, Short.MAX_VALUE)
+        );
+        contextMenuPlotsBackgroundPanelLayout.setVerticalGroup(
+            contextMenuPlotsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 20, Short.MAX_VALUE)
+        );
+
+        contextMenuPlotsBackgroundPanel.setBounds(980, 0, 30, 20);
+        plotLayeredPane.add(contextMenuPlotsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(proteinGoMappingsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(plotPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(plotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1019, Short.MAX_VALUE)
+                    .addComponent(mappingsTableLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1019, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinGoMappingsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(mappingsTableLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(plotPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(plotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
@@ -976,16 +1130,245 @@ public class GOEAPanel extends javax.swing.JPanel {
     private void goMappingsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_goMappingsTableKeyReleased
         updatePlotMarkers();
     }//GEN-LAST:event_goMappingsTableKeyReleased
+
+    /**
+     * Resize the layered panes.
+     * 
+     * @param evt 
+     */
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+
+        // resize the layered panels
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+
+                // move the icons
+                mappingsTableLayeredPane.getComponent(0).setBounds(
+                        mappingsTableLayeredPane.getWidth() - mappingsTableLayeredPane.getComponent(0).getWidth() - 10,
+                        -3,
+                        mappingsTableLayeredPane.getComponent(0).getWidth(),
+                        mappingsTableLayeredPane.getComponent(0).getHeight());
+
+                mappingsTableLayeredPane.getComponent(1).setBounds(
+                        mappingsTableLayeredPane.getWidth() - mappingsTableLayeredPane.getComponent(1).getWidth() - 20,
+                        -3,
+                        mappingsTableLayeredPane.getComponent(1).getWidth(),
+                        mappingsTableLayeredPane.getComponent(1).getHeight());
+
+                mappingsTableLayeredPane.getComponent(2).setBounds(
+                        mappingsTableLayeredPane.getWidth() - mappingsTableLayeredPane.getComponent(2).getWidth() - 5,
+                        -3,
+                        mappingsTableLayeredPane.getComponent(2).getWidth(),
+                        mappingsTableLayeredPane.getComponent(2).getHeight());
+
+                // resize the plot area
+                mappingsTableLayeredPane.getComponent(3).setBounds(0, 0, mappingsTableLayeredPane.getWidth(), mappingsTableLayeredPane.getHeight());
+                mappingsTableLayeredPane.revalidate();
+                mappingsTableLayeredPane.repaint();
+
+
+                // move the icons
+                plotLayeredPane.getComponent(0).setBounds(
+                        plotLayeredPane.getWidth() - plotLayeredPane.getComponent(0).getWidth() - 10,
+                        -3,
+                        plotLayeredPane.getComponent(0).getWidth(),
+                        plotLayeredPane.getComponent(0).getHeight());
+
+                plotLayeredPane.getComponent(1).setBounds(
+                        plotLayeredPane.getWidth() - plotLayeredPane.getComponent(1).getWidth() - 20,
+                        -3,
+                        plotLayeredPane.getComponent(1).getWidth(),
+                        plotLayeredPane.getComponent(1).getHeight());
+
+                plotLayeredPane.getComponent(2).setBounds(
+                        plotLayeredPane.getWidth() - plotLayeredPane.getComponent(2).getWidth() - 5,
+                        -3,
+                        plotLayeredPane.getComponent(2).getWidth(),
+                        plotLayeredPane.getComponent(2).getHeight());
+
+                // resize the plot area
+                plotLayeredPane.getComponent(3).setBounds(0, 0, plotLayeredPane.getWidth(), plotLayeredPane.getHeight());
+                plotLayeredPane.revalidate();
+                plotLayeredPane.repaint();
+            }
+        });
+    }//GEN-LAST:event_formComponentResized
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void mappingsHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mappingsHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_mappingsHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void mappingsHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_mappingsHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_mappingsHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void mappingsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mappingsHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"), "GO_Mappings");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_mappingsHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void exportMappingsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportMappingsJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportMappingsJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void exportMappingsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportMappingsJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportMappingsJButtonMouseExited
+
+    /**
+     * Export the table contents.
+     * 
+     * @param evt 
+     */
+    private void exportMappingsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMappingsJButtonActionPerformed
+
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Copying to Clipboard. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("ExportThread") {
+
+            @Override
+            public void run() {
+                try {
+                    String clipboardString = "";
+
+                    clipboardString = Util.tableToText(goMappingsTable, "\t", progressDialog, true);
+
+                    StringSelection stringSelection = new StringSelection(clipboardString);
+                    Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(stringSelection, peptideShakerGUI);
+
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                    JOptionPane.showMessageDialog(peptideShakerGUI, "Table content copied to clipboard.", "Copied to Clipboard", JOptionPane.INFORMATION_MESSAGE);
+
+                } catch (Exception e) {
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                    JOptionPane.showMessageDialog(peptideShakerGUI, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }//GEN-LAST:event_exportMappingsJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void plotHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_plotHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_plotHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void plotHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_plotHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_plotHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void plotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plotHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"), "GO_Plots");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_plotHelpJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void exportPlotsJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPlotsJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_exportPlotsJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void exportPlotsJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportPlotsJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_exportPlotsJButtonMouseExited
+
+    /**
+     * Export the table contents.
+     * 
+     * @param evt 
+     */
+    private void exportPlotsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPlotsJButtonActionPerformed
+        
+        int index = goPlotsTabbedPane.getSelectedIndex();
+        
+        if (index == 0) {
+            new ExportGraphicsDialog(peptideShakerGUI, true, (ChartPanel) goFrequencyPlotPanel.getComponent(0));
+        } else {
+            new ExportGraphicsDialog(peptideShakerGUI, true, (ChartPanel) goSignificancePlotPanel.getComponent(0));
+        }
+        
+    }//GEN-LAST:event_exportPlotsJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel contextMenuMappingsBackgroundPanel;
+    private javax.swing.JPanel contextMenuPlotsBackgroundPanel;
     private javax.swing.JMenuItem deselectAllMenuItem;
+    private javax.swing.JButton exportMappingsJButton;
+    private javax.swing.JButton exportPlotsJButton;
     private javax.swing.JPanel goFrequencyPlotPanel;
     private javax.swing.JComboBox goMappingFilesJComboBox;
     private javax.swing.JLabel goMappingsFileJLabel;
     private javax.swing.JTable goMappingsTable;
     private javax.swing.JTabbedPane goPlotsTabbedPane;
     private javax.swing.JPanel goSignificancePlotPanel;
+    private javax.swing.JButton mappingsHelpJButton;
+    private javax.swing.JPanel mappingsPanel;
+    private javax.swing.JLayeredPane mappingsTableLayeredPane;
+    private javax.swing.JButton plotHelpJButton;
+    private javax.swing.JLayeredPane plotLayeredPane;
     private javax.swing.JPanel plotPanel;
-    private javax.swing.JPanel proteinGoMappingsPanel;
     private javax.swing.JScrollPane proteinGoMappingsScrollPane;
     private javax.swing.JMenuItem selectAllMenuItem;
     private javax.swing.JMenuItem selectSignificantMenuItem;
