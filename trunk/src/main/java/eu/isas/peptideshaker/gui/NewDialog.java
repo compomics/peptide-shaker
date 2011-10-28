@@ -916,6 +916,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * @param waitingDialog a dialog to display feedback to the user
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
+        peptideShakerGUI.getSearchParameters().setFastaFile(fastaFile);
         peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles, spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
     }
 
