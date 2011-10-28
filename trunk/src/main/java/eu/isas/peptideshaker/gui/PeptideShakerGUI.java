@@ -63,6 +63,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -80,6 +81,8 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -103,6 +106,10 @@ import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
  */
 public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDialogParent, ClipboardOwner {
 
+    /**
+     * The current PeptideShaker cps file.
+     */
+    private File currentPSFile = null;
     /**
      * The currently selected protein accession number.
      */
@@ -538,6 +545,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         exportJMenu = new javax.swing.JMenu();
         identificationFeaturesMenu = new javax.swing.JMenuItem();
         followUpAnalysisMenu = new javax.swing.JMenuItem();
+        jSeparator10 = new javax.swing.JPopupMenu.Separator();
+        exportProjectMenuItem = new javax.swing.JMenuItem();
+        exportPrideXmlMenuItem = new javax.swing.JMenuItem();
         viewJMenu = new javax.swing.JMenu();
         overViewTabViewMenu = new javax.swing.JMenu();
         proteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -1109,7 +1119,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         exportJMenu.add(identificationFeaturesMenu);
 
-        followUpAnalysisMenu.setText("Follow-up Analysis");
+        followUpAnalysisMenu.setText("Follow-Up Analysis");
         followUpAnalysisMenu.setEnabled(false);
         followUpAnalysisMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1117,6 +1127,27 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         exportJMenu.add(followUpAnalysisMenu);
+        exportJMenu.add(jSeparator10);
+
+        exportProjectMenuItem.setText("PeptideShaker Project");
+        exportProjectMenuItem.setToolTipText("Export a PeptideShaker project as a single zip file");
+        exportProjectMenuItem.setEnabled(false);
+        exportProjectMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportProjectMenuItemActionPerformed(evt);
+            }
+        });
+        exportJMenu.add(exportProjectMenuItem);
+
+        exportPrideXmlMenuItem.setText("PRIDE XML");
+        exportPrideXmlMenuItem.setToolTipText("Export a PeptideShaker project as a PRIDE XML file");
+        exportPrideXmlMenuItem.setEnabled(false);
+        exportPrideXmlMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportPrideXmlMenuItemActionPerformed(evt);
+            }
+        });
+        exportJMenu.add(exportPrideXmlMenuItem);
 
         menuBar.add(exportJMenu);
 
@@ -2195,6 +2226,198 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }//GEN-LAST:event_importFilterMenuActionPerformed
 
     /**
+     * Export the current PeptideShaker project as a single zip file.
+     * 
+     * @param evt 
+     */
+    private void exportProjectMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProjectMenuItemActionPerformed
+
+        if (dataSaved) {
+            JOptionPane.showMessageDialog(this, "You first need to save the data.", "Unsaved Data", JOptionPane.INFORMATION_MESSAGE);
+
+            // save the data first
+            saveMenuItemActionPerformed(null);
+        } else {
+
+            if (currentPSFile != null) {
+
+                final PeptideShakerGUI tempRef = this; // needed due to threading issues
+                progressDialog = new ProgressDialogX(this, this, true);
+                progressDialog.doNothingOnClose();
+
+                new Thread(new Runnable() {
+
+                    public void run() {
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Exporting Project. Please Wait...");
+                        progressDialog.setVisible(true);
+                    }
+                }, "ProgressDialog").start();
+
+                new Thread("ExportThread") {
+
+                    @Override
+                    public void run() {
+
+                        progressDialog.setTitle("Getting FASTA File. Please Wait...");
+                        
+                        File projectFolder = currentPSFile.getParentFile();
+                        File fastaLocation = tempRef.getSearchParameters().getFastaFile();
+                        ArrayList<String> dataFiles = new ArrayList<String>();
+                        dataFiles.add(tempRef.getSearchParameters().getFastaFile().getAbsolutePath());
+
+                        File indexFile = new File(fastaLocation.getParentFile(), fastaLocation.getName() + ".cui");
+
+                        if (indexFile.exists()) {
+                            dataFiles.add(indexFile.getAbsolutePath());
+                        }
+
+                        
+                        progressDialog.setTitle("Getting Spectrum Files. Please Wait...");
+                        progressDialog.setIndeterminate(false);
+                        progressDialog.setValue(0);
+                        progressDialog.setMax(getSearchParameters().getSpectrumFiles().size());
+
+                        ArrayList<String> names = new ArrayList<String>();
+
+                        for (String filePath : getSearchParameters().getSpectrumFiles()) {
+
+                            progressDialog.incrementValue();
+
+                            File spectrumLocation = new File(filePath);
+
+                            if (spectrumLocation.exists() && !names.contains(spectrumLocation.getName())) {
+                                
+                                names.add(spectrumLocation.getName());
+                                dataFiles.add(spectrumLocation.getAbsolutePath());
+
+                                indexFile = new File(spectrumLocation.getParentFile(), spectrumLocation.getName() + ".cui");
+
+                                if (indexFile.exists()) {
+                                    dataFiles.add(indexFile.getAbsolutePath());
+                                }
+                            }
+                        }
+
+
+                        progressDialog.setTitle("Zipping Project. Please Wait...");
+                        progressDialog.setIndeterminate(true);
+
+
+                        // zip the project
+                        String zipFileFileName = currentPSFile.getName() + "_project.zip";
+                        File zipFile = new File(projectFolder, zipFileFileName);
+
+                        try {
+                            FileOutputStream fos = new FileOutputStream(zipFile);
+                            ZipOutputStream out = new ZipOutputStream(fos);
+                            BufferedInputStream origin = null;
+                            final int BUFFER = 2048;
+                            byte data[] = new byte[BUFFER];
+
+                            progressDialog.setTitle("Zipping CPS File. Please Wait...");
+
+                            // add the cps file
+                            FileInputStream fi = new FileInputStream(currentPSFile);
+                            origin = new BufferedInputStream(fi, BUFFER);
+                            ZipEntry entry = new ZipEntry(currentPSFile.getName());
+                            out.putNextEntry(entry);
+                            int count;
+                            while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                                out.write(data, 0, count);
+                            }
+                            origin.close();
+
+
+                            // add the cps folder
+                            String cpsFolderName = currentPSFile.getName().substring(0, currentPSFile.getName().length() - 4) + "_cps";
+                            File cpsFolder = new File(projectFolder, cpsFolderName);
+
+                            String files[] = cpsFolder.list();
+
+                            progressDialog.setTitle("Zipping CPS Folder. Please Wait...");
+                            progressDialog.setIndeterminate(false);
+                            progressDialog.setValue(0);
+                            progressDialog.setMax(files.length);
+
+                            for (int i = 0; i < files.length; i++) {
+
+                                progressDialog.incrementValue();
+
+                                fi = new FileInputStream(new File(cpsFolder, files[i]));
+                                origin = new BufferedInputStream(fi, BUFFER);
+                                entry = new ZipEntry(cpsFolderName + File.separator + files[i]);
+                                out.putNextEntry(entry);
+                                while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                                    out.write(data, 0, count);
+                                }
+                                origin.close();
+                            }
+
+
+                            // add the data files
+                            progressDialog.setTitle("Zipping FASTA and MGFs. Please Wait...");
+                            progressDialog.setIndeterminate(false);
+                            progressDialog.setValue(0);
+                            progressDialog.setMax(dataFiles.size());
+
+                            for (int i = 0; i < dataFiles.size(); i++) {
+
+                                progressDialog.incrementValue();
+
+                                fi = new FileInputStream(new File(dataFiles.get(i)));
+                                origin = new BufferedInputStream(fi, BUFFER);
+                                entry = new ZipEntry("data" + File.separator + new File(dataFiles.get(i)).getName());
+                                out.putNextEntry(entry);
+                                while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                                    out.write(data, 0, count);
+                                }
+                                origin.close();
+                            }
+
+
+                            progressDialog.setIndeterminate(true);
+                            progressDialog.setTitle("Cleaning Up. Please Wait...");
+
+                            out.close();
+
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+                            JOptionPane.showMessageDialog(tempRef, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+                            JOptionPane.showMessageDialog(tempRef, "Could not zip files.", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
+                            return;
+                        }
+
+                        // get the size (in MB) of the zip file
+                        final int NUMBER_OF_BYTES_PER_MEGABYTE = 1048576;
+                        double sizeOfZippedFile = Util.roundDouble(((double) zipFile.length() / NUMBER_OF_BYTES_PER_MEGABYTE), 2);
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        JOptionPane.showMessageDialog(tempRef, "Project zipped to \'" + zipFileFileName + "\' (" + sizeOfZippedFile + "MB)", "Export Sucessful", JOptionPane.INFORMATION_MESSAGE);
+                    }
+                }.start();
+            }
+        }
+    }//GEN-LAST:event_exportProjectMenuItemActionPerformed
+
+    /**
+     * Export the current PeptideShaker project as a PRIDE XML file.
+     * 
+     * @param evt 
+     */
+    private void exportPrideXmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideXmlMenuItemActionPerformed
+        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_exportPrideXmlMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
     private void loadEnzymes() {
@@ -2302,6 +2525,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         proteinFilterJMenuItem.setEnabled(true);
                         identificationFeaturesMenu.setEnabled(true);
                         followUpAnalysisMenu.setEnabled(true);
+                        exportProjectMenuItem.setEnabled(true);
+                        exportPrideXmlMenuItem.setEnabled(true);
                         projectPropertiesMenuItem.setEnabled(true);
                         spectrumCountingMenuItem.setEnabled(true);
                         ionsMenu.setEnabled(true);
@@ -2386,6 +2611,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenuItem exportIntensityHistogramGraphicsJMenuItem;
     private javax.swing.JMenu exportJMenu;
     private javax.swing.JMenuItem exportMassErrorPlotGraphicsJMenuItem;
+    private javax.swing.JMenuItem exportPrideXmlMenuItem;
+    private javax.swing.JMenuItem exportProjectMenuItem;
     private javax.swing.JMenuItem exportSequenceFragmentationGraphicsJMenuItem;
     private javax.swing.JMenuItem exportSpectrumGraphicsJMenuItem;
     private javax.swing.JMenu exportSpectrumMenu;
@@ -2409,6 +2636,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
@@ -4186,7 +4414,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public void importPeptideShakerFile(File aPsFile) {
 
-        final File psFile = aPsFile;
+        currentPSFile = aPsFile;
 
         final PeptideShakerGUI peptideShakerGUI = this; // needed due to threading issues
         progressDialog = new ProgressDialogX(this, this, true);
@@ -4215,7 +4443,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-                    MsExperiment tempExperiment = experimentIO.loadExperiment(psFile);
+                    MsExperiment tempExperiment = experimentIO.loadExperiment(currentPSFile);
                     Sample tempSample = null;
                     int tempReplicate = -1;
 
@@ -4230,7 +4458,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     try {
                         File providedFastaLocation = experimentSettings.getSearchParameters().getFastaFile();
                         String fileName = providedFastaLocation.getName();
-                        File projectFolder = psFile.getParentFile();
+                        File projectFolder = currentPSFile.getParentFile();
                         File dataFolder = new File(projectFolder, "data");
 
                         // try to locate the FASTA file
@@ -4304,16 +4532,16 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     ArrayList<String> names = new ArrayList<String>();
                     ArrayList<String> spectrumFiles = new ArrayList<String>();
-                    
+
                     for (String filePath : getSearchParameters().getSpectrumFiles()) {
                         try {
                             File providedSpectrumLocation = new File(filePath);
                             String fileName = providedSpectrumLocation.getName();
-                            File projectFolder = psFile.getParentFile();
+                            File projectFolder = currentPSFile.getParentFile();
                             File dataFolder = new File(projectFolder, "data");
-                            
+
                             // try to locate the spectrum file
-                            if (providedSpectrumLocation.exists() && !names.contains(providedSpectrumLocation.getName())) { 
+                            if (providedSpectrumLocation.exists() && !names.contains(providedSpectrumLocation.getName())) {
                                 names.add(providedSpectrumLocation.getName());
                                 spectrumFiles.add(providedSpectrumLocation.getAbsolutePath());
                             } else if (new File(projectFolder, fileName).exists() && !names.contains(new File(projectFolder, fileName).getName())) {
@@ -4494,7 +4722,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     progressDialog.dispose();
 
                     JOptionPane.showMessageDialog(peptideShakerGUI,
-                            "An error occured while reading " + psFile + ".\n"
+                            "An error occured while reading " + currentPSFile + ".\n"
                             + "Please verify that the compomics-utilities version used to create\n"
                             + "the file is compatible with your version of PeptideShaker.",
                             "File Input Error", JOptionPane.ERROR_MESSAGE);
