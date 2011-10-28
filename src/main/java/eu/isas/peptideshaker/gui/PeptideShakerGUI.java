@@ -2311,7 +2311,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         settingsMenu.setEnabled(true);
                         exportGraphicsMenu.setEnabled(true);
                         helpJMenu.setEnabled(true);
+                        
+                        // return the peptide shaker icon to the standard version
+                        tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     } catch (Exception e) {
+                        
+                        // return the peptide shaker icon to the standard version
+                        tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                         if (progressDialog != null) {
                             progressDialog.setVisible(false);
