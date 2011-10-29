@@ -11,11 +11,13 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 import javax.swing.filechooser.FileFilter;
 
@@ -60,7 +62,15 @@ public class WaitingDialog extends javax.swing.JDialog {
      * The tab space to add when using tab.
      */
     private String tab = "        "; // tab could be used, but lenght is locale dependent
- 
+    /**
+     * An array list of the tip of the day.
+     */
+    private ArrayList<String> tips;
+    /**
+     * The current tip index.
+     */
+    private int currentTipIndex = -1;
+
     /**
      * Creates a new WaitingDialog.
      *
@@ -71,17 +81,51 @@ public class WaitingDialog extends javax.swing.JDialog {
     public WaitingDialog(PeptideShakerGUI peptideShaker, boolean modal, String experimentReference) {
         super(peptideShaker, modal);
         initComponents();
-        
+
         setSecondaryProgressDialogIntermediate(true);
-        
+
         // update the layout in the layered pane
-        formComponentResized(null);
+        resizeLayeredPanes();
         
+        // set up the tip of the day
+        setUpTipOfTheDay();
+        tipOfTheDayEditorPane.setText(getTipOfTheDay());
+
         this.setLocationRelativeTo(peptideShaker);
         this.peptideShakerGUI = peptideShaker;
 
         // change the peptide shaker icon to a "waiting version"
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+    }
+    
+    /**
+     * Set up the list of tip of the day.
+     */
+    private void setUpTipOfTheDay () {
+        
+        tips = new ArrayList<String>();
+        
+        // @TODO: replace the dummy tooltips with real tooltips
+
+        tips.add("Did you know that. Did you know that. Did you know that. Did you know that. Did you know that."
+                + "Did you know that. Did you know that. Did you know that. Did you know that. Did you know that."
+                + "<br><br>"
+                + "Did you know that. Did you know that. Did you know that. Did you know that. Did you know that.");
+
+        tips.add("Another tip. Another tip. Another tip. Another tip. Another tip."
+                + "Another tip. Another tip. Another tip. Another tip. Another tip."
+                + "<br><br>"
+                + "Another tip. Another tip. Another tip. Another tip. Another tip.");
+        
+        tips.add("The third tip. The third tip. The third tip. The third tip. The third tip."
+                + "The third tip. The third tip. The third tip. The third tip. The third tip."
+                + "<br><br>"
+                + "The third tip. The third tip. The third tip. The third tip. The third tip.");
+        
+        tips.add("Tip number four. Tip number four. Tip number four. Tip number four. Tip number four."
+                + "Tip number four. Tip number four. Tip number four. Tip number four. Tip number four."
+                + "<br><br>"
+                + "Tip number four. Tip number four. Tip number four. Tip number four. Tip number four.");
     }
 
     /**
@@ -108,7 +152,7 @@ public class WaitingDialog extends javax.swing.JDialog {
     public void increaseProgressValue(int amount) {
         progressBar.setValue(progressBar.getValue() + amount);
     }
-    
+
     /**
      * Set the maximum value of the secondary progress bar. And resets the value 
      * to 0.
@@ -119,7 +163,7 @@ public class WaitingDialog extends javax.swing.JDialog {
         secondaryJProgressBar.setValue(0);
         secondaryJProgressBar.setMaximum(maxProgressValue);
     }
-    
+
     /**
      * Reset the secondary progress bar value to 0.
      */
@@ -144,22 +188,22 @@ public class WaitingDialog extends javax.swing.JDialog {
     public void increaseSecondaryProgressValue(int amount) {
         secondaryJProgressBar.setValue(secondaryJProgressBar.getValue() + amount);
     }
-    
+
     /**
      * Sets the secondary progress bar to intermediate or not.
      * 
      * @param intermediate if true, set to intermediate
      */
     public void setSecondaryProgressDialogIntermediate(boolean intermediate) {
-        
+
         // this split pane trick should not be needed, but if not used the look and feel of the
         // intermediate progress bar changes when moving back and forth between the two...
-        
+
         if (intermediate) {
-            secondaryProgressBarSplitPane.setDividerLocation(secondaryProgressBarSplitPane.getWidth()); 
+            secondaryProgressBarSplitPane.setDividerLocation(secondaryProgressBarSplitPane.getWidth());
         } else {
-            secondaryProgressBarSplitPane.setDividerLocation(0);   
-        }    
+            secondaryProgressBarSplitPane.setDividerLocation(0);
+        }
     }
 
     /** This method is called from within the constructor to
@@ -175,17 +219,29 @@ public class WaitingDialog extends javax.swing.JDialog {
         jPanel2 = new javax.swing.JPanel();
         progressBar = new javax.swing.JProgressBar();
         layeredPane = new javax.swing.JLayeredPane();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        reportAreaScrollPane = new javax.swing.JScrollPane();
         reportArea = new javax.swing.JTextArea();
+        tipOfTheDayJPanel = new javax.swing.JPanel();
+        tipOfTheDayLayeredPane = new javax.swing.JLayeredPane();
+        tipOfTheDayScrollPane = new javax.swing.JScrollPane();
+        tipOfTheDayEditorPane = new javax.swing.JEditorPane();
+        closeJButton = new javax.swing.JButton();
+        nextJButton = new javax.swing.JButton();
         secondaryProgressBarSplitPane = new javax.swing.JSplitPane();
         secondaryJProgressBar = new javax.swing.JProgressBar();
         tempJProgressBar = new javax.swing.JProgressBar();
         okButton = new javax.swing.JButton();
         saveReportLabel = new javax.swing.JLabel();
+        showTipOfTheDayCheckBox = new javax.swing.JCheckBox();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("Importing Data - Please Wait...");
         setMinimumSize(new java.awt.Dimension(500, 500));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
                 formComponentResized(evt);
@@ -205,10 +261,92 @@ public class WaitingDialog extends javax.swing.JDialog {
         reportArea.setEditable(false);
         reportArea.setLineWrap(true);
         reportArea.setRows(5);
-        jScrollPane1.setViewportView(reportArea);
+        reportAreaScrollPane.setViewportView(reportArea);
 
-        jScrollPane1.setBounds(0, 0, 842, 490);
-        layeredPane.add(jScrollPane1, javax.swing.JLayeredPane.DEFAULT_LAYER);
+        reportAreaScrollPane.setBounds(0, 0, 842, 490);
+        layeredPane.add(reportAreaScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        tipOfTheDayJPanel.setOpaque(false);
+        tipOfTheDayJPanel.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                tipOfTheDayJPanelComponentResized(evt);
+            }
+        });
+
+        tipOfTheDayScrollPane.setBorder(new org.jdesktop.swingx.border.DropShadowBorder());
+        tipOfTheDayScrollPane.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        tipOfTheDayScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
+        tipOfTheDayScrollPane.setOpaque(false);
+
+        tipOfTheDayEditorPane.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(240, 240, 240), 20));
+        tipOfTheDayEditorPane.setContentType("text/html");
+        tipOfTheDayEditorPane.setEditable(false);
+        tipOfTheDayEditorPane.setText("<html>\r\n  <head>\r\n\r\n  </head>\r\n<body style=\"background-color:#F0F0F0;\">\n    <p style=\"margin-top: 0\" align=\"justify\">\r\n     <b> \rTip of the Day!</b>\n     <br><br>\n     Did you know that. Did you know that. Did you know that. Did you know that. Did you know that. \n     Did you know that.  Did you know that.  Did you know that.  Did you know that.  Did you know that.\n    <br><br>\n    Did you know that.  Did you know that.  Did you know that.  Did you know that.  Did you know that.\n    </p>\r\n  </body>\r\n</html>\r\n");
+        tipOfTheDayEditorPane.setOpaque(false);
+        tipOfTheDayScrollPane.setViewportView(tipOfTheDayEditorPane);
+
+        tipOfTheDayScrollPane.setBounds(0, 2, 210, 260);
+        tipOfTheDayLayeredPane.add(tipOfTheDayScrollPane, javax.swing.JLayeredPane.DEFAULT_LAYER);
+
+        closeJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/close_grey.png"))); // NOI18N
+        closeJButton.setToolTipText("Close");
+        closeJButton.setBorderPainted(false);
+        closeJButton.setContentAreaFilled(false);
+        closeJButton.setIconTextGap(0);
+        closeJButton.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        closeJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/close.png"))); // NOI18N
+        closeJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                closeJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                closeJButtonMouseExited(evt);
+            }
+        });
+        closeJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeJButtonActionPerformed(evt);
+            }
+        });
+        closeJButton.setBounds(170, 0, 40, 33);
+        tipOfTheDayLayeredPane.add(closeJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        nextJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/next_grey.png"))); // NOI18N
+        nextJButton.setToolTipText("Next Tip");
+        nextJButton.setBorderPainted(false);
+        nextJButton.setContentAreaFilled(false);
+        nextJButton.setIconTextGap(0);
+        nextJButton.setMargin(new java.awt.Insets(2, 0, 2, 0));
+        nextJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/next.png"))); // NOI18N
+        nextJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                nextJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                nextJButtonMouseExited(evt);
+            }
+        });
+        nextJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextJButtonActionPerformed(evt);
+            }
+        });
+        nextJButton.setBounds(170, 230, 40, 33);
+        tipOfTheDayLayeredPane.add(nextJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        javax.swing.GroupLayout tipOfTheDayJPanelLayout = new javax.swing.GroupLayout(tipOfTheDayJPanel);
+        tipOfTheDayJPanel.setLayout(tipOfTheDayJPanelLayout);
+        tipOfTheDayJPanelLayout.setHorizontalGroup(
+            tipOfTheDayJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(tipOfTheDayLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 210, Short.MAX_VALUE)
+        );
+        tipOfTheDayJPanelLayout.setVerticalGroup(
+            tipOfTheDayJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(tipOfTheDayLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
+        );
+
+        tipOfTheDayJPanel.setBounds(610, 200, 210, 270);
+        layeredPane.add(tipOfTheDayJPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         secondaryProgressBarSplitPane.setBorder(null);
         secondaryProgressBarSplitPane.setDividerLocation(0);
@@ -269,6 +407,17 @@ public class WaitingDialog extends javax.swing.JDialog {
             }
         });
 
+        showTipOfTheDayCheckBox.setSelected(true);
+        showTipOfTheDayCheckBox.setText("Tip of the Day");
+        showTipOfTheDayCheckBox.setToolTipText("Show/Hide Tip of the Day");
+        showTipOfTheDayCheckBox.setIconTextGap(10);
+        showTipOfTheDayCheckBox.setOpaque(false);
+        showTipOfTheDayCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showTipOfTheDayCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -280,7 +429,9 @@ public class WaitingDialog extends javax.swing.JDialog {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(saveReportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 710, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(showTipOfTheDayCheckBox)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 593, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -292,7 +443,8 @@ public class WaitingDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(okButton)
-                    .addComponent(saveReportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(saveReportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(showTipOfTheDayCheckBox))
                 .addContainerGap())
         );
 
@@ -355,7 +507,7 @@ public class WaitingDialog extends javax.swing.JDialog {
     private void saveReportLabelMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveReportLabelMouseReleased
         File outputFile = null;
         JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        
+
         FileFilter filter = new FileFilter() {
 
             @Override
@@ -372,7 +524,7 @@ public class WaitingDialog extends javax.swing.JDialog {
 
         fc.setFileFilter(filter);
         int result = fc.showSaveDialog(this);
-        
+
         if (result == JFileChooser.APPROVE_OPTION) {
             outputFile = fc.getSelectedFile();
             if (outputFile.exists()) {
@@ -384,7 +536,7 @@ public class WaitingDialog extends javax.swing.JDialog {
                 }
             }
         }
-        
+
         if (outputFile != null) {
             saveReport(outputFile);
         }
@@ -396,24 +548,122 @@ public class WaitingDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
-        // resize the report area
-        layeredPane.getComponent(0).setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
-        layeredPane.revalidate();
-        layeredPane.repaint();
+
+        // resize the layered panels
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                resizeLayeredPanes();
+            }
+        });
     }//GEN-LAST:event_formComponentResized
 
+    /**
+     * Close the dialog.
+     * 
+     * @param evt 
+     */
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        okButtonActionPerformed(null);
+    }//GEN-LAST:event_formWindowClosing
+
+    /**
+     * Update the tip of the day layered pane.
+     * 
+     * @param evt 
+     */
+    private void tipOfTheDayJPanelComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_tipOfTheDayJPanelComponentResized
+        // resize the layered panels
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                resizeLayeredPanes();
+            }
+        });
+    }//GEN-LAST:event_tipOfTheDayJPanelComponentResized
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void closeJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_closeJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void closeJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_closeJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_closeJButtonMouseExited
+
+    /**
+     * Hide the tip of the day.
+     * 
+     * @param evt 
+     */
+    private void closeJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeJButtonActionPerformed
+        tipOfTheDayJPanel.setVisible(false);
+        showTipOfTheDayCheckBox.setSelected(false);
+    }//GEN-LAST:event_closeJButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void nextJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_nextJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void nextJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_nextJButtonMouseExited
+
+    /**
+     * Open the next random tip.
+     * 
+     * @param evt 
+     */
+    private void nextJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextJButtonActionPerformed
+        tipOfTheDayEditorPane.setText(getTipOfTheDay());
+    }//GEN-LAST:event_nextJButtonActionPerformed
+
+    /**
+     * Show/hide the tip of the day.
+     * 
+     * @param evt 
+     */
+    private void showTipOfTheDayCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTipOfTheDayCheckBoxActionPerformed
+        tipOfTheDayJPanel.setVisible(showTipOfTheDayCheckBox.isSelected());
+    }//GEN-LAST:event_showTipOfTheDayCheckBoxActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton closeJButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLayeredPane layeredPane;
+    private javax.swing.JButton nextJButton;
     private javax.swing.JButton okButton;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JTextArea reportArea;
+    private javax.swing.JScrollPane reportAreaScrollPane;
     private javax.swing.JLabel saveReportLabel;
     private javax.swing.JProgressBar secondaryJProgressBar;
     private javax.swing.JSplitPane secondaryProgressBarSplitPane;
+    private javax.swing.JCheckBox showTipOfTheDayCheckBox;
     private javax.swing.JProgressBar tempJProgressBar;
+    private javax.swing.JEditorPane tipOfTheDayEditorPane;
+    private javax.swing.JPanel tipOfTheDayJPanel;
+    private javax.swing.JLayeredPane tipOfTheDayLayeredPane;
+    private javax.swing.JScrollPane tipOfTheDayScrollPane;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -530,11 +780,11 @@ public class WaitingDialog extends javax.swing.JDialog {
 
         try {
             String filePath = aFile.getAbsolutePath();
-            
+
             if (!filePath.endsWith(".txt")) {
                 filePath += ".txt";
             }
-            
+
             bw = new BufferedWriter(new FileWriter(filePath));
             bw.write(output.toString());
             bw.flush();
@@ -603,13 +853,70 @@ public class WaitingDialog extends javax.swing.JDialog {
         // return the peptide shaker icon to the standard version
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
     }
-    
+
     /**
      * Returns the secondary progress bar for updates from external processes.
      * 
      * @return the secondary progress bar
      */
-    public JProgressBar getSecondaryProgressBar () {
+    public JProgressBar getSecondaryProgressBar() {
         return secondaryJProgressBar;
+    }
+
+    /**
+     * Resize the layered panes.
+     */
+    private void resizeLayeredPanes() {
+
+        // resize the report area
+        layeredPane.getComponent(1).setBounds(0, 0, layeredPane.getWidth(), layeredPane.getHeight());
+
+        // move the tip of the day panel
+        layeredPane.getComponent(0).setBounds(layeredPane.getWidth() - 255, layeredPane.getHeight() - 300,
+                230, 280);
+
+        layeredPane.revalidate();
+        layeredPane.repaint();
+
+
+        // resize the tip of the day panel
+        tipOfTheDayLayeredPane.getComponent(2).setBounds(0, 0, tipOfTheDayLayeredPane.getWidth(), tipOfTheDayLayeredPane.getHeight());
+
+        //move the buttons
+        tipOfTheDayLayeredPane.getComponent(0).setBounds(
+                tipOfTheDayLayeredPane.getWidth() - 40, -2,
+                tipOfTheDayLayeredPane.getComponent(0).getWidth(), tipOfTheDayLayeredPane.getComponent(0).getHeight());
+
+        tipOfTheDayLayeredPane.getComponent(1).setBounds(
+                tipOfTheDayLayeredPane.getWidth() - 40, tipOfTheDayLayeredPane.getHeight() - 35,
+                tipOfTheDayLayeredPane.getComponent(1).getWidth(), tipOfTheDayLayeredPane.getComponent(1).getHeight());
+
+        tipOfTheDayLayeredPane.revalidate();
+        tipOfTheDayLayeredPane.repaint();
+    }
+
+    /**
+     * Returns a random tip of the day text as HTML ready to insert into the 
+     * tip of the day panel.
+     * 
+     * @return a random tip of the day text as html
+     */
+    private String getTipOfTheDay() {
+
+        String htmlStart = "<html><head></head><body style=\"background-color:#F0F0F0;\">"
+                + " <p style=\"margin-top: 0\" align=\"justify\">"
+                + "<b>Tip of the Day!</b><br><br>";
+
+        String htmlEnd = "</p></body></html>";
+
+        int newTipIndex = (int) (Math.random() * tips.size());
+        
+        while (newTipIndex == currentTipIndex) {
+            newTipIndex = (int) (Math.random() * tips.size());
+        }
+        
+        currentTipIndex = newTipIndex;
+        
+        return htmlStart + tips.get(currentTipIndex) + htmlEnd;
     }
 }
