@@ -2714,6 +2714,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                                 precursor.getMz(), precursor.getCharge().toString(),
                                 "", 40, false, false, false, 2, false);
+                        spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                         spectrum.setDeltaMassWindow(annotationPreferences.getFragmentIonAccuracy());
                         spectrum.setBorder(null);
 

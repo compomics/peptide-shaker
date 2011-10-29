@@ -4,6 +4,7 @@ import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
+import com.compomics.util.experiment.biology.AminoAcid;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.EnzymeFactory;
 import com.compomics.util.experiment.biology.NeutralLoss;
@@ -81,6 +82,8 @@ import java.net.URL;
 import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.swing.JFileChooser;
@@ -4830,10 +4833,93 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Setsthe identification filter used
+     * Sets the identification filter used.
+     * 
      * @param idFilter the identification filter used
      */
     public void setIdFilter(IdFilter idFilter) {
         this.idFilter = idFilter;
+    }
+
+    /**
+     * Get the current delta masses for use when annotating the spectra.
+     * 
+     * @return 
+     */
+    public HashMap<Double, String> getCurrentMassDeltas() {
+
+        HashMap<Double, String> knownMassDeltas = new HashMap<Double, String>();
+
+        // add the monoisotopic amino acids masses
+        knownMassDeltas.put(AminoAcid.A.monoisotopicMass, "A");
+        knownMassDeltas.put(AminoAcid.R.monoisotopicMass, "R");
+        knownMassDeltas.put(AminoAcid.N.monoisotopicMass, "N");
+        knownMassDeltas.put(AminoAcid.D.monoisotopicMass, "D");
+        knownMassDeltas.put(AminoAcid.C.monoisotopicMass, "C");
+        knownMassDeltas.put(AminoAcid.Q.monoisotopicMass, "Q");
+        knownMassDeltas.put(AminoAcid.E.monoisotopicMass, "E");
+        knownMassDeltas.put(AminoAcid.G.monoisotopicMass, "G");
+        knownMassDeltas.put(AminoAcid.H.monoisotopicMass, "H");
+        knownMassDeltas.put(AminoAcid.I.monoisotopicMass, "I/L");
+        knownMassDeltas.put(AminoAcid.K.monoisotopicMass, "K");
+        knownMassDeltas.put(AminoAcid.M.monoisotopicMass, "M");
+        knownMassDeltas.put(AminoAcid.F.monoisotopicMass, "F");
+        knownMassDeltas.put(AminoAcid.P.monoisotopicMass, "P");
+        knownMassDeltas.put(AminoAcid.S.monoisotopicMass, "S");
+        knownMassDeltas.put(AminoAcid.T.monoisotopicMass, "T");
+        knownMassDeltas.put(AminoAcid.W.monoisotopicMass, "W");
+        knownMassDeltas.put(AminoAcid.Y.monoisotopicMass, "Y");
+        knownMassDeltas.put(AminoAcid.V.monoisotopicMass, "V");
+
+        
+        // add default neutral losses
+        knownMassDeltas.put(NeutralLoss.H2O.mass, "H2O");
+        knownMassDeltas.put(NeutralLoss.NH3.mass, "NH3");
+        knownMassDeltas.put(NeutralLoss.CH4OS.mass, "CH4OS");
+        knownMassDeltas.put(NeutralLoss.H3PO4.mass, "H3PO4");
+        knownMassDeltas.put(NeutralLoss.HPO3.mass, "HPO3");
+        knownMassDeltas.put(4d, "18O"); // @TODO: should this be added to neutral losses??
+        knownMassDeltas.put(44d, "(P)EG"); // @TODO: should this be added to neutral losses??
+        
+        
+        // add the modifications
+        ArrayList<String> modificationList = new ArrayList<String>(searchParameters.getModificationProfile().getUtilitiesNames());
+        Collections.sort(modificationList);
+
+        // get the list of all ptms
+        HashMap<String, PTM> ptms = new HashMap<String, PTM>();
+
+        for (PTM ptm : ptmFactory.getPtmMap().values()) {
+            ptms.put(ptm.getName().toLowerCase(), ptm);
+        }
+
+        // iterate the modifications list and add the non-terminal modifications
+        for (int i = 0; i < modificationList.size(); i++) {
+            String utilitiesName = modificationList.get(i);
+            String peptideShakerName = searchParameters.getModificationProfile().getPeptideShakerName(utilitiesName);
+            String shortName = searchParameters.getModificationProfile().getShortName(peptideShakerName);
+
+            if (ptms.get(peptideShakerName) != null) {
+
+                double mass = ptms.get(peptideShakerName).getMass();
+                String name = ptms.get(peptideShakerName).getName();
+
+                if (ptms.get(peptideShakerName).getType() == PTM.MODAA) {
+
+                    ArrayList<String> residues = ptms.get(name).getResidues();
+
+                    for (int j = 0; j < residues.size(); j++) {
+                        if (!knownMassDeltas.containsValue((String) residues.get(j) + "<" + shortName + ">")) {
+                            knownMassDeltas.put(mass + AminoAcid.getAminoAcid(residues.get(j).charAt(0)).monoisotopicMass, 
+                                    (String) residues.get(j) + "<" + shortName + ">");
+                        }
+                    }
+                }
+            } else {
+                System.out.println("Error: PTM not found: " + peptideShakerName);
+            }
+        }
+
+        return knownMassDeltas;
     }
 }
