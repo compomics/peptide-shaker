@@ -169,7 +169,8 @@ public class PeptideShaker {
      * @param searchParameters
      * @param annotationPreferences
      * @throws IllegalArgumentException
-     * @throws IOException  
+     * @throws IOException
+     * @throws Exception  
      */
     public void processIdentifications(InputMap inputMap, WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) 
         throws IllegalArgumentException, IOException, Exception {

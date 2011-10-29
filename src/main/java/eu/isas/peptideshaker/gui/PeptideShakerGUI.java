@@ -1390,7 +1390,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                         String folderPath = selectedFile.substring(0, selectedFile.lastIndexOf("."));
                         File newFolder = new File(folderPath + "_cps");
-                        
+
                         if (newFolder.exists()) {
                             String[] fileList = newFolder.list();
                             progressDialog.setMax(fileList.length);
@@ -1404,7 +1404,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                             }
                             progressDialog.setIndeterminate(true);
                         }
-                        
+
                         newFolder.mkdir();
 
                         identification.save(newFolder, progressDialog);
@@ -1424,7 +1424,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
                         currentPSFile = newFile;
                         dataSaved = true;
-                        
+
                     } catch (Exception e) {
 
                         // return the peptide shaker icon to the standard version
@@ -2262,12 +2262,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     @Override
                     public void run() {
-                        
+
                         // change the peptide shaker icon to a "waiting version"
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                         progressDialog.setTitle("Getting FASTA File. Please Wait...");
-                        
+
                         File projectFolder = currentPSFile.getParentFile();
                         File fastaLocation = tempRef.getSearchParameters().getFastaFile();
                         ArrayList<String> dataFiles = new ArrayList<String>();
@@ -2279,7 +2279,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             dataFiles.add(indexFile.getAbsolutePath());
                         }
 
-                        
+
                         progressDialog.setTitle("Getting Spectrum Files. Please Wait...");
                         progressDialog.setIndeterminate(false);
                         progressDialog.setValue(0);
@@ -2294,7 +2294,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             File spectrumLocation = new File(filePath);
 
                             if (spectrumLocation.exists() && !names.contains(spectrumLocation.getName())) {
-                                
+
                                 names.add(spectrumLocation.getName());
                                 dataFiles.add(spectrumLocation.getAbsolutePath());
 
@@ -2322,7 +2322,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             final int BUFFER = 2048;
                             byte data[] = new byte[BUFFER];
 
-                            progressDialog.setTitle("Zipping CPS File. Please Wait...");
+                            progressDialog.setTitle("Zipping PeptideShaker File. Please Wait...");
 
                             // add the cps file
                             FileInputStream fi = new FileInputStream(currentPSFile);
@@ -2342,7 +2342,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                             String files[] = cpsFolder.list();
 
-                            progressDialog.setTitle("Zipping CPS Folder. Please Wait...");
+                            progressDialog.setTitle("Zipping PeptideShaker Folder. Please Wait...");
                             progressDialog.setIndeterminate(false);
                             progressDialog.setValue(0);
                             progressDialog.setMax(files.length);
@@ -2363,7 +2363,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
 
                             // add the data files
-                            progressDialog.setTitle("Zipping FASTA and MGFs. Please Wait...");
+                            progressDialog.setTitle("Zipping FASTA and Spectrum Files. Please Wait...");
                             progressDialog.setIndeterminate(false);
                             progressDialog.setValue(0);
                             progressDialog.setMax(dataFiles.size());
@@ -2414,7 +2414,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         progressDialog.dispose();
                         // return the peptide shaker icon to the standard version
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                        JOptionPane.showMessageDialog(tempRef, "Project zipped to \'" + zipFileFileName + "\' (" + sizeOfZippedFile + "MB)", 
+                        JOptionPane.showMessageDialog(tempRef, "Project zipped to \'" + zipFileFileName + "\' (" + sizeOfZippedFile + "MB)",
                                 "Export Sucessful", JOptionPane.INFORMATION_MESSAGE);
                     }
                 }.start();
@@ -3453,7 +3453,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         // repaint the panels
         repaintPanels();
-        
+
         dataSaved = false;
     }
 
@@ -4482,8 +4482,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             SequenceFactory.getInstance().loadFastaFile(providedFastaLocation);
                         } else if (new File(projectFolder, fileName).exists()) {
                             SequenceFactory.getInstance().loadFastaFile(new File(projectFolder, fileName));
+                            experimentSettings.getSearchParameters().setFastaFile(new File(projectFolder, fileName));
                         } else if (new File(dataFolder, fileName).exists()) {
                             SequenceFactory.getInstance().loadFastaFile(new File(dataFolder, fileName));
+                            experimentSettings.getSearchParameters().setFastaFile(new File(dataFolder, fileName));
                         }
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(peptideShakerGUI,
@@ -4655,7 +4657,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             return;
                         }
                     }
-                    
+
                     getSearchParameters().setSpectrumFiles(spectrumFiles);
 
                     ArrayList<Sample> samples = new ArrayList(tempExperiment.getSamples().values());
@@ -4678,7 +4680,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     }
 
                     ArrayList<Integer> replicates = new ArrayList(tempExperiment.getAnalysisSet(tempSample).getReplicateNumberList());
-                    
+
                     if (replicates.size() == 1) {
                         tempReplicate = replicates.get(0);
                     } else {
@@ -4697,7 +4699,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     File mgfFile;
                     int cpt = 0;
                     progressDialog.setTitle("Importing Spectrum Files. Please Wait...");
-                    
+
                     for (String spectrumFile : spectrumFiles) {
                         progressDialog.setIndeterminate(false);
                         progressDialog.setMax(spectrumFiles.size() + 1);
@@ -4727,7 +4729,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     peptideShakerGUI.displayResults(true);
                     peptideShakerGUI.setFrameTitle(experiment.getReference());
-                    
+
                     dataSaved = true;
 
                     // change the peptide shaker icon back to the default version
