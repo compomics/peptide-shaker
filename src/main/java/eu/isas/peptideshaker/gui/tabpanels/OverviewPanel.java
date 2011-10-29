@@ -3553,6 +3553,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                                     precursor.getMz(), precursor.getCharge().toString(),
                                     "", 40, false, false, false, 2, false);
+                            spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                             spectrum.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
                             spectrum.setBorder(null);
 
