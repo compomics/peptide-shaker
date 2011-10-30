@@ -408,7 +408,7 @@ public class WaitingDialog extends javax.swing.JDialog {
         });
 
         showTipOfTheDayCheckBox.setSelected(true);
-        showTipOfTheDayCheckBox.setText("Tip of the Day");
+        showTipOfTheDayCheckBox.setText("Show Tip of the Day");
         showTipOfTheDayCheckBox.setToolTipText("Show/Hide Tip of the Day");
         showTipOfTheDayCheckBox.setIconTextGap(10);
         showTipOfTheDayCheckBox.setOpaque(false);
@@ -429,9 +429,9 @@ public class WaitingDialog extends javax.swing.JDialog {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
                         .addComponent(saveReportLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
+                        .addGap(29, 29, 29)
                         .addComponent(showTipOfTheDayCheckBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 593, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 552, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
