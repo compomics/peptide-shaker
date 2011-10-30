@@ -25,6 +25,7 @@ import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.ExportFeatureDialog;
 import eu.isas.peptideshaker.gui.HelpWindow;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.gui.ProteinFilter;
 import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -61,6 +62,7 @@ import javax.swing.table.TableColumn;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
+import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
@@ -99,6 +101,10 @@ public class OverviewPanel extends javax.swing.JPanel {
      * A reference to the peptide score column.
      */
     private TableColumn peptideScoreColumn;
+    /**
+     * A reference to the protein visible column.
+     */
+    private TableColumn proteinVisibleColumn;
     /**
      * The current sequence coverage;
      */
@@ -190,6 +196,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         proteinScoreColumn = proteinTable.getColumn("Score");
         peptideScoreColumn = peptideTable.getColumn("Score");
+        proteinVisibleColumn = proteinTable.getColumn("   ");
 
         setTableProperties();
 
@@ -250,6 +257,12 @@ public class OverviewPanel extends javax.swing.JPanel {
         peptideTable.getColumn("").setMinWidth(30);
         psmTable.getColumn("").setMinWidth(30);
 
+        // the selected and visible columns
+        proteinTable.getColumn("  ").setMaxWidth(30);
+        proteinTable.getColumn("  ").setMaxWidth(30);
+        proteinTable.getColumn("   ").setMaxWidth(30);
+        proteinTable.getColumn("   ").setMaxWidth(30);
+
         // the protein inference column
         proteinTable.getColumn("PI").setMaxWidth(35);
         proteinTable.getColumn("PI").setMinWidth(35);
@@ -290,6 +303,12 @@ public class OverviewPanel extends javax.swing.JPanel {
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
+        proteinTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
+                new ImageIcon(this.getClass().getResource("/icons/star_yellow.png")),
+                new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
+                new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
+                "Selected", null, null));
+        proteinTable.getColumn("   ").setCellRenderer(new NimbusCheckBoxRenderer());
 
         // set up the peptide inference color map
         HashMap<Integer, Color> peptideInferenceColorMap = new HashMap<Integer, Color>();
@@ -345,6 +364,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         // set up the table header tooltips
         proteinTableToolTips = new ArrayList<String>();
         proteinTableToolTips.add(null);
+        proteinTableToolTips.add("Selected");
+        proteinTableToolTips.add("Hidden");
         proteinTableToolTips.add("Protein Inference Class");
         proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Description");
@@ -531,14 +552,14 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "PI", "Accession", "Description", "Coverage", "#Peptides", "#Spectra", "MS2 Quantification", "MW", "Score", "Confidence", ""
+                " ", "  ", "   ", "PI", "Accession", "Description", "Coverage", "#Peptides", "#Spectra", "MS2 Quantification", "MW", "Score", "Confidence", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Boolean.class, java.lang.Boolean.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false
+                false, true, true, false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -2268,7 +2289,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         -3,
                         proteinsLayeredPane.getComponent(1).getWidth(),
                         proteinsLayeredPane.getComponent(1).getHeight());
-                
+
                 proteinsLayeredPane.getComponent(2).setBounds(
                         proteinsLayeredPane.getWidth() - proteinsLayeredPane.getComponent(2).getWidth() - 32,
                         -5,
@@ -2299,7 +2320,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         -3,
                         peptidesLayeredPane.getComponent(1).getWidth(),
                         peptidesLayeredPane.getComponent(1).getHeight());
-                
+
                 peptidesLayeredPane.getComponent(2).setBounds(
                         peptidesLayeredPane.getWidth() - peptidesLayeredPane.getComponent(2).getWidth() - 32,
                         -5,
@@ -2330,7 +2351,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         -3,
                         psmsLayeredPane.getComponent(1).getWidth(),
                         psmsLayeredPane.getComponent(1).getHeight());
-                
+
                 psmsLayeredPane.getComponent(2).setBounds(
                         psmsLayeredPane.getWidth() - psmsLayeredPane.getComponent(2).getWidth() - 32,
                         -5,
@@ -2361,7 +2382,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         -3,
                         spectrumLayeredPane.getComponent(1).getWidth(),
                         spectrumLayeredPane.getComponent(1).getHeight());
-                
+
                 spectrumLayeredPane.getComponent(2).setBounds(
                         spectrumLayeredPane.getWidth() - spectrumLayeredPane.getComponent(2).getWidth() - 32,
                         -5,
@@ -2392,7 +2413,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         -3,
                         sequenceCoverageLayeredPane.getComponent(1).getWidth(),
                         sequenceCoverageLayeredPane.getComponent(1).getHeight());
-                
+
                 sequenceCoverageLayeredPane.getComponent(2).setBounds(
                         sequenceCoverageLayeredPane.getWidth() - sequenceCoverageLayeredPane.getComponent(2).getWidth() - 32,
                         -5,
@@ -2974,7 +2995,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         displayCoverage = false;
         peptideShakerGUI.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displayCoverage, displaySpectrum);
     }//GEN-LAST:event_hideCoverageJButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JLayeredPane backgroundLayeredPane;
@@ -3500,6 +3520,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         + "%, " + currentProteinSequence.length() + " AA)" + " - Too long to display...");
                 sequenceCoveragePanel.repaint();
             }
+        } catch (ClassCastException e) {
+            // ignore   @TODO: this should not happen, but can happen if the table does not update fast enough for the filtering
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             e.printStackTrace();
@@ -4054,6 +4076,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                         ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                                     index + 1,
+                                    false, // @TODO: this needs to be saved in the cps file!
+                                    false, // @TODO: this needs to be saved in the cps file!
                                     probabilities.getGroupClass(),
                                     peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
                                     description,
@@ -4202,7 +4226,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         int validatedProteinCounter = 0;
 
         for (int i = 0; i < proteinTable.getRowCount(); i++) {
-            if ((Boolean) proteinTable.getValueAt(i, proteinTable.getColumnCount() - 1)) {
+        if ((Boolean) proteinTable.getValueAt(i, proteinTable.getColumnCount() - 1)) {
                 validatedProteinCounter++;
             }
         }
@@ -4487,11 +4511,69 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 peptideTable.removeColumn(peptideTable.getColumn("Score"));
             } else {
                 proteinTable.addColumn(proteinScoreColumn);
-                proteinTable.moveColumn(11, 9);
+                if (peptideShakerGUI.showHiddenProteins()) {
+                    proteinTable.moveColumn(13, 11);
+                } else {
+                    proteinTable.moveColumn(12, 11);
+                }
 
                 peptideTable.addColumn(peptideScoreColumn);
                 peptideTable.moveColumn(8, 6);
             }
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Hides or displays the Visible column in the protein table.
+     * 
+     * @param hide if true the visible column is hidden.
+     */
+    public void hideHiddenProteinsColumn(boolean hide) {
+
+        try {
+            if (hide) {
+
+                ArrayList<Integer> hiddenProteins = new ArrayList<Integer>();
+
+                // get the list of hidden proteins
+                for (int i = 0; i < proteinTable.getRowCount(); i++) {
+                    if ((Boolean) proteinTable.getValueAt(i, proteinTable.getColumn("   ").getModelIndex())) {
+                        hiddenProteins.add((Integer) proteinTable.getValueAt(i, proteinTable.getColumn(" ").getModelIndex()));
+                    }
+                }
+
+                peptideShakerGUI.setHiddenProteinIndexes(hiddenProteins);
+
+                proteinTable.removeColumn(proteinTable.getColumn("   "));
+            } else {
+                proteinTable.addColumn(proteinVisibleColumn);
+
+                if (peptideShakerGUI.showScores()) {
+                    proteinTable.moveColumn(13, 2);
+                } else {
+                    proteinTable.moveColumn(12, 2);
+                }
+
+                // update the selection
+                for (int i = 0; i < proteinTable.getRowCount(); i++) {
+                    if (peptideShakerGUI.getHiddenProteinIndexes().contains((Integer) proteinTable.getValueAt(i, proteinTable.getColumn(" ").getModelIndex()))) {
+                        proteinTable.setValueAt(true, i, proteinTable.getColumn("   ").getModelIndex());
+                    } else {
+                        proteinTable.setValueAt(false, i, proteinTable.getColumn("   ").getModelIndex());
+                    }
+                }
+            }
+
+            if (peptideShakerGUI.getOverviewPanel() != null) {
+                ProteinFilter proteinFilter = new ProteinFilter(peptideShakerGUI, true, peptideShakerGUI.getCurrentProteinFilterValues(),
+                        peptideShakerGUI.getCurrrentProteinFilterRadioButtonSelections(), peptideShakerGUI.getCurrrentProteinInferenceFilterSelection(),
+                        !hide, false);
+                proteinFilter.filter();
+                proteinFilter.dispose();
+            }
+
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
         }
@@ -4726,7 +4808,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             }.start();
         }
     }
-    
+
     /**
      * Updates the visability of the show panels buttons at the bottom of 
      * the screen.
@@ -4734,25 +4816,25 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @return true of all panels are currently displayed
      */
     private boolean updateHiddenPanels() {
-        
+
         showProteinsJButton.setVisible(!displayProteins);
         showProteinsAfterSeparator.setVisible(!displayProteins);
-        
+
         showPeptidesAndPsmsJButton.setVisible(!displayPeptidesAndPSMs);
         showPeptidesAfterSeparator.setVisible(!displayPeptidesAndPSMs);
-        
+
         showCoverageJButton.setVisible(!displayCoverage);
         showCoverageAfterSeparator.setVisible(!displayCoverage);
-        
+
         showSpectrumJButton.setVisible(!displaySpectrum);
         showSpectrumAfterSeparator.setVisible(!displaySpectrum);
-        
+
         if (displayProteins && displayPeptidesAndPSMs && displayCoverage && displaySpectrum) {
             showProteinsBeforeSeparator.setVisible(false);
         } else {
             showProteinsBeforeSeparator.setVisible(true);
         }
-        
+
         return displayProteins && displayPeptidesAndPSMs && displayCoverage && displaySpectrum;
     }
 }

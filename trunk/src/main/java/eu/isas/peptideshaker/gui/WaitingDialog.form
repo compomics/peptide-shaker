@@ -57,9 +57,9 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                           <Component id="saveReportLabel" min="-2" pref="70" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                           <Component id="showTipOfTheDayCheckBox" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="593" max="32767" attributes="0"/>
+                          <EmptySpace pref="552" max="32767" attributes="0"/>
                           <Component id="okButton" min="-2" pref="84" max="-2" attributes="1"/>
                       </Group>
                   </Group>
@@ -348,7 +348,7 @@
         <Component class="javax.swing.JCheckBox" name="showTipOfTheDayCheckBox">
           <Properties>
             <Property name="selected" type="boolean" value="true"/>
-            <Property name="text" type="java.lang.String" value="Tip of the Day"/>
+            <Property name="text" type="java.lang.String" value="Show Tip of the Day"/>
             <Property name="toolTipText" type="java.lang.String" value="Show/Hide Tip of the Day"/>
             <Property name="iconTextGap" type="int" value="10"/>
             <Property name="opaque" type="boolean" value="false"/>

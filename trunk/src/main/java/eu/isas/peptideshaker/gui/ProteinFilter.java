@@ -32,10 +32,12 @@ public class ProteinFilter extends javax.swing.JDialog {
      * @param currentProteinFilterValues                    the current filter text values
      * @param currrentProteinFilterRadioButtonSelections    the current filter radio button settings
      * @param currentProteinInferenceFilterSelection        the current protein inference type selection (0-5)
+     * @param showHiddenProteins                            show/hide the hidden proteins
      * @param visible                                       if true the dialog is made visible
      */
-    public ProteinFilter(PeptideShakerGUI peptideShakerGUI, boolean modal, String[] currentProteinFilterValues, 
-            Integer[] currrentProteinFilterRadioButtonSelections, int currentProteinInferenceFilterSelection, boolean visible) {
+    public ProteinFilter(PeptideShakerGUI peptideShakerGUI, boolean modal, String[] currentProteinFilterValues,
+            Integer[] currrentProteinFilterRadioButtonSelections, int currentProteinInferenceFilterSelection,
+            boolean showHiddenProteins, boolean visible) {
         super(peptideShakerGUI, modal);
 
         this.peptideShakerGUI = peptideShakerGUI;
@@ -90,7 +92,9 @@ public class ProteinFilter extends javax.swing.JDialog {
         } else {
             allJRadioButton.setSelected(true);
         }
-        
+
+        showHiddenProteinsCheckBox.setSelected(showHiddenProteins);
+
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(visible);
     }
@@ -155,6 +159,8 @@ public class ProteinFilter extends javax.swing.JDialog {
         unrelatedIsoformsJRadioButton = new javax.swing.JRadioButton();
         unrelatedProteinsJRadioButton = new javax.swing.JRadioButton();
         allJRadioButton = new javax.swing.JRadioButton();
+        jLabel4 = new javax.swing.JLabel();
+        showHiddenProteinsCheckBox = new javax.swing.JCheckBox();
         clearJButton = new javax.swing.JButton();
         exitJButton = new javax.swing.JButton();
         proteinFilteringHelpJButton = new javax.swing.JButton();
@@ -405,6 +411,7 @@ public class ProteinFilter extends javax.swing.JDialog {
             }
         });
 
+        jLabel1.setFont(jLabel1.getFont().deriveFont((jLabel1.getFont().getStyle() | java.awt.Font.ITALIC)));
         jLabel1.setText("(contains, RegExp)");
         jLabel1.setToolTipText("<html>\nFind all proteins containing a given string.<br>\nRegular expressions are supported.\n</html>");
 
@@ -418,6 +425,7 @@ public class ProteinFilter extends javax.swing.JDialog {
             }
         });
 
+        jLabel2.setFont(jLabel2.getFont().deriveFont((jLabel2.getFont().getStyle() | java.awt.Font.ITALIC)));
         jLabel2.setText("(contains, RegExp)");
         jLabel2.setToolTipText("<html>\nFind all proteins containing a given accession number.<br>\nRegular expressions are supported.\n</html>");
 
@@ -475,6 +483,21 @@ public class ProteinFilter extends javax.swing.JDialog {
             }
         });
 
+        jLabel4.setText("All Proteins:");
+        jLabel4.setToolTipText("Show the hidden proteins");
+
+        showHiddenProteinsCheckBox.setFont(showHiddenProteinsCheckBox.getFont().deriveFont((showHiddenProteinsCheckBox.getFont().getStyle() | java.awt.Font.ITALIC)));
+        showHiddenProteinsCheckBox.setSelected(true);
+        showHiddenProteinsCheckBox.setText("(show the hidden proteins)");
+        showHiddenProteinsCheckBox.setToolTipText("Show the hidden proteins");
+        showHiddenProteinsCheckBox.setIconTextGap(15);
+        showHiddenProteinsCheckBox.setOpaque(false);
+        showHiddenProteinsCheckBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showHiddenProteinsCheckBoxActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout optionsPanelLayout = new javax.swing.GroupLayout(optionsPanel);
         optionsPanel.setLayout(optionsPanelLayout);
         optionsPanelLayout.setHorizontalGroup(
@@ -490,9 +513,11 @@ public class ProteinFilter extends javax.swing.JDialog {
                     .addComponent(jLabel10)
                     .addComponent(jLabel9)
                     .addComponent(jLabel16)
-                    .addComponent(jLabel3))
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4))
                 .addGap(18, 18, 18)
                 .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(showHiddenProteinsCheckBox)
                     .addGroup(optionsPanelLayout.createSequentialGroup()
                         .addComponent(allJRadioButton)
                         .addContainerGap())
@@ -625,6 +650,10 @@ public class ProteinFilter extends javax.swing.JDialog {
                     .addComponent(unrelatedProteinsJRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(allJRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 14, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(optionsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(showHiddenProteinsCheckBox)
+                    .addComponent(jLabel4))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -672,7 +701,7 @@ public class ProteinFilter extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(optionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
@@ -708,7 +737,7 @@ public class ProteinFilter extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -877,9 +906,9 @@ public class ProteinFilter extends javax.swing.JDialog {
             spectraRadioButtonIndex,
             scoreRadioButtonIndex,
             confidenceRadioButtonIndex};
-        
+
         int currentProteinInferenceSelection = 5;
-        
+
         if (singleProteinJRadioButton.isSelected()) {
             currentProteinInferenceSelection = PSParameter.NOT_GROUP;
         } else if (isoformsJRadioButton.isSelected()) {
@@ -996,6 +1025,10 @@ private void unrelatedProteinsJRadioButtonActionPerformed(java.awt.event.ActionE
      *
      * @param evt
      */
+    private void showHiddenProteinsCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showHiddenProteinsCheckBoxActionPerformed
+        filter();
+    }//GEN-LAST:event_showHiddenProteinsCheckBoxActionPerformed
+
     /**
      * Filters the protein table according to the current filter settings.
      */
@@ -1166,10 +1199,23 @@ private void unrelatedProteinsJRadioButtonActionPerformed(java.awt.event.ActionE
         if (unrelatedProteinsJRadioButton.isSelected()) {
             filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL, PSParameter.UNRELATED, proteinTable.getColumn("PI").getModelIndex()));
         }
-        
+
+        // show hidden proteins filter
+        if (!showHiddenProteinsCheckBox.isSelected()) {
+
+            RowFilter<Object, Object> hiddenFilter = new RowFilter<Object, Object>() {
+
+                public boolean include(Entry<? extends Object, ? extends Object> entry) { 
+                    return !peptideShakerGUI.getHiddenProteinIndexes().contains((Integer) entry.getValue(0));
+                }
+            };
+
+            filters.add(hiddenFilter);
+        }
+
         // note: if none of the above, 'All' is selected and no filtering is needed
 
-        
+
         // add the filters to the table
         RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
         ((TableRowSorter) proteinTable.getRowSorter()).setRowFilter(allFilters);
@@ -1217,6 +1263,7 @@ private void unrelatedProteinsJRadioButtonActionPerformed(java.awt.event.ActionE
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel optionsPanel;
     private javax.swing.ButtonGroup pValueButtonGroup;
@@ -1233,6 +1280,7 @@ private void unrelatedProteinsJRadioButtonActionPerformed(java.awt.event.ActionE
     private javax.swing.JRadioButton scoreGreaterThanJRadioButton;
     private javax.swing.JTextField scoreJTextField;
     private javax.swing.JRadioButton scoreLessThanJRadioButton;
+    private javax.swing.JCheckBox showHiddenProteinsCheckBox;
     private javax.swing.JRadioButton singleProteinJRadioButton;
     private javax.swing.JRadioButton spectraEqualJRadioButton;
     private javax.swing.JRadioButton spectraGreaterThanJRadioButton;

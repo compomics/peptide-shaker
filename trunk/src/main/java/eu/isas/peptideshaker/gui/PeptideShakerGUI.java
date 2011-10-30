@@ -344,6 +344,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * List of caught exceptions
      */
     private ArrayList<String> exceptionCaught = new ArrayList<String>();
+    /**
+     * Show/hide the hidden proteins.
+     */
+    private boolean showHiddenProteins = true;
+    /**
+     * The list of the currently hidden proteins indexes.
+     */
+    private ArrayList<Integer> hiddenProteins = new ArrayList<Integer>();
 
     /**
      * The main method used to start PeptideShaker
@@ -560,6 +568,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        jSeparator11 = new javax.swing.JPopupMenu.Separator();
+        showHiddenProteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
         aboutJMenuItem = new javax.swing.JMenuItem();
@@ -1226,6 +1236,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         viewJMenu.add(scoresJCheckBoxMenuItem);
+        viewJMenu.add(jSeparator11);
+
+        showHiddenProteinsJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        showHiddenProteinsJCheckBoxMenuItem.setMnemonic('h');
+        showHiddenProteinsJCheckBoxMenuItem.setSelected(true);
+        showHiddenProteinsJCheckBoxMenuItem.setText("Hidden Proteins");
+        showHiddenProteinsJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showHiddenProteinsJCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        viewJMenu.add(showHiddenProteinsJCheckBoxMenuItem);
 
         menuBar.add(viewJMenu);
 
@@ -1604,7 +1626,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt 
      */
     private void proteinFilterJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinFilterJMenuItemActionPerformed
-        new ProteinFilter(this, true, currentProteinFilterValues, currrentProteinFilterRadioButtonSelections, currentProteinInferenceFilterSelection, true);
+        new ProteinFilter(this, true, currentProteinFilterValues, currrentProteinFilterRadioButtonSelections, 
+                currentProteinInferenceFilterSelection, showHiddenProteinsJCheckBoxMenuItem.isSelected(), true);
     }//GEN-LAST:event_proteinFilterJMenuItemActionPerformed
 
     /**
@@ -2435,6 +2458,16 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }//GEN-LAST:event_exportPrideXmlMenuItemActionPerformed
 
     /**
+     * Show/hide hidden proteins.
+     * 
+     * @param evt 
+     */
+    private void showHiddenProteinsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showHiddenProteinsJCheckBoxMenuItemActionPerformed
+        showHiddenProteins = showHiddenProteinsJCheckBoxMenuItem.isSelected();  
+        overviewPanel.hideHiddenProteinsColumn(!showHiddenProteins);
+    }//GEN-LAST:event_showHiddenProteinsJCheckBoxMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
     private void loadEnzymes() {
@@ -2508,6 +2541,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         }
 
                         progressDialog.setTitle("Loading Overview Tab. Please Wait...");
+                        
+                        // reset show hidden proteins and scores columns
+                        showHiddenProteinsJCheckBoxMenuItem.setSelected(true);
+                        scoresJCheckBoxMenuItem.setSelected(false);
+                        
                         overviewPanel.displayResults(progressDialog);
 
                         if (updateValidationTab) {
@@ -2654,6 +2692,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu ionsMenu;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
+    private javax.swing.JPopupMenu.Separator jSeparator11;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
@@ -2686,6 +2725,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenuItem searchParametersMenu;
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
     private javax.swing.JMenu settingsMenu;
+    private javax.swing.JCheckBoxMenuItem showHiddenProteinsJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem singleChargeCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
     private javax.swing.JMenuItem spectrumCountingMenuItem;
@@ -3452,6 +3492,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         currentProteinFilterValues = new String[]{"", "", "", "", "", "", "", ""};
 
         // set up the tabs/panels
+        showHiddenProteinsJCheckBoxMenuItem.setSelected(true);
+        scoresJCheckBoxMenuItem.setSelected(false);
         setUpPanels(true);
 
         // repaint the panels
@@ -4262,6 +4304,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             if (!new File(filePath).exists()) {
                                 JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
                             } else {
+                                clearData();
                                 NewDialog openDialog = new NewDialog(temp, false);
                                 openDialog.setSearchParamatersFiles(new ArrayList<File>());
 
@@ -4921,5 +4964,41 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         }
 
         return knownMassDeltas;
+    }
+    
+    /**
+     * Returns the currently hidden protein indexes.
+     * 
+     * @return the currently hidden protein indexes
+     */
+    public ArrayList<Integer> getHiddenProteinIndexes() {
+        return hiddenProteins;
+    }
+    
+    /**
+     * Set the currently hidden protein indexes.
+     * 
+     * @param hiddenProteins the currently hidden protein indexes
+     */
+    public void setHiddenProteinIndexes(ArrayList<Integer> hiddenProteins) {
+        this.hiddenProteins = hiddenProteins;
+    }
+    
+    /**
+     * Returns true of the hidden proteins are to be hidden.
+     * 
+     * @return true of the hidden proteins are to be hidden
+     */
+    public boolean showHiddenProteins () {
+        return showHiddenProteins;
+    }
+    
+    /**
+     * Returns true of the scores columns are to be shown.
+     * 
+     * @return true of the score columns are to be shown
+     */
+    public boolean showScores () {
+        return scoresJCheckBoxMenuItem.isSelected();
     }
 }
