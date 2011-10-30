@@ -3612,9 +3612,11 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                             // create the sequence fragment ion view
                             secondarySpectrumPlotsJPanel.removeAll();
+                            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                            PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
                             SequenceFragmentationPanel sequenceFragmentationPanel =
-                                    new SequenceFragmentationPanel(currentPeptide.getNTerminal() + "-" + currentPeptide.getSequence() + "-" + currentPeptide.getCTerminal(),
-                                    annotations, true);
+                                    new SequenceFragmentationPanel(peptideAssumption.getPeptide().getModifiedSequenceAsString(true),
+                                    annotations, true, true);
                             sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                             sequenceFragmentationPanel.setOpaque(true);
                             sequenceFragmentationPanel.setBackground(Color.WHITE);
