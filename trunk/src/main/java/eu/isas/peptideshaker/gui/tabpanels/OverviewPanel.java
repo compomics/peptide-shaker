@@ -406,6 +406,12 @@ public class OverviewPanel extends javax.swing.JPanel {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        selectJPopupMenu = new javax.swing.JPopupMenu();
+        selectAllMenuItem = new javax.swing.JMenuItem();
+        deselectAllMenuItem = new javax.swing.JMenuItem();
+        selectHiddenJPopupMenu = new javax.swing.JPopupMenu();
+        selectHiddenAllMenuItem = new javax.swing.JMenuItem();
+        deselectHiddenAllMenuItem = new javax.swing.JMenuItem();
         backgroundLayeredPane = new javax.swing.JLayeredPane();
         overviewJPanel = new javax.swing.JPanel();
         overviewJSplitPane = new javax.swing.JSplitPane();
@@ -521,6 +527,38 @@ public class OverviewPanel extends javax.swing.JPanel {
         showSpectrumAfterSeparator = new javax.swing.JPopupMenu.Separator();
         showCoverageJButton = new javax.swing.JButton();
         showCoverageAfterSeparator = new javax.swing.JPopupMenu.Separator();
+
+        selectAllMenuItem.setText("Select All");
+        selectAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAllMenuItemActionPerformed(evt);
+            }
+        });
+        selectJPopupMenu.add(selectAllMenuItem);
+
+        deselectAllMenuItem.setText("Deselect All");
+        deselectAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deselectAllMenuItemActionPerformed(evt);
+            }
+        });
+        selectJPopupMenu.add(deselectAllMenuItem);
+
+        selectHiddenAllMenuItem.setText("Select All");
+        selectHiddenAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectHiddenAllMenuItemActionPerformed(evt);
+            }
+        });
+        selectHiddenJPopupMenu.add(selectHiddenAllMenuItem);
+
+        deselectHiddenAllMenuItem.setText("Deselect All");
+        deselectHiddenAllMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deselectHiddenAllMenuItemActionPerformed(evt);
+            }
+        });
+        selectHiddenJPopupMenu.add(deselectHiddenAllMenuItem);
 
         setBackground(new java.awt.Color(255, 255, 255));
         addComponentListener(new java.awt.event.ComponentAdapter() {
@@ -1782,47 +1820,62 @@ public class OverviewPanel extends javax.swing.JPanel {
         int row = proteinTable.getSelectedRow();
         int column = proteinTable.getSelectedColumn();
 
-        if (row != -1) {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        if (evt == null || evt.getButton() == MouseEvent.BUTTON1) {
 
-            // set the currently selected protein index
-            peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
-
-            // set the accession number in the annotation tab
-            String accessionNumber = (String) proteinTable.getValueAt(row, proteinTable.getColumn("Accession").getModelIndex());
-
-            if (accessionNumber.lastIndexOf("a href") != -1) {
-                accessionNumber = accessionNumber.substring(accessionNumber.lastIndexOf("\">") + 2);
-                accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf("<"));
-            }
-
-            peptideShakerGUI.setSelectedProteinAccession(accessionNumber);
-
-            // update the peptide selection
-            updatedPeptideSelection(row);
-
-            // update the sequence coverage map
-            updateSequenceCoverageMap(row);
-
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-
-            // open protein link in web browser
-            if (column == proteinTable.getColumn("Accession").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
-                    && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
-
-                String link = (String) proteinTable.getValueAt(row, column);
-                link = link.substring(link.indexOf("\"") + 1);
-                link = link.substring(0, link.indexOf("\""));
-
+            if (row != -1) {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                BareBonesBrowserLaunch.openURL(link);
-                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-            }
 
-            // open the protein inference dialog
-            if (column == proteinTable.getColumn("PI").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
-                String proteinKey = proteinTableMap.get(getProteinKey(row));
-                new ProteinInferenceDialog(peptideShakerGUI, proteinKey, peptideShakerGUI.getIdentification());
+                // set the currently selected protein index
+                peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
+
+                // set the accession number in the annotation tab
+                String accessionNumber = (String) proteinTable.getValueAt(row, proteinTable.getColumn("Accession").getModelIndex());
+
+                if (accessionNumber.lastIndexOf("a href") != -1) {
+                    accessionNumber = accessionNumber.substring(accessionNumber.lastIndexOf("\">") + 2);
+                    accessionNumber = accessionNumber.substring(0, accessionNumber.indexOf("<"));
+                }
+
+                peptideShakerGUI.setSelectedProteinAccession(accessionNumber);
+
+                // update the peptide selection
+                updatedPeptideSelection(row);
+
+                // update the sequence coverage map
+                updateSequenceCoverageMap(row);
+
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
+                // open protein link in web browser
+                if (column == proteinTable.getColumn("Accession").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
+                        && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                    String link = (String) proteinTable.getValueAt(row, column);
+                    link = link.substring(link.indexOf("\"") + 1);
+                    link = link.substring(0, link.indexOf("\""));
+
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    BareBonesBrowserLaunch.openURL(link);
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                }
+
+                // open the protein inference dialog
+                if (column == proteinTable.getColumn("PI").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
+                    String proteinKey = proteinTableMap.get(getProteinKey(row));
+                    new ProteinInferenceDialog(peptideShakerGUI, proteinKey, peptideShakerGUI.getIdentification());
+                }
+            }
+        } else if (evt.getButton() == MouseEvent.BUTTON3) {
+            if (proteinTable.columnAtPoint(evt.getPoint()) == proteinTable.getColumn("  ").getModelIndex()) {
+                selectJPopupMenu.show(proteinTable, evt.getX(), evt.getY());
+            } else {
+                try {
+                    if (proteinTable.columnAtPoint(evt.getPoint()) == proteinTable.getColumn("   ").getModelIndex()) {
+                        selectHiddenJPopupMenu.show(proteinTable, evt.getX(), evt.getY());
+                    }
+                } catch (IllegalArgumentException e) {
+                    // ignore, column is not currently visible
+                }
             }
         }
     }//GEN-LAST:event_proteinTableMouseReleased
@@ -2995,6 +3048,65 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         displayCoverage = false;
         peptideShakerGUI.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displayCoverage, displaySpectrum);
     }//GEN-LAST:event_hideCoverageJButtonActionPerformed
+
+    /**
+     * Select all rows in the current selection column.
+     * 
+     * @param evt 
+     */
+    private void selectAllMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllMenuItemActionPerformed
+        for (int i = 0; i < proteinTable.getRowCount(); i++) {
+            proteinTable.setValueAt(true, i, proteinTable.getColumn("  ").getModelIndex());
+        }
+    }//GEN-LAST:event_selectAllMenuItemActionPerformed
+
+    /**
+     * Deselect all rows in the current selection column.
+     * 
+     * @param evt 
+     */
+    private void deselectAllMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectAllMenuItemActionPerformed
+        for (int i = 0; i < proteinTable.getRowCount(); i++) {
+            proteinTable.setValueAt(false, i, proteinTable.getColumn("  ").getModelIndex());
+        }
+    }//GEN-LAST:event_deselectAllMenuItemActionPerformed
+
+    /**
+     * Select all rows in the current selection column.
+     * 
+     * @param evt 
+     */
+    private void selectHiddenAllMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectHiddenAllMenuItemActionPerformed
+        
+        ArrayList<Integer> hiddenProteins = peptideShakerGUI.getHiddenProteinIndexes();
+        
+        for (int i = 0; i < proteinTable.getRowCount(); i++) {
+            proteinTable.setValueAt(true, i, proteinTable.getColumn("   ").getModelIndex());
+            
+            if (!hiddenProteins.contains((Integer) proteinTable.getValueAt(i, proteinTable.getColumn(" ").getModelIndex()))) {
+                hiddenProteins.add((Integer) proteinTable.getValueAt(i, proteinTable.getColumn(" ").getModelIndex()));
+            }    
+        }
+        
+        peptideShakerGUI.setHiddenProteinIndexes(hiddenProteins);
+    }//GEN-LAST:event_selectHiddenAllMenuItemActionPerformed
+
+    /**
+     * Deselect all rows in the current selection column.
+     * 
+     * @param evt 
+     */
+    private void deselectHiddenAllMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectHiddenAllMenuItemActionPerformed
+        
+        ArrayList<Integer> hiddenProteins = peptideShakerGUI.getHiddenProteinIndexes();
+        
+        for (int i = 0; i < proteinTable.getRowCount(); i++) {
+            proteinTable.setValueAt(false, i, proteinTable.getColumn("   ").getModelIndex());
+            hiddenProteins.remove((Integer) proteinTable.getValueAt(i, proteinTable.getColumn(" ").getModelIndex()));
+        }
+        
+        peptideShakerGUI.setHiddenProteinIndexes(hiddenProteins);
+    }//GEN-LAST:event_deselectHiddenAllMenuItemActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JLayeredPane backgroundLayeredPane;
@@ -3009,6 +3121,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JPanel contextMenuSpectrumBackgroundPanel;
     private javax.swing.JSplitPane coverageJSplitPane;
     private javax.swing.JTable coverageTable;
+    private javax.swing.JMenuItem deselectAllMenuItem;
+    private javax.swing.JMenuItem deselectHiddenAllMenuItem;
     private javax.swing.JButton exportPeptidesJButton;
     private javax.swing.JButton exportProteinsJButton;
     private javax.swing.JButton exportPsmsJButton;
@@ -3046,6 +3160,10 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JLayeredPane psmsLayeredPane;
     private javax.swing.JPanel psmsPanel;
     private javax.swing.JPanel secondarySpectrumPlotsJPanel;
+    private javax.swing.JMenuItem selectAllMenuItem;
+    private javax.swing.JMenuItem selectHiddenAllMenuItem;
+    private javax.swing.JPopupMenu selectHiddenJPopupMenu;
+    private javax.swing.JPopupMenu selectJPopupMenu;
     private javax.swing.JPanel sequenceCoverageJPanel;
     private javax.swing.JLayeredPane sequenceCoverageLayeredPane;
     private javax.swing.JPanel sequenceCoveragePanel;
@@ -4226,7 +4344,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         int validatedProteinCounter = 0;
 
         for (int i = 0; i < proteinTable.getRowCount(); i++) {
-        if ((Boolean) proteinTable.getValueAt(i, proteinTable.getColumnCount() - 1)) {
+            if ((Boolean) proteinTable.getValueAt(i, proteinTable.getColumnCount() - 1)) {
                 validatedProteinCounter++;
             }
         }
