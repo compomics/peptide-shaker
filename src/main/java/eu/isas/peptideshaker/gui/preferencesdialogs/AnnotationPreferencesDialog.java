@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
-import eu.isas.peptideshaker.gui.HelpWindow;
+import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import javax.swing.SpinnerNumberModel;
@@ -306,11 +306,6 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
         automaticAnnotationCheck.setSelected(true);
         automaticAnnotationCheck.setText("Automatic Annotation");
         automaticAnnotationCheck.setOpaque(false);
-        automaticAnnotationCheck.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                automaticAnnotationCheckActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -333,7 +328,7 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
                         .addGap(200, 200, 200))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(adaptBox)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 340, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 250, Short.MAX_VALUE)
                         .addComponent(automaticAnnotationCheck)))
                 .addContainerGap())
         );
@@ -571,12 +566,9 @@ public class AnnotationPreferencesDialog extends javax.swing.JDialog {
      */
     private void annotationPreferencesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_annotationPreferencesHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/AnnotationPreferences.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/AnnotationPreferences.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_annotationPreferencesHelpJButtonActionPerformed
-
-    private void automaticAnnotationCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_automaticAnnotationCheckActionPerformed
-    }//GEN-LAST:event_automaticAnnotationCheckActionPerformed
 
 private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySpinnerStateChanged
     annotationPreferences.setAnnotationLevel(((Integer) intensitySpinner.getValue()) / 100.0);

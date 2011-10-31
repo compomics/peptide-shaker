@@ -19,7 +19,7 @@ import com.googlecode.charts4j.GCharts;
 import com.googlecode.charts4j.VennDiagram;
 import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
-import eu.isas.peptideshaker.gui.HelpWindow;
+import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
@@ -1940,7 +1940,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      */
     private void psmsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmsHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_psmsHelpJButtonActionPerformed
 
@@ -1996,7 +1996,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      */
     private void searchEnginesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchEnginesHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_searchEnginesHelpJButtonActionPerformed
 
@@ -2075,7 +2075,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      */
     private void spectrumSelectionHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumSelectionHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumSelectionHelpJButtonActionPerformed
 
@@ -2131,7 +2131,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      */
     private void spectrumHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PSMs.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumHelpJButtonActionPerformed
 

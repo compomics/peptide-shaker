@@ -430,7 +430,7 @@
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="adaptBox" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="340" max="32767" attributes="0"/>
+                                      <EmptySpace pref="250" max="32767" attributes="0"/>
                                       <Component id="automaticAnnotationCheck" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -504,9 +504,6 @@
                         <Property name="text" type="java.lang.String" value="Automatic Annotation"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="automaticAnnotationCheckActionPerformed"/>
-                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>

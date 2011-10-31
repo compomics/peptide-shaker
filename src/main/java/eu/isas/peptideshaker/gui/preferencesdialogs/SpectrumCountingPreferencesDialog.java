@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import eu.isas.peptideshaker.gui.HelpWindow;
+import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
@@ -233,7 +233,7 @@ public class SpectrumCountingPreferencesDialog extends javax.swing.JDialog {
      */
     private void spectrumCountingHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumCountingHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/SpectrumCountingPreferencesDialog.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/SpectrumCountingPreferencesDialog.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumCountingHelpJButtonActionPerformed
 

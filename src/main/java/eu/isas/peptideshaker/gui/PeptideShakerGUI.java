@@ -58,6 +58,7 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dialog.ModalExclusionType;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -1472,7 +1473,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void helpJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJMenuItemActionPerformed
-        new HelpWindow(this, getClass().getResource("/helpFiles/PeptideShaker.html"));
+        new HelpDialog(this, getClass().getResource("/helpFiles/PeptideShaker.html"));
     }//GEN-LAST:event_helpJMenuItemActionPerformed
 
     /**
@@ -1481,7 +1482,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void aboutJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutJMenuItemActionPerformed
-        new HelpWindow(this, getClass().getResource("/helpFiles/AboutPeptideShaker.html"));
+        new HelpDialog(this, getClass().getResource("/helpFiles/AboutPeptideShaker.html"));
     }//GEN-LAST:event_aboutJMenuItemActionPerformed
 
     /**
@@ -2038,16 +2039,16 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
         int spectrumTabIndex = overviewPanel.getSelectedSpectrumTabIndex();
 
         if (spectrumTabIndex == 0) {
-            new HelpWindow(this, getClass().getResource("/helpFiles/IonTable.html"));
+            new HelpDialog(this, getClass().getResource("/helpFiles/IonTable.html"));
         } else if (spectrumTabIndex == 1) {
-            new HelpWindow(this, getClass().getResource("/helpFiles/BubblePlot.html"));
+            new HelpDialog(this, getClass().getResource("/helpFiles/BubblePlot.html"));
         } else if (spectrumTabIndex == 2) {
-            new HelpWindow(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
+            new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
         }
     } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
-        new HelpWindow(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
+        new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
     } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-        new HelpWindow(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
+        new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
     }
 
     setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
