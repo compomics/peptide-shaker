@@ -1054,7 +1054,6 @@ public class GOEAPanel extends javax.swing.JPanel {
         }
 
         if (goMappingsTable.getRowCount() > 0 && evt.getButton() == MouseEvent.BUTTON3) {
-            //selectTermsJPopupMenu.show(this, evt.getX() + 30, evt.getY() + 115); // @TODO: no idea why the addition is needed...
             selectTermsJPopupMenu.show(goMappingsTable, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_goMappingsTableMouseReleased
