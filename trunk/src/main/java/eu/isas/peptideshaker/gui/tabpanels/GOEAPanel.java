@@ -6,7 +6,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
-import eu.isas.peptideshaker.gui.HelpWindow;
+import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
@@ -1220,7 +1220,7 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     private void mappingsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mappingsHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"), "GO_Mappings");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"), "GO_Mappings");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_mappingsHelpJButtonActionPerformed
 
@@ -1313,7 +1313,7 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     private void plotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_plotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"), "GO_Plots");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/GOEA.html"), "GO_Plots");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_plotHelpJButtonActionPerformed
 

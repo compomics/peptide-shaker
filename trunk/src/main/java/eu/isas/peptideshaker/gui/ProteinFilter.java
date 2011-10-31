@@ -95,6 +95,7 @@ public class ProteinFilter extends javax.swing.JDialog {
 
         showHiddenProteinsCheckBox.setSelected(showHiddenProteins);
 
+        peptideShakerGUI.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(visible);
     }
@@ -924,6 +925,7 @@ public class ProteinFilter extends javax.swing.JDialog {
         peptideShakerGUI.setCurrrentProteinInferenceFilterSelection(currentProteinInferenceSelection);
 
         // close the dialog
+        peptideShakerGUI.setModalExclusionType(ModalExclusionType.NO_EXCLUDE);
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_exitJButtonActionPerformed
@@ -971,7 +973,7 @@ public class ProteinFilter extends javax.swing.JDialog {
      */
     private void proteinFilteringHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinFilteringHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/ProteinFiltering.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/ProteinFiltering.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_proteinFilteringHelpJButtonActionPerformed
 

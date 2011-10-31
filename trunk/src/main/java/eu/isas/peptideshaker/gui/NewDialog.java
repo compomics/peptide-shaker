@@ -821,7 +821,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      */
     private void openDialogHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/OpenDialog.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/OpenDialog.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
 

@@ -8,7 +8,7 @@ import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyMap;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoySeries;
-import eu.isas.peptideshaker.gui.HelpWindow;
+import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.BasicStroke;
@@ -1944,7 +1944,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void thresholdHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_thresholdHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Setting_the_Threshold");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Setting_the_Threshold");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_thresholdHelpJButtonActionPerformed
 
@@ -1955,7 +1955,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void pepHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pepHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Optimize_Estimator_Accuracy");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Optimize_Estimator_Accuracy");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pepHelpJButtonActionPerformed
 
@@ -1966,7 +1966,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void totalTPHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalTPHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_totalTPHelpJButtonActionPerformed
 
@@ -1977,7 +1977,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void benefitPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_benefitPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#ROC_plot");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#ROC_plot");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_benefitPlotHelpJButtonActionPerformed
 
@@ -1988,7 +1988,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void fdrFnrPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrFnrPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#FDR_FNR_plot");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#FDR_FNR_plot");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_fdrFnrPlotHelpJButtonActionPerformed
 
@@ -1999,7 +1999,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void confidencePlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confidencePlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Confidence_plot");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Confidence_plot");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_confidencePlotHelpJButtonActionPerformed
 
@@ -2064,7 +2064,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void pepPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pepPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#PEP_plot");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#PEP_plot");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_pepPlotHelpJButtonActionPerformed
 
@@ -2093,7 +2093,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void fdrsPlotHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrsPlotHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#FDR_plot");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#FDR_plot");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_fdrsPlotHelpJButtonActionPerformed
 
@@ -2213,7 +2213,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
     private void nMaxHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nMaxHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_nMaxHelpJButtonActionPerformed
 
@@ -2237,7 +2237,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
     private void confidenceHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_confidenceHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_confidenceHelpJButtonActionPerformed
 
@@ -2266,7 +2266,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void fdrHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fdrHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_fdrHelpJButtonActionPerformed
 
@@ -2295,7 +2295,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void fnrHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fnrHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_fnrHelpJButtonActionPerformed
 
@@ -2324,7 +2324,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void truePositivesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_truePositivesHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_truePositivesHelpJButtonActionPerformed
 
@@ -2353,7 +2353,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void falsePositivesHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_falsePositivesHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_falsePositivesHelpJButtonActionPerformed
 
@@ -2382,7 +2382,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void validatedHitsHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_validatedHitsHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Identification_summary");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_validatedHitsHelpJButtonActionPerformed
 
@@ -2429,7 +2429,7 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     private void groupSelectionHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupSelectionHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Group_Selection");
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/Validation.html"), "#Group_Selection");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_groupSelectionHelpJButtonActionPerformed
 

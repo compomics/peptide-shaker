@@ -618,7 +618,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      */
     private void helpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpWindow(peptideShakerGUI, getClass().getResource("/helpFiles/ProteinInference.html"));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/ProteinInference.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 }//GEN-LAST:event_helpJButtonActionPerformed
 
