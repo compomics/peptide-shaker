@@ -47,9 +47,12 @@ import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
 import no.uib.jsparklines.renderers.util.BarChartColorRenderer;
 import org.apache.commons.math.distribution.HypergeometricDistributionImpl;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryLabelPositions;
+import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
 import org.jfree.chart.plot.CategoryMarker;
 import org.jfree.chart.plot.CategoryPlot;
@@ -82,13 +85,13 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     TreeMap<String, Integer> totalGoTermUsage;
     /**
-     * The distribution chart.
+     * The distribution chart panel.
      */
-    JFreeChart distributionChart = null;
+    ChartPanel distributionChartPanel = null;
     /**
-     * The significance chart.
+     * The significance chart panel.
      */
-    JFreeChart significanceChart = null;
+    ChartPanel signChartPanel = null;
 
     /** 
      * Creates a new GOEAPanel.
@@ -403,6 +406,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
             // update the table
             Double maxLog2Diff = 0.0;
+            ArrayList<Integer> indexes = new ArrayList<Integer>();
+            ArrayList<Double> pValues = new ArrayList<Double>();
 
             for (Map.Entry<String, Integer> entry : totalGoTermUsage.entrySet()) {
 
@@ -451,6 +456,9 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                 JSparklinesDataset dataset = new JSparklinesDataset(sparkLineDataSeries);
 
+                pValues.add(pValue);
+                indexes.add(goMappingsTable.getRowCount());
+                
                 ((DefaultTableModel) goMappingsTable.getModel()).addRow(new Object[]{
                             goMappingsTable.getRowCount() + 1,
                             addGoLink(goAccession),
@@ -461,11 +469,22 @@ public class GOEAPanel extends javax.swing.JPanel {
                             dataset,
                             log2Diff,
                             pValue,
-                            pValue < (Double) significanceJSpinner.getValue() / totalGoTermUsage.keySet().size(),
+                            pValue < (Double) significanceJSpinner.getValue() / totalGoTermUsage.keySet().size(), // bonferroni correction
                             true
                         });
             }
-
+            
+            // correct the p-values for multiple testing using benjamini-hochberg
+            sortPValues(pValues, indexes);
+           
+            goMappingsTable.setValueAt(pValues.get(0) < (Double) significanceJSpinner.getValue(), 
+                    indexes.get(0), goMappingsTable.getColumn(" ").getModelIndex());
+            
+            for (int i=1; i<pValues.size(); i++) {
+                goMappingsTable.setValueAt(pValues.get(i)*pValues.size()/(pValues.size() - i - 1) < (Double) significanceJSpinner.getValue(), 
+                        indexes.get(i), goMappingsTable.getColumn(" ").getModelIndex());
+            }
+            
             br.close();
             r.close();
 
@@ -538,6 +557,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         for (int i = 0; i < goMappingsTable.getRowCount(); i++) {
 
             boolean selected = (Boolean) goMappingsTable.getValueAt(i, goMappingsTable.getColumn("  ").getModelIndex());
+            boolean significant = (Boolean) goMappingsTable.getValueAt(i, goMappingsTable.getColumn(" ").getModelIndex());
 
             if (selected) {
 
@@ -545,7 +565,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                 Double percentAll = (Double) goMappingsTable.getValueAt(i, goMappingsTable.getColumn("Frequency All (%)").getModelIndex());
                 Double percentDataset = (Double) goMappingsTable.getValueAt(i, goMappingsTable.getColumn("Frequency Dataset (%)").getModelIndex());
                 Double log2Diff = (Double) goMappingsTable.getValueAt(i, goMappingsTable.getColumn("Log2 Diff").getModelIndex());
-                Double pValue = (Double) goMappingsTable.getValueAt(i, goMappingsTable.getColumn("p-value").getModelIndex());
 
                 frquencyPlotDataset.addValue(percentAll, "All", goTerm);
                 frquencyPlotDataset.addValue(percentDataset, "Dataset", goTerm);
@@ -556,7 +575,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                     significancePlotDataset.addValue(0, "Difference", goTerm);
                 }
 
-                if (pValue < (Double) significanceJSpinner.getValue() / totalGoTermUsage.keySet().size()) {
+                if (significant) {
                     if (log2Diff > 0) {
                         significanceColors.add(peptideShakerGUI.getSparklineColor());
                     } else {
@@ -575,34 +594,64 @@ public class GOEAPanel extends javax.swing.JPanel {
         maxLog2Diff = Math.ceil(maxLog2Diff);
 
 
-        distributionChart = ChartFactory.createBarChart(null, "GO Terms", "Frequency (%)", frquencyPlotDataset, PlotOrientation.VERTICAL, false, true, true);
-        ChartPanel chartPanel = new ChartPanel(distributionChart);
+        JFreeChart distributionChart = ChartFactory.createBarChart(null, "GO Terms", "Frequency (%)", frquencyPlotDataset, PlotOrientation.VERTICAL, false, true, true);
+        distributionChartPanel = new ChartPanel(distributionChart);
 
-        ((CategoryPlot) chartPanel.getChart().getPlot()).getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_90);
+        ((CategoryPlot) distributionChartPanel.getChart().getPlot()).getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
         BarRenderer3D renderer = new BarRenderer3D(0, 0);
         renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
         renderer.setSeriesPaint(0, Color.RED);
         renderer.setSeriesPaint(1, peptideShakerGUI.getSparklineColor());
         distributionChart.getCategoryPlot().setRenderer(renderer);
+        
+        // add mouse listener
+        distributionChartPanel.addChartMouseListener(new ChartMouseListener() {
+
+            @Override
+            public void chartMouseClicked(ChartMouseEvent cme) {
+                
+                if (cme.getEntity() instanceof CategoryItemEntity) {
+                    CategoryItemEntity categoryItem = (CategoryItemEntity) cme.getEntity();
+                    String columnKey = (String) categoryItem.getColumnKey();
+
+                    // select and highlight category
+                    boolean categoryFound = false;
+                    
+                    for (int i=0; i<goMappingsTable.getRowCount() && !categoryFound; i++) {
+                        if (((String) goMappingsTable.getValueAt(
+                                i, goMappingsTable.getColumn("GO Term").getModelIndex())).equalsIgnoreCase(columnKey)) {
+                            goMappingsTable.setRowSelectionInterval(i, i);
+                            goMappingsTable.scrollRectToVisible(goMappingsTable.getCellRect(i, 0, false));
+                            goMappingsTableMouseReleased(null);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void chartMouseMoved(ChartMouseEvent cme) {
+                // do nothing
+            }
+        });
 
         // set background color
         distributionChart.getPlot().setBackgroundPaint(Color.WHITE);
         distributionChart.setBackgroundPaint(Color.WHITE);
-        chartPanel.setBackground(Color.WHITE);
+        distributionChartPanel.setBackground(Color.WHITE);
 
         // hide the outline
         distributionChart.getPlot().setOutlineVisible(false);
 
         goFrequencyPlotPanel.removeAll();
-        goFrequencyPlotPanel.add(chartPanel);
+        goFrequencyPlotPanel.add(distributionChartPanel);
         goFrequencyPlotPanel.revalidate();
         goFrequencyPlotPanel.repaint();
 
 
 
-        significanceChart = ChartFactory.createBarChart(null, "GO Terms", "Log2 Difference", significancePlotDataset, PlotOrientation.VERTICAL, false, true, true);
-        ChartPanel signChartPanel = new ChartPanel(significanceChart);
+        JFreeChart significanceChart = ChartFactory.createBarChart(null, "GO Terms", "Log2 Difference", significancePlotDataset, PlotOrientation.VERTICAL, false, true, true);
+        signChartPanel = new ChartPanel(significanceChart);
 
         ((CategoryPlot) signChartPanel.getChart().getPlot()).getDomainAxis().setCategoryLabelPositions(CategoryLabelPositions.UP_90);
 
@@ -613,7 +662,36 @@ public class GOEAPanel extends javax.swing.JPanel {
         signRenderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
         significanceChart.getCategoryPlot().setRenderer(signRenderer);
 
+        
+        // add mouse listener
+        signChartPanel.addChartMouseListener(new ChartMouseListener() {
 
+            @Override
+            public void chartMouseClicked(ChartMouseEvent cme) {
+                
+                if (cme.getEntity() instanceof CategoryItemEntity) {
+                    CategoryItemEntity categoryItem = (CategoryItemEntity) cme.getEntity();
+                    String columnKey = (String) categoryItem.getColumnKey();
+
+                    // select and highlight category
+                    boolean categoryFound = false;
+                    
+                    for (int i=0; i<goMappingsTable.getRowCount() && !categoryFound; i++) {
+                        if (((String) goMappingsTable.getValueAt(
+                                i, goMappingsTable.getColumn("GO Term").getModelIndex())).equalsIgnoreCase(columnKey)) {
+                            goMappingsTable.setRowSelectionInterval(i, i);
+                            goMappingsTable.scrollRectToVisible(goMappingsTable.getCellRect(i, 0, false));
+                            goMappingsTableMouseReleased(null);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void chartMouseMoved(ChartMouseEvent cme) {
+                // do nothing
+            }
+        });
 
         // set background color
         significanceChart.getPlot().setBackgroundPaint(Color.WHITE);
@@ -1030,7 +1108,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
-            if (evt.getButton() == MouseEvent.BUTTON1) {
+            if (evt == null || evt.getButton() == MouseEvent.BUTTON1) {
 
                 // open protein link in web browser
                 if (column == goMappingsTable.getColumn("GO Accession").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
@@ -1053,11 +1131,16 @@ public class GOEAPanel extends javax.swing.JPanel {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
 
-        if (goMappingsTable.getRowCount() > 0 && evt.getButton() == MouseEvent.BUTTON3) {
+        if (evt != null && goMappingsTable.getRowCount() > 0 && evt.getButton() == MouseEvent.BUTTON3) {
             selectTermsJPopupMenu.show(goMappingsTable, evt.getX(), evt.getY());
         }
     }//GEN-LAST:event_goMappingsTableMouseReleased
 
+    /**
+     * Update the analysis with the new significance threshold.
+     * 
+     * @param evt 
+     */
     private void significanceJSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_significanceJSpinnerStateChanged
         if (peptideShakerGUI.getIdentification() != null) {
 
@@ -1126,6 +1209,11 @@ public class GOEAPanel extends javax.swing.JPanel {
         updateGoPlots();
     }//GEN-LAST:event_selectSignificantMenuItemActionPerformed
 
+    /**
+     * Update the plot markers.
+     * 
+     * @param evt 
+     */
     private void goMappingsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_goMappingsTableKeyReleased
         updatePlotMarkers();
     }//GEN-LAST:event_goMappingsTableKeyReleased
@@ -1378,7 +1466,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Returns the GO accession number as a web link to the given 
-     * GO term at AmiGO.
+     * GO term at QuickGO.
      * 
      * @param goAccession
      * @return 
@@ -1391,13 +1479,13 @@ public class GOEAPanel extends javax.swing.JPanel {
 
     /**
      * Returns the GO accession number as a web link to the given 
-     * GO term at AmiGO.
+     * GO term at QuickGO.
      * 
      * @param goAccession  the GO accession number
      * @return             the GO accession web link
      */
     private String getGoAccessionLink(String goAccession) {
-        return "http://amigo.geneontology.org/cgi-bin/amigo/term_details?term=" + goAccession;
+        return "http://www.ebi.ac.uk/QuickGO/GTerm?id=" + goAccession;
     }
 
     /**
@@ -1405,15 +1493,15 @@ public class GOEAPanel extends javax.swing.JPanel {
      */
     private void updatePlotMarkers() {
 
-        if (significanceChart != null && goMappingsTable.getSelectedRow() != -1) {
+        if (signChartPanel != null && goMappingsTable.getSelectedRow() != -1) {
 
             removePlotMarkers();
 
-            significanceChart.getCategoryPlot().addDomainMarker(
+            signChartPanel.getChart().getCategoryPlot().addDomainMarker(
                     new CategoryMarker((String) goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex()),
                     Color.LIGHT_GRAY, new BasicStroke(1.0f), Color.LIGHT_GRAY, new BasicStroke(1.0f), 0.2f), Layer.BACKGROUND);
 
-            distributionChart.getCategoryPlot().addDomainMarker(
+            distributionChartPanel.getChart().getCategoryPlot().addDomainMarker(
                     new CategoryMarker((String) goMappingsTable.getValueAt(goMappingsTable.getSelectedRow(), goMappingsTable.getColumn("GO Term").getModelIndex()),
                     Color.LIGHT_GRAY, new BasicStroke(1.0f), Color.LIGHT_GRAY, new BasicStroke(1.0f), 0.2f), Layer.BACKGROUND);
         }
@@ -1423,9 +1511,9 @@ public class GOEAPanel extends javax.swing.JPanel {
      * Removes the plot markers.
      */
     private void removePlotMarkers() {
-        if (significanceChart != null && significanceChart.getCategoryPlot().getDomainMarkers(Layer.BACKGROUND) != null) {
+        if (signChartPanel != null && signChartPanel.getChart().getCategoryPlot().getDomainMarkers(Layer.BACKGROUND) != null) {
 
-            Iterator iterator = significanceChart.getCategoryPlot().getDomainMarkers(Layer.BACKGROUND).iterator();
+            Iterator iterator = signChartPanel.getChart().getCategoryPlot().getDomainMarkers(Layer.BACKGROUND).iterator();
 
             // store the keys in a list first to escape a ConcurrentModificationException
             ArrayList<CategoryMarker> tempMarkers = new ArrayList<CategoryMarker>();
@@ -1435,12 +1523,10 @@ public class GOEAPanel extends javax.swing.JPanel {
             }
 
             for (int i = 0; i < tempMarkers.size(); i++) {
-                significanceChart.getCategoryPlot().removeDomainMarker(i, tempMarkers.get(i), Layer.BACKGROUND);
+                signChartPanel.getChart().getCategoryPlot().removeDomainMarker(i, tempMarkers.get(i), Layer.BACKGROUND);
             }
 
-
-
-            iterator = distributionChart.getCategoryPlot().getDomainMarkers(Layer.BACKGROUND).iterator();
+            iterator = distributionChartPanel.getChart().getCategoryPlot().getDomainMarkers(Layer.BACKGROUND).iterator();
 
             // store the keys in a list first to escape a ConcurrentModificationException
             tempMarkers = new ArrayList<CategoryMarker>();
@@ -1450,13 +1536,43 @@ public class GOEAPanel extends javax.swing.JPanel {
             }
 
             for (int i = 0; i < tempMarkers.size(); i++) {
-                distributionChart.getCategoryPlot().removeDomainMarker(i, tempMarkers.get(i), Layer.BACKGROUND);
+                distributionChartPanel.getChart().getCategoryPlot().removeDomainMarker(i, tempMarkers.get(i), Layer.BACKGROUND);
             }
 
-
-
-
             goPlotsTabbedPane.repaint();
+        }
+    }
+    
+    /**
+     * Sort the p-values and make the same changes to the table indexes.
+     * 
+     * @param pValues
+     * @param tableIndexes 
+     */
+    private void sortPValues (ArrayList<Double> pValues, ArrayList<Integer> tableIndexes) {
+        
+        // iterate p-value list
+        for(int i=0; i<pValues.size(); i++) {
+
+            double maxValue = Double.MIN_VALUE;
+            int maxIndex = -1;
+            
+            // find max p-value in sublist
+            for (int j=i; j<pValues.size(); j++) {
+                if (pValues.get(j) > maxValue) {
+                    maxValue = pValues.get(j);
+                    maxIndex = j;
+                }
+            }
+            
+            // move in both lists
+            double oldValue = pValues.get(i);
+            pValues.set(i, pValues.get(maxIndex));
+            pValues.set(maxIndex, oldValue);
+            
+            int oldIntValue = tableIndexes.get(i);
+            tableIndexes.set(i, tableIndexes.get(maxIndex));
+            tableIndexes.set(maxIndex, oldIntValue);
         }
     }
 }
