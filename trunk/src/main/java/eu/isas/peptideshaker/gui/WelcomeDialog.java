@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui;
 import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
 import java.io.File;
 import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -32,11 +33,10 @@ public class WelcomeDialog extends javax.swing.JDialog {
      */
     public WelcomeDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);
+        this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
-
         openDialog = new NewDialog(peptideShakerGUI, false);
 
-        this.peptideShakerGUI = peptideShakerGUI;
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
@@ -57,6 +57,10 @@ public class WelcomeDialog extends javax.swing.JDialog {
         newJButton = new javax.swing.JButton();
         peptideShakerButton = new javax.swing.JButton();
         compomicsButton = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        recentProjectCmb = new javax.swing.JComboBox();
+        jButton1 = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Welcome to PeptideShaker");
@@ -124,6 +128,17 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
 
+        jLabel3.setText("Recent project:");
+
+        recentProjectCmb.setModel(new DefaultComboBoxModel(peptideShakerGUI.getRecentProjects()));
+
+        jButton1.setText("Open");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -132,18 +147,27 @@ public class WelcomeDialog extends javax.swing.JDialog {
                 .addGap(51, 51, 51)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addComponent(openJButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel2))
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(recentProjectCmb, 0, 360, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1))
+                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addComponent(newJButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel1)))
-                .addGap(55, 55, 55)
-                .addComponent(peptideShakerButton)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(compomicsButton)
-                .addContainerGap(47, Short.MAX_VALUE))
+                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                                .addComponent(openJButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel2))
+                            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                                .addComponent(newJButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(jLabel1)))
+                        .addGap(55, 55, 55)
+                        .addComponent(peptideShakerButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(compomicsButton)))
+                .addGap(47, 47, 47))
         );
 
         backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {newJButton, openJButton});
@@ -164,7 +188,14 @@ public class WelcomeDialog extends javax.swing.JDialog {
                             .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                 .addComponent(openJButton)
                                 .addComponent(jLabel2)))))
-                .addGap(27, 27, 27))
+                .addGap(18, 18, 18)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(recentProjectCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1))
+                .addGap(61, 61, 61))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -303,13 +334,24 @@ public class WelcomeDialog extends javax.swing.JDialog {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_compomicsButtonActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        String filePath = (String) recentProjectCmb.getSelectedItem();
+        peptideShakerGUI.importPeptideShakerFile(new File(filePath));
+        peptideShakerGUI.updateRecentProjectsList(new File(filePath));
+        peptideShakerGUI.setLastSelectedFolder(new File(filePath).getAbsolutePath());
+        dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton compomicsButton;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JButton newJButton;
     private javax.swing.JButton openJButton;
     private javax.swing.JButton peptideShakerButton;
+    private javax.swing.JComboBox recentProjectCmb;
     // End of variables declaration//GEN-END:variables
 }

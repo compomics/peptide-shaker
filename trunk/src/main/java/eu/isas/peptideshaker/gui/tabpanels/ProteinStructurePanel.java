@@ -1796,6 +1796,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                         String tooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(peptide);
                         peptideTable.setToolTipText(tooltip);
                     } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                         e.printStackTrace();
                     }
                 } else {
@@ -3124,6 +3125,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             try {
                 modifications = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModificationMatches();
             } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                 e.printStackTrace();
             }
 
@@ -3237,6 +3239,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 proteinTable.moveColumn(10, 8);
             }
         } catch (IllegalArgumentException e) {
+                    peptideShakerGUI.catchException(e);
             e.printStackTrace();
         }
     }
@@ -3258,6 +3261,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 peptideTable.setValueAt(modifiedSequence, i, peptideTable.getColumn("Sequence").getModelIndex());
             }
         } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
             e.printStackTrace();
         }
 

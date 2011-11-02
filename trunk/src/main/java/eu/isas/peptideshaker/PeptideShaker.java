@@ -6,10 +6,10 @@ import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Sample;
-import com.compomics.util.experiment.identification.AScore;
 import com.compomics.util.experiment.identification.AdvocateFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
+import com.compomics.util.experiment.identification.PTMLocationScores;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
@@ -883,7 +883,7 @@ public class PeptideShaker {
                 annotationPreferences.setCurrentSettings(spectrumMatch.getBestAssumption().getPeptide(), spectrum.getPrecursor().getCharge().value, true);
                 for (String mod : modifications.keySet()) {
                     if (nMod.get(mod) == 1) {
-                        HashMap<ArrayList<Integer>, Double> aScores = AScore.getAScore(spectrumMatch.getBestAssumption().getPeptide(),
+                        HashMap<ArrayList<Integer>, Double> aScores = PTMLocationScores.getAScore(spectrumMatch.getBestAssumption().getPeptide(),
                                 modifications.get(mod), nMod.get(mod), spectrum, annotationPreferences.getIonTypes(),
                                 annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
                                 searchParameters.getFragmentIonAccuracy());
@@ -1247,7 +1247,11 @@ public class PeptideShaker {
             for (String utilitiesName : searchParameters.getModificationProfile().getUtilitiesNames()) {
                 if (peptideShakerName.equals(searchParameters.getModificationProfile().getPeptideShakerName(utilitiesName))) {
                     sePtm = ptmFactory.getPTM(utilitiesName);
-                    residues.addAll(sePtm.getResidues());
+                    for (String aa : sePtm.getResidues()) {
+                        if (!residues.contains(aa)) {
+                            residues.add(aa);
+                        }
+                    }
                     if (modType == -1) {
                         modType = sePtm.getType();
                     } else if (sePtm.getType() != modType) {
