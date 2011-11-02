@@ -96,7 +96,7 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-              <JLayeredPaneConstraints x="0" y="0" width="-1" height="-1" layer="0" position="-1"/>
+              <JLayeredPaneConstraints x="0" y="0" width="1020" height="-1" layer="0" position="-1"/>
             </Constraint>
           </Constraints>
 
@@ -106,12 +106,22 @@
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="proteinGoMappingsScrollPane" alignment="0" pref="987" max="32767" attributes="0"/>
-                          <Group type="102" alignment="1" attributes="0">
+                          <Component id="proteinGoMappingsScrollPane" alignment="0" pref="988" max="32767" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
                               <Component id="goMappingsFileJLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="goMappingFilesJComboBox" pref="690" max="32767" attributes="0"/>
+                              <Component id="speciesJComboBox" min="-2" pref="293" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="downloadButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="updateButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="unknownSpeciesLabel" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="102" alignment="1" attributes="0">
+                              <EmptySpace min="10" pref="10" max="10" attributes="0"/>
+                              <Component id="biasWarningLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="318" max="32767" attributes="0"/>
                               <Component id="significanceJLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="significanceJSpinner" min="-2" pref="69" max="-2" attributes="0"/>
@@ -127,12 +137,19 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="goMappingsFileJLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="goMappingFilesJComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="significanceJLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="significanceJSpinner" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="speciesJComboBox" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="downloadButton" linkSize="3" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
+                          <Component id="updateButton" linkSize="3" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
+                          <Component id="unknownSpeciesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="proteinGoMappingsScrollPane" pref="281" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="proteinGoMappingsScrollPane" pref="254" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="significanceJSpinner" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="significanceJLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="biasWarningLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -140,6 +157,9 @@
           </Layout>
           <SubComponents>
             <Container class="javax.swing.JScrollPane" name="proteinGoMappingsScrollPane">
+              <Properties>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
               <AuxValues>
                 <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
               </AuxValues>
@@ -163,6 +183,7 @@
                         <Column editable="true" title="  " type="java.lang.Boolean"/>
                       </Table>
                     </Property>
+                    <Property name="opaque" type="boolean" value="false"/>
                     <Property name="selectionModel" type="javax.swing.ListSelectionModel" editor="org.netbeans.modules.form.editors2.JTableSelectionModelEditor">
                       <JTableSelectionModel selectionMode="0"/>
                     </Property>
@@ -181,10 +202,10 @@
             </Container>
             <Component class="javax.swing.JLabel" name="goMappingsFileJLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="GO Mappings File:"/>
+                <Property name="text" type="java.lang.String" value="Species:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JComboBox" name="goMappingFilesJComboBox">
+            <Component class="javax.swing.JComboBox" name="speciesJComboBox">
               <Properties>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="4">
@@ -195,6 +216,9 @@
                   </StringArray>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="speciesJComboBoxActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="significanceJLabel">
               <Properties>
@@ -209,6 +233,49 @@
               </Properties>
               <Events>
                 <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="significanceJSpinnerStateChanged"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="downloadButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Download"/>
+                <Property name="toolTipText" type="java.lang.String" value="Download GO Mappings"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="downloadButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JButton" name="updateButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Update"/>
+                <Property name="toolTipText" type="java.lang.String" value="Update the GO Mappings"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="updateButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="biasWarningLabel">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                  <FontInfo relative="true">
+                    <Font component="biasWarningLabel" italic="true" property="font" relativeSize="true" size="0"/>
+                  </FontInfo>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Note that the statistical analysis above is only correct as long as the selected protein set is unbiased."/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="unknownSpeciesLabel">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                  <FontInfo relative="true">
+                    <Font component="unknownSpeciesLabel" italic="true" property="font" relativeSize="true" size="0"/>
+                  </FontInfo>
+                </Property>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href&gt;Species not in list?&lt;/a&gt;&lt;/html&gt;"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="unknownSpeciesLabelMouseClicked"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="unknownSpeciesLabelMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="unknownSpeciesLabelMouseExited"/>
               </Events>
             </Component>
           </SubComponents>
@@ -346,7 +413,9 @@
               <SubComponents>
                 <Container class="javax.swing.JPanel" name="goFrequencyPlotPanel">
                   <Properties>
-                    <Property name="opaque" type="boolean" value="false"/>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
@@ -360,7 +429,9 @@
                 </Container>
                 <Container class="javax.swing.JPanel" name="goSignificancePlotPanel">
                   <Properties>
-                    <Property name="opaque" type="boolean" value="false"/>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                    </Property>
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">

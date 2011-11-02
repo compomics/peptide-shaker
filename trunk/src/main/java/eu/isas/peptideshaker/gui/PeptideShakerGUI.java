@@ -1800,8 +1800,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     });
                 }
             }
+        } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX) {
+            goPanel.displayResults();
         }
-
+        
         // update the basic protein annotation
         if (selectedIndex == ANNOTATION_TAB_INDEX) {
             annotationPanel.updateBasicProteinAnnotation(selectedProteinAccession);
@@ -2502,6 +2504,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             overviewPanel.updateSeparators();
             statsPanel.updateSeparators();
 
+            // @TODO: there seems to be something wrong with the max value here is is usually peaks at around 50%?
+            
             progressDialog = new ProgressDialogX(this, this, true);
             int max = 3 * identification.getProteinIdentification().size()
                     + 2 * identification.getPeptideIdentification().size()
@@ -2560,10 +2564,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                         progressDialog.setTitle("Loading QC Plots Tab. Please Wait...");
                         qcPanel.displayResults(progressDialog);
-
-                        progressDialog.setTitle("Loading GO Analysis Tab. Please Wait...");
-                        goPanel.displayResults(progressDialog, false);
-
 
                         allTabsJTabbedPaneStateChanged(null);
 

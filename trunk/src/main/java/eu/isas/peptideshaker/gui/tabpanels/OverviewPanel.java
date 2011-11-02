@@ -1765,8 +1765,14 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void proteinTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseMoved
         int row = proteinTable.rowAtPoint(evt.getPoint());
         int column = proteinTable.columnAtPoint(evt.getPoint());
+        
+        int modelShift = 0;
+        
+        if (!peptideShakerGUI.showHiddenProteins()) {
+            modelShift = -1;
+        }
 
-        if (column == proteinTable.getColumn("Accession").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
+        if (column == proteinTable.getColumn("Accession").getModelIndex() + modelShift && proteinTable.getValueAt(row, column) != null) {
 
             String tempValue = (String) proteinTable.getValueAt(row, column);
 
@@ -1775,7 +1781,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
-        } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
+        } else if (column == proteinTable.getColumn("PI").getModelIndex() + modelShift && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         } else {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1819,17 +1825,24 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void proteinTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseReleased
         int row = proteinTable.getSelectedRow();
         int column = proteinTable.getSelectedColumn();
-
+        
+        int modelShift = 0;
+        
+        if (!peptideShakerGUI.showHiddenProteins()) {
+            modelShift = -1;
+        }
+        
         if (evt == null || evt.getButton() == MouseEvent.BUTTON1) {
 
             if (row != -1) {
+                
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
                 // set the currently selected protein index
                 peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
 
                 // set the accession number in the annotation tab
-                String accessionNumber = (String) proteinTable.getValueAt(row, proteinTable.getColumn("Accession").getModelIndex());
+                String accessionNumber = (String) proteinTable.getValueAt(row, proteinTable.getColumn("Accession").getModelIndex() + modelShift);
 
                 if (accessionNumber.lastIndexOf("a href") != -1) {
                     accessionNumber = accessionNumber.substring(accessionNumber.lastIndexOf("\">") + 2);
@@ -1847,7 +1860,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                 // open protein link in web browser
-                if (column == proteinTable.getColumn("Accession").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1
+                if (column == proteinTable.getColumn("Accession").getModelIndex() + modelShift && evt != null && evt.getButton() == MouseEvent.BUTTON1
                         && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
 
                     String link = (String) proteinTable.getValueAt(row, column);
@@ -1860,7 +1873,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 }
 
                 // open the protein inference dialog
-                if (column == proteinTable.getColumn("PI").getModelIndex() && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
+                if (column == proteinTable.getColumn("PI").getModelIndex() + modelShift && evt != null && evt.getButton() == MouseEvent.BUTTON1) {
                     String proteinKey = proteinTableMap.get(getProteinKey(row));
                     new ProteinInferenceDialog(peptideShakerGUI, proteinKey, peptideShakerGUI.getIdentification());
                 }
