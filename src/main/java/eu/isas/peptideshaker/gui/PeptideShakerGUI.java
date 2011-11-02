@@ -58,7 +58,6 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dialog.ModalExclusionType;
 import java.awt.Frame;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -88,9 +87,11 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.swing.JFileChooser;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
@@ -391,7 +392,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         repaintPanels();
 
         // load the list of recently used projects
-        loadRecentProjectsList();
+        loadRecentProjectsList(openRecentJMenu);
 
         // set the title
         setFrameTitle(null);
@@ -4279,6 +4280,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             }
         }
         ArrayList<String> paths = new ArrayList<String>();
+        
         if (fileExists) {
 
             try {
@@ -4297,25 +4299,28 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 e.printStackTrace();
             }
         }
+        
         String[] result = new String[paths.size()];
         int cpt = 0;
+        
         for (String project : paths) {
             result[cpt] = project;
             cpt++;
         }
+        
         return result;
     }
 
     /**
      * Add the list of recently used files to the file menu.
      */
-    private void loadRecentProjectsList() {
+    public void loadRecentProjectsList(JMenu menu) {
 
-
-        openRecentJMenu.removeAll();
+        menu.removeAll();
         String[] paths = getRecentProjects();
         int counter = 1;
-        ArrayList<String> filesNotFound = new ArrayList<String>();
+        ArrayList<String> filesNotFound = new ArrayList<String>(); // @TODO: should this be used?
+        
         for (String line : paths) {
             JMenuItem menuItem = new JMenuItem(counter++ + ": " + line);
 
@@ -4349,15 +4354,71 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 }
             });
 
-            openRecentJMenu.add(menuItem);
+            menu.add(menuItem);
         }
-        if (openRecentJMenu.getItemCount() == 0) {
+        
+        if (menu.getItemCount() == 0) {
             JMenuItem menuItem = new JMenuItem("(empty)");
             menuItem.setEnabled(false);
-            openRecentJMenu.add(menuItem);
+            menu.add(menuItem);
         }
     }
+    
+    /**
+     * Add the list of recently used files to the file menu.
+     */
+    public void loadRecentProjectsList(JPopupMenu menu, WelcomeDialog welcomeDialog) {
 
+        final WelcomeDialog tempWelcomeDialog = welcomeDialog;
+        menu.removeAll();
+        String[] paths = getRecentProjects();
+        int counter = 1;
+        ArrayList<String> filesNotFound = new ArrayList<String>(); // @TODO: should this be used?
+        
+        for (String line : paths) {
+            JMenuItem menuItem = new JMenuItem(counter++ + ": " + line);
+
+            final String filePath = line;
+            final PeptideShakerGUI temp = this;
+
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+
+                    if (!new File(filePath).exists()) {
+                        JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        clearData();
+                        NewDialog openDialog = new NewDialog(temp, false);
+                        openDialog.setSearchParamatersFiles(new ArrayList<File>());
+
+                        // get the properties files
+                        for (File file : new File(filePath).getParentFile().listFiles()) {
+                            if (file.getName().toLowerCase().endsWith(".properties")) {
+                                if (!openDialog.getSearchParametersFiles().contains(file)) {
+                                    openDialog.getSearchParametersFiles().add(file);
+                                }
+                            }
+                        }
+
+                        importPeptideShakerFile(new File(filePath));
+                        updateRecentProjectsList(new File(filePath));
+                        lastSelectedFolder = new File(filePath).getAbsolutePath();
+                        tempWelcomeDialog.dispose();
+                    }
+                }
+            });
+
+            menu.add(menuItem);
+        }
+        
+        if (menu.getComponentCount() == 0) {
+            JMenuItem menuItem = new JMenuItem("(empty)");
+            menuItem.setEnabled(false);
+            menu.add(menuItem);
+        }
+    }
+    
     /**
      * Add the given file to the top of the recent projects list.
      * 
@@ -4412,7 +4473,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 w.close();
 
                 // load the updated list
-                loadRecentProjectsList();
+                loadRecentProjectsList(openRecentJMenu);
 
             } catch (IOException e) {
                 e.printStackTrace();
