@@ -146,7 +146,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         });
 
         isasButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/isas.png"))); // NOI18N
-        isasButton.setToolTipText("Leibniz-Institut für Analytische Wissenschaften – ISAS – e.V.");
+        isasButton.setToolTipText("<html>Leibniz-Institut f&uuml;r Analytische Wissenschaften – ISAS – e.V.</html>");
         isasButton.setBorder(null);
         isasButton.setBorderPainted(false);
         isasButton.setContentAreaFilled(false);

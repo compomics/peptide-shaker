@@ -208,7 +208,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/icons/isas.png"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Leibniz-Institut f&#xfc;r Analytische Wissenschaften &#x2013; ISAS &#x2013; e.V."/>
+            <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;Leibniz-Institut f&amp;uuml;r Analytische Wissenschaften &#x2013; ISAS &#x2013; e.V.&lt;/html&gt;"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>

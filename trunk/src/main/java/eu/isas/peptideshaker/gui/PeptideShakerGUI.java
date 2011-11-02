@@ -87,7 +87,6 @@ import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import javax.swing.JFileChooser;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -392,7 +391,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         repaintPanels();
 
         // load the list of recently used projects
-        loadRecentProjectsList(openRecentJMenu);
+        loadRecentProjectsList();
 
         // set the title
         setFrameTitle(null);
@@ -4314,9 +4313,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     /**
      * Add the list of recently used files to the file menu.
      */
-    public void loadRecentProjectsList(JMenu menu) {
+    private void loadRecentProjectsList() {
 
-        menu.removeAll();
+        openRecentJMenu.removeAll();
         String[] paths = getRecentProjects();
         int counter = 1;
         ArrayList<String> filesNotFound = new ArrayList<String>(); // @TODO: should this be used?
@@ -4354,18 +4353,21 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 }
             });
 
-            menu.add(menuItem);
+            openRecentJMenu.add(menuItem);
         }
         
-        if (menu.getItemCount() == 0) {
+        if (openRecentJMenu.getItemCount() == 0) {
             JMenuItem menuItem = new JMenuItem("(empty)");
             menuItem.setEnabled(false);
-            menu.add(menuItem);
+            openRecentJMenu.add(menuItem);
         }
     }
     
     /**
      * Add the list of recently used files to the file menu.
+     * 
+     * @param menu              the menu to add the recent files list to
+     * @param welcomeDialog     the welcome dialog reference
      */
     public void loadRecentProjectsList(JPopupMenu menu, WelcomeDialog welcomeDialog) {
 
@@ -4473,7 +4475,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 w.close();
 
                 // load the updated list
-                loadRecentProjectsList(openRecentJMenu);
+                loadRecentProjectsList();
 
             } catch (IOException e) {
                 e.printStackTrace();
