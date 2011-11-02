@@ -1627,7 +1627,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt 
      */
     private void proteinFilterJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinFilterJMenuItemActionPerformed
-        new ProteinFilter(this, true, currentProteinFilterValues, currrentProteinFilterRadioButtonSelections, 
+        new ProteinFilter(this, true, currentProteinFilterValues, currrentProteinFilterRadioButtonSelections,
                 currentProteinInferenceFilterSelection, showHiddenProteinsJCheckBoxMenuItem.isSelected(), true);
     }//GEN-LAST:event_proteinFilterJMenuItemActionPerformed
 
@@ -2464,7 +2464,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param evt 
      */
     private void showHiddenProteinsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showHiddenProteinsJCheckBoxMenuItemActionPerformed
-        showHiddenProteins = showHiddenProteinsJCheckBoxMenuItem.isSelected();  
+        showHiddenProteins = showHiddenProteinsJCheckBoxMenuItem.isSelected();
         overviewPanel.hideHiddenProteinsColumn(!showHiddenProteins);
     }//GEN-LAST:event_showHiddenProteinsJCheckBoxMenuItemActionPerformed
 
@@ -2542,11 +2542,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         }
 
                         progressDialog.setTitle("Loading Overview Tab. Please Wait...");
-                        
+
                         // reset show hidden proteins and scores columns
                         showHiddenProteinsJCheckBoxMenuItem.setSelected(true);
                         scoresJCheckBoxMenuItem.setSelected(false);
-                        
+
                         overviewPanel.displayResults(progressDialog);
 
                         if (updateValidationTab) {
@@ -4057,6 +4057,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     sequenceFactory.closeFile();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    catchException(e);
                 }
 
                 progressDialog.dispose();
@@ -4262,10 +4263,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         }
     }
 
-    /**
-     * Add the list of recently used files to the file menu.
-     */
-    private void loadRecentProjectsList() {
+    public String[] getRecentProjects() {
 
         String path = getJarFilePath() + "/conf/recently_opened_projects.txt";
 
@@ -4280,67 +4278,83 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 e.printStackTrace();
             }
         }
-
+        ArrayList<String> paths = new ArrayList<String>();
         if (fileExists) {
-
-            openRecentJMenu.removeAll();
 
             try {
                 FileReader r = new FileReader(file);
                 BufferedReader br = new BufferedReader(r);
 
-                String line = br.readLine();
-                int counter = 1;
+                String line;
 
-                while (line != null) {
-                    JMenuItem menuItem = new JMenuItem(counter++ + ": " + line);
-
-                    final String filePath = line;
-                    final PeptideShakerGUI temp = this;
-
-                    menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                        public void actionPerformed(java.awt.event.ActionEvent evt) {
-
-                            if (!new File(filePath).exists()) {
-                                JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
-                            } else {
-                                clearData();
-                                NewDialog openDialog = new NewDialog(temp, false);
-                                openDialog.setSearchParamatersFiles(new ArrayList<File>());
-
-                                // get the properties files
-                                for (File file : new File(filePath).getParentFile().listFiles()) {
-                                    if (file.getName().toLowerCase().endsWith(".properties")) {
-                                        if (!openDialog.getSearchParametersFiles().contains(file)) {
-                                            openDialog.getSearchParametersFiles().add(file);
-                                        }
-                                    }
-                                }
-
-                                importPeptideShakerFile(new File(filePath));
-                                updateRecentProjectsList(new File(filePath));
-                                lastSelectedFolder = new File(filePath).getAbsolutePath();
-                            }
-                        }
-                    });
-
-                    openRecentJMenu.add(menuItem);
-                    line = br.readLine();
+                while ((line = br.readLine()) != null) {
+                    paths.add(line);
                 }
-
                 br.close();
                 r.close();
-
-                if (openRecentJMenu.getItemCount() == 0) {
-                    JMenuItem menuItem = new JMenuItem("(empty)");
-                    menuItem.setEnabled(false);
-                    openRecentJMenu.add(menuItem);
-                }
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+        String[] result = new String[paths.size()];
+        int cpt = 0;
+        for (String project : paths) {
+            result[cpt] = project;
+            cpt++;
+        }
+        return result;
+    }
+
+    /**
+     * Add the list of recently used files to the file menu.
+     */
+    private void loadRecentProjectsList() {
+
+
+        openRecentJMenu.removeAll();
+        String[] paths = getRecentProjects();
+        int counter = 1;
+        ArrayList<String> filesNotFound = new ArrayList<String>();
+        for (String line : paths) {
+            JMenuItem menuItem = new JMenuItem(counter++ + ": " + line);
+
+            final String filePath = line;
+            final PeptideShakerGUI temp = this;
+
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+
+                    if (!new File(filePath).exists()) {
+                        JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        clearData();
+                        NewDialog openDialog = new NewDialog(temp, false);
+                        openDialog.setSearchParamatersFiles(new ArrayList<File>());
+
+                        // get the properties files
+                        for (File file : new File(filePath).getParentFile().listFiles()) {
+                            if (file.getName().toLowerCase().endsWith(".properties")) {
+                                if (!openDialog.getSearchParametersFiles().contains(file)) {
+                                    openDialog.getSearchParametersFiles().add(file);
+                                }
+                            }
+                        }
+
+                        importPeptideShakerFile(new File(filePath));
+                        updateRecentProjectsList(new File(filePath));
+                        lastSelectedFolder = new File(filePath).getAbsolutePath();
+                    }
+                }
+            });
+
+            openRecentJMenu.add(menuItem);
+        }
+        if (openRecentJMenu.getItemCount() == 0) {
+            JMenuItem menuItem = new JMenuItem("(empty)");
+            menuItem.setEnabled(false);
+            openRecentJMenu.add(menuItem);
         }
     }
 
@@ -4349,7 +4363,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * 
      * @param file the file to add
      */
-    private void updateRecentProjectsList(File file) {
+    public void updateRecentProjectsList(File file) {
 
         String path = getJarFilePath() + "/conf/recently_opened_projects.txt";
 
@@ -4915,7 +4929,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         knownMassDeltas.put(AminoAcid.Y.monoisotopicMass, "Y");
         knownMassDeltas.put(AminoAcid.V.monoisotopicMass, "V");
 
-        
+
         // add default neutral losses
         knownMassDeltas.put(NeutralLoss.H2O.mass, "H2O");
         knownMassDeltas.put(NeutralLoss.NH3.mass, "NH3");
@@ -4924,8 +4938,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         knownMassDeltas.put(NeutralLoss.HPO3.mass, "HPO3");
         knownMassDeltas.put(4d, "18O"); // @TODO: should this be added to neutral losses??
         knownMassDeltas.put(44d, "(P)EG"); // @TODO: should this be added to neutral losses??
-        
-        
+
+
         // add the modifications
         ArrayList<String> modificationList = new ArrayList<String>(searchParameters.getModificationProfile().getUtilitiesNames());
         Collections.sort(modificationList);
@@ -4954,7 +4968,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     for (int j = 0; j < residues.size(); j++) {
                         if (!knownMassDeltas.containsValue((String) residues.get(j) + "<" + shortName + ">")) {
-                            knownMassDeltas.put(mass + AminoAcid.getAminoAcid(residues.get(j).charAt(0)).monoisotopicMass, 
+                            knownMassDeltas.put(mass + AminoAcid.getAminoAcid(residues.get(j).charAt(0)).monoisotopicMass,
                                     (String) residues.get(j) + "<" + shortName + ">");
                         }
                     }
@@ -4966,7 +4980,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         return knownMassDeltas;
     }
-    
+
     /**
      * Returns the currently hidden protein indexes.
      * 
@@ -4975,7 +4989,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public ArrayList<Integer> getHiddenProteinIndexes() {
         return hiddenProteins;
     }
-    
+
     /**
      * Set the currently hidden protein indexes.
      * 
@@ -4984,22 +4998,22 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void setHiddenProteinIndexes(ArrayList<Integer> hiddenProteins) {
         this.hiddenProteins = hiddenProteins;
     }
-    
+
     /**
      * Returns true of the hidden proteins are to be hidden.
      * 
      * @return true of the hidden proteins are to be hidden
      */
-    public boolean showHiddenProteins () {
+    public boolean showHiddenProteins() {
         return showHiddenProteins;
     }
-    
+
     /**
      * Returns true of the scores columns are to be shown.
      * 
      * @return true of the score columns are to be shown
      */
-    public boolean showScores () {
+    public boolean showScores() {
         return scoresJCheckBoxMenuItem.isSelected();
     }
 }

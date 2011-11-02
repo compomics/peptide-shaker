@@ -1,13 +1,17 @@
 package eu.isas.peptideshaker.gui;
 
+
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
@@ -65,7 +69,7 @@ public class WaitingDialog extends javax.swing.JDialog {
     /**
      * An array list of the tip of the day.
      */
-    private ArrayList<String> tips;
+    private ArrayList<String> tips = new ArrayList<String>();
     /**
      * The current tip index.
      */
@@ -102,30 +106,21 @@ public class WaitingDialog extends javax.swing.JDialog {
      * Set up the list of tip of the day.
      */
     private void setUpTipOfTheDay () {
-        
-        tips = new ArrayList<String>();
-        
-        // @TODO: replace the dummy tooltips with real tooltips
+        try {
+            InputStream stream = getClass().getResource("/tips.txt").openStream();
+            InputStreamReader streamReader = new InputStreamReader(stream);
+            BufferedReader b = new BufferedReader(streamReader);
+            tips = new ArrayList<String>();
+            String line;
 
-        tips.add("Did you know that. Did you know that. Did you know that. Did you know that. Did you know that."
-                + "Did you know that. Did you know that. Did you know that. Did you know that. Did you know that."
-                + "<br><br>"
-                + "Did you know that. Did you know that. Did you know that. Did you know that. Did you know that.");
-
-        tips.add("Another tip. Another tip. Another tip. Another tip. Another tip."
-                + "Another tip. Another tip. Another tip. Another tip. Another tip."
-                + "<br><br>"
-                + "Another tip. Another tip. Another tip. Another tip. Another tip.");
-        
-        tips.add("The third tip. The third tip. The third tip. The third tip. The third tip."
-                + "The third tip. The third tip. The third tip. The third tip. The third tip."
-                + "<br><br>"
-                + "The third tip. The third tip. The third tip. The third tip. The third tip.");
-        
-        tips.add("Tip number four. Tip number four. Tip number four. Tip number four. Tip number four."
-                + "Tip number four. Tip number four. Tip number four. Tip number four. Tip number four."
-                + "<br><br>"
-                + "Tip number four. Tip number four. Tip number four. Tip number four. Tip number four.");
+            while ((line = b.readLine()) != null) {
+                tips.add(line);
+            }
+        } catch (Exception e) {
+            showTipOfTheDayCheckBox.setSelected(false);
+            showTipOfTheDayCheckBox.setEnabled(false);
+            tipOfTheDayJPanel.setVisible(false);
+        }
     }
 
     /**

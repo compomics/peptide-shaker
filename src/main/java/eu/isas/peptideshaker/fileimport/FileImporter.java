@@ -196,7 +196,9 @@ public class FileImporter {
                         if (!sequences.containsKey(peptide)) {
                             sequences.put(peptide, new ArrayList<String>());
                         }
-                        sequences.get(peptide).add(proteinKey);
+                        if (!sequences.get(peptide).contains(proteinKey)) {
+                            sequences.get(peptide).add(proteinKey);
+                        }
                         if (waitingDialog.isRunCanceled()) {
                             return;
                         }
@@ -263,7 +265,6 @@ public class FileImporter {
      * @return                  a list of corresponding proteins found in the database
      */
     private ArrayList<String> getProteins(String peptideSequence, WaitingDialog waitingDialog) {
-        
         ArrayList<String> result = sequences.get(peptideSequence);
         boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !testing;
 
@@ -563,15 +564,15 @@ public class FileImporter {
                     waitingDialog.increaseProgressValue(mgfNames.size() - mgfImported.size());
                     importSpectra(waitingDialog, mgfImported);
                 } else {
-                    
+
                     String mgfFileMissing = "Mgf files missing: ";
-                    
-                    for (int i=0; i < mgfMissing.size() - 1; i++) {
+
+                    for (int i = 0; i < mgfMissing.size() - 1; i++) {
                         mgfFileMissing += mgfMissing.get(i) + ", ";
                     }
-                    
+
                     mgfFileMissing += mgfMissing.get(mgfMissing.size() - 1);
-                    
+
                     throw new IllegalArgumentException(mgfFileMissing);
                 }
 

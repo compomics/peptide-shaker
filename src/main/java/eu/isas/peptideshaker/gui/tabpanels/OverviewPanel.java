@@ -1979,6 +1979,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                         String tooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(peptide);
                         peptideTable.setToolTipText(tooltip);
                     } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                         e.printStackTrace();
                     }
                 } else {
@@ -2019,6 +2020,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                         modifiedSequence = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(
                                 peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), false);
                     } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                         e.printStackTrace();
                     }
 
@@ -2166,6 +2168,7 @@ private void coverageTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
                             modifiedSequence = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(
                                     peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), false);
                         } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                             e.printStackTrace();
                         }
 
@@ -2261,6 +2264,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             // @TODO: do we have to do anything here??
                         }
                     } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                         e.printStackTrace();
                     }
                 } else {
@@ -4041,6 +4045,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                 peptideStart = proteinSequence.lastIndexOf(peptideSequence) + 1;
                                 peptideEnd = peptideStart + peptideSequence.length() - 1;
                             } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
                                 e.printStackTrace();
                             }
                             int proteinInferenceType = probabilities.getGroupClass();
@@ -4639,6 +4644,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 peptideTable.moveColumn(8, 6);
             }
         } catch (IllegalArgumentException e) {
+                    peptideShakerGUI.catchException(e);
             e.printStackTrace();
         }
     }
@@ -4791,6 +4797,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 }
             }
         } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
             e.printStackTrace();
         }
 
@@ -4839,6 +4846,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 // @TODO: do we need to do something here??
             }
         } catch (Exception e) {
+                    peptideShakerGUI.catchException(e);
             e.printStackTrace();
         }
 
