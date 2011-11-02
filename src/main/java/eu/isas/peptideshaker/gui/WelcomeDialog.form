@@ -63,10 +63,11 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jSeparator1" alignment="0" pref="525" max="32767" attributes="1"/>
                               <Group type="102" alignment="0" attributes="0">
+                                  <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                                   <Component id="compomicsButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <EmptySpace max="-2" attributes="0"/>
                                   <Component id="probeButton" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                                   <Component id="isasButton" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -99,9 +100,9 @@
                   <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="compomicsButton" alignment="2" min="-2" max="-2" attributes="1"/>
                       <Component id="isasButton" alignment="2" min="-2" max="-2" attributes="1"/>
                       <Component id="probeButton" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="compomicsButton" alignment="2" min="-2" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>

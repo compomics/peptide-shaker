@@ -1020,6 +1020,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             }
         });
 
+        spectrumTableJScrollPane.setOpaque(false);
+
         spectrumTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
