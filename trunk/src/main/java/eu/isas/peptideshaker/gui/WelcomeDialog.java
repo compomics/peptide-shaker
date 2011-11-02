@@ -3,9 +3,9 @@ package eu.isas.peptideshaker.gui;
 import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
 import java.io.File;
 import java.util.ArrayList;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.filechooser.FileFilter;
 
 /**
@@ -13,6 +13,7 @@ import javax.swing.filechooser.FileFilter;
  * create a new one.
  * 
  * @author Harald Barsnes
+ * @author Marc Vaudel
  */
 public class WelcomeDialog extends javax.swing.JDialog {
 
@@ -51,15 +52,14 @@ public class WelcomeDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         backgroundPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        createLabel = new javax.swing.JLabel();
+        openProjectLabel = new javax.swing.JLabel();
         openJButton = new javax.swing.JButton();
         newJButton = new javax.swing.JButton();
-        peptideShakerButton = new javax.swing.JButton();
         compomicsButton = new javax.swing.JButton();
-        jLabel3 = new javax.swing.JLabel();
-        recentProjectCmb = new javax.swing.JComboBox();
-        jButton1 = new javax.swing.JButton();
+        recentProjectsLabel = new javax.swing.JLabel();
+        probeButton = new javax.swing.JButton();
+        isasButton = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JSeparator();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -68,11 +68,11 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
         backgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        jLabel1.setFont(jLabel1.getFont().deriveFont((jLabel1.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel1.setText("Create a new PeptideShaker project");
+        createLabel.setFont(createLabel.getFont().deriveFont((createLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        createLabel.setText("Create a new PeptideShaker project");
 
-        jLabel2.setFont(jLabel2.getFont().deriveFont((jLabel2.getFont().getStyle() | java.awt.Font.ITALIC)));
-        jLabel2.setText("Open an existing PeptideShaker project");
+        openProjectLabel.setFont(openProjectLabel.getFont().deriveFont((openProjectLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        openProjectLabel.setText("Open an existing PeptideShaker project");
 
         openJButton.setText("Open Project");
         openJButton.setFocusPainted(false);
@@ -90,27 +90,8 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
 
-        peptideShakerButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/peptide-shaker.gif"))); // NOI18N
-        peptideShakerButton.setToolTipText("PeptideShaker");
-        peptideShakerButton.setBorder(null);
-        peptideShakerButton.setBorderPainted(false);
-        peptideShakerButton.setContentAreaFilled(false);
-        peptideShakerButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                peptideShakerButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                peptideShakerButtonMouseExited(evt);
-            }
-        });
-        peptideShakerButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                peptideShakerButtonActionPerformed(evt);
-            }
-        });
-
         compomicsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/compomics.png"))); // NOI18N
-        compomicsButton.setToolTipText("CompOmics");
+        compomicsButton.setToolTipText("The Computational Omics and Systems Biology Group");
         compomicsButton.setBorder(null);
         compomicsButton.setBorderPainted(false);
         compomicsButton.setContentAreaFilled(false);
@@ -128,14 +109,58 @@ public class WelcomeDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel3.setText("Recent project:");
+        recentProjectsLabel.setFont(recentProjectsLabel.getFont().deriveFont((recentProjectsLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        recentProjectsLabel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/next_grey.png"))); // NOI18N
+        recentProjectsLabel.setText("<html><a href>Recent Projects</html>");
+        recentProjectsLabel.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+        recentProjectsLabel.setIconTextGap(-4);
+        recentProjectsLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                recentProjectsLabelMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                recentProjectsLabelMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                recentProjectsLabelMouseExited(evt);
+            }
+        });
 
-        recentProjectCmb.setModel(new DefaultComboBoxModel(peptideShakerGUI.getRecentProjects()));
-
-        jButton1.setText("Open");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        probeButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/probe.png"))); // NOI18N
+        probeButton.setToolTipText("Proteomics Unit at the University of Bergen");
+        probeButton.setBorder(null);
+        probeButton.setBorderPainted(false);
+        probeButton.setContentAreaFilled(false);
+        probeButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                probeButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                probeButtonMouseExited(evt);
+            }
+        });
+        probeButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                probeButtonActionPerformed(evt);
+            }
+        });
+
+        isasButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/isas.png"))); // NOI18N
+        isasButton.setToolTipText("Leibniz-Institut für Analytische Wissenschaften – ISAS – e.V.");
+        isasButton.setBorder(null);
+        isasButton.setBorderPainted(false);
+        isasButton.setContentAreaFilled(false);
+        isasButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                isasButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                isasButtonMouseExited(evt);
+            }
+        });
+        isasButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                isasButtonActionPerformed(evt);
             }
         });
 
@@ -144,58 +169,55 @@ public class WelcomeDialog extends javax.swing.JDialog {
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
-                .addGap(51, 51, 51)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(recentProjectCmb, 0, 360, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addGap(53, 53, 53)
                         .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(newJButton)
+                            .addComponent(openJButton))
+                        .addGap(36, 36, 36)
+                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(openProjectLabel)
+                            .addComponent(createLabel)))
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE)
                             .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                .addComponent(openJButton)
+                                .addComponent(compomicsButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel2))
-                            .addGroup(backgroundPanelLayout.createSequentialGroup()
-                                .addComponent(newJButton)
+                                .addComponent(probeButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel1)))
-                        .addGap(55, 55, 55)
-                        .addComponent(peptideShakerButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(compomicsButton)))
-                .addGap(47, 47, 47))
+                                .addComponent(isasButton))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addContainerGap(430, Short.MAX_VALUE)
+                        .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
         );
 
         backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {newJButton, openJButton});
 
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(backgroundPanelLayout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(compomicsButton, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE)
-                    .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(peptideShakerButton, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(backgroundPanelLayout.createSequentialGroup()
-                            .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(newJButton)
-                                .addComponent(jLabel1))
-                            .addGap(18, 18, 18)
-                            .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(openJButton)
-                                .addComponent(jLabel2)))))
-                .addGap(18, 18, 18)
-                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap(38, Short.MAX_VALUE)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(recentProjectCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
-                .addGap(61, 61, 61))
+                    .addComponent(newJButton)
+                    .addComponent(createLabel))
+                .addGap(18, 18, 18)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(openJButton)
+                    .addComponent(openProjectLabel))
+                .addGap(11, 11, 11)
+                .addComponent(recentProjectsLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(compomicsButton)
+                    .addComponent(isasButton)
+                    .addComponent(probeButton))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -222,6 +244,7 @@ public class WelcomeDialog extends javax.swing.JDialog {
         openDialog.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_newJButtonActionPerformed
+    
     /**
      * Open the dialog for opening an existing project.
      * 
@@ -281,35 +304,6 @@ public class WelcomeDialog extends javax.swing.JDialog {
      * 
      * @param evt 
      */
-    private void peptideShakerButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerButtonMouseEntered
-        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_peptideShakerButtonMouseEntered
-
-    /**
-     * Change the cursor back to the default cursor.
-     * 
-     * @param evt 
-     */
-    private void peptideShakerButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_peptideShakerButtonMouseExited
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_peptideShakerButtonMouseExited
-
-    /**
-     * Open the PeptideShaker web page.
-     * 
-     * @param evt 
-     */
-    private void peptideShakerButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideShakerButtonActionPerformed
-        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        BareBonesBrowserLaunch.openURL("http://peptide-shaker.googlecode.com");
-        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_peptideShakerButtonActionPerformed
-
-    /**
-     * Change the cursor to a hand cursor.
-     * 
-     * @param evt 
-     */
     private void compomicsButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_compomicsButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_compomicsButtonMouseEntered
@@ -334,24 +328,103 @@ public class WelcomeDialog extends javax.swing.JDialog {
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_compomicsButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String filePath = (String) recentProjectCmb.getSelectedItem();
-        peptideShakerGUI.importPeptideShakerFile(new File(filePath));
-        peptideShakerGUI.updateRecentProjectsList(new File(filePath));
-        peptideShakerGUI.setLastSelectedFolder(new File(filePath).getAbsolutePath());
-        dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+     /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void probeButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_probeButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_probeButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void probeButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_probeButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_probeButtonMouseExited
+
+    /**
+     * Open the PROBE web page.
+     * 
+     * @param evt 
+     */
+    private void probeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_probeButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://probe.uib.no");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_probeButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void isasButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_isasButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_isasButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void isasButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_isasButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_isasButtonMouseExited
+
+    /**
+     * Open the ISAS web page.
+     * 
+     * @param evt 
+     */
+    private void isasButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_isasButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        BareBonesBrowserLaunch.openURL("http://www.isas.de");
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_isasButtonActionPerformed
+
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void recentProjectsLabelMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_recentProjectsLabelMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_recentProjectsLabelMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void recentProjectsLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_recentProjectsLabelMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_recentProjectsLabelMouseExited
+
+    /**
+     * Open a recently opened project.
+     * 
+     * @param evt 
+     */
+    private void recentProjectsLabelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_recentProjectsLabelMouseClicked
+        JPopupMenu popupMenu = new JPopupMenu();
+        peptideShakerGUI.loadRecentProjectsList(popupMenu, this);
+        popupMenu.show(recentProjectsLabel, evt.getX(), evt.getY());
+    }//GEN-LAST:event_recentProjectsLabelMouseClicked
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton compomicsButton;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel createLabel;
+    private javax.swing.JButton isasButton;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JButton newJButton;
     private javax.swing.JButton openJButton;
-    private javax.swing.JButton peptideShakerButton;
-    private javax.swing.JComboBox recentProjectCmb;
+    private javax.swing.JLabel openProjectLabel;
+    private javax.swing.JButton probeButton;
+    private javax.swing.JLabel recentProjectsLabel;
     // End of variables declaration//GEN-END:variables
 }
