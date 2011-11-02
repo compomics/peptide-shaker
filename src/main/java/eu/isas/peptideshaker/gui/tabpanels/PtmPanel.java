@@ -3048,7 +3048,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                                 } else if (peptideFragmentIon.getType() == PeptideFragmentIonType.X_ION
                                         || peptideFragmentIon.getType() == PeptideFragmentIonType.Y_ION
                                         || peptideFragmentIon.getType() == PeptideFragmentIonType.Z_ION) {
-                                    aa = peptideFragmentIon.getNumber();
+                                    aa = currentPeptide.getSequence().length() + 1 - peptideFragmentIon.getNumber();
                                     if (!ySerieMap.containsKey(aa)) {
                                         ySerieMap.put(aa, new HashMap<PeptideFragmentIon, ArrayList<IonMatch>>());
                                     }
