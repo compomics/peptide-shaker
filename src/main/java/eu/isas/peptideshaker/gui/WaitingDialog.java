@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
-
+import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -90,7 +90,7 @@ public class WaitingDialog extends javax.swing.JDialog {
 
         // update the layout in the layered pane
         resizeLayeredPanes();
-        
+
         // set up the tip of the day
         setUpTipOfTheDay();
         tipOfTheDayEditorPane.setText(getTipOfTheDay());
@@ -101,11 +101,11 @@ public class WaitingDialog extends javax.swing.JDialog {
         // change the peptide shaker icon to a "waiting version"
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
     }
-    
+
     /**
      * Set up the list of tip of the day.
      */
-    private void setUpTipOfTheDay () {
+    private void setUpTipOfTheDay() {
         try {
             InputStream stream = getClass().getResource("/tips.txt").openStream();
             InputStreamReader streamReader = new InputStreamReader(stream);
@@ -278,6 +278,11 @@ public class WaitingDialog extends javax.swing.JDialog {
         tipOfTheDayEditorPane.setEditable(false);
         tipOfTheDayEditorPane.setText("<html>\r\n  <head>\r\n\r\n  </head>\r\n<body style=\"background-color:#F0F0F0;\">\n    <p style=\"margin-top: 0\" align=\"justify\">\r\n     <b> \rTip of the Day!</b>\n     <br><br>\n     Did you know that. Did you know that. Did you know that. Did you know that. Did you know that. \n     Did you know that.  Did you know that.  Did you know that.  Did you know that.  Did you know that.\n    <br><br>\n    Did you know that.  Did you know that.  Did you know that.  Did you know that.  Did you know that.\n    </p>\r\n  </body>\r\n</html>\r\n");
         tipOfTheDayEditorPane.setOpaque(false);
+        tipOfTheDayEditorPane.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
+            public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {
+                tipOfTheDayEditorPaneHyperlinkUpdate(evt);
+            }
+        });
         tipOfTheDayScrollPane.setViewportView(tipOfTheDayEditorPane);
 
         tipOfTheDayScrollPane.setBounds(0, 2, 210, 260);
@@ -640,6 +645,20 @@ public class WaitingDialog extends javax.swing.JDialog {
     private void showTipOfTheDayCheckBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showTipOfTheDayCheckBoxActionPerformed
         tipOfTheDayJPanel.setVisible(showTipOfTheDayCheckBox.isSelected());
     }//GEN-LAST:event_showTipOfTheDayCheckBoxActionPerformed
+
+    /**
+     * Make the links active.
+     *
+     * @param evt
+     */
+    private void tipOfTheDayEditorPaneHyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {//GEN-FIRST:event_tipOfTheDayEditorPaneHyperlinkUpdate
+        if (evt.getEventType().toString().equalsIgnoreCase(
+                javax.swing.event.HyperlinkEvent.EventType.ACTIVATED.toString())) {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            BareBonesBrowserLaunch.openURL(evt.getDescription());
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_tipOfTheDayEditorPaneHyperlinkUpdate
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeJButton;
     private javax.swing.JPanel jPanel1;
@@ -905,13 +924,13 @@ public class WaitingDialog extends javax.swing.JDialog {
         String htmlEnd = "</p></body></html>";
 
         int newTipIndex = (int) (Math.random() * tips.size());
-        
+
         while (newTipIndex == currentTipIndex) {
             newTipIndex = (int) (Math.random() * tips.size());
         }
-        
+
         currentTipIndex = newTipIndex;
-        
+
         return htmlStart + tips.get(currentTipIndex) + htmlEnd;
     }
 }
