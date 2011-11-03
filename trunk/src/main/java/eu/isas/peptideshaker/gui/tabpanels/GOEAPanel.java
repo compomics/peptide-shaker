@@ -545,24 +545,14 @@ public class GOEAPanel extends javax.swing.JPanel {
                     }
 
                     // correct the p-values for multiple testing using benjamini-hochberg
-                    boolean allValuesAreMinusInfinity = true;
+                    sortPValues(pValues, indexes);
 
-                    for (int i = 0; i < goMappingsTable.getRowCount() && allValuesAreMinusInfinity; i++) {
-                        if (!((Double) goMappingsTable.getValueAt(i, goMappingsTable.getColumn("Log2 Diff").getModelIndex())).isInfinite()) {
-                            allValuesAreMinusInfinity = false;
-                        }
-                    }
+                    goMappingsTable.setValueAt(pValues.get(0) < (Double) significanceJSpinner.getValue(),
+                            indexes.get(0), goMappingsTable.getColumn(" ").getModelIndex());
 
-                    if (!allValuesAreMinusInfinity) {
-                        sortPValues(pValues, indexes);
-
-                        goMappingsTable.setValueAt(pValues.get(0) < (Double) significanceJSpinner.getValue(),
-                                indexes.get(0), goMappingsTable.getColumn(" ").getModelIndex());
-
-                        for (int i = 1; i < pValues.size(); i++) {
-                            goMappingsTable.setValueAt(pValues.get(i) * pValues.size() / (pValues.size() - i - 1) < (Double) significanceJSpinner.getValue(),
-                                    indexes.get(i), goMappingsTable.getColumn(" ").getModelIndex());
-                        }
+                    for (int i = 1; i < pValues.size(); i++) {
+                        goMappingsTable.setValueAt(pValues.get(i) * pValues.size() / (pValues.size() - i - 1) < (Double) significanceJSpinner.getValue(),
+                                indexes.get(i), goMappingsTable.getColumn(" ").getModelIndex());
                     }
 
                     br.close();
@@ -613,8 +603,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                         progressDialog.dispose();
                     }
                 } catch (IndexOutOfBoundsException e) {
-                    // ignore as this only happens when the gui cannot keep up with the user
-
+                    e.printStackTrace();
+                    
                     if (progressDialog != null) {
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
@@ -1861,7 +1851,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         // iterate p-value list
         for (int i = 0; i < pValues.size(); i++) {
 
-            double maxValue = Double.MIN_VALUE;
+            double maxValue = -1;
             int maxIndex = -1;
 
             // find max p-value in sublist

@@ -225,6 +225,9 @@
                                 <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xd;&#xa;  &lt;head&gt;&#xd;&#xa;&#xd;&#xa;  &lt;/head&gt;&#xd;&#xa;&lt;body style=&quot;background-color:#F0F0F0;&quot;&gt;&#xa;    &lt;p style=&quot;margin-top: 0&quot; align=&quot;justify&quot;&gt;&#xd;&#xa;     &lt;b&gt; &#xd;Tip of the Day!&lt;/b&gt;&#xa;     &lt;br&gt;&lt;br&gt;&#xa;     Did you know that. Did you know that. Did you know that. Did you know that. Did you know that. &#xa;     Did you know that.  Did you know that.  Did you know that.  Did you know that.  Did you know that.&#xa;    &lt;br&gt;&lt;br&gt;&#xa;    Did you know that.  Did you know that.  Did you know that.  Did you know that.  Did you know that.&#xa;    &lt;/p&gt;&#xd;&#xa;  &lt;/body&gt;&#xd;&#xa;&lt;/html&gt;&#xd;&#xa;"/>
                                 <Property name="opaque" type="boolean" value="false"/>
                               </Properties>
+                              <Events>
+                                <EventHandler event="hyperlinkUpdate" listener="javax.swing.event.HyperlinkListener" parameters="javax.swing.event.HyperlinkEvent" handler="tipOfTheDayEditorPaneHyperlinkUpdate"/>
+                              </Events>
                             </Component>
                           </SubComponents>
                         </Container>
