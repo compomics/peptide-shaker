@@ -551,7 +551,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             indexes.get(0), goMappingsTable.getColumn(" ").getModelIndex());
 
                     for (int i = 1; i < pValues.size(); i++) {
-                        goMappingsTable.setValueAt(pValues.get(i) * pValues.size() / (pValues.size() - i - 1) < (Double) significanceJSpinner.getValue(),
+                        goMappingsTable.setValueAt(pValues.get(i) * pValues.size() / (pValues.size() - i) < (Double) significanceJSpinner.getValue(),
                                 indexes.get(i), goMappingsTable.getColumn(" ").getModelIndex());
                     }
 
