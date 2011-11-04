@@ -3098,7 +3098,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     int up = Math.min(bin + binSize, 100);
                     String seriesTitle = bin + "% to " + up + "% most intense peaks - b ions";
                     dataset.addSeries(seriesTitle, serieArray);
-                    renderer.setSeriesFillPaint(seriesCpt, new Color(bin * 255 / 100, bin * 255 / 100, 0));
+                    renderer.setSeriesPaint(seriesCpt, new Color(255, 255-255*(bin+binSize)/100, 255-255*(bin+binSize)/100));
                     seriesCpt++;
 
                     
@@ -3138,7 +3138,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     up = Math.min(bin + binSize, 100);
                     seriesTitle = bin + "% to " + up + "% most intense peaks - y ions";
                     dataset.addSeries(seriesTitle, serieArray);
-                    renderer.setSeriesFillPaint(seriesCpt, new Color(0, bin * 255 / 100, 0));
+                    renderer.setSeriesPaint(seriesCpt, new Color(255-255*(bin+binSize)/100, 255-255*(bin+binSize)/100, 255));
 
                     seriesCpt++;
                     
