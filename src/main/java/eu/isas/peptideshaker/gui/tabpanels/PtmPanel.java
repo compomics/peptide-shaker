@@ -36,17 +36,12 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import javax.swing.ImageIcon;
 import javax.swing.JColorChooser;
-import javax.swing.JDialog;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -63,6 +58,7 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYShapeRenderer;
@@ -1452,14 +1448,7 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void selectedPsmsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_selectedPsmsTableKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            try {
-                relatedSelected = false;
-                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
-                updateSpectrum(spectrumKey);
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
-                e.printStackTrace();
-            }
+            selectedPsmsTableMouseReleased(null);
         }
     }//GEN-LAST:event_selectedPsmsTableKeyReleased
 
@@ -2104,14 +2093,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private void relatedPsmsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_relatedPsmsTableKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
-            try {
-                relatedSelected = true;
-                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
-                updateSpectrum(spectrumKey);
-            } catch (Exception e) {
-                peptideShakerGUI.catchException(e);
-                e.printStackTrace();
-            }
+            relatedPsmsTableMouseReleased(null);
         }
     }//GEN-LAST:event_relatedPsmsTableKeyReleased
 
@@ -2978,16 +2960,19 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     }
 
     /**
-     * Updates the PSM plot
+     * Updates the PSM plot.
+     * 
      * @param spectrumKeys 
      */
     private void updateSpectrumPlot(ArrayList<String> spectrumKeys) {
+
         AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
 
         MSnSpectrum currentSpectrum;
         XYPlot ptmPlot = new XYPlot();
 
         for (String spectrumKey : spectrumKeys) {
+
             currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
             // get the spectrum annotations
             SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
@@ -2996,48 +2981,59 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             annotationPreferences.setCurrentSettings(currentPeptide,
                     currentSpectrum.getPrecursor().getCharge().value, true);
 
-            HashMap<PeptideFragmentIon, ArrayList<IonMatch>> ionMatches = PTMLocationScores.getPTMPlotData(currentPeptide, ptmFactory.getPTM(getSelectedModification()), currentSpectrum, annotationPreferences.getIonTypes(), annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(), annotationPreferences.getFragmentIonAccuracy(), annotationPreferences.getAnnotationIntensityLimit());
+            HashMap<PeptideFragmentIon, ArrayList<IonMatch>> ionMatches = PTMLocationScores.getPTMPlotData(
+                    currentPeptide, ptmFactory.getPTM(getSelectedModification()), currentSpectrum, annotationPreferences.getIonTypes(),
+                    annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
+                    annotationPreferences.getFragmentIonAccuracy(), annotationPreferences.getAnnotationIntensityLimit());
+
             if (ionMatches.size() > 0) {
 
                 ArrayList<Double> intensities = new ArrayList<Double>();
+
                 for (ArrayList<IonMatch> list : ionMatches.values()) {
                     for (IonMatch ionMatch : list) {
                         intensities.add(ionMatch.peak.intensity);
                     }
                 }
+
                 Collections.sort(intensities);
+                
                 // complete the PTM plot
                 NumberAxis aaAxis = new NumberAxis("Peptide Sequence");
-                NumberAxis deltaAxis = new NumberAxis("Fragment ion deviation");
+                NumberAxis deltaAxis = new NumberAxis("Fragment Ion Deviation");
                 ptmPlot.setDomainAxis(aaAxis);
                 ptmPlot.setRangeAxis(deltaAxis);
 
-                    XYShapeRenderer renderer = new XYShapeRenderer();
+                XYShapeRenderer renderer = new XYShapeRenderer();
                 DefaultXYDataset dataset = new DefaultXYDataset();
 
                 int i, seriesCpt = 0;
                 Double intMin, intMax;
                 int binSize = 10;
-                for (int bin = 0; bin < 100; bin+=binSize) {
+                
+                for (int bin = 0; bin < 100; bin += binSize) {
+                    
                     // Please don't put the size relative to the intensity!
                     i = bin * intensities.size() / 100;
                     intMin = intensities.get(i);
-                    i = (bin+binSize) * intensities.size() / 100;
+                    i = (bin + binSize) * intensities.size() / 100;
+                    
                     if (i < intensities.size()) {
                         intMax = intensities.get(i);
                     } else {
                         intMax = Double.POSITIVE_INFINITY;
                     }
+                    
                     HashMap<Integer, HashMap<PeptideFragmentIon, ArrayList<IonMatch>>> bSerieMap = new HashMap<Integer, HashMap<PeptideFragmentIon, ArrayList<IonMatch>>>();
                     HashMap<Integer, HashMap<PeptideFragmentIon, ArrayList<IonMatch>>> ySerieMap = new HashMap<Integer, HashMap<PeptideFragmentIon, ArrayList<IonMatch>>>();
-                    int aa;
+
                     for (PeptideFragmentIon peptideFragmentIon : ionMatches.keySet()) {
                         for (IonMatch ionMatch : ionMatches.get(peptideFragmentIon)) {
                             if (ionMatch.peak.intensity >= intMin && ionMatch.peak.intensity < intMax) {
                                 if (peptideFragmentIon.getType() == PeptideFragmentIonType.A_ION
                                         || peptideFragmentIon.getType() == PeptideFragmentIonType.B_ION
                                         || peptideFragmentIon.getType() == PeptideFragmentIonType.C_ION) {
-                                    aa = peptideFragmentIon.getNumber();
+                                    int aa = peptideFragmentIon.getNumber();
                                     if (!bSerieMap.containsKey(aa)) {
                                         bSerieMap.put(aa, new HashMap<PeptideFragmentIon, ArrayList<IonMatch>>());
                                     }
@@ -3048,7 +3044,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                                 } else if (peptideFragmentIon.getType() == PeptideFragmentIonType.X_ION
                                         || peptideFragmentIon.getType() == PeptideFragmentIonType.Y_ION
                                         || peptideFragmentIon.getType() == PeptideFragmentIonType.Z_ION) {
-                                    aa = currentPeptide.getSequence().length() + 1 - peptideFragmentIon.getNumber();
+                                    int aa = currentPeptide.getSequence().length() + 1 - peptideFragmentIon.getNumber();
                                     if (!ySerieMap.containsKey(aa)) {
                                         ySerieMap.put(aa, new HashMap<PeptideFragmentIon, ArrayList<IonMatch>>());
                                     }
@@ -3063,10 +3059,13 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
                     HashMap<Double, ArrayList<Double>> tempMap;
                     HashMap<Double, Double> serie = new HashMap<Double, Double>();
+                    
                     for (int n : bSerieMap.keySet()) {
+                        
                         int nPoints = 0;
                         tempMap = new HashMap<Double, ArrayList<Double>>();
                         double noModMass;
+                        
                         for (PeptideFragmentIon noModIon : bSerieMap.get(n).keySet()) {
                             for (IonMatch ionMatch : bSerieMap.get(n).get(noModIon)) {
                                 noModMass = noModIon.theoreticMass;
@@ -3077,10 +3076,12 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                                 nPoints++;
                             }
                         }
+                        
                         double increment = 1.0 / (nPoints + 1);
                         ArrayList<Double> masses = new ArrayList<Double>(tempMap.keySet());
                         Collections.sort(masses);
                         int cpt = 0;
+                        
                         for (double mass : masses) {
                             for (double deltaMass : tempMap.get(mass)) {
                                 serie.put(n + (cpt + 1) * increment, deltaMass);
@@ -3088,25 +3089,30 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                             }
                         }
                     }
+                    
                     double[][] serieArray = new double[2][serie.size()];
                     int cpt = 0;
+                    
                     for (double x : serie.keySet()) {
                         serieArray[0][cpt] = x;
                         serieArray[1][cpt] = serie.get(x);
                         cpt++;
                     }
+                    
                     int up = Math.min(bin + binSize, 100);
                     String seriesTitle = bin + "% to " + up + "% most intense peaks - b ions";
                     dataset.addSeries(seriesTitle, serieArray);
-                    renderer.setSeriesPaint(seriesCpt, new Color(255, 255-255*(bin+binSize)/100, 255-255*(bin+binSize)/100));
+                    renderer.setSeriesPaint(seriesCpt, new Color(255 - 255 * (bin + binSize) / 100, 255 - 255 * (bin + binSize) / 100, 255));
                     seriesCpt++;
 
-                    
                     serie = new HashMap<Double, Double>();
+                    
                     for (int n : ySerieMap.keySet()) {
+                        
                         int nPoints = 0;
                         tempMap = new HashMap<Double, ArrayList<Double>>();
                         double noModMass;
+                        
                         for (PeptideFragmentIon noModIon : ySerieMap.get(n).keySet()) {
                             for (IonMatch ionMatch : ySerieMap.get(n).get(noModIon)) {
                                 noModMass = noModIon.theoreticMass;
@@ -3117,6 +3123,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                                 nPoints++;
                             }
                         }
+                        
                         double increment = 1.0 / (nPoints + 1);
                         ArrayList<Double> masses = new ArrayList<Double>(tempMap.keySet());
                         Collections.sort(masses);
@@ -3128,28 +3135,45 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                             }
                         }
                     }
+                    
                     serieArray = new double[2][serie.size()];
                     cpt = 0;
+                    
                     for (double x : serie.keySet()) {
                         serieArray[0][cpt] = x;
                         serieArray[1][cpt] = serie.get(x);
                         cpt++;
                     }
+                    
                     up = Math.min(bin + binSize, 100);
                     seriesTitle = bin + "% to " + up + "% most intense peaks - y ions";
                     dataset.addSeries(seriesTitle, serieArray);
-                    renderer.setSeriesPaint(seriesCpt, new Color(255-255*(bin+binSize)/100, 255-255*(bin+binSize)/100, 255));
+                    renderer.setSeriesPaint(seriesCpt, new Color(255, 255 - 255 * (bin + binSize) / 100, 255 - 255 * (bin + binSize) / 100));
 
                     seriesCpt++;
-                    
                 }
-                    ptmPlot.setDataset(0, dataset);
-                    ptmPlot.setRenderer(0, renderer);
+                
+                // add tooltips
+                renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
+                
+                ptmPlot.setDataset(0, dataset);
+                ptmPlot.setRenderer(0, renderer);
             }
         }
-        
+
         ChartPanel chartPanel = new ChartPanel(new JFreeChart(ptmPlot));
         
+        // set background color
+        ptmPlot.setBackgroundPaint(Color.WHITE);
+        chartPanel.getChart().setBackgroundPaint(Color.WHITE);
+        chartPanel.setBackground(Color.WHITE);
+
+        // hide the outline
+        ptmPlot.setOutlineVisible(false);
+        
+        // hide the legend
+        chartPanel.getChart().getLegend().setVisible(false);
+
         ptmPlotPanel.removeAll();
         ptmPlotPanel.add(chartPanel);
         ptmPlotPanel.revalidate();
