@@ -34,6 +34,8 @@
         </MenuItem>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.ButtonGroup" name="significanceLevelButtonGroup">
+    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
@@ -117,14 +119,19 @@
                               <Component id="updateButton" linkSize="2" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="unknownSpeciesLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="ensemblVersionLabel" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="10" pref="10" max="10" attributes="0"/>
                               <Component id="biasWarningLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="318" max="32767" attributes="0"/>
+                              <EmptySpace pref="278" max="32767" attributes="0"/>
                               <Component id="significanceJLabel" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="significanceJSpinner" min="-2" pref="69" max="-2" attributes="0"/>
+                              <Component id="onePercentRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="fivePercentRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -141,14 +148,16 @@
                           <Component id="downloadButton" linkSize="3" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                           <Component id="updateButton" linkSize="3" alignment="3" min="-2" pref="23" max="-2" attributes="0"/>
                           <Component id="unknownSpeciesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="ensemblVersionLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="proteinGoMappingsScrollPane" pref="254" max="32767" attributes="0"/>
+                      <Component id="proteinGoMappingsScrollPane" pref="259" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="significanceJSpinner" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="significanceJLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="biasWarningLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="biasWarningLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="significanceJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="onePercentRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="fivePercentRadioButton" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -169,7 +178,7 @@
                 <Component class="javax.swing.JTable" name="goMappingsTable">
                   <Properties>
                     <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                      <Table columnCount="11" rowCount="0">
+                      <Table columnCount="10" rowCount="0">
                         <Column editable="false" title="" type="java.lang.Integer"/>
                         <Column editable="false" title="GO Accession" type="java.lang.String"/>
                         <Column editable="false" title="GO Term" type="java.lang.String"/>
@@ -177,9 +186,8 @@
                         <Column editable="false" title="Frequency All (%)" type="java.lang.Double"/>
                         <Column editable="false" title="Frequency Dataset (%)" type="java.lang.Double"/>
                         <Column editable="false" title="Frequency (%)" type="java.lang.Object"/>
-                        <Column editable="false" title="Log2 Diff" type="java.lang.Double"/>
+                        <Column editable="false" title="Log2 Diff" type="java.lang.Object"/>
                         <Column editable="false" title="p-value" type="java.lang.Double"/>
-                        <Column editable="false" title=" " type="java.lang.Boolean"/>
                         <Column editable="true" title="  " type="java.lang.Boolean"/>
                       </Table>
                     </Property>
@@ -225,16 +233,6 @@
                 <Property name="text" type="java.lang.String" value="Significance Level:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JSpinner" name="significanceJSpinner">
-              <Properties>
-                <Property name="model" type="javax.swing.SpinnerModel" editor="org.netbeans.modules.form.editors2.SpinnerModelEditor">
-                  <SpinnerModel initial="0.05" maximum="1.0" minimum="0.0" numberType="java.lang.Double" stepSize="0.01" type="number"/>
-                </Property>
-              </Properties>
-              <Events>
-                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="significanceJSpinnerStateChanged"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JButton" name="downloadButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Download"/>
@@ -276,6 +274,46 @@
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="unknownSpeciesLabelMouseClicked"/>
                 <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="unknownSpeciesLabelMouseEntered"/>
                 <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="unknownSpeciesLabelMouseExited"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="fivePercentRadioButton">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="significanceLevelButtonGroup"/>
+                </Property>
+                <Property name="selected" type="boolean" value="true"/>
+                <Property name="text" type="java.lang.String" value="0.05"/>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="fivePercentRadioButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JRadioButton" name="onePercentRadioButton">
+              <Properties>
+                <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                  <ComponentRef name="significanceLevelButtonGroup"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="0.01"/>
+                <Property name="opaque" type="boolean" value="false"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="onePercentRadioButtonActionPerformed"/>
+              </Events>
+            </Component>
+            <Component class="javax.swing.JLabel" name="ensemblVersionLabel">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                  <FontInfo relative="true">
+                    <Font component="ensemblVersionLabel" italic="true" property="font" relativeSize="true" size="0"/>
+                  </FontInfo>
+                </Property>
+                <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href&gt;Ensembl version?&lt;/a&gt;&lt;/html&gt;"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ensemblVersionLabelMouseClicked"/>
+                <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ensemblVersionLabelMouseEntered"/>
+                <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ensemblVersionLabelMouseExited"/>
               </Events>
             </Component>
           </SubComponents>
@@ -478,7 +516,7 @@
             <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
               <Image iconType="3" name="/icons/export_no_frame_grey.png"/>
             </Property>
-            <Property name="toolTipText" type="java.lang.String" value="Copy to Clipboard"/>
+            <Property name="toolTipText" type="java.lang.String" value="Export"/>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="null"/>
             </Property>

@@ -163,7 +163,7 @@ public class ProteinFilter extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
         showHiddenProteinsCheckBox = new javax.swing.JCheckBox();
         clearJButton = new javax.swing.JButton();
-        exitJButton = new javax.swing.JButton();
+        okJButton = new javax.swing.JButton();
         proteinFilteringHelpJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -667,10 +667,10 @@ public class ProteinFilter extends javax.swing.JDialog {
             }
         });
 
-        exitJButton.setText("Exit");
-        exitJButton.addActionListener(new java.awt.event.ActionListener() {
+        okJButton.setText("OK");
+        okJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitJButtonActionPerformed(evt);
+                okJButtonActionPerformed(evt);
             }
         });
 
@@ -711,11 +711,11 @@ public class ProteinFilter extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 349, Short.MAX_VALUE)
                         .addComponent(clearJButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(exitJButton)))
+                        .addComponent(okJButton)))
                 .addContainerGap())
         );
 
-        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {clearJButton, exitJButton});
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {clearJButton, okJButton});
 
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -726,7 +726,7 @@ public class ProteinFilter extends javax.swing.JDialog {
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(proteinFilteringHelpJButton)
                     .addComponent(clearJButton)
-                    .addComponent(exitJButton))
+                    .addComponent(okJButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -839,7 +839,7 @@ public class ProteinFilter extends javax.swing.JDialog {
      *
      * @param evt
      */
-    private void exitJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitJButtonActionPerformed
+    private void okJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okJButtonActionPerformed
 
         // store the current filter values
         String[] currentFilterValues = {
@@ -928,7 +928,7 @@ public class ProteinFilter extends javax.swing.JDialog {
         peptideShakerGUI.setModalExclusionType(ModalExclusionType.NO_EXCLUDE);
         this.setVisible(false);
         this.dispose();
-    }//GEN-LAST:event_exitJButtonActionPerformed
+    }//GEN-LAST:event_okJButtonActionPerformed
 
     /**
      * Closes the dialog.
@@ -936,7 +936,7 @@ public class ProteinFilter extends javax.swing.JDialog {
      * @param evt
      */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        exitJButtonActionPerformed(null);
+        okJButtonActionPerformed(null);
     }//GEN-LAST:event_formWindowClosing
 
     /**
@@ -1251,7 +1251,6 @@ private void unrelatedProteinsJRadioButtonActionPerformed(java.awt.event.ActionE
     private javax.swing.JTextField coverageJTextField;
     private javax.swing.JRadioButton coverageLessThanJRadioButton;
     private javax.swing.JTextField descriptionJTextField;
-    private javax.swing.JButton exitJButton;
     private javax.swing.ButtonGroup expCountButtonGroup;
     private javax.swing.ButtonGroup foldChangeButtonGroup;
     private javax.swing.JRadioButton isoformsJRadioButton;
@@ -1267,6 +1266,7 @@ private void unrelatedProteinsJRadioButtonActionPerformed(java.awt.event.ActionE
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JButton okJButton;
     private javax.swing.JPanel optionsPanel;
     private javax.swing.ButtonGroup pValueButtonGroup;
     private javax.swing.JRadioButton peptideEqualJRadioButton;

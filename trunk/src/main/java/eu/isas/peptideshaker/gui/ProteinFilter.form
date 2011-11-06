@@ -75,7 +75,7 @@
                           <EmptySpace pref="349" max="32767" attributes="0"/>
                           <Component id="clearJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="exitJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="okJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -91,7 +91,7 @@
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="proteinFilteringHelpJButton" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="clearJButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="exitJButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="okJButton" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -749,12 +749,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearJButtonActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="exitJButton">
+        <Component class="javax.swing.JButton" name="okJButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Exit"/>
+            <Property name="text" type="java.lang.String" value="OK"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exitJButtonActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="okJButtonActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="proteinFilteringHelpJButton">
