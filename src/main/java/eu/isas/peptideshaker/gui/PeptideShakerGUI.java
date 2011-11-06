@@ -1527,6 +1527,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ptmPanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
         spectrumIdentificationPanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
         proteinStructurePanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
+        goPanel.showSparkLines(sparklinesJCheckBoxMenuItem.isSelected());
 }//GEN-LAST:event_sparklinesJCheckBoxMenuItemActionPerformed
 
     /**
