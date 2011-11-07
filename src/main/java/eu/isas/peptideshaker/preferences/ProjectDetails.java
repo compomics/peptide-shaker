@@ -25,10 +25,6 @@ public class ProjectDetails implements Serializable {
      */
     private ArrayList<File> identificationFiles;
     /**
-     * List of the spectrum files loaded
-     */
-    private ArrayList<File> spectrumFiles;
-    /**
      * The database file loaded
      */
     private File dbFile;
@@ -73,22 +69,6 @@ public class ProjectDetails implements Serializable {
      */
     public void setIdentificationFiles(ArrayList<File> identificationFiles) {
         this.identificationFiles = identificationFiles;
-    }
-
-    /**
-     * Getter for the spectrum files used
-     * @return the spectrum files used
-     */
-    public ArrayList<File> getSpectrumFiles() {
-        return spectrumFiles;
-    }
-
-    /**
-     * Setter for the spectrum files used
-     * @param spectrumFiles the spectrum files used
-     */
-    public void setSpectrumFiles(ArrayList<File> spectrumFiles) {
-        this.spectrumFiles = spectrumFiles;
     }
 
     /**

@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
+import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;
 
 /**
@@ -22,6 +23,7 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
         initComponents();
         
         ProjectDetails projectDetails = parent.getProjectDetails();
+        SearchParameters searchParameters = parent.getSearchParameters();
         if (projectDetails != null) {
             
             String report = "<html><br>";
@@ -38,8 +40,8 @@ public class ProjectDetailsDialog extends javax.swing.JDialog {
             }
             
             report += "<br><b>Spectrum Files:</b><br>";
-            for (File mgfFile : projectDetails.getSpectrumFiles()) {
-                report += mgfFile.getAbsolutePath() + "<br>";
+            for (String mgfFile : searchParameters.getSpectrumFiles()) {
+                report += mgfFile + "<br>";
             }
             
             report += "<br><b>FASTA File:</b><br>";

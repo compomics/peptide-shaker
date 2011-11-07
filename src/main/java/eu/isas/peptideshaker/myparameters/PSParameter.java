@@ -49,6 +49,15 @@ public class PSParameter implements UrParameter {
      */
     private boolean validated = false;
     /**
+     * Boolean indicating whether this is a hidden match
+     */
+    private boolean hidden = false;
+    /**
+     * Boolean indicating whether this is a starred match
+     * @TODO would be nice to change that into a color
+     */
+    private boolean starred = false;
+    /**
      * the key in the corresponding specific map
      */
     private String secificMapKey;
@@ -76,7 +85,6 @@ public class PSParameter implements UrParameter {
      * 3- unrelated proteins proteins or peptide shared by unrelated proteins
      */
     public static final int UNRELATED = 3;
-    
 
     /**
      * Constructor
@@ -355,6 +363,42 @@ public class PSParameter implements UrParameter {
     }
 
     /**
+     * Hide/Unhide a match.
+     * 
+     * @param hidden boolean indicating whether the match should be hidden
+     */
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    /**
+     * Returns whether a match is hidden or not.
+     * 
+     * @return boolean indicating whether a match is hidden or not
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    /**
+     * Star/Unstar a match.
+     * 
+     * @param starred boolean indicating whether the match should be starred
+     */
+    public void setStarred(boolean starred) {
+        this.starred = starred;
+    }
+
+    /**
+     * Returns whether a match is starred or not.
+     * 
+     * @return boolean indicating whether a match is starred or not
+     */
+    public boolean isStarred() {
+        return starred;
+    }
+
+    /**
      * Returns the protein group class.
      * 
      * @return the protein group class
@@ -362,7 +406,7 @@ public class PSParameter implements UrParameter {
     public int getGroupClass() {
         return groupClass;
     }
-    
+
     /**
      * Returns the group class description
      * @return the group class description 
@@ -406,8 +450,7 @@ public class PSParameter implements UrParameter {
     public void setSecificMapKey(String secificMapKey) {
         this.secificMapKey = secificMapKey;
     }
-    
-    
+
     @Override
     public String getFamilyName() {
         return "PeptideShaker";

@@ -32,6 +32,7 @@ import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;
@@ -143,7 +144,7 @@ public class PeptideShaker {
      * @param searchParameters  The search parameters
      * @param annotationPreferences the annotation preferences to use for PTM scoring
      */
-    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) {
+    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails) {
 
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
 
@@ -157,7 +158,7 @@ public class PeptideShaker {
             fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences);
         } else {
             fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
-            fileImporter.importFiles(spectrumFiles);
+            fileImporter.importFiles(spectrumFiles, projectDetails);
         }
     }
 
