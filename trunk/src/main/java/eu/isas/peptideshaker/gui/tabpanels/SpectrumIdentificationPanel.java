@@ -47,6 +47,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
+import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
@@ -190,6 +191,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEngineTable.getColumn(" ").setMaxWidth(30);
         spectrumTable.getColumn(" ").setMinWidth(50);
         spectrumTable.getColumn(" ").setMaxWidth(50);
+        spectrumTable.getColumn("PSM").setMinWidth(50);
+        spectrumTable.getColumn("PSM").setMaxWidth(50);
 
         omssaTable.getColumn(" ").setMinWidth(30);
         omssaTable.getColumn(" ").setMaxWidth(30);
@@ -247,10 +250,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumTable.getColumn("m/z").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         spectrumTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
         spectrumTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, 10d, peptideShakerGUI.getSparklineColor()));
+        spectrumTable.getColumn("PSM").setCellRenderer(new NimbusCheckBoxRenderer());
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-
+        
         // set up the table header tooltips
         searchEngineTableToolTips = new ArrayList<String>();
         searchEngineTableToolTips.add(null);
@@ -268,6 +272,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumTableToolTips.add("Precursor m/z");
         spectrumTableToolTips.add("Precursor Charge");
         spectrumTableToolTips.add("Precursor Retention Time");
+        spectrumTableToolTips.add("Peptide to Spectrum Match Found");
 
         peptideShakerTableToolTips = new ArrayList<String>();
         peptideShakerTableToolTips.add(null);
