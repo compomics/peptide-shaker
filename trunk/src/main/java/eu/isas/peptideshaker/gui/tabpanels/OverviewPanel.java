@@ -1859,6 +1859,17 @@ public class OverviewPanel extends javax.swing.JPanel {
 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
+                if (column == 1) {
+                    String key = proteinTableMap.get(getProteinKey(row));
+                    PSParameter psParameter = new PSParameter();
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(key, psParameter);
+                    psParameter.setStarred((Boolean) proteinTable.getValueAt(row, column));
+                } else if (column == 2) {
+                    String key = proteinTableMap.get(getProteinKey(row));
+                    PSParameter psParameter = new PSParameter();
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(key, psParameter);
+                    psParameter.setHidden((Boolean) proteinTable.getValueAt(row, column));
+                }
                 // open protein link in web browser
                 if (column == proteinTable.getColumn("Accession").getModelIndex() + modelShift && evt != null && evt.getButton() == MouseEvent.BUTTON1
                         && ((String) proteinTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
@@ -4212,8 +4223,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                         ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                                     index + 1,
-                                    false, // @TODO: this needs to be saved in the cps file!
-                                    false, // @TODO: this needs to be saved in the cps file!
+                                    probabilities.isStarred(),
+                                    probabilities.isHidden(),
                                     probabilities.getGroupClass(),
                                     peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
                                     description,

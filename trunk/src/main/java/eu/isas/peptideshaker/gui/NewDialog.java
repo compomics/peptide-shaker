@@ -917,7 +917,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
         peptideShakerGUI.getSearchParameters().setFastaFile(fastaFile);
-        peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles, spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences());
+        peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles, spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails());
     }
 
     /**
@@ -1148,7 +1148,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         projectDetails.setCreationDate(new Date());
         projectDetails.setDbFile(fastaFile);
         projectDetails.setIdentificationFiles(idFiles);
-        projectDetails.setSpectrumFiles(spectrumFiles);
 
         return projectDetails;
     }

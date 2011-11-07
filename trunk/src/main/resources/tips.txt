@@ -1,12 +1,13 @@
-You can contribute to <i>PeptideShaker</i>! <br><br> Use our <a href="http://groups.google.com/group/peptide-shaker">mailing list</a> to explain your special needs and exchange new ideas!
-Looking for a specific protein?<br><br>You can search/filter proteins via the <i>Filter</i> menu in the <i>Overview</i> tab.
-Post-Translational Modifications (PTMs) are color coded in peptide sequences.<br><br>You can change the colors via <i>Search Parameters</i> on the <i>Edit</i> menu.<br><br>You can also verify the location of the PTMs in the <i>Modifications</i> tab!
-User-defined modifications: <br><br>User-defined modifications can be implemented in the conf/peptideshaker_usermods.xml file similarly as in <a href="http://searchgui.googlecode.com">SearchGUI</a>. <br><br>Before loading your files don't forget to add your modification in the Search Parameters!
-Not getting the result you wanted?<br><br>When creating a new project, be sure that the <i>Search Parameters</i> and <i>Import Filters</i> are correct!
-How to run user-friendly OMSSA and X!Tandem searches?<br><br>We recommend the use of <a href="http://searchgui.googlecode.com">SearchGUI</a>!
-In order to get the best perfomance, give <i>PeptideShaker</i> as much memory as possible in the JavaOptions.txt file located in the conf folder.<br><br>More information available in the <a href="http://code.google.com/p/peptide-shaker/#Troubleshooting">troubleshooting</a> section of our website.
-Does all your spectra have different titles? <br><br><i>PeptideShaker</i> is not able to differentiate spectra with identical titles in the same mgf file.
-How did you generate your mgf file? <br><br>Processing of the raw data can have dramatic impact on the final result.<br><br>We recommend the use of <a href="http://open-ms.sourceforge.net">OpenMS</a> for the spectrum processing.
-Need more help? <br><br>Look for the question marks. And we will be happy to answer your questions on our <a href="http://groups.google.com/group/peptide-shaker">mailing list</a>.
-Which database are you using? <br><br>Large databases will increase the amount of false positive identifications. For best results you should use only the species expected in the sample.<br><br>We recommend the use of <a href="http://uniprot.org">UniProt</a> databases.
-Does <i>PeptideShaker</i> not find your protein? <br><br>Verify that you are using the correct database and that its parsing is done correctly!
+You can contribute to PeptideShaker! <br><br> Use our <a href=mailto:peptide-shaker@googlegroups.com>mailing list</a> to explain us your special needs and exchange new ideas!
+Looking for a specific protein?<br><br>You can search/filter proteins using the menu "Filter" in the overview tab.
+Post-Translational Modifications (PTMs) are color coded in peptide sequences.<br><br> You can change the color of every PTM in Edit -> Search parameters.<br><br>You can also verify the location of the PTM in the modification tab!
+User-defined modifications: <br><br> If you have user-defined modifications you should implement them in the conf/peptideshaker_usermods.xml file similarly as in <a href="searchgui.googlecode.com">SearchGUI</a>. <br><br>Before loading your files don't forget to add your modification in the search parameters!
+When creating a new project, be sure that the search parameters and import filters are correct!
+How to run user-friendly OMSSA and X!Tandem searches? We recommend the use of <a href="searchgui.googlecode.com">SearchGUI</a>!
+In order to get the best perfomance, give PeptideShaker as much memory as possible in the JavaOptions.txt file located in the conf folder. More information available in the <a href="http://code.google.com/p/peptide-shaker/#Troubleshooting">troubleshooting</a> section of our website.
+Do all your spectra have different titles? <br><br>PeptideShaker cannot differentiate spectra with equal names in the same mgf file.
+How did you generate your mgf file? <br><br>Processing of the raw data can have dramatic impact on the final result, we recommend the use of <a href="openms.de">OpenMS</a> for the spectrum processing.
+Need more help? <br><br> Question marks are here to guide you to the help and we will be happy to answer your questions on our <a href=mailto:peptide-shaker@googlegroups.com>mailing list</a>.
+Which database are you using? <br><br>Large databases will increase the amount of false positive identifications. For best results you should use only the species expected in the sample. We recommend the use of <a href="uniprot.org">UniProtKB</a> databases.
+Peptide-Shaker does not find your protein? <br><br>Verify that you are using the correct database and that its parsing is done correctly!
+Did you expect more peptides/proteins?<br><br> In the spectrum IDs tab you can verify the performance of all search engines. You can also adjust Validation settings in the Validation tab.<br><br> If you compare results from other packages, remember that you should use same search, import and validation settings!

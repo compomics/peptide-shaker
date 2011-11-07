@@ -20,6 +20,7 @@ import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -131,8 +132,8 @@ public class FileImporter {
      * 
      * @param spectrumFiles
      */
-    public void importFiles(ArrayList<File> spectrumFiles) {
-        SpectrumProcessor spectrumProcessor = new SpectrumProcessor(spectrumFiles);
+    public void importFiles(ArrayList<File> spectrumFiles, ProjectDetails projectDetails) {
+        SpectrumProcessor spectrumProcessor = new SpectrumProcessor(spectrumFiles, projectDetails);
         spectrumProcessor.execute();
     }
 
@@ -610,14 +611,19 @@ public class FileImporter {
          * A list of spectrum files (can be empty, no spectrum will be imported)
          */
         private HashMap<String, File> spectrumFiles;
+        /**
+         * The project details where we will store the imported mgf files
+         */
+        private ProjectDetails projectDetails;
 
         /**
          * Constructor of the worker
          * @param spectrumFiles ArrayList containing the spectrum files
          */
-        public SpectrumProcessor(ArrayList<File> spectrumFiles) {
+        public SpectrumProcessor(ArrayList<File> spectrumFiles, ProjectDetails projectDetails) {
 
             this.spectrumFiles = new HashMap<String, File>();
+            this.projectDetails = projectDetails;
 
             for (File file : spectrumFiles) {
                 this.spectrumFiles.put(file.getName(), file);
