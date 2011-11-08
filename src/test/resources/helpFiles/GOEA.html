@@ -6,11 +6,93 @@
     </HEAD>
     <BODY>
         <a name="#top"/>
-        <H2>Gene Ontology Enrichement Analysis</H2>
+        <H2>Gene Ontology Enrichment Analysis</H2>
+
+        <ul>
+            <li><a href='#Introduction'>Introduction</a></li>
+            <li><a href='#Species'>Species</a></li>
+            <li><a href='#Ensembl_Version'>Ensembl Version</a></li>
+            <li><a href='#GO_Plots'>GO Plots</a></li>
+        </ul>
+
+        <a name="#Introduction"></a>
         <h3>Introduction</h3>
         <p align="justify">
-            (to be added...)
+            Gene Ontology Enrichment Analysis (GOEA) analyzes the frequencies of <a href="http://www.geneontology.org">gene ontology</a> 
+            terms in your dataset and compares these to the frequencies of the same GO terms in 
+            the species specific version of <a href="http://www.ensembl.org">Ensembl</a>. In order
+            to not get too many terms the GOSlim <a href="http://www.ebi.ac.uk/GOA/">UniProtKB-GOA</a> is used.
+            <br><br>
+            GOEA shows if certain GO terms are significantly up or down regulated in your dataset. 
+            To calcualte the significance <b>PeptideShaker</b> employs a 
+            <a href="http://en.wikipedia.org/wiki/Hypergeometric_test">Hypergeometric test</a>. 
+            This divides the GO terms into three groups: 
         </p>
-        <br><br>
+        <ul>
+            <li>Significantly up regulated (colored green).</li>
+            <li>Significantly down regulated (colored red).</li>
+            <li>Not significantly regulated (colored grey).</li>
+        </ul>
+        <p align="justify">
+            <b><i>Note that the GO Enrichment Analysis only supports <a href="http://www.uniprot.org">UniProt</a> accession numbers!</i></b>
+        </p>
+
+        <br>
+        <a href="#top">More on the Gene Ontology Enrichment Analysis</a>
+        <br><br><br>
+
+        <a name="#Species"></a>
+        <h3>Species</h3>
+        <p align="justify">
+            A default set of species is included. Select the wanted species in the drop down menu 
+            in the upper right corner. If your species is not in this list, let us know and we will 
+            try to add it. To get the complete list of the species that we can support, go to the
+            <a href="http://www.ensembl.org/biomart/martview">Ensembl Biomart</a>, choose <i>Ensembl Genes 64</i> 
+            as the main database, and locate your species in the list. 
+            <br><br>
+            Contact us by sending an e-mail to the <a href="http://groups.google.com/group/peptide-shaker">PeptideShaker Google Group</a> or 
+            by reporting an issue at the <a href="http://code.google.com/p/peptide-shaker/issues/list">PeptideShaker homepage</a>.
+            <br><br>
+            As a default only human GO term to protein mappings are included. The other species can be downloaded if needed.
+            Simply select the species in the drop down menu and click the <i>Download</i> button to start downloading 
+            the GO term to protein mappings for that species. For species where the mappings already have been downloaded 
+            these can be updated to the current release of Ensembl by clicking the <i>Update</i> button.
+        </p>
+        <br>
+        <a href="#top">More on the Gene Ontology Enrichment Analysis</a>
+        <br><br><br>
+
+        <a name="#Ensembl_Version"></a>
+        <h3>Ensembl Version</h3>
+        <p align="justify">
+            <b>PeptideShaker</b> always uses the latest version of <a href="http://www.ensembl.org">Ensembl</a> 
+            when downloading the GO term to protein mappings. The date when the mappings were downloaded is shown 
+            behind the species name in the species drop down menu. Ensembl is updated with the latest data on a 
+            monthly basis and each version is given a number, e.g., Ensembl 64. To find the Ensembl version 
+            used for your GO analysis compare the download date of the mappings file with the release dates of Ensembl 
+            found in the <a href="http://www.ensembl.org/info/website/archives/index.html">Ensembl archives page</a>.
+        </p>
+        <br>
+        <a href="#top">More on the Gene Ontology Enrichment Analysis</a>
+        <br><br><br>
+
+        <a name="#GO_Plots"></a>
+        <h3>GO Plots</h3>
+        <p align="justify">
+            Two GO plots are available: a <i>significance plot</i> and a <i>distribution plot</i>. The significance plot highlights 
+            the significantly up and down regulated GO terms, while the distribution plot shows the frequencies in 
+            percent for your dataset compared to the whole of <a href="http://www.ensembl.org">Ensembl</a>.
+            <br><br>
+            The plots are closely connected to the table with the GO terms. Selecting a a row in the table will 
+            highlight the same term in the plots and visa versa. GO terms can be excluded from the plot by 
+            deselecting them in the final column in the table. Right-clicking in the table will bring up 
+            a menu with shortcuts for selecting/deselecting all, and for selecting only the significant GO terms. 
+            <br><br>
+            The order of the terms in the plot is also the same as for the table. Click the table column headers 
+            to re-order the table and plots.
+        </p>
+        <br>
+        <a href="#top">More on the Gene Ontology Enrichment Analysis</a>
+        <br><br><br>
     </BODY>
 </HTML>
