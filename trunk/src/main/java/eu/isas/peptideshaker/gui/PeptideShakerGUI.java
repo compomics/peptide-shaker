@@ -139,17 +139,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private final int ANNOTATION_TAB_INDEX = 4;
     /**
+     * The GO Analysis tab index.
+     */
+    private final int GO_ANALYSIS_TAB_INDEX = 5;
+    /**
      * The Validation tab index.
      */
-    private final int VALIDATION_TAB_INDEX = 5;
+    private final int VALIDATION_TAB_INDEX = 6;
     /**
      * The QC Plots tab index.
      */
-    private final int QC_PLOTS_TAB_INDEX = 6;
-    /**
-     * The GO Analysis tab index.
-     */
-    private final int GO_ANALYSIS_TAB_INDEX = 7;
+    private final int QC_PLOTS_TAB_INDEX = 7;
     /**
      * The decimal format use for the score and confidence columns.
      */
@@ -533,9 +533,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         ptmJPanel = new javax.swing.JPanel();
         proteinStructureJPanel = new javax.swing.JPanel();
         annotationsJPanel = new javax.swing.JPanel();
+        goJPanel = new javax.swing.JPanel();
         statsJPanel = new javax.swing.JPanel();
         qcJPanel = new javax.swing.JPanel();
-        goJPanel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         fileJMenu = new javax.swing.JMenu();
         newJMenuItem = new javax.swing.JMenuItem();
@@ -977,6 +977,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationsJPanel.setLayout(new javax.swing.BoxLayout(annotationsJPanel, javax.swing.BoxLayout.LINE_AXIS));
         allTabsJTabbedPane.addTab("Annotation", annotationsJPanel);
 
+        goJPanel.setOpaque(false);
+        goJPanel.setLayout(new javax.swing.BoxLayout(goJPanel, javax.swing.BoxLayout.LINE_AXIS));
+        allTabsJTabbedPane.addTab("GO Analysis", goJPanel);
+
         statsJPanel.setOpaque(false);
         statsJPanel.setLayout(new javax.swing.BoxLayout(statsJPanel, javax.swing.BoxLayout.LINE_AXIS));
         allTabsJTabbedPane.addTab("Validation", statsJPanel);
@@ -984,10 +988,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         qcJPanel.setOpaque(false);
         qcJPanel.setLayout(new javax.swing.BoxLayout(qcJPanel, javax.swing.BoxLayout.LINE_AXIS));
         allTabsJTabbedPane.addTab("QC Plots", qcJPanel);
-
-        goJPanel.setOpaque(false);
-        goJPanel.setLayout(new javax.swing.BoxLayout(goJPanel, javax.swing.BoxLayout.LINE_AXIS));
-        allTabsJTabbedPane.addTab("GO Analysis", goJPanel);
 
         javax.swing.GroupLayout gradientPanelLayout = new javax.swing.GroupLayout(gradientPanel);
         gradientPanel.setLayout(gradientPanelLayout);
@@ -3548,6 +3548,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         // repaint the panels
         repaintPanels();
+        
+        // select the overview tab
+        allTabsJTabbedPane.setSelectedIndex(0);
 
         dataSaved = false;
     }

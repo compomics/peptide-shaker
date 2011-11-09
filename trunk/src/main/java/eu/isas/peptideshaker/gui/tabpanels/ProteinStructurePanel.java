@@ -2797,12 +2797,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 // ignore error
             }
 
-            // select the first row
-            if (proteinTable.getRowCount() > 0) {
-                proteinTable.setRowSelectionInterval(0, 0);
-                proteinTableMouseReleased(null);
-                proteinTable.requestFocus();
-            }
+//            // select the first row
+//            if (proteinTable.getRowCount() > 0) {
+//                proteinTable.setRowSelectionInterval(0, 0);
+//                proteinTableMouseReleased(null);
+//                proteinTable.requestFocus();
+//            }
 
             // enable the contextual export options
             exportPdbStructureJButton.setEnabled(true);
