@@ -32,9 +32,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -118,6 +116,10 @@ public class GOEAPanel extends javax.swing.JPanel {
      * The species map, key: latin name, element: ensembl database name.
      */
     private HashMap<String, String> speciesMap;
+    /**
+     * The Ensembl versions for the downloaded species. 
+     */
+    private HashMap<String, String> ensemblVersionsMap;
     /**
      * The list of species.
      */
@@ -229,11 +231,13 @@ public class GOEAPanel extends javax.swing.JPanel {
         try {
 
             File speciesFile = new File(mappingsFolderPath + "species");
+            File ensemblVersionsFile = new File(mappingsFolderPath + "ensembl_versions");
             File goDomainsFile = new File(mappingsFolderPath + "go_domains");
 
             goDomainMap = new HashMap<String, String>();
             species = new Vector<String>();
             speciesMap = new HashMap<String, String>();
+            ensemblVersionsMap = new HashMap<String, String>();
 
             if (!goDomainsFile.exists()) {
                 JOptionPane.showMessageDialog(this, "GO domains file \"" + goDomainsFile.getName() + "\" not found!\n"
@@ -256,6 +260,24 @@ public class GOEAPanel extends javax.swing.JPanel {
                 r.close();
             }
 
+            if (ensemblVersionsFile.exists()) {
+
+                // read the Ensembl versions
+                FileReader r = new FileReader(ensemblVersionsFile);
+                BufferedReader br = new BufferedReader(r);
+
+                String line = br.readLine();
+
+                while (line != null) {
+                    String[] elements = line.split("\\t");
+                    ensemblVersionsMap.put(elements[0], elements[1]);
+                    line = br.readLine();
+                }
+
+                br.close();
+                r.close();
+            }
+
 
             if (!speciesFile.exists()) {
                 JOptionPane.showMessageDialog(this, "GO species file \"" + speciesFile.getName() + "\" not found!\n"
@@ -269,6 +291,9 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                 String line = br.readLine();
 
+                species.add("-- Select Species --");
+                species.add(speciesSeparator);
+
                 while (line != null) {
                     String[] elements = line.split("\\t");
                     speciesMap.put(elements[0], elements[1]);
@@ -277,12 +302,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                         species.add(speciesSeparator);
                     }
 
-                    if (new File(mappingsFolderPath + elements[1]).exists()) {
-                        long datetime = new File(mappingsFolderPath + elements[1]).lastModified();
-                        Date d = new Date(datetime);                
-                        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");                
-                        String dateString = sdf.format(d);
-                        species.add(elements[0] + " [" + dateString + "]");
+                    if (ensemblVersionsMap.containsKey(elements[1])) {
+                        species.add(elements[0] + " [" + ensemblVersionsMap.get(elements[1]) + "]");
                     } else {
                         species.add(elements[0] + " [N/A]");
                     }
@@ -317,7 +338,7 @@ public class GOEAPanel extends javax.swing.JPanel {
             final File goMappingsFile = new File(goMappingsPath);
 
             if (goMappingsFile.exists()) {
-                
+
                 progressDialog = new ProgressDialogX(peptideShakerGUI, true);
 
                 new Thread(new Runnable() {
@@ -411,6 +432,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             progressDialog.setValue(0);
                             progressDialog.setMax(identification.getProteinIdentification().size());
 
+                            PSParameter probabilities = new PSParameter();
 
                             for (String matchKey : identification.getProteinIdentification()) {
 
@@ -418,8 +440,9 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                                 try {
                                     proteinPSParameter = (PSParameter) identification.getMatchParameter(matchKey, proteinPSParameter);
+                                    probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(matchKey, probabilities);
 
-                                    if (proteinPSParameter.isValidated() && !ProteinMatch.isDecoy(matchKey)) {
+                                    if (proteinPSParameter.isValidated() && !ProteinMatch.isDecoy(matchKey) && !probabilities.isHidden()) {
                                         if (ProteinMatch.getNProteins(matchKey) > 1) {
                                             mainAccession = identification.getProteinMatch(matchKey).getMainMatch();
                                         } else {
@@ -976,6 +999,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         goMappingsFileJLabel.setText("Species:");
 
+        speciesJComboBox.setMaximumRowCount(30);
         speciesJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         speciesJComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1062,7 +1086,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, mappingsPanelLayout.createSequentialGroup()
                         .addComponent(goMappingsFileJLabel)
                         .addGap(18, 18, 18)
-                        .addComponent(speciesJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 293, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(speciesJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(downloadButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -1667,25 +1691,45 @@ public class GOEAPanel extends javax.swing.JPanel {
             @Override
             public void run() {
 
-                String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
-                selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
-                selectedSpecies = speciesMap.get(selectedSpecies);
-
-                // Construct data
-                String requestXml = "query=<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-                        + "<!DOCTYPE Query>"
-                        + "<Query  virtualSchemaName = \"default\" formatter = \"TSV\" header = \"0\" uniqueRows = \"1\" count = \"\" datasetConfigVersion = \"0.6\" >"
-                        + "<Dataset name = \"" + selectedSpecies + "\" interface = \"default\" >"
-                        + "<Attribute name = \"uniprot_swissprot_accession\" />"
-                        + "<Attribute name = \"goslim_goa_accession\" />"
-                        + "<Attribute name = \"goslim_goa_description\" />"
-                        + "</Dataset>"
-                        + "</Query>";
-                
                 try {
 
+                    // get the current Ensembl version
+                    URL url = new URL("http://www.biomart.org/biomart/martservice?type=registry");
+                    
+                    BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+
+                    String inputLine;
+                    boolean ensemblVersionFound = false;
+                    String ensemblVersion = "?";
+
+                    while ((inputLine = in.readLine()) != null && !ensemblVersionFound) {
+                        if (inputLine.indexOf("database=\"ensembl_mart_") != -1) {
+                            ensemblVersion = inputLine.substring(inputLine.indexOf("database=\"ensembl_mart_") + "database=\"ensembl_mart_".length());
+                            ensemblVersion = ensemblVersion.substring(0, ensemblVersion.indexOf("\""));
+                            ensemblVersionFound = true;
+                        }
+                    }
+
+
+                    String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
+                    selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
+                    selectedSpecies = speciesMap.get(selectedSpecies);
+
+                    // Construct data
+                    String requestXml = "query=<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                            + "<!DOCTYPE Query>"
+                            + "<Query  virtualSchemaName = \"default\" formatter = \"TSV\" header = \"0\" uniqueRows = \"1\" count = \"\" datasetConfigVersion = \"0.6\" >"
+                            + "<Dataset name = \"" + selectedSpecies + "\" interface = \"default\" >"
+                            + "<Attribute name = \"uniprot_swissprot_accession\" />"
+                            + "<Attribute name = \"goslim_goa_accession\" />"
+                            + "<Attribute name = \"goslim_goa_description\" />"
+                            + "</Dataset>"
+                            + "</Query>";
+
+
+
                     // Send data
-                    URL url = new URL("http://www.biomart.org/biomart/martservice/result");
+                    url = new URL("http://www.biomart.org/biomart/martservice/result");
                     URLConnection conn = url.openConnection();
                     conn.setDoOutput(true);
                     OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
@@ -1722,12 +1766,29 @@ public class GOEAPanel extends javax.swing.JPanel {
                     w.close();
                     wr.close();
                     br.close();
-
+                    
+                    
+                    // update the Ensembl species versions
+                    w = new FileWriter(new File(mappingsFolderPath + "ensembl_versions"));
+                    bw = new BufferedWriter(w);
+                    
+                    ensemblVersionsMap.put(selectedSpecies, "Ensembl " + ensemblVersion);
+                    
+                    Iterator<String> iterator = ensemblVersionsMap.keySet().iterator();
+                    
+                    while (iterator.hasNext()) {
+                        String key = iterator.next();
+                        bw.write(key + "\t" + ensemblVersionsMap.get(key) + "\n");
+                    }
+                    
+                    bw.close();
+                    w.close();
+                           
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
 
                     JOptionPane.showMessageDialog(peptideShakerGUI, "GO Mappings Downloaded", "GO Mappings", JOptionPane.INFORMATION_MESSAGE);
-                    
+
                     int index = speciesJComboBox.getSelectedIndex();
                     loadSpeciesAndGoDomains();
                     speciesJComboBox.setSelectedIndex(index);
@@ -1851,7 +1912,6 @@ public class GOEAPanel extends javax.swing.JPanel {
     private void ensemblVersionLabelMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ensemblVersionLabelMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_ensemblVersionLabelMouseExited
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel biasWarningLabel;
     private javax.swing.JPanel contextMenuMappingsBackgroundPanel;
@@ -2002,13 +2062,14 @@ public class GOEAPanel extends javax.swing.JPanel {
 
         String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
 
-        if (!selectedSpecies.equalsIgnoreCase(speciesSeparator)) {
+        if (!selectedSpecies.equalsIgnoreCase(speciesSeparator)
+                && !selectedSpecies.equalsIgnoreCase("-- Select Species --")) {
 
             selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
             String databaseName = speciesMap.get(selectedSpecies);
             File mappingFilesFolder = new File(mappingsFolderPath);
             String[] mappingsFiles = mappingFilesFolder.list();
-            
+
             clearOldResults();
 
             boolean speciesFileFound = false;
