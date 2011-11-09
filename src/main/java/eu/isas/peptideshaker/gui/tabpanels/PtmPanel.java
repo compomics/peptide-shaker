@@ -335,6 +335,7 @@ public class PtmPanel extends javax.swing.JPanel {
         selectedPsmsTableToolTips.add("Peptide Sequence");
         selectedPsmsTableToolTips.add("PTM Location Confidence");
         selectedPsmsTableToolTips.add("Precursor Charge");
+        selectedPsmsTableToolTips.add("Precursor Retention Time");
         selectedPsmsTableToolTips.add("PSM Validated");
 
         relatedPsmsTableToolTips = new ArrayList<String>();
@@ -342,6 +343,7 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPsmsTableToolTips.add("Peptide Sequence");
         relatedPsmsTableToolTips.add("PTM Location Confidence");
         relatedPsmsTableToolTips.add("Precursor Charge");
+        relatedPsmsTableToolTips.add("Precursor Retention Time");
         relatedPsmsTableToolTips.add("PSM Validated");
 
         ptmTableToolTips = new ArrayList<String>();
