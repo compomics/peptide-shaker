@@ -1804,7 +1804,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 }
             }
         } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX) {
-            goPanel.displayResults();
+            //goPanel.displayResults(); // @TODO: set species from cps file? @TODO: reload GO enrichment tab if hidden selection is changed!
         }
 
         // update the basic protein annotation
