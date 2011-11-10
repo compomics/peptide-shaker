@@ -169,8 +169,9 @@ public class FileImporter {
             waitingDialog.setSecondaryProgressDialogIntermediate(true);
 
             if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !testing) {
+                
                 waitingDialog.appendReport("Creating peptide to protein map.");
-                String sequence;
+
                 Enzyme enzyme = searchParameters.getEnzyme();
                 int nMissedCleavages = searchParameters.getnMissedCleavages();
                 int nMin = idFilter.getMinPepLength();
@@ -186,7 +187,8 @@ public class FileImporter {
 
                     waitingDialog.increaseSecondaryProgressValue();
 
-                    sequence = sequenceFactory.getProtein(proteinKey).getSequence();
+                    String sequence = sequenceFactory.getProtein(proteinKey).getSequence();
+                    
                     for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
                         if (!sequences.containsKey(peptide)) {
                             sequences.put(peptide, new ArrayList<String>());
@@ -202,8 +204,10 @@ public class FileImporter {
 
                 waitingDialog.setSecondaryProgressDialogIntermediate(true);
             }
+            
             waitingDialog.appendReport("FASTA file import completed.");
             waitingDialog.increaseProgressValue();
+            
         } catch (FileNotFoundException e) {
             waitingDialog.appendReport("File " + fastaFile + " was not found. Please select a different FASTA file.");
             e.printStackTrace();
@@ -217,7 +221,8 @@ public class FileImporter {
             e.printStackTrace();
             waitingDialog.setRunCanceled();
         } catch (ClassNotFoundException e) {
-            waitingDialog.appendReport("Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry.\nIf the error occurs again please report bug at http://peptide-shaker.googlecode.com.");
+            waitingDialog.appendReport("Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry.\n"
+                    + "If the error occurs again please report bug at http://peptide-shaker.googlecode.com.");
             e.printStackTrace();
             waitingDialog.setRunCanceled();
         }
