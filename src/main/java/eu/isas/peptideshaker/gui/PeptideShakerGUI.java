@@ -3099,10 +3099,18 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @return  the precursor
      */
     public Precursor getPrecursor(String spectrumKey) {
-        String spectrumFile = Spectrum.getSpectrumFile(spectrumKey);
-        String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
+        return getPrecursor(spectrumKey, false);
+    }
+
+    /**
+     * Returns the precursor of a given spectrum
+     * @param spectrumKey   the key of the given spectrum
+     * @param save          boolean indicating whether the precursor should be saved in memory for later re-use
+     * @return  the precursor
+     */
+    public Precursor getPrecursor(String spectrumKey, boolean save) {
         try {
-            return spectrumFactory.getPrecursor(spectrumFile, spectrumTitle);
+            return spectrumFactory.getPrecursor(spectrumKey, save);
         } catch (Exception e) {
             catchException(e);
             return null;
@@ -4158,7 +4166,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         h3po4IonCheckBoxMenuItem.setSelected(false);
         ch4osIonCheckBoxMenuItem.setSelected(false);
 
-        for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses().keySet()) {
+        for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses().getAccountedNeutralLosses()) {
             if (neutralLoss.isSameAs(NeutralLoss.H2O)) {
                 h2oIonCheckBoxMenuItem.setSelected(true);
             } else if (neutralLoss.isSameAs(NeutralLoss.NH3)) {

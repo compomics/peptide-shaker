@@ -660,7 +660,7 @@ public class FeaturesGenerator {
                     result += prec.getCharge() + SEPARATOR;
                     result += prec.getRt() + SEPARATOR;
                     result += bestAssumption.getPeptide().getMass() + SEPARATOR;
-                    result += Math.abs(bestAssumption.getDeltaMass(peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR;
+                    result += Math.abs(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR;
                 }
                 if (score) {
                     result += psParameter.getPsmScore() + SEPARATOR;
@@ -823,7 +823,7 @@ public class FeaturesGenerator {
                                 result += prec.getCharge() + SEPARATOR;
                                 result += prec.getRt() + SEPARATOR;
                                 result += peptideAssumption.getPeptide().getMass() + SEPARATOR;
-                                result += Math.abs(peptideAssumption.getDeltaMass(peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR;
+                                result += Math.abs(peptideAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR;
                             }
                             if (scores) {
                                 if (se == Advocate.MASCOT) {

@@ -13,6 +13,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
+import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.protein.Header.DatabaseType;
@@ -30,8 +31,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * This class is responsible for the import of identifications
@@ -128,16 +131,6 @@ public class FileImporter {
     }
 
     /**
-     * Import spectra from spectrum files.
-     * 
-     * @param spectrumFiles
-     */
-    public void importFiles(ArrayList<File> spectrumFiles, ProjectDetails projectDetails) {
-        SpectrumProcessor spectrumProcessor = new SpectrumProcessor(spectrumFiles, projectDetails);
-        spectrumProcessor.execute();
-    }
-
-    /**
      * Imports sequences from a fasta file
      *
      * @param waitingDialog     Dialog displaying feedback to the user
@@ -228,35 +221,6 @@ public class FileImporter {
             e.printStackTrace();
             waitingDialog.setRunCanceled();
         }
-    }
-
-    /**
-     * Imports spectra from various spectrum files.
-     * 
-     * @param waitingDialog Dialog displaying feedback to the user
-     * @param spectrumFiles The spectrum files
-     */
-    public void importSpectra(WaitingDialog waitingDialog, ArrayList<File> spectrumFiles) {
-
-        String fileName = "";
-
-        waitingDialog.appendReport("Importing spectra.");
-
-        for (File spectrumFile : spectrumFiles) {
-            try {
-                fileName = spectrumFile.getName();
-                waitingDialog.appendReport("Importing " + fileName);
-                waitingDialog.setSecondaryProgressDialogIntermediate(false);
-                waitingDialog.resetSecondaryProgressBar();
-                spectrumFactory.addSpectra(spectrumFile, waitingDialog.getSecondaryProgressBar());
-                waitingDialog.resetSecondaryProgressBar();
-                waitingDialog.increaseProgressValue();
-            } catch (Exception e) {
-                waitingDialog.appendReport("Spectrum files import failed when trying to import " + fileName + ".");
-                e.printStackTrace();
-            }
-        }
-        waitingDialog.appendReport("Spectra import completed.");
     }
 
     /**
@@ -462,6 +426,7 @@ public class FileImporter {
 
             int nTotal = 0;
             int nRetained = 0;
+                ArrayList<String> mgfUsed = new ArrayList<String>();
 
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             importSequences(waitingDialog, proteomicAnalysis, fastaFile, idFilter, searchParameters);
@@ -472,7 +437,6 @@ public class FileImporter {
                 waitingDialog.appendReport("Reading identification files.");
                 InputMap inputMap = new InputMap();
 
-                ArrayList<String> mgfNeeded = new ArrayList<String>();
 
                 for (File idFile : idFiles) {
 
@@ -485,19 +449,34 @@ public class FileImporter {
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();
 
                     int numberOfMatches = tempSet.size();
+                    int progress = 0;
                     waitingDialog.setSecondaryProgressDialogIntermediate(false);
                     waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
+                    Precursor precursor;
+                    String spectrumKey, fileName;
+                    SpectrumMatch match;
+                    PeptideAssumption firstHit;
 
                     while (matchIt.hasNext()) {
 
-                        waitingDialog.increaseSecondaryProgressValue();
 
-                        SpectrumMatch match = matchIt.next();
+                        match = matchIt.next();
                         nTotal++;
 
-                        PeptideAssumption firstHit = match.getFirstHit(searchEngine);
+                        firstHit = match.getFirstHit(searchEngine);
+                        spectrumKey = match.getKey();
+                        fileName = Spectrum.getSpectrumFile(spectrumKey);
+                        if (!mgfUsed.contains(fileName)) {
+                            importSpectra(waitingDialog, fileName, searchParameters);
+                            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+                            waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
+                            waitingDialog.increaseProgressValue();
+                            mgfUsed.add(fileName);
+                        }
 
-                        if (!idFilter.validateId(firstHit)) {
+                        precursor = spectrumFactory.getPrecursor(spectrumKey, false);
+
+                        if (!idFilter.validateId(firstHit, precursor.getMz())) {
                             matchIt.remove();
                         } else {
                             Peptide peptide;
@@ -518,19 +497,15 @@ public class FileImporter {
 
                             identification.addSpectrumMatch(match);
 
-                            String mgfName = Spectrum.getSpectrumFile(match.getKey());
-                            if (!mgfNeeded.contains(mgfName)) {
-                                mgfNeeded.add(mgfName);
-                            }
-
                             nRetained++;
                         }
 
                         if (waitingDialog.isRunCanceled()) {
                             return 1;
                         }
-                    }
+                        waitingDialog.setSecondaryProgressValue(++progress);
 
+                    }
                     waitingDialog.setSecondaryProgressDialogIntermediate(true);
                     waitingDialog.increaseProgressValue();
                 }
@@ -547,36 +522,7 @@ public class FileImporter {
                 waitingDialog.appendReport("Identification file(s) import completed. "
                         + nTotal + " identifications imported, " + nRetained + " identifications retained.");
 
-                ArrayList<String> mgfMissing = new ArrayList<String>();
-                ArrayList<String> mgfNames = new ArrayList<String>(spectrumFiles.keySet());
-                ArrayList<File> mgfImported = new ArrayList<File>();
-
-                for (String mgfFile : mgfNeeded) {
-                    if (!mgfNames.contains(mgfFile)) {
-                        mgfMissing.add(mgfFile);
-                    } else {
-                        mgfImported.add(spectrumFiles.get(mgfFile));
-                    }
-                }
-
-                if (mgfMissing.isEmpty()) {
-                    for (File file : mgfImported) {
-                        searchParameters.addSpectrumFile(file.getAbsolutePath());
-                    }
-                    waitingDialog.increaseProgressValue(mgfNames.size() - mgfImported.size());
-                    importSpectra(waitingDialog, mgfImported);
-                } else {
-
-                    String mgfFileMissing = "Mgf files missing: ";
-
-                    for (int i = 0; i < mgfMissing.size() - 1; i++) {
-                        mgfFileMissing += mgfMissing.get(i) + ", ";
-                    }
-
-                    mgfFileMissing += mgfMissing.get(mgfMissing.size() - 1);
-
-                    throw new IllegalArgumentException(mgfFileMissing);
-                }
+                waitingDialog.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
 
                 peptideShaker.processIdentifications(inputMap, waitingDialog, searchParameters, annotationPreferences);
 
@@ -601,117 +547,85 @@ public class FileImporter {
 
             return 0;
         }
-    }
-
-    /**
-     * Worker which loads spectra from files assuming that ids are already loaded them while giving feedback to the user.
-     */
-    private class SpectrumProcessor extends SwingWorker {
 
         /**
-         * A list of spectrum files (can be empty, no spectrum will be imported)
+         * Verify that the spectra are imported and imports spectra from the desired spectrum file if necessary.
+         * 
+         * @param waitingDialog Dialog displaying feedback to the user
+         * @param spectrumFiles The spectrum files
          */
-        private HashMap<String, File> spectrumFiles;
-        /**
-         * The project details where we will store the imported mgf files
-         */
-        private ProjectDetails projectDetails;
+        public void importSpectra(WaitingDialog waitingDialog, String targetFileName, SearchParameters searchParameters) {
 
-        /**
-         * Constructor of the worker
-         * @param spectrumFiles ArrayList containing the spectrum files
-         */
-        public SpectrumProcessor(ArrayList<File> spectrumFiles, ProjectDetails projectDetails) {
 
-            this.spectrumFiles = new HashMap<String, File>();
-            this.projectDetails = projectDetails;
+            File spectrumFile = spectrumFiles.get(targetFileName);
+            
+            if (spectrumFile == null) {
 
-            for (File file : spectrumFiles) {
-                this.spectrumFiles.put(file.getName(), file);
-            }
-
-            try {
-                ptmFactory.importModifications(new File(MODIFICATION_FILE));
-            } catch (Exception e) {
-                waitingDialog.appendReport("Failed importing modifications from " + MODIFICATION_FILE);
-                waitingDialog.setRunCanceled();
-                e.printStackTrace();
-            }
-
-            try {
-                ptmFactory.importModifications(new File(USER_MODIFICATION_FILE));
-            } catch (Exception e) {
-                waitingDialog.appendReport("Failed importing modifications from " + USER_MODIFICATION_FILE);
-                waitingDialog.setRunCanceled();
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        protected Object doInBackground() throws Exception {
-
-            Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-
-            try {
-                ArrayList<String> mgfNeeded = new ArrayList<String>();
-                String newFile;
-
-                for (String spectrumKey : identification.getSpectrumIdentification()) {
-                    newFile = Spectrum.getSpectrumFile(spectrumKey);
-                    if (!mgfNeeded.contains(newFile)) {
-                        mgfNeeded.add(newFile);
-                    }
-                }
-
-                waitingDialog.increaseProgressValue();
-
-                ArrayList<String> mgfMissing = new ArrayList<String>();
-                ArrayList<String> mgfNames = new ArrayList<String>(spectrumFiles.keySet());
-                ArrayList<File> mgfImported = new ArrayList<File>();
-
-                for (String mgfFile : mgfNeeded) {
-                    if (!mgfNames.contains(mgfFile)) {
-                        mgfMissing.add(mgfFile);
-                    } else {
-                        mgfImported.add(spectrumFiles.get(mgfFile));
-                    }
-                }
-
-                if (mgfMissing.isEmpty()) {
-                    for (int i = mgfImported.size(); i < mgfNames.size(); i++) {
-                        waitingDialog.increaseProgressValue();
-                    }
-                    importSpectra(waitingDialog, mgfImported);
-                } else {
-                    for (int i = 0; i < mgfNames.size(); i++) {
-                        waitingDialog.increaseProgressValue();
-                    }
-                }
-
-                waitingDialog.appendReport("File import finished.\n\n");
-                waitingDialog.setRunFinished();
-
-            } catch (Exception e) {
-                waitingDialog.appendReport("An error occured while importing spectra:");
-                waitingDialog.appendReport(e.getLocalizedMessage());
-                waitingDialog.setRunCanceled();
-                e.printStackTrace();
-            } catch (OutOfMemoryError error) {
-                Runtime.getRuntime().gc();
-                waitingDialog.appendReportEndLine();
-                waitingDialog.appendReport("Ran out of memory!");
-                waitingDialog.setRunCanceled();
                 JOptionPane.showMessageDialog(null,
-                        "The task used up all the available memory and had to be stopped.\n"
-                        + "Memory boundaries are set in ../conf/JavaOptions.txt.",
-                        "Out Of Memory Error",
-                        JOptionPane.ERROR_MESSAGE);
+                        "Could not find " + targetFileName + ".\n"
+                        + "Please select the spectrum file or the folder containing it manually.",
+                        "File Input Error", JOptionPane.ERROR_MESSAGE);
 
-                System.out.println("Ran out of memory!");
-                error.printStackTrace();
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Open Spectrum File");
+
+                FileFilter filter = new FileFilter() {
+
+                    @Override
+                    public boolean accept(File myFile) {
+                        return myFile.getName().toLowerCase().endsWith("mgf")
+                                || myFile.isDirectory();
+                    }
+
+                    @Override
+                    public String getDescription() {
+                        return "Supported formats: Mascot Generic Format (.mgf)";
+                    }
+                };
+
+                fileChooser.setFileFilter(filter);
+                int returnVal = fileChooser.showDialog(null, "Open");
+
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File mgfFolder = fileChooser.getSelectedFile();
+                    if (!mgfFolder.isDirectory()) {
+                        mgfFolder = mgfFolder.getParentFile();
+                    }
+                    boolean found = false;
+                    for (File file : mgfFolder.listFiles()) {
+                        if (file.getName().equals(targetFileName)) {
+                            spectrumFile = file;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        JOptionPane.showMessageDialog(null,
+                                targetFileName + " was not found in the given folder. Input will be cancelled",
+                                "File Input Error", JOptionPane.ERROR_MESSAGE);
+
+                        waitingDialog.setRunCanceled();
+
+                        return;
+                    }
+                }
             }
 
-            return 0;
+            try {
+                waitingDialog.appendReport("Importing " + targetFileName);
+                waitingDialog.setSecondaryProgressDialogIntermediate(false);
+                waitingDialog.resetSecondaryProgressBar();
+                spectrumFactory.addSpectra(spectrumFile, waitingDialog.getSecondaryProgressBar());
+                waitingDialog.resetSecondaryProgressBar();
+                waitingDialog.increaseProgressValue();
+                searchParameters.addSpectrumFile(spectrumFile.getAbsolutePath());
+                waitingDialog.appendReport(targetFileName + " imported.");
+            } catch (Exception e) {
+                waitingDialog.appendReport("Spectrum files import failed when trying to import " + targetFileName + ".");
+                e.printStackTrace();
+            }
+
         }
     }
+
 }

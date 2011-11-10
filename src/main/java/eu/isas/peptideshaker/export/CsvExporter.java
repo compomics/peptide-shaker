@@ -463,7 +463,8 @@ public class CsvExporter {
         line += SEPARATOR;
         String fileName = Spectrum.getSpectrumFile(spectrumMatch.getKey());
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getKey());
-        line += spectrumFactory.getPrecursor(fileName, spectrumTitle).getCharge() + SEPARATOR;
+        Precursor precursor = spectrumFactory.getPrecursor(fileName, spectrumTitle);
+        line += precursor.getCharge() + SEPARATOR;
         line += fileName + SEPARATOR;
         line += spectrumTitle + SEPARATOR;
 
@@ -475,7 +476,7 @@ public class CsvExporter {
 
         line += SEPARATOR;
         line += spectrumMatch.getBestAssumption().getPeptide().getMass() + SEPARATOR;
-        line += Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(true)) + SEPARATOR;
+        line += Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true)) + SEPARATOR;
         PeptideAssumption assumption = spectrumMatch.getFirstHit(Advocate.MASCOT);
 
         if (assumption != null) {
@@ -587,7 +588,7 @@ public class CsvExporter {
                     line += assumption.getFile() + SEPARATOR;
 
                     line += spectrumMatch.getBestAssumption().getPeptide().getMass() + SEPARATOR;
-                    line += Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(true)) + SEPARATOR;
+                    line += Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true)) + SEPARATOR;
 
                     if (se == Advocate.MASCOT) {
                         MascotScore score = (MascotScore) assumption.getUrParam(new MascotScore(0));

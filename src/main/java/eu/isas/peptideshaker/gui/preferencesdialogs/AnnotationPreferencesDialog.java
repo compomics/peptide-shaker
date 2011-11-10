@@ -655,7 +655,7 @@ private void intensitySpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//
         h3po4Box.setSelected(false);
         hpo3Box.setSelected(false);
         ch4osBox.setSelected(false);
-        for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses().keySet()) {
+        for (NeutralLoss neutralLoss : annotationPreferences.getNeutralLosses().getAccountedNeutralLosses()) {
             if (neutralLoss.isSameAs(NeutralLoss.H2O)) {
                 h2oBox.setSelected(true);
             } else if (neutralLoss.isSameAs(NeutralLoss.NH3)) {
