@@ -147,19 +147,14 @@ public class PeptideShaker {
     public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails) {
 
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
+        analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification());
+        Identification identification = analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        identification.setInMemory(false);
+        identification.setAutomatedMemoryManagement(true);
+        identification.setSerializationDirectory(SERIALIZATION_DIRECTORY);
+        fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
+        fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences);
 
-        if (analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION) == null) {
-            analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification());
-            Identification identification = analysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-            identification.setInMemory(false);
-            identification.setAutomatedMemoryManagement(true);
-            identification.setSerializationDirectory(SERIALIZATION_DIRECTORY);
-            fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
-            fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences);
-        } else {
-            fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
-            fileImporter.importFiles(spectrumFiles, projectDetails);
-        }
     }
 
     /**
@@ -173,8 +168,8 @@ public class PeptideShaker {
      * @throws IOException
      * @throws Exception  
      */
-    public void processIdentifications(InputMap inputMap, WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) 
-        throws IllegalArgumentException, IOException, Exception {
+    public void processIdentifications(InputMap inputMap, WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences)
+            throws IllegalArgumentException, IOException, Exception {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         if (!identification.memoryCheck()) {
@@ -221,7 +216,7 @@ public class PeptideShaker {
             waitingDialog.appendReport("An error occured while trying to resolve protein inference issues.");
             throw e;
         }
-        
+
         waitingDialog.appendReport("Correcting protein probabilities.");
         proteinMap.estimateProbabilities(waitingDialog);
         attachProteinProbabilities();
@@ -1201,7 +1196,7 @@ public class PeptideShaker {
      */
     private ArrayList<String> parseDescription(String proteinAccession) throws IOException, IllegalArgumentException {
         String description = sequenceFactory.getHeader(proteinAccession).getDescription();
-       
+
         ArrayList<String> result = new ArrayList<String>();
         for (String component : description.split(" ")) {
             if (component.length() > 3) {

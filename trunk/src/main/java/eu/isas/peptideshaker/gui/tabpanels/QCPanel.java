@@ -8,6 +8,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
@@ -1543,10 +1544,13 @@ public class QCPanel extends javax.swing.JPanel {
                 validatedDecoyValues = new ArrayList<Double>();
                 nonValidatedDecoyValues = new ArrayList<Double>();
                 SpectrumMatch spectrumMatch;
+                Precursor precursor;
 
                 for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
                     spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                    precursor = peptideShakerGUI.getPrecursor(spectrumKey);
                     double value = Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(
+                            precursor.getMz(),
                             peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
                     if (value > maxValue) {
                         maxValue = value;

@@ -40,7 +40,7 @@ public class IdFilter implements Serializable {
      * Boolean indicating the unit of the allowed mass deviation (true: ppm, false: Da)
      */
     private boolean isPpm;
-    
+
     /**
      * Constructor with default settings
      */
@@ -81,37 +81,29 @@ public class IdFilter implements Serializable {
      * @param assumption the considered peptide assumption
      * @return a boolean indicating whether the given assumption passes the filter
      */
-    public boolean validateId(PeptideAssumption assumption) {
-        if (isPpm) {
-            if (Math.abs(assumption.getDeltaMass(isPpm)) > maxMassDeviation && maxMassDeviation > 0) {
-                return false;
-            } else if (Math.abs(assumption.getPeptide().getMass()-assumption.getMeasuredMass()) > 2) {
-                int debug = 1;
-            }
-        } else {
-            if (Math.abs(assumption.getMeasuredMass() - assumption.getPeptide().getMass()) > maxMassDeviation && maxMassDeviation > 0) {
-                return false;
-            }
+    public boolean validateId(PeptideAssumption assumption, double precursorMass) {
+        if (Math.abs(assumption.getDeltaMass(precursorMass, isPpm)) > maxMassDeviation && maxMassDeviation > 0) {
+            return false;
         }
-        
+
         int pepLength = assumption.getPeptide().getSequence().length();
-        
+
         if ((pepLength > maxPepLength && maxPepLength != 0) || pepLength < minPepLength) {
             return false;
         }
-        
+
         int searchEngine = assumption.getAdvocate();
         double eValue = assumption.getEValue();
-        
+
         if (searchEngine == Advocate.MASCOT && eValue > mascotMaxEvalue
                 || searchEngine == Advocate.OMSSA && eValue > omssaMaxEvalue
                 || searchEngine == Advocate.XTANDEM && eValue > xtandemMaxEvalue) {
             return false;
         }
-        
+
         boolean target = false;
         boolean decoy = false;
-        
+
         for (String protein : assumption.getPeptide().getParentProteins()) {
             if (SequenceFactory.isDecoy(protein)) {
                 decoy = true;
@@ -119,11 +111,11 @@ public class IdFilter implements Serializable {
                 target = true;
             }
         }
-        
+
         if (target && decoy) {
             return false;
         }
-        
+
         return true;
     }
 
@@ -238,6 +230,4 @@ public class IdFilter implements Serializable {
     public void setXtandemMaxEvalue(double xtandemMaxEvalue) {
         this.xtandemMaxEvalue = xtandemMaxEvalue;
     }
-    
-    
 }

@@ -5,10 +5,13 @@ User-defined modifications can be implemented in the conf/peptideshaker_usermods
 Not getting the result you wanted?<br><br>When creating a new project, be sure that the <i>Search Parameters</i> and <i>Import Filters</i> are correct!
 How to run user-friendly OMSSA and X!Tandem searches?<br><br>We recommend the use of <a href="http://searchgui.googlecode.com">SearchGUI</a>!
 In order to get the best perfomance, give <i>PeptideShaker</i> as much memory as possible in the JavaOptions.txt file located in the conf folder.<br><br>More information available in the <a href="http://code.google.com/p/peptide-shaker/#Troubleshooting">troubleshooting</a> section of our website.
-Does all your spectra have different titles?<br><br><i>PeptideShaker</i> is not able to differentiate spectra with identical titles in the same mgf file.
+Do all your spectra have different titles?<br><br><i>PeptideShaker</i> is not able to differentiate spectra with identical titles in the same mgf file.
 How did you generate your mgf file?<br><br>Processing of the raw data can have dramatic impact on the final result.<br><br>We recommend the use of <a href="http://open-ms.sourceforge.net">OpenMS</a> for the spectrum processing.
 Need more help?<br><br>Look for the question marks.<br><br>We will also be happy to answer your questions on our <a href="http://groups.google.com/group/peptide-shaker">mailing list</a>.
 Which database are you using?<br><br>Large databases will increase the amount of false positive identifications. For best results you should use only the species expected in the sample.<br><br>We recommend the use of <a href="http://uniprot.org">UniProt</a> databases.
 Is <i>PeptideShaker</i> not finding your protein?<br><br>Verify that you are using the correct database and that its parsing is done correctly!
 Did you expect more peptides/proteins?<br><br>In the <i>Spectrum IDs</i> tab you can verify the performance of all search engines. You can also adjust validation settings in the <i>Validation</i> tab.<br><br><i>If you compare the results with other packages, remember that you should use same search, import and validation settings!</i>
 Using Mascot Results?<br><br>Make sure that the database used for the search is the same as the one provided to <i>PeptideShaker</i> and that the <i>decoy</i> option is <b><u>not</u></b> selected!
+Did you check the QC plots?<br><br>Quality Control plots are available in the QC tab and can help you to verify that everything went right during the identification process.
+You need a new QC metric/plot?<br><br> Propose it on our <a href="http://groups.google.com/group/peptide-shaker">mailing list</a>!
+

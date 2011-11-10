@@ -174,6 +174,14 @@ public class WaitingDialog extends javax.swing.JDialog {
     public void increaseSecondaryProgressValue() {
         secondaryJProgressBar.setValue(secondaryJProgressBar.getValue() + 1);
     }
+    
+    /**
+     * Sets the secondary progress bar to the given value
+     * @param value the progress value
+     */
+    public void setSecondaryProgressValue(int value) {
+        secondaryJProgressBar.setValue(value);
+    }
 
     /**
      * Increase the secondary progress bar value by the given amount.

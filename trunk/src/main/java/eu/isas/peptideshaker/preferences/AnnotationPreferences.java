@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.preferences;
 import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
+import com.compomics.util.experiment.identification.NeutralLossesMap;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -54,7 +55,7 @@ public class AnnotationPreferences implements Serializable {
     /**
      * The neutral losses searched for
      */
-    private HashMap<NeutralLoss, Integer> neutralLosses = new HashMap<NeutralLoss, Integer>();
+    private NeutralLossesMap neutralLosses = new NeutralLossesMap();
     /**
      * Shall neutral losses be only considered for ions containing amino acids of interest?
      */
@@ -155,14 +156,14 @@ public class AnnotationPreferences implements Serializable {
      * clears the considered neutral losses
      */
     public void clearNeutralLosses() {
-        neutralLosses.clear();
+        neutralLosses.clearNeutralLosses();
     }
 
     /**
      * returns the considered neutral losses
      * @return the considered neutral losses 
      */
-    public HashMap<NeutralLoss, Integer> getNeutralLosses() {
+    public NeutralLossesMap getNeutralLosses() {
         return neutralLosses;
     }
 
@@ -171,7 +172,7 @@ public class AnnotationPreferences implements Serializable {
      * @param neutralLoss a new neutral loss
      */
     public void addNeutralLoss(NeutralLoss neutralLoss) {
-        neutralLosses.put(neutralLoss, 1);
+        neutralLosses.addNeutralLoss(neutralLoss, 0, 0);
     }
 
     /**

@@ -2453,7 +2453,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         for (String spectrumTitle : SpectrumFactory.getInstance().getSpectrumTitles(fileSelected)) {
 
             spectrumKey = Spectrum.getSpectrumKey(fileSelected, spectrumTitle);
-            Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey);
+            Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
             if (precursor != null) {
 
                 double retentionTime = precursor.getRt();

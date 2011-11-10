@@ -3969,7 +3969,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                 peptideAssumption.getPeptide().getModifiedSequenceAsHtml(
                                 peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                                 precursor.getCharge().value,
-                                Math.abs(peptideAssumption.getDeltaMass(peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())),
+                                Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())),
                                 probabilities.isValidated()
                             });
 
