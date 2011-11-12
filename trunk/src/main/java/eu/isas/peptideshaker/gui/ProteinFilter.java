@@ -1,7 +1,11 @@
 package eu.isas.peptideshaker.gui;
 
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.FocusTraversalPolicy;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 import javax.swing.JTable;
@@ -94,6 +98,9 @@ public class ProteinFilter extends javax.swing.JDialog {
         }
 
         showHiddenProteinsCheckBox.setSelected(showHiddenProteins);
+        
+        // set the focus traveral policy
+        setUpFocusTraversal();
 
         peptideShakerGUI.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
         setLocationRelativeTo(peptideShakerGUI);
@@ -701,18 +708,17 @@ public class ProteinFilter extends javax.swing.JDialog {
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(optionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(proteinFilteringHelpJButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 349, Short.MAX_VALUE)
-                        .addComponent(clearJButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(okJButton)))
+                .addContainerGap()
+                .addComponent(optionsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(proteinFilteringHelpJButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 341, Short.MAX_VALUE)
+                .addComponent(okJButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(clearJButton)
+                .addGap(18, 18, 18))
         );
 
         backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {clearJButton, okJButton});
@@ -723,10 +729,11 @@ public class ProteinFilter extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(optionsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(proteinFilteringHelpJButton)
-                    .addComponent(clearJButton)
-                    .addComponent(okJButton))
+                    .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                        .addComponent(clearJButton)
+                        .addComponent(okJButton)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1295,4 +1302,92 @@ private void unrelatedProteinsJRadioButtonActionPerformed(java.awt.event.ActionE
     private javax.swing.JRadioButton unrelatedIsoformsJRadioButton;
     private javax.swing.JRadioButton unrelatedProteinsJRadioButton;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * Set up the focus traversal.
+     */
+    private void setUpFocusTraversal () {
+        
+        HashMap<Component, Component> focusMap = new HashMap<Component, Component>();
+        focusMap.put(proteinAccessionJTextField, descriptionJTextField);
+        focusMap.put(descriptionJTextField, coverageJTextField);
+        focusMap.put(coverageJTextField, spectrumCountingJTextField);
+        focusMap.put(spectrumCountingJTextField, peptideJTextField);
+        focusMap.put(peptideJTextField, spectraJTextField);
+        focusMap.put(spectraJTextField, scoreJTextField);
+        focusMap.put(scoreJTextField, confidenceJTextField);
+        focusMap.put(confidenceJTextField, singleProteinJRadioButton);
+        focusMap.put(singleProteinJRadioButton, unrelatedIsoformsJRadioButton);
+        focusMap.put(unrelatedIsoformsJRadioButton, isoformsJRadioButton);
+        focusMap.put(isoformsJRadioButton, unrelatedProteinsJRadioButton);
+        focusMap.put(unrelatedProteinsJRadioButton, allJRadioButton);
+        focusMap.put(allJRadioButton, showHiddenProteinsCheckBox);
+        focusMap.put(showHiddenProteinsCheckBox, okJButton);
+        focusMap.put(okJButton, clearJButton);
+        focusMap.put(clearJButton, proteinAccessionJTextField);
+        
+        HashMap<Component, Component> focusReverseMap = new HashMap<Component, Component>();
+        focusReverseMap.put(proteinAccessionJTextField, clearJButton);
+        focusReverseMap.put(descriptionJTextField, proteinAccessionJTextField);
+        focusReverseMap.put(coverageJTextField, descriptionJTextField);
+        focusReverseMap.put(spectrumCountingJTextField, coverageJTextField);
+        focusReverseMap.put(peptideJTextField, spectrumCountingJTextField);
+        focusReverseMap.put(spectraJTextField, peptideJTextField);
+        focusReverseMap.put(scoreJTextField, spectraJTextField);
+        focusReverseMap.put(confidenceJTextField, scoreJTextField);
+        focusReverseMap.put(singleProteinJRadioButton, confidenceJTextField);
+        focusReverseMap.put(unrelatedIsoformsJRadioButton, singleProteinJRadioButton);
+        focusReverseMap.put(isoformsJRadioButton, unrelatedIsoformsJRadioButton);
+        focusReverseMap.put(unrelatedProteinsJRadioButton, isoformsJRadioButton);
+        focusReverseMap.put(allJRadioButton, unrelatedProteinsJRadioButton);
+        focusReverseMap.put(showHiddenProteinsCheckBox, allJRadioButton);
+        focusReverseMap.put(okJButton, showHiddenProteinsCheckBox);
+        focusReverseMap.put(clearJButton, okJButton);
+        
+        MyFocusPolicy focusPolicy = new MyFocusPolicy(focusMap, focusReverseMap, proteinAccessionJTextField, clearJButton);
+        this.setFocusTraversalPolicy(focusPolicy);
+    }
+    
+    /**
+     * The focus traversal policy map.
+     */
+    class MyFocusPolicy extends FocusTraversalPolicy {
+
+        private HashMap<Component, Component> focusMap;
+        private HashMap<Component, Component> focusReverseMap;
+        private Component first;
+        private Component last;
+        
+        public MyFocusPolicy (HashMap<Component, Component> focusMap, HashMap<Component, Component> focusReverseMap, Component first, Component last) {
+            this.focusMap = focusMap;
+            this.focusReverseMap = focusReverseMap;
+            this.first = first;
+            this.last = last;
+        }
+        
+        @Override
+        public Component getComponentAfter(Container aContainer, Component aComponent) {
+            return focusMap.get(aComponent);  
+        } 
+
+        @Override
+        public Component getComponentBefore(Container aContainer, Component aComponent) {
+            return focusReverseMap.get(aComponent);  
+        }
+
+        @Override
+        public Component getFirstComponent(Container aContainer) {
+            return first;
+        }
+
+        @Override
+        public Component getLastComponent(Container aContainer) {
+            return last;
+        }
+
+        @Override
+        public Component getDefaultComponent(Container aContainer) {
+            return first;
+        }
+    }
 }

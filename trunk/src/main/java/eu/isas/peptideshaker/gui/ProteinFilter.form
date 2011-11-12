@@ -64,21 +64,18 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="optionsPanel" max="32767" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                          <Component id="proteinFilteringHelpJButton" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="349" max="32767" attributes="0"/>
-                          <Component id="clearJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="okJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Component id="optionsPanel" max="32767" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+              </Group>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                  <Component id="proteinFilteringHelpJButton" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="341" max="32767" attributes="0"/>
+                  <Component id="okJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="clearJButton" linkSize="2" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -88,10 +85,12 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="optionsPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="proteinFilteringHelpJButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="clearJButton" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="okJButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="proteinFilteringHelpJButton" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="clearJButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="okJButton" alignment="2" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
