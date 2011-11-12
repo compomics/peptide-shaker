@@ -27,7 +27,6 @@ import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
-import eu.isas.peptideshaker.gui.PtmLocationDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.Color;
 import java.awt.Component;
@@ -49,6 +48,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
@@ -171,7 +171,7 @@ public class PtmPanel extends javax.swing.JPanel {
         peptidesTable.setAutoCreateRowSorter(true);
         relatedPeptidesTable.setAutoCreateRowSorter(true);
         selectedPsmsTable.setAutoCreateRowSorter(true);
-
+        
         relatedPeptidesTableJScrollPane.getViewport().setOpaque(false);
         psmsModifiedTableJScrollPane.getViewport().setOpaque(false);
         psmsRelatedTableJScrollPane.getViewport().setOpaque(false);
@@ -197,41 +197,41 @@ public class PtmPanel extends javax.swing.JPanel {
         ptmJTable.getColumn("  ").setMaxWidth(35);
         ptmJTable.getColumn("  ").setMinWidth(35);
 
-        peptidesTable.getColumn(" ").setMaxWidth(50);
-        peptidesTable.getColumn(" ").setMinWidth(50);
-        peptidesTable.getColumn("PTM").setMaxWidth(50);
-        peptidesTable.getColumn("PTM").setMinWidth(50);
+        peptidesTable.getColumn(" ").setMaxWidth(45);
+        peptidesTable.getColumn(" ").setMinWidth(45);
+        peptidesTable.getColumn("PTM").setMaxWidth(45);
+        peptidesTable.getColumn("PTM").setMinWidth(45);
         peptidesTable.getColumn("  ").setMaxWidth(30);
         peptidesTable.getColumn("  ").setMinWidth(30);
         peptidesTable.getColumn("PI").setMaxWidth(35);
         peptidesTable.getColumn("PI").setMinWidth(35);
-        peptidesTable.getColumn("Peptide").setMaxWidth(90);
-        peptidesTable.getColumn("Peptide").setMinWidth(90);
+        peptidesTable.getColumn("Peptide").setMaxWidth(80);
+        peptidesTable.getColumn("Peptide").setMinWidth(80);
 
-        relatedPeptidesTable.getColumn(" ").setMaxWidth(60);
-        relatedPeptidesTable.getColumn(" ").setMinWidth(60);
+        relatedPeptidesTable.getColumn(" ").setMaxWidth(45);
+        relatedPeptidesTable.getColumn(" ").setMinWidth(45);
         relatedPeptidesTable.getColumn("PI").setMaxWidth(35);
         relatedPeptidesTable.getColumn("PI").setMinWidth(35);
         relatedPeptidesTable.getColumn("  ").setMaxWidth(30);
         relatedPeptidesTable.getColumn("  ").setMinWidth(30);
-        relatedPeptidesTable.getColumn("PTM").setMaxWidth(50);
-        relatedPeptidesTable.getColumn("PTM").setMinWidth(50);
-        relatedPeptidesTable.getColumn("Peptide").setMaxWidth(90);
-        relatedPeptidesTable.getColumn("Peptide").setMinWidth(90);
+        relatedPeptidesTable.getColumn("PTM").setMaxWidth(45);
+        relatedPeptidesTable.getColumn("PTM").setMinWidth(45);
+        relatedPeptidesTable.getColumn("Peptide").setMaxWidth(80);
+        relatedPeptidesTable.getColumn("Peptide").setMinWidth(80);
 
-        selectedPsmsTable.getColumn(" ").setMaxWidth(50);
-        selectedPsmsTable.getColumn(" ").setMinWidth(50);
-        selectedPsmsTable.getColumn("PTM").setMaxWidth(50);
-        selectedPsmsTable.getColumn("PTM").setMinWidth(50);
+        selectedPsmsTable.getColumn(" ").setMaxWidth(45);
+        selectedPsmsTable.getColumn(" ").setMinWidth(45);
+        selectedPsmsTable.getColumn("PTM").setMaxWidth(45);
+        selectedPsmsTable.getColumn("PTM").setMinWidth(45);
         selectedPsmsTable.getColumn("Charge").setMaxWidth(90);
         selectedPsmsTable.getColumn("Charge").setMinWidth(90);
         selectedPsmsTable.getColumn("  ").setMaxWidth(30);
         selectedPsmsTable.getColumn("  ").setMinWidth(30);
 
-        relatedPsmsTable.getColumn(" ").setMaxWidth(50);
-        relatedPsmsTable.getColumn(" ").setMinWidth(50);
-        relatedPsmsTable.getColumn("PTM").setMaxWidth(50);
-        relatedPsmsTable.getColumn("PTM").setMinWidth(50);
+        relatedPsmsTable.getColumn(" ").setMaxWidth(45);
+        relatedPsmsTable.getColumn(" ").setMinWidth(45);
+        relatedPsmsTable.getColumn("PTM").setMaxWidth(45);
+        relatedPsmsTable.getColumn("PTM").setMinWidth(45);
         relatedPsmsTable.getColumn("Charge").setMaxWidth(90);
         relatedPsmsTable.getColumn("Charge").setMinWidth(90);
         relatedPsmsTable.getColumn("  ").setMaxWidth(30);
@@ -282,7 +282,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         peptidesTable.getColumn("Peptide").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Peptide").getCellRenderer()).showNumberAndChart(
-                true, peptideShakerGUI.getLabelWidth(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+                true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
         peptidesTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
@@ -290,7 +290,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         relatedPeptidesTable.getColumn("Peptide").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Peptide").getCellRenderer()).showNumberAndChart(
-                true, peptideShakerGUI.getLabelWidth(), peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+                true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
         relatedPeptidesTable.getColumn("  ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
@@ -388,9 +388,11 @@ public class PtmPanel extends javax.swing.JPanel {
         selectedPeptidesJPanel = new javax.swing.JPanel();
         selectedPeptidesJSplitPane = new javax.swing.JSplitPane();
         peptidesTableJScrollPane = new javax.swing.JScrollPane();
-        peptidesTable = new JTable() {
+        peptidesTable =         new JTable() {
+
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
+
                     public String getToolTipText(MouseEvent e) {
                         String tip = null;
                         java.awt.Point p = e.getPoint();
@@ -400,6 +402,26 @@ public class PtmPanel extends javax.swing.JPanel {
                         return tip;
                     }
                 };
+            }
+
+            /**
+            * Returns false to indicate that <strong class="highlight">horizontal</strong> scrollbars are required
+            * to display the table while honoring perferred column widths. Returns
+            * true if the table can be displayed in viewport without <strong class="highlight">horizontal</strong>
+            * scrollbars.
+            *
+            * @return true if an auto-resizing mode is enabled
+            *   and the viewport width is larger than the table's
+            *   preferred size, otherwise return false.
+            * @see Scrollable#getScrollableTracksViewportWidth
+            */
+            public boolean getScrollableTracksViewportWidth() {
+                if (autoResizeMode != AUTO_RESIZE_OFF) {
+                    if (getParent() instanceof JViewport) {
+                        return (((JViewport) getParent()).getWidth() > getPreferredSize().width);
+                    }
+                }
+                return false;
             }
         };
         modificationProfileSelectedPeptideJPanel = new javax.swing.JPanel();
@@ -411,9 +433,11 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesPanel = new javax.swing.JPanel();
         relatedPeptidesJSplitPane = new javax.swing.JSplitPane();
         relatedPeptidesTableJScrollPane = new javax.swing.JScrollPane();
-        relatedPeptidesTable = new JTable() {
+        relatedPeptidesTable =         new JTable() {
+
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
+
                     public String getToolTipText(MouseEvent e) {
                         String tip = null;
                         java.awt.Point p = e.getPoint();
@@ -423,6 +447,26 @@ public class PtmPanel extends javax.swing.JPanel {
                         return tip;
                     }
                 };
+            }
+
+            /**
+            * Returns false to indicate that <strong class="highlight">horizontal</strong> scrollbars are required
+            * to display the table while honoring perferred column widths. Returns
+            * true if the table can be displayed in viewport without <strong class="highlight">horizontal</strong>
+            * scrollbars.
+            *
+            * @return true if an auto-resizing mode is enabled
+            *   and the viewport width is larger than the table's
+            *   preferred size, otherwise return false.
+            * @see Scrollable#getScrollableTracksViewportWidth
+            */
+            public boolean getScrollableTracksViewportWidth() {
+                if (autoResizeMode != AUTO_RESIZE_OFF) {
+                    if (getParent() instanceof JViewport) {
+                        return (((JViewport) getParent()).getWidth() > getPreferredSize().width);
+                    }
+                }
+                return false;
             }
         };
         modificationProfileRelatedPeptideJPanel = new javax.swing.JPanel();
@@ -2827,6 +2871,21 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
                 ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
                 relatedPeptidesPanel.repaint();
+                
+                // invoke later to give time for components to update
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    public void run() {
+                        // set the preferred size of the accession column
+                        int peptideTableWidth = peptideShakerGUI.getPreferredColumnWidth(peptidesTable, peptidesTable.getColumn("Sequence").getModelIndex(), 1);
+                        int relatedPeptideWidth = peptideShakerGUI.getPreferredColumnWidth(relatedPeptidesTable, relatedPeptidesTable.getColumn("Sequence").getModelIndex(), 1);
+                        
+                        int width = Math.max(peptideTableWidth, relatedPeptideWidth);
+                        
+                        peptidesTable.getColumn("Sequence").setMinWidth(width);
+                        relatedPeptidesTable.getColumn("Sequence").setMinWidth(width);
+                    }
+                });
 
                 updateSelectedPsmTable();
                 updateRelatedPsmTable(false);
@@ -2887,6 +2946,21 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         } else {
             modificationProfileRelatedPeptideJPanel.removeAll();
         }
+        
+        // invoke later to give time for components to update
+        SwingUtilities.invokeLater(new Runnable() {
+
+            public void run() {
+                // set the preferred size of the accession column
+                int peptideTableWidth = peptideShakerGUI.getPreferredColumnWidth(peptidesTable, peptidesTable.getColumn("Sequence").getModelIndex(), 1);
+                int relatedPeptideWidth = peptideShakerGUI.getPreferredColumnWidth(relatedPeptidesTable, relatedPeptidesTable.getColumn("Sequence").getModelIndex(), 1);
+
+                int width = Math.max(peptideTableWidth, relatedPeptideWidth);
+
+                peptidesTable.getColumn("Sequence").setMinWidth(width);
+                relatedPeptidesTable.getColumn("Sequence").setMinWidth(width);
+            }
+        });
 
         ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
         relatedPeptidesPanel.repaint();
@@ -3196,7 +3270,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         ptmPlotPanel.add(chartPanel);
         ptmPlotPanel.revalidate();
         ptmPlotPanel.repaint();
-
     }
 
     /**
