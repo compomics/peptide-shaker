@@ -1751,7 +1751,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             if (row != -1) {
                 updateSpectrum(row, false);
                 String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
-                peptideShakerGUI.selectSpectrum(spectrumKey);
+                peptideShakerGUI.setSelectedSpectrumKey(spectrumKey);
             }
         }
 }//GEN-LAST:event_psmTableKeyReleased
@@ -1811,7 +1811,7 @@ public class OverviewPanel extends javax.swing.JPanel {
             updateSpectrum(row, false);
 
             String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
-            peptideShakerGUI.selectSpectrum(spectrumKey);
+            peptideShakerGUI.setSelectedSpectrumKey(spectrumKey);
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
@@ -1957,7 +1957,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         if (row != -1) {
             updateSpectrum(row, false);
             String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(row, 0));
-            peptideShakerGUI.selectSpectrum(spectrumKey);
+            peptideShakerGUI.setSelectedSpectrumKey(spectrumKey);
 
             if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
                 peptideShakerGUI.openSpectrumIdTab();
@@ -3938,9 +3938,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                 updateSequenceCoverage(proteinMatch.getMainMatch());
 
-                while (psmTable.getRowCount() > 0) {
-                    ((DefaultTableModel) psmTable.getModel()).removeRow(0);
-                }
+                DefaultTableModel dm = (DefaultTableModel) psmTable.getModel();
+                dm.getDataVector().removeAllElements();
 
                 spectrumPanel.removeAll();
                 spectrumPanel.revalidate();
@@ -4013,13 +4012,11 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
             try {
 
-                while (peptideTable.getRowCount() > 0) {
-                    ((DefaultTableModel) peptideTable.getModel()).removeRow(0);
-                }
+                DefaultTableModel dm = (DefaultTableModel) peptideTable.getModel();
+                dm.getDataVector().removeAllElements();
 
-                while (psmTable.getRowCount() > 0) {
-                    ((DefaultTableModel) psmTable.getModel()).removeRow(0);
-                }
+                dm = (DefaultTableModel) psmTable.getModel();
+                dm.getDataVector().removeAllElements();
 
                 spectrumPanel.removeAll();
                 spectrumPanel.revalidate();
@@ -4405,13 +4402,11 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         // if required, clear the peptide and psm tables, and the spectrum and protein sequence displays
         if (proteinTable.getRowCount() == 0) {
 
-            while (peptideTable.getRowCount() > 0) {
-                ((DefaultTableModel) peptideTable.getModel()).removeRow(0);
-            }
+            DefaultTableModel dm = (DefaultTableModel) peptideTable.getModel();
+            dm.getDataVector().removeAllElements();
 
-            while (psmTable.getRowCount() > 0) {
-                ((DefaultTableModel) psmTable.getModel()).removeRow(0);
-            }
+            dm = (DefaultTableModel) psmTable.getModel();
+            dm.getDataVector().removeAllElements();
 
             ((TitledBorder) peptidesPanel.getBorder()).setTitle("Peptides");
             peptidesPanel.repaint();

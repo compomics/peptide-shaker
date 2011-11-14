@@ -119,6 +119,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private String selectedProteinAccession = null;
     /**
+     * The currently selected spectrum key.
+     */
+    private String selectedSpectrumKey = null;
+    /**
      * The Overview tab index.
      */
     private final int OVER_VIEW_TAB_INDEX = 0;
@@ -1805,6 +1809,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX) {
             //goPanel.displayResults(); // @TODO: set species from cps file? @TODO: reload GO enrichment tab if hidden selection is changed!
+        } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
+            if (selectedSpectrumKey != null) {
+                // invoke later to give time for components to update
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    public void run() {
+                        spectrumIdentificationPanel.selectSpectrum(selectedSpectrumKey);
+                    }
+                });
+
+            }
         }
 
         // update the basic protein annotation
@@ -2300,18 +2315,18 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 int returnVal = fileChooser.showSaveDialog(this);
 
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    
+
                     String tempPath = fileChooser.getSelectedFile().getAbsolutePath();
-                    
+
                     if (!tempPath.endsWith(".zip")) {
                         tempPath += ".zip";
                     }
-                    
+
                     File tempZipFile = new File(tempPath);
                     setLastSelectedFolder(tempZipFile.getAbsolutePath());
-                    
+
                     int outcome = JOptionPane.YES_OPTION;
-                    
+
                     if (tempZipFile.exists()) {
                         outcome = JOptionPane.showConfirmDialog(progressDialog,
                                 "Should " + tempZipFile.getName() + " be overwritten?", "Selected File Already Exists",
@@ -2321,9 +2336,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     if (outcome != JOptionPane.YES_OPTION) {
                         return;
                     }
-                    
+
                     final File zipFile = tempZipFile;
-                    
+
 
                     final PeptideShakerGUI tempRef = this; // needed due to threading issues
                     progressDialog = new ProgressDialogX(this, this, true);
@@ -3247,12 +3262,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Selects the desired spectrum in the spectrum Id tab.
+     * Sets the currently selected spectrum key.
      * 
-     * @param spectrumKey the key of the desired spectrum
+     * @param spectrumKey the key for the selected spectrum
      */
-    public void selectSpectrum(String spectrumKey) {
-        spectrumIdentificationPanel.selectSpectrum(spectrumKey);
+    public void setSelectedSpectrumKey(String spectrumKey) {
+        selectedSpectrumKey = spectrumKey;
     }
 
     /**
@@ -3556,7 +3571,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         // repaint the panels
         repaintPanels();
-        
+
         // select the overview tab
         allTabsJTabbedPane.setSelectedIndex(0);
 
