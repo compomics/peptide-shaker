@@ -1703,7 +1703,7 @@ public class PtmPanel extends javax.swing.JPanel {
 //                }
             }
         }
-
+        
         relatedSelected = false;
         updateRelatedPeptidesTable();
         updateSelectedPsmTable();
@@ -2746,9 +2746,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         Arrays.sort(modifications);
 
-        while (ptmJTable.getRowCount() > 0) {
-            ((DefaultTableModel) ptmJTable.getModel()).removeRow(0);
-        }
+        DefaultTableModel dm = (DefaultTableModel) ptmJTable.getModel();
+        dm.getDataVector().removeAllElements();
 
         for (int i = 0; i < modifications.length; i++) {
 
@@ -2971,10 +2970,12 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         ((DefaultTableModel) selectedPsmsTable.getModel()).fireTableDataChanged();
 
         if (selectedPsmsTable.getRowCount() > 0) {
+            
             selectedPsmsTable.setRowSelectionInterval(0, 0);
             selectedPsmsTable.scrollRectToVisible(selectedPsmsTable.getCellRect(0, 0, false));
+
             try {
-                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
+                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());    
                 updateSpectrum(spectrumKey);
                 ArrayList<String> spectra = new ArrayList<String>();
                 spectra.add(spectrumKey);
@@ -2984,7 +2985,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 e.printStackTrace();
             }
         }
-
+        
         ((TitledBorder) modsPsmsLayeredPanel.getBorder()).setTitle("Peptide-Spectrum Matches - Modified Peptide (" + selectedPsmsTable.getRowCount() + ")");
         modsPsmsLayeredPanel.repaint();
     }
@@ -3280,12 +3281,11 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             spectrumChartJPanel.removeAll();
             spectrumChartJPanel.revalidate();
             spectrumChartJPanel.repaint();
-
+            
             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
-            peptideShakerGUI.selectSpectrum(spectrumKey);
-
+            peptideShakerGUI.setSelectedSpectrumKey(spectrumKey); 
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-
+            
             if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
 
                 Precursor precursor = currentSpectrum.getPrecursor();
@@ -3314,7 +3314,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
-
+                
                 spectrumChartJPanel.add(spectrum);
 
                 ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(

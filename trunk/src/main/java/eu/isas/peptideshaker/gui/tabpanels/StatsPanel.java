@@ -2718,9 +2718,8 @@ public class StatsPanel extends javax.swing.JPanel {
         sensitivitySlider2.setEnabled(true);
 
         // empty the group table
-        while (groupSelectionTable.getRowCount() > 0) {
-            ((DefaultTableModel) groupSelectionTable.getModel()).removeRow(0);
-        }
+        DefaultTableModel dm = (DefaultTableModel) groupSelectionTable.getModel();
+        dm.getDataVector().removeAllElements();
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         PSMaps pSMaps = new PSMaps();

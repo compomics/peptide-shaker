@@ -1499,9 +1499,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         if (loadStructure) {
 
-            while (pdbChainsJTable.getRowCount() > 0) {
-                ((DefaultTableModel) pdbChainsJTable.getModel()).removeRow(0);
-            }
+            DefaultTableModel dm = (DefaultTableModel) pdbChainsJTable.getModel();
+            dm.getDataVector().removeAllElements();
 
             // clear the peptide to pdb mappings in the peptide table
             for (int i = 0; i < peptideTable.getRowCount(); i++) {
@@ -2511,9 +2510,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
             try {
-                while (peptideTable.getRowCount() > 0) {
-                    ((DefaultTableModel) peptideTable.getModel()).removeRow(0);
-                }
+                DefaultTableModel dm = (DefaultTableModel) peptideTable.getModel();
+                dm.getDataVector().removeAllElements();
 
                 String proteinKey = proteinTableMap.get(getProteinKey(row));
                 peptideTableMap = new HashMap<Integer, String>();
@@ -2862,13 +2860,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     uniProtPdb = new FindPdbForUniprotAccessions(tempAccession);
 
                     // delete the previous matches
-                    while (pdbMatchesJTable.getRowCount() > 0) {
-                        ((DefaultTableModel) pdbMatchesJTable.getModel()).removeRow(0);
-                    }
+                    DefaultTableModel dm = (DefaultTableModel) pdbMatchesJTable.getModel();
+                    dm.getDataVector().removeAllElements();
 
-                    while (pdbChainsJTable.getRowCount() > 0) {
-                        ((DefaultTableModel) pdbChainsJTable.getModel()).removeRow(0);
-                    }
+                    dm = (DefaultTableModel) pdbChainsJTable.getModel();
+                    dm.getDataVector().removeAllElements();
 
                     // clear the peptide to pdb mappings in the peptide table
                     for (int i = 0; i < peptideTable.getRowCount(); i++) {

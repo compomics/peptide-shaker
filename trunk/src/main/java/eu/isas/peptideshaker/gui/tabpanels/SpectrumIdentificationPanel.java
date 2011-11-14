@@ -141,6 +141,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * The identification
      */
     private Identification identification;
+    /**
+     * The currently selected spectrum key in the Spectrum ID tab.
+     */
+    private String selectedSpectrumKeySpectrumIdTab = null;
 
     /**
      * Create a new SpectrumIdentificationPanel.
@@ -254,7 +258,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        
+
         // set up the table header tooltips
         searchEngineTableToolTips = new ArrayList<String>();
         searchEngineTableToolTips.add(null);
@@ -2436,10 +2440,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      */
     private void fileSelectionChanged() {
 
-        while (spectrumTable.getRowCount() > 0) {
-            ((DefaultTableModel) spectrumTable.getModel()).removeRow(0);
-        }
-
+        DefaultTableModel dm = (DefaultTableModel) spectrumTable.getModel();
+        dm.getDataVector().removeAllElements();
+ 
         String fileSelected = (String) fileNamesCmb.getSelectedItem();
 
         int maxCharge = Integer.MIN_VALUE;
@@ -2515,21 +2518,49 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      */
     public void selectSpectrum(String spectrumKey) {
 
-        String fileName = Spectrum.getSpectrumFile(spectrumKey);
-        String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
+        if (selectedSpectrumKeySpectrumIdTab == null || 
+                !selectedSpectrumKeySpectrumIdTab.equalsIgnoreCase(spectrumKey)) {
 
-        fileNamesCmb.setSelectedItem(fileName);
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-        // We might want something faster here
-        for (int i = 0; i < spectrumTable.getRowCount(); i++) {
-            if (((String) spectrumTable.getValueAt(i, 1)).equals(spectrumTitle)) {
-                spectrumTable.setRowSelectionInterval(i, i);
-                spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(i, 0, false));
-                break;
-            }
+            new Thread(new Runnable() {
+
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Updating Spectrum Selection. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
+
+            final String finalSpectrumKey = spectrumKey;
+
+            new Thread("SpectrumSelectionThread") {
+
+                @Override
+                public void run() {
+
+                    String fileName = Spectrum.getSpectrumFile(finalSpectrumKey);
+                    String spectrumTitle = Spectrum.getSpectrumTitle(finalSpectrumKey);
+ 
+                    fileNamesCmb.setSelectedItem(fileName);
+                    
+                    // We might want something faster here
+                    for (int i = 0; i < spectrumTable.getRowCount(); i++) {
+                        if (((String) spectrumTable.getValueAt(i, 1)).equals(spectrumTitle)) {
+                            spectrumTable.setRowSelectionInterval(i, i);
+                            spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(i, 0, false));
+                            break;
+                        }
+                    }
+                    
+                    selectedSpectrumKeySpectrumIdTab = finalSpectrumKey;
+                    spectrumSelectionChanged();
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                }
+            }.start();
         }
-
-        spectrumSelectionChanged();
     }
 
     /**
@@ -2541,18 +2572,17 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
             try {
 
                 // empty the tables
-                while (peptideShakerJTable.getRowCount() > 0) {
-                    ((DefaultTableModel) peptideShakerJTable.getModel()).removeRow(0);
-                }
-                while (omssaTable.getRowCount() > 0) {
-                    ((DefaultTableModel) omssaTable.getModel()).removeRow(0);
-                }
-                while (mascotTable.getRowCount() > 0) {
-                    ((DefaultTableModel) mascotTable.getModel()).removeRow(0);
-                }
-                while (xTandemTable.getRowCount() > 0) {
-                    ((DefaultTableModel) xTandemTable.getModel()).removeRow(0);
-                }
+                DefaultTableModel dm = (DefaultTableModel) peptideShakerJTable.getModel();
+                dm.getDataVector().removeAllElements();
+
+                dm = (DefaultTableModel) omssaTable.getModel();
+                dm.getDataVector().removeAllElements();
+
+                dm = (DefaultTableModel) mascotTable.getModel();
+                dm.getDataVector().removeAllElements();
+
+                dm = (DefaultTableModel) xTandemTable.getModel();
+                dm.getDataVector().removeAllElements();
 
                 omssaTablePeptideTooltips = new HashMap<Integer, String>();
                 xTandemTablePeptideTooltips = new HashMap<Integer, String>();

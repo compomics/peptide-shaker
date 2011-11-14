@@ -356,9 +356,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                     public void run() {
 
                         // clear old table
-                        while (goMappingsTable.getRowCount() > 0) {
-                            ((DefaultTableModel) goMappingsTable.getModel()).removeRow(0);
-                        }
+                        DefaultTableModel dm = (DefaultTableModel) goMappingsTable.getModel();
+                        dm.getDataVector().removeAllElements();
 
                         if (!goMappingsFile.exists()) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Mapping file \"" + goMappingsFile.getName() + "\" not found!",
@@ -2113,9 +2112,8 @@ public class GOEAPanel extends javax.swing.JPanel {
         goMappingsLoaded = false;
 
         // clear old results
-        while (goMappingsTable.getRowCount() > 0) {
-            ((DefaultTableModel) goMappingsTable.getModel()).removeRow(0);
-        }
+        DefaultTableModel dm = (DefaultTableModel) goMappingsTable.getModel();
+        dm.getDataVector().removeAllElements();
 
         goFrequencyPlotPanel.removeAll();
         goFrequencyPlotPanel.revalidate();
