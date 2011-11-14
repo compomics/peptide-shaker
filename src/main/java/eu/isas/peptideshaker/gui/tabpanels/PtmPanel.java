@@ -75,6 +75,11 @@ import org.jfree.data.xy.DefaultXYDataset;
 public class PtmPanel extends javax.swing.JPanel {
 
     /**
+     * It true the tab has been initiated, i.e., the data displayed at leaat once. 
+     * False means that the tab has to be loaded from scratch.
+     */
+    private boolean tabInitiated = false;
+    /**
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
@@ -171,7 +176,7 @@ public class PtmPanel extends javax.swing.JPanel {
         peptidesTable.setAutoCreateRowSorter(true);
         relatedPeptidesTable.setAutoCreateRowSorter(true);
         selectedPsmsTable.setAutoCreateRowSorter(true);
-        
+
         relatedPeptidesTableJScrollPane.getViewport().setOpaque(false);
         psmsModifiedTableJScrollPane.getViewport().setOpaque(false);
         psmsRelatedTableJScrollPane.getViewport().setOpaque(false);
@@ -1703,7 +1708,7 @@ public class PtmPanel extends javax.swing.JPanel {
 //                }
             }
         }
-        
+
         relatedSelected = false;
         updateRelatedPeptidesTable();
         updateSelectedPsmTable();
@@ -2671,7 +2676,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         selectedPsmsTable.revalidate();
         selectedPsmsTable.repaint();
-        
+
         relatedPsmsTable.revalidate();
         relatedPsmsTable.repaint();
     }
@@ -2727,66 +2732,84 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
     /**
      * Displays the results.
-     * 
-     * @param progressDialog a progress dialog. Can be null.
      */
-    public void displayResults(ProgressDialogX progressDialog) {
+    public void displayResults() {
 
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.doNothingOnClose();
 
-        this.identification = peptideShakerGUI.getIdentification();
-        createPeptideMap(progressDialog);
-        String[] modifications = new String[peptideMap.size()];
-        int cpt = 0;
+        new Thread(new Runnable() {
 
-        for (String modification : peptideMap.keySet()) {
-            modifications[cpt] = modification;
-            cpt++;
-        }
-
-        Arrays.sort(modifications);
-
-        DefaultTableModel dm = (DefaultTableModel) ptmJTable.getModel();
-        dm.getDataVector().removeAllElements();
-
-        for (int i = 0; i < modifications.length; i++) {
-
-            if (!modifications[i].equalsIgnoreCase(NO_MODIFICATION)) {
-                ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{
-                            peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(modifications[i]),
-                            modifications[i]
-                        });
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Updating Data. Please Wait...");
+                progressDialog.setVisible(true);
             }
-        }
+        }, "ProgressDialog").start();
 
-        ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{
-                    Color.lightGray,
-                    NO_MODIFICATION});
+        new Thread("DisplayThread") {
 
-        if (ptmJTable.getRowCount() > 0) {
-            ptmJTable.setRowSelectionInterval(0, 0);
-            ptmJTable.scrollRectToVisible(ptmJTable.getCellRect(0, 0, false));
-            updatePeptideTable();
-        }
+            @Override
+            public void run() {
 
-        // update the slider tooltips
-        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
-        accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
-        intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
+                identification = peptideShakerGUI.getIdentification();
+                createPeptideMap(progressDialog);
+                String[] modifications = new String[peptideMap.size()];
+                int cpt = 0;
 
-        ((JSparklinesBarChartTableCellRenderer) selectedPsmsTable.getColumn("Charge").getCellRenderer()).setMaxValue(
-                (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge());
-        ((JSparklinesBarChartTableCellRenderer) relatedPsmsTable.getColumn("Charge").getCellRenderer()).setMaxValue(
-                (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge());
+                for (String modification : peptideMap.keySet()) {
+                    modifications[cpt] = modification;
+                    cpt++;
+                }
 
-        // enable the contextual export options
-        exportModifiedPeptideProfileJButton.setEnabled(true);
-        exportRelatedPeptideProfileJButton.setEnabled(true);
-        exportSpectrumJButton.setEnabled(true);
-        exportModifiedPsmsJButton.setEnabled(true);
-        exportRelatedPsmsJButton.setEnabled(true);
+                Arrays.sort(modifications);
 
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+                DefaultTableModel dm = (DefaultTableModel) ptmJTable.getModel();
+                dm.getDataVector().removeAllElements();
+
+                for (int i = 0; i < modifications.length; i++) {
+
+                    if (!modifications[i].equalsIgnoreCase(NO_MODIFICATION)) {
+                        ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{
+                                    peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(modifications[i]),
+                                    modifications[i]
+                                });
+                    }
+                }
+
+                ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{
+                            Color.lightGray,
+                            NO_MODIFICATION});
+
+//                if (ptmJTable.getRowCount() > 0) {
+//                    ptmJTable.setRowSelectionInterval(0, 0);
+//                    ptmJTable.scrollRectToVisible(ptmJTable.getCellRect(0, 0, false));
+//                    updatePeptideTable();
+//                }
+
+                // update the slider tooltips
+                double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+                accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+                intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
+
+                ((JSparklinesBarChartTableCellRenderer) selectedPsmsTable.getColumn("Charge").getCellRenderer()).setMaxValue(
+                        (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge());
+                ((JSparklinesBarChartTableCellRenderer) relatedPsmsTable.getColumn("Charge").getCellRenderer()).setMaxValue(
+                        (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge());
+
+                // enable the contextual export options
+                exportModifiedPeptideProfileJButton.setEnabled(true);
+                exportRelatedPeptideProfileJButton.setEnabled(true);
+                exportSpectrumJButton.setEnabled(true);
+                exportModifiedPsmsJButton.setEnabled(true);
+                exportRelatedPsmsJButton.setEnabled(true);
+
+                tabInitiated = true;
+
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+            }
+        }.start();
     }
 
     /**
@@ -2796,102 +2819,129 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         if (ptmJTable.getSelectedRow() != -1) {
 
-            // @TODO: replace the waiting cursor with a progress bar?
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            new Thread(new Runnable() {
 
-            // clear the spectrum
-            spectrumChartJPanel.removeAll();
-            spectrumChartJPanel.revalidate();
-            spectrumChartJPanel.repaint();
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Getting Modifications. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
 
-            try {
-                HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<Double, ArrayList<String>>();
-                PeptideMatch peptideMatch;
-                PSParameter probabilities = new PSParameter();
-                double p;
+            new Thread("DisplayThread") {
 
-                for (String peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()))) {
+                @Override
+                public void run() {
 
-                    peptideMatch = identification.getPeptideMatch(peptideKey);
+                    // clear the spectrum
+                    spectrumChartJPanel.removeAll();
+                    spectrumChartJPanel.revalidate();
+                    spectrumChartJPanel.repaint();
 
-                    if (!peptideMatch.isDecoy()) {
+                    try {
+                        HashMap<Double, ArrayList<String>> scoreToPeptideMap = new HashMap<Double, ArrayList<String>>();
+                        PeptideMatch peptideMatch;
+                        PSParameter probabilities = new PSParameter();
+                        double p;
 
-                        probabilities = (PSParameter) identification.getMatchParameter(peptideKey, probabilities);
-                        p = probabilities.getPeptideProbability();
+                        for (String peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()))) {
 
-                        if (!scoreToPeptideMap.containsKey(p)) {
-                            scoreToPeptideMap.put(p, new ArrayList<String>());
+                            peptideMatch = identification.getPeptideMatch(peptideKey);
+
+                            if (!peptideMatch.isDecoy()) {
+
+                                probabilities = (PSParameter) identification.getMatchParameter(peptideKey, probabilities);
+                                p = probabilities.getPeptideProbability();
+
+                                if (!scoreToPeptideMap.containsKey(p)) {
+                                    scoreToPeptideMap.put(p, new ArrayList<String>());
+                                }
+
+                                scoreToPeptideMap.get(p).add(peptideKey);
+                            }
                         }
 
-                        scoreToPeptideMap.get(p).add(peptideKey);
+                        ArrayList<Double> scores = new ArrayList<Double>(scoreToPeptideMap.keySet());
+                        Collections.sort(scores);
+                        displayedPeptides = new ArrayList<String>();
+
+                        for (double score : scores) {
+                            displayedPeptides.addAll(scoreToPeptideMap.get(score));
+                        }
+
+                        ((DefaultTableModel) peptidesTable.getModel()).fireTableDataChanged();
+
+                        if (peptidesTable.getRowCount() > 0) {
+                            peptidesTable.setRowSelectionInterval(0, 0);
+                            peptidesTable.scrollRectToVisible(peptidesTable.getCellRect(0, 0, false));
+                            updateRelatedPeptidesTable();
+                            updateModificationProfiles();
+                        } else {
+                            modificationProfileSelectedPeptideJPanel.removeAll();
+                            modificationProfileSelectedPeptideJPanel.revalidate();
+                            modificationProfileSelectedPeptideJPanel.repaint();
+
+                            modificationProfileRelatedPeptideJPanel.removeAll();
+                            modificationProfileRelatedPeptideJPanel.revalidate();
+                            modificationProfileRelatedPeptideJPanel.repaint();
+
+                            relatedPeptides = new ArrayList<String>();
+                            ((DefaultTableModel) relatedPeptidesTable.getModel()).fireTableDataChanged();
+                        }
+
+                        String selectedPTM = "";
+
+                        if (ptmJTable.getSelectedRow() != -1) {
+                            selectedPTM = "- " + ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()) + " ";
+                        }
+
+                        ((TitledBorder) selectedPeptidesJPanel.getBorder()).setTitle("Modified Peptides " + selectedPTM + "(" + peptidesTable.getRowCount() + ")");
+                        selectedPeptidesJPanel.repaint();
+
+                        ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
+                        relatedPeptidesPanel.repaint();
+
+                        // invoke later to give time for components to update
+                        SwingUtilities.invokeLater(new Runnable() {
+
+                            public void run() {
+                                // set the preferred size of the accession column
+                                int peptideTableWidth = peptideShakerGUI.getPreferredColumnWidth(peptidesTable, peptidesTable.getColumn("Sequence").getModelIndex(), 1);
+                                int relatedPeptideWidth = peptideShakerGUI.getPreferredColumnWidth(relatedPeptidesTable, relatedPeptidesTable.getColumn("Sequence").getModelIndex(), 1);
+
+                                int width = Math.max(peptideTableWidth, relatedPeptideWidth);
+
+                                peptidesTable.getColumn("Sequence").setMinWidth(width);
+                                relatedPeptidesTable.getColumn("Sequence").setMinWidth(width);
+                            }
+                        });
+
+                        ((DefaultTableModel) selectedPsmsTable.getModel()).fireTableDataChanged();
+                        ((DefaultTableModel) relatedPsmsTable.getModel()).fireTableDataChanged();
+
+                        // invoke later to give time for components to update
+                        SwingUtilities.invokeLater(new Runnable() {
+
+                            public void run() {
+                                updateSelectedPsmTable();
+                                updateRelatedPsmTable(false);
+                            }
+                        });
+
+                    } catch (Exception e) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                        System.out.println("Exception when updating selected peptides table...");
+                        peptideShakerGUI.catchException(e);
                     }
+
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
                 }
-
-                ArrayList<Double> scores = new ArrayList<Double>(scoreToPeptideMap.keySet());
-                Collections.sort(scores);
-                displayedPeptides = new ArrayList<String>();
-
-                for (double score : scores) {
-                    displayedPeptides.addAll(scoreToPeptideMap.get(score));
-                }
-
-                ((DefaultTableModel) peptidesTable.getModel()).fireTableDataChanged();
-
-                if (peptidesTable.getRowCount() > 0) {
-                    peptidesTable.setRowSelectionInterval(0, 0);
-                    peptidesTable.scrollRectToVisible(peptidesTable.getCellRect(0, 0, false));
-                    updateRelatedPeptidesTable();
-                    updateModificationProfiles();
-                } else {
-                    modificationProfileSelectedPeptideJPanel.removeAll();
-                    modificationProfileSelectedPeptideJPanel.revalidate();
-                    modificationProfileSelectedPeptideJPanel.repaint();
-
-                    modificationProfileRelatedPeptideJPanel.removeAll();
-                    modificationProfileRelatedPeptideJPanel.revalidate();
-                    modificationProfileRelatedPeptideJPanel.repaint();
-
-                    relatedPeptides = new ArrayList<String>();
-                    ((DefaultTableModel) relatedPeptidesTable.getModel()).fireTableDataChanged();
-                }
-
-                String selectedPTM = "";
-
-                if (ptmJTable.getSelectedRow() != -1) {
-                    selectedPTM = "- " + ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()) + " ";
-                }
-
-                ((TitledBorder) selectedPeptidesJPanel.getBorder()).setTitle("Modified Peptides " + selectedPTM + "(" + peptidesTable.getRowCount() + ")");
-                selectedPeptidesJPanel.repaint();
-
-                ((TitledBorder) relatedPeptidesPanel.getBorder()).setTitle("Related Peptides (" + relatedPeptidesTable.getRowCount() + ")");
-                relatedPeptidesPanel.repaint();
-                
-                // invoke later to give time for components to update
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    public void run() {
-                        // set the preferred size of the accession column
-                        int peptideTableWidth = peptideShakerGUI.getPreferredColumnWidth(peptidesTable, peptidesTable.getColumn("Sequence").getModelIndex(), 1);
-                        int relatedPeptideWidth = peptideShakerGUI.getPreferredColumnWidth(relatedPeptidesTable, relatedPeptidesTable.getColumn("Sequence").getModelIndex(), 1);
-                        
-                        int width = Math.max(peptideTableWidth, relatedPeptideWidth);
-                        
-                        peptidesTable.getColumn("Sequence").setMinWidth(width);
-                        relatedPeptidesTable.getColumn("Sequence").setMinWidth(width);
-                    }
-                });
-
-                updateSelectedPsmTable();
-                updateRelatedPsmTable(false);
-
-            } catch (Exception e) {
-                System.out.println("Exception when updating selected peptides table...");
-                peptideShakerGUI.catchException(e);
-            }
-
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }.start();
         }
     }
 
@@ -2942,7 +2992,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         } else {
             modificationProfileRelatedPeptideJPanel.removeAll();
         }
-        
+
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
 
@@ -2970,12 +3020,12 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         ((DefaultTableModel) selectedPsmsTable.getModel()).fireTableDataChanged();
 
         if (selectedPsmsTable.getRowCount() > 0) {
-            
+
             selectedPsmsTable.setRowSelectionInterval(0, 0);
             selectedPsmsTable.scrollRectToVisible(selectedPsmsTable.getCellRect(0, 0, false));
 
             try {
-                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());    
+                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
                 updateSpectrum(spectrumKey);
                 ArrayList<String> spectra = new ArrayList<String>();
                 spectra.add(spectrumKey);
@@ -2985,7 +3035,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 e.printStackTrace();
             }
         }
-        
+
         ((TitledBorder) modsPsmsLayeredPanel.getBorder()).setTitle("Peptide-Spectrum Matches - Modified Peptide (" + selectedPsmsTable.getRowCount() + ")");
         modsPsmsLayeredPanel.repaint();
     }
@@ -3281,11 +3331,11 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             spectrumChartJPanel.removeAll();
             spectrumChartJPanel.revalidate();
             spectrumChartJPanel.repaint();
-            
+
             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
-            peptideShakerGUI.setSelectedSpectrumKey(spectrumKey); 
+            peptideShakerGUI.setSelectedSpectrumKey(spectrumKey);
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-            
+
             if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
 
                 Precursor precursor = currentSpectrum.getPrecursor();
@@ -3314,7 +3364,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
                 spectrum.showAnnotatedPeaksOnly(!annotationPreferences.showAllPeaks());
                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
-                
+
                 spectrumChartJPanel.add(spectrum);
 
                 ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(
@@ -4110,5 +4160,14 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         }
 
         return results;
+    }
+
+    /**
+     * Returns true if the tab has been loaded at least once.
+     * 
+     * @return true if the tab has been loaded at least once
+     */
+    public boolean isInitiated() {
+        return tabInitiated;
     }
 }

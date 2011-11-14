@@ -44,6 +44,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
@@ -61,6 +62,11 @@ import org.jfree.chart.plot.PlotOrientation;
  */
 public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
+    /**
+     * It true the tab has been initiated, i.e., the data displayed at leaat once. 
+     * False means that the tab has to be loaded from scratch.
+     */
+    private boolean tabInitiated = false;
     /**
      * The progress dialog.
      */
@@ -1019,7 +1025,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumSelectionPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum Selection"));
         spectrumSelectionPanel.setOpaque(false);
 
-        fileNamesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "File Name" }));
         fileNamesCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 fileNamesCmbActionPerformed(evt);
@@ -2249,124 +2254,155 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
     /**
      * Displays the results in the panel.
-     * 
-     * @param progressDialog a progress dialog. Can be null.
      */
-    public void displayResults(ProgressDialogX progressDialog) {
+    public void displayResults() {
 
-        try {
-            identification = peptideShakerGUI.getIdentification();
-            int m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0;
-            boolean mascot, omssa, xTandem;
-            PSParameter probabilities = new PSParameter();
-            SpectrumMatch spectrumMatch;
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.doNothingOnClose();
 
-            for (String spectrumKey : identification.getSpectrumIdentification()) {
-                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                mascot = false;
-                omssa = false;
-                xTandem = false;
-                probabilities = (PSParameter) identification.getMatchParameter(spectrumKey, probabilities);
+        new Thread(new Runnable() {
 
-                if (probabilities.isValidated()) {
-                    if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
-                        if (spectrumMatch.getFirstHit(Advocate.MASCOT).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
-                            mascot = true;
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Updating Data. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("DisplayThread") {
+
+            @Override
+            public void run() {
+
+                try {
+                    identification = peptideShakerGUI.getIdentification();
+                    int m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0;
+                    boolean mascot, omssa, xTandem;
+                    PSParameter probabilities = new PSParameter();
+                    SpectrumMatch spectrumMatch;
+
+                    progressDialog.setIndeterminate(false);
+                    progressDialog.setMax(identification.getSpectrumIdentification().size());
+                    progressDialog.setValue(0);
+
+                    for (String spectrumKey : identification.getSpectrumIdentification()) {
+                        spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                        mascot = false;
+                        omssa = false;
+                        xTandem = false;
+                        probabilities = (PSParameter) identification.getMatchParameter(spectrumKey, probabilities);
+
+                        if (probabilities.isValidated()) {
+                            if (spectrumMatch.getFirstHit(Advocate.MASCOT) != null) {
+                                if (spectrumMatch.getFirstHit(Advocate.MASCOT).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                    mascot = true;
+                                }
+                            }
+                            if (spectrumMatch.getFirstHit(Advocate.OMSSA) != null) {
+                                if (spectrumMatch.getFirstHit(Advocate.OMSSA).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                    omssa = true;
+                                }
+                            }
+                            if (spectrumMatch.getFirstHit(Advocate.XTANDEM) != null) {
+                                if (spectrumMatch.getFirstHit(Advocate.XTANDEM).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
+                                    xTandem = true;
+                                }
+                            }
                         }
-                    }
-                    if (spectrumMatch.getFirstHit(Advocate.OMSSA) != null) {
-                        if (spectrumMatch.getFirstHit(Advocate.OMSSA).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
-                            omssa = true;
-                        }
-                    }
-                    if (spectrumMatch.getFirstHit(Advocate.XTANDEM) != null) {
-                        if (spectrumMatch.getFirstHit(Advocate.XTANDEM).getPeptide().isSameAs(spectrumMatch.getBestAssumption().getPeptide())) {
-                            xTandem = true;
-                        }
-                    }
-                }
 
-                if (mascot && omssa && xTandem) {
-                    omx++;
-                } else if (mascot && omssa) {
-                    mo++;
-                } else if (omssa && xTandem) {
-                    ox++;
-                } else if (mascot && xTandem) {
-                    mx++;
-                } else if (mascot) {
-                    m++;
-                } else if (omssa) {
-                    o++;
-                } else if (xTandem) {
-                    x++;
-                }
-                if (progressDialog != null) {
-                    progressDialog.incrementValue();
+                        if (mascot && omssa && xTandem) {
+                            omx++;
+                        } else if (mascot && omssa) {
+                            mo++;
+                        } else if (omssa && xTandem) {
+                            ox++;
+                        } else if (mascot && xTandem) {
+                            mx++;
+                        } else if (mascot) {
+                            m++;
+                        } else if (omssa) {
+                            o++;
+                        } else if (xTandem) {
+                            x++;
+                        }
+
+                        progressDialog.incrementValue();
+                    }
+
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Updating Display. Please Wait...");
+
+                    int nMascot = omx + mo + mx + m;
+                    int nOMSSA = omx + mo + ox + o;
+                    int nXTandem = omx + mx + ox + x;
+
+                    double biggestValue = Math.max(Math.max(nMascot, nOMSSA), nXTandem);
+
+                    updateVennDiagram(vennDiagramButton, nOMSSA, nXTandem, nMascot,
+                            (ox + omx), (mo + omx), (mx + omx), omx,
+                            "OMSSA", "X!Tandem", "Mascot");
+
+                    ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                1, "OMSSA",
+                                nOMSSA, o, nOMSSA, ox + omx, mo + omx, omx
+                            });
+                    ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                2, "X!Tandem",
+                                nXTandem, x, ox + omx, nXTandem, mx + omx, omx
+                            });
+                    ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                3, "Mascot",
+                                nMascot, m, mo + omx, mx + omx, nMascot, omx
+                            });
+
+                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).setMaxValue(biggestValue);
+                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).setMaxValue(biggestValue);
+                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("OMSSA").getCellRenderer()).setMaxValue(biggestValue);
+                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).setMaxValue(biggestValue);
+                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).setMaxValue(biggestValue);
+                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).setMaxValue(biggestValue);
+
+                    searchEngineTable.revalidate();
+                    searchEngineTable.repaint();
+
+                    ArrayList<String> fileNames = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
+                    String[] filesArray = new String[fileNames.size()];
+                    int cpt = 0;
+
+                    for (String tempName : fileNames) {
+                        filesArray[cpt] = Util.getFileName(tempName);
+                        cpt++;
+                    }
+
+                    fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
+                    fileSelectionChanged();
+
+                    // update the slider tooltips
+                    double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+                    accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+                    intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
+
+                    formComponentResized(null);
+
+                    // enable the contextual export options
+                    exportSearchEnginePerformanceJButton.setEnabled(true);
+                    exportSpectrumSelectionJButton.setEnabled(true);
+                    exportSpectrumJButton.setEnabled(true);
+                    exportPsmsJButton.setEnabled(true);
+
+                    tabInitiated = true;
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+
+                    selectSpectrum(peptideShakerGUI.getSelectedSpectrumKey());
+
+                } catch (Exception e) {
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                    peptideShakerGUI.catchException(e);
                 }
             }
-
-            int nMascot = omx + mo + mx + m;
-            int nOMSSA = omx + mo + ox + o;
-            int nXTandem = omx + mx + ox + x;
-
-            double biggestValue = Math.max(Math.max(nMascot, nOMSSA), nXTandem);
-
-            updateVennDiagram(vennDiagramButton, nOMSSA, nXTandem, nMascot,
-                    (ox + omx), (mo + omx), (mx + omx), omx,
-                    "OMSSA", "X!Tandem", "Mascot");
-
-            ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                        1, "OMSSA",
-                        nOMSSA, o, nOMSSA, ox + omx, mo + omx, omx
-                    });
-            ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                        2, "X!Tandem",
-                        nXTandem, x, ox + omx, nXTandem, mx + omx, omx
-                    });
-            ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                        3, "Mascot",
-                        nMascot, m, mo + omx, mx + omx, nMascot, omx
-                    });
-
-            ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).setMaxValue(biggestValue);
-            ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).setMaxValue(biggestValue);
-            ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("OMSSA").getCellRenderer()).setMaxValue(biggestValue);
-            ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).setMaxValue(biggestValue);
-            ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).setMaxValue(biggestValue);
-            ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).setMaxValue(biggestValue);
-
-            searchEngineTable.revalidate();
-            searchEngineTable.repaint();
-
-            ArrayList<String> fileNames = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
-            String[] filesArray = new String[fileNames.size()];
-            int cpt = 0;
-
-            for (String tempName : fileNames) {
-                filesArray[cpt] = Util.getFileName(tempName);
-                cpt++;
-            }
-
-            fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
-            fileSelectionChanged();
-
-            // update the slider tooltips
-            double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
-            accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
-            intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
-
-            formComponentResized(null);
-
-            // enable the contextual export options
-            exportSearchEnginePerformanceJButton.setEnabled(true);
-            exportSpectrumSelectionJButton.setEnabled(true);
-            exportSpectrumJButton.setEnabled(true);
-            exportPsmsJButton.setEnabled(true);
-
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-        }
+        }.start();
     }
 
     /**
@@ -2442,7 +2478,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
         DefaultTableModel dm = (DefaultTableModel) spectrumTable.getModel();
         dm.getDataVector().removeAllElements();
- 
+
         String fileSelected = (String) fileNamesCmb.getSelectedItem();
 
         int maxCharge = Integer.MIN_VALUE;
@@ -2453,6 +2489,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
         int counter = 0;
         String spectrumKey;
+
         for (String spectrumTitle : SpectrumFactory.getInstance().getSpectrumTitles(fileSelected)) {
 
             spectrumKey = Spectrum.getSpectrumKey(fileSelected, spectrumTitle);
@@ -2492,6 +2529,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
             }
         }
 
+        ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("Spectrum Selection (" + spectrumTable.getRowCount() + ")");
+        spectrumSelectionPanel.repaint();
+
         //lLowRT -= 1.0;
         //double widthOfMarker = (lHighRT / lLowRT) * 4; // @TODO: switch this back on later??
 
@@ -2518,8 +2558,8 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      */
     public void selectSpectrum(String spectrumKey) {
 
-        if (selectedSpectrumKeySpectrumIdTab == null || 
-                !selectedSpectrumKeySpectrumIdTab.equalsIgnoreCase(spectrumKey)) {
+        if (spectrumKey != null && (selectedSpectrumKeySpectrumIdTab == null
+                || !selectedSpectrumKeySpectrumIdTab.equalsIgnoreCase(spectrumKey))) {
 
             progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
             progressDialog.doNothingOnClose();
@@ -2542,10 +2582,12 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                     String fileName = Spectrum.getSpectrumFile(finalSpectrumKey);
                     String spectrumTitle = Spectrum.getSpectrumTitle(finalSpectrumKey);
- 
-                    fileNamesCmb.setSelectedItem(fileName);
-                    
-                    // We might want something faster here
+
+                    if (!((String) fileNamesCmb.getSelectedItem()).equalsIgnoreCase(fileName)) {
+                        fileNamesCmb.setSelectedItem(fileName);
+                    }
+
+                    // @TODO: we might want something faster here!!
                     for (int i = 0; i < spectrumTable.getRowCount(); i++) {
                         if (((String) spectrumTable.getValueAt(i, 1)).equals(spectrumTitle)) {
                             spectrumTable.setRowSelectionInterval(i, i);
@@ -2553,7 +2595,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                             break;
                         }
                     }
-                    
+
                     selectedSpectrumKeySpectrumIdTab = finalSpectrumKey;
                     spectrumSelectionChanged();
                     progressDialog.setVisible(false);
@@ -2574,21 +2616,26 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 // empty the tables
                 DefaultTableModel dm = (DefaultTableModel) peptideShakerJTable.getModel();
                 dm.getDataVector().removeAllElements();
+                ((DefaultTableModel) peptideShakerJTable.getModel()).fireTableDataChanged();
 
                 dm = (DefaultTableModel) omssaTable.getModel();
                 dm.getDataVector().removeAllElements();
+                ((DefaultTableModel) omssaTable.getModel()).fireTableDataChanged();
 
                 dm = (DefaultTableModel) mascotTable.getModel();
                 dm.getDataVector().removeAllElements();
+                ((DefaultTableModel) mascotTable.getModel()).fireTableDataChanged();
 
                 dm = (DefaultTableModel) xTandemTable.getModel();
                 dm.getDataVector().removeAllElements();
+                ((DefaultTableModel) xTandemTable.getModel()).fireTableDataChanged();
 
                 omssaTablePeptideTooltips = new HashMap<Integer, String>();
                 xTandemTablePeptideTooltips = new HashMap<Integer, String>();
                 mascotTablePeptideTooltips = new HashMap<Integer, String>();
 
                 String key = Spectrum.getSpectrumKey((String) fileNamesCmb.getSelectedItem(), (String) spectrumTable.getValueAt(spectrumTable.getSelectedRow(), 1));
+
                 if (identification.matchExists(key)) {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
                     PSParameter probabilities = new PSParameter();
@@ -2688,6 +2735,11 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                         }
                     }
 
+                    ((DefaultTableModel) peptideShakerJTable.getModel()).fireTableDataChanged();
+                    ((DefaultTableModel) omssaTable.getModel()).fireTableDataChanged();
+                    ((DefaultTableModel) mascotTable.getModel()).fireTableDataChanged();
+                    ((DefaultTableModel) xTandemTable.getModel()).fireTableDataChanged();
+
                     // select one of the matches
                     if (omssaTable.getRowCount() > 0) {
                         omssaTable.setRowSelectionInterval(0, 0);
@@ -2705,10 +2757,17 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     xTandemTable.repaint();
                     omssaTable.revalidate();
                     omssaTable.repaint();
-
                 }
-                //update the spectrum
-                updateSpectrum();
+
+                // invoke later to give time for components to update
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    public void run() {
+                        //update the spectrum
+                        updateSpectrum();
+                    }
+                });
+
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
             }
@@ -3105,5 +3164,14 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         }
 
         return result;
+    }
+
+    /**
+     * Returns true if the tab has been loaded at least once.
+     * 
+     * @return true if the tab has been loaded at least once
+     */
+    public boolean isInitiated() {
+        return tabInitiated;
     }
 }
