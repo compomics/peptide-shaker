@@ -595,7 +595,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
             if (!needDialog || !waitingDialog.isRunCanceled()) {
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
-                peptideShakerGUI.displayResults(true);
+                peptideShakerGUI.displayResults();
                 peptideShakerGUI.setFrameTitle(projectNameIdTxt.getText().trim());
                 this.dispose();
             }

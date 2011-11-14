@@ -36,6 +36,11 @@ import org.jfree.data.category.DefaultCategoryDataset;
 public class QCPanel extends javax.swing.JPanel {
 
     /**
+     * It true the tab has been initiated, i.e., the data displayed at leaat once. 
+     * False means that the tab has to be loaded from scratch.
+     */
+    private boolean tabInitiated = false;
+    /**
      * The main peptide shaker gui.
      */
     private PeptideShakerGUI peptideShakerGUI;
@@ -1019,18 +1024,41 @@ public class QCPanel extends javax.swing.JPanel {
 
     /**
      * This method displays results on the panel
-     * 
-     * @param progressDialog a progress dialog. Can be null.
      */
-    public void displayResults(ProgressDialogX progressDialog) {
-        updateProteinQCPlot(progressDialog);
-        updatePeptideQCPlot(progressDialog);
-        updatePsmQCPlot(progressDialog);
+    public void displayResults() {
 
-        // enable the contextual export options
-        exportPsmPlotJButton.setEnabled(true);
-        exportPeptidesPlotJButton.setEnabled(true);
-        exportProteinsPlotJButton.setEnabled(true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Loading QC Plots. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("DisplayThread") {
+
+            @Override
+            public void run() {
+
+                updateProteinQCPlot(progressDialog);
+                updatePeptideQCPlot(progressDialog);
+                updatePsmQCPlot(progressDialog);
+
+                // enable the contextual export options
+                exportPsmPlotJButton.setEnabled(true);
+                exportPeptidesPlotJButton.setEnabled(true);
+                exportProteinsPlotJButton.setEnabled(true);
+
+                tabInitiated = true;
+
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+            }
+        }.start();
     }
 
     /**
@@ -1699,5 +1727,14 @@ public class QCPanel extends javax.swing.JPanel {
                 }
             }
         }
+    }
+
+    /**
+     * Returns true if the tab has been loaded at least once.
+     * 
+     * @return true if the tab has been loaded at least once
+     */
+    public boolean isInitiated() {
+        return tabInitiated;
     }
 }

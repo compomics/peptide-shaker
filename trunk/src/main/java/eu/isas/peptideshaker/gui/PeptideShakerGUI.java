@@ -338,10 +338,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private String notSelectedRowHtmlTagFontColor = "#0101DF";
     /**
-     * Boolean indicating whether spectra should be displayed or not
-     */
-    private boolean displaySpectrum = true;
-    /**
      * The spectrum annotator
      */
     private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
@@ -1667,7 +1663,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
 
         // check if we have re-loaded the data using the current threshold and PEP window settings
-        if (selectedIndex != VALIDATION_TAB_INDEX) {
+        if (selectedIndex != VALIDATION_TAB_INDEX && statsPanel.isInitiated()) {
+            
             if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate) {
 
                 allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
@@ -1678,7 +1675,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                 if (value == JOptionPane.YES_OPTION) {
                     statsPanel.revalidateData();
-                    allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                    return;
                 } else if (value == JOptionPane.NO_OPTION) {
                     // reset the test, i.e., don't ask twice without changes in between
                     ignoreThresholdUpdate = true;
@@ -1697,7 +1694,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
                 if (value == JOptionPane.YES_OPTION) {
                     statsPanel.applyPepWindow();
-                    allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                    return;
                 } else if (value == JOptionPane.NO_OPTION) {
                     // reset the test, i.e., don't ask twice without changes in between
                     ignorePepWindowUpdate = true;
@@ -1715,112 +1712,47 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         // make sure that the same protein and peptide are selected in both 
         // the overview and protein structure tabs
         if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-
-            if (selectedProteinIndex != -1) {
-
-                int proteinRow = overviewPanel.getProteinTable().getSelectedRow();
-
-                if (proteinRow != -1) {
-
-                    int currentProteinIndex = (Integer) overviewPanel.getProteinTable().getValueAt(proteinRow, 0);
-
-                    if (currentProteinIndex != selectedProteinIndex) {
-                        overviewPanel.setSelectedProteinIndex(selectedProteinIndex);
-                    }
-                } else {
-                    overviewPanel.setSelectedProteinIndex(selectedProteinIndex);
-                }
-
-                if (selectedPeptideIndex != -1) {
-
-                    // invoke later to give time for components to update
-                    SwingUtilities.invokeLater(new Runnable() {
-
-                        public void run() {
-
-                            int peptideRow = overviewPanel.getPeptideTable().getSelectedRow();
-
-                            if (peptideRow != -1) {
-
-                                int currentPeptideIndex = (Integer) overviewPanel.getPeptideTable().getValueAt(peptideRow, 0);
-
-                                if (currentPeptideIndex != selectedPeptideIndex) {
-                                    overviewPanel.setSelectedPeptideIndex(selectedPeptideIndex);
-                                }
-                            } else {
-                                overviewPanel.setSelectedPeptideIndex(selectedPeptideIndex);
-                            }
-                        }
-                    });
-                }
-            }
+            // update selected protein and peptide
+            overviewPanel.updateSelectedProteinAndPeptide(selectedProteinIndex, selectedPeptideIndex);
         } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
-
-            if (selectedProteinIndex != -1) {
-
-                int proteinRow = proteinStructurePanel.getProteinTable().getSelectedRow();
-
-                if (proteinRow != -1) {
-
-                    int currentProteinIndex = (Integer) proteinStructurePanel.getProteinTable().getValueAt(proteinRow, 0);
-
-                    if (currentProteinIndex != selectedProteinIndex) {
-
-                        // invoke later to give time for components to update
-                        SwingUtilities.invokeLater(new Runnable() {
-
-                            public void run() {
-                                proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
-                            }
-                        });
-                    }
-                } else {
-                    // invoke later to give time for components to update
-                    SwingUtilities.invokeLater(new Runnable() {
-
-                        public void run() {
-                            proteinStructurePanel.setSelectedProteinIndex(selectedProteinIndex);
-                        }
-                    });
-                }
-
-                if (selectedPeptideIndex != -1) {
-
-                    // invoke later to give time for components to update
-                    SwingUtilities.invokeLater(new Runnable() {
-
-                        public void run() {
-
-                            int peptideRow = proteinStructurePanel.getPeptideTable().getSelectedRow();
-
-                            if (peptideRow != -1) {
-
-                                int currentPeptideIndex = (Integer) proteinStructurePanel.getPeptideTable().getValueAt(peptideRow, 0);
-
-                                if (currentPeptideIndex != selectedPeptideIndex) {
-                                    proteinStructurePanel.setSelectedPeptideIndex(selectedPeptideIndex);
-                                }
-                            } else {
-                                proteinStructurePanel.setSelectedPeptideIndex(selectedPeptideIndex);
-                            }
-                        }
-                    });
+            if (!proteinStructurePanel.isInitiated()) {
+                proteinStructurePanel.displayResults();
+            } else {
+                if (selectedProteinIndex != -1) {
+                    // update selected protein and peptide
+                    proteinStructurePanel.updateSelectedProteinAndPeptide(selectedProteinIndex, selectedPeptideIndex);
                 }
             }
         } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX) {
-            //goPanel.displayResults(); // @TODO: set species from cps file? @TODO: reload GO enrichment tab if hidden selection is changed!
+            //goPanel.displayResults(); 
+            // @TODO: set species from cps file? 
+            // @TODO: reload GO enrichment tab if hidden selection is changed!
         } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
-            if (selectedSpectrumKey != null) {
-                // invoke later to give time for components to update
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    public void run() {
-                        spectrumIdentificationPanel.selectSpectrum(selectedSpectrumKey);
-                    }
-                });
-
+            if (!spectrumIdentificationPanel.isInitiated()) {
+                spectrumIdentificationPanel.displayResults();
+            } else {
+                spectrumIdentificationPanel.selectSpectrum(selectedSpectrumKey);
             }
-        }
+        } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
+            if (!ptmPanel.isInitiated()) {
+                ptmPanel.displayResults();
+            } else {
+                // ptmPanel.selectSpectrum(selectedSpectrumKey); // @TODO: select the correct spectrum/peptide/psm
+            }
+        } else if (selectedIndex == QC_PLOTS_TAB_INDEX) {
+            if (!qcPanel.isInitiated()) {
+                qcPanel.displayResults();
+            } else {
+                // @TODO: reload if hidden selection is changed!
+            }
+        } else if (selectedIndex == VALIDATION_TAB_INDEX) {
+            if (!statsPanel.isInitiated()) {
+                statsPanel.displayResults();
+            } else {
+                // @TODO: reload if hidden selection is changed!
+            }
+        } 
+        
 
         // update the basic protein annotation
         if (selectedIndex == ANNOTATION_TAB_INDEX) {
@@ -1839,8 +1771,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
         }
 
-        updateSpectrumAnnotations();
+        // invoke later to give time for components to update
+        SwingUtilities.invokeLater(new Runnable() {
 
+            public void run() {
+                // set the preferred size of the accession column
+                updateSpectrumAnnotations();
+            }
+        });
+        
         // disable the protein filter option if a tab other than the overview tab is selected
         proteinFilterJMenuItem.setEnabled(selectedIndex == OVER_VIEW_TAB_INDEX);
     }//GEN-LAST:event_allTabsJTabbedPaneStateChanged
@@ -2548,34 +2487,20 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
     /**
      * This method will display results in all panels
-     * 
-     * @param iUpdateValidationTab if true the validation tab will be updated
      */
-    public void displayResults(boolean iUpdateValidationTab) {
+    public void displayResults() {
 
-        final boolean updateValidationTab = iUpdateValidationTab;
-
+        // move to the Overview tab
+        allTabsJTabbedPane.setSelectedIndex(0);
+        
         try {
-            displaySpectrum = true;
-            boolean displaySequence = true;
-            boolean displayProteins = true;
-            boolean displayPeptidesAndPSMs = true;
+            sequenceCoverageJCheckBoxMenuItem.setSelected(true);
 
-            sequenceCoverageJCheckBoxMenuItem.setSelected(displaySequence);
-            spectrumJCheckBoxMenuItem.setSelected(displaySpectrum);
-
-            overviewPanel.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displaySequence, displaySpectrum);
+            overviewPanel.setDisplayOptions(true, true, true, true);
             overviewPanel.updateSeparators();
             statsPanel.updateSeparators();
 
-            // @TODO: there seems to be something wrong with the max value here is is usually peaks at around 50%?
-
             progressDialog = new ProgressDialogX(this, this, true);
-            int max = 3 * identification.getProteinIdentification().size()
-                    + 2 * identification.getPeptideIdentification().size()
-                    + 2 * identification.getSpectrumIdentification().size()
-                    + 1;
-            progressDialog.setMax(max);
             progressDialog.doNothingOnClose();
 
             final PeptideShakerGUI tempRef = this; // needed due to threading issues
@@ -2583,7 +2508,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             new Thread(new Runnable() {
 
                 public void run() {
-                    progressDialog.setTitle("Loading Data. Please wait...");
+                    progressDialog.setTitle("Loading Data. Please Wait...");
                     progressDialog.setVisible(true);
                 }
             }, "ProgressDialog").start();
@@ -2597,38 +2522,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     try {
-
-                        if (displaySpectrum) {
-                            progressDialog.setTitle("Loading Spectrum ID Tab. Please Wait...");
-                            spectrumIdentificationPanel.displayResults(progressDialog);
-                            progressDialog.setTitle("Loading Modifications Tab. Please Wait...");
-                            ptmPanel.displayResults(progressDialog);
-                        } else {
-                            spectrumJPanel.setEnabled(false);
-                            ptmPanel.setEnabled(false);
-                            progressDialog.setValue(identification.getPeptideIdentification().size() + identification.getSpectrumIdentification().size());
-                        }
-
-                        progressDialog.setTitle("Loading Overview Tab. Please Wait...");
-
                         // reset show hidden proteins and scores columns
                         showHiddenProteinsJCheckBoxMenuItem.setSelected(true);
                         scoresJCheckBoxMenuItem.setSelected(false);
 
+                        // load the Overview tab
                         overviewPanel.displayResults(progressDialog);
-
-                        if (updateValidationTab) {
-                            progressDialog.setTitle("Loading Validation Tab. Please Wait...");
-                            statsPanel.displayResults();
-                        }
-                        progressDialog.incrementValue();
-
-                        progressDialog.setTitle("Loading Structure Tab. Please Wait...");
-                        proteinStructurePanel.displayResults(progressDialog);
-
-                        progressDialog.setTitle("Loading QC Plots Tab. Please Wait...");
-                        qcPanel.displayResults(progressDialog);
-
+     
                         allTabsJTabbedPaneStateChanged(null);
 
                         // make sure that all panels are looking the way they should
@@ -3262,6 +3162,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
+     * Returns the currently selected spectrum key.
+     * 
+     * @return the key for the selected spectrum
+     */
+    public String getSelectedSpectrumKey() {
+        return selectedSpectrumKey;
+    }
+    
+    /**
      * Sets the currently selected spectrum key.
      * 
      * @param spectrumKey the key for the selected spectrum
@@ -3573,7 +3482,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         repaintPanels();
 
         // select the overview tab
-        allTabsJTabbedPane.setSelectedIndex(0);
+        allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
 
         dataSaved = false;
     }
@@ -3592,7 +3501,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         repaintPanels();
 
         // display the results
-        displayResults(false);
+        displayResults();
 
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
@@ -4926,7 +4835,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     progressDialog.setVisible(false); // @TODO: there is sometimes an error here...
                     progressDialog.dispose();
 
-                    peptideShakerGUI.displayResults(true);
+                    peptideShakerGUI.displayResults();
                     peptideShakerGUI.setFrameTitle(experiment.getReference());
 
                     dataSaved = true;
@@ -5153,5 +5062,23 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public boolean showScores() {
         return scoresJCheckBoxMenuItem.isSelected();
+    }
+
+    /**
+     * Returns the selected protein index.
+     * 
+     * @return the selectedProteinIndex
+     */
+    public int getSelectedProteinIndex() {
+        return selectedProteinIndex;
+    }
+
+    /**
+     * Returns the selected peptide index.
+     * 
+     * @return the selectedPeptideIndex
+     */
+    public int getSelectedPeptideIndex() {
+        return selectedPeptideIndex;
     }
 }

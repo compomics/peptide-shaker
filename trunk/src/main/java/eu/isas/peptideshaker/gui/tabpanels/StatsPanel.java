@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
@@ -47,6 +48,15 @@ import org.jfree.ui.RectangleEdge;
  */
 public class StatsPanel extends javax.swing.JPanel {
 
+    /**
+     * It true the tab has been initiated, i.e., the data displayed at leaat once. 
+     * False means that the tab has to be loaded from scratch.
+     */
+    private boolean tabInitiated = false;
+    /**
+     * The progress dialog.
+     */
+    private ProgressDialogX progressDialog;
     /**
      * If true the data has been (re-)loaded with the current thresold setting.
      */
@@ -1748,7 +1758,7 @@ public class StatsPanel extends javax.swing.JPanel {
         leftPlotSplitPane.setDividerLocation(leftPlotSplitPane.getWidth() / 3);
         estimatorsPlotSplitPane.setDividerLocation(estimatorsPlotSplitPane.getWidth() / 2);
         rightPlotSplitPane.setDividerLocation(rightPlotSplitPane.getWidth() / 2);
-        
+
         SwingUtilities.invokeLater(new Runnable() {
 
             public void run() {
@@ -1781,7 +1791,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         confidencePlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
                         confidencePlotLayeredPane.getComponent(0).getWidth(),
                         confidencePlotLayeredPane.getComponent(0).getHeight());
-                
+
                 confidencePlotLayeredPane.getComponent(1).setBounds(
                         confidencePlotLayeredPane.getWidth() - confidencePlotLayeredPane.getComponent(0).getWidth() - 20,
                         confidencePlotLayeredPane.getComponent(1).getHeight() / 2 - 12,
@@ -1800,7 +1810,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         fdrPlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
                         fdrPlotLayeredPane.getComponent(0).getWidth(),
                         fdrPlotLayeredPane.getComponent(0).getHeight());
-                
+
                 fdrPlotLayeredPane.getComponent(1).setBounds(
                         fdrPlotLayeredPane.getWidth() - fdrPlotLayeredPane.getComponent(0).getWidth() - 20,
                         fdrPlotLayeredPane.getComponent(1).getHeight() / 2 - 12,
@@ -1819,7 +1829,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         benefitPlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
                         benefitPlotLayeredPane.getComponent(0).getWidth(),
                         benefitPlotLayeredPane.getComponent(0).getHeight());
-                
+
                 benefitPlotLayeredPane.getComponent(1).setBounds(
                         benefitPlotLayeredPane.getWidth() - benefitPlotLayeredPane.getComponent(0).getWidth() - 20,
                         benefitPlotLayeredPane.getComponent(1).getHeight() / 2 - 12,
@@ -1838,7 +1848,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         pepPlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
                         pepPlotLayeredPane.getComponent(0).getWidth(),
                         pepPlotLayeredPane.getComponent(0).getHeight());
-                
+
                 pepPlotLayeredPane.getComponent(1).setBounds(
                         pepPlotLayeredPane.getWidth() - pepPlotLayeredPane.getComponent(1).getWidth() - 20,
                         pepPlotLayeredPane.getComponent(1).getHeight() / 2 - 12,
@@ -1857,7 +1867,7 @@ public class StatsPanel extends javax.swing.JPanel {
                         fdrsPlotLayeredPane.getComponent(0).getHeight() / 2 - 12,
                         fdrsPlotLayeredPane.getComponent(0).getWidth(),
                         fdrsPlotLayeredPane.getComponent(0).getHeight());
-                
+
                 fdrsPlotLayeredPane.getComponent(1).setBounds(
                         fdrsPlotLayeredPane.getWidth() - fdrsPlotLayeredPane.getComponent(0).getWidth() - 20,
                         fdrsPlotLayeredPane.getComponent(1).getHeight() / 2 - 12,
@@ -1892,9 +1902,9 @@ public class StatsPanel extends javax.swing.JPanel {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
             // update the other tabs
+            dataValidated = true;
             reloadData();
             validateButton.setEnabled(false);
-            dataValidated = true;
         }
     }//GEN-LAST:event_validateButtonActionPerformed
 
@@ -2710,70 +2720,91 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     public void displayResults() {
 
-        groupSelectionTable.setEnabled(true);
-        confidenceSlider.setEnabled(true);
-        fdrSlider1.setEnabled(true);
-        fdrSlider2.setEnabled(true);
-        sensitivitySlider1.setEnabled(true);
-        sensitivitySlider2.setEnabled(true);
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.doNothingOnClose();
 
-        // empty the group table
-        DefaultTableModel dm = (DefaultTableModel) groupSelectionTable.getModel();
-        dm.getDataVector().removeAllElements();
+        new Thread(new Runnable() {
 
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        PSMaps pSMaps = new PSMaps();
-        pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
-        ArrayList<String> peptideKeys = pSMaps.getPeptideSpecificMap().getKeys();
-        HashMap<Integer, String> psmKeys = pSMaps.getPsmSpecificMap().getKeys();
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Updating Validation Data. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
 
-        int cpt = 0;
+        new Thread("DisplayThread") {
 
-        modifiedMaps.put(cpt, false);
-        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Proteins"});
+            @Override
+            public void run() {
 
-        if (peptideKeys.size() == 1) {
-            peptideMap.put(cpt, peptideKeys.get(0));
-            modifiedMaps.put(cpt, false);
-            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Peptides"});
-        } else {
-            for (String pepitdeKey : peptideKeys) {
-                peptideMap.put(cpt, pepitdeKey);
+                groupSelectionTable.setEnabled(true);
+                confidenceSlider.setEnabled(true);
+                fdrSlider1.setEnabled(true);
+                fdrSlider2.setEnabled(true);
+                sensitivitySlider1.setEnabled(true);
+                sensitivitySlider2.setEnabled(true);
+
+                // empty the group table
+                DefaultTableModel dm = (DefaultTableModel) groupSelectionTable.getModel();
+                dm.getDataVector().removeAllElements();
+
+                PSMaps pSMaps = new PSMaps();
+                pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
+                ArrayList<String> peptideKeys = pSMaps.getPeptideSpecificMap().getKeys();
+                HashMap<Integer, String> psmKeys = pSMaps.getPsmSpecificMap().getKeys();
+
+                int cpt = 0;
+
                 modifiedMaps.put(cpt, false);
+                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Proteins"});
 
-                if (pepitdeKey.equals("")) {
-                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Not Modified Peptides"});
-                } else if (pepitdeKey.equals(PeptideSpecificMap.DUSTBIN)) {
-                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Other Peptides"});
+                if (peptideKeys.size() == 1) {
+                    peptideMap.put(cpt, peptideKeys.get(0));
+                    modifiedMaps.put(cpt, false);
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Peptides"});
                 } else {
-                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, pepitdeKey + " Peptides"});
+                    for (String pepitdeKey : peptideKeys) {
+                        peptideMap.put(cpt, pepitdeKey);
+                        modifiedMaps.put(cpt, false);
+
+                        if (pepitdeKey.equals("")) {
+                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Not Modified Peptides"});
+                        } else if (pepitdeKey.equals(PeptideSpecificMap.DUSTBIN)) {
+                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Other Peptides"});
+                        } else {
+                            ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, pepitdeKey + " Peptides"});
+                        }
+                    }
                 }
+                for (Integer psmKey : psmKeys.keySet()) {
+                    psmMap.put(cpt, psmKey);
+                    modifiedMaps.put(cpt, false);
+                    if (psmKeys.size() > 1) {
+                        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Charge " + psmKeys.get(psmKey) + " PSMs"});
+                    } else {
+                        ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "PSMs"});
+                    }
+                }
+
+                if (groupSelectionTable.getRowCount() > 0) {
+                    groupSelectionTable.setRowSelectionInterval(0, 0);
+                }
+
+                groupSelectionChanged();
+
+                // enable the contextual export options
+                pepPlotExportJButton.setEnabled(true);
+                fdrPlotExportJButton.setEnabled(true);
+                confidencePlotExportJButton.setEnabled(true);
+                fdrFnrPlotExportJButton.setEnabled(true);
+                benefitPlotExportJButton.setEnabled(true);
+
+                tabInitiated = true;
+
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
             }
-        }
-        for (Integer psmKey : psmKeys.keySet()) {
-            psmMap.put(cpt, psmKey);
-            modifiedMaps.put(cpt, false);
-            if (psmKeys.size() > 1) {
-                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Charge " + psmKeys.get(psmKey) + " PSMs"});
-            } else {
-                ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "PSMs"});
-            }
-        }
-
-        if (groupSelectionTable.getRowCount() > 0) {
-            groupSelectionTable.setRowSelectionInterval(0, 0);
-        }
-
-        groupSelectionChanged();
-
-        // enable the contextual export options
-        pepPlotExportJButton.setEnabled(true);
-        fdrPlotExportJButton.setEnabled(true);
-        confidencePlotExportJButton.setEnabled(true);
-        fdrFnrPlotExportJButton.setEnabled(true);
-        benefitPlotExportJButton.setEnabled(true);
-
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }.start();
     }
 
     /**
@@ -3440,5 +3471,14 @@ public class StatsPanel extends javax.swing.JPanel {
      */
     public void applyPepWindow() {
         applyButtonActionPerformed(null);
+    }
+
+    /**
+     * Returns true if the tab has been loaded at least once.
+     * 
+     * @return true if the tab has been loaded at least once
+     */
+    public boolean isInitiated() {
+        return tabInitiated;
     }
 }
