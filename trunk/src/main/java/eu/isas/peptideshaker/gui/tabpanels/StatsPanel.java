@@ -2743,7 +2743,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 modifiedMaps.put(cpt, false);
 
                 if (pepitdeKey.equals("")) {
-                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Not modified Peptides"});
+                    ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Not Modified Peptides"});
                 } else if (pepitdeKey.equals(PeptideSpecificMap.DUSTBIN)) {
                     ((DefaultTableModel) groupSelectionTable.getModel()).addRow(new Object[]{++cpt, "Other Peptides"});
                 } else {

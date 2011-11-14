@@ -58,14 +58,14 @@
               <Group type="102" attributes="0">
                   <Component id="ptmPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="peptideTablesJSplitPane" pref="777" max="32767" attributes="0"/>
+                  <Component id="peptideTablesJSplitPane" pref="812" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="peptideTablesJSplitPane" alignment="0" pref="400" max="32767" attributes="1"/>
               <Component id="ptmPanel" alignment="0" max="32767" attributes="3"/>
+              <Component id="peptideTablesJSplitPane" alignment="0" pref="400" max="32767" attributes="1"/>
           </Group>
         </DimensionLayout>
       </Layout>
@@ -78,10 +78,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="ptmLayeredLayeredPane" pref="285" max="32767" attributes="0"/>
-                  </Group>
+                  <Component id="ptmLayeredLayeredPane" alignment="0" pref="260" max="32767" attributes="0"/>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
@@ -106,18 +103,18 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="0" y="0" width="-1" height="400" layer="0" position="-1"/>
+                      <JLayeredPaneConstraints x="0" y="0" width="260" height="400" layer="0" position="-1"/>
                     </Constraint>
                   </Constraints>
 
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="273" max="32767" attributes="0"/>
+                          <EmptySpace min="0" pref="248" max="32767" attributes="0"/>
                           <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="ptmJScrollPane" pref="253" max="32767" attributes="0"/>
+                                  <Component id="ptmJScrollPane" pref="228" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -150,8 +147,7 @@
                         <Component class="javax.swing.JTable" name="ptmJTable">
                           <Properties>
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                              <Table columnCount="3" rowCount="0">
-                                <Column editable="false" title=" " type="java.lang.Integer"/>
+                              <Table columnCount="2" rowCount="0">
                                 <Column editable="false" title="  " type="java.lang.Object"/>
                                 <Column editable="false" title="PTM" type="java.lang.String"/>
                               </Table>
@@ -203,7 +199,7 @@
                   </Events>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="270" y="0" width="10" height="-1" layer="300" position="-1"/>
+                      <JLayeredPaneConstraints x="240" y="0" width="10" height="-1" layer="300" position="-1"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -215,7 +211,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                      <JLayeredPaneConstraints x="260" y="0" width="20" height="20" layer="300" position="-1"/>
+                      <JLayeredPaneConstraints x="230" y="0" width="20" height="20" layer="300" position="-1"/>
                     </Constraint>
                   </Constraints>
 
@@ -263,9 +259,9 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="777" max="32767" attributes="0"/>
+                      <EmptySpace min="0" pref="812" max="32767" attributes="0"/>
                       <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                          <Component id="modifiedPeptidesLayeredPane" alignment="0" pref="777" max="32767" attributes="0"/>
+                          <Component id="modifiedPeptidesLayeredPane" alignment="0" pref="812" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>
@@ -294,7 +290,7 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                          <JLayeredPaneConstraints x="0" y="0" width="770" height="170" layer="0" position="-1"/>
+                          <JLayeredPaneConstraints x="0" y="0" width="810" height="170" layer="0" position="-1"/>
                         </Constraint>
                       </Constraints>
 
@@ -303,7 +299,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="selectedPeptidesJSplitPane" pref="738" max="32767" attributes="0"/>
+                                  <Component id="selectedPeptidesJSplitPane" pref="778" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -495,7 +491,7 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="relatedPeptiesLayeredPane" alignment="1" pref="777" max="32767" attributes="0"/>
+                      <Component id="relatedPeptiesLayeredPane" alignment="1" pref="812" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
@@ -520,18 +516,18 @@
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                          <JLayeredPaneConstraints x="0" y="0" width="770" height="230" layer="0" position="-1"/>
+                          <JLayeredPaneConstraints x="0" y="0" width="810" height="230" layer="0" position="-1"/>
                         </Constraint>
                       </Constraints>
 
                       <Layout>
                         <DimensionLayout dim="0">
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <EmptySpace min="0" pref="758" max="32767" attributes="0"/>
+                              <EmptySpace min="0" pref="798" max="32767" attributes="0"/>
                               <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="relatedPeptidesJSplitPane" pref="738" max="32767" attributes="0"/>
+                                      <Component id="relatedPeptidesJSplitPane" pref="778" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>

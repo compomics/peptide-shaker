@@ -192,8 +192,6 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void setTableProperties() {
 
-        ptmJTable.getColumn(" ").setMaxWidth(35);
-        ptmJTable.getColumn(" ").setMinWidth(35);
         ptmJTable.getColumn("  ").setMaxWidth(35);
         ptmJTable.getColumn("  ").setMinWidth(35);
 
@@ -347,7 +345,6 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPsmsTableToolTips.add("PSM Validated");
 
         ptmTableToolTips = new ArrayList<String>();
-        ptmTableToolTips.add(null);
         ptmTableToolTips.add("PTM Color");
         ptmTableToolTips.add("PTM Name");
     }
@@ -554,14 +551,14 @@ public class PtmPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "  ", "PTM"
+                "  ", "PTM"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Object.class, java.lang.String.class
+                java.lang.Object.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -598,11 +595,11 @@ public class PtmPanel extends javax.swing.JPanel {
         ptmLayeredPanel.setLayout(ptmLayeredPanelLayout);
         ptmLayeredPanelLayout.setHorizontalGroup(
             ptmLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 273, Short.MAX_VALUE)
+            .addGap(0, 248, Short.MAX_VALUE)
             .addGroup(ptmLayeredPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(ptmLayeredPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(ptmJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 253, Short.MAX_VALUE)
+                    .addComponent(ptmJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         ptmLayeredPanelLayout.setVerticalGroup(
@@ -615,7 +612,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     .addContainerGap()))
         );
 
-        ptmLayeredPanel.setBounds(0, 0, 285, 400);
+        ptmLayeredPanel.setBounds(0, 0, 260, 400);
         ptmLayeredLayeredPane.add(ptmLayeredPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         ptmSelectionHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
@@ -637,7 +634,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 ptmSelectionHelpJButtonActionPerformed(evt);
             }
         });
-        ptmSelectionHelpJButton.setBounds(270, 0, 10, 25);
+        ptmSelectionHelpJButton.setBounds(240, 0, 10, 25);
         ptmLayeredLayeredPane.add(ptmSelectionHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuPtmBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -653,16 +650,14 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGap(0, 20, Short.MAX_VALUE)
         );
 
-        contextMenuPtmBackgroundPanel.setBounds(260, 0, 20, 20);
+        contextMenuPtmBackgroundPanel.setBounds(230, 0, 20, 20);
         ptmLayeredLayeredPane.add(contextMenuPtmBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout ptmPanelLayout = new javax.swing.GroupLayout(ptmPanel);
         ptmPanel.setLayout(ptmPanelLayout);
         ptmPanelLayout.setHorizontalGroup(
             ptmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ptmPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(ptmLayeredLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 285, Short.MAX_VALUE))
+            .addComponent(ptmLayeredLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
         );
         ptmPanelLayout.setVerticalGroup(
             ptmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -725,7 +720,7 @@ public class PtmPanel extends javax.swing.JPanel {
             selectedPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, selectedPeptidesJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(selectedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 738, Short.MAX_VALUE)
+                .addComponent(selectedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
                 .addContainerGap())
         );
         selectedPeptidesJPanelLayout.setVerticalGroup(
@@ -736,7 +731,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        selectedPeptidesJPanel.setBounds(0, 0, 770, 170);
+        selectedPeptidesJPanel.setBounds(0, 0, 810, 170);
         modifiedPeptidesLayeredPane.add(selectedPeptidesJPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         modificationProfileHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
@@ -805,9 +800,9 @@ public class PtmPanel extends javax.swing.JPanel {
         modifiedPeptidesPanel.setLayout(modifiedPeptidesPanelLayout);
         modifiedPeptidesPanelLayout.setHorizontalGroup(
             modifiedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 777, Short.MAX_VALUE)
+            .addGap(0, 812, Short.MAX_VALUE)
             .addGroup(modifiedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addComponent(modifiedPeptidesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 777, Short.MAX_VALUE))
+                .addComponent(modifiedPeptidesLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 812, Short.MAX_VALUE))
         );
         modifiedPeptidesPanelLayout.setVerticalGroup(
             modifiedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -864,11 +859,11 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesPanel.setLayout(relatedPeptidesPanelLayout);
         relatedPeptidesPanelLayout.setHorizontalGroup(
             relatedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 758, Short.MAX_VALUE)
+            .addGap(0, 798, Short.MAX_VALUE)
             .addGroup(relatedPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(relatedPeptidesPanelLayout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(relatedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 738, Short.MAX_VALUE)
+                    .addComponent(relatedPeptidesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 778, Short.MAX_VALUE)
                     .addContainerGap()))
         );
         relatedPeptidesPanelLayout.setVerticalGroup(
@@ -881,7 +876,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     .addContainerGap()))
         );
 
-        relatedPeptidesPanel.setBounds(0, 0, 770, 230);
+        relatedPeptidesPanel.setBounds(0, 0, 810, 230);
         relatedPeptiesLayeredPane.add(relatedPeptidesPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
         relatedProfileHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
@@ -950,7 +945,7 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesJPanel.setLayout(relatedPeptidesJPanelLayout);
         relatedPeptidesJPanelLayout.setHorizontalGroup(
             relatedPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(relatedPeptiesLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 777, Short.MAX_VALUE)
+            .addComponent(relatedPeptiesLayeredPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 812, Short.MAX_VALUE)
         );
         relatedPeptidesJPanelLayout.setVerticalGroup(
             relatedPeptidesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -966,12 +961,12 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGroup(ptmAndPeptideSelectionPanelLayout.createSequentialGroup()
                 .addComponent(ptmPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 777, Short.MAX_VALUE))
+                .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 812, Short.MAX_VALUE))
         );
         ptmAndPeptideSelectionPanelLayout.setVerticalGroup(
             ptmAndPeptideSelectionPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
             .addComponent(ptmPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(peptideTablesJSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
         );
 
         psmSpectraSplitPane.setBorder(null);
@@ -1895,7 +1890,7 @@ private void ptmJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:
     int row = ptmJTable.rowAtPoint(evt.getPoint());
     int column = ptmJTable.columnAtPoint(evt.getPoint());
 
-    if (row != -1 && column == 1) {
+    if (row != -1 && column == ptmJTable.getColumn("  ").getModelIndex()) {
 
         if (row != currentPtmRow) {
             updatePeptideTable();
@@ -1909,9 +1904,9 @@ private void ptmJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:
             ptmJTable.setValueAt(newColor, row, column);
 
             // update the profiles with the new colors
-            if (!((String) ptmJTable.getValueAt(row, 2)).equalsIgnoreCase("no modification")) {
+            if (!((String) ptmJTable.getValueAt(row, ptmJTable.getColumn("PTM").getModelIndex())).equalsIgnoreCase("no modification")) {
                 peptideShakerGUI.getSearchParameters().getModificationProfile().setColor(
-                        (String) ptmJTable.getValueAt(row, 2), newColor);
+                        (String) ptmJTable.getValueAt(row, ptmJTable.getColumn("  ").getModelIndex()), newColor);
                 peptideShakerGUI.updatePtmColorCoding();
             }
         }
@@ -1997,7 +1992,7 @@ private void ptmJTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:eve
     int row = ptmJTable.rowAtPoint(evt.getPoint());
     int column = ptmJTable.columnAtPoint(evt.getPoint());
 
-    if (row != -1 && column == 1) {
+    if (row != -1 && column == ptmJTable.getColumn("  ").getModelIndex()) {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     } else {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -2727,7 +2722,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * @return the selected PTM name
      */
     public String getSelectedModification() {
-        return (String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), 2);
+        return (String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex());
     }
 
     /**
@@ -2759,7 +2754,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
             if (!modifications[i].equalsIgnoreCase(NO_MODIFICATION)) {
                 ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{
-                            (i + 1),
                             peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(modifications[i]),
                             modifications[i]
                         });
@@ -2767,7 +2761,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         }
 
         ((DefaultTableModel) ptmJTable.getModel()).addRow(new Object[]{
-                    (ptmJTable.getRowCount() + 2),
                     Color.lightGray,
                     NO_MODIFICATION});
 
@@ -2819,7 +2812,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 PSParameter probabilities = new PSParameter();
                 double p;
 
-                for (String peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), 2))) {
+                for (String peptideKey : peptideMap.get((String) ptmJTable.getValueAt(ptmJTable.getSelectedRow(), ptmJTable.getColumn("PTM").getModelIndex()))) {
 
                     peptideMatch = identification.getPeptideMatch(peptideKey);
 
@@ -3935,7 +3928,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         for (int i = 0; i < ptmJTable.getRowCount(); i++) {
             ptmJTable.setValueAt(peptideShakerGUI.getSearchParameters().getModificationProfile().getColor(
-                    (String) ptmJTable.getValueAt(i, 2)), i, 1);
+                    (String) ptmJTable.getValueAt(i, ptmJTable.getColumn("PTM").getModelIndex())), i, ptmJTable.getColumn("  ").getModelIndex());
         }
 
         updateModificationProfiles();
