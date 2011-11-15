@@ -17,6 +17,7 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import javax.swing.SwingUtilities;
 import org.jfree.chart.ChartFactory;
@@ -603,7 +604,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 public void run() {
                     progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Loading. Please Wait...");
+                    progressDialog.setTitle("Loading QC Plot. Please Wait...");
                     progressDialog.setVisible(true);
                 }
             }, "ProgressDialog").start();
@@ -612,10 +613,14 @@ public class QCPanel extends javax.swing.JPanel {
 
                 @Override
                 public void run() {
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
                     progressDialog.setMax(peptideShakerGUI.getIdentification().getProteinIdentification().size());
                     updateProteinQCPlot(progressDialog);
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
+                    // return the peptide shaker icon to the standard version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
             }.start();
         }
@@ -655,7 +660,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 public void run() {
                     progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Loading. Please Wait...");
+                    progressDialog.setTitle("Loading QC Plot. Please Wait...");
                     progressDialog.setVisible(true);
                 }
             }, "ProgressDialog").start();
@@ -664,10 +669,14 @@ public class QCPanel extends javax.swing.JPanel {
 
                 @Override
                 public void run() {
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
                     progressDialog.setMax(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
                     updatePeptideQCPlot(progressDialog);
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
+                    // return the peptide shaker icon to the standard version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
             }.start();
         }
@@ -697,7 +706,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 public void run() {
                     progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Loading. Please Wait...");
+                    progressDialog.setTitle("Loading QC Plot. Please Wait...");
                     progressDialog.setVisible(true);
                 }
             }, "ProgressDialog").start();
@@ -706,10 +715,14 @@ public class QCPanel extends javax.swing.JPanel {
 
                 @Override
                 public void run() {
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
                     progressDialog.setMax(peptideShakerGUI.getIdentification().getSpectrumIdentification().size());
                     updatePsmQCPlot(progressDialog);
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
+                    // return the peptide shaker icon to the standard version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
             }.start();
         }
@@ -1044,6 +1057,9 @@ public class QCPanel extends javax.swing.JPanel {
             @Override
             public void run() {
 
+                // change the peptide shaker icon to a "waiting version"
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
                 updateProteinQCPlot(progressDialog);
                 updatePeptideQCPlot(progressDialog);
                 updatePsmQCPlot(progressDialog);
@@ -1057,18 +1073,22 @@ public class QCPanel extends javax.swing.JPanel {
 
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
+
+                // return the peptide shaker icon to the standard version
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
             }
         }.start();
     }
 
     /**
      * Updates the protein QC plot
-     * 
-     * @param progressDialog a progress dialog. Can be null.
      */
     private void updateProteinQCPlot(ProgressDialogX progressDialog) {
 
+        progressDialog.setTitle("Getting Protein Dataset. Please Wait...");
         getProteinDataset(progressDialog);
+        progressDialog.setTitle("Loading Protein QC Plots. Please Wait...");
+
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         ArrayList<Double> bins = new ArrayList<Double>();
 
@@ -1183,12 +1203,13 @@ public class QCPanel extends javax.swing.JPanel {
 
     /**
      * Updates the peptide QC plot
-     * 
-     * @param progressDialog a progress dialog. Can be null.
      */
     private void updatePeptideQCPlot(ProgressDialogX progressDialog) {
 
+        progressDialog.setTitle("Getting Peptide Dataset. Please Wait...");
         getPeptideDataset(progressDialog);
+        progressDialog.setTitle("Loading Peptide QC Plots. Please Wait...");
+
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         ArrayList<Double> bins = new ArrayList<Double>();
 
@@ -1265,12 +1286,13 @@ public class QCPanel extends javax.swing.JPanel {
 
     /**
      * Updates the PSM QC plot
-     * 
-     * @param progressDialog a progress dialog. Can be null.
      */
     private void updatePsmQCPlot(ProgressDialogX progressDialog) {
 
+        progressDialog.setTitle("Getting PSM Dataset. Please Wait...");
         getPsmDataset(progressDialog);
+        progressDialog.setTitle("Loading PSM QC Plots. Please Wait...");
+
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         ArrayList<Double> bins = new ArrayList<Double>();
 
@@ -1344,14 +1366,17 @@ public class QCPanel extends javax.swing.JPanel {
 
     /**
      * Returns the dataset to use for the protein QC plot
-     * 
-     * @param progressDialog a progress dialog. Can be null.
      */
     private void getProteinDataset(ProgressDialogX progressDialog) {
+
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMax(peptideShakerGUI.getIdentification().getProteinIdentification().size());
+        progressDialog.setValue(0);
 
         try {
             PSParameter psParameter = new PSParameter();
             maxValue = Double.MIN_VALUE;
+
             if (proteinNumberValidatedPeptidesJRadioButton.isSelected()) {
                 // Values for the number of validated peptides
                 validatedValues = new ArrayList<Double>();
@@ -1385,9 +1410,8 @@ public class QCPanel extends javax.swing.JPanel {
                             nonValidatedDecoyValues.add(value);
                         }
                     }
-                    if (progressDialog != null) {
-                        progressDialog.incrementValue();
-                    }
+
+                    progressDialog.incrementValue();
                 }
 
             } else if (proteinSpectrumCountingScoreJRadioButton.isSelected()) {
@@ -1420,9 +1444,8 @@ public class QCPanel extends javax.swing.JPanel {
                             nonValidatedDecoyValues.add(value);
                         }
                     }
-                    if (progressDialog != null) {
-                        progressDialog.incrementValue();
-                    }
+
+                    progressDialog.incrementValue();
                 }
             } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
 
@@ -1453,9 +1476,8 @@ public class QCPanel extends javax.swing.JPanel {
                             nonValidatedDecoyValues.add(value);
                         }
                     }
-                    if (progressDialog != null) {
-                        progressDialog.incrementValue();
-                    }
+
+                    progressDialog.incrementValue();
                 }
             }
         } catch (Exception e) {
@@ -1465,10 +1487,12 @@ public class QCPanel extends javax.swing.JPanel {
 
     /**
      * Returns the dataset to use for the peptide QC plot
-     * 
-     * @param progressDialog a progress dialog. Can be null.
      */
     private void getPeptideDataset(ProgressDialogX progressDialog) {
+
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMax(peptideShakerGUI.getIdentification().getPeptideIdentification().size());
+        progressDialog.setValue(0);
 
         try {
             PSParameter psParameter = new PSParameter();
@@ -1508,9 +1532,8 @@ public class QCPanel extends javax.swing.JPanel {
                             nonValidatedDecoyValues.add(value);
                         }
                     }
-                    if (progressDialog != null) {
-                        progressDialog.incrementValue();
-                    }
+
+                    progressDialog.incrementValue();
                 }
             } else if (peptidesMissedCleavagesJRadioButton.isSelected()) {
 
@@ -1543,9 +1566,8 @@ public class QCPanel extends javax.swing.JPanel {
                             nonValidatedDecoyValues.add(value);
                         }
                     }
-                    if (progressDialog != null) {
-                        progressDialog.incrementValue();
-                    }
+
+                    progressDialog.incrementValue();
                 }
             }
         } catch (Exception e) {
@@ -1555,10 +1577,12 @@ public class QCPanel extends javax.swing.JPanel {
 
     /**
      * Returns the dataset to use for the PSM QC plot
-     * 
-     * @param progressDialog a progress dialog. Can be null.
      */
     private void getPsmDataset(ProgressDialogX progressDialog) {
+
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMax(peptideShakerGUI.getIdentification().getSpectrumIdentification().size());
+        progressDialog.setValue(0);
 
         try {
             PSParameter psParameter = new PSParameter();
@@ -1597,9 +1621,8 @@ public class QCPanel extends javax.swing.JPanel {
                             nonValidatedDecoyValues.add(value);
                         }
                     }
-                    if (progressDialog != null) {
-                        progressDialog.incrementValue();
-                    }
+
+                    progressDialog.incrementValue();
                 }
             } else if (psmPrecursorChargeJRadioButton.isSelected()) {
 
@@ -1630,9 +1653,8 @@ public class QCPanel extends javax.swing.JPanel {
                             nonValidatedDecoyValues.add(value);
                         }
                     }
-                    if (progressDialog != null) {
-                        progressDialog.incrementValue();
-                    }
+
+                    progressDialog.incrementValue();
                 }
             }
         } catch (Exception e) {
