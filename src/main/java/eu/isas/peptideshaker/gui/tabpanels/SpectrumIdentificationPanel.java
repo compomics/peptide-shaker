@@ -263,7 +263,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumTable.getColumn("PSM").setCellRenderer(new NimbusCheckBoxRenderer());
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
 
         // set up the table header tooltips
         searchEngineTableToolTips = new ArrayList<String>();
@@ -1374,7 +1374,32 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void fileNamesCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileNamesCmbActionPerformed
-        fileSelectionChanged();
+        
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Updating Data. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("DisplayThread") {
+
+            @Override
+            public void run() {
+                // change the peptide shaker icon to a "waiting version"
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                fileSelectionChanged(progressDialog);
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+                // return the peptide shaker icon to the standard version
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+            }
+        }.start();
     }//GEN-LAST:event_fileNamesCmbActionPerformed
 
     /**
@@ -2273,6 +2298,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
             @Override
             public void run() {
+                
+                // change the peptide shaker icon to a "waiting version"
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                 try {
                     identification = peptideShakerGUI.getIdentification();
@@ -2330,7 +2358,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     }
 
                     progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Updating Display. Please Wait...");
+                    progressDialog.setTitle("Updating Tables. Please Wait...");
 
                     int nMascot = omx + mo + mx + m;
                     int nOMSSA = omx + mo + ox + o;
@@ -2365,6 +2393,8 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     searchEngineTable.revalidate();
                     searchEngineTable.repaint();
 
+                    progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
+
                     ArrayList<String> fileNames = peptideShakerGUI.getSearchParameters().getSpectrumFiles();
                     String[] filesArray = new String[fileNames.size()];
                     int cpt = 0;
@@ -2375,7 +2405,8 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     }
 
                     fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
-                    fileSelectionChanged();
+
+                    fileSelectionChanged(progressDialog);
 
                     // update the slider tooltips
                     double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
@@ -2391,15 +2422,22 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     exportPsmsJButton.setEnabled(true);
 
                     tabInitiated = true;
+                    
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
 
                     selectSpectrum(peptideShakerGUI.getSelectedSpectrumKey());
+                    
+                    // return the peptide shaker icon to the standard version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                 } catch (Exception e) {
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
                     peptideShakerGUI.catchException(e);
+                    
+                    // return the peptide shaker icon to the standard version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
             }
         }.start();
@@ -2474,7 +2512,11 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
     /**
      * Method called whenever the file selection changed
      */
-    private void fileSelectionChanged() {
+    private void fileSelectionChanged(ProgressDialogX progressDialog) {
+
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Updating Spectrum Table. Please Wait...");
+        progressDialog.setVisible(true);
 
         DefaultTableModel dm = (DefaultTableModel) spectrumTable.getModel();
         dm.getDataVector().removeAllElements();
@@ -2490,10 +2532,17 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         int counter = 0;
         String spectrumKey;
 
+        progressDialog.setIndeterminate(false);
+        progressDialog.setMax(SpectrumFactory.getInstance().getSpectrumTitles(fileSelected).size());
+        progressDialog.setValue(0);
+
         for (String spectrumTitle : SpectrumFactory.getInstance().getSpectrumTitles(fileSelected)) {
+
+            progressDialog.incrementValue();
 
             spectrumKey = Spectrum.getSpectrumKey(fileSelected, spectrumTitle);
             Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+
             if (precursor != null) {
 
                 double retentionTime = precursor.getRt();
@@ -2545,7 +2594,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 PlotOrientation.HORIZONTAL, lLowRT - widthOfMarker / 2, lHighRT + widthOfMarker / 2, widthOfMarker,
                 peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor());
         spectrumTable.getColumn("RT").setCellRenderer(lRTCellRenderer);
-        lRTCellRenderer.showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        lRTCellRenderer.showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
 
         spectrumTable.setRowSelectionInterval(0, 0);
         spectrumSelectionChanged();
@@ -2579,6 +2628,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                 @Override
                 public void run() {
+                    
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     String fileName = Spectrum.getSpectrumFile(finalSpectrumKey);
                     String spectrumTitle = Spectrum.getSpectrumTitle(finalSpectrumKey);
@@ -2600,6 +2652,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     spectrumSelectionChanged();
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
+                    
+                    // return the peptide shaker icon to the standard version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
             }.start();
         }

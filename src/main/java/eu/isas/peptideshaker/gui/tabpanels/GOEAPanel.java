@@ -355,6 +355,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                     @Override
                     public void run() {
 
+                        // change the peptide shaker icon to a "waiting version"
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
                         // clear old table
                         DefaultTableModel dm = (DefaultTableModel) goMappingsTable.getModel();
                         dm.getDataVector().removeAllElements();
@@ -364,6 +367,9 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     "File Not Found", JOptionPane.ERROR_MESSAGE);
                             progressDialog.setVisible(false);
                             progressDialog.dispose();
+
+                            // return the peptide shaker icon to the standard version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             return;
                         }
 
@@ -464,6 +470,10 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     }
                                 } catch (IllegalArgumentException e) {
                                     e.printStackTrace();
+                                    progressDialog.setVisible(false);
+                                    progressDialog.dispose();
+                                    // return the peptide shaker icon to the standard version
+                                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                                 }
                             }
 
@@ -641,12 +651,17 @@ public class GOEAPanel extends javax.swing.JPanel {
                             progressDialog.setVisible(false);
                             progressDialog.dispose();
 
+                            // return the peptide shaker icon to the standard version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
                         } catch (FileNotFoundException e) {
                             e.printStackTrace();
 
                             if (progressDialog != null) {
                                 progressDialog.setVisible(false);
                                 progressDialog.dispose();
+                                // return the peptide shaker icon to the standard version
+                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             }
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -654,6 +669,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                             if (progressDialog != null) {
                                 progressDialog.setVisible(false);
                                 progressDialog.dispose();
+                                // return the peptide shaker icon to the standard version
+                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             }
                         } catch (IndexOutOfBoundsException e) {
                             e.printStackTrace();
@@ -661,6 +678,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                             if (progressDialog != null) {
                                 progressDialog.setVisible(false);
                                 progressDialog.dispose();
+                                // return the peptide shaker icon to the standard version
+                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             }
                         } catch (ParserConfigurationException e) {
                             e.printStackTrace();
@@ -668,6 +687,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                             if (progressDialog != null) {
                                 progressDialog.setVisible(false);
                                 progressDialog.dispose();
+                                // return the peptide shaker icon to the standard version
+                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             }
                         } catch (XPathExpressionException e) {
                             e.printStackTrace();
@@ -675,6 +696,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                             if (progressDialog != null) {
                                 progressDialog.setVisible(false);
                                 progressDialog.dispose();
+                                // return the peptide shaker icon to the standard version
+                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             }
                         } catch (HeadlessException e) {
                             e.printStackTrace();
@@ -682,6 +705,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                             if (progressDialog != null) {
                                 progressDialog.setVisible(false);
                                 progressDialog.dispose();
+                                // return the peptide shaker icon to the standard version
+                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             }
                         } catch (SAXException e) {
                             e.printStackTrace();
@@ -689,6 +714,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                             if (progressDialog != null) {
                                 progressDialog.setVisible(false);
                                 progressDialog.dispose();
+                                // return the peptide shaker icon to the standard version
+                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             }
                         }
                     }
@@ -1694,7 +1721,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                     // get the current Ensembl version
                     URL url = new URL("http://www.biomart.org/biomart/martservice?type=registry");
-                    
+
                     BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 
                     String inputLine;
@@ -1765,24 +1792,24 @@ public class GOEAPanel extends javax.swing.JPanel {
                     w.close();
                     wr.close();
                     br.close();
-                    
-                    
+
+
                     // update the Ensembl species versions
                     w = new FileWriter(new File(mappingsFolderPath + "ensembl_versions"));
                     bw = new BufferedWriter(w);
-                    
+
                     ensemblVersionsMap.put(selectedSpecies, "Ensembl " + ensemblVersion);
-                    
+
                     Iterator<String> iterator = ensemblVersionsMap.keySet().iterator();
-                    
+
                     while (iterator.hasNext()) {
                         String key = iterator.next();
                         bw.write(key + "\t" + ensemblVersionsMap.get(key) + "\n");
                     }
-                    
+
                     bw.close();
                     w.close();
-                           
+
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
 

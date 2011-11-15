@@ -4179,6 +4179,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 
             progressDialogX.incrementValue();
         }
+        
+        progressDialogX.setIndeterminate(true);
+        progressDialogX.setTitle("Sorting Proteins. Please Wait...");
 
         Collections.sort(scores);
         proteinTableMap = new HashMap<Integer, String>();
@@ -4188,12 +4191,13 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
         int validatedProteinsCounter = 0;
 
+        progressDialogX.setIndeterminate(false);
         progressDialogX.setTitle("Loading Scores. Please Wait...");
         progressDialogX.setMax(scores.size());
         progressDialogX.setValue(0);
         
         for (double currentScore : scores) {
-
+            
             nP = new ArrayList(orderMap.get(currentScore).keySet());
             Collections.sort(nP);
 

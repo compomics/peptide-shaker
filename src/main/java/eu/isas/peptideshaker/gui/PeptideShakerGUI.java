@@ -4579,6 +4579,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     peptideShakerGUI.setSearchParameters(experimentSettings.getSearchParameters());
                     PeptideShaker.setPeptideShakerPTMs(searchParameters);
 
+                    progressDialog.setTitle("Loading FASTA File. Please Wait...");
+                    
                     try {
                         File providedFastaLocation = experimentSettings.getSearchParameters().getFastaFile();
                         String fileName = providedFastaLocation.getName();
@@ -4658,6 +4660,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     ArrayList<String> names = new ArrayList<String>();
                     ArrayList<String> spectrumFiles = new ArrayList<String>();
+                    
+                    progressDialog.setTitle("Locating Spectrum Files. Please Wait..."); // @TODO: can be extended with progress counter
 
                     for (String filePath : getSearchParameters().getSpectrumFiles()) {
                         try {
