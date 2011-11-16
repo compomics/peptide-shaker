@@ -546,6 +546,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         projectPropertiesMenuItem = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         saveMenuItem = new javax.swing.JMenuItem();
+        saveAsMenuItem = new javax.swing.JMenuItem();
         jSeparator9 = new javax.swing.JPopupMenu.Separator();
         exitJMenuItem = new javax.swing.JMenuItem();
         editMenu = new javax.swing.JMenu();
@@ -1048,7 +1049,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         saveMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         saveMenuItem.setMnemonic('S');
-        saveMenuItem.setText("Save As...");
+        saveMenuItem.setText("Save");
         saveMenuItem.setEnabled(false);
         saveMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1056,6 +1057,16 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         fileJMenu.add(saveMenuItem);
+
+        saveAsMenuItem.setMnemonic('V');
+        saveAsMenuItem.setText("Save As...");
+        saveAsMenuItem.setEnabled(false);
+        saveAsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveAsMenuItemActionPerformed(evt);
+            }
+        });
+        fileJMenu.add(saveAsMenuItem);
         fileJMenu.add(jSeparator9);
 
         exitJMenuItem.setMnemonic('x');
@@ -1339,12 +1350,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_exitJMenuItemActionPerformed
 
     /**
-     * Updates the sparklines to show charts or numbers based on the current
-     * selection of the menu item.
+     * Saves the project.
      *
      * @param evt
      */
-    private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
+    private void saveAsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveAsMenuItemActionPerformed
 
         final JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
         fileChooser.setDialogTitle("Save As...");
@@ -1370,104 +1380,29 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         if (returnVal == JFileChooser.APPROVE_OPTION) {
 
             lastSelectedFolder = fileChooser.getSelectedFile().getAbsolutePath();
+            String selectedFile = fileChooser.getSelectedFile().getPath();
 
-            progressDialog = new ProgressDialogX(this, this, true);
-            progressDialog.doNothingOnClose();
+            if (!selectedFile.endsWith(".cps")) {
+                selectedFile += ".cps";
+            }
 
-            final PeptideShakerGUI tempRef = this; // needed due to threading issues
+            File newFile = new File(selectedFile);
+            int outcome = JOptionPane.YES_OPTION;
 
-            new Thread(new Runnable() {
+            if (newFile.exists()) {
+                outcome = JOptionPane.showConfirmDialog(progressDialog,
+                        "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            }
 
-                public void run() {
-                    progressDialog.setIndeterminate(true);
-                    progressDialog.setTitle("Saving. Please Wait...");
-                    progressDialog.setVisible(true);
-                }
-            }, "ProgressDialog").start();
-
-            new Thread("SaveThread") {
-
-                @Override
-                public void run() {
-
-                    String selectedFile = fileChooser.getSelectedFile().getPath();
-
-                    if (!selectedFile.endsWith(".cps")) {
-                        selectedFile += ".cps";
-                    }
-
-                    File newFile = new File(selectedFile);
-                    int outcome = JOptionPane.YES_OPTION;
-
-                    if (newFile.exists()) {
-                        outcome = JOptionPane.showConfirmDialog(progressDialog,
-                                "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
-                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                    }
-
-                    if (outcome != JOptionPane.YES_OPTION) {
-                        progressDialog.setVisible(false);
-                        progressDialog.dispose();
-                        return;
-                    }
-
-                    try {
-                        // change the peptide shaker icon to a "waiting version"
-                        tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                        experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails));
-
-                        String folderPath = selectedFile.substring(0, selectedFile.lastIndexOf("."));
-                        File newFolder = new File(folderPath + "_cps");
-
-                        if (newFolder.exists()) {
-                            String[] fileList = newFolder.list();
-                            progressDialog.setMax(fileList.length);
-                            progressDialog.setTitle("Deleting Old Matches. Please Wait...");
-                            File toDelete;
-                            int cpt = 0;
-                            for (String fileName : fileList) {
-                                toDelete = new File(newFolder.getPath(), fileName);
-                                toDelete.delete();
-                                progressDialog.setValue(++cpt);
-                            }
-                            progressDialog.setIndeterminate(true);
-                        }
-
-                        newFolder.mkdir();
-
-                        identification.save(newFolder, progressDialog);
-
-                        progressDialog.setValue(99);
-                        progressDialog.setMax(100);
-                        experimentIO.save(newFile, experiment);
-
-                        progressDialog.setVisible(false);
-                        progressDialog.dispose();
-
-                        // return the peptide shaker icon to the standard version
-                        tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                        updateRecentProjectsList(new File(selectedFile));
-
-                        JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
-                        currentPSFile = newFile;
-                        dataSaved = true;
-
-                    } catch (Exception e) {
-
-                        // return the peptide shaker icon to the standard version
-                        tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                        progressDialog.setVisible(false);
-                        progressDialog.dispose();
-
-                        JOptionPane.showMessageDialog(tempRef, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);
-                        e.printStackTrace();
-                    }
-                }
-            }.start();
+            if (outcome != JOptionPane.YES_OPTION) {
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+            } else {
+                saveProject();
+            }
         }
-    }//GEN-LAST:event_saveMenuItemActionPerformed
+    }//GEN-LAST:event_saveAsMenuItemActionPerformed
 
     /**
      * Opens the Help dialog.
@@ -1664,7 +1599,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // check if we have re-loaded the data using the current threshold and PEP window settings
         if (selectedIndex != VALIDATION_TAB_INDEX && statsPanel.isInitiated()) {
-            
+
             if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate) {
 
                 allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
@@ -1751,8 +1686,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             } else {
                 // @TODO: reload if hidden selection is changed!
             }
-        } 
-        
+        }
+
 
         // update the basic protein annotation
         if (selectedIndex == ANNOTATION_TAB_INDEX) {
@@ -1779,7 +1714,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 updateSpectrumAnnotations();
             }
         });
-        
+
         // disable the protein filter option if a tab other than the overview tab is selected
         proteinFilterJMenuItem.setEnabled(selectedIndex == OVER_VIEW_TAB_INDEX);
     }//GEN-LAST:event_allTabsJTabbedPaneStateChanged
@@ -2474,6 +2409,20 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }//GEN-LAST:event_showHiddenProteinsJCheckBoxMenuItemActionPerformed
 
     /**
+     * Save the current project.
+     * 
+     * @param evt 
+     */
+    private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
+
+        if (currentPSFile != null && currentPSFile.exists()) {
+            saveProject();
+        } else {
+            saveAsMenuItemActionPerformed(null);
+        }
+    }//GEN-LAST:event_saveMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
     private void loadEnzymes() {
@@ -2492,7 +2441,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         // move to the Overview tab
         allTabsJTabbedPane.setSelectedIndex(0);
-        
+
         try {
             sequenceCoverageJCheckBoxMenuItem.setSelected(true);
 
@@ -2528,7 +2477,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                         // load the Overview tab
                         overviewPanel.displayResults(progressDialog);
-     
+
                         allTabsJTabbedPaneStateChanged(null);
 
                         // make sure that all panels are looking the way they should
@@ -2542,6 +2491,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                         // enable the menu items depending on a project being open
                         saveMenuItem.setEnabled(true);
+                        saveAsMenuItem.setEnabled(true);
                         proteinFilterJMenuItem.setEnabled(true);
                         identificationFeaturesMenu.setEnabled(true);
                         followUpAnalysisMenu.setEnabled(true);
@@ -2685,6 +2635,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
     private javax.swing.JPanel ptmJPanel;
     private javax.swing.JPanel qcJPanel;
+    private javax.swing.JMenuItem saveAsMenuItem;
     private javax.swing.JMenuItem saveMenuItem;
     private javax.swing.JCheckBoxMenuItem scoresJCheckBoxMenuItem;
     private javax.swing.JMenuItem searchParametersMenu;
@@ -3169,7 +3120,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public String getSelectedSpectrumKey() {
         return selectedSpectrumKey;
     }
-    
+
     /**
      * Sets the currently selected spectrum key.
      * 
@@ -4580,7 +4531,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     PeptideShaker.setPeptideShakerPTMs(searchParameters);
 
                     progressDialog.setTitle("Loading FASTA File. Please Wait...");
-                    
+
                     try {
                         File providedFastaLocation = experimentSettings.getSearchParameters().getFastaFile();
                         String fileName = providedFastaLocation.getName();
@@ -4660,7 +4611,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     ArrayList<String> names = new ArrayList<String>();
                     ArrayList<String> spectrumFiles = new ArrayList<String>();
-                    
+
                     progressDialog.setTitle("Locating Spectrum Files. Please Wait..."); // @TODO: can be extended with progress counter
 
                     for (String filePath : getSearchParameters().getSpectrumFiles()) {
@@ -5084,5 +5035,86 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public int getSelectedPeptideIndex() {
         return selectedPeptideIndex;
+    }
+
+    /**
+     * Save the project to the currentPSFile location.
+     */
+    private void saveProject() {
+        lastSelectedFolder = currentPSFile.getAbsolutePath();
+
+        progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog.doNothingOnClose();
+
+        final PeptideShakerGUI tempRef = this; // needed due to threading issues
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Saving. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("SaveThread") {
+
+            @Override
+            public void run() {
+
+                try {
+                    // change the peptide shaker icon to a "waiting version"
+                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                    experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails));
+
+                    String folderPath = currentPSFile.getParentFile().getAbsolutePath();
+                    File newFolder = new File(folderPath + "_cps");
+
+                    if (newFolder.exists()) {
+                        String[] fileList = newFolder.list();
+                        progressDialog.setMax(fileList.length);
+                        progressDialog.setTitle("Deleting Old Matches. Please Wait...");
+                        File toDelete;
+                        int cpt = 0;
+                        for (String fileName : fileList) {
+                            toDelete = new File(newFolder.getPath(), fileName);
+                            toDelete.delete();
+                            progressDialog.setValue(++cpt);
+                        }
+                        progressDialog.setIndeterminate(true);
+                    }
+
+                    newFolder.mkdir();
+
+                    identification.save(newFolder, progressDialog);
+
+                    progressDialog.setValue(99);
+                    progressDialog.setMax(100);
+                    experimentIO.save(currentPSFile, experiment);
+
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+
+                    // return the peptide shaker icon to the standard version
+                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                    updateRecentProjectsList(currentPSFile);
+
+                    JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+                    dataSaved = true;
+
+                } catch (Exception e) {
+
+                    // return the peptide shaker icon to the standard version
+                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+
+                    JOptionPane.showMessageDialog(tempRef, "Failed saving the file.", "Error", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 }
