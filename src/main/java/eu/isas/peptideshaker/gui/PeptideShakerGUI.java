@@ -1394,11 +1394,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
                         JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
-
+            
             if (outcome != JOptionPane.YES_OPTION) {
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
             } else {
+                currentPSFile = newFile;
                 saveProject();
             }
         }
@@ -2168,7 +2169,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                 // select the output folder
                 final JFileChooser fileChooser = new JFileChooser(lastSelectedFolder);
-                fileChooser.setDialogTitle("Save As...");
+                fileChooser.setDialogTitle("Export As Zip...");
                 fileChooser.setMultiSelectionEnabled(false);
 
                 FileFilter filter = new FileFilter() {
@@ -2306,6 +2307,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                 String cpsFolderName = currentPSFile.getName().substring(0, currentPSFile.getName().length() - 4) + "_cps";
                                 File cpsFolder = new File(projectFolder, cpsFolderName);
 
+                                if (!cpsFolder.exists()) {
+                                    progressDialog.setVisible(false);
+                                    progressDialog.dispose();
+                                    // return the peptide shaker icon to the standard version
+                                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                    JOptionPane.showMessageDialog(tempRef, "cps folder not found!", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
+                                    return;
+                                }
+                                
                                 String files[] = cpsFolder.list();
 
                                 progressDialog.setTitle("Zipping PeptideShaker Folder. Please Wait...");
@@ -2380,7 +2390,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             progressDialog.dispose();
                             // return the peptide shaker icon to the standard version
                             tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                            JOptionPane.showMessageDialog(tempRef, "Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + "MB)",
+                            JOptionPane.showMessageDialog(tempRef, "Project zipped to \'" + zipFile.getAbsolutePath() + "\' (" + sizeOfZippedFile + " MB)",
                                     "Export Sucessful", JOptionPane.INFORMATION_MESSAGE);
                         }
                     }.start();
@@ -2414,7 +2424,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param evt 
      */
     private void saveMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveMenuItemActionPerformed
-
         if (currentPSFile != null && currentPSFile.exists()) {
             saveProject();
         } else {
@@ -5041,6 +5050,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * Save the project to the currentPSFile location.
      */
     private void saveProject() {
+        
         lastSelectedFolder = currentPSFile.getAbsolutePath();
 
         progressDialog = new ProgressDialogX(this, this, true);
@@ -5068,12 +5078,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails));
 
                     String folderPath = currentPSFile.getParentFile().getAbsolutePath();
-                    File newFolder = new File(folderPath + "_cps");
-
+                    File newFolder = new File(folderPath, currentPSFile.getName().substring(0, currentPSFile.getName().length() - 4) + "_cps");
+                    
                     if (newFolder.exists()) {
                         String[] fileList = newFolder.list();
                         progressDialog.setMax(fileList.length);
-                        progressDialog.setTitle("Deleting Old Matches. Please Wait...");
+                        progressDialog.setTitle("Deleting Old Data. Please Wait...");
                         File toDelete;
                         int cpt = 0;
                         for (String fileName : fileList) {
