@@ -152,6 +152,10 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private SpectrumPanel spectrum;
     /**
+     * The current spectrum key.
+     */
+    private String currentSpectrumKey = "";
+    /**
      * Protein inference map, key: pi type, element: pi as a string.
      */
     private HashMap<Integer, String> proteinInferenceTooltipMap;
@@ -163,6 +167,10 @@ public class PtmPanel extends javax.swing.JPanel {
      * The ptm factory
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
+    /**
+     * The chart panel.
+     */
+    private ChartPanel chartPanel;
 
     /**
      * Creates a new PTM tab.
@@ -183,7 +191,7 @@ public class PtmPanel extends javax.swing.JPanel {
         peptidesTableJScrollPane.getViewport().setOpaque(false);
         ptmJScrollPane.getViewport().setOpaque(false);
 
-        //spectrumTabbedPane.setEnabledAt(0, false);
+        spectrumTabbedPane.setEnabledAt(0, false);
         //spectrumTabbedPane.setEnabledAt(1, false);
 
         setTableProperties();
@@ -482,6 +490,9 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumTabbedPane = new javax.swing.JTabbedPane();
         psmModProfileJPanel = new javax.swing.JPanel();
         ptmPlotPanel = new javax.swing.JPanel();
+        ptmPlotJToolBar = new javax.swing.JToolBar();
+        ptmPlotAnnotationMenuPanel = new javax.swing.JPanel();
+        ptmPlotChartPanel = new javax.swing.JPanel();
         spectrumJPanel = new javax.swing.JPanel();
         spectrumJToolBar = new javax.swing.JToolBar();
         spectrumAnnotationMenuPanel = new javax.swing.JPanel();
@@ -776,10 +787,8 @@ public class PtmPanel extends javax.swing.JPanel {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 exportModifiedPeptideProfileJButtonMouseExited(evt);
             }
-        });
-        exportModifiedPeptideProfileJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportModifiedPeptideProfileJButtonActionPerformed(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportModifiedPeptideProfileJButtonMouseReleased(evt);
             }
         });
         exportModifiedPeptideProfileJButton.setBounds(730, 0, 10, 25);
@@ -921,10 +930,8 @@ public class PtmPanel extends javax.swing.JPanel {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 exportRelatedPeptideProfileJButtonMouseExited(evt);
             }
-        });
-        exportRelatedPeptideProfileJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportRelatedPeptideProfileJButtonActionPerformed(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportRelatedPeptideProfileJButtonMouseReleased(evt);
             }
         });
         exportRelatedPeptideProfileJButton.setBounds(740, 0, 10, 25);
@@ -992,6 +999,11 @@ public class PtmPanel extends javax.swing.JPanel {
 
         spectrumTabbedPane.setBackground(new java.awt.Color(255, 255, 255));
         spectrumTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+        spectrumTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spectrumTabbedPaneStateChanged(evt);
+            }
+        });
 
         psmModProfileJPanel.setOpaque(false);
 
@@ -1009,7 +1021,37 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumTabbedPane.addTab("Profile", psmModProfileJPanel);
 
         ptmPlotPanel.setOpaque(false);
-        ptmPlotPanel.setLayout(new javax.swing.BoxLayout(ptmPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        ptmPlotJToolBar.setBackground(new java.awt.Color(255, 255, 255));
+        ptmPlotJToolBar.setBorder(null);
+        ptmPlotJToolBar.setFloatable(false);
+        ptmPlotJToolBar.setRollover(true);
+        ptmPlotJToolBar.setBorderPainted(false);
+
+        ptmPlotAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(ptmPlotAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
+        ptmPlotJToolBar.add(ptmPlotAnnotationMenuPanel);
+
+        ptmPlotChartPanel.setOpaque(false);
+        ptmPlotChartPanel.setLayout(new javax.swing.BoxLayout(ptmPlotChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+
+        javax.swing.GroupLayout ptmPlotPanelLayout = new javax.swing.GroupLayout(ptmPlotPanel);
+        ptmPlotPanel.setLayout(ptmPlotPanelLayout);
+        ptmPlotPanelLayout.setHorizontalGroup(
+            ptmPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(ptmPlotChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+            .addGroup(ptmPlotPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ptmPlotJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 490, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        ptmPlotPanelLayout.setVerticalGroup(
+            ptmPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ptmPlotPanelLayout.createSequentialGroup()
+                .addComponent(ptmPlotChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addComponent(ptmPlotJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
         spectrumTabbedPane.addTab("PTM Plot", ptmPlotPanel);
 
         spectrumJPanel.setBackground(new java.awt.Color(255, 255, 255));
@@ -1150,10 +1192,8 @@ public class PtmPanel extends javax.swing.JPanel {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 exportSpectrumJButtonMouseExited(evt);
             }
-        });
-        exportSpectrumJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportSpectrumJButtonActionPerformed(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportSpectrumJButtonMouseReleased(evt);
             }
         });
         exportSpectrumJButton.setBounds(530, 0, 10, 25);
@@ -2200,38 +2240,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     }//GEN-LAST:event_exportModifiedPeptideProfileJButtonMouseExited
 
     /**
-     * Export the table contents.
-     * 
-     * @param evt 
-     */
-    private void exportModifiedPeptideProfileJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportModifiedPeptideProfileJButtonActionPerformed
-
-        JPopupMenu popupMenu = new JPopupMenu();
-
-        JMenuItem menuItem = new JMenuItem("Table to Clipboard");
-        menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyTableContentToClipboard(TableIndex.MODIFIED_PEPTIDES_TABLE);
-            }
-        });
-
-        popupMenu.add(menuItem);
-
-        menuItem = new JMenuItem("Modification Profile Plot");
-        menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                new ExportGraphicsDialog(peptideShakerGUI, true, modificationProfileSelectedPeptideJPanel.getComponent(1));
-            }
-        });
-
-        popupMenu.add(menuItem);
-
-        popupMenu.show(exportModifiedPeptideProfileJButton, exportModifiedPeptideProfileJButton.getX(), exportModifiedPeptideProfileJButton.getY());
-    }//GEN-LAST:event_exportModifiedPeptideProfileJButtonActionPerformed
-
-    /**
      * Change the cursor to a hand cursor.
      * 
      * @param evt 
@@ -2277,41 +2285,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private void exportRelatedPeptideProfileJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportRelatedPeptideProfileJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exportRelatedPeptideProfileJButtonMouseExited
-
-    /**
-     * Export the table contents.
-     * 
-     * @param evt 
-     */
-    private void exportRelatedPeptideProfileJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportRelatedPeptideProfileJButtonActionPerformed
-
-        JPopupMenu popupMenu = new JPopupMenu();
-
-        JMenuItem menuItem = new JMenuItem("Table to Clipboard");
-        menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyTableContentToClipboard(TableIndex.RELATED_PEPTIDES_TABLE);
-            }
-        });
-
-        popupMenu.add(menuItem);
-
-        if (modificationProfileRelatedPeptideJPanel.getComponentCount() == 2) {
-
-            menuItem = new JMenuItem("Modification Profile Plot");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    new ExportGraphicsDialog(peptideShakerGUI, true, modificationProfileRelatedPeptideJPanel.getComponent(1));
-                }
-            });
-
-            popupMenu.add(menuItem);
-        }
-
-        popupMenu.show(exportRelatedPeptideProfileJButton, exportRelatedPeptideProfileJButton.getX(), exportRelatedPeptideProfileJButton.getY());
-    }//GEN-LAST:event_exportRelatedPeptideProfileJButtonActionPerformed
 
     /**
      * Change the cursor to a hand cursor.
@@ -2473,45 +2446,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     }//GEN-LAST:event_exportSpectrumJButtonMouseExited
 
     /**
-     * Export the spectrum to mgf or figure format.
-     * 
-     * @param evt 
-     */
-    private void exportSpectrumJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonActionPerformed
-
-        JPopupMenu popupMenu = new JPopupMenu();
-
-        int index = spectrumTabbedPane.getSelectedIndex();
-
-        if (index == 2) { // spectrum
-            JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsFigure();
-                }
-            });
-
-            popupMenu.add(menuItem);
-
-            menuItem = new JMenuItem("Spectrum As MGF");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsMgf();
-                }
-            });
-
-            popupMenu.add(menuItem);
-        } else {
-            // @TODO: implement the other options!
-        }
-
-        popupMenu.show(exportSpectrumJButton, exportSpectrumJButton.getX(), exportSpectrumJButton.getY());
-
-    }//GEN-LAST:event_exportSpectrumJButtonActionPerformed
-
-    /**
      * Change the cursor to a hand cursor.
      * 
      * @param evt 
@@ -2536,9 +2470,176 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private void spectrumHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum");
+        
+        int spectrumTabIndex = spectrumTabbedPane.getSelectedIndex();
+
+        if (spectrumTabIndex == 0) {
+            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Peptides"); // @TODO: update when psm mod profiles are added!
+        } else if (spectrumTabIndex == 1) {
+            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#PTM_Plot");
+        } else if (spectrumTabIndex == 2) {
+            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum");
+        }
+        
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumHelpJButtonActionPerformed
+
+    /**
+     * Move the annotation menu bar.
+     * 
+     * @param evt 
+     */
+    private void spectrumTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spectrumTabbedPaneStateChanged
+        if (peptideShakerGUI.getAnnotationMenuBar() != null) {
+
+            int index = spectrumTabbedPane.getSelectedIndex();
+
+            if (index == 0) {
+                // no annotation menu bar here
+            } else if (index == 1) {
+                ptmPlotAnnotationMenuPanel.removeAll();
+                ptmPlotAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+                peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, false, false, true);
+            } else if (index == 2) {
+                spectrumAnnotationMenuPanel.removeAll();
+                spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+                peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false, false);
+            }
+        }
+    }//GEN-LAST:event_spectrumTabbedPaneStateChanged
+
+    /**
+     * Export the spectrum to mgf or figure format.
+     * 
+     * @param evt 
+     */
+    private void exportSpectrumJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonMouseReleased
+
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        int index = spectrumTabbedPane.getSelectedIndex();
+
+        if (index == 2) { // spectrum
+            
+            JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsFigure();
+                }
+            });
+
+            popupMenu.add(menuItem);
+
+            menuItem = new JMenuItem("Spectrum As MGF");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsMgf();
+                }
+            });
+
+            popupMenu.add(menuItem);
+            
+        } else if (index == 1) {
+
+            JMenuItem menuItem = new JMenuItem("Plot As Figure");
+
+            if (chartPanel == null) {
+                menuItem.setEnabled(false);
+            } else {
+                menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                    public void actionPerformed(java.awt.event.ActionEvent evt) {
+                        new ExportGraphicsDialog(peptideShakerGUI, true, chartPanel);
+                    }
+                });
+            }
+
+            popupMenu.add(menuItem);
+            
+            menuItem = new JMenuItem("Spectrum As Figure");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsFigure();
+                }
+            });
+
+            popupMenu.add(menuItem);
+
+        } else if (index == 0) {
+            // @TODO: implement export of the mod profiles
+        }
+
+        popupMenu.show(exportSpectrumJButton, evt.getX(), evt.getY());
+    }//GEN-LAST:event_exportSpectrumJButtonMouseReleased
+
+    /**
+     * Export the table contents.
+     * 
+     * @param evt 
+     */
+    private void exportRelatedPeptideProfileJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportRelatedPeptideProfileJButtonMouseReleased
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem menuItem = new JMenuItem("Table to Clipboard");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyTableContentToClipboard(TableIndex.RELATED_PEPTIDES_TABLE);
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        if (modificationProfileRelatedPeptideJPanel.getComponentCount() == 2) {
+
+            menuItem = new JMenuItem("Modification Profile Plot");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    new ExportGraphicsDialog(peptideShakerGUI, true, modificationProfileRelatedPeptideJPanel.getComponent(1));
+                }
+            });
+
+            popupMenu.add(menuItem);
+        }
+
+        popupMenu.show(exportRelatedPeptideProfileJButton, evt.getX(), evt.getY());
+    }//GEN-LAST:event_exportRelatedPeptideProfileJButtonMouseReleased
+
+    /**
+     * Export the table contents.
+     * 
+     * @param evt 
+     */
+    private void exportModifiedPeptideProfileJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportModifiedPeptideProfileJButtonMouseReleased
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem menuItem = new JMenuItem("Table to Clipboard");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyTableContentToClipboard(TableIndex.MODIFIED_PEPTIDES_TABLE);
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        menuItem = new JMenuItem("Modification Profile Plot");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                new ExportGraphicsDialog(peptideShakerGUI, true, modificationProfileSelectedPeptideJPanel.getComponent(1));
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        popupMenu.show(exportModifiedPeptideProfileJButton, evt.getX(), evt.getY());
+    }//GEN-LAST:event_exportModifiedPeptideProfileJButtonMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel contextMenuModPsmsBackgroundPanel;
@@ -2577,6 +2678,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JLayeredPane ptmLayeredLayeredPane;
     private javax.swing.JPanel ptmLayeredPanel;
     private javax.swing.JPanel ptmPanel;
+    private javax.swing.JPanel ptmPlotAnnotationMenuPanel;
+    private javax.swing.JPanel ptmPlotChartPanel;
+    private javax.swing.JToolBar ptmPlotJToolBar;
     private javax.swing.JPanel ptmPlotPanel;
     private javax.swing.JButton ptmSelectionHelpJButton;
     private javax.swing.JPanel relatedPeptidesJPanel;
@@ -2781,12 +2885,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                             Color.lightGray,
                             NO_MODIFICATION});
 
-//                if (ptmJTable.getRowCount() > 0) {
-//                    ptmJTable.setRowSelectionInterval(0, 0);
-//                    ptmJTable.scrollRectToVisible(ptmJTable.getCellRect(0, 0, false));
-//                    updatePeptideTable();
-//                }
-
                 // update the slider tooltips
                 double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
                 accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
@@ -2803,6 +2901,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 exportSpectrumJButton.setEnabled(true);
                 exportModifiedPsmsJButton.setEnabled(true);
                 exportRelatedPsmsJButton.setEnabled(true);
+                
+                selectedPeptidesJSplitPane.setDividerLocation(0.5);
+                relatedPeptidesJSplitPane.setDividerLocation(0.5);
 
                 tabInitiated = true;
 
@@ -3101,18 +3202,17 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
 
-        MSnSpectrum currentSpectrum;
         XYPlot ptmPlot = new XYPlot();
 
         for (String spectrumKey : spectrumKeys) {
 
-            currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+            MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+            
             // get the spectrum annotations
             SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
             Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
-
             annotationPreferences.setCurrentSettings(currentPeptide,
-                    currentSpectrum.getPrecursor().getCharge().value, true);
+                    currentSpectrum.getPrecursor().getCharge().value, false); // @TODO: not sure if 'false' is correct here, but 'true' resets the annotation to default...
 
             int nPTM = 0;
             for (ModificationMatch modMatch : currentPeptide.getModificationMatches()) {
@@ -3120,6 +3220,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     nPTM++;
                 }
             }
+            
+            // @TODO: the currently selected fragment ion types are not taken into consideration?
+            // @TODO: the slider spectrum values are ignored?
 
             HashMap<PeptideFragmentIon, ArrayList<IonMatch>> ionMatches = PTMLocationScores.getPTMPlotData(
                     currentPeptide, ptmFactory.getPTM(getSelectedModification()), nPTM, currentSpectrum, annotationPreferences.getIonTypes(),
@@ -3301,7 +3404,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             }
         }
 
-        ChartPanel chartPanel = new ChartPanel(new JFreeChart(ptmPlot));
+        chartPanel = new ChartPanel(new JFreeChart(ptmPlot));
 
         // set background color
         ptmPlot.setBackgroundPaint(Color.WHITE);
@@ -3314,10 +3417,10 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         // hide the legend
         chartPanel.getChart().getLegend().setVisible(false);
 
-        ptmPlotPanel.removeAll();
-        ptmPlotPanel.add(chartPanel);
-        ptmPlotPanel.revalidate();
-        ptmPlotPanel.repaint();
+        ptmPlotChartPanel.removeAll();
+        ptmPlotChartPanel.add(chartPanel);
+        ptmPlotChartPanel.revalidate();
+        ptmPlotChartPanel.repaint();
     }
 
     /**
@@ -3352,13 +3455,14 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
 
                 annotationPreferences.setCurrentSettings(currentPeptide,
-                        currentSpectrum.getPrecursor().getCharge().value, true);
+                        currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
                 ArrayList<IonMatch> annotations = annotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                         annotationPreferences.getNeutralLosses(),
                         annotationPreferences.getValidatedCharges(),
                         currentSpectrum, currentPeptide,
                         currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                         annotationPreferences.getFragmentIonAccuracy());
+                currentSpectrumKey = spectrumMatch.getKey();
 
                 // add the spectrum annotations
                 spectrum.setAnnotations(SpectrumAnnotator.getSpectrumAnnotation(annotations));
@@ -3366,6 +3470,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 spectrum.setYAxisZoomExcludesBackgroundPeaks(peptideShakerGUI.getAnnotationPreferences().yAxisZoomExcludesBackgroundPeaks());
 
                 spectrumChartJPanel.add(spectrum);
+                peptideShakerGUI.updateAnnotationMenus();
 
                 ((TitledBorder) spectrumAndFragmentIonPanel.getBorder()).setTitle(
                         "Spectrum & Fragment Ions (" + currentPeptide.getModifiedSequenceAsString(true) + ")");
@@ -3946,9 +4051,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * Makes sure that the annotation menu bar is visible.
      */
     public void showSpectrumAnnotationMenu() {
-        spectrumAnnotationMenuPanel.removeAll();
-        spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-        peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false);
+        spectrumTabbedPaneStateChanged(null);
     }
 
     /**

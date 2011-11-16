@@ -1394,7 +1394,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
                         JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
-            
+
             if (outcome != JOptionPane.YES_OPTION) {
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
@@ -1596,128 +1596,131 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void allTabsJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_allTabsJTabbedPaneStateChanged
 
-        int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
+        if (identification != null) {
 
-        // check if we have re-loaded the data using the current threshold and PEP window settings
-        if (selectedIndex != VALIDATION_TAB_INDEX && statsPanel.isInitiated()) {
+            int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
 
-            if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate) {
+            // check if we have re-loaded the data using the current threshold and PEP window settings
+            if (selectedIndex != VALIDATION_TAB_INDEX && statsPanel.isInitiated()) {
 
-                allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+                if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate) {
 
-                int value = JOptionPane.showConfirmDialog(
-                        this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results?",
-                        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-
-                if (value == JOptionPane.YES_OPTION) {
-                    statsPanel.revalidateData();
-                    return;
-                } else if (value == JOptionPane.NO_OPTION) {
-                    // reset the test, i.e., don't ask twice without changes in between
-                    ignoreThresholdUpdate = true;
-                    allTabsJTabbedPane.setSelectedIndex(selectedIndex);
-                } else {
-                    // cancel the move
                     allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
-                }
-            } else if (!statsPanel.pepWindowApplied() && !ignorePepWindowUpdate) {
 
-                allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+                    int value = JOptionPane.showConfirmDialog(
+                            this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results?",
+                            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-                int value = JOptionPane.showConfirmDialog(
-                        this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes?",
-                        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                    if (value == JOptionPane.YES_OPTION) {
+                        statsPanel.revalidateData();
+                        return;
+                    } else if (value == JOptionPane.NO_OPTION) {
+                        // reset the test, i.e., don't ask twice without changes in between
+                        ignoreThresholdUpdate = true;
+                        allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                    } else {
+                        // cancel the move
+                        allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+                    }
+                } else if (!statsPanel.pepWindowApplied() && !ignorePepWindowUpdate) {
 
-                if (value == JOptionPane.YES_OPTION) {
-                    statsPanel.applyPepWindow();
-                    return;
-                } else if (value == JOptionPane.NO_OPTION) {
-                    // reset the test, i.e., don't ask twice without changes in between
-                    ignorePepWindowUpdate = true;
-                    allTabsJTabbedPane.setSelectedIndex(selectedIndex);
-                } else {
-                    // cancel the move
                     allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+
+                    int value = JOptionPane.showConfirmDialog(
+                            this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes?",
+                            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                    if (value == JOptionPane.YES_OPTION) {
+                        statsPanel.applyPepWindow();
+                        return;
+                    } else if (value == JOptionPane.NO_OPTION) {
+                        // reset the test, i.e., don't ask twice without changes in between
+                        ignorePepWindowUpdate = true;
+                        allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                    } else {
+                        // cancel the move
+                        allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+                    }
+                }
+            } else {
+                ignoreThresholdUpdate = false;
+                ignorePepWindowUpdate = false;
+            }
+
+            // make sure that the same protein and peptide are selected in both 
+            // the overview and protein structure tabs
+            if (selectedIndex == OVER_VIEW_TAB_INDEX) {
+                // update selected protein and peptide
+                overviewPanel.updateSelectedProteinAndPeptide(selectedProteinIndex, selectedPeptideIndex);
+            } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
+                if (!proteinStructurePanel.isInitiated()) {
+                    proteinStructurePanel.displayResults();
+                } else {
+                    if (selectedProteinIndex != -1) {
+                        // update selected protein and peptide
+                        proteinStructurePanel.updateSelectedProteinAndPeptide(selectedProteinIndex, selectedPeptideIndex);
+                    }
+                }
+            } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX) {
+                //goPanel.displayResults(); 
+                // @TODO: set species from cps file? 
+                // @TODO: reload GO enrichment tab if hidden selection is changed!
+            } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
+                if (!spectrumIdentificationPanel.isInitiated()) {
+                    spectrumIdentificationPanel.displayResults();
+                } else {
+                    spectrumIdentificationPanel.selectSpectrum(selectedSpectrumKey);
+                }
+            } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
+                if (!ptmPanel.isInitiated()) {
+                    ptmPanel.displayResults();
+                } else {
+                    // ptmPanel.selectSpectrum(selectedSpectrumKey); // @TODO: select the correct spectrum/peptide/psm
+                }
+            } else if (selectedIndex == QC_PLOTS_TAB_INDEX) {
+                if (!qcPanel.isInitiated()) {
+                    qcPanel.displayResults();
+                } else {
+                    // @TODO: reload if hidden selection is changed!
+                }
+            } else if (selectedIndex == VALIDATION_TAB_INDEX) {
+                if (!statsPanel.isInitiated()) {
+                    statsPanel.displayResults();
+                } else {
+                    // @TODO: reload if hidden selection is changed!
                 }
             }
-        } else {
-            ignoreThresholdUpdate = false;
-            ignorePepWindowUpdate = false;
-        }
 
-        // make sure that the same protein and peptide are selected in both 
-        // the overview and protein structure tabs
-        if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-            // update selected protein and peptide
-            overviewPanel.updateSelectedProteinAndPeptide(selectedProteinIndex, selectedPeptideIndex);
-        } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
-            if (!proteinStructurePanel.isInitiated()) {
-                proteinStructurePanel.displayResults();
-            } else {
-                if (selectedProteinIndex != -1) {
-                    // update selected protein and peptide
-                    proteinStructurePanel.updateSelectedProteinAndPeptide(selectedProteinIndex, selectedPeptideIndex);
+
+            // update the basic protein annotation
+            if (selectedIndex == ANNOTATION_TAB_INDEX) {
+                annotationPanel.updateBasicProteinAnnotation(selectedProteinAccession);
+            }
+
+            // move the spectrum annotation menu bar and set the intensity slider value
+            if (selectedIndex == OVER_VIEW_TAB_INDEX) {
+                overviewPanel.showSpectrumAnnotationMenu();
+                overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+            } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
+                spectrumIdentificationPanel.showSpectrumAnnotationMenu();
+                spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+            } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
+                ptmPanel.showSpectrumAnnotationMenu();
+                ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
+            }
+
+            // invoke later to give time for components to update
+            SwingUtilities.invokeLater(new Runnable() {
+
+                public void run() {
+                    // set the preferred size of the accession column
+                    updateSpectrumAnnotations();
                 }
-            }
-        } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX) {
-            //goPanel.displayResults(); 
-            // @TODO: set species from cps file? 
-            // @TODO: reload GO enrichment tab if hidden selection is changed!
-        } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
-            if (!spectrumIdentificationPanel.isInitiated()) {
-                spectrumIdentificationPanel.displayResults();
-            } else {
-                spectrumIdentificationPanel.selectSpectrum(selectedSpectrumKey);
-            }
-        } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
-            if (!ptmPanel.isInitiated()) {
-                ptmPanel.displayResults();
-            } else {
-                // ptmPanel.selectSpectrum(selectedSpectrumKey); // @TODO: select the correct spectrum/peptide/psm
-            }
-        } else if (selectedIndex == QC_PLOTS_TAB_INDEX) {
-            if (!qcPanel.isInitiated()) {
-                qcPanel.displayResults();
-            } else {
-                // @TODO: reload if hidden selection is changed!
-            }
-        } else if (selectedIndex == VALIDATION_TAB_INDEX) {
-            if (!statsPanel.isInitiated()) {
-                statsPanel.displayResults();
-            } else {
-                // @TODO: reload if hidden selection is changed!
-            }
+            });
+
+            // disable the protein filter option if a tab other than the overview tab is selected
+            proteinFilterJMenuItem.setEnabled(selectedIndex == OVER_VIEW_TAB_INDEX);
         }
-
-
-        // update the basic protein annotation
-        if (selectedIndex == ANNOTATION_TAB_INDEX) {
-            annotationPanel.updateBasicProteinAnnotation(selectedProteinAccession);
-        }
-
-        // move the spectrum annotation menu bar and set the intensity slider value
-        if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-            overviewPanel.showSpectrumAnnotationMenu();
-            overviewPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
-        } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
-            spectrumIdentificationPanel.showSpectrumAnnotationMenu();
-            spectrumIdentificationPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
-        } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
-            ptmPanel.showSpectrumAnnotationMenu();
-            ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
-        }
-
-        // invoke later to give time for components to update
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                // set the preferred size of the accession column
-                updateSpectrumAnnotations();
-            }
-        });
-
-        // disable the protein filter option if a tab other than the overview tab is selected
-        proteinFilterJMenuItem.setEnabled(selectedIndex == OVER_VIEW_TAB_INDEX);
     }//GEN-LAST:event_allTabsJTabbedPaneStateChanged
 
     /**
@@ -1943,7 +1946,15 @@ private void helpMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-
     } else if (selectedTabIndex == SPECTRUM_ID_TAB_INDEX) {
         new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
     } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
-        new HelpDialog(this, getClass().getResource("/helpFiles/SpectrumPanel.html"));
+        int spectrumTabIndex = overviewPanel.getSelectedSpectrumTabIndex();
+
+        if (spectrumTabIndex == 0) {
+            new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"), "#Peptides"); // @TODO: update when psm mod profiles are added!
+        } else if (spectrumTabIndex == 1) {
+            new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"), "#PTM_Plot");
+        } else if (spectrumTabIndex == 2) {
+            new HelpDialog(this, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum");
+        }
     }
 
     setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -2315,7 +2326,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                     JOptionPane.showMessageDialog(tempRef, "cps folder not found!", "Zip Error", JOptionPane.INFORMATION_MESSAGE);
                                     return;
                                 }
-                                
+
                                 String files[] = cpsFolder.list();
 
                                 progressDialog.setTitle("Zipping PeptideShaker Folder. Please Wait...");
@@ -4184,8 +4195,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param showSpectrumOptions       if true, the spectrum options are shown
      * @param showBubblePlotOptions     if true, the bubble plot options are shown
      * @param showIonTableOptions       if true, the ion table options are shown
+     * @param showPtmPlotOptions        if true, the ptm plot option are shown 
      */
-    public void updateAnnotationMenuBarVisableOptions(boolean showSpectrumOptions, boolean showBubblePlotOptions, boolean showIonTableOptions) {
+    public void updateAnnotationMenuBarVisableOptions(boolean showSpectrumOptions, boolean showBubblePlotOptions,
+            boolean showIonTableOptions, boolean showPtmPlotOptions) {
+
+        // @TODO: replace boolean variables with an Enum
+
         allCheckBoxMenuItem.setVisible(showSpectrumOptions);
         exportSpectrumGraphicsJMenuItem.setVisible(showSpectrumOptions);
         exportSpectrumMenu.setVisible(showSpectrumOptions);
@@ -5050,7 +5066,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * Save the project to the currentPSFile location.
      */
     private void saveProject() {
-        
+
         lastSelectedFolder = currentPSFile.getAbsolutePath();
 
         progressDialog = new ProgressDialogX(this, this, true);
@@ -5079,7 +5095,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     String folderPath = currentPSFile.getParentFile().getAbsolutePath();
                     File newFolder = new File(folderPath, currentPSFile.getName().substring(0, currentPSFile.getName().length() - 4) + "_cps");
-                    
+
                     if (newFolder.exists()) {
                         String[] fileList = newFolder.list();
                         progressDialog.setMax(fileList.length);

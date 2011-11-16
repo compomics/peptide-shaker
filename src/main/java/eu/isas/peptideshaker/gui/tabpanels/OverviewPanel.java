@@ -1515,10 +1515,8 @@ public class OverviewPanel extends javax.swing.JPanel {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 exportSpectrumJButtonMouseExited(evt);
             }
-        });
-        exportSpectrumJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportSpectrumJButtonActionPerformed(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportSpectrumJButtonMouseReleased(evt);
             }
         });
         exportSpectrumJButton.setBounds(450, 0, 10, 25);
@@ -2042,7 +2040,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_coverageTableMouseMoved
 
     /**
-     * Open the help dialog.
+     * Move the annotation menu bar.
      * 
      * @param evt 
      */
@@ -2055,15 +2053,15 @@ private void spectrumJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) 
         if (index == 0) {
             ionTableAnnotationMenuPanel.removeAll();
             ionTableAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-            peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, false, true);
+            peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, false, true, false);
         } else if (index == 1) {
             bubbleAnnotationMenuPanel.removeAll();
             bubbleAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-            peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, true, false);
+            peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, true, false, false);
         } else if (index == 2) {
             spectrumAnnotationMenuPanel.removeAll();
             spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-            peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false);
+            peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false, false);
         }
     }
 }//GEN-LAST:event_spectrumJTabbedPaneStateChanged
@@ -2708,104 +2706,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }//GEN-LAST:event_exportSpectrumJButtonMouseExited
 
     /**
-     * Export the spectrum to mgf or figure format.
-     * 
-     * @param evt 
-     */
-    private void exportSpectrumJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonActionPerformed
-
-        JPopupMenu popupMenu = new JPopupMenu();
-
-        int index = spectrumJTabbedPane.getSelectedIndex();
-
-        if (index == 0) { // fragment ion
-            JMenuItem menuItem = new JMenuItem("Spectrum As MGF");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsMgf();
-                }
-            });
-
-            popupMenu.add(menuItem);
-        } else if (index == 1) { // bubble plot
-            JMenuItem menuItem = new JMenuItem("Bubble Plot As Figure");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportBubblePlotAsFigure();
-                }
-            });
-
-            popupMenu.add(menuItem);
-
-            menuItem = new JMenuItem("Spectrum As MGF");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsMgf();
-                }
-            });
-
-            popupMenu.add(menuItem);
-        } else if (index == 2) { // spectrum
-            JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsFigure();
-                }
-            });
-
-            popupMenu.add(menuItem);
-
-            menuItem = new JMenuItem("Sequence Fragmentation");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSequenceFragmentationAsFigure();
-                }
-            });
-
-            popupMenu.add(menuItem);
-
-            menuItem = new JMenuItem("Intensity Histogram");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportIntensityHistogramAsFigure();
-                }
-            });
-
-            popupMenu.add(menuItem);
-
-            menuItem = new JMenuItem("Mass Error Plot");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportMassErrorPlotAsFigure();
-                }
-            });
-
-            popupMenu.add(menuItem);
-
-            popupMenu.add(new JSeparator());
-
-            menuItem = new JMenuItem("Spectrum As MGF");
-            menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsMgf();
-                }
-            });
-
-            popupMenu.add(menuItem);
-        }
-
-        popupMenu.show(exportSpectrumJButton, exportSpectrumJButton.getX(), exportSpectrumJButton.getY());
-    }//GEN-LAST:event_exportSpectrumJButtonActionPerformed
-
-    /**
      * Change the cursor to a hand cursor.
      * 
      * @param evt 
@@ -3133,6 +3033,103 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
         peptideShakerGUI.setHiddenProteinIndexes(hiddenProteins);
     }//GEN-LAST:event_deselectHiddenAllMenuItemActionPerformed
+
+    /**
+     * Export the spectrum to mgf or figure format.
+     * 
+     * @param evt 
+     */
+    private void exportSpectrumJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonMouseReleased
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        int index = spectrumJTabbedPane.getSelectedIndex();
+
+        if (index == 0) { // fragment ion
+            JMenuItem menuItem = new JMenuItem("Spectrum As MGF");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsMgf();
+                }
+            });
+
+            popupMenu.add(menuItem);
+        } else if (index == 1) { // bubble plot
+            JMenuItem menuItem = new JMenuItem("Bubble Plot As Figure");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportBubblePlotAsFigure();
+                }
+            });
+
+            popupMenu.add(menuItem);
+
+            menuItem = new JMenuItem("Spectrum As MGF");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsMgf();
+                }
+            });
+
+            popupMenu.add(menuItem);
+        } else if (index == 2) { // spectrum
+            JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsFigure();
+                }
+            });
+
+            popupMenu.add(menuItem);
+
+            menuItem = new JMenuItem("Sequence Fragmentation");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSequenceFragmentationAsFigure();
+                }
+            });
+
+            popupMenu.add(menuItem);
+
+            menuItem = new JMenuItem("Intensity Histogram");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportIntensityHistogramAsFigure();
+                }
+            });
+
+            popupMenu.add(menuItem);
+
+            menuItem = new JMenuItem("Mass Error Plot");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportMassErrorPlotAsFigure();
+                }
+            });
+
+            popupMenu.add(menuItem);
+
+            popupMenu.add(new JSeparator());
+
+            menuItem = new JMenuItem("Spectrum As MGF");
+            menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    peptideShakerGUI.exportSpectrumAsMgf();
+                }
+            });
+
+            popupMenu.add(menuItem);
+        }
+
+        popupMenu.show(exportSpectrumJButton, evt.getX(), evt.getY());
+    }//GEN-LAST:event_exportSpectrumJButtonMouseReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JLayeredPane backgroundLayeredPane;
@@ -3698,7 +3695,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                 try {
                     MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+
                     if (currentSpectrum != null) {
+
                         HashSet<Peak> peaks = currentSpectrum.getPeakList();
 
                         if (peaks == null || peaks.isEmpty()) {
@@ -3747,7 +3746,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             }
 
                             peptideShakerGUI.updateAnnotationMenus();
-
 
                             currentSpectrumKey = spectrumKey;
 
@@ -4175,11 +4173,11 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 }
 
                 orderMap.get(score).get(nPeptides).get(nSpectra).add(proteinKey);
-            } 
-                
+            }
+
             progressDialogX.incrementValue();
         }
-        
+
         progressDialogX.setIndeterminate(true);
         progressDialogX.setTitle("Sorting Proteins. Please Wait...");
 
@@ -4195,9 +4193,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         progressDialogX.setTitle("Loading Scores. Please Wait...");
         progressDialogX.setMax(scores.size());
         progressDialogX.setValue(0);
-        
+
         for (double currentScore : scores) {
-            
+
             nP = new ArrayList(orderMap.get(currentScore).keySet());
             Collections.sort(nP);
 
@@ -4267,7 +4265,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     maxPeptides = -currentNP;
                 }
             }
-            
+
             progressDialogX.incrementValue();
         }
 

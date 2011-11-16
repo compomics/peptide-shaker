@@ -605,10 +605,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 exportSearchEnginePerformanceJButtonMouseExited(evt);
             }
-        });
-        exportSearchEnginePerformanceJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportSearchEnginePerformanceJButtonActionPerformed(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportSearchEnginePerformanceJButtonMouseReleased(evt);
             }
         });
         exportSearchEnginePerformanceJButton.setBounds(1280, 0, 10, 25);
@@ -1305,10 +1303,8 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 exportSpectrumJButtonMouseExited(evt);
             }
-        });
-        exportSpectrumJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportSpectrumJButtonActionPerformed(evt);
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                exportSpectrumJButtonMouseReleased(evt);
             }
         });
         exportSpectrumJButton.setBounds(600, 0, 10, 25);
@@ -1374,7 +1370,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void fileNamesCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileNamesCmbActionPerformed
-        
+
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
 
@@ -2057,38 +2053,6 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
     }//GEN-LAST:event_exportSearchEnginePerformanceJButtonMouseExited
 
     /**
-     * Export the table contents.
-     * 
-     * @param evt 
-     */
-    private void exportSearchEnginePerformanceJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSearchEnginePerformanceJButtonActionPerformed
-
-        JPopupMenu popupMenu = new JPopupMenu();
-
-        JMenuItem menuItem = new JMenuItem("Table to Clipboard");
-        menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                copyTableContentToClipboard(TableIndex.SEARCH_ENGINE_PERFORMANCE);
-            }
-        });
-
-        popupMenu.add(menuItem);
-
-        menuItem = new JMenuItem("Venn Diagram");
-        menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                new ExportGraphicsDialog(peptideShakerGUI, true, vennDiagramButton);
-            }
-        });
-
-        popupMenu.add(menuItem);
-
-        popupMenu.show(exportSearchEnginePerformanceJButton, exportSearchEnginePerformanceJButton.getX(), exportSearchEnginePerformanceJButton.getY());
-    }//GEN-LAST:event_exportSearchEnginePerformanceJButtonActionPerformed
-
-    /**
      * Change the cursor to a hand cursor.
      * 
      * @param evt 
@@ -2192,12 +2156,42 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
     }//GEN-LAST:event_exportSpectrumJButtonMouseExited
 
     /**
+     * Export the table contents.
+     * 
+     * @param evt 
+     */
+    private void exportSearchEnginePerformanceJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSearchEnginePerformanceJButtonMouseReleased
+        JPopupMenu popupMenu = new JPopupMenu();
+
+        JMenuItem menuItem = new JMenuItem("Table to Clipboard");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                copyTableContentToClipboard(TableIndex.SEARCH_ENGINE_PERFORMANCE);
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        menuItem = new JMenuItem("Venn Diagram");
+        menuItem.addActionListener(new java.awt.event.ActionListener() {
+
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                new ExportGraphicsDialog(peptideShakerGUI, true, vennDiagramButton);
+            }
+        });
+
+        popupMenu.add(menuItem);
+
+        popupMenu.show(exportSearchEnginePerformanceJButton, evt.getX(), evt.getY());
+    }//GEN-LAST:event_exportSearchEnginePerformanceJButtonMouseReleased
+
+    /**
      * Export the spectrum.
      * 
      * @param evt 
      */
-    private void exportSpectrumJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonActionPerformed
-
+    private void exportSpectrumJButtonMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_exportSpectrumJButtonMouseReleased
         JPopupMenu popupMenu = new JPopupMenu();
 
         JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
@@ -2220,9 +2214,8 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
         popupMenu.add(menuItem);
 
-        popupMenu.show(exportSpectrumJButton, exportSpectrumJButton.getX(), exportSpectrumJButton.getY());
-
-    }//GEN-LAST:event_exportSpectrumJButtonActionPerformed
+        popupMenu.show(exportSpectrumJButton, evt.getX(), evt.getY());
+    }//GEN-LAST:event_exportSpectrumJButtonMouseReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel contextMenuPsmsBackgroundPanel;
@@ -2298,7 +2291,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
             @Override
             public void run() {
-                
+
                 // change the peptide shaker icon to a "waiting version"
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
@@ -2422,12 +2415,12 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     exportPsmsJButton.setEnabled(true);
 
                     tabInitiated = true;
-                    
+
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
 
                     selectSpectrum(peptideShakerGUI.getSelectedSpectrumKey());
-                    
+
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -2435,7 +2428,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
                     peptideShakerGUI.catchException(e);
-                    
+
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
@@ -2628,7 +2621,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                 @Override
                 public void run() {
-                    
+
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
@@ -2652,7 +2645,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     spectrumSelectionChanged();
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
-                    
+
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 }
@@ -2835,20 +2828,19 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
     public void updateSpectrum() {
 
         if (spectrumTable.getSelectedRow() != -1) {
+
             try {
                 spectrumChartPanel.removeAll();
-
 
                 String key = Spectrum.getSpectrumKey((String) fileNamesCmb.getSelectedItem(), (String) spectrumTable.getValueAt(spectrumTable.getSelectedRow(), 1));
                 MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(key);
                 SpectrumPanel spectrum = null;
                 AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
+
                 if (currentSpectrum != null) {
                     Precursor precursor = currentSpectrum.getPrecursor();
 
                     if (currentSpectrum.getMzValuesAsArray().length > 0 && currentSpectrum.getIntensityValuesAsArray().length > 0) {
-
-
                         spectrum = new SpectrumPanel(
                                 currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
                                 precursor.getMz(), precursor.getCharge().toString(),
@@ -2860,9 +2852,11 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 }
 
                 if (identification.matchExists(key)) {
+
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
                     PSParameter probabilities = new PSParameter();
                     probabilities = (PSParameter) identification.getMatchParameter(key, probabilities);
+
                     if (currentSpectrum != null) {
 
                         if (currentSpectrum.getMzValuesAsArray().length > 0 && currentSpectrum.getIntensityValuesAsArray().length > 0) {
@@ -2991,6 +2985,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 }
                 if (spectrum != null) {
                     spectrumChartPanel.add(spectrum);
+                    peptideShakerGUI.updateAnnotationMenus();
                 }
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
@@ -3035,7 +3030,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
     public void showSpectrumAnnotationMenu() {
         spectrumAnnotationMenuPanel.removeAll();
         spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-        peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false);
+        peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false, false);
     }
 
     /**
