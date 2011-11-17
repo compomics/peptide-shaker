@@ -1603,17 +1603,55 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             // check if we have re-loaded the data using the current threshold and PEP window settings
             if (selectedIndex != VALIDATION_TAB_INDEX && statsPanel.isInitiated()) {
 
-                if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate) {
+                if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate 
+                        && !statsPanel.pepWindowApplied() && !ignorePepWindowUpdate) {
+                    
+                    allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+
+                    int value = JOptionPane.showConfirmDialog(
+                            this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results 1?",
+                            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                    if (value == JOptionPane.YES_OPTION) {
+                        ignorePepWindowUpdate = true;
+                        statsPanel.revalidateData();
+                        allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                        ignorePepWindowUpdate = false;
+                    } else if (value == JOptionPane.NO_OPTION) {
+                        
+                        // reset the test, i.e., don't ask twice without changes in between
+                        ignoreThresholdUpdate = true;
+                        
+                        value = JOptionPane.showConfirmDialog(
+                            this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes 1?",
+                            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+                        if (value == JOptionPane.YES_OPTION) {
+                            statsPanel.applyPepWindow();
+                            allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                        } else if (value == JOptionPane.NO_OPTION) {
+                            // reset the test, i.e., don't ask twice without changes in between
+                            ignorePepWindowUpdate = true;
+                            allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                        } else {
+                            // cancel the move
+                            allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+                        }
+                    } else {
+                        // cancel the move
+                        allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+                    }
+                } else if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate) {
 
                     allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
 
                     int value = JOptionPane.showConfirmDialog(
-                            this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results?",
+                            this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results 2?",
                             JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
                     if (value == JOptionPane.YES_OPTION) {
                         statsPanel.revalidateData();
-                        return;
+                        allTabsJTabbedPane.setSelectedIndex(selectedIndex);
                     } else if (value == JOptionPane.NO_OPTION) {
                         // reset the test, i.e., don't ask twice without changes in between
                         ignoreThresholdUpdate = true;
@@ -1627,12 +1665,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
 
                     int value = JOptionPane.showConfirmDialog(
-                            this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes?",
+                            this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes 3?",
                             JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
                     if (value == JOptionPane.YES_OPTION) {
                         statsPanel.applyPepWindow();
-                        return;
+                        allTabsJTabbedPane.setSelectedIndex(selectedIndex);
                     } else if (value == JOptionPane.NO_OPTION) {
                         // reset the test, i.e., don't ask twice without changes in between
                         ignorePepWindowUpdate = true;
@@ -2499,14 +2537,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         // load the Overview tab
                         overviewPanel.displayResults(progressDialog);
 
-                        allTabsJTabbedPaneStateChanged(null);
-
                         // make sure that all panels are looking the way they should
                         repaintPanels();
 
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
-
+                        
                         // return the peptide shaker icon to the standard version
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -2530,6 +2566,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                         // return the peptide shaker icon to the standard version
                         tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        
+                        allTabsJTabbedPaneStateChanged(null);
                     } catch (Exception e) {
 
                         // return the peptide shaker icon to the standard version
