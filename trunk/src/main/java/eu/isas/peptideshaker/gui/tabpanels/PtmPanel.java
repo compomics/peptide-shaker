@@ -14,6 +14,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.protein.SequenceModificationPanel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
@@ -57,6 +58,7 @@ import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
+import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -313,6 +315,8 @@ public class PtmPanel extends javax.swing.JPanel {
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
+        selectedPsmsTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, 10d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesIntervalChartTableCellRenderer) selectedPsmsTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
 
         relatedPsmsTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) relatedPsmsTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() - 30);
@@ -320,6 +324,8 @@ public class PtmPanel extends javax.swing.JPanel {
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
+        relatedPsmsTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, 10d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesIntervalChartTableCellRenderer) relatedPsmsTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
 
         // ptm color coding
         ptmJTable.getColumn("  ").setCellRenderer(new JSparklinesColorTableCellRenderer());
@@ -1018,7 +1024,7 @@ public class PtmPanel extends javax.swing.JPanel {
             .addGap(0, 363, Short.MAX_VALUE)
         );
 
-        spectrumTabbedPane.addTab("Profile", psmModProfileJPanel);
+        spectrumTabbedPane.addTab("PTM Profiles", psmModProfileJPanel);
 
         ptmPlotPanel.setOpaque(false);
 
@@ -2470,7 +2476,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private void spectrumHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumHelpJButtonActionPerformed
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        
+
         int spectrumTabIndex = spectrumTabbedPane.getSelectedIndex();
 
         if (spectrumTabIndex == 0) {
@@ -2480,7 +2486,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         } else if (spectrumTabIndex == 2) {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum");
         }
-        
+
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumHelpJButtonActionPerformed
 
@@ -2520,7 +2526,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         int index = spectrumTabbedPane.getSelectedIndex();
 
         if (index == 2) { // spectrum
-            
+
             JMenuItem menuItem = new JMenuItem("Spectrum As Figure");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
@@ -2540,7 +2546,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             });
 
             popupMenu.add(menuItem);
-            
+
         } else if (index == 1) {
 
             JMenuItem menuItem = new JMenuItem("Plot As Figure");
@@ -2557,7 +2563,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             }
 
             popupMenu.add(menuItem);
-            
+
             menuItem = new JMenuItem("Spectrum As Figure");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
@@ -2639,7 +2645,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         popupMenu.show(exportModifiedPeptideProfileJButton, evt.getX(), evt.getY());
     }//GEN-LAST:event_exportModifiedPeptideProfileJButtonMouseReleased
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel contextMenuModPsmsBackgroundPanel;
@@ -2770,7 +2775,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         ((JSparklinesBarChartTableCellRenderer) peptidesTable.getColumn("Peptide").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) relatedPeptidesTable.getColumn("Peptide").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) selectedPsmsTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesIntervalChartTableCellRenderer) selectedPsmsTable.getColumn("RT").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) relatedPsmsTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesIntervalChartTableCellRenderer) relatedPsmsTable.getColumn("RT").getCellRenderer()).showNumbers(!showSparkLines);
 
         peptidesTable.revalidate();
         peptidesTable.repaint();
@@ -2901,7 +2908,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 exportSpectrumJButton.setEnabled(true);
                 exportModifiedPsmsJButton.setEnabled(true);
                 exportRelatedPsmsJButton.setEnabled(true);
-                
+
                 selectedPeptidesJSplitPane.setDividerLocation(0.5);
                 relatedPeptidesJSplitPane.setDividerLocation(0.5);
 
@@ -3131,6 +3138,49 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 ArrayList<String> spectra = new ArrayList<String>();
                 spectra.add(spectrumKey);
                 updateSpectrumPlot(spectra);
+
+                // update the RT column renderer
+                double lowRT = Double.MAX_VALUE;
+                double highRT = Double.MIN_VALUE;
+                boolean retentionTimeValues = false;
+
+                for (int i = 0; i < selectedPsmsTable.getRowCount(); i++) {
+
+                    spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(i);
+                    Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+
+                    if (precursor != null) {
+
+                        double retentionTime = precursor.getRt();
+
+                        if (!retentionTimeValues && retentionTime != -1) {
+                            retentionTimeValues = true;
+                        }
+
+                        if (lowRT > retentionTime) {
+                            lowRT = retentionTime;
+                        }
+
+                        if (highRT < retentionTime) {
+                            highRT = retentionTime;
+                        }
+                    }
+                }
+
+                if (retentionTimeValues) {
+
+                    // @TODO: min and max retention time from the projet should be used as boundaries instead
+
+                    lowRT = 100;
+                    double widthOfMarker = 200;
+
+                    JSparklinesIntervalChartTableCellRenderer rtCellRenderer = new JSparklinesIntervalChartTableCellRenderer(
+                            PlotOrientation.HORIZONTAL, lowRT - widthOfMarker / 2, highRT + widthOfMarker / 2, widthOfMarker,
+                            peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor());
+                    selectedPsmsTable.getColumn("RT").setCellRenderer(rtCellRenderer);
+                    rtCellRenderer.showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+                }
+
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
                 e.printStackTrace();
@@ -3148,26 +3198,71 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         ((DefaultTableModel) relatedPsmsTable.getModel()).fireTableDataChanged();
 
-        if (selectRow) {
-            if (relatedPsmsTable.getRowCount() > 0) {
-                relatedPsmsTable.setRowSelectionInterval(0, 0);
-                relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(0, 0, false));
-                try {
+        try {
+            if (selectRow) {
+                if (relatedPsmsTable.getRowCount() > 0) {
+                    relatedPsmsTable.setRowSelectionInterval(0, 0);
+                    relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(0, 0, false));
+
                     String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
                     updateSpectrum(spectrumKey);
-                } catch (Exception e) {
-                    peptideShakerGUI.catchException(e);
-                    e.printStackTrace();
+
+                }
+
+                if (selectedPsmsTable.getSelectedRow() != -1) {
+                    selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
+                }
+            } else {
+                if (relatedPsmsTable.getSelectedRow() != -1) {
+                    relatedPsmsTable.removeRowSelectionInterval(relatedPsmsTable.getSelectedRow(), relatedPsmsTable.getSelectedRow());
                 }
             }
 
-            if (selectedPsmsTable.getSelectedRow() != -1) {
-                selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
+            // update the RT column renderer
+            double lowRT = Double.MAX_VALUE;
+            double highRT = Double.MIN_VALUE;
+            boolean retentionTimeValues = false;
+
+            for (int i = 0; i < relatedPsmsTable.getRowCount(); i++) {
+
+                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(i);
+                Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+
+                if (precursor != null) {
+
+                    double retentionTime = precursor.getRt();
+
+                    if (!retentionTimeValues && retentionTime != -1) {
+                        retentionTimeValues = true;
+                    }
+
+                    if (lowRT > retentionTime) {
+                        lowRT = retentionTime;
+                    }
+
+                    if (highRT < retentionTime) {
+                        highRT = retentionTime;
+                    }
+                }
             }
-        } else {
-            if (relatedPsmsTable.getSelectedRow() != -1) {
-                relatedPsmsTable.removeRowSelectionInterval(relatedPsmsTable.getSelectedRow(), relatedPsmsTable.getSelectedRow());
+
+            if (retentionTimeValues) {
+
+                // @TODO: min and max retention time from the projet should be used as boundaries instead
+
+                lowRT = 100;
+                double widthOfMarker = 200;
+
+                JSparklinesIntervalChartTableCellRenderer rtCellRenderer = new JSparklinesIntervalChartTableCellRenderer(
+                        PlotOrientation.HORIZONTAL, lowRT - widthOfMarker / 2, highRT + widthOfMarker / 2, widthOfMarker,
+                        peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor());
+                relatedPsmsTable.getColumn("RT").setCellRenderer(rtCellRenderer);
+                rtCellRenderer.showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
             }
+
+        } catch (Exception e) {
+            peptideShakerGUI.catchException(e);
+            e.printStackTrace();
         }
 
         ((TitledBorder) relatedPsmsPanel.getBorder()).setTitle("Peptide-Spectrum Matches - Related Peptide (" + relatedPsmsTable.getRowCount() + ")");
@@ -3207,7 +3302,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         for (String spectrumKey : spectrumKeys) {
 
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-            
+
             // get the spectrum annotations
             SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
             Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
@@ -3220,7 +3315,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     nPTM++;
                 }
             }
-            
+
             // @TODO: the currently selected fragment ion types are not taken into consideration?
             // @TODO: the slider spectrum values are ignored?
 

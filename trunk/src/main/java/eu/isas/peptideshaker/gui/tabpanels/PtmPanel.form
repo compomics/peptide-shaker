@@ -833,8 +833,8 @@
                           </Properties>
                           <Constraints>
                             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                              <JTabbedPaneConstraints tabName="Profile">
-                                <Property name="tabTitle" type="java.lang.String" value="Profile"/>
+                              <JTabbedPaneConstraints tabName="PTM Profiles">
+                                <Property name="tabTitle" type="java.lang.String" value="PTM Profiles"/>
                               </JTabbedPaneConstraints>
                             </Constraint>
                           </Constraints>

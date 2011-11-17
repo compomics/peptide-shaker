@@ -2523,27 +2523,28 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         double lHighRT = Double.MIN_VALUE;
 
         int counter = 0;
-        String spectrumKey;
 
         progressDialog.setIndeterminate(false);
         progressDialog.setMax(SpectrumFactory.getInstance().getSpectrumTitles(fileSelected).size());
         progressDialog.setValue(0);
+        
+        boolean retentionTimeValues = false;
 
         for (String spectrumTitle : SpectrumFactory.getInstance().getSpectrumTitles(fileSelected)) {
 
             progressDialog.incrementValue();
 
-            spectrumKey = Spectrum.getSpectrumKey(fileSelected, spectrumTitle);
+            String spectrumKey = Spectrum.getSpectrumKey(fileSelected, spectrumTitle);
             Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
 
             if (precursor != null) {
 
                 double retentionTime = precursor.getRt();
-
-                if (retentionTime == -1) {
-                    retentionTime = 0;
+                
+                if (!retentionTimeValues && retentionTime != -1) {
+                   retentionTimeValues = true; 
                 }
-
+                
                 ((DefaultTableModel) spectrumTable.getModel()).addRow(new Object[]{
                             ++counter,
                             Spectrum.getSpectrumTitle(spectrumKey),
@@ -2574,20 +2575,23 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("Spectrum Selection (" + spectrumTable.getRowCount() + ")");
         spectrumSelectionPanel.repaint();
 
-        //lLowRT -= 1.0;
-        //double widthOfMarker = (lHighRT / lLowRT) * 4; // @TODO: switch this back on later??
 
-        lLowRT = 100;
-        double widthOfMarker = 200;
-
-        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).setMaxValue(maxCharge);
-        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
-
-        JSparklinesIntervalChartTableCellRenderer lRTCellRenderer = new JSparklinesIntervalChartTableCellRenderer(
+        if (retentionTimeValues) {
+            
+            // @TODO: min and max retention time from the projet should be used as boundaries instead
+            
+            lLowRT = 100;
+            double widthOfMarker = 200;
+            
+            JSparklinesIntervalChartTableCellRenderer lRTCellRenderer = new JSparklinesIntervalChartTableCellRenderer(
                 PlotOrientation.HORIZONTAL, lLowRT - widthOfMarker / 2, lHighRT + widthOfMarker / 2, widthOfMarker,
                 peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor());
-        spectrumTable.getColumn("RT").setCellRenderer(lRTCellRenderer);
-        lRTCellRenderer.showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+            spectrumTable.getColumn("RT").setCellRenderer(lRTCellRenderer);
+            lRTCellRenderer.showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        }
+        
+        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).setMaxValue(maxCharge);
+        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
 
         spectrumTable.setRowSelectionInterval(0, 0);
         spectrumSelectionChanged();
