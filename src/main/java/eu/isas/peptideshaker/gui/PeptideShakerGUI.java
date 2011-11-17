@@ -2998,7 +2998,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         try {
             return spectrumFactory.getPrecursor(spectrumKey, save);
         } catch (Exception e) {
-            catchException(e);
+            e.printStackTrace();
             return null;
         }
     }
