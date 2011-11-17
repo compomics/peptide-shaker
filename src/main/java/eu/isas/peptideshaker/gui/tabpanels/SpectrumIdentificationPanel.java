@@ -2578,7 +2578,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
         if (retentionTimeValues) {
             
-            // @TODO: min and max retention time from the projet should be used as boundaries instead
+            // @TODO: min and max retention time from the project should be used as boundaries instead
             
             lLowRT = 100;
             double widthOfMarker = 200;

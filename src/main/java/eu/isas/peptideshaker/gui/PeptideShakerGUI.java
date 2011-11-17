@@ -1819,6 +1819,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 JOptionPane.showMessageDialog(this, "Not a PeptideShaker file (.cps).",
                         "Wrong File.", JOptionPane.ERROR_MESSAGE);
             } else {
+                clearData();
                 updateRecentProjectsList(newFile);
                 importPeptideShakerFile(newFile);
             }
