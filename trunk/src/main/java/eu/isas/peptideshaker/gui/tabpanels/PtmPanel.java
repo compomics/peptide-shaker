@@ -194,7 +194,7 @@ public class PtmPanel extends javax.swing.JPanel {
         ptmJScrollPane.getViewport().setOpaque(false);
 
         spectrumTabbedPane.setEnabledAt(0, false);
-        //spectrumTabbedPane.setEnabledAt(1, false);
+        spectrumTabbedPane.setEnabledAt(1, false);
 
         setTableProperties();
 
