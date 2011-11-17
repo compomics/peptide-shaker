@@ -3,9 +3,55 @@
 
 ----
 
+*Changes in PeptideShaker 0.11.0 (November 17. 2011):*
+
+ * NEW FEATURE: Added a GO Enrichment Analysis tab.
+ * NEW FEATURE: Added molecular weight to the protein table in the Overview tab.
+ * NEW FEATURE: Added Save in addition to Save As in the File menu.
+ * NEW FEATURE: Added Tip of the Day to the Waiting dialog.
+ * NEW FEATURE: The modified residues are now indicated by a star above the given residue in the sequence fragmentation plot. 
+ * NEW FEATURE: Added the option of hiding proteins in the Overview tab. 
+ * NEW FEATURE: Added the option of highlighting/marking proteins in the Overview tab.
+ * NEW FEATURE: Made the recent projects appear in the welcome dialog. Also updated the Welcome dialog GUI.
+ * NEW FEATURE: The main tabs are now loaded individually, i.e., not all at once when opening a project.
+
+ * FEATURE IMPROVEMENT: Made the importing of PeptideShaker projects a bit smarter.
+ * FEATURE IMPROVEMENT: Simplified the default PTM short names for oxidation (mox > ox) and phosphorylation (phopho > p), as the long names took up too much space. 
+ * FEATURE IMPROVEMENT: The delta masses used when manually de novo sequencing the spectra are now based on the currently selected modifications and not hardcoded to the default set.
+ * FEATURE IMPROVEMENT: Replaced HelpWindow with HelpDialog, identical in every way but a JDialog instead of a JFrame, which makes the modal exclusion handling simpler.
+ * FEATURE IMPROVEMENT: Made it possible to interact with the tool when the ProteinFilter dialog is being displayed, e.g., select proteins in the Overview tab without having to close the filtering dialog.
+ * FEATURE IMPROVEMENT: Fixed some minor GUI details for when using the backup look and feel.
+ * FEATURE IMPROVEMENT: The export folder when zipping a PeptideShaker project can now be chosen by the user.
+ * FEATURE IMPROVEMENT: Sectrumpanel now displays all spectra.
+ * FEATURE IMPROVEMENT: Added horizontal scroll bars to the peptide tables in the PTM tab, displayed when required. 
+ * FEATURE IMPROVEMENT: Improved the focus traversal order in the protein filtering dialog.
+ * FEATURE IMPROVEMENT: Removed the index column in the ptm selection panel in the Modifications tab to make more room for the peptides tables.
+ * FEATURE IMPROVEMENT: Spectrum IDs tab: added more space for the label in the retention time cell renderer to show higher retention time values.
+ * FEATURE IMPROVEMENT: Retention time is now shown for the PSMs in the Modification tab.
+ * FEATURE IMPROVEMENT: Improved the error handling if a required mgf file is missing when trying open a new project.
+ * FEATURE IMPROVEMENT: Moved the identification filter settings in a separate dialog.
+
+ * BUG FIX: Fixed a GUI bug with the spectrum slidersin the Spectrum IDs tab.
+ * BUG FIX: Fixed a bug in the Da/ppm selection when importing the value from a SearchGUI properties file (it always defaulted to ppm...). 
+ * BUG FIX: Fixed some minor bugs related to the export PeptideShaker project to zip file feature.
+ * BUG FIX: Fixed a bug in the ProteinInferencePeptideLevelDialog where one of the tables was editable, and thus the UniProt link didn't work.
+ * BUG FIX: Minor GUI fixes for the PSM column in the Spectrum IDs tab.
+ * BUG FIX: Fixed a problem with the location of the popup menus in the contextual export options when the tool was not maximized.
+ * BUG FIX: Fixed a bug where the spectrum annotations could not be changed from the annotation menu bar in the Spectrum IDs and PTM tabs.
+ * BUG FIX: Fixed a bug where the tool was not always reset correctly when opening a new project.
+ * BUG FIX: Fixed a problem with the validation tab when editing both threshold and PEP window at the same time and then moving to a different tab.
+
+ * LIBRARY UPDATE: Updated the UniProt API to version 2011.11.
+ * LIBRARY UPDATE: Updated utilities to version 3.3.2.
+ * LIBRARY UPDATE: Updated jsparklines to version 0.5.26.
+
+----
+
 *Changes in PeptideShaker 0.10.3 (October 24. 2011):*
  * BUG FIX: The help text in the Modifications tab is now visible.
  * LIBRARY UPDATE: Updated utilities to version 3.2.22, which now also supports the special amino acid Selenocysteine (U).
+
+Download Count: 30
 
 ----
 
