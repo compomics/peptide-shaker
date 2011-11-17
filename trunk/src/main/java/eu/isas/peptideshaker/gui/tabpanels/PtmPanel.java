@@ -3169,7 +3169,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
                 if (retentionTimeValues) {
 
-                    // @TODO: min and max retention time from the projet should be used as boundaries instead
+                    // @TODO: min and max retention time from the project should be used as boundaries instead
 
                     lowRT = 100;
                     double widthOfMarker = 200;
@@ -3248,7 +3248,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
             if (retentionTimeValues) {
 
-                // @TODO: min and max retention time from the projet should be used as boundaries instead
+                // @TODO: min and max retention time from the project should be used as boundaries instead
 
                 lowRT = 100;
                 double widthOfMarker = 200;
