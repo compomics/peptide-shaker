@@ -285,8 +285,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         // set up the protein inference color map
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
         proteinInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor()); // NOT_GROUP
-        proteinInferenceColorMap.put(PSParameter.ISOFORMS, Color.ORANGE); // ISOFORMS
-        proteinInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.BLUE); // ISOFORMS_UNRELATED
+        proteinInferenceColorMap.put(PSParameter.ISOFORMS, Color.YELLOW); // ISOFORMS
+        proteinInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.ORANGE); // ISOFORMS_UNRELATED
         proteinInferenceColorMap.put(PSParameter.UNRELATED, Color.RED); // UNRELATED
 
         // set up the protein inference tooltip map
@@ -317,10 +317,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         // set up the peptide inference color map
         HashMap<Integer, Color> peptideInferenceColorMap = new HashMap<Integer, Color>();
-        peptideInferenceColorMap.put(0, peptideShakerGUI.getSparklineColor());
-        peptideInferenceColorMap.put(1, Color.ORANGE);
-        peptideInferenceColorMap.put(2, Color.BLUE);
-        peptideInferenceColorMap.put(3, Color.RED);
+        peptideInferenceColorMap.put(PSParameter.NOT_GROUP, peptideShakerGUI.getSparklineColor());
+        peptideInferenceColorMap.put(PSParameter.ISOFORMS, Color.YELLOW);
+        peptideInferenceColorMap.put(PSParameter.ISOFORMS_UNRELATED, Color.ORANGE);
+        peptideInferenceColorMap.put(PSParameter.UNRELATED, Color.RED);
 
         // set up the peptide inference tooltip map
         HashMap<Integer, String> peptideInferenceTooltipMap = new HashMap<Integer, String>();
@@ -3221,15 +3221,18 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * @param proteinInferenceType  the protein inference group type
      */
     public void updateMainMatch(String mainMatch, int proteinInferenceType) {
-        proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex());
-        proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex());
-        String description = "";
-        try {
-            description = sequenceFactory.getHeader(mainMatch).getDescription();
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-        }
-        proteinTable.setValueAt(description, proteinTable.getSelectedRow(), proteinTable.getColumn("Description").getModelIndex());
+        
+        if (proteinTable.getRowCount() > 0) {
+            proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex());
+            proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex());
+            String description = "";
+            try {
+                description = sequenceFactory.getHeader(mainMatch).getDescription();
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+            }
+            proteinTable.setValueAt(description, proteinTable.getSelectedRow(), proteinTable.getColumn("Description").getModelIndex());
+        }    
     }
 
     /**
