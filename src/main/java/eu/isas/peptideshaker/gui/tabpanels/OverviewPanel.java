@@ -1854,12 +1854,12 @@ public class OverviewPanel extends javax.swing.JPanel {
 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-                if (column == 1) {
+                if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     String key = proteinTableMap.get(getProteinKey(row));
                     PSParameter psParameter = new PSParameter();
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(key, psParameter);
                     psParameter.setStarred((Boolean) proteinTable.getValueAt(row, column));
-                } else if (column == 2) {
+                } else if (peptideShakerGUI.showHiddenProteins() && column == proteinTable.getColumn("   ").getModelIndex()) {
                     String key = proteinTableMap.get(getProteinKey(row));
                     PSParameter psParameter = new PSParameter();
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(key, psParameter);
@@ -4628,15 +4628,22 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param proteinInferenceType  the protein inference group type
      */
     public void updateMainMatch(String mainMatch, int proteinInferenceType) {
-        proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex());
-        proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex());
+        
+        int modelShift = 0;
+
+        if (!peptideShakerGUI.showHiddenProteins()) {
+            modelShift = -1;
+        }
+        
+        proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex() + modelShift);
+        proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex() + modelShift);
         String description = "unknown protein";
         try {
             description = sequenceFactory.getHeader(mainMatch).getDescription();
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
         }
-        proteinTable.setValueAt(description, proteinTable.getSelectedRow(), proteinTable.getColumn("Description").getModelIndex());
+        proteinTable.setValueAt(description, proteinTable.getSelectedRow(), proteinTable.getColumn("Description").getModelIndex() + modelShift);
     }
 
     /**
@@ -4716,7 +4723,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     }
                 }
             }
-
+            
             if (peptideShakerGUI.getOverviewPanel() != null) {
                 ProteinFilter proteinFilter = new ProteinFilter(peptideShakerGUI, true, peptideShakerGUI.getCurrentProteinFilterValues(),
                         peptideShakerGUI.getCurrrentProteinFilterRadioButtonSelections(), peptideShakerGUI.getCurrrentProteinInferenceFilterSelection(),
