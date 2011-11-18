@@ -1399,8 +1399,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
             } else {
-                currentPSFile = newFile;
-                saveProject();
+                saveProjectAs(newFile);
             }
         }
     }//GEN-LAST:event_saveAsMenuItemActionPerformed
@@ -5100,12 +5099,63 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public int getSelectedPeptideIndex() {
         return selectedPeptideIndex;
     }
+    
+    /**
+     * Saves the modifications made to the project
+     */
+    private void saveProject() {
+       
+        progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog.doNothingOnClose();
+        final PeptideShakerGUI tempRef = this; // needed due to threading issues
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Saving. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("ExportThread") {
+
+            @Override
+            public void run() {
+                try {
+                    // change the peptide shaker icon to a "waiting version"
+                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                    identification.emptyCache(progressDialog);
+                    progressDialog.setIndeterminate(true);
+                    experimentIO.save(currentPSFile, experiment);
+
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+
+                    // return the peptide shaker icon to the standard version
+                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                    updateRecentProjectsList(currentPSFile);
+
+                    JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
+                    dataSaved = true;
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    catchException(e);
+                }
+
+                progressDialog.dispose();
+            }
+        }.start();
+    }
 
     /**
      * Save the project to the currentPSFile location.
      */
-    private void saveProject() {
+    private void saveProjectAs(File newFile) {
 
+        currentPSFile = newFile;
         lastSelectedFolder = currentPSFile.getAbsolutePath();
 
         progressDialog = new ProgressDialogX(this, this, true);
