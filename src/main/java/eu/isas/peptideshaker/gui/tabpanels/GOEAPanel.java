@@ -218,8 +218,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         mappingsTableToolTips.add("Frequency Dataset (%)");
         mappingsTableToolTips.add("Frequency (%) (All & Dataset))");
         mappingsTableToolTips.add("Log2 Difference (Dataset / All)");
-        mappingsTableToolTips.add("Hypergeometic Test p-value");
-        mappingsTableToolTips.add("Significance after Multiple Hypothesis Testing Correction");
+        mappingsTableToolTips.add("<html>Hypergeometic Test<br>FDR-Corrected</html>");
         mappingsTableToolTips.add("Selected for Plots");
     }
 
@@ -586,7 +585,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                             true
                                         });
                             }
-
+                            
                             // correct the p-values for multiple testing using benjamini-hochberg
                             sortPValues(pValues, indexes);
 
@@ -600,6 +599,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             ((ValueAndBooleanDataPoint) goMappingsTable.getValueAt(
                                     indexes.get(0), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(
                                     pValues.get(0) < significanceLevel);
+                            goMappingsTable.setValueAt(pValues.get(0), indexes.get(0), goMappingsTable.getColumn("p-value").getModelIndex());
 
                             if (pValues.get(0) < significanceLevel) {
                                 significantCounter++;
@@ -609,11 +609,15 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 ((ValueAndBooleanDataPoint) goMappingsTable.getValueAt(
                                         indexes.get(i), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(
                                         pValues.get(i) * pValues.size() / (pValues.size() - i) < significanceLevel);
+                                goMappingsTable.setValueAt(
+                                        pValues.get(i) * pValues.size() / (pValues.size() - i), indexes.get(i), goMappingsTable.getColumn("p-value").getModelIndex());
 
                                 if (pValues.get(i) * pValues.size() / (pValues.size() - i) < significanceLevel) {
                                     significantCounter++;
                                 }
                             }
+                            
+                            ((DefaultTableModel) goMappingsTable.getModel()).fireTableDataChanged();
 
                             ((TitledBorder) mappingsPanel.getBorder()).setTitle("Gene Ontology Mappings (" + significantCounter + "/" + goMappingsTable.getRowCount() + ")");
                             mappingsPanel.revalidate();
@@ -987,362 +991,361 @@ public class GOEAPanel extends javax.swing.JPanel {
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class, java.lang.Object.class, ValueAndBooleanDataPoint.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false, false, false, false, true
-            };
+			};
+                public Class getColumnClass(int columnIndex) {
+                    return types [columnIndex];
+                }
 
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
+                public boolean isCellEditable(int rowIndex, int columnIndex) {
+                    return canEdit [columnIndex];
+                }
+            });
+            goMappingsTable.setOpaque(false);
+            goMappingsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+            goMappingsTable.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    goMappingsTableMouseExited(evt);
+                }
+                public void mouseReleased(java.awt.event.MouseEvent evt) {
+                    goMappingsTableMouseReleased(evt);
+                }
+            });
+            goMappingsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+                public void mouseMoved(java.awt.event.MouseEvent evt) {
+                    goMappingsTableMouseMoved(evt);
+                }
+            });
+            goMappingsTable.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyReleased(java.awt.event.KeyEvent evt) {
+                    goMappingsTableKeyReleased(evt);
+                }
+            });
+            proteinGoMappingsScrollPane.setViewportView(goMappingsTable);
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        goMappingsTable.setOpaque(false);
-        goMappingsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        goMappingsTable.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                goMappingsTableMouseExited(evt);
-            }
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                goMappingsTableMouseReleased(evt);
-            }
-        });
-        goMappingsTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
-            public void mouseMoved(java.awt.event.MouseEvent evt) {
-                goMappingsTableMouseMoved(evt);
-            }
-        });
-        goMappingsTable.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyReleased(java.awt.event.KeyEvent evt) {
-                goMappingsTableKeyReleased(evt);
-            }
-        });
-        proteinGoMappingsScrollPane.setViewportView(goMappingsTable);
+            goMappingsFileJLabel.setText("Species:");
 
-        goMappingsFileJLabel.setText("Species:");
+            speciesJComboBox.setMaximumRowCount(30);
+            speciesJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+            speciesJComboBox.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    speciesJComboBoxActionPerformed(evt);
+                }
+            });
 
-        speciesJComboBox.setMaximumRowCount(30);
-        speciesJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-        speciesJComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                speciesJComboBoxActionPerformed(evt);
-            }
-        });
+            significanceJLabel.setText("Significance Level:");
 
-        significanceJLabel.setText("Significance Level:");
+            downloadButton.setText("Download");
+            downloadButton.setToolTipText("Download GO Mappings");
+            downloadButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    downloadButtonActionPerformed(evt);
+                }
+            });
 
-        downloadButton.setText("Download");
-        downloadButton.setToolTipText("Download GO Mappings");
-        downloadButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downloadButtonActionPerformed(evt);
-            }
-        });
+            updateButton.setText("Update");
+            updateButton.setToolTipText("Update the GO Mappings");
+            updateButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    updateButtonActionPerformed(evt);
+                }
+            });
 
-        updateButton.setText("Update");
-        updateButton.setToolTipText("Update the GO Mappings");
-        updateButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                updateButtonActionPerformed(evt);
-            }
-        });
+            biasWarningLabel.setFont(biasWarningLabel.getFont().deriveFont((biasWarningLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+            biasWarningLabel.setText("Note that the statistical analysis above is only correct as long as the selected protein set is unbiased.");
 
-        biasWarningLabel.setFont(biasWarningLabel.getFont().deriveFont((biasWarningLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        biasWarningLabel.setText("Note that the statistical analysis above is only correct as long as the selected protein set is unbiased.");
+            unknownSpeciesLabel.setFont(unknownSpeciesLabel.getFont().deriveFont((unknownSpeciesLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+            unknownSpeciesLabel.setText("<html><a href>Species not in list?</a></html>");
+            unknownSpeciesLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    unknownSpeciesLabelMouseClicked(evt);
+                }
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    unknownSpeciesLabelMouseEntered(evt);
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    unknownSpeciesLabelMouseExited(evt);
+                }
+            });
 
-        unknownSpeciesLabel.setFont(unknownSpeciesLabel.getFont().deriveFont((unknownSpeciesLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        unknownSpeciesLabel.setText("<html><a href>Species not in list?</a></html>");
-        unknownSpeciesLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                unknownSpeciesLabelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                unknownSpeciesLabelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                unknownSpeciesLabelMouseExited(evt);
-            }
-        });
+            significanceLevelButtonGroup.add(fivePercentRadioButton);
+            fivePercentRadioButton.setSelected(true);
+            fivePercentRadioButton.setText("0.05");
+            fivePercentRadioButton.setOpaque(false);
+            fivePercentRadioButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    fivePercentRadioButtonActionPerformed(evt);
+                }
+            });
 
-        significanceLevelButtonGroup.add(fivePercentRadioButton);
-        fivePercentRadioButton.setSelected(true);
-        fivePercentRadioButton.setText("0.05");
-        fivePercentRadioButton.setOpaque(false);
-        fivePercentRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                fivePercentRadioButtonActionPerformed(evt);
-            }
-        });
+            significanceLevelButtonGroup.add(onePercentRadioButton);
+            onePercentRadioButton.setText("0.01");
+            onePercentRadioButton.setOpaque(false);
+            onePercentRadioButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    onePercentRadioButtonActionPerformed(evt);
+                }
+            });
 
-        significanceLevelButtonGroup.add(onePercentRadioButton);
-        onePercentRadioButton.setText("0.01");
-        onePercentRadioButton.setOpaque(false);
-        onePercentRadioButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                onePercentRadioButtonActionPerformed(evt);
-            }
-        });
+            ensemblVersionLabel.setFont(ensemblVersionLabel.getFont().deriveFont((ensemblVersionLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+            ensemblVersionLabel.setText("<html><a href>Ensembl version?</a></html>");
+            ensemblVersionLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    ensemblVersionLabelMouseClicked(evt);
+                }
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    ensemblVersionLabelMouseEntered(evt);
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    ensemblVersionLabelMouseExited(evt);
+                }
+            });
 
-        ensemblVersionLabel.setFont(ensemblVersionLabel.getFont().deriveFont((ensemblVersionLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        ensemblVersionLabel.setText("<html><a href>Ensembl version?</a></html>");
-        ensemblVersionLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                ensemblVersionLabelMouseClicked(evt);
-            }
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                ensemblVersionLabelMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                ensemblVersionLabelMouseExited(evt);
-            }
-        });
+            javax.swing.GroupLayout mappingsPanelLayout = new javax.swing.GroupLayout(mappingsPanel);
+            mappingsPanel.setLayout(mappingsPanelLayout);
+            mappingsPanelLayout.setHorizontalGroup(
+                mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mappingsPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 988, Short.MAX_VALUE)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, mappingsPanelLayout.createSequentialGroup()
+                            .addComponent(goMappingsFileJLabel)
+                            .addGap(18, 18, 18)
+                            .addComponent(speciesJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(downloadButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(updateButton)
+                            .addGap(18, 18, 18)
+                            .addComponent(unknownSpeciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGap(18, 18, 18)
+                            .addComponent(ensemblVersionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(mappingsPanelLayout.createSequentialGroup()
+                            .addGap(10, 10, 10)
+                            .addComponent(biasWarningLabel)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 278, Short.MAX_VALUE)
+                            .addComponent(significanceJLabel)
+                            .addGap(18, 18, 18)
+                            .addComponent(onePercentRadioButton)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(fivePercentRadioButton)
+                            .addGap(13, 13, 13)))
+                    .addContainerGap())
+            );
 
-        javax.swing.GroupLayout mappingsPanelLayout = new javax.swing.GroupLayout(mappingsPanel);
-        mappingsPanel.setLayout(mappingsPanelLayout);
-        mappingsPanelLayout.setHorizontalGroup(
-            mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, mappingsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 988, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, mappingsPanelLayout.createSequentialGroup()
+            mappingsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {downloadButton, updateButton});
+
+            mappingsPanelLayout.setVerticalGroup(
+                mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(mappingsPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(goMappingsFileJLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(speciesJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 355, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(downloadButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(updateButton)
-                        .addGap(18, 18, 18)
+                        .addComponent(speciesJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(downloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(unknownSpeciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
                         .addComponent(ensemblVersionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(mappingsPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                    .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                         .addComponent(biasWarningLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 278, Short.MAX_VALUE)
                         .addComponent(significanceJLabel)
-                        .addGap(18, 18, 18)
                         .addComponent(onePercentRadioButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(fivePercentRadioButton)
-                        .addGap(13, 13, 13)))
-                .addContainerGap())
-        );
+                        .addComponent(fivePercentRadioButton))
+                    .addContainerGap())
+            );
 
-        mappingsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {downloadButton, updateButton});
+            mappingsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {downloadButton, speciesJComboBox, updateButton});
 
-        mappingsPanelLayout.setVerticalGroup(
-            mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(mappingsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(goMappingsFileJLabel)
-                    .addComponent(speciesJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(downloadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(updateButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(unknownSpeciesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ensemblVersionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(proteinGoMappingsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(mappingsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(biasWarningLabel)
-                    .addComponent(significanceJLabel)
-                    .addComponent(onePercentRadioButton)
-                    .addComponent(fivePercentRadioButton))
-                .addContainerGap())
-        );
+            mappingsPanel.setBounds(0, 0, 1020, 368);
+            mappingsTableLayeredPane.add(mappingsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        mappingsPanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {downloadButton, speciesJComboBox, updateButton});
+            mappingsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+            mappingsHelpJButton.setToolTipText("Help");
+            mappingsHelpJButton.setBorder(null);
+            mappingsHelpJButton.setBorderPainted(false);
+            mappingsHelpJButton.setContentAreaFilled(false);
+            mappingsHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+            mappingsHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    mappingsHelpJButtonMouseEntered(evt);
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    mappingsHelpJButtonMouseExited(evt);
+                }
+            });
+            mappingsHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    mappingsHelpJButtonActionPerformed(evt);
+                }
+            });
+            mappingsHelpJButton.setBounds(990, 0, 10, 25);
+            mappingsTableLayeredPane.add(mappingsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        mappingsPanel.setBounds(0, 0, 1020, 368);
-        mappingsTableLayeredPane.add(mappingsPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+            exportMappingsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+            exportMappingsJButton.setToolTipText("Copy to Clipboard");
+            exportMappingsJButton.setBorder(null);
+            exportMappingsJButton.setBorderPainted(false);
+            exportMappingsJButton.setContentAreaFilled(false);
+            exportMappingsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+            exportMappingsJButton.setEnabled(false);
+            exportMappingsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+            exportMappingsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    exportMappingsJButtonMouseEntered(evt);
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    exportMappingsJButtonMouseExited(evt);
+                }
+            });
+            exportMappingsJButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    exportMappingsJButtonActionPerformed(evt);
+                }
+            });
+            exportMappingsJButton.setBounds(980, 0, 10, 25);
+            mappingsTableLayeredPane.add(exportMappingsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        mappingsHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
-        mappingsHelpJButton.setToolTipText("Help");
-        mappingsHelpJButton.setBorder(null);
-        mappingsHelpJButton.setBorderPainted(false);
-        mappingsHelpJButton.setContentAreaFilled(false);
-        mappingsHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
-        mappingsHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                mappingsHelpJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                mappingsHelpJButtonMouseExited(evt);
-            }
-        });
-        mappingsHelpJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                mappingsHelpJButtonActionPerformed(evt);
-            }
-        });
-        mappingsHelpJButton.setBounds(990, 0, 10, 25);
-        mappingsTableLayeredPane.add(mappingsHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+            contextMenuMappingsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        exportMappingsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportMappingsJButton.setToolTipText("Copy to Clipboard");
-        exportMappingsJButton.setBorder(null);
-        exportMappingsJButton.setBorderPainted(false);
-        exportMappingsJButton.setContentAreaFilled(false);
-        exportMappingsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportMappingsJButton.setEnabled(false);
-        exportMappingsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
-        exportMappingsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                exportMappingsJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                exportMappingsJButtonMouseExited(evt);
-            }
-        });
-        exportMappingsJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportMappingsJButtonActionPerformed(evt);
-            }
-        });
-        exportMappingsJButton.setBounds(980, 0, 10, 25);
-        mappingsTableLayeredPane.add(exportMappingsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+            javax.swing.GroupLayout contextMenuMappingsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuMappingsBackgroundPanel);
+            contextMenuMappingsBackgroundPanel.setLayout(contextMenuMappingsBackgroundPanelLayout);
+            contextMenuMappingsBackgroundPanelLayout.setHorizontalGroup(
+                contextMenuMappingsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 30, Short.MAX_VALUE)
+            );
+            contextMenuMappingsBackgroundPanelLayout.setVerticalGroup(
+                contextMenuMappingsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 20, Short.MAX_VALUE)
+            );
 
-        contextMenuMappingsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+            contextMenuMappingsBackgroundPanel.setBounds(980, 0, 30, 20);
+            mappingsTableLayeredPane.add(contextMenuMappingsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        javax.swing.GroupLayout contextMenuMappingsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuMappingsBackgroundPanel);
-        contextMenuMappingsBackgroundPanel.setLayout(contextMenuMappingsBackgroundPanelLayout);
-        contextMenuMappingsBackgroundPanelLayout.setHorizontalGroup(
-            contextMenuMappingsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 30, Short.MAX_VALUE)
-        );
-        contextMenuMappingsBackgroundPanelLayout.setVerticalGroup(
-            contextMenuMappingsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
-        );
+            plotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology - Enrichment Analysis"));
+            plotPanel.setOpaque(false);
 
-        contextMenuMappingsBackgroundPanel.setBounds(980, 0, 30, 20);
-        mappingsTableLayeredPane.add(contextMenuMappingsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
+            goPlotsTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
 
-        plotPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gene Ontology - Enrichment Analysis"));
-        plotPanel.setOpaque(false);
+            goFrequencyPlotPanel.setBackground(new java.awt.Color(255, 255, 255));
+            goFrequencyPlotPanel.setLayout(new javax.swing.BoxLayout(goFrequencyPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+            goPlotsTabbedPane.addTab("Distribution", goFrequencyPlotPanel);
 
-        goPlotsTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
+            goSignificancePlotPanel.setBackground(new java.awt.Color(255, 255, 255));
+            goSignificancePlotPanel.setLayout(new javax.swing.BoxLayout(goSignificancePlotPanel, javax.swing.BoxLayout.LINE_AXIS));
+            goPlotsTabbedPane.addTab("Significance", goSignificancePlotPanel);
 
-        goFrequencyPlotPanel.setBackground(new java.awt.Color(255, 255, 255));
-        goFrequencyPlotPanel.setLayout(new javax.swing.BoxLayout(goFrequencyPlotPanel, javax.swing.BoxLayout.LINE_AXIS));
-        goPlotsTabbedPane.addTab("Distribution", goFrequencyPlotPanel);
+            goPlotsTabbedPane.setSelectedIndex(1);
 
-        goSignificancePlotPanel.setBackground(new java.awt.Color(255, 255, 255));
-        goSignificancePlotPanel.setLayout(new javax.swing.BoxLayout(goSignificancePlotPanel, javax.swing.BoxLayout.LINE_AXIS));
-        goPlotsTabbedPane.addTab("Significance", goSignificancePlotPanel);
+            javax.swing.GroupLayout plotPanelLayout = new javax.swing.GroupLayout(plotPanel);
+            plotPanel.setLayout(plotPanelLayout);
+            plotPanelLayout.setHorizontalGroup(
+                plotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(plotPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(goPlotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 987, Short.MAX_VALUE)
+                    .addContainerGap())
+            );
+            plotPanelLayout.setVerticalGroup(
+                plotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, plotPanelLayout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(goPlotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                    .addContainerGap())
+            );
 
-        goPlotsTabbedPane.setSelectedIndex(1);
+            plotPanel.setBounds(0, 0, 1019, 370);
+            plotLayeredPane.add(plotPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
 
-        javax.swing.GroupLayout plotPanelLayout = new javax.swing.GroupLayout(plotPanel);
-        plotPanel.setLayout(plotPanelLayout);
-        plotPanelLayout.setHorizontalGroup(
-            plotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(plotPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(goPlotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 987, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        plotPanelLayout.setVerticalGroup(
-            plotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, plotPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(goPlotsTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+            plotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
+            plotHelpJButton.setToolTipText("Help");
+            plotHelpJButton.setBorder(null);
+            plotHelpJButton.setBorderPainted(false);
+            plotHelpJButton.setContentAreaFilled(false);
+            plotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
+            plotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    plotHelpJButtonMouseEntered(evt);
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    plotHelpJButtonMouseExited(evt);
+                }
+            });
+            plotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    plotHelpJButtonActionPerformed(evt);
+                }
+            });
+            plotHelpJButton.setBounds(990, 0, 10, 25);
+            plotLayeredPane.add(plotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        plotPanel.setBounds(0, 0, 1019, 370);
-        plotLayeredPane.add(plotPanel, javax.swing.JLayeredPane.DEFAULT_LAYER);
+            exportPlotsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+            exportPlotsJButton.setToolTipText("Export");
+            exportPlotsJButton.setBorder(null);
+            exportPlotsJButton.setBorderPainted(false);
+            exportPlotsJButton.setContentAreaFilled(false);
+            exportPlotsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
+            exportPlotsJButton.setEnabled(false);
+            exportPlotsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
+            exportPlotsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseEntered(java.awt.event.MouseEvent evt) {
+                    exportPlotsJButtonMouseEntered(evt);
+                }
+                public void mouseExited(java.awt.event.MouseEvent evt) {
+                    exportPlotsJButtonMouseExited(evt);
+                }
+            });
+            exportPlotsJButton.addActionListener(new java.awt.event.ActionListener() {
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    exportPlotsJButtonActionPerformed(evt);
+                }
+            });
+            exportPlotsJButton.setBounds(980, 0, 10, 25);
+            plotLayeredPane.add(exportPlotsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        plotHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
-        plotHelpJButton.setToolTipText("Help");
-        plotHelpJButton.setBorder(null);
-        plotHelpJButton.setBorderPainted(false);
-        plotHelpJButton.setContentAreaFilled(false);
-        plotHelpJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame.png"))); // NOI18N
-        plotHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                plotHelpJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                plotHelpJButtonMouseExited(evt);
-            }
-        });
-        plotHelpJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                plotHelpJButtonActionPerformed(evt);
-            }
-        });
-        plotHelpJButton.setBounds(990, 0, 10, 25);
-        plotLayeredPane.add(plotHelpJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+            contextMenuPlotsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        exportPlotsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportPlotsJButton.setToolTipText("Export");
-        exportPlotsJButton.setBorder(null);
-        exportPlotsJButton.setBorderPainted(false);
-        exportPlotsJButton.setContentAreaFilled(false);
-        exportPlotsJButton.setDisabledIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame_grey.png"))); // NOI18N
-        exportPlotsJButton.setEnabled(false);
-        exportPlotsJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/export_no_frame.png"))); // NOI18N
-        exportPlotsJButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseEntered(java.awt.event.MouseEvent evt) {
-                exportPlotsJButtonMouseEntered(evt);
-            }
-            public void mouseExited(java.awt.event.MouseEvent evt) {
-                exportPlotsJButtonMouseExited(evt);
-            }
-        });
-        exportPlotsJButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportPlotsJButtonActionPerformed(evt);
-            }
-        });
-        exportPlotsJButton.setBounds(980, 0, 10, 25);
-        plotLayeredPane.add(exportPlotsJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+            javax.swing.GroupLayout contextMenuPlotsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuPlotsBackgroundPanel);
+            contextMenuPlotsBackgroundPanel.setLayout(contextMenuPlotsBackgroundPanelLayout);
+            contextMenuPlotsBackgroundPanelLayout.setHorizontalGroup(
+                contextMenuPlotsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 30, Short.MAX_VALUE)
+            );
+            contextMenuPlotsBackgroundPanelLayout.setVerticalGroup(
+                contextMenuPlotsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGap(0, 20, Short.MAX_VALUE)
+            );
 
-        contextMenuPlotsBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
+            contextMenuPlotsBackgroundPanel.setBounds(980, 0, 30, 20);
+            plotLayeredPane.add(contextMenuPlotsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        javax.swing.GroupLayout contextMenuPlotsBackgroundPanelLayout = new javax.swing.GroupLayout(contextMenuPlotsBackgroundPanel);
-        contextMenuPlotsBackgroundPanel.setLayout(contextMenuPlotsBackgroundPanelLayout);
-        contextMenuPlotsBackgroundPanelLayout.setHorizontalGroup(
-            contextMenuPlotsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 30, Short.MAX_VALUE)
-        );
-        contextMenuPlotsBackgroundPanelLayout.setVerticalGroup(
-            contextMenuPlotsBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 20, Short.MAX_VALUE)
-        );
-
-        contextMenuPlotsBackgroundPanel.setBounds(980, 0, 30, 20);
-        plotLayeredPane.add(contextMenuPlotsBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(plotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1019, Short.MAX_VALUE)
-                    .addComponent(mappingsTableLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1019, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(mappingsTableLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(plotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-    }// </editor-fold>//GEN-END:initComponents
+            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
+            this.setLayout(layout);
+            layout.setHorizontalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(plotLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1019, Short.MAX_VALUE)
+                        .addComponent(mappingsTableLayeredPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 1019, Short.MAX_VALUE))
+                    .addContainerGap())
+            );
+            layout.setVerticalGroup(
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(mappingsTableLayeredPane, javax.swing.GroupLayout.PREFERRED_SIZE, 365, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(plotLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 372, Short.MAX_VALUE)
+                    .addContainerGap())
+            );
+        }// </editor-fold>//GEN-END:initComponents
 
     /**
      * Changes the cursor back to the default cursor a hand.
@@ -2141,6 +2144,8 @@ public class GOEAPanel extends javax.swing.JPanel {
         // clear old results
         DefaultTableModel dm = (DefaultTableModel) goMappingsTable.getModel();
         dm.getDataVector().removeAllElements();
+        
+        ((DefaultTableModel) goMappingsTable.getModel()).fireTableDataChanged();
 
         goFrequencyPlotPanel.removeAll();
         goFrequencyPlotPanel.revalidate();
