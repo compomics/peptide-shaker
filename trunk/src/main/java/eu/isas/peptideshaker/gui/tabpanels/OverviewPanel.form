@@ -1357,324 +1357,364 @@
                                   <Layout>
                                     <DimensionLayout dim="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <EmptySpace min="0" pref="478" max="32767" attributes="0"/>
-                                          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                                  <Component id="spectrumJTabbedPane" pref="426" max="32767" attributes="0"/>
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                                  <Group type="103" groupAlignment="1" attributes="0">
-                                                      <Component id="accuracySlider" min="-2" pref="26" max="-2" attributes="0"/>
-                                                      <Component id="intensitySlider" min="-2" pref="26" max="-2" attributes="0"/>
-                                                  </Group>
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                              </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <EmptySpace max="-2" attributes="0"/>
+                                              <Component id="slidersSplitPane" pref="458" max="32767" attributes="0"/>
+                                              <EmptySpace max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
                                     </DimensionLayout>
                                     <DimensionLayout dim="1">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <EmptySpace min="0" pref="323" max="32767" attributes="0"/>
-                                          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                              <Group type="102" alignment="0" attributes="0">
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                                  <Group type="103" groupAlignment="1" attributes="0">
-                                                      <Component id="spectrumJTabbedPane" alignment="0" pref="301" max="32767" attributes="0"/>
-                                                      <Group type="102" alignment="1" attributes="0">
-                                                          <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-                                                          <Component id="accuracySlider" pref="94" max="32767" attributes="0"/>
-                                                          <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
-                                                          <Component id="intensitySlider" pref="94" max="32767" attributes="0"/>
-                                                          <EmptySpace min="-2" pref="59" max="-2" attributes="0"/>
-                                                      </Group>
-                                                  </Group>
-                                                  <EmptySpace max="-2" attributes="0"/>
-                                              </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="slidersSplitPane" max="32767" attributes="0"/>
+                                              <EmptySpace min="-2" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
                                     </DimensionLayout>
                                   </Layout>
                                   <SubComponents>
-                                    <Container class="javax.swing.JTabbedPane" name="spectrumJTabbedPane">
+                                    <Container class="javax.swing.JSplitPane" name="slidersSplitPane">
                                       <Properties>
-                                        <Property name="selectedIndex" type="int" value="2"/>
-                                        <Property name="tabPlacement" type="int" value="3"/>
+                                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                          <Border info="null"/>
+                                        </Property>
+                                        <Property name="dividerLocation" type="int" value="430"/>
+                                        <Property name="dividerSize" type="int" value="0"/>
+                                        <Property name="opaque" type="boolean" value="false"/>
                                       </Properties>
-                                      <Events>
-                                        <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="spectrumJTabbedPaneMouseWheelMoved"/>
-                                        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="spectrumJTabbedPaneStateChanged"/>
-                                      </Events>
 
-                                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+                                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
                                       <SubComponents>
-                                        <Container class="javax.swing.JPanel" name="fragmentIonJPanel">
+                                        <Container class="javax.swing.JTabbedPane" name="spectrumJTabbedPane">
                                           <Properties>
-                                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                            </Property>
+                                            <Property name="selectedIndex" type="int" value="2"/>
+                                            <Property name="tabPlacement" type="int" value="3"/>
                                           </Properties>
+                                          <Events>
+                                            <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="spectrumJTabbedPaneMouseWheelMoved"/>
+                                            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="spectrumJTabbedPaneMouseEntered"/>
+                                            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="spectrumJTabbedPaneStateChanged"/>
+                                          </Events>
                                           <Constraints>
-                                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                                              <JTabbedPaneConstraints tabName="Ion Table">
-                                                <Property name="tabTitle" type="java.lang.String" value="Ion Table"/>
-                                              </JTabbedPaneConstraints>
+                                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                                              <JSplitPaneConstraints position="left"/>
                                             </Constraint>
                                           </Constraints>
 
-                                          <Layout>
-                                            <DimensionLayout dim="0">
-                                              <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Group type="102" alignment="1" attributes="0">
-                                                      <EmptySpace max="-2" attributes="0"/>
-                                                      <Group type="103" groupAlignment="1" attributes="0">
-                                                          <Component id="fragmentIonsJScrollPane" alignment="0" pref="401" max="32767" attributes="0"/>
-                                                          <Component id="ionTableJToolBar" alignment="0" pref="401" max="32767" attributes="0"/>
-                                                      </Group>
-                                                      <EmptySpace max="-2" attributes="0"/>
-                                                  </Group>
-                                              </Group>
-                                            </DimensionLayout>
-                                            <DimensionLayout dim="1">
-                                              <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Group type="102" alignment="1" attributes="0">
-                                                      <EmptySpace max="-2" attributes="0"/>
-                                                      <Component id="fragmentIonsJScrollPane" pref="256" max="32767" attributes="0"/>
-                                                      <EmptySpace max="-2" attributes="0"/>
-                                                      <Component id="ionTableJToolBar" min="-2" max="-2" attributes="0"/>
-                                                  </Group>
-                                              </Group>
-                                            </DimensionLayout>
-                                          </Layout>
+                                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
                                           <SubComponents>
-                                            <Container class="javax.swing.JScrollPane" name="fragmentIonsJScrollPane">
-                                              <Properties>
-                                                <Property name="opaque" type="boolean" value="false"/>
-                                              </Properties>
-
-                                              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-                                            </Container>
-                                            <Container class="javax.swing.JToolBar" name="ionTableJToolBar">
+                                            <Container class="javax.swing.JPanel" name="fragmentIonJPanel">
                                               <Properties>
                                                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                                                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                                                 </Property>
-                                                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                                  <Border info="null"/>
-                                                </Property>
-                                                <Property name="floatable" type="boolean" value="false"/>
-                                                <Property name="rollover" type="boolean" value="true"/>
-                                                <Property name="borderPainted" type="boolean" value="false"/>
                                               </Properties>
+                                              <Constraints>
+                                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                                                  <JTabbedPaneConstraints tabName="Ion Table">
+                                                    <Property name="tabTitle" type="java.lang.String" value="Ion Table"/>
+                                                  </JTabbedPaneConstraints>
+                                                </Constraint>
+                                              </Constraints>
 
-                                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                              <Layout>
+                                                <DimensionLayout dim="0">
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Group type="102" alignment="1" attributes="0">
+                                                          <EmptySpace max="-2" attributes="0"/>
+                                                          <Group type="103" groupAlignment="1" attributes="0">
+                                                              <Component id="fragmentIonsJScrollPane" alignment="0" pref="405" max="32767" attributes="0"/>
+                                                              <Component id="ionTableJToolBar" alignment="0" pref="405" max="32767" attributes="0"/>
+                                                          </Group>
+                                                          <EmptySpace max="-2" attributes="0"/>
+                                                      </Group>
+                                                  </Group>
+                                                </DimensionLayout>
+                                                <DimensionLayout dim="1">
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Group type="102" alignment="1" attributes="0">
+                                                          <EmptySpace max="-2" attributes="0"/>
+                                                          <Component id="fragmentIonsJScrollPane" pref="267" max="32767" attributes="0"/>
+                                                          <EmptySpace max="-2" attributes="0"/>
+                                                          <Component id="ionTableJToolBar" min="-2" max="-2" attributes="0"/>
+                                                      </Group>
+                                                  </Group>
+                                                </DimensionLayout>
+                                              </Layout>
                                               <SubComponents>
-                                                <Container class="javax.swing.JPanel" name="ionTableAnnotationMenuPanel">
+                                                <Container class="javax.swing.JScrollPane" name="fragmentIonsJScrollPane">
+                                                  <Properties>
+                                                    <Property name="opaque" type="boolean" value="false"/>
+                                                  </Properties>
+                                                  <Events>
+                                                    <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="fragmentIonsJScrollPaneMouseWheelMoved"/>
+                                                  </Events>
+
+                                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                                                </Container>
+                                                <Container class="javax.swing.JToolBar" name="ionTableJToolBar">
+                                                  <Properties>
+                                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                                    </Property>
+                                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                                      <Border info="null"/>
+                                                    </Property>
+                                                    <Property name="floatable" type="boolean" value="false"/>
+                                                    <Property name="rollover" type="boolean" value="true"/>
+                                                    <Property name="borderPainted" type="boolean" value="false"/>
+                                                  </Properties>
 
                                                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                                  <SubComponents>
+                                                    <Container class="javax.swing.JPanel" name="ionTableAnnotationMenuPanel">
+
+                                                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                                    </Container>
+                                                  </SubComponents>
                                                 </Container>
                                               </SubComponents>
                                             </Container>
-                                          </SubComponents>
-                                        </Container>
-                                        <Container class="javax.swing.JPanel" name="bubblePlotTabJPanel">
-                                          <Properties>
-                                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                            </Property>
-                                          </Properties>
-                                          <Constraints>
-                                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                                              <JTabbedPaneConstraints tabName="Bubble Plot">
-                                                <Property name="tabTitle" type="java.lang.String" value="Bubble Plot"/>
-                                              </JTabbedPaneConstraints>
-                                            </Constraint>
-                                          </Constraints>
+                                            <Container class="javax.swing.JPanel" name="bubblePlotTabJPanel">
+                                              <Properties>
+                                                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                                </Property>
+                                              </Properties>
+                                              <Constraints>
+                                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                                                  <JTabbedPaneConstraints tabName="Bubble Plot">
+                                                    <Property name="tabTitle" type="java.lang.String" value="Bubble Plot"/>
+                                                  </JTabbedPaneConstraints>
+                                                </Constraint>
+                                              </Constraints>
 
-                                          <Layout>
-                                            <DimensionLayout dim="0">
-                                              <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Group type="102" alignment="0" attributes="0">
-                                                      <EmptySpace max="-2" attributes="0"/>
-                                                      <Component id="bubblePlotJToolBar" pref="401" max="32767" attributes="0"/>
-                                                      <EmptySpace max="-2" attributes="0"/>
-                                                  </Group>
-                                                  <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                                                      <Component id="bubbleJPanel" alignment="0" pref="421" max="32767" attributes="0"/>
-                                                  </Group>
-                                              </Group>
-                                            </DimensionLayout>
-                                            <DimensionLayout dim="1">
-                                              <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Group type="102" alignment="0" attributes="0">
-                                                      <EmptySpace pref="273" max="32767" attributes="0"/>
-                                                      <Component id="bubblePlotJToolBar" min="-2" max="-2" attributes="0"/>
-                                                  </Group>
-                                                  <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                              <Layout>
+                                                <DimensionLayout dim="0">
+                                                  <Group type="103" groupAlignment="0" attributes="0">
                                                       <Group type="102" alignment="0" attributes="0">
-                                                          <Component id="bubbleJPanel" pref="248" max="32767" attributes="0"/>
-                                                          <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+                                                          <EmptySpace max="-2" attributes="0"/>
+                                                          <Component id="bubblePlotJToolBar" pref="405" max="32767" attributes="0"/>
+                                                          <EmptySpace max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                                          <Component id="bubbleJPanel" alignment="0" pref="425" max="32767" attributes="0"/>
                                                       </Group>
                                                   </Group>
-                                              </Group>
-                                            </DimensionLayout>
-                                          </Layout>
-                                          <SubComponents>
-                                            <Container class="javax.swing.JPanel" name="bubbleJPanel">
-                                              <Properties>
-                                                <Property name="opaque" type="boolean" value="false"/>
-                                              </Properties>
+                                                </DimensionLayout>
+                                                <DimensionLayout dim="1">
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Group type="102" alignment="0" attributes="0">
+                                                          <EmptySpace pref="284" max="32767" attributes="0"/>
+                                                          <Component id="bubblePlotJToolBar" min="-2" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
+                                                          <Group type="102" alignment="0" attributes="0">
+                                                              <Component id="bubbleJPanel" pref="259" max="32767" attributes="0"/>
+                                                              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+                                                          </Group>
+                                                      </Group>
+                                                  </Group>
+                                                </DimensionLayout>
+                                              </Layout>
+                                              <SubComponents>
+                                                <Container class="javax.swing.JPanel" name="bubbleJPanel">
+                                                  <Properties>
+                                                    <Property name="opaque" type="boolean" value="false"/>
+                                                  </Properties>
 
-                                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                                </Container>
+                                                <Container class="javax.swing.JToolBar" name="bubblePlotJToolBar">
+                                                  <Properties>
+                                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                                    </Property>
+                                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                                      <Border info="null"/>
+                                                    </Property>
+                                                    <Property name="floatable" type="boolean" value="false"/>
+                                                    <Property name="rollover" type="boolean" value="true"/>
+                                                    <Property name="borderPainted" type="boolean" value="false"/>
+                                                  </Properties>
+
+                                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                                  <SubComponents>
+                                                    <Container class="javax.swing.JPanel" name="bubbleAnnotationMenuPanel">
+
+                                                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                                    </Container>
+                                                  </SubComponents>
+                                                </Container>
+                                              </SubComponents>
                                             </Container>
-                                            <Container class="javax.swing.JToolBar" name="bubblePlotJToolBar">
+                                            <Container class="javax.swing.JPanel" name="spectrumJPanel">
                                               <Properties>
                                                 <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                                                   <Color blue="ff" green="ff" red="ff" type="rgb"/>
                                                 </Property>
-                                                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                                  <Border info="null"/>
-                                                </Property>
-                                                <Property name="floatable" type="boolean" value="false"/>
-                                                <Property name="rollover" type="boolean" value="true"/>
-                                                <Property name="borderPainted" type="boolean" value="false"/>
                                               </Properties>
+                                              <Constraints>
+                                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                                                  <JTabbedPaneConstraints tabName="Spectrum">
+                                                    <Property name="tabTitle" type="java.lang.String" value="Spectrum"/>
+                                                  </JTabbedPaneConstraints>
+                                                </Constraint>
+                                              </Constraints>
 
-                                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                              <Layout>
+                                                <DimensionLayout dim="0">
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Group type="102" alignment="0" attributes="0">
+                                                          <EmptySpace max="-2" attributes="0"/>
+                                                          <Component id="spectrumJToolBar" pref="405" max="32767" attributes="0"/>
+                                                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <Component id="spectrumSplitPane" alignment="0" pref="425" max="32767" attributes="0"/>
+                                                  </Group>
+                                                </DimensionLayout>
+                                                <DimensionLayout dim="1">
+                                                  <Group type="103" groupAlignment="0" attributes="0">
+                                                      <Group type="102" alignment="1" attributes="0">
+                                                          <Component id="spectrumSplitPane" pref="278" max="32767" attributes="0"/>
+                                                          <EmptySpace max="-2" attributes="0"/>
+                                                          <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
+                                                      </Group>
+                                                  </Group>
+                                                </DimensionLayout>
+                                              </Layout>
                                               <SubComponents>
-                                                <Container class="javax.swing.JPanel" name="bubbleAnnotationMenuPanel">
+                                                <Container class="javax.swing.JToolBar" name="spectrumJToolBar">
+                                                  <Properties>
+                                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                                    </Property>
+                                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                                      <Border info="null"/>
+                                                    </Property>
+                                                    <Property name="floatable" type="boolean" value="false"/>
+                                                    <Property name="rollover" type="boolean" value="true"/>
+                                                    <Property name="borderPainted" type="boolean" value="false"/>
+                                                  </Properties>
 
                                                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                                  <SubComponents>
+                                                    <Container class="javax.swing.JPanel" name="spectrumAnnotationMenuPanel">
+
+                                                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                                    </Container>
+                                                  </SubComponents>
+                                                </Container>
+                                                <Container class="javax.swing.JSplitPane" name="spectrumSplitPane">
+                                                  <Properties>
+                                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                                      <Border info="null"/>
+                                                    </Property>
+                                                    <Property name="dividerLocation" type="int" value="80"/>
+                                                    <Property name="dividerSize" type="int" value="0"/>
+                                                    <Property name="orientation" type="int" value="0"/>
+                                                    <Property name="opaque" type="boolean" value="false"/>
+                                                  </Properties>
+
+                                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
+                                                  <SubComponents>
+                                                    <Container class="javax.swing.JPanel" name="secondarySpectrumPlotsJPanel">
+                                                      <Properties>
+                                                        <Property name="opaque" type="boolean" value="false"/>
+                                                      </Properties>
+                                                      <Constraints>
+                                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                                                          <JSplitPaneConstraints position="top"/>
+                                                        </Constraint>
+                                                      </Constraints>
+
+                                                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                                    </Container>
+                                                    <Container class="javax.swing.JPanel" name="spectrumPanel">
+                                                      <Properties>
+                                                        <Property name="opaque" type="boolean" value="false"/>
+                                                      </Properties>
+                                                      <Constraints>
+                                                        <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                                                          <JSplitPaneConstraints position="right"/>
+                                                        </Constraint>
+                                                      </Constraints>
+
+                                                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
+                                                    </Container>
+                                                  </SubComponents>
                                                 </Container>
                                               </SubComponents>
                                             </Container>
                                           </SubComponents>
                                         </Container>
-                                        <Container class="javax.swing.JPanel" name="spectrumJPanel">
+                                        <Container class="javax.swing.JPanel" name="slidersPanel">
                                           <Properties>
-                                            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                              <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                            </Property>
+                                            <Property name="opaque" type="boolean" value="false"/>
                                           </Properties>
                                           <Constraints>
-                                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                                              <JTabbedPaneConstraints tabName="Spectrum">
-                                                <Property name="tabTitle" type="java.lang.String" value="Spectrum"/>
-                                              </JTabbedPaneConstraints>
+                                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                                              <JSplitPaneConstraints position="right"/>
                                             </Constraint>
                                           </Constraints>
 
                                           <Layout>
                                             <DimensionLayout dim="0">
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Group type="102" alignment="0" attributes="0">
-                                                      <EmptySpace max="-2" attributes="0"/>
-                                                      <Component id="spectrumJToolBar" pref="401" max="32767" attributes="0"/>
-                                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                                  <Group type="102" alignment="1" attributes="0">
+                                                      <EmptySpace max="32767" attributes="0"/>
+                                                      <Group type="103" groupAlignment="1" attributes="0">
+                                                          <Component id="accuracySlider" min="-2" pref="26" max="-2" attributes="0"/>
+                                                          <Component id="intensitySlider" min="-2" pref="26" max="-2" attributes="0"/>
+                                                      </Group>
+                                                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                                                   </Group>
-                                                  <Component id="spectrumSplitPane" alignment="0" pref="421" max="32767" attributes="0"/>
                                               </Group>
                                             </DimensionLayout>
                                             <DimensionLayout dim="1">
                                               <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Group type="102" alignment="1" attributes="0">
-                                                      <Component id="spectrumSplitPane" pref="267" max="32767" attributes="0"/>
-                                                      <EmptySpace max="-2" attributes="0"/>
-                                                      <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
+                                                  <Group type="102" alignment="0" attributes="0">
+                                                      <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                                                      <Component id="accuracySlider" pref="94" max="32767" attributes="0"/>
+                                                      <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
+                                                      <Component id="intensitySlider" pref="94" max="32767" attributes="0"/>
+                                                      <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
                                             </DimensionLayout>
                                           </Layout>
                                           <SubComponents>
-                                            <Container class="javax.swing.JToolBar" name="spectrumJToolBar">
+                                            <Component class="javax.swing.JSlider" name="accuracySlider">
                                               <Properties>
-                                                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                                </Property>
-                                                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                                  <Border info="null"/>
-                                                </Property>
-                                                <Property name="floatable" type="boolean" value="false"/>
-                                                <Property name="rollover" type="boolean" value="true"/>
-                                                <Property name="borderPainted" type="boolean" value="false"/>
-                                              </Properties>
-
-                                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                                              <SubComponents>
-                                                <Container class="javax.swing.JPanel" name="spectrumAnnotationMenuPanel">
-
-                                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                                                </Container>
-                                              </SubComponents>
-                                            </Container>
-                                            <Container class="javax.swing.JSplitPane" name="spectrumSplitPane">
-                                              <Properties>
-                                                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                                  <Border info="null"/>
-                                                </Property>
-                                                <Property name="dividerLocation" type="int" value="80"/>
-                                                <Property name="dividerSize" type="int" value="0"/>
-                                                <Property name="orientation" type="int" value="0"/>
+                                                <Property name="orientation" type="int" value="1"/>
+                                                <Property name="paintTicks" type="boolean" value="true"/>
+                                                <Property name="toolTipText" type="java.lang.String" value="Annotation Accuracy"/>
+                                                <Property name="value" type="int" value="100"/>
                                                 <Property name="opaque" type="boolean" value="false"/>
                                               </Properties>
-
-                                              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
-                                              <SubComponents>
-                                                <Container class="javax.swing.JPanel" name="secondarySpectrumPlotsJPanel">
-                                                  <Properties>
-                                                    <Property name="opaque" type="boolean" value="false"/>
-                                                  </Properties>
-                                                  <Constraints>
-                                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                                                      <JSplitPaneConstraints position="top"/>
-                                                    </Constraint>
-                                                  </Constraints>
-
-                                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                                                </Container>
-                                                <Container class="javax.swing.JPanel" name="spectrumPanel">
-                                                  <Properties>
-                                                    <Property name="opaque" type="boolean" value="false"/>
-                                                  </Properties>
-                                                  <Constraints>
-                                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
-                                                      <JSplitPaneConstraints position="right"/>
-                                                    </Constraint>
-                                                  </Constraints>
-
-                                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBorderLayout"/>
-                                                </Container>
-                                              </SubComponents>
-                                            </Container>
+                                              <Events>
+                                                <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="accuracySliderMouseWheelMoved"/>
+                                                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="accuracySliderStateChanged"/>
+                                              </Events>
+                                            </Component>
+                                            <Component class="javax.swing.JSlider" name="intensitySlider">
+                                              <Properties>
+                                                <Property name="orientation" type="int" value="1"/>
+                                                <Property name="paintTicks" type="boolean" value="true"/>
+                                                <Property name="toolTipText" type="java.lang.String" value="Annotation Level"/>
+                                                <Property name="value" type="int" value="75"/>
+                                                <Property name="opaque" type="boolean" value="false"/>
+                                              </Properties>
+                                              <Events>
+                                                <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="intensitySliderMouseWheelMoved"/>
+                                                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="intensitySliderStateChanged"/>
+                                              </Events>
+                                            </Component>
                                           </SubComponents>
                                         </Container>
                                       </SubComponents>
                                     </Container>
-                                    <Component class="javax.swing.JSlider" name="intensitySlider">
-                                      <Properties>
-                                        <Property name="orientation" type="int" value="1"/>
-                                        <Property name="paintTicks" type="boolean" value="true"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Annotation Level"/>
-                                        <Property name="value" type="int" value="75"/>
-                                        <Property name="opaque" type="boolean" value="false"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="intensitySliderMouseWheelMoved"/>
-                                        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="intensitySliderStateChanged"/>
-                                      </Events>
-                                    </Component>
-                                    <Component class="javax.swing.JSlider" name="accuracySlider">
-                                      <Properties>
-                                        <Property name="orientation" type="int" value="1"/>
-                                        <Property name="paintTicks" type="boolean" value="true"/>
-                                        <Property name="toolTipText" type="java.lang.String" value="Annotation Accuracy"/>
-                                        <Property name="value" type="int" value="100"/>
-                                        <Property name="opaque" type="boolean" value="false"/>
-                                      </Properties>
-                                      <Events>
-                                        <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="accuracySliderMouseWheelMoved"/>
-                                        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="accuracySliderStateChanged"/>
-                                      </Events>
-                                    </Component>
                                   </SubComponents>
                                 </Container>
                                 <Component class="javax.swing.JButton" name="spectrumHelpJButton">
