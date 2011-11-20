@@ -3778,9 +3778,12 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             secondarySpectrumPlotsJPanel.removeAll();
                             SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                             PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
-                            SequenceFragmentationPanel sequenceFragmentationPanel =
-                                    new SequenceFragmentationPanel(peptideAssumption.getPeptide().getModifiedSequenceAsString(true),
-                                    annotations, true, true);
+
+                            SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
+                                    peptideAssumption.getPeptide().getModifiedSequenceAsString(true),
+                                    annotations, true, true,
+                                    peptideAssumption.getPeptide().getPTMShortNameColorMap(peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors()),
+                                    peptideAssumption.getPeptide().getPTMShortNameMap());
                             sequenceFragmentationPanel.setMinimumSize(new Dimension(sequenceFragmentationPanel.getPreferredSize().width, sequenceFragmentationPanel.getHeight()));
                             sequenceFragmentationPanel.setOpaque(true);
                             sequenceFragmentationPanel.setBackground(Color.WHITE);
@@ -4628,13 +4631,13 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param proteinInferenceType  the protein inference group type
      */
     public void updateMainMatch(String mainMatch, int proteinInferenceType) {
-        
+
         int modelShift = 0;
 
         if (!peptideShakerGUI.showHiddenProteins()) {
             modelShift = -1;
         }
-        
+
         proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex() + modelShift);
         proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex() + modelShift);
         String description = "unknown protein";
@@ -4723,7 +4726,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     }
                 }
             }
-            
+
             if (peptideShakerGUI.getOverviewPanel() != null) {
                 ProteinFilter proteinFilter = new ProteinFilter(peptideShakerGUI, true, peptideShakerGUI.getCurrentProteinFilterValues(),
                         peptideShakerGUI.getCurrrentProteinFilterRadioButtonSelections(), peptideShakerGUI.getCurrrentProteinInferenceFilterSelection(),

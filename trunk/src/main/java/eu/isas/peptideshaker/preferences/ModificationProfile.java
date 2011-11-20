@@ -122,7 +122,8 @@ public class ModificationProfile implements Serializable {
     }
 
     /**
-     * Removes a modification from the profile
+     * Removes a modification from the profile.
+     * 
      * @param utilitiesName the utilities name of the modification
      */
     public void remove(String utilitiesName) {
@@ -136,6 +137,8 @@ public class ModificationProfile implements Serializable {
 
     /**
      * Returns a mapping of the PeptideShaker names to the colors used.
+     * 
+     * @return  a mapping of the PeptideShaker names to the colors used
      */
     public HashMap<String, Color> getPtmColors() {
         return colors;

@@ -193,8 +193,8 @@ public class PtmPanel extends javax.swing.JPanel {
         peptidesTableJScrollPane.getViewport().setOpaque(false);
         ptmJScrollPane.getViewport().setOpaque(false);
 
-        spectrumTabbedPane.setEnabledAt(0, false);
-        spectrumTabbedPane.setEnabledAt(1, false);
+        //spectrumTabbedPane.setEnabledAt(0, false);
+        //spectrumTabbedPane.setEnabledAt(1, false);
 
         setTableProperties();
 
