@@ -569,6 +569,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         peptidesAndPsmsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         spectrumJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         sequenceCoverageJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        jSeparator12 = new javax.swing.JPopupMenu.Separator();
+        spectrumSlidersCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -1226,6 +1228,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         overViewTabViewMenu.add(sequenceCoverageJCheckBoxMenuItem);
+        overViewTabViewMenu.add(jSeparator12);
+
+        spectrumSlidersCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        spectrumSlidersCheckBoxMenuItem.setMnemonic('L');
+        spectrumSlidersCheckBoxMenuItem.setText("Spectrum Sliders");
+        spectrumSlidersCheckBoxMenuItem.setToolTipText("Show the accuracy and intensity level sliders");
+        spectrumSlidersCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                spectrumSlidersCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        overViewTabViewMenu.add(spectrumSlidersCheckBoxMenuItem);
 
         viewJMenu.add(overViewTabViewMenu);
         viewJMenu.add(jSeparator3);
@@ -1438,7 +1452,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), spectrumSlidersCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
         statsPanel.updateSeparators();
     }//GEN-LAST:event_formComponentResized
@@ -1472,7 +1486,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void sequenceCoverageJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceCoverageJCheckBoxMenuItemActionPerformed
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), spectrumSlidersCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
 }//GEN-LAST:event_sequenceCoverageJCheckBoxMenuItemActionPerformed
 
@@ -1492,26 +1506,26 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         final boolean showSpectrum = spectrumJCheckBoxMenuItem.isSelected();
 
         if (!showPeptidesAndPsms && !showSpectrum) {
-            overviewPanel.setDisplayOptions(showProteins, true, showCoverage, false);
+            overviewPanel.setDisplayOptions(showProteins, true, showCoverage, false, spectrumSlidersCheckBoxMenuItem.isSelected());
             overviewPanel.updateSeparators();
 
-            overviewPanel.setDisplayOptions(showProteins, false, showCoverage, false);
+            overviewPanel.setDisplayOptions(showProteins, false, showCoverage, false, spectrumSlidersCheckBoxMenuItem.isSelected());
             overviewPanel.updateSeparators();
         } else if (!showPeptidesAndPsms && showSpectrum) {
-            overviewPanel.setDisplayOptions(showProteins, true, showCoverage, false);
+            overviewPanel.setDisplayOptions(showProteins, true, showCoverage, false, spectrumSlidersCheckBoxMenuItem.isSelected());
             overviewPanel.updateSeparators();
 
             // invoke later to give time for components to update
             SwingUtilities.invokeLater(new Runnable() {
 
                 public void run() {
-                    overviewPanel.setDisplayOptions(showProteins, showPeptidesAndPsms, showCoverage, showSpectrum);
+                    overviewPanel.setDisplayOptions(showProteins, showPeptidesAndPsms, showCoverage, showSpectrum, spectrumSlidersCheckBoxMenuItem.isSelected());
                     overviewPanel.updateSeparators();
                 }
             });
 
         } else {
-            overviewPanel.setDisplayOptions(showProteins, showPeptidesAndPsms, showCoverage, showSpectrum);
+            overviewPanel.setDisplayOptions(showProteins, showPeptidesAndPsms, showCoverage, showSpectrum, spectrumSlidersCheckBoxMenuItem.isSelected());
             overviewPanel.updateSeparators();
         }
 
@@ -1524,7 +1538,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void peptidesAndPsmsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesAndPsmsJCheckBoxMenuItemActionPerformed
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), spectrumSlidersCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
 }//GEN-LAST:event_peptidesAndPsmsJCheckBoxMenuItemActionPerformed
 
@@ -1535,7 +1549,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void proteinsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinsJCheckBoxMenuItemActionPerformed
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), spectrumSlidersCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
 }//GEN-LAST:event_proteinsJCheckBoxMenuItemActionPerformed
 
@@ -2481,6 +2495,17 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }//GEN-LAST:event_saveMenuItemActionPerformed
 
     /**
+     * Hide/display the spectrum accuracy and intensity level sliders.
+     * 
+     * @param evt 
+     */
+    private void spectrumSlidersCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumSlidersCheckBoxMenuItemActionPerformed
+        overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), spectrumSlidersCheckBoxMenuItem.isSelected());
+        overviewPanel.updateSeparators();
+    }//GEN-LAST:event_spectrumSlidersCheckBoxMenuItemActionPerformed
+
+    /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
     private void loadEnzymes() {
@@ -2503,7 +2528,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         try {
             sequenceCoverageJCheckBoxMenuItem.setSelected(true);
 
-            overviewPanel.setDisplayOptions(true, true, true, true);
+            overviewPanel.setDisplayOptions(true, true, true, true, false);
             overviewPanel.updateSeparators();
             statsPanel.updateSeparators();
 
@@ -2666,6 +2691,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
+    private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
@@ -2705,6 +2731,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenuItem spectrumCountingMenuItem;
     private javax.swing.JCheckBoxMenuItem spectrumJCheckBoxMenuItem;
     private javax.swing.JPanel spectrumJPanel;
+    private javax.swing.JCheckBoxMenuItem spectrumSlidersCheckBoxMenuItem;
     private javax.swing.JMenu splitterMenu;
     private javax.swing.JMenu splitterMenu1;
     private javax.swing.JMenu splitterMenu2;
@@ -4934,16 +4961,19 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param displayPeptidesAndPsms
      * @param displayCoverage
      * @param displaySpectrum 
+     * @param displaySpectrumSliders 
      */
     public void setDisplayOptions(boolean displayProteins, boolean displayPeptidesAndPsms,
-            boolean displayCoverage, boolean displaySpectrum) {
+            boolean displayCoverage, boolean displaySpectrum, boolean displaySpectrumSliders) {
         proteinsJCheckBoxMenuItem.setSelected(displayProteins);
         peptidesAndPsmsJCheckBoxMenuItem.setSelected(displayPeptidesAndPsms);
         sequenceCoverageJCheckBoxMenuItem.setSelected(displayCoverage);
         spectrumJCheckBoxMenuItem.setSelected(displaySpectrum);
+        spectrumSlidersCheckBoxMenuItem.setSelected(displaySpectrumSliders);
 
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), 
+                spectrumSlidersCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
     }
 
