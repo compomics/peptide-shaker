@@ -402,23 +402,26 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     String goAccession = elements[1];
                                     String goTerm = elements[2].toLowerCase();
 
-                                    if (!proteinToGoMappings.containsKey(proteinAccession)) {
-                                        ArrayList<String> proteinGoMappings = new ArrayList<String>();
-                                        proteinGoMappings.add(goTerm);
-                                        proteinToGoMappings.put(proteinAccession, proteinGoMappings);
-                                    } else {
-                                        proteinToGoMappings.get(proteinAccession).add(goTerm);
+                                    if (proteinAccession.length() > 0) {
+
+                                        if (!proteinToGoMappings.containsKey(proteinAccession)) {
+                                            ArrayList<String> proteinGoMappings = new ArrayList<String>();
+                                            proteinGoMappings.add(goTerm);
+                                            proteinToGoMappings.put(proteinAccession, proteinGoMappings);
+                                        } else {
+                                            proteinToGoMappings.get(proteinAccession).add(goTerm);
+                                        }
+
+                                        goTermToAccessionMap.put(goTerm, goAccession);
+
+                                        if (totalGoTermUsage.containsKey(goTerm)) {
+                                            totalGoTermUsage.put(goTerm, totalGoTermUsage.get(goTerm) + 1);
+                                        } else {
+                                            totalGoTermUsage.put(goTerm, 1);
+                                        }
+
+                                        totalNumberOfProteins++;
                                     }
-
-                                    goTermToAccessionMap.put(goTerm, goAccession);
-
-                                    if (totalGoTermUsage.containsKey(goTerm)) {
-                                        totalGoTermUsage.put(goTerm, totalGoTermUsage.get(goTerm) + 1);
-                                    } else {
-                                        totalGoTermUsage.put(goTerm, 1);
-                                    }
-
-                                    totalNumberOfProteins++;
                                 }
 
                                 line = br.readLine();
@@ -585,7 +588,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                             true
                                         });
                             }
-                            
+
                             // correct the p-values for multiple testing using benjamini-hochberg
                             sortPValues(pValues, indexes);
 
@@ -616,7 +619,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                     significantCounter++;
                                 }
                             }
-                            
+
                             ((DefaultTableModel) goMappingsTable.getModel()).fireTableDataChanged();
 
                             ((TitledBorder) mappingsPanel.getBorder()).setTitle("Gene Ontology Mappings (" + significantCounter + "/" + goMappingsTable.getRowCount() + ")");
@@ -2144,7 +2147,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         // clear old results
         DefaultTableModel dm = (DefaultTableModel) goMappingsTable.getModel();
         dm.getDataVector().removeAllElements();
-        
+
         ((DefaultTableModel) goMappingsTable.getModel()).fireTableDataChanged();
 
         goFrequencyPlotPanel.removeAll();

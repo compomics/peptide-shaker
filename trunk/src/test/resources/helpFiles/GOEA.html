@@ -23,15 +23,16 @@
             the species specific version of <a href="http://www.ensembl.org">Ensembl</a>. In order
             to not get too many terms the GOSlim <a href="http://www.ebi.ac.uk/GOA/">UniProtKB-GOA</a> is used.
             <br><br>
-            GOEA shows if certain GO terms are significantly up or down regulated in your dataset. 
+            GOEA shows if certain GO terms are found more or less often in your dataset compared 
+            to the distribution of the same terms in Ensembl. 
             To calcualte the significance <b>PeptideShaker</b> employs a 
             <a href="http://en.wikipedia.org/wiki/Hypergeometric_test">Hypergeometric test</a>. 
             This divides the GO terms into three groups: 
         </p>
         <ul>
-            <li>Significantly up regulated (colored green).</li>
-            <li>Significantly down regulated (colored red).</li>
-            <li>Not significantly regulated (colored grey).</li>
+            <li>Significantly higher in dataset (colored green).</li>
+            <li>Significantly lower in dataset (colored red).</li>
+            <li>Not significantly different (colored grey).</li>
         </ul>
         <p align="justify">
             <b><i>Note that the GO Enrichment Analysis only supports <a href="http://www.uniprot.org">UniProt</a> accession numbers!</i></b>
@@ -76,7 +77,7 @@
         <h3>GO Plots</h3>
         <p align="justify">
             Two GO plots are available: a <i>significance plot</i> and a <i>distribution plot</i>. The significance plot highlights 
-            the significantly up and down regulated GO terms, while the distribution plot shows the frequencies in 
+            the significant GO terms, while the distribution plot shows the frequencies in 
             percent for your dataset compared to the whole of <a href="http://www.ensembl.org">Ensembl</a>.
             <br><br>
             The plots are closely connected to the table with the GO terms. Selecting a a row in the table will 
