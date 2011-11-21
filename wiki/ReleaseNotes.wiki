@@ -3,6 +3,20 @@
 
 ----
 
+*Changes in PeptideShaker 0.11.1 (November 21. 2011):*
+ * FEATURE IMPROVEMENT: Reduced the time required to save a project using the `Save` option compared to the `Save As` option.
+ * FEATURE IMPROVEMENT: "N/A" is now shown in the retention time columns if the retention time is -1.
+ * FEATURE IMPROVEMENT: Background highlighting of modifications in the sequence fragmentation plots with tooltips, similar to what us used in the tables.
+ * FEATURE IMPROVEMENT: The spectrum sliders (accuracy and intensity level) are now hidden by default.
+ * FEATURE IMPROVEMENT: The p-value shown in the GO Enrichment tab is now the FDR-corrected p-value.
+ * BUG FIX: Fixed some bugs related to changing the protein inference in the protein table in the Overview tab.
+ * BUG FIX: Made sure that the color coding for protein inference is the same in both the Overview tab and the 3D Structures tab.
+ * BUG FIX: Fixed a bug with the sorting of the Log2 Diff column in the GO Enrichemnt tab, that sorted on absolute value.
+ * LIBRARY UPDATE: Updated jsparklines to version 0.5.27.
+ * LIBRARY UPDATE: Updated utilities to version 3.3.3.
+
+----
+
 *Changes in PeptideShaker 0.11.0 (November 17. 2011):*
 
  * NEW FEATURE: Added a GO Enrichment Analysis tab.
@@ -44,6 +58,8 @@
  * LIBRARY UPDATE: Updated the UniProt API to version 2011.11.
  * LIBRARY UPDATE: Updated utilities to version 3.3.2.
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.26.
+
+Download Count: 7
 
 ----
 
