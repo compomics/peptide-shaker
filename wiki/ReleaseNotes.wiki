@@ -12,6 +12,8 @@
  * BUG FIX: Fixed some bugs related to changing the protein inference in the protein table in the Overview tab.
  * BUG FIX: Made sure that the color coding for protein inference is the same in both the Overview tab and the 3D Structures tab.
  * BUG FIX: Fixed a bug with the sorting of the Log2 Diff column in the GO Enrichemnt tab, that sorted on absolute value.
+ * BUG FIX: Fixed a bug in the GO Enrichment mapping where unmapped GO terms were added to the table and frequencies.
+ * BUG FIX: Corrected a bug in the export of unidentified spectra.
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.27.
  * LIBRARY UPDATE: Updated utilities to version 3.3.3.
 
