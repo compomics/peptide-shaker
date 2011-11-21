@@ -573,7 +573,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private boolean isValidated(String spectrumKey) {
         PSParameter psParameter = new PSParameter();
-        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
+        if (peptideShakerGUI.getIdentification().matchExists(spectrumKey)) {
+            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
+        } else {
+            return false;
+        }
         switch (spectrumValidationCmb.getSelectedIndex()) {
             case 0:
                 return psParameter.isValidated();
