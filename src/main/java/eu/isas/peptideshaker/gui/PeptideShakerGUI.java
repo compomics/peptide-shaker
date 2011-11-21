@@ -569,10 +569,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         peptidesAndPsmsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         spectrumJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         sequenceCoverageJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        jSeparator12 = new javax.swing.JPopupMenu.Separator();
-        spectrumSlidersCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        spectrumSlidersCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator11 = new javax.swing.JPopupMenu.Separator();
         showHiddenProteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
@@ -1228,7 +1227,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         overViewTabViewMenu.add(sequenceCoverageJCheckBoxMenuItem);
-        overViewTabViewMenu.add(jSeparator12);
+
+        viewJMenu.add(overViewTabViewMenu);
+        viewJMenu.add(jSeparator3);
+
+        sparklinesJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        sparklinesJCheckBoxMenuItem.setSelected(true);
+        sparklinesJCheckBoxMenuItem.setText("JSparklines");
+        sparklinesJCheckBoxMenuItem.setToolTipText("View sparklines or the underlying numbers");
+        sparklinesJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                sparklinesJCheckBoxMenuItemActionPerformed(evt);
+            }
+        });
+        viewJMenu.add(sparklinesJCheckBoxMenuItem);
 
         spectrumSlidersCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         spectrumSlidersCheckBoxMenuItem.setMnemonic('L');
@@ -1239,21 +1251,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 spectrumSlidersCheckBoxMenuItemActionPerformed(evt);
             }
         });
-        overViewTabViewMenu.add(spectrumSlidersCheckBoxMenuItem);
-
-        viewJMenu.add(overViewTabViewMenu);
-        viewJMenu.add(jSeparator3);
-
-        sparklinesJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        sparklinesJCheckBoxMenuItem.setSelected(true);
-        sparklinesJCheckBoxMenuItem.setText("JSparklines");
-        sparklinesJCheckBoxMenuItem.setToolTipText("View sparklines or the underlying numbers");
-        sparklinesJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                sparklinesJCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        viewJMenu.add(sparklinesJCheckBoxMenuItem);
+        viewJMenu.add(spectrumSlidersCheckBoxMenuItem);
 
         scoresJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         scoresJCheckBoxMenuItem.setMnemonic('c');
@@ -2503,6 +2501,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
                 sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), spectrumSlidersCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
+        
+        spectrumIdentificationPanel.setDisplayOptions(spectrumSlidersCheckBoxMenuItem.isSelected());
+        spectrumIdentificationPanel.updateSeparators();
+        
+        ptmPanel.setDisplayOptions(spectrumSlidersCheckBoxMenuItem.isSelected());
+        ptmPanel.updateSeparators();
     }//GEN-LAST:event_spectrumSlidersCheckBoxMenuItemActionPerformed
 
     /**
@@ -2691,7 +2695,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
-    private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;

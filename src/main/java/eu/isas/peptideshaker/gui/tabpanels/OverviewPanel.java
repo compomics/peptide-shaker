@@ -2134,17 +2134,7 @@ private void spectrumJTabbedPaneMouseWheelMoved(java.awt.event.MouseWheelEvent e
         }
     }
     
-    double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
-    
-    spectrumJTabbedPane.setToolTipText("<html>Accuracy: " + Util.roundDouble(accuracy, 2) + " Da<br>" + 
-           "Level: " + intensitySlider.getValue() + "%</html>");
-    
-    // show the tooltip now
-    ToolTipManager.sharedInstance().mouseMoved(
-        new MouseEvent(spectrumJTabbedPane, 0, 0, 0,
-                spectrumJTabbedPane.getX() + spectrumJTabbedPane.getWidth() - 10, spectrumJTabbedPane.getY() + 90, // X-Y of the mouse for the tool tip
-                0, false));
-
+    updateSpectrumSliderToolTip();
 }//GEN-LAST:event_spectrumJTabbedPaneMouseWheelMoved
 
     /**
@@ -2157,6 +2147,7 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
     peptideShakerGUI.updateSpectrumAnnotations();
     peptideShakerGUI.setDataSaved(false);
     intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
+    updateSpectrumSliderToolTip();
 }//GEN-LAST:event_intensitySliderStateChanged
 
     /**
@@ -2333,6 +2324,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
         accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+        updateSpectrumSliderToolTip(); 
     }//GEN-LAST:event_accuracySliderStateChanged
 
     /**
@@ -5125,5 +5117,21 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 });
             }
         }
+    }
+    
+    /**
+     * Updates and displays the current spectrum slider tooltip.
+     */
+    private void updateSpectrumSliderToolTip () {
+        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+    
+        spectrumJTabbedPane.setToolTipText("<html>Accuracy: " + Util.roundDouble(accuracy, 2) + " Da<br>" + 
+               "Level: " + intensitySlider.getValue() + "%</html>");
+
+        // show the tooltip now
+        ToolTipManager.sharedInstance().mouseMoved(
+            new MouseEvent(spectrumJTabbedPane, 0, 0, 0,
+                    spectrumJTabbedPane.getX() + spectrumJTabbedPane.getWidth() - 10, spectrumJTabbedPane.getY() + 90, // X-Y of the mouse for the tool tip
+                    0, false));
     }
 }
