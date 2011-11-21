@@ -777,156 +777,227 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" attributes="0">
-                              <EmptySpace pref="527" max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="intensitySlider" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="accuracySlider" alignment="1" min="-2" max="-2" attributes="1"/>
-                              </Group>
-                          </Group>
-                          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  <Component id="spectrumTabbedPane" max="32767" attributes="0"/>
-                                  <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="slidersSplitPane" pref="538" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
-                              <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-                              <Component id="accuracySlider" pref="146" max="32767" attributes="0"/>
-                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                              <Component id="intensitySlider" pref="146" max="32767" attributes="0"/>
-                              <EmptySpace min="-2" pref="69" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="103" rootIndex="1" groupAlignment="0" attributes="0">
-                              <Group type="102" alignment="0" attributes="0">
-                                  <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="spectrumTabbedPane" pref="391" max="32767" attributes="0"/>
-                                  <EmptySpace max="-2" attributes="0"/>
-                              </Group>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="slidersSplitPane" pref="391" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
                   </Layout>
                   <SubComponents>
-                    <Container class="javax.swing.JTabbedPane" name="spectrumTabbedPane">
+                    <Container class="javax.swing.JSplitPane" name="slidersSplitPane">
                       <Properties>
-                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                        <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                          <Border info="null"/>
                         </Property>
-                        <Property name="selectedIndex" type="int" value="2"/>
-                        <Property name="tabPlacement" type="int" value="3"/>
+                        <Property name="dividerLocation" type="int" value="500"/>
+                        <Property name="dividerSize" type="int" value="0"/>
+                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="spectrumTabbedPaneStateChanged"/>
-                      </Events>
 
-                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+                      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
                       <SubComponents>
-                        <Container class="javax.swing.JPanel" name="psmModProfileJPanel">
-                          <Properties>
-                            <Property name="opaque" type="boolean" value="false"/>
-                          </Properties>
-                          <Constraints>
-                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                              <JTabbedPaneConstraints tabName="PTM Profiles">
-                                <Property name="tabTitle" type="java.lang.String" value="PTM Profiles"/>
-                              </JTabbedPaneConstraints>
-                            </Constraint>
-                          </Constraints>
-
-                          <Layout>
-                            <DimensionLayout dim="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <EmptySpace min="0" pref="510" max="32767" attributes="0"/>
-                              </Group>
-                            </DimensionLayout>
-                            <DimensionLayout dim="1">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <EmptySpace min="0" pref="363" max="32767" attributes="0"/>
-                              </Group>
-                            </DimensionLayout>
-                          </Layout>
-                        </Container>
-                        <Container class="javax.swing.JPanel" name="ptmPlotPanel">
-                          <Properties>
-                            <Property name="opaque" type="boolean" value="false"/>
-                          </Properties>
-                          <Constraints>
-                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                              <JTabbedPaneConstraints tabName="PTM Plot">
-                                <Property name="tabTitle" type="java.lang.String" value="PTM Plot"/>
-                              </JTabbedPaneConstraints>
-                            </Constraint>
-                          </Constraints>
-
-                          <Layout>
-                            <DimensionLayout dim="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="ptmPlotChartPanel" alignment="0" pref="510" max="32767" attributes="0"/>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                                      <Component id="ptmPlotJToolBar" pref="490" max="32767" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                            </DimensionLayout>
-                            <DimensionLayout dim="1">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <Component id="ptmPlotChartPanel" pref="363" max="32767" attributes="0"/>
-                                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                                      <Component id="ptmPlotJToolBar" min="-2" max="-2" attributes="0"/>
-                                  </Group>
-                              </Group>
-                            </DimensionLayout>
-                          </Layout>
-                          <SubComponents>
-                            <Container class="javax.swing.JToolBar" name="ptmPlotJToolBar">
-                              <Properties>
-                                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                </Property>
-                                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                  <Border info="null"/>
-                                </Property>
-                                <Property name="floatable" type="boolean" value="false"/>
-                                <Property name="rollover" type="boolean" value="true"/>
-                                <Property name="borderPainted" type="boolean" value="false"/>
-                              </Properties>
-
-                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                              <SubComponents>
-                                <Container class="javax.swing.JPanel" name="ptmPlotAnnotationMenuPanel">
-
-                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                                </Container>
-                              </SubComponents>
-                            </Container>
-                            <Container class="javax.swing.JPanel" name="ptmPlotChartPanel">
-                              <Properties>
-                                <Property name="opaque" type="boolean" value="false"/>
-                              </Properties>
-
-                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                            </Container>
-                          </SubComponents>
-                        </Container>
-                        <Container class="javax.swing.JPanel" name="spectrumJPanel">
+                        <Container class="javax.swing.JTabbedPane" name="spectrumTabbedPane">
                           <Properties>
                             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                               <Color blue="ff" green="ff" red="ff" type="rgb"/>
                             </Property>
+                            <Property name="selectedIndex" type="int" value="2"/>
+                            <Property name="tabPlacement" type="int" value="3"/>
+                          </Properties>
+                          <Events>
+                            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="spectrumTabbedPaneStateChanged"/>
+                          </Events>
+                          <Constraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                              <JSplitPaneConstraints position="left"/>
+                            </Constraint>
+                          </Constraints>
+
+                          <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
+                          <SubComponents>
+                            <Container class="javax.swing.JPanel" name="psmModProfileJPanel">
+                              <Properties>
+                                <Property name="opaque" type="boolean" value="false"/>
+                              </Properties>
+                              <Constraints>
+                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                                  <JTabbedPaneConstraints tabName="PTM Profiles">
+                                    <Property name="tabTitle" type="java.lang.String" value="PTM Profiles"/>
+                                  </JTabbedPaneConstraints>
+                                </Constraint>
+                              </Constraints>
+
+                              <Layout>
+                                <DimensionLayout dim="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <EmptySpace min="0" pref="492" max="32767" attributes="0"/>
+                                  </Group>
+                                </DimensionLayout>
+                                <DimensionLayout dim="1">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <EmptySpace min="0" pref="363" max="32767" attributes="0"/>
+                                  </Group>
+                                </DimensionLayout>
+                              </Layout>
+                            </Container>
+                            <Container class="javax.swing.JPanel" name="ptmPlotPanel">
+                              <Properties>
+                                <Property name="opaque" type="boolean" value="false"/>
+                              </Properties>
+                              <Constraints>
+                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                                  <JTabbedPaneConstraints tabName="PTM Plot">
+                                    <Property name="tabTitle" type="java.lang.String" value="PTM Plot"/>
+                                  </JTabbedPaneConstraints>
+                                </Constraint>
+                              </Constraints>
+
+                              <Layout>
+                                <DimensionLayout dim="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="ptmPlotChartPanel" alignment="0" pref="492" max="32767" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                                          <Component id="ptmPlotJToolBar" pref="472" max="32767" attributes="0"/>
+                                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                </DimensionLayout>
+                                <DimensionLayout dim="1">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="1" attributes="0">
+                                          <Component id="ptmPlotChartPanel" pref="363" max="32767" attributes="0"/>
+                                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                                          <Component id="ptmPlotJToolBar" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                </DimensionLayout>
+                              </Layout>
+                              <SubComponents>
+                                <Container class="javax.swing.JToolBar" name="ptmPlotJToolBar">
+                                  <Properties>
+                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                    </Property>
+                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                      <Border info="null"/>
+                                    </Property>
+                                    <Property name="floatable" type="boolean" value="false"/>
+                                    <Property name="rollover" type="boolean" value="true"/>
+                                    <Property name="borderPainted" type="boolean" value="false"/>
+                                  </Properties>
+
+                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                  <SubComponents>
+                                    <Container class="javax.swing.JPanel" name="ptmPlotAnnotationMenuPanel">
+
+                                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                    </Container>
+                                  </SubComponents>
+                                </Container>
+                                <Container class="javax.swing.JPanel" name="ptmPlotChartPanel">
+                                  <Properties>
+                                    <Property name="opaque" type="boolean" value="false"/>
+                                  </Properties>
+
+                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                </Container>
+                              </SubComponents>
+                            </Container>
+                            <Container class="javax.swing.JPanel" name="spectrumJPanel">
+                              <Properties>
+                                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                </Property>
+                              </Properties>
+                              <Constraints>
+                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
+                                  <JTabbedPaneConstraints tabName="Spectrum">
+                                    <Property name="tabTitle" type="java.lang.String" value="Spectrum"/>
+                                  </JTabbedPaneConstraints>
+                                </Constraint>
+                              </Constraints>
+
+                              <Layout>
+                                <DimensionLayout dim="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="spectrumJToolBar" pref="472" max="32767" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="spectrumChartJPanel" alignment="0" pref="492" max="32767" attributes="0"/>
+                                  </Group>
+                                </DimensionLayout>
+                                <DimensionLayout dim="1">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Group type="102" alignment="1" attributes="0">
+                                          <Component id="spectrumChartJPanel" pref="363" max="32767" attributes="0"/>
+                                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+                                          <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                </DimensionLayout>
+                              </Layout>
+                              <SubComponents>
+                                <Container class="javax.swing.JToolBar" name="spectrumJToolBar">
+                                  <Properties>
+                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                    </Property>
+                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                      <Border info="null"/>
+                                    </Property>
+                                    <Property name="floatable" type="boolean" value="false"/>
+                                    <Property name="rollover" type="boolean" value="true"/>
+                                    <Property name="borderPainted" type="boolean" value="false"/>
+                                  </Properties>
+
+                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                  <SubComponents>
+                                    <Container class="javax.swing.JPanel" name="spectrumAnnotationMenuPanel">
+
+                                      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+                                    </Container>
+                                  </SubComponents>
+                                </Container>
+                                <Container class="javax.swing.JPanel" name="spectrumChartJPanel">
+                                  <Properties>
+                                    <Property name="opaque" type="boolean" value="false"/>
+                                  </Properties>
+
+                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout">
+                                    <Property name="axis" type="int" value="1"/>
+                                  </Layout>
+                                </Container>
+                              </SubComponents>
+                            </Container>
+                          </SubComponents>
+                        </Container>
+                        <Container class="javax.swing.JPanel" name="sliderPanel">
+                          <Properties>
+                            <Property name="maximumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                              <Dimension value="[36, 312]"/>
+                            </Property>
+                            <Property name="opaque" type="boolean" value="false"/>
+                            <Property name="preferredSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
+                              <Dimension value="[36, 312]"/>
+                            </Property>
                           </Properties>
                           <Constraints>
-                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                              <JTabbedPaneConstraints tabName="Spectrum">
-                                <Property name="tabTitle" type="java.lang.String" value="Spectrum"/>
-                              </JTabbedPaneConstraints>
+                            <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                              <JSplitPaneConstraints position="right"/>
                             </Constraint>
                           </Constraints>
 
@@ -934,84 +1005,58 @@
                             <DimensionLayout dim="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="spectrumJToolBar" pref="490" max="32767" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace max="32767" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="intensitySlider" alignment="1" min="-2" max="-2" attributes="0"/>
+                                          <Component id="accuracySlider" alignment="1" min="-2" max="-2" attributes="1"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="spectrumChartJPanel" alignment="0" pref="510" max="32767" attributes="0"/>
                               </Group>
                             </DimensionLayout>
                             <DimensionLayout dim="1">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <Component id="spectrumChartJPanel" pref="363" max="32767" attributes="0"/>
-                                      <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                                      <Component id="spectrumJToolBar" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
+                                      <Component id="accuracySlider" pref="146" max="32767" attributes="0"/>
+                                      <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                                      <Component id="intensitySlider" pref="146" max="32767" attributes="0"/>
+                                      <EmptySpace min="-2" pref="47" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                             </DimensionLayout>
                           </Layout>
                           <SubComponents>
-                            <Container class="javax.swing.JToolBar" name="spectrumJToolBar">
+                            <Component class="javax.swing.JSlider" name="accuracySlider">
                               <Properties>
-                                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
-                                </Property>
-                                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
-                                  <Border info="null"/>
-                                </Property>
-                                <Property name="floatable" type="boolean" value="false"/>
-                                <Property name="rollover" type="boolean" value="true"/>
-                                <Property name="borderPainted" type="boolean" value="false"/>
-                              </Properties>
-
-                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                              <SubComponents>
-                                <Container class="javax.swing.JPanel" name="spectrumAnnotationMenuPanel">
-
-                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
-                                </Container>
-                              </SubComponents>
-                            </Container>
-                            <Container class="javax.swing.JPanel" name="spectrumChartJPanel">
-                              <Properties>
+                                <Property name="orientation" type="int" value="1"/>
+                                <Property name="paintTicks" type="boolean" value="true"/>
+                                <Property name="toolTipText" type="java.lang.String" value="Annotation Accuracy"/>
+                                <Property name="value" type="int" value="100"/>
                                 <Property name="opaque" type="boolean" value="false"/>
                               </Properties>
-
-                              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout">
-                                <Property name="axis" type="int" value="1"/>
-                              </Layout>
-                            </Container>
+                              <Events>
+                                <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="accuracySliderMouseWheelMoved"/>
+                                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="accuracySliderStateChanged"/>
+                              </Events>
+                            </Component>
+                            <Component class="javax.swing.JSlider" name="intensitySlider">
+                              <Properties>
+                                <Property name="orientation" type="int" value="1"/>
+                                <Property name="paintTicks" type="boolean" value="true"/>
+                                <Property name="toolTipText" type="java.lang.String" value="Annotation Intensity Level"/>
+                                <Property name="value" type="int" value="75"/>
+                                <Property name="opaque" type="boolean" value="false"/>
+                              </Properties>
+                              <Events>
+                                <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="intensitySliderMouseWheelMoved"/>
+                                <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="intensitySliderStateChanged"/>
+                              </Events>
+                            </Component>
                           </SubComponents>
                         </Container>
                       </SubComponents>
                     </Container>
-                    <Component class="javax.swing.JSlider" name="accuracySlider">
-                      <Properties>
-                        <Property name="orientation" type="int" value="1"/>
-                        <Property name="paintTicks" type="boolean" value="true"/>
-                        <Property name="toolTipText" type="java.lang.String" value="Annotation Accuracy"/>
-                        <Property name="value" type="int" value="100"/>
-                        <Property name="opaque" type="boolean" value="false"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="accuracySliderMouseWheelMoved"/>
-                        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="accuracySliderStateChanged"/>
-                      </Events>
-                    </Component>
-                    <Component class="javax.swing.JSlider" name="intensitySlider">
-                      <Properties>
-                        <Property name="orientation" type="int" value="1"/>
-                        <Property name="paintTicks" type="boolean" value="true"/>
-                        <Property name="toolTipText" type="java.lang.String" value="Annotation Intensity Level"/>
-                        <Property name="value" type="int" value="75"/>
-                        <Property name="opaque" type="boolean" value="false"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="intensitySliderMouseWheelMoved"/>
-                        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="intensitySliderStateChanged"/>
-                      </Events>
-                    </Component>
                   </SubComponents>
                 </Container>
                 <Component class="javax.swing.JButton" name="spectrumHelpJButton">

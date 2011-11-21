@@ -14,7 +14,6 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.protein.SequenceModificationPanel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
@@ -51,6 +50,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.JViewport;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -81,6 +81,10 @@ public class PtmPanel extends javax.swing.JPanel {
      * False means that the tab has to be loaded from scratch.
      */
     private boolean tabInitiated = false;
+    /**
+     * Boolean indicating whether the spectrum sliders shall be displayed
+     */
+    private boolean displaySpectrumSliders = false;
     /**
      * The progress dialog.
      */
@@ -182,6 +186,7 @@ public class PtmPanel extends javax.swing.JPanel {
     public PtmPanel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
+        formComponentResized(null);
 
         peptidesTable.setAutoCreateRowSorter(true);
         relatedPeptidesTable.setAutoCreateRowSorter(true);
@@ -193,8 +198,8 @@ public class PtmPanel extends javax.swing.JPanel {
         peptidesTableJScrollPane.getViewport().setOpaque(false);
         ptmJScrollPane.getViewport().setOpaque(false);
 
-        //spectrumTabbedPane.setEnabledAt(0, false);
-        //spectrumTabbedPane.setEnabledAt(1, false);
+        spectrumTabbedPane.setEnabledAt(0, false);
+        spectrumTabbedPane.setEnabledAt(1, false);
 
         setTableProperties();
 
@@ -493,6 +498,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumAndFragmentIonJPanel = new javax.swing.JPanel();
         spectrumLayeredPane = new javax.swing.JLayeredPane();
         spectrumAndFragmentIonPanel = new javax.swing.JPanel();
+        slidersSplitPane = new javax.swing.JSplitPane();
         spectrumTabbedPane = new javax.swing.JTabbedPane();
         psmModProfileJPanel = new javax.swing.JPanel();
         ptmPlotPanel = new javax.swing.JPanel();
@@ -503,6 +509,7 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar = new javax.swing.JToolBar();
         spectrumAnnotationMenuPanel = new javax.swing.JPanel();
         spectrumChartJPanel = new javax.swing.JPanel();
+        sliderPanel = new javax.swing.JPanel();
         accuracySlider = new javax.swing.JSlider();
         intensitySlider = new javax.swing.JSlider();
         spectrumHelpJButton = new javax.swing.JButton();
@@ -1003,6 +1010,11 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumAndFragmentIonPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum & Fragment Ions"));
         spectrumAndFragmentIonPanel.setOpaque(false);
 
+        slidersSplitPane.setBorder(null);
+        slidersSplitPane.setDividerLocation(500);
+        slidersSplitPane.setDividerSize(0);
+        slidersSplitPane.setOpaque(false);
+
         spectrumTabbedPane.setBackground(new java.awt.Color(255, 255, 255));
         spectrumTabbedPane.setTabPlacement(javax.swing.JTabbedPane.BOTTOM);
         spectrumTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -1017,7 +1029,7 @@ public class PtmPanel extends javax.swing.JPanel {
         psmModProfileJPanel.setLayout(psmModProfileJPanelLayout);
         psmModProfileJPanelLayout.setHorizontalGroup(
             psmModProfileJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 510, Short.MAX_VALUE)
+            .addGap(0, 492, Short.MAX_VALUE)
         );
         psmModProfileJPanelLayout.setVerticalGroup(
             psmModProfileJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1044,10 +1056,10 @@ public class PtmPanel extends javax.swing.JPanel {
         ptmPlotPanel.setLayout(ptmPlotPanelLayout);
         ptmPlotPanelLayout.setHorizontalGroup(
             ptmPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ptmPlotChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+            .addComponent(ptmPlotChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
             .addGroup(ptmPlotPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ptmPlotJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 490, Short.MAX_VALUE)
+                .addComponent(ptmPlotJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
                 .addContainerGap())
         );
         ptmPlotPanelLayout.setVerticalGroup(
@@ -1080,9 +1092,9 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 490, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 510, Short.MAX_VALUE)
+            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
         );
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1095,6 +1107,12 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumTabbedPane.addTab("Spectrum", spectrumJPanel);
 
         spectrumTabbedPane.setSelectedIndex(2);
+
+        slidersSplitPane.setLeftComponent(spectrumTabbedPane);
+
+        sliderPanel.setMaximumSize(new java.awt.Dimension(36, 312));
+        sliderPanel.setOpaque(false);
+        sliderPanel.setPreferredSize(new java.awt.Dimension(36, 312));
 
         accuracySlider.setOrientation(javax.swing.JSlider.VERTICAL);
         accuracySlider.setPaintTicks(true);
@@ -1128,34 +1146,44 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         });
 
+        javax.swing.GroupLayout sliderPanelLayout = new javax.swing.GroupLayout(sliderPanel);
+        sliderPanel.setLayout(sliderPanelLayout);
+        sliderPanelLayout.setHorizontalGroup(
+            sliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(sliderPanelLayout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(sliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(intensitySlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(accuracySlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, 0))
+        );
+        sliderPanelLayout.setVerticalGroup(
+            sliderPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(sliderPanelLayout.createSequentialGroup()
+                .addGap(25, 25, 25)
+                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                .addGap(27, 27, 27)
+                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
+                .addGap(47, 47, 47))
+        );
+
+        slidersSplitPane.setRightComponent(sliderPanel);
+
         javax.swing.GroupLayout spectrumAndFragmentIonPanelLayout = new javax.swing.GroupLayout(spectrumAndFragmentIonPanel);
         spectrumAndFragmentIonPanel.setLayout(spectrumAndFragmentIonPanelLayout);
         spectrumAndFragmentIonPanelLayout.setHorizontalGroup(
             spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
-                .addContainerGap(527, Short.MAX_VALUE)
-                .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(intensitySlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(accuracySlider, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-            .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(spectrumTabbedPane)
-                    .addGap(33, 33, 33)))
+                .addContainerGap()
+                .addComponent(slidersSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 538, Short.MAX_VALUE)
+                .addContainerGap())
         );
         spectrumAndFragmentIonPanelLayout.setVerticalGroup(
             spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumAndFragmentIonPanelLayout.createSequentialGroup()
-                .addGap(25, 25, 25)
-                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-                .addGap(27, 27, 27)
-                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 146, Short.MAX_VALUE)
-                .addGap(69, 69, 69))
-            .addGroup(spectrumAndFragmentIonPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(spectrumTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
-                    .addContainerGap()))
+            .addGroup(spectrumAndFragmentIonPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(slidersSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         spectrumAndFragmentIonPanel.setBounds(0, 0, 570, 440);
@@ -1715,6 +1743,18 @@ public class PtmPanel extends javax.swing.JPanel {
                 spectrumLayeredPane.getComponent(3).setBounds(0, 0, spectrumLayeredPane.getWidth(), spectrumLayeredPane.getHeight());
                 spectrumLayeredPane.revalidate();
                 spectrumLayeredPane.repaint();
+
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    public void run() {
+                        // set the sliders split pane divider location
+                        if (displaySpectrumSliders) {
+                            slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
+                        } else {
+                            slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
+                        }
+                    }
+                });
             }
         });
     }//GEN-LAST:event_formComponentResized
@@ -1974,7 +2014,9 @@ private void ptmJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:
      * @param evt 
      */
 private void ptmJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_ptmJTableKeyReleased
-    updatePeptideTable();
+    if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+        updatePeptideTable();
+    }
 }//GEN-LAST:event_ptmJTableKeyReleased
 
     /**
@@ -1996,6 +2038,7 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
     peptideShakerGUI.updateSpectrumAnnotations();
     peptideShakerGUI.setDataSaved(false);
     intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
+    updateSpectrumSliderToolTip();
 }//GEN-LAST:event_intensitySliderStateChanged
 
     /**
@@ -2007,7 +2050,7 @@ private void spectrumAndFragmentIonJPanelMouseWheelMoved(java.awt.event.MouseWhe
 
     // @TODO: figure out why the strange special cases are needed... if not included the slider gets stuck at the given values!
 
-    if (evt.isAltDown()) {
+    if (evt.isControlDown()) {
         if (evt.getWheelRotation() > 0) { // Down
             intensitySlider.setValue(intensitySlider.getValue() - 1);
         } else { // Up
@@ -2032,6 +2075,8 @@ private void spectrumAndFragmentIonJPanelMouseWheelMoved(java.awt.event.MouseWhe
             }
         }
     }
+
+    updateSpectrumSliderToolTip();
 }//GEN-LAST:event_spectrumAndFragmentIonJPanelMouseWheelMoved
 
     /**
@@ -2105,6 +2150,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         peptideShakerGUI.updateSpectrumAnnotations();
         peptideShakerGUI.setDataSaved(false);
         accuracySlider.setToolTipText("Annotation Accuracy: " + Util.roundDouble(accuracy, 2) + " Da");
+        updateSpectrumSliderToolTip();
     }//GEN-LAST:event_accuracySliderStateChanged
 
     /**
@@ -2702,6 +2748,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JPanel selectedPeptidesJPanel;
     private javax.swing.JSplitPane selectedPeptidesJSplitPane;
     private javax.swing.JTable selectedPsmsTable;
+    private javax.swing.JPanel sliderPanel;
+    private javax.swing.JSplitPane slidersSplitPane;
     private javax.swing.JPanel spectrumAndFragmentIonJPanel;
     private javax.swing.JPanel spectrumAndFragmentIonPanel;
     private javax.swing.JPanel spectrumAnnotationMenuPanel;
@@ -4361,11 +4409,48 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     }
 
     /**
+     * Sets the the display options.
+     * 
+     * @param displaySpectrumSliders    boolean indicating whether the spectrum sliders shall be displayed 
+     */
+    public void setDisplayOptions(boolean displaySpectrumSliders) {
+        this.displaySpectrumSliders = displaySpectrumSliders;
+    }
+
+    /**
      * Returns true if the tab has been loaded at least once.
      * 
      * @return true if the tab has been loaded at least once
      */
     public boolean isInitiated() {
         return tabInitiated;
+    }
+
+    /**
+     * Method called whenever the component is resized to maintain the look of the GUI.
+     */
+    public void updateSeparators() {
+        // set the sliders split pane divider location
+        if (displaySpectrumSliders) {
+            slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
+        } else {
+            slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
+        }
+    }
+
+    /**
+     * Updates and displays the current spectrum slider tooltip.
+     */
+    private void updateSpectrumSliderToolTip() {
+        double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
+
+        spectrumJPanel.setToolTipText("<html>Accuracy: " + Util.roundDouble(accuracy, 2) + " Da<br>"
+                + "Level: " + intensitySlider.getValue() + "%</html>");
+
+        // show the tooltip now
+        ToolTipManager.sharedInstance().mouseMoved(
+                new MouseEvent(spectrumJPanel, 0, 0, 0,
+                spectrumJPanel.getWidth() - 150, spectrumJPanel.getY() + 20, // X-Y of the mouse for the tool tip
+                0, false));
     }
 }
