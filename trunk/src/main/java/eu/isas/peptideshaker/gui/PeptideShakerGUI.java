@@ -3522,7 +3522,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         // select the overview tab
         allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
-
+        currentPSFile = null;
         dataSaved = false;
     }
 
