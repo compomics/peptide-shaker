@@ -1955,18 +1955,6 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
     if (evt.isControlDown()) {
         if (evt.getWheelRotation() > 0) { // Down
-            intensitySlider.setValue(intensitySlider.getValue() - 1);
-        } else { // Up
-            if (intensitySlider.getValue() == 28) {
-                intensitySlider.setValue(intensitySlider.getValue() + 2);
-            } else if (intensitySlider.getValue() == 56) {
-                intensitySlider.setValue(intensitySlider.getValue() + 3);
-            } else {
-                intensitySlider.setValue(intensitySlider.getValue() + 1);
-            }
-        }
-    } else {
-        if (evt.getWheelRotation() > 0) { // Down
             accuracySlider.setValue(accuracySlider.getValue() - 1);
         } else { // Up
             if (accuracySlider.getValue() == 28) {
@@ -1977,6 +1965,18 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 accuracySlider.setValue(accuracySlider.getValue() + 1);
             }
         }
+    } else {
+        if (evt.getWheelRotation() > 0) { // Down
+            intensitySlider.setValue(intensitySlider.getValue() - 1);
+        } else { // Up
+            if (intensitySlider.getValue() == 28) {
+                intensitySlider.setValue(intensitySlider.getValue() + 2);
+            } else if (intensitySlider.getValue() == 56) {
+                intensitySlider.setValue(intensitySlider.getValue() + 3);
+            } else {
+                intensitySlider.setValue(intensitySlider.getValue() + 1);
+            }
+        } 
     }
     
     updateSpectrumSliderToolTip();
