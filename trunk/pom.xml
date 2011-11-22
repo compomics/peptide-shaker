@@ -160,6 +160,9 @@
                                         <include>matches/</include>
                                         <include>peptide-shaker.ico</include>
                                     </includes>
+                                    <excludes>
+                                       <exclude>conf/recently_opened_projects.txt</exclude>
+                                    </excludes>
                                 </resource>
                             </resources>
                         </configuration>
