@@ -522,7 +522,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         intensitySlider = new javax.swing.JSlider();
         spectrumHelpJButton = new javax.swing.JButton();
         exportSpectrumJButton = new javax.swing.JButton();
-        hideCoveragePanelJButton = new javax.swing.JButton();
+        hideSpectrumPanelJButton = new javax.swing.JButton();
+        maximizeSpectrumPanelJButton = new javax.swing.JButton();
         contextMenuSpectrumBackgroundPanel = new javax.swing.JPanel();
         toolBar = new javax.swing.JToolBar();
         showProteinsBeforeSeparator = new javax.swing.JPopupMenu.Separator();
@@ -1555,27 +1556,49 @@ public class OverviewPanel extends javax.swing.JPanel {
         exportSpectrumJButton.setBounds(450, 0, 10, 25);
         spectrumLayeredPane.add(exportSpectrumJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
-        hideCoveragePanelJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hide_grey.png"))); // NOI18N
-        hideCoveragePanelJButton.setToolTipText("Hide Spectrum (Shift+Ctrl+E)");
-        hideCoveragePanelJButton.setBorder(null);
-        hideCoveragePanelJButton.setBorderPainted(false);
-        hideCoveragePanelJButton.setContentAreaFilled(false);
-        hideCoveragePanelJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hide.png"))); // NOI18N
-        hideCoveragePanelJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+        hideSpectrumPanelJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hide_grey.png"))); // NOI18N
+        hideSpectrumPanelJButton.setToolTipText("Hide Spectrum (Shift+Ctrl+E)");
+        hideSpectrumPanelJButton.setBorder(null);
+        hideSpectrumPanelJButton.setBorderPainted(false);
+        hideSpectrumPanelJButton.setContentAreaFilled(false);
+        hideSpectrumPanelJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/hide.png"))); // NOI18N
+        hideSpectrumPanelJButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                hideCoveragePanelJButtonMouseEntered(evt);
+                hideSpectrumPanelJButtonMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                hideCoveragePanelJButtonMouseExited(evt);
+                hideSpectrumPanelJButtonMouseExited(evt);
             }
         });
-        hideCoveragePanelJButton.addActionListener(new java.awt.event.ActionListener() {
+        hideSpectrumPanelJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                hideCoveragePanelJButtonActionPerformed(evt);
+                hideSpectrumPanelJButtonActionPerformed(evt);
             }
         });
-        hideCoveragePanelJButton.setBounds(440, 0, 10, 25);
-        spectrumLayeredPane.add(hideCoveragePanelJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+        hideSpectrumPanelJButton.setBounds(440, 0, 10, 25);
+        spectrumLayeredPane.add(hideSpectrumPanelJButton, javax.swing.JLayeredPane.POPUP_LAYER);
+
+        maximizeSpectrumPanelJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/maximize_grey.png"))); // NOI18N
+        maximizeSpectrumPanelJButton.setToolTipText("Maximize Spectrum (Shift+Alt+E)");
+        maximizeSpectrumPanelJButton.setBorder(null);
+        maximizeSpectrumPanelJButton.setBorderPainted(false);
+        maximizeSpectrumPanelJButton.setContentAreaFilled(false);
+        maximizeSpectrumPanelJButton.setRolloverIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/maximize.png"))); // NOI18N
+        maximizeSpectrumPanelJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                maximizeSpectrumPanelJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                maximizeSpectrumPanelJButtonMouseExited(evt);
+            }
+        });
+        maximizeSpectrumPanelJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                maximizeSpectrumPanelJButtonActionPerformed(evt);
+            }
+        });
+        maximizeSpectrumPanelJButton.setBounds(425, 5, 10, 20);
+        spectrumLayeredPane.add(maximizeSpectrumPanelJButton, javax.swing.JLayeredPane.POPUP_LAYER);
 
         contextMenuSpectrumBackgroundPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1583,14 +1606,14 @@ public class OverviewPanel extends javax.swing.JPanel {
         contextMenuSpectrumBackgroundPanel.setLayout(contextMenuSpectrumBackgroundPanelLayout);
         contextMenuSpectrumBackgroundPanelLayout.setHorizontalGroup(
             contextMenuSpectrumBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 40, Short.MAX_VALUE)
+            .addGap(0, 60, Short.MAX_VALUE)
         );
         contextMenuSpectrumBackgroundPanelLayout.setVerticalGroup(
             contextMenuSpectrumBackgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 20, Short.MAX_VALUE)
         );
 
-        contextMenuSpectrumBackgroundPanel.setBounds(440, 0, 40, 20);
+        contextMenuSpectrumBackgroundPanel.setBounds(420, 0, 60, 20);
         spectrumLayeredPane.add(contextMenuSpectrumBackgroundPanel, javax.swing.JLayeredPane.POPUP_LAYER);
 
         javax.swing.GroupLayout spectrumMainJPanelLayout = new javax.swing.GroupLayout(spectrumMainJPanel);
@@ -2481,15 +2504,21 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         -5,
                         spectrumLayeredPane.getComponent(2).getWidth(),
                         spectrumLayeredPane.getComponent(2).getHeight());
-
+                
                 spectrumLayeredPane.getComponent(3).setBounds(
+                        spectrumLayeredPane.getWidth() - spectrumLayeredPane.getComponent(2).getWidth() - 44,
+                        0,
+                        spectrumLayeredPane.getComponent(3).getWidth(),
+                        spectrumLayeredPane.getComponent(3).getHeight());
+
+                spectrumLayeredPane.getComponent(4).setBounds(
                         spectrumLayeredPane.getWidth() - spectrumLayeredPane.getComponent(3).getWidth() - 5,
                         -3,
                         spectrumLayeredPane.getComponent(3).getWidth(),
                         spectrumLayeredPane.getComponent(3).getHeight());
                 
                 // resize the plot area
-                spectrumLayeredPane.getComponent(4).setBounds(0, 0, spectrumLayeredPane.getWidth(), spectrumLayeredPane.getHeight());
+                spectrumLayeredPane.getComponent(5).setBounds(0, 0, spectrumLayeredPane.getWidth(), spectrumLayeredPane.getHeight());
                 spectrumLayeredPane.revalidate();
                 spectrumLayeredPane.repaint();
                 
@@ -2946,28 +2975,32 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * 
      * @param evt 
      */
-    private void hideCoveragePanelJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hideCoveragePanelJButtonMouseEntered
+    private void maximizeSpectrumPanelJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_maximizeSpectrumPanelJButtonMouseEntered
         setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-    }//GEN-LAST:event_hideCoveragePanelJButtonMouseEntered
+    }//GEN-LAST:event_maximizeSpectrumPanelJButtonMouseEntered
 
     /**
      * Change the cursor back to the default cursor.
      * 
      * @param evt 
      */
-    private void hideCoveragePanelJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hideCoveragePanelJButtonMouseExited
+    private void maximizeSpectrumPanelJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_maximizeSpectrumPanelJButtonMouseExited
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_hideCoveragePanelJButtonMouseExited
+    }//GEN-LAST:event_maximizeSpectrumPanelJButtonMouseExited
 
     /**
      * Update the display panels options.
      * 
      * @param evt 
      */
-    private void hideCoveragePanelJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideCoveragePanelJButtonActionPerformed
-        displaySpectrum = false;
+    private void maximizeSpectrumPanelJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_maximizeSpectrumPanelJButtonActionPerformed
+        displayProteins = false;
+        displayPeptidesAndPSMs = false;
+        displayCoverage = false;
+        displaySpectrumSliders = false;
+        displaySpectrum = true;
         peptideShakerGUI.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displayCoverage, displaySpectrum, displaySpectrumSliders);
-    }//GEN-LAST:event_hideCoveragePanelJButtonActionPerformed
+    }//GEN-LAST:event_maximizeSpectrumPanelJButtonActionPerformed
 
     /**
      * Change the cursor to a hand cursor.
@@ -3192,6 +3225,29 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         spectrumJTabbedPaneMouseWheelMoved(evt);
     }//GEN-LAST:event_fragmentIonsJScrollPaneMouseWheelMoved
 
+    /**
+     * Change the cursor to a hand cursor.
+     * 
+     * @param evt 
+     */
+    private void hideSpectrumPanelJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hideSpectrumPanelJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_hideSpectrumPanelJButtonMouseEntered
+
+    /**
+     * Change the cursor back to the default cursor.
+     * 
+     * @param evt 
+     */
+    private void hideSpectrumPanelJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hideSpectrumPanelJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_hideSpectrumPanelJButtonMouseExited
+
+    private void hideSpectrumPanelJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hideSpectrumPanelJButtonActionPerformed
+        displaySpectrum = false;
+        peptideShakerGUI.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displayCoverage, displaySpectrum, displaySpectrumSliders);
+    }//GEN-LAST:event_hideSpectrumPanelJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JLayeredPane backgroundLayeredPane;
@@ -3216,13 +3272,14 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     private javax.swing.JPanel fragmentIonJPanel;
     private javax.swing.JScrollPane fragmentIonsJScrollPane;
     private javax.swing.JButton hideCoverageJButton;
-    private javax.swing.JButton hideCoveragePanelJButton;
     private javax.swing.JButton hidePeptideAndPsmsJButton;
     private javax.swing.JButton hidePeptideAndPsmsJButton2;
     private javax.swing.JButton hideProteinsJButton;
+    private javax.swing.JButton hideSpectrumPanelJButton;
     private javax.swing.JSlider intensitySlider;
     private javax.swing.JPanel ionTableAnnotationMenuPanel;
     private javax.swing.JToolBar ionTableJToolBar;
+    private javax.swing.JButton maximizeSpectrumPanelJButton;
     private javax.swing.JPanel overviewJPanel;
     private javax.swing.JSplitPane overviewJSplitPane;
     private javax.swing.JScrollPane peptideScrollPane;

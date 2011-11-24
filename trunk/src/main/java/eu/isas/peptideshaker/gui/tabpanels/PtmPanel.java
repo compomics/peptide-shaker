@@ -2976,7 +2976,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         if (ptmJTable.getSelectedRow() != -1) {
 
             progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-            progressDialog.doNothingOnClose();
+            //progressDialog.doNothingOnClose();  // @TODO: there seems to be a bug here somewhere, so it has to be possible to manually close the progress dialog...
 
             new Thread(new Runnable() {
 
