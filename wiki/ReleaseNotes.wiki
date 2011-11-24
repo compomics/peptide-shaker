@@ -3,6 +3,13 @@
 
 ----
 
+*Changes in PeptideShaker 0.11.2 (November 24. 2011):*
+ * NEW FEATURE: Added a maximize button to the Spectrum panel in the Overview tab.
+ * BUG FIX: Fixed a bug in the protein filter for the confidence and score filters.
+ * BUG FIX: Fixed a minor GUI bug when the user tried to hide all panels in the Overview tab.
+
+----
+
 *Changes in PeptideShaker 0.11.1 (November 21. 2011):*
  * FEATURE IMPROVEMENT: Reduced the time required to save a project using the `Save` option compared to the `Save As` option.
  * FEATURE IMPROVEMENT: "N/A" is now shown in the retention time columns if the retention time is -1.
@@ -16,6 +23,8 @@
  * BUG FIX: Corrected a bug in the export of unidentified spectra.
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.27.
  * LIBRARY UPDATE: Updated utilities to version 3.3.3.
+
+Download Count: 8
 
 ----
 
