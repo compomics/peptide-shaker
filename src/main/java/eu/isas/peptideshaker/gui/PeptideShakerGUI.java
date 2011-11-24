@@ -4968,6 +4968,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public void setDisplayOptions(boolean displayProteins, boolean displayPeptidesAndPsms,
             boolean displayCoverage, boolean displaySpectrum, boolean displaySpectrumSliders) {
+        
+        if (!displayProteins && !displayPeptidesAndPsms && !displayCoverage && !displaySpectrum) {
+            displayProteins = true;
+        }
+        
         proteinsJCheckBoxMenuItem.setSelected(displayProteins);
         peptidesAndPsmsJCheckBoxMenuItem.setSelected(displayPeptidesAndPsms);
         sequenceCoverageJCheckBoxMenuItem.setSelected(displayCoverage);

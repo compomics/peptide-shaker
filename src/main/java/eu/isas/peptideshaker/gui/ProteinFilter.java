@@ -1171,6 +1171,8 @@ private void unrelatedProteinsJRadioButtonActionPerformed(java.awt.event.ActionE
                 }
             } catch (NumberFormatException e) {
                 //JOptionPane.showMessageDialog(this, "Score has to be a number!", "Filter Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IllegalArgumentException e) {
+                // if the score column is hidden
             }
         }
 
@@ -1183,11 +1185,11 @@ private void unrelatedProteinsJRadioButtonActionPerformed(java.awt.event.ActionE
                 if (value != 0) {
 
                     if (confidenceGreaterThanJRadioButton.isSelected()) {
-                        filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, value, proteinTable.getColumn("Confidence [%]").getModelIndex()));
+                        filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.AFTER, value, proteinTable.getColumn("Confidence").getModelIndex()));
                     } else if (confidenceEqualJRadioButton.isSelected()) {
-                        filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL, value, proteinTable.getColumn("Confidence [%]").getModelIndex()));
+                        filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL, value, proteinTable.getColumn("Confidence").getModelIndex()));
                     } else {
-                        filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, value, proteinTable.getColumn("Confidence [%]").getModelIndex()));
+                        filters.add(RowFilter.numberFilter(RowFilter.ComparisonType.BEFORE, value, proteinTable.getColumn("Confidence").getModelIndex()));
                     }
                 }
             } catch (NumberFormatException e) {

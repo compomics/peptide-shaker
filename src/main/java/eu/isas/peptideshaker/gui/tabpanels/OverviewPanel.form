@@ -1773,7 +1773,7 @@
                                     </Constraint>
                                   </Constraints>
                                 </Component>
-                                <Component class="javax.swing.JButton" name="hideCoveragePanelJButton">
+                                <Component class="javax.swing.JButton" name="hideSpectrumPanelJButton">
                                   <Properties>
                                     <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                                       <Image iconType="3" name="/icons/hide_grey.png"/>
@@ -1789,13 +1789,39 @@
                                     </Property>
                                   </Properties>
                                   <Events>
-                                    <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="hideCoveragePanelJButtonMouseEntered"/>
-                                    <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="hideCoveragePanelJButtonMouseExited"/>
-                                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hideCoveragePanelJButtonActionPerformed"/>
+                                    <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="hideSpectrumPanelJButtonMouseEntered"/>
+                                    <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="hideSpectrumPanelJButtonMouseExited"/>
+                                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hideSpectrumPanelJButtonActionPerformed"/>
                                   </Events>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
                                       <JLayeredPaneConstraints x="440" y="0" width="10" height="-1" layer="300" position="-1"/>
+                                    </Constraint>
+                                  </Constraints>
+                                </Component>
+                                <Component class="javax.swing.JButton" name="maximizeSpectrumPanelJButton">
+                                  <Properties>
+                                    <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                      <Image iconType="3" name="/icons/maximize_grey.png"/>
+                                    </Property>
+                                    <Property name="toolTipText" type="java.lang.String" value="Maximize Spectrum (Shift+Alt+E)"/>
+                                    <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                                      <Border info="null"/>
+                                    </Property>
+                                    <Property name="borderPainted" type="boolean" value="false"/>
+                                    <Property name="contentAreaFilled" type="boolean" value="false"/>
+                                    <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                                      <Image iconType="3" name="/icons/maximize.png"/>
+                                    </Property>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="maximizeSpectrumPanelJButtonMouseEntered"/>
+                                    <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="maximizeSpectrumPanelJButtonMouseExited"/>
+                                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="maximizeSpectrumPanelJButtonActionPerformed"/>
+                                  </Events>
+                                  <Constraints>
+                                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
+                                      <JLayeredPaneConstraints x="425" y="5" width="10" height="20" layer="300" position="-1"/>
                                     </Constraint>
                                   </Constraints>
                                 </Component>
@@ -1807,14 +1833,14 @@
                                   </Properties>
                                   <Constraints>
                                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JLayeredPaneSupportLayout$JLayeredPaneConstraintsDescription">
-                                      <JLayeredPaneConstraints x="440" y="0" width="40" height="20" layer="300" position="-1"/>
+                                      <JLayeredPaneConstraints x="420" y="0" width="60" height="20" layer="300" position="-1"/>
                                     </Constraint>
                                   </Constraints>
 
                                   <Layout>
                                     <DimensionLayout dim="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <EmptySpace min="0" pref="40" max="32767" attributes="0"/>
+                                          <EmptySpace min="0" pref="60" max="32767" attributes="0"/>
                                       </Group>
                                     </DimensionLayout>
                                     <DimensionLayout dim="1">
