@@ -10,6 +10,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.pdbfinder.FindPdbForUniprotAccessions;
@@ -63,12 +64,7 @@ import org.jmol.api.JmolViewer;
  * @author Harald Barsnes
  */
 public class ProteinStructurePanel extends javax.swing.JPanel implements ProgressDialogParent {
-
-    /**
-     * It true the tab has been initiated, i.e., the data displayed at leaat once. 
-     * False means that the tab has to be loaded from scratch.
-     */
-    private boolean tabInitiated = false;
+    
     /**
      * Peptide keys that can be mapped to the current pdb file.
      */
@@ -105,11 +101,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
      * The currently displayed PDB file.
      */
     private String currentlyDisplayedPdbFile;
-    /**
-     * If true, the protein selection in the protein structure tab is mirrored in 
-     * the protein table in the overview tab.
-     */
-    private boolean updateOverviewPanel = true;
     /**
      * A simple progress dialog.
      */
@@ -1384,7 +1375,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
             try {
                 // find and store the protein sequence for later use
-                String proteinKey = proteinTableMap.get(getProteinKey(proteinTable.getSelectedRow()));
+                String proteinKey = proteinTableMap.get(getProteinIndex(proteinTable.getSelectedRow()));
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                 String proteinAccession = proteinMatch.getMainMatch();
                 try {
@@ -1394,14 +1385,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     proteinSequence = "";
                 }
 
-                // set the currently selected protein index
-                peptideShakerGUI.setSelectedProteinIndex((Integer) proteinTable.getValueAt(row, 0));
-
-                // set the accession number in the annotation tab
-                peptideShakerGUI.setSelectedProteinAccession(proteinAccession);
-
                 // update the pdb file table
-                updatePdbTable(proteinTableMap.get(getProteinKey(row)));
+                updatePdbTable(proteinTableMap.get(getProteinIndex(row)));
 
                 // empty the jmol panel
                 if (jmolStructureShown) {
@@ -1419,6 +1404,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
                 // update the peptide selection
                 updatedPeptideSelection(row);
+                
+                // remember the selection
+                newItemSelection();
+                
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
                 // open protein link in web browser
@@ -1461,17 +1450,15 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     updatePeptideToPdbMapping();
                 }
 
-                // set the currently selected peptide index
-                if (updateOverviewPanel) {
-                    peptideShakerGUI.setSelectedPeptideIndex((Integer) peptideTable.getValueAt(row, 0));
-                }
+                // remember the selection
+                    newItemSelection();
 
                 // open the protein inference at the petide level dialog
                 if (evt != null && column == peptideTable.getColumn("PI").getModelIndex()) {
 
-                    String proteinKey = proteinTableMap.get(getProteinKey(proteinTable.getSelectedRow()));
+                    String proteinKey = proteinTableMap.get(getProteinIndex(proteinTable.getSelectedRow()));
 
-                    String peptideKey = peptideTableMap.get(getPeptideKey(row));
+                    String peptideKey = peptideTableMap.get(getPeptideIndex(row));
 
                     new ProteinInferencePeptideLevelDialog(peptideShakerGUI, true, peptideKey, proteinKey);
                 }
@@ -1795,7 +1782,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
                 if (sequence.indexOf("<span") != -1) {
                     try {
-                        String peptideKey = peptideTableMap.get(getPeptideKey(row));
+                        String peptideKey = peptideTableMap.get(getPeptideIndex(row));
                         Peptide peptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
                         String tooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(peptide);
                         peptideTable.setToolTipText(tooltip);
@@ -2429,56 +2416,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Select the given protein index in the protein table.
-     * 
-     * @param proteinIndex the protein index to select
-     */
-    public void setSelectedProteinIndex(Integer proteinIndex) {
-
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-        boolean indexFound = false;
-
-        for (int i = 0; i < proteinTable.getRowCount() && !indexFound; i++) {
-            if (((Integer) proteinTable.getValueAt(i, 0)).intValue() == proteinIndex.intValue()) {
-                indexFound = true;
-                proteinTable.setRowSelectionInterval(i, i);
-                proteinTable.scrollRectToVisible(proteinTable.getCellRect(i, 0, false));
-            }
-        }
-
-        updateOverviewPanel = false;
-        proteinTableMouseReleased(null);
-        updateOverviewPanel = true;
-
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }
-
-    /**
-     * Select the given peptide index in the peptide table.
-     * 
-     * @param peptideIndex the peptide index to select
-     */
-    public void setSelectedPeptideIndex(Integer peptideIndex) {
-
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-        boolean indexFound = false;
-
-        for (int i = 0; i < peptideTable.getRowCount() && !indexFound; i++) {
-            if (((Integer) peptideTable.getValueAt(i, 0)).intValue() == peptideIndex.intValue()) {
-                indexFound = true;
-                peptideTable.setRowSelectionInterval(i, i);
-                peptideTable.scrollRectToVisible(peptideTable.getCellRect(i, 0, false));
-
-                peptideTableMouseReleased(null);
-            }
-        }
-
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-    }
-
-    /**
      * Returns a list of keys of the displayed proteins
      * @return a list of keys of the displayed proteins 
      */
@@ -2495,16 +2432,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     }
 
     /**
-     * Returns the peptide key for the given row.
-     *
-     * @param row   the given row
-     * @return      the peptide key
-     */
-    private Integer getPeptideKey(int row) {
-        return (Integer) peptideTable.getValueAt(row, 0);
-    }
-
-    /**
      * Updates the peptide selection according to the currently selected protein.
      *
      * @param row   the row index of the protein
@@ -2518,7 +2445,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 DefaultTableModel dm = (DefaultTableModel) peptideTable.getModel();
                 dm.getDataVector().removeAllElements();
 
-                String proteinKey = proteinTableMap.get(getProteinKey(row));
+                String proteinKey = proteinTableMap.get(getProteinIndex(row));
                 peptideTableMap = new HashMap<Integer, String>();
 
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
@@ -2832,13 +2759,13 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     exportPeptidesJButton.setEnabled(true);
                     exportPdbMatchesJButton.setEnabled(true);
                     exportPdbChainsJButton.setEnabled(true);
+                    
+                    updateSelection();
 
-                    tabInitiated = true;
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
 
-                    updateSelectedProteinAndPeptide(peptideShakerGUI.getSelectedProteinIndex(), peptideShakerGUI.getSelectedPeptideIndex());
-
+                    peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX);
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -2846,19 +2773,31 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
                     peptideShakerGUI.catchException(e);
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
                 }
             }
         }.start();
     }
 
     /**
-     * Returns the protein key for the given row.
+     * Returns the index of the protein at the given row in the protein table.
      *
-     * @param row   the row to get the key for
-     * @return      the protein key
+     * @param row the row of interest
+     * @return  the index of the corresponding protein
      */
-    private Integer getProteinKey(int row) {
+    private Integer getProteinIndex(int row) {
         return (Integer) proteinTable.getValueAt(row, 0);
+    }
+
+    /**
+     * Returns the index of the peptide at the given row in the peptide table.
+     *
+     * @param row the row of interest
+     * @return  the index of the corresponding peptide
+     */
+    private Integer getPeptideIndex(int row) {
+        return (Integer) peptideTable.getValueAt(row, 0);
     }
 
     /**
@@ -3106,7 +3045,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         // iterate the peptide table and highlight the covered areas
         for (int i = 0; i < peptideTable.getRowCount(); i++) {
-            String peptideKey = peptideTableMap.get(getPeptideKey(i));
+            String peptideKey = peptideTableMap.get(getPeptideIndex(i));
             String peptideSequence = Peptide.getSequence(peptideKey);
             String tempSequence = proteinSequence;
 
@@ -3130,7 +3069,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
 
         // highlight the selected peptide
-        String peptideKey = peptideTableMap.get(getPeptideKey(peptideTable.getSelectedRow()));
+        String peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
         String peptideSequence = Peptide.getSequence(peptideKey);
         String tempSequence = proteinSequence;
         PTMFactory pmtFactory = PTMFactory.getInstance();
@@ -3156,7 +3095,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         // annotate the modified covered residues
         for (int i = 0; i < peptideTable.getRowCount(); i++) {
-            peptideKey = peptideTableMap.get(getPeptideKey(i));
+            peptideKey = peptideTableMap.get(getPeptideIndex(i));
             peptideSequence = Peptide.getSequence(peptideKey);
             tempSequence = proteinSequence;
 
@@ -3269,13 +3208,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
     /**
      * Hides or displays the score columns in the protein and peptide tables.
-     * 
-     * @param hide if true the score columns are hidden.
      */
-    public void hideScores(boolean hide) {
+    public void updateScores() {
 
         try {
-            if (hide) {
+            if (peptideShakerGUI.getDisplayPreferences().showScores()) {
                 proteinTable.removeColumn(proteinTable.getColumn("Score"));
             } else {
                 proteinTable.addColumn(proteinScoreColumn);
@@ -3299,7 +3236,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         try {
             // update the peptide table
             for (int i = 0; i < peptideTable.getRowCount(); i++) {
-                String peptideKey = peptideTableMap.get(getPeptideKey(i));
+                String peptideKey = peptideTableMap.get(getPeptideIndex(i));
                 String modifiedSequence = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(ptmColors, true);
                 peptideTable.setValueAt(modifiedSequence, i, peptideTable.getColumn("Sequence").getModelIndex());
             }
@@ -3403,71 +3340,110 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     }
 
     /**
-     * Returns true if the tab has been loaded at least once.
-     * 
-     * @return true if the tab has been loaded at least once
+     * Update the selected protein and peptide.
      */
-    public boolean isInitiated() {
-        return tabInitiated;
+    public void updateSelection() {
+
+        int proteinRow = 0;
+        String proteinKey = peptideShakerGUI.getSelectedProteinKey();
+        String peptideKey = peptideShakerGUI.getSelectedPeptideKey();
+        String psmKey = peptideShakerGUI.getSelectedPsmKey();
+        if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
+                && peptideKey.equals(PeptideShakerGUI.NO_SELECTION)
+                && !psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+            if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
+                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
+                peptideKey = spectrumMatch.getBestAssumption().getPeptide().getKey();
+            } else {
+                peptideShakerGUI.resetSelectedItems();
+            }
+        }
+        if (proteinKey.equals(PeptideShakerGUI.NO_SELECTION)
+                && !peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+            ProteinMatch proteinMatch;
+            for (String possibleKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(possibleKey);
+                if (proteinMatch.getPeptideMatches().contains(peptideKey)) {
+                    proteinKey = possibleKey;
+                    break;
+                }
+            }
+        }
+        if (!proteinKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+            proteinRow = getProteinRow(proteinKey);
+        }
+        if (proteinRow != -1) {
+            proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
+            proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
+            proteinTableMouseReleased(null);
+
+            // invoke later to give time for components to update
+            SwingUtilities.invokeLater(new Runnable() {
+
+                @Override
+                public void run() {
+
+                    int peptideRow = 0;
+                    String peptideKey = peptideShakerGUI.getSelectedPeptideKey();
+                    if (!peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+                        peptideRow = getPeptideRow(peptideKey);
+                    }
+                    peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
+                    peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideRow, 0, false));
+                    peptideTableMouseReleased(null);
+                }
+            });
+        }
     }
 
     /**
-     * Update the selected protein and peptide.
-     * 
-     * @param aSelectedProteinIndex     the selected protein index
-     * @param aSelectedPeptideIndex     the selected peptide index
+     * Provides to the PeptideShakerGUI instance the currently selected protein, peptide and psm
      */
-    public void updateSelectedProteinAndPeptide(int aSelectedProteinIndex, int aSelectedPeptideIndex) {
-
-        final int selectedProteinIndex = aSelectedProteinIndex;
-        final int selectedPeptideIndex = aSelectedPeptideIndex;
-        int proteinRow = proteinTable.getSelectedRow();
-
-        if (proteinRow != -1) {
-
-            int currentProteinIndex = (Integer) proteinTable.getValueAt(proteinRow, 0);
-
-            if (currentProteinIndex != selectedProteinIndex) {
-
-                // invoke later to give time for components to update
-                SwingUtilities.invokeLater(new Runnable() {
-
-                    public void run() {
-                        setSelectedProteinIndex(selectedProteinIndex);
-                    }
-                });
+    public void newItemSelection() {
+        String proteinKey = proteinTableMap.get(getProteinIndex(proteinTable.getSelectedRow()));
+        String peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
+        peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, PeptideShakerGUI.NO_SELECTION);
+    }
+    
+    /**
+     * Returns the row of a desired protein
+     * @param proteinKey the key of the protein
+     * @return the row of the desired protein
+     */
+    private int getProteinRow(String proteinKey) {
+        int index = -1;
+        for (int key : proteinTableMap.keySet()) {
+            if (proteinTableMap.get(key).equals(proteinKey)) {
+                index = key;
+                break;
             }
-        } else {
-            // invoke later to give time for components to update
-            SwingUtilities.invokeLater(new Runnable() {
-
-                public void run() {
-                    setSelectedProteinIndex(selectedProteinIndex);
-                }
-            });
         }
-
-        if (selectedPeptideIndex != -1) {
-
-            // invoke later to give time for components to update
-            SwingUtilities.invokeLater(new Runnable() {
-
-                public void run() {
-
-                    int peptideRow = getPeptideTable().getSelectedRow();
-
-                    if (peptideRow != -1) {
-
-                        int currentPeptideIndex = (Integer) peptideTable.getValueAt(peptideRow, 0);
-
-                        if (currentPeptideIndex != selectedPeptideIndex) {
-                            setSelectedPeptideIndex(selectedPeptideIndex);
-                        }
-                    } else {
-                        setSelectedPeptideIndex(selectedPeptideIndex);
-                    }
-                }
-            });
+        for (int row = 0 ; row < proteinTable.getRowCount() ; row++) {
+            if ((Integer) proteinTable.getValueAt(row, 0) == index) {
+                return row;
+            }
         }
+        return -1;
+    }
+    
+    /**
+     * Returns the row of a desired peptide
+     * @param proteinKey the key of the peptide
+     * @return the row of the desired peptide
+     */
+    private int getPeptideRow(String peptideKey) {
+        int index = -1;
+        for (int key : peptideTableMap.keySet()) {
+            if (peptideTableMap.get(key).equals(peptideKey)) {
+                index = key;
+                break;
+            }
+        }
+        for (int row = 0 ; row < peptideTable.getRowCount() ; row++) {
+            if ((Integer) peptideTable.getValueAt(row, 0) == index) {
+                return row;
+            }
+        }
+        return -1;
     }
 }

@@ -1202,7 +1202,9 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
     public void updateBasicProteinAnnotation(String aAccessionNumber) {
 
         // only update if new accession number
-        if (aAccessionNumber != null && !currentAccessionNumber.equalsIgnoreCase(aAccessionNumber)) {
+        if (aAccessionNumber != null 
+                && !aAccessionNumber.equals(PeptideShakerGUI.NO_SELECTION)
+                && !currentAccessionNumber.equalsIgnoreCase(aAccessionNumber)) {
 
             currentAccessionNumber = aAccessionNumber;
             accessionNumberJTextField.setText(currentAccessionNumber);

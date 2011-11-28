@@ -35,12 +35,6 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * @author Harald Barsnes
  */
 public class QCPanel extends javax.swing.JPanel {
-
-    /**
-     * It true the tab has been initiated, i.e., the data displayed at leaat once. 
-     * False means that the tab has to be loaded from scratch.
-     */
-    private boolean tabInitiated = false;
     /**
      * The main peptide shaker gui.
      */
@@ -1068,8 +1062,8 @@ public class QCPanel extends javax.swing.JPanel {
                 exportPsmPlotJButton.setEnabled(true);
                 exportPeptidesPlotJButton.setEnabled(true);
                 exportProteinsPlotJButton.setEnabled(true);
-
-                tabInitiated = true;
+                
+                peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX);
 
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
@@ -1635,7 +1629,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                 for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
                     spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    double value = peptideShakerGUI.getPrecursor(spectrumKey).getCharge().value;
+                    double value = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                     if (value > maxValue) {
                         maxValue = value;
                     }
@@ -1749,14 +1743,5 @@ public class QCPanel extends javax.swing.JPanel {
                 }
             }
         }
-    }
-
-    /**
-     * Returns true if the tab has been loaded at least once.
-     * 
-     * @return true if the tab has been loaded at least once
-     */
-    public boolean isInitiated() {
-        return tabInitiated;
     }
 }

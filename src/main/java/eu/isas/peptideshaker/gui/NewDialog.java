@@ -535,6 +535,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * @param evt
      */
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
+        peptideShakerGUI.clearData();
         this.setVisible(false);
         this.dispose();
 }//GEN-LAST:event_exitButtonActionPerformed
@@ -547,9 +548,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      */
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
         if (validateInput()) {
-
-            // clear the previuos data
-            peptideShakerGUI.clearData();
 
             this.setVisible(false);
 
