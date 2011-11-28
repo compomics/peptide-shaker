@@ -77,15 +77,6 @@ import org.jfree.data.xy.DefaultXYDataset;
 public class PtmPanel extends javax.swing.JPanel {
 
     /**
-     * It true the tab has been initiated, i.e., the data displayed at leaat once. 
-     * False means that the tab has to be loaded from scratch.
-     */
-    private boolean tabInitiated = false;
-    /**
-     * Boolean indicating whether the spectrum sliders shall be displayed
-     */
-    private boolean displaySpectrumSliders = false;
-    /**
      * The progress dialog.
      */
     private ProgressDialogX progressDialog;
@@ -1748,7 +1739,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                     public void run() {
                         // set the sliders split pane divider location
-                        if (displaySpectrumSliders) {
+                        if (peptideShakerGUI.getDisplayPreferences().showSliders()) {
                             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
                         } else {
                             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
@@ -1794,12 +1785,9 @@ public class PtmPanel extends javax.swing.JPanel {
 //                }
             }
         }
-
-        relatedSelected = false;
-        updateRelatedPeptidesTable();
-        updateSelectedPsmTable();
-        updateRelatedPsmTable(false);
         updateModificationProfiles();
+
+        newItemSelection();
     }//GEN-LAST:event_peptidesTableMouseReleased
 
     /**
@@ -1810,6 +1798,7 @@ public class PtmPanel extends javax.swing.JPanel {
     private void relatedPeptidesTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_relatedPeptidesTableMouseReleased
         relatedSelected = true;
         updateSelectedPsmTable();
+        updateRelatedPsmTable(true);
 
         if (evt != null) {
 
@@ -1835,8 +1824,9 @@ public class PtmPanel extends javax.swing.JPanel {
             }
         }
 
-        updateRelatedPsmTable(true);
         updateModificationProfiles();
+
+        newItemSelection();
     }//GEN-LAST:event_relatedPeptidesTableMouseReleased
 
     /**
@@ -1873,6 +1863,8 @@ public class PtmPanel extends javax.swing.JPanel {
 //                new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(false), getSelectedModification(), row);
 //            }
 //        }
+
+            newItemSelection();
         }
     }//GEN-LAST:event_selectedPsmsTableMouseReleased
 
@@ -2073,7 +2065,7 @@ private void spectrumAndFragmentIonJPanelMouseWheelMoved(java.awt.event.MouseWhe
             } else {
                 intensitySlider.setValue(intensitySlider.getValue() + 1);
             }
-        } 
+        }
     }
 
     updateSpectrumSliderToolTip();
@@ -2196,6 +2188,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 //                new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(true), getSelectedModification(), row);
 //            }
 //        }
+
+            newItemSelection();
         }
     }//GEN-LAST:event_relatedPsmsTableMouseReleased
 
@@ -2960,12 +2954,110 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 selectedPeptidesJSplitPane.setDividerLocation(0.5);
                 relatedPeptidesJSplitPane.setDividerLocation(0.5);
 
-                tabInitiated = true;
+                peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX);
+
+                if (currentPtmRow != -1) {
+                    updatePeptideTable();
+                }
 
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
             }
         }.start();
+    }
+
+    /**
+     * Tries to find the last selected peptide
+     */
+    public void updateSelection() {
+        String selectedKey = peptideShakerGUI.getSelectedPeptideKey();
+        if (selectedKey.equals(PeptideShakerGUI.NO_SELECTION)
+                && !peptideShakerGUI.getSelectedPsmKey().equals(PeptideShakerGUI.NO_SELECTION)) {
+            String psmKey = peptideShakerGUI.getSelectedPsmKey();
+            if (peptideShakerGUI.getIdentification().matchExists(psmKey)) {
+                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(psmKey);
+                selectedKey = spectrumMatch.getBestAssumption().getPeptide().getKey();
+            }
+        }
+        if (!selectedKey.equals(PeptideShakerGUI.NO_SELECTION)) {
+            int row = 0;
+            for (String displayedPeptide : displayedPeptides) {
+                if (displayedPeptide.equals(selectedKey)) {
+                    peptidesTable.setRowSelectionInterval(row, row);   //@TODO: verify that this is compatible with the resorting of rows
+                    //well, apparently it isn't
+                    //@TODO find a resorting compatible method
+                    peptidesTable.scrollRectToVisible(peptidesTable.getCellRect(row, 0, false));
+                    relatedSelected = false;
+                    updateRelatedPeptidesTable();
+                    updateSelectedPsmTable();
+                    updateRelatedPsmTable(false);
+                    updateModificationProfiles();
+                    if (relatedPeptidesTable.getSelectedRow() >= 0) {
+                        relatedPeptidesTable.removeRowSelectionInterval(relatedPeptidesTable.getSelectedRow(), relatedPeptidesTable.getSelectedRow());
+                    }
+                    row = 0;
+                    selectedKey = peptideShakerGUI.getSelectedPsmKey();
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(false));
+                    for (String displayedPsm : peptideMatch.getSpectrumMatches()) {
+                        if (displayedPsm.equals(selectedKey)) {
+                            selectedPsmsTable.setRowSelectionInterval(row, row);    //@TODO: verify that this is compatible with the resorting of rows
+                            selectedPsmsTable.scrollRectToVisible(selectedPsmsTable.getCellRect(row, 0, false));
+                            if (relatedPsmsTable.getSelectedRow() >= 0) {
+                                relatedPsmsTable.removeRowSelectionInterval(relatedPsmsTable.getSelectedRow(), relatedPsmsTable.getSelectedRow());
+                            }
+                            selectedPsmsTableMouseReleased(null);
+                            return;
+                        }
+                        row++;
+                    }
+                    selectedPsmsTable.setRowSelectionInterval(0, 0);    //@TODO: verify that this is compatible with the resorting of rows
+                    selectedPsmsTable.scrollRectToVisible(selectedPsmsTable.getCellRect(0, 0, false));
+                    if (relatedPsmsTable.getSelectedRow() >= 0) {
+                        relatedPsmsTable.removeRowSelectionInterval(relatedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
+                    }
+                    selectedPsmsTableMouseReleased(null);
+                    return;
+                }
+                row++;
+            }
+            row = 0;
+            for (String displayedPeptide : relatedPeptides) {
+                if (displayedPeptide.equals(selectedKey)) {
+                    relatedPeptidesTable.setRowSelectionInterval(row, row);   //@TODO: verify that this is compatible with the resorting of rows
+                    relatedPeptidesTable.scrollRectToVisible(relatedPeptidesTable.getCellRect(row, 0, false));
+                    if (peptidesTable.getSelectedRow() >= 0) {
+                        peptidesTable.removeRowSelectionInterval(peptidesTable.getSelectedRow(), peptidesTable.getSelectedRow());
+                    }
+                    relatedSelected = true;
+                    updateSelectedPsmTable();
+                    updateRelatedPsmTable(true);
+                    updateModificationProfiles();
+                    row = 0;
+                    selectedKey = peptideShakerGUI.getSelectedPsmKey();
+                    PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(false));
+                    for (String displayedPsm : peptideMatch.getSpectrumMatches()) {
+                        if (displayedPsm.equals(selectedKey)) {
+                            relatedPsmsTable.setRowSelectionInterval(row, row);    //@TODO: verify that this is compatible with the resorting of rows
+                            relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(row, 0, false));
+                            if (selectedPsmsTable.getSelectedRow() >= 0) {
+                                selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
+                            }
+                            relatedPsmsTableMouseReleased(null);
+                            return;
+                        }
+                        row++;
+                    }
+                    relatedPsmsTable.setRowSelectionInterval(0, 0);    //@TODO: verify that this is compatible with the resorting of rows
+                    relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(0, 0, false));
+                    if (selectedPsmsTable.getSelectedRow() >= 0) {
+                        selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
+                    }
+                    relatedPsmsTableMouseReleased(null);
+                    return;
+                }
+                row++;
+            }
+        }
     }
 
     /**
@@ -3084,6 +3176,14 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                             public void run() {
                                 updateSelectedPsmTable();
                                 updateRelatedPsmTable(false);
+
+                                // invoke later to give time for components to update
+                                SwingUtilities.invokeLater(new Runnable() {
+
+                                    public void run() {
+                                        updateSelection();
+                                    }
+                                });
                             }
                         });
 
@@ -3579,7 +3679,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             spectrumChartJPanel.repaint();
 
             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
-            peptideShakerGUI.setSelectedSpectrumKey(spectrumKey);
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
 
             if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
@@ -3693,6 +3792,33 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             }
             return displayedPeptides.get((Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1);
         }
+    }
+
+    /**
+     * Returns the key of the selected peptide
+     */
+    private String getSelectedPeptide() {
+        return getSelectedPeptide(relatedSelected);
+    }
+
+    /**
+     * Returns the key of the selected peptide
+     */
+    private String getSelectedPsm(boolean relatedPeptide) {
+        String psmKey;
+        if (relatedPeptide) {
+            psmKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
+        } else {
+            psmKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
+        }
+        return psmKey;
+    }
+
+    /**
+     * Returns the key of the selected peptide
+     */
+    private String getSelectedPsm() {
+        return getSelectedPsm(relatedSelected);
     }
 
     /**
@@ -3942,7 +4068,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         }
                     case 3:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
-                        return peptideShakerGUI.getPrecursor(spectrumKey).getCharge().value;
+                        return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getIdentificationCharge().value;
                     case 4:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                         Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey);
@@ -4043,7 +4169,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         }
                     case 3:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
-                        return peptideShakerGUI.getPrecursor(spectrumKey).getCharge().value;
+                        return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getIdentificationCharge().value;
                     case 4:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
                         Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey);
@@ -4409,29 +4535,11 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     }
 
     /**
-     * Sets the the display options.
-     * 
-     * @param displaySpectrumSliders    boolean indicating whether the spectrum sliders shall be displayed 
-     */
-    public void setDisplayOptions(boolean displaySpectrumSliders) {
-        this.displaySpectrumSliders = displaySpectrumSliders;
-    }
-
-    /**
-     * Returns true if the tab has been loaded at least once.
-     * 
-     * @return true if the tab has been loaded at least once
-     */
-    public boolean isInitiated() {
-        return tabInitiated;
-    }
-
-    /**
      * Method called whenever the component is resized to maintain the look of the GUI.
      */
     public void updateSeparators() {
         // set the sliders split pane divider location
-        if (displaySpectrumSliders) {
+        if (peptideShakerGUI.getDisplayPreferences().showSliders()) {
             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
         } else {
             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
@@ -4452,5 +4560,20 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 new MouseEvent(spectrumJPanel, 0, 0, 0,
                 spectrumJPanel.getWidth() - 150, spectrumJPanel.getY() + 20, // X-Y of the mouse for the tool tip
                 0, false));
+    }
+
+    /**
+     * Provides to the PeptideShakerGUI instance the currently selected peptide and psm
+     */
+    public void newItemSelection() {
+        String peptideKey = getSelectedPeptide();
+        if (peptideKey.equals("")) {
+            peptideKey = PeptideShakerGUI.NO_SELECTION;
+        }
+        String psmKey = getSelectedPsm();
+        if (psmKey.equals("")) {
+            psmKey = PeptideShakerGUI.NO_SELECTION;
+        }
+        peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, peptideKey, psmKey);
     }
 }

@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.preferences.FilterPreferences;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.FocusTraversalPolicy;
@@ -33,15 +34,10 @@ public class ProteinFilter extends javax.swing.JDialog {
      *
      * @param peptideShakerGUI                              the PeptideShakerGUI parent frame
      * @param modal                                         if the dialog is modal or not
-     * @param currentProteinFilterValues                    the current filter text values
-     * @param currrentProteinFilterRadioButtonSelections    the current filter radio button settings
-     * @param currentProteinInferenceFilterSelection        the current protein inference type selection (0-5)
      * @param showHiddenProteins                            show/hide the hidden proteins
      * @param visible                                       if true the dialog is made visible
      */
-    public ProteinFilter(PeptideShakerGUI peptideShakerGUI, boolean modal, String[] currentProteinFilterValues,
-            Integer[] currrentProteinFilterRadioButtonSelections, int currentProteinInferenceFilterSelection,
-            boolean showHiddenProteins, boolean visible) {
+    public ProteinFilter(PeptideShakerGUI peptideShakerGUI, boolean modal, boolean visible) {
         super(peptideShakerGUI, modal);
 
         this.peptideShakerGUI = peptideShakerGUI;
@@ -49,55 +45,57 @@ public class ProteinFilter extends javax.swing.JDialog {
         proteinTable = peptideShakerGUI.getOverviewProteinTable();
 
         initComponents();
+        
+        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
 
         // update the filter properties
-        proteinAccessionJTextField.setText(currentProteinFilterValues[0]);
-        descriptionJTextField.setText(currentProteinFilterValues[1]);
-        coverageJTextField.setText(currentProteinFilterValues[2]);
-        spectrumCountingJTextField.setText(currentProteinFilterValues[3]);
-        peptideJTextField.setText(currentProteinFilterValues[4]);
-        spectraJTextField.setText(currentProteinFilterValues[5]);
-        scoreJTextField.setText(currentProteinFilterValues[6]);
-        confidenceJTextField.setText(currentProteinFilterValues[7]);
+        proteinAccessionJTextField.setText(filterPreferences.getProteinAccession());
+        descriptionJTextField.setText(filterPreferences.getProteinDescription());
+        coverageJTextField.setText(filterPreferences.getProteinCoverage());
+        spectrumCountingJTextField.setText(filterPreferences.getSpectrumCounting());
+        peptideJTextField.setText(filterPreferences.getnPeptides());
+        spectraJTextField.setText(filterPreferences.getProteinNSpectra());
+        scoreJTextField.setText(filterPreferences.getProteinScore());
+        confidenceJTextField.setText(filterPreferences.getProteinConfidence());
 
         // update the radio buttons
-        coverageGreaterThanJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[0].intValue() == 0);
-        coverageEqualJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[0].intValue() == 1);
-        coverageLessThanJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[0].intValue() == 2);
+        coverageGreaterThanJRadioButton.setSelected(filterPreferences.getCoverageButtonSelection() == 0);
+        coverageEqualJRadioButton.setSelected(filterPreferences.getCoverageButtonSelection() == 1);
+        coverageLessThanJRadioButton.setSelected(filterPreferences.getCoverageButtonSelection() == 2);
 
-        spectrumCountingGreaterThanJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[1].intValue() == 0);
-        spectrumCountingEqualJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[1].intValue() == 1);
-        spectrumCountingLessThanJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[1].intValue() == 2);
+        spectrumCountingGreaterThanJRadioButton.setSelected(filterPreferences.getSpectrumCountingButtonSelection() == 0);
+        spectrumCountingEqualJRadioButton.setSelected(filterPreferences.getSpectrumCountingButtonSelection() == 1);
+        spectrumCountingLessThanJRadioButton.setSelected(filterPreferences.getSpectrumCountingButtonSelection() == 2);
 
-        peptideGreaterThanJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[2].intValue() == 0);
-        peptideEqualJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[2].intValue() == 1);
-        peptideLessThanJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[2].intValue() == 2);
+        peptideGreaterThanJRadioButton.setSelected(filterPreferences.getnPeptidesButtonSelection() == 0);
+        peptideEqualJRadioButton.setSelected(filterPreferences.getnPeptidesButtonSelection() == 1);
+        peptideLessThanJRadioButton.setSelected(filterPreferences.getnPeptidesButtonSelection() == 2);
 
-        spectraGreaterThanJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[3].intValue() == 0);
-        spectraEqualJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[3].intValue() == 1);
-        spectraLessThanJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[3].intValue() == 2);
+        spectraGreaterThanJRadioButton.setSelected(filterPreferences.getProteinNSpectraButtonSelection() == 0);
+        spectraEqualJRadioButton.setSelected(filterPreferences.getProteinNSpectraButtonSelection() == 1);
+        spectraLessThanJRadioButton.setSelected(filterPreferences.getProteinNSpectraButtonSelection() == 2);
 
-        scoreGreaterThanJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[4].intValue() == 0);
-        scoreEqualJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[4].intValue() == 1);
-        scoreLessThanJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[4].intValue() == 2);
+        scoreGreaterThanJRadioButton.setSelected(filterPreferences.getProteinScoreButtonSelection() == 0);
+        scoreEqualJRadioButton.setSelected(filterPreferences.getProteinScoreButtonSelection() == 1);
+        scoreLessThanJRadioButton.setSelected(filterPreferences.getProteinScoreButtonSelection() == 2);
 
-        confidenceGreaterThanJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[5].intValue() == 0);
-        confidenceEqualJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[5].intValue() == 1);
-        confidenceLessThanJRadioButton.setSelected(currrentProteinFilterRadioButtonSelections[5].intValue() == 2);
+        confidenceGreaterThanJRadioButton.setSelected(filterPreferences.getProteinConfidenceButtonSelection() == 0);
+        confidenceEqualJRadioButton.setSelected(filterPreferences.getProteinConfidenceButtonSelection() == 1);
+        confidenceLessThanJRadioButton.setSelected(filterPreferences.getProteinConfidenceButtonSelection() == 2);
 
-        if (currentProteinInferenceFilterSelection == PSParameter.NOT_GROUP) {
+        if (filterPreferences.getCurrentProteinInferenceFilterSelection() == PSParameter.NOT_GROUP) {
             singleProteinJRadioButton.setSelected(true);
-        } else if (currentProteinInferenceFilterSelection == PSParameter.ISOFORMS) {
+        } else if (filterPreferences.getCurrentProteinInferenceFilterSelection() == PSParameter.ISOFORMS) {
             isoformsJRadioButton.setSelected(true);
-        } else if (currentProteinInferenceFilterSelection == PSParameter.ISOFORMS_UNRELATED) {
+        } else if (filterPreferences.getCurrentProteinInferenceFilterSelection() == PSParameter.ISOFORMS_UNRELATED) {
             unrelatedIsoformsJRadioButton.setSelected(true);
-        } else if (currentProteinInferenceFilterSelection == PSParameter.UNRELATED) {
+        } else if (filterPreferences.getCurrentProteinInferenceFilterSelection() == PSParameter.UNRELATED) {
             unrelatedProteinsJRadioButton.setSelected(true);
         } else {
             allJRadioButton.setSelected(true);
         }
 
-        showHiddenProteinsCheckBox.setSelected(showHiddenProteins);
+        showHiddenProteinsCheckBox.setSelected(peptideShakerGUI.getDisplayPreferences().showHiddenProteins());
         
         // set the focus traveral policy
         setUpFocusTraversal();
@@ -848,89 +846,79 @@ public class ProteinFilter extends javax.swing.JDialog {
      */
     private void okJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okJButtonActionPerformed
 
-        // store the current filter values
-        String[] currentFilterValues = {
-            proteinAccessionJTextField.getText(),
-            descriptionJTextField.getText(),
-            coverageJTextField.getText(),
-            spectrumCountingJTextField.getText(),
-            peptideJTextField.getText(),
-            spectraJTextField.getText(),
-            scoreJTextField.getText(),
-            confidenceJTextField.getText()};
-
-        int coverageRadioButtonIndex = 0;
+        FilterPreferences filterPreferences = peptideShakerGUI.getFilterPreferences();
+        
+        filterPreferences.setProteinAccession(proteinAccessionJTextField.getText());
+        filterPreferences.setProteinDescription(descriptionJTextField.getText());
+        filterPreferences.setProteinCoverage(coverageJTextField.getText());
+        filterPreferences.setSpectrumCounting(spectrumCountingJTextField.getText());
+        filterPreferences.setnPeptides(peptideJTextField.getText());
+        filterPreferences.setProteinNSpectra(spectraJTextField.getText());
+        filterPreferences.setProteinScore(scoreJTextField.getText());
+        filterPreferences.setProteinConfidence(confidenceJTextField.getText());
+        
 
         if (coverageEqualJRadioButton.isSelected()) {
-            coverageRadioButtonIndex = 1;
+            filterPreferences.setCoverageButtonSelection(1);
         } else if (coverageLessThanJRadioButton.isSelected()) {
-            coverageRadioButtonIndex = 2;
+            filterPreferences.setCoverageButtonSelection(2);
+        } else {
+            filterPreferences.setCoverageButtonSelection(0);
         }
-
-        int spectrumCountRadioButtonIndex = 0;
 
         if (spectrumCountingEqualJRadioButton.isSelected()) {
-            spectrumCountRadioButtonIndex = 1;
+            filterPreferences.setSpectrumCountingButtonSelection(1);
         } else if (spectrumCountingLessThanJRadioButton.isSelected()) {
-            spectrumCountRadioButtonIndex = 2;
+            filterPreferences.setSpectrumCountingButtonSelection(2);
+        } else {
+            filterPreferences.setSpectrumCountingButtonSelection(0);
         }
-
-        int peptideRadioButtonIndex = 0;
-
         if (peptideEqualJRadioButton.isSelected()) {
-            peptideRadioButtonIndex = 1;
+            filterPreferences.setnPeptidesButtonSelection(1);
         } else if (peptideLessThanJRadioButton.isSelected()) {
-            peptideRadioButtonIndex = 2;
+            filterPreferences.setnPeptidesButtonSelection(2);
+        } else {
+            filterPreferences.setnPeptidesButtonSelection(1);
         }
-
-        int spectraRadioButtonIndex = 0;
 
         if (spectraEqualJRadioButton.isSelected()) {
-            spectraRadioButtonIndex = 1;
+            filterPreferences.setProteinNSpectraButtonSelection(1);
         } else if (spectraLessThanJRadioButton.isSelected()) {
-            spectraRadioButtonIndex = 2;
+            filterPreferences.setProteinNSpectraButtonSelection(2);
+        } else {
+            filterPreferences.setProteinNSpectraButtonSelection(0);
         }
-
-        int scoreRadioButtonIndex = 0;
 
         if (scoreEqualJRadioButton.isSelected()) {
-            scoreRadioButtonIndex = 1;
+            filterPreferences.setProteinScoreButtonSelection(1);
         } else if (scoreLessThanJRadioButton.isSelected()) {
-            scoreRadioButtonIndex = 2;
+            filterPreferences.setProteinScoreButtonSelection(1);
+        } else {
+            filterPreferences.setProteinScoreButtonSelection(1);
         }
-
-        int confidenceRadioButtonIndex = 0;
 
         if (confidenceEqualJRadioButton.isSelected()) {
-            confidenceRadioButtonIndex = 1;
+            filterPreferences.setProteinConfidenceButtonSelection(1);
         } else if (confidenceLessThanJRadioButton.isSelected()) {
-            confidenceRadioButtonIndex = 2;
+            filterPreferences.setProteinConfidenceButtonSelection(1);
+        } else {
+            filterPreferences.setProteinConfidenceButtonSelection(1);
         }
-
-        Integer[] currrentFilterRadioButtonSelections = {
-            coverageRadioButtonIndex,
-            spectrumCountRadioButtonIndex,
-            peptideRadioButtonIndex,
-            spectraRadioButtonIndex,
-            scoreRadioButtonIndex,
-            confidenceRadioButtonIndex};
-
-        int currentProteinInferenceSelection = 5;
 
         if (singleProteinJRadioButton.isSelected()) {
-            currentProteinInferenceSelection = PSParameter.NOT_GROUP;
+            filterPreferences.setCurrentProteinInferenceFilterSelection(PSParameter.NOT_GROUP);
         } else if (isoformsJRadioButton.isSelected()) {
-            currentProteinInferenceSelection = PSParameter.ISOFORMS;
+            filterPreferences.setCurrentProteinInferenceFilterSelection(PSParameter.ISOFORMS);
         } else if (unrelatedIsoformsJRadioButton.isSelected()) {
-            currentProteinInferenceSelection = PSParameter.ISOFORMS_UNRELATED;
+            filterPreferences.setCurrentProteinInferenceFilterSelection(PSParameter.ISOFORMS_UNRELATED);
         } else if (unrelatedProteinsJRadioButton.isSelected()) {
-            currentProteinInferenceSelection = PSParameter.UNRELATED;
+            filterPreferences.setCurrentProteinInferenceFilterSelection(PSParameter.UNRELATED);
+        } else {
+            filterPreferences.setCurrentProteinInferenceFilterSelection(5);
         }
 
-        peptideShakerGUI.setCurrentProteinFilterValues(currentFilterValues);
-        peptideShakerGUI.setCurrrentProteinFilterRadioButtonSelections(currrentFilterRadioButtonSelections);
-        peptideShakerGUI.setCurrrentProteinInferenceFilterSelection(currentProteinInferenceSelection);
-
+        peptideShakerGUI.setSelectedItems();
+        
         // close the dialog
         peptideShakerGUI.setModalExclusionType(ModalExclusionType.NO_EXCLUDE);
         this.setVisible(false);
@@ -1217,7 +1205,7 @@ private void unrelatedProteinsJRadioButtonActionPerformed(java.awt.event.ActionE
             RowFilter<Object, Object> hiddenFilter = new RowFilter<Object, Object>() {
 
                 public boolean include(Entry<? extends Object, ? extends Object> entry) { 
-                    return !peptideShakerGUI.getHiddenProteinIndexes().contains((Integer) entry.getValue(0));
+                    return (Boolean) entry.getValue(2);
                 }
             };
 
@@ -1240,9 +1228,6 @@ private void unrelatedProteinsJRadioButtonActionPerformed(java.awt.event.ActionE
                 updateProteinSelection = true;
             }
         }
-
-        // Make sure that the currently selected protein in the protein table is displayed in the other tables
-        peptideShakerGUI.updateProteinTableSelection(updateProteinSelection);
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }

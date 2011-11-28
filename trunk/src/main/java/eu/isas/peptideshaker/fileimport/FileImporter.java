@@ -87,7 +87,7 @@ public class FileImporter {
     /**
      * db processing disabled only while testing
      */
-    boolean testing = false;
+    boolean testing = true;
 
     /**
      * Constructor for the importer
@@ -173,6 +173,9 @@ public class FileImporter {
                 waitingDialog.appendReport("Creating peptide to protein map.");
 
                 Enzyme enzyme = searchParameters.getEnzyme();
+                if (enzyme == null) {
+                    throw new NullPointerException("Enzyme not found");
+                }
                 int nMissedCleavages = searchParameters.getnMissedCleavages();
                 int nMin = idFilter.getMinPepLength();
                 int nMax = idFilter.getMaxPepLength();
@@ -223,6 +226,13 @@ public class FileImporter {
         } catch (ClassNotFoundException e) {
             waitingDialog.appendReport("Serialization issue while processing the FASTA file. Please delete the .fasta.cui file and retry.\n"
                     + "If the error occurs again please report bug at http://peptide-shaker.googlecode.com.");
+            e.printStackTrace();
+            waitingDialog.setRunCanceled();
+        } catch (NullPointerException e) {
+            waitingDialog.appendReport("The enzyme to use was not found.\n"
+                    + "Please verify the Search Parameters given while creating the project.\n"
+                    + "If the enzyme does not appear, verify that it is implemented in peptideshaker_enzymes.xml located in the conf folder of the PeptideShaker folder.\n\n"
+                    + "If the error persists please report bug at http://peptide-shaker.googlecode.com.");
             e.printStackTrace();
             waitingDialog.setRunCanceled();
         }

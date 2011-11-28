@@ -51,6 +51,8 @@ import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
@@ -115,45 +117,57 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private File currentPSFile = null;
     /**
-     * The currently selected protein accession number.
+     * convenience static string indicating that no selection was done by the user
      */
-    private String selectedProteinAccession = null;
+    public final static String NO_SELECTION = "NO SELECTION";
+    /**
+     * The currently selected protein key.
+     */
+    private String selectedProteinKey = NO_SELECTION;
+    /**
+     * The currently selected peptide Key.
+     */
+    private String selectedPeptideKey = NO_SELECTION;
     /**
      * The currently selected spectrum key.
      */
-    private String selectedSpectrumKey = null;
+    private String selectedPsmKey = NO_SELECTION;
     /**
      * The Overview tab index.
      */
-    private final int OVER_VIEW_TAB_INDEX = 0;
+    public static final int OVER_VIEW_TAB_INDEX = 0;
     /**
      * The SpectrumID tab index.
      */
-    private final int SPECTRUM_ID_TAB_INDEX = 1;
+    public static final int SPECTRUM_ID_TAB_INDEX = 1;
     /**
      * The Modifications tab index.
      */
-    private final int MODIFICATIONS_TAB_INDEX = 2;
+    public static final int MODIFICATIONS_TAB_INDEX = 2;
     /**
      * The Structures tab index.
      */
-    private final int STRUCTURES_TAB_INDEX = 3;
+    public static final int STRUCTURES_TAB_INDEX = 3;
     /**
      * The Annotation tab index.
      */
-    private final int ANNOTATION_TAB_INDEX = 4;
+    public static final int ANNOTATION_TAB_INDEX = 4;
     /**
      * The GO Analysis tab index.
      */
-    private final int GO_ANALYSIS_TAB_INDEX = 5;
+    public static final int GO_ANALYSIS_TAB_INDEX = 5;
     /**
      * The Validation tab index.
      */
-    private final int VALIDATION_TAB_INDEX = 6;
+    public static final int VALIDATION_TAB_INDEX = 6;
     /**
      * The QC Plots tab index.
      */
-    private final int QC_PLOTS_TAB_INDEX = 7;
+    public static final int QC_PLOTS_TAB_INDEX = 7;
+    /**
+     * array containing the tab which must be updated as indexed by the static index. If true the whole panel will be reloaded, if false only the selection will be updated.
+     */
+    private HashMap<Integer, Boolean> updateNeeded;
     /**
      * The decimal format use for the score and confidence columns.
      */
@@ -170,14 +184,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private boolean useRelativeError = false;
     /**
-     * The currently selected protein index.
-     */
-    private int selectedProteinIndex = -1;
-    /**
-     * The currently selected peptide index.
-     */
-    private int selectedPeptideIndex = -1;
-    /**
      * If true, the latest changes have been saved.
      */
     private boolean dataSaved = true;
@@ -190,19 +196,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private boolean ignorePepWindowUpdate = false;
     /**
-     * The current protein filter values.
-     */
-    private String[] currentProteinFilterValues = {"", "", "", "", "", "", "", ""};
-    /**
-     * The current settings for the radio buttons for the protein filters.
-     */
-    private Integer[] currrentProteinFilterRadioButtonSelections = {0, 0, 0, 0, 0, 0};
-    /**
-     * The current protein inference filter selection.
-     */
-    private int currentProteinInferenceFilterSelection = 5;
-    /**
      * The scaling value for the bubbles.
+     * @TODO: do we need to save this? (we can :) )
      */
     private double bubbleScale = 1;
     /**
@@ -257,6 +252,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The spectrum counting preferences
      */
     private SpectrumCountingPreferences spectrumCountingPreferences = new SpectrumCountingPreferences();
+    /**
+     * The filter preferences
+     */
+    private FilterPreferences filterPreferences = new FilterPreferences();
+    /**
+     * The display preferences
+     */
+    private DisplayPreferences displayPreferences = new DisplayPreferences();
     /**
      * The parameters of the search
      */
@@ -341,18 +344,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The spectrum annotator
      */
     private SpectrumAnnotator spectrumAnnotator = new SpectrumAnnotator();
-    /**
+    /**     
      * List of caught exceptions
      */
     private ArrayList<String> exceptionCaught = new ArrayList<String>();
-    /**
-     * Show/hide the hidden proteins.
-     */
-    private boolean showHiddenProteins = true;
-    /**
-     * The list of the currently hidden proteins indexes.
-     */
-    private ArrayList<Integer> hiddenProteins = new ArrayList<Integer>();
 
     /**
      * The main method used to start PeptideShaker
@@ -1324,11 +1319,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void newJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newJMenuItemActionPerformed
 
-        // reset enzymes, ptms and preferences
-        loadEnzymes();
-        loadModifications();
-        setDefaultPreferences();
-
         if (!dataSaved && experiment != null) {
             int value = JOptionPane.showConfirmDialog(this,
                     "Do you want to save the changes to " + experiment.getReference() + "?",
@@ -1338,11 +1328,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
+                clearData();
                 NewDialog openDialog = new NewDialog(this, true);
                 openDialog.setVisible(true);
             } else if (value == JOptionPane.CANCEL_OPTION) {
                 // do nothing
             } else { // no option
+                clearData();
                 NewDialog openDialog = new NewDialog(this, true);
                 openDialog.setVisible(true);
             }
@@ -1450,7 +1442,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), spectrumSlidersCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
         statsPanel.updateSeparators();
     }//GEN-LAST:event_formComponentResized
@@ -1484,7 +1476,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void sequenceCoverageJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sequenceCoverageJCheckBoxMenuItemActionPerformed
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), spectrumSlidersCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
 }//GEN-LAST:event_sequenceCoverageJCheckBoxMenuItemActionPerformed
 
@@ -1504,26 +1496,26 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         final boolean showSpectrum = spectrumJCheckBoxMenuItem.isSelected();
 
         if (!showPeptidesAndPsms && !showSpectrum) {
-            overviewPanel.setDisplayOptions(showProteins, true, showCoverage, false, spectrumSlidersCheckBoxMenuItem.isSelected());
+            overviewPanel.setDisplayOptions(showProteins, true, showCoverage, false);
             overviewPanel.updateSeparators();
 
-            overviewPanel.setDisplayOptions(showProteins, false, showCoverage, false, spectrumSlidersCheckBoxMenuItem.isSelected());
+            overviewPanel.setDisplayOptions(showProteins, false, showCoverage, false);
             overviewPanel.updateSeparators();
         } else if (!showPeptidesAndPsms && showSpectrum) {
-            overviewPanel.setDisplayOptions(showProteins, true, showCoverage, false, spectrumSlidersCheckBoxMenuItem.isSelected());
+            overviewPanel.setDisplayOptions(showProteins, true, showCoverage, false);
             overviewPanel.updateSeparators();
 
             // invoke later to give time for components to update
             SwingUtilities.invokeLater(new Runnable() {
 
                 public void run() {
-                    overviewPanel.setDisplayOptions(showProteins, showPeptidesAndPsms, showCoverage, showSpectrum, spectrumSlidersCheckBoxMenuItem.isSelected());
+                    overviewPanel.setDisplayOptions(showProteins, showPeptidesAndPsms, showCoverage, showSpectrum);
                     overviewPanel.updateSeparators();
                 }
             });
 
         } else {
-            overviewPanel.setDisplayOptions(showProteins, showPeptidesAndPsms, showCoverage, showSpectrum, spectrumSlidersCheckBoxMenuItem.isSelected());
+            overviewPanel.setDisplayOptions(showProteins, showPeptidesAndPsms, showCoverage, showSpectrum);
             overviewPanel.updateSeparators();
         }
 
@@ -1536,7 +1528,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void peptidesAndPsmsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesAndPsmsJCheckBoxMenuItemActionPerformed
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), spectrumSlidersCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
 }//GEN-LAST:event_peptidesAndPsmsJCheckBoxMenuItemActionPerformed
 
@@ -1547,7 +1539,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private void proteinsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinsJCheckBoxMenuItemActionPerformed
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), spectrumSlidersCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
 }//GEN-LAST:event_proteinsJCheckBoxMenuItemActionPerformed
 
@@ -1577,8 +1569,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt 
      */
     private void proteinFilterJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinFilterJMenuItemActionPerformed
-        new ProteinFilter(this, true, currentProteinFilterValues, currrentProteinFilterRadioButtonSelections,
-                currentProteinInferenceFilterSelection, showHiddenProteinsJCheckBoxMenuItem.isSelected(), true);
+        new ProteinFilter(this, true, true);
     }//GEN-LAST:event_proteinFilterJMenuItemActionPerformed
 
     /**
@@ -1614,9 +1605,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             // check if we have re-loaded the data using the current threshold and PEP window settings
             if (selectedIndex != VALIDATION_TAB_INDEX && statsPanel.isInitiated()) {
 
-                if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate 
+                if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate
                         && !statsPanel.pepWindowApplied() && !ignorePepWindowUpdate) {
-                    
+
                     allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
 
                     int value = JOptionPane.showConfirmDialog(
@@ -1629,13 +1620,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         allTabsJTabbedPane.setSelectedIndex(selectedIndex);
                         ignorePepWindowUpdate = false;
                     } else if (value == JOptionPane.NO_OPTION) {
-                        
+
                         // reset the test, i.e., don't ask twice without changes in between
                         ignoreThresholdUpdate = true;
-                        
+
                         value = JOptionPane.showConfirmDialog(
-                            this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes 1?",
-                            JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+                                this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes 1?",
+                                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
                         if (value == JOptionPane.YES_OPTION) {
                             statsPanel.applyPepWindow();
@@ -1696,54 +1687,45 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 ignorePepWindowUpdate = false;
             }
 
-            // make sure that the same protein and peptide are selected in both 
-            // the overview and protein structure tabs
             if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-                // update selected protein and peptide
-                overviewPanel.updateSelectedProteinAndPeptide(selectedProteinIndex, selectedPeptideIndex);
-            } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
-                if (!proteinStructurePanel.isInitiated()) {
-                    proteinStructurePanel.displayResults();
+                if (updateNeeded.get(OVER_VIEW_TAB_INDEX)) {
+                overviewPanel.displayResults();
                 } else {
-                    if (selectedProteinIndex != -1) {
-                        // update selected protein and peptide
-                        proteinStructurePanel.updateSelectedProteinAndPeptide(selectedProteinIndex, selectedPeptideIndex);
-                    }
+                    overviewPanel.updateSelection();
+                }
+            } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
+                if (updateNeeded.get(STRUCTURES_TAB_INDEX)) {
+                proteinStructurePanel.displayResults();
+                } else {
+                    proteinStructurePanel.updateSelection();
                 }
             } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX) {
-                //goPanel.displayResults(); 
+                goPanel.displayResults();
                 // @TODO: set species from cps file? 
                 // @TODO: reload GO enrichment tab if hidden selection is changed!
             } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
-                if (!spectrumIdentificationPanel.isInitiated()) {
-                    spectrumIdentificationPanel.displayResults();
+                if (updateNeeded.get(SPECTRUM_ID_TAB_INDEX)) {
+                spectrumIdentificationPanel.displayResults();
                 } else {
-                    spectrumIdentificationPanel.selectSpectrum(selectedSpectrumKey);
+                    spectrumIdentificationPanel.updateSelection();
                 }
             } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
-                if (!ptmPanel.isInitiated()) {
-                    ptmPanel.displayResults();
+                if (updateNeeded.get(MODIFICATIONS_TAB_INDEX)) {
+                ptmPanel.displayResults();
                 } else {
-                    // ptmPanel.selectSpectrum(selectedSpectrumKey); // @TODO: select the correct spectrum/peptide/psm
+                    ptmPanel.updateSelection();
                 }
-            } else if (selectedIndex == QC_PLOTS_TAB_INDEX) {
-                if (!qcPanel.isInitiated()) {
+            } else if (selectedIndex == QC_PLOTS_TAB_INDEX
+                && updateNeeded.get(QC_PLOTS_TAB_INDEX)) {
                     qcPanel.displayResults();
-                } else {
-                    // @TODO: reload if hidden selection is changed!
-                }
-            } else if (selectedIndex == VALIDATION_TAB_INDEX) {
-                if (!statsPanel.isInitiated()) {
-                    statsPanel.displayResults();
-                } else {
-                    // @TODO: reload if hidden selection is changed!
-                }
+            } else if (selectedIndex == VALIDATION_TAB_INDEX
+                    && updateNeeded.get(VALIDATION_TAB_INDEX)) {
+                statsPanel.displayResults();
             }
-
 
             // update the basic protein annotation
             if (selectedIndex == ANNOTATION_TAB_INDEX) {
-                annotationPanel.updateBasicProteinAnnotation(selectedProteinAccession);
+                annotationPanel.updateBasicProteinAnnotation(selectedProteinKey);
             }
 
             // move the spectrum annotation menu bar and set the intensity slider value
@@ -1808,8 +1790,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt 
      */
     private void scoresJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scoresJCheckBoxMenuItemActionPerformed
-        overviewPanel.hideScores(!scoresJCheckBoxMenuItem.isSelected());
-        proteinStructurePanel.hideScores(!scoresJCheckBoxMenuItem.isSelected());
+        displayPreferences.showScores(scoresJCheckBoxMenuItem.isSelected());
+        overviewPanel.updateScores();
+        proteinStructurePanel.updateScores();
 
         // make sure that the jsparklines are showing correctly
         sparklinesJCheckBoxMenuItemActionPerformed(null);
@@ -1838,6 +1821,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         }
 
+        clearData();
 
         JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
         fileChooser.setDialogTitle("Open PeptideShaker Project");
@@ -2475,8 +2459,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param evt 
      */
     private void showHiddenProteinsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showHiddenProteinsJCheckBoxMenuItemActionPerformed
-        showHiddenProteins = showHiddenProteinsJCheckBoxMenuItem.isSelected();
-        overviewPanel.hideHiddenProteinsColumn(!showHiddenProteins);
+        displayPreferences.showHiddenProteins(showHiddenProteinsJCheckBoxMenuItem.isSelected());
+        overviewPanel.updateHiddenProteinsColumn();
     }//GEN-LAST:event_showHiddenProteinsJCheckBoxMenuItemActionPerformed
 
     /**
@@ -2498,14 +2482,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param evt 
      */
     private void spectrumSlidersCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumSlidersCheckBoxMenuItemActionPerformed
-        overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), spectrumSlidersCheckBoxMenuItem.isSelected());
+
+        displayPreferences.setShowSliders(spectrumSlidersCheckBoxMenuItem.isSelected());
+
         overviewPanel.updateSeparators();
-        
-        spectrumIdentificationPanel.setDisplayOptions(spectrumSlidersCheckBoxMenuItem.isSelected());
         spectrumIdentificationPanel.updateSeparators();
-        
-        ptmPanel.setDisplayOptions(spectrumSlidersCheckBoxMenuItem.isSelected());
         ptmPanel.updateSeparators();
     }//GEN-LAST:event_spectrumSlidersCheckBoxMenuItemActionPerformed
 
@@ -2532,91 +2513,56 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         try {
             sequenceCoverageJCheckBoxMenuItem.setSelected(true);
 
-            overviewPanel.setDisplayOptions(true, true, true, true, false);
+            overviewPanel.setDisplayOptions(true, true, true, true);
             overviewPanel.updateSeparators();
             statsPanel.updateSeparators();
 
-            progressDialog = new ProgressDialogX(this, this, true);
-            progressDialog.doNothingOnClose();
+            // change the peptide shaker icon to a "waiting version"
+            setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-            final PeptideShakerGUI tempRef = this; // needed due to threading issues
+            // reset show hidden proteins and scores columns
+            showHiddenProteinsJCheckBoxMenuItem.setSelected(true);
+            scoresJCheckBoxMenuItem.setSelected(false);
 
-            new Thread(new Runnable() {
+            // make sure that all panels are looking the way they should
+            repaintPanels();
 
-                public void run() {
-                    progressDialog.setTitle("Loading Data. Please Wait...");
-                    progressDialog.setVisible(true);
-                }
-            }, "ProgressDialog").start();
 
-            new Thread("DisplayThread") {
+            // return the peptide shaker icon to the standard version
+            setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                @Override
-                public void run() {
+            // enable the menu items depending on a project being open
+            saveMenuItem.setEnabled(true);
+            saveAsMenuItem.setEnabled(true);
+            proteinFilterJMenuItem.setEnabled(true);
+            identificationFeaturesMenu.setEnabled(true);
+            followUpAnalysisMenu.setEnabled(true);
+            exportProjectMenuItem.setEnabled(true);
+            exportPrideXmlMenuItem.setEnabled(true);
+            projectPropertiesMenuItem.setEnabled(true);
+            spectrumCountingMenuItem.setEnabled(true);
+            ionsMenu.setEnabled(true);
+            lossMenu.setEnabled(true);
+            otherMenu.setEnabled(true);
+            chargeMenu.setEnabled(true);
+            settingsMenu.setEnabled(true);
+            exportGraphicsMenu.setEnabled(true);
+            helpJMenu.setEnabled(true);
 
-                    // change the peptide shaker icon to a "waiting version"
-                    tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+            // return the peptide shaker icon to the standard version
+            setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                    try {
-                        // reset show hidden proteins and scores columns
-                        showHiddenProteinsJCheckBoxMenuItem.setSelected(true);
-                        scoresJCheckBoxMenuItem.setSelected(false);
-
-                        // load the Overview tab
-                        overviewPanel.displayResults(progressDialog);
-
-                        // make sure that all panels are looking the way they should
-                        repaintPanels();
-
-                        progressDialog.setVisible(false);
-                        progressDialog.dispose();
-                        
-                        // return the peptide shaker icon to the standard version
-                        tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                        // enable the menu items depending on a project being open
-                        saveMenuItem.setEnabled(true);
-                        saveAsMenuItem.setEnabled(true);
-                        proteinFilterJMenuItem.setEnabled(true);
-                        identificationFeaturesMenu.setEnabled(true);
-                        followUpAnalysisMenu.setEnabled(true);
-                        exportProjectMenuItem.setEnabled(true);
-                        exportPrideXmlMenuItem.setEnabled(true);
-                        projectPropertiesMenuItem.setEnabled(true);
-                        spectrumCountingMenuItem.setEnabled(true);
-                        ionsMenu.setEnabled(true);
-                        lossMenu.setEnabled(true);
-                        otherMenu.setEnabled(true);
-                        chargeMenu.setEnabled(true);
-                        settingsMenu.setEnabled(true);
-                        exportGraphicsMenu.setEnabled(true);
-                        helpJMenu.setEnabled(true);
-
-                        // return the peptide shaker icon to the standard version
-                        tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                        
-                        allTabsJTabbedPaneStateChanged(null);
-                    } catch (Exception e) {
-
-                        // return the peptide shaker icon to the standard version
-                        tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                        if (progressDialog != null) {
-                            progressDialog.setVisible(false);
-                            progressDialog.dispose();
-                        }
-
-                        e.printStackTrace();
-                        catchException(e);
-                        JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\n"
-                                + "See /conf/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
-                    }
-                }
-            }.start();
-
+            allTabsJTabbedPaneStateChanged(null);
         } catch (Exception e) {
+
+            // return the peptide shaker icon to the standard version
+            setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "A problem occured while displaying results. Please send the log file to the developers.", "Display Problem", JOptionPane.ERROR_MESSAGE);
+            catchException(e);
+            JOptionPane.showMessageDialog(null, "A problem occured when loading the data.\n"
+                    + "See /conf/PeptideShaker.log for more details.", "Loading Failed!", JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -3081,6 +3027,38 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
+     * Return the filter preferences to use
+     * @return the filter preferences to use
+     */
+    public FilterPreferences getFilterPreferences() {
+        return filterPreferences;
+    }
+
+    /**
+     * Return the display preferences to use
+     * @return the display preferences to use
+     */
+    public DisplayPreferences getDisplayPreferences() {
+        return displayPreferences;
+    }
+
+    /**
+     * Sets the gui filter preferences to use
+     * @param filterPreferences the gui filter preferences to use
+     */
+    public void setFilterPreferences(FilterPreferences filterPreferences) {
+        this.filterPreferences = filterPreferences;
+    }
+
+    /**
+     * Sets the display preferences to use
+     * @param displayPreferences  the display preferences to use
+     */
+    public void setDisplayPreferences(DisplayPreferences displayPreferences) {
+        this.displayPreferences = displayPreferences;
+    }
+
+    /**
      * Returns the spectrum counting preferences
      * @return the spectrum counting preferences 
      */
@@ -3201,24 +3179,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the currently selected spectrum key.
-     * 
-     * @return the key for the selected spectrum
-     */
-    public String getSelectedSpectrumKey() {
-        return selectedSpectrumKey;
-    }
-
-    /**
-     * Sets the currently selected spectrum key.
-     * 
-     * @param spectrumKey the key for the selected spectrum
-     */
-    public void setSelectedSpectrumKey(String spectrumKey) {
-        selectedSpectrumKey = spectrumKey;
-    }
-
-    /**
      * Opens the Spectrum ID tab.
      */
     public void openSpectrumIdTab() {
@@ -3253,96 +3213,61 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the current protein filter values.
-     *
-     * @return the current protein filter values
+     * Sets the keys of the selected protein, peptide and PSM
+     * @param proteinKey    the key of the selected protein
+     * @param peptideKey    the key of the selected peptide
+     * @param psmKey        the key of the selected PSM
      */
-    public String[] getCurrentProteinFilterValues() {
-        return currentProteinFilterValues;
+    public void setSelectedItems(String proteinKey, String peptideKey, String psmKey) {
+        this.selectedProteinKey = proteinKey;
+        this.selectedPeptideKey = peptideKey;
+        this.selectedPsmKey = psmKey;
+    }
+    
+    /**
+     * Resets the items selection.
+     */
+    public void resetSelectedItems() {
+        setSelectedItems(NO_SELECTION, NO_SELECTION, NO_SELECTION);
     }
 
     /**
-     * Set the current protein filter values.
-     *
-     * @param currentProteinFilterValues the protein filter values to set
+     * Sets the selected item based on the selected tab
      */
-    public void setCurrentProteinFilterValues(String[] currentProteinFilterValues) {
-        this.currentProteinFilterValues = currentProteinFilterValues;
+    public void setSelectedItems() {
+        int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
+        if (selectedIndex == OVER_VIEW_TAB_INDEX) {
+            overviewPanel.newItemSelection();
+        } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
+            ptmPanel.newItemSelection();
+        } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
+            proteinStructurePanel.newItemSelection();
+        }
     }
 
     /**
-     * Returns the current protein filter radio button settings.
-     *
-     * @return the current protein filter radio button settings
+     * Returns the key of the selected protein 
+     * @return the key of the selected protein
      */
-    public Integer[] getCurrrentProteinFilterRadioButtonSelections() {
-        return currrentProteinFilterRadioButtonSelections;
+    public String getSelectedProteinKey() {
+        return selectedProteinKey;
     }
 
     /**
-     * Set the current protein filter radio button settings.
-     *
-     * @param currrentProteinFilterRadioButtonSelections the protein filter radio buttons to set
+     * Returns the key of the selected peptide 
+     * @return the key of the selected peptide
      */
-    public void setCurrrentProteinFilterRadioButtonSelections(Integer[] currrentProteinFilterRadioButtonSelections) {
-        this.currrentProteinFilterRadioButtonSelections = currrentProteinFilterRadioButtonSelections;
+    public String getSelectedPeptideKey() {
+        return selectedPeptideKey;
     }
 
     /**
-     * Set the current protein inference filer selection.
+     * Returns the currently selected spectrum key.
      * 
-     * @param currentProteinInferenceFilterSelection the protein inference filer selection to set
+     * @return the key for the selected spectrum
      */
-    public void setCurrrentProteinInferenceFilterSelection(int currentProteinInferenceFilterSelection) {
-        this.currentProteinInferenceFilterSelection = currentProteinInferenceFilterSelection;
-    }
-
-    /**
-     * Returns the current protein inference selection as an int.
-     * 
-     * @return the current protein inference selection as an int (0-5)
-     */
-    public int getCurrrentProteinInferenceFilterSelection() {
-        return currentProteinInferenceFilterSelection;
-    }
-
-    /**
-     * Update the overview panel to make sure that the currently selected protein 
-     * in the protein table is displayed in the other tables.
-     * 
-     * @param updateProteinSelection if true the protein selection will be updated
-     */
-    public void updateProteinTableSelection(boolean updateProteinSelection) {
-        overviewPanel.updateProteinSelection(updateProteinSelection);
-    }
-
-    /**
-     * Set the selected protein index in the overview or protein structure tabs. 
-     * Used to make sure that the same protein is selected in both tabs.
-     * 
-     * @param selectedProteinIndex      the selected protein index
-     */
-    public void setSelectedProteinIndex(Integer selectedProteinIndex) {
-        this.selectedProteinIndex = selectedProteinIndex;
-    }
-
-    /**
-     * Set the selected protein accesssion number in the annotation tab.
-     * 
-     * @param selectedProteinAccession      the selected protein accession number
-     */
-    public void setSelectedProteinAccession(String selectedProteinAccession) {
-        this.selectedProteinAccession = selectedProteinAccession;
-    }
-
-    /**
-     * Set the selected peptide index in the overview or protein structure tabs. 
-     * Used to make sure that the same peptide is selected in both tabs.
-     * 
-     * @param selectedPeptideIndex      the selected peptide index
-     */
-    public void setSelectedPeptideIndex(Integer selectedPeptideIndex) {
-        this.selectedPeptideIndex = selectedPeptideIndex;
+    public String getSelectedPsmKey() {
+        return selectedPsmKey;
     }
 
     /**
@@ -3509,13 +3434,29 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public void clearData() {
 
-        // reset the filter
-        currentProteinFilterValues = new String[]{"", "", "", "", "", "", "", ""};
+        // reset the preferences
+        selectedProteinKey = NO_SELECTION;
+        selectedPeptideKey = NO_SELECTION;
+        selectedPsmKey = NO_SELECTION;
+        annotationPreferences = new AnnotationPreferences();
+        spectrumCountingPreferences = new SpectrumCountingPreferences();
+        filterPreferences = new FilterPreferences();
+        displayPreferences = new DisplayPreferences();
+        searchParameters = new SearchParameters();
+        idFilter = new IdFilter();
+        projectDetails = null;
+        spectrumAnnotator = new SpectrumAnnotator();
+        exceptionCaught = new ArrayList<String>();
+        // reset enzymes, ptms and preferences
+        loadEnzymes();
+        loadModifications();
+        setDefaultPreferences();
 
         // set up the tabs/panels
         showHiddenProteinsJCheckBoxMenuItem.setSelected(true);
         scoresJCheckBoxMenuItem.setSelected(false);
         setUpPanels(true);
+
 
         // repaint the panels
         repaintPanels();
@@ -3557,6 +3498,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * Set up the different tabs/panels.
      */
     private void setUpPanels(boolean setupValidationTab) {
+
+        updateNeeded = new HashMap<Integer, Boolean>();
+        for (int tabIndex = 0; tabIndex < allTabsJTabbedPane.getTabCount(); tabIndex++) {
+            updateNeeded.put(tabIndex, true);
+        }
 
         if (setupValidationTab) {
             statsPanel = new StatsPanel(this);
@@ -4617,10 +4563,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     PSSettings experimentSettings = new PSSettings();
                     experimentSettings = (PSSettings) tempExperiment.getUrParam(experimentSettings);
-                    peptideShakerGUI.setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
-                    peptideShakerGUI.setSpectrumCountingPreferences(experimentSettings.getSpectrumCountingPreferences());
-                    peptideShakerGUI.setProjectDetails(experimentSettings.getProjectDetails());
-                    peptideShakerGUI.setSearchParameters(experimentSettings.getSearchParameters());
+                    setAnnotationPreferences(experimentSettings.getAnnotationPreferences());
+                    setSpectrumCountingPreferences(experimentSettings.getSpectrumCountingPreferences());
+                    setProjectDetails(experimentSettings.getProjectDetails());
+                    setSearchParameters(experimentSettings.getSearchParameters());
+                    setFilterPreferences(experimentSettings.getFilterPreferences());
+                    setDisplayPreferences(experimentSettings.getDisplayPreferences());
+
                     PeptideShaker.setPeptideShakerPTMs(searchParameters);
 
                     progressDialog.setTitle("Loading FASTA File. Please Wait...");
@@ -4963,25 +4912,22 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param displayProteins
      * @param displayPeptidesAndPsms
      * @param displayCoverage
-     * @param displaySpectrum 
-     * @param displaySpectrumSliders 
+     * @param displaySpectrum
      */
     public void setDisplayOptions(boolean displayProteins, boolean displayPeptidesAndPsms,
-            boolean displayCoverage, boolean displaySpectrum, boolean displaySpectrumSliders) {
-        
+            boolean displayCoverage, boolean displaySpectrum) {
+
         if (!displayProteins && !displayPeptidesAndPsms && !displayCoverage && !displaySpectrum) {
             displayProteins = true;
         }
-        
+
         proteinsJCheckBoxMenuItem.setSelected(displayProteins);
         peptidesAndPsmsJCheckBoxMenuItem.setSelected(displayPeptidesAndPsms);
         sequenceCoverageJCheckBoxMenuItem.setSelected(displayCoverage);
         spectrumJCheckBoxMenuItem.setSelected(displaySpectrum);
-        spectrumSlidersCheckBoxMenuItem.setSelected(displaySpectrumSliders);
 
         overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
-                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected(), 
-                spectrumSlidersCheckBoxMenuItem.isSelected());
+                sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
     }
 
@@ -5085,64 +5031,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the currently hidden protein indexes.
-     * 
-     * @return the currently hidden protein indexes
-     */
-    public ArrayList<Integer> getHiddenProteinIndexes() {
-        return hiddenProteins;
-    }
-
-    /**
-     * Set the currently hidden protein indexes.
-     * 
-     * @param hiddenProteins the currently hidden protein indexes
-     */
-    public void setHiddenProteinIndexes(ArrayList<Integer> hiddenProteins) {
-        this.hiddenProteins = hiddenProteins;
-    }
-
-    /**
-     * Returns true of the hidden proteins are to be hidden.
-     * 
-     * @return true of the hidden proteins are to be hidden
-     */
-    public boolean showHiddenProteins() {
-        return showHiddenProteins;
-    }
-
-    /**
-     * Returns true of the scores columns are to be shown.
-     * 
-     * @return true of the score columns are to be shown
-     */
-    public boolean showScores() {
-        return scoresJCheckBoxMenuItem.isSelected();
-    }
-
-    /**
-     * Returns the selected protein index.
-     * 
-     * @return the selectedProteinIndex
-     */
-    public int getSelectedProteinIndex() {
-        return selectedProteinIndex;
-    }
-
-    /**
-     * Returns the selected peptide index.
-     * 
-     * @return the selectedPeptideIndex
-     */
-    public int getSelectedPeptideIndex() {
-        return selectedPeptideIndex;
-    }
-    
-    /**
      * Saves the modifications made to the project
      */
     private void saveProject() {
-       
+
         progressDialog = new ProgressDialogX(this, this, true);
         progressDialog.doNothingOnClose();
         final PeptideShakerGUI tempRef = this; // needed due to threading issues
@@ -5177,7 +5069,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
                     dataSaved = true;
-                    
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     catchException(e);
@@ -5186,6 +5078,14 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 progressDialog.dispose();
             }
         }.start();
+    }
+
+    /**
+     * Sets that the tab was updated
+     * @param tabIndex integer indicating which tab (according to the static indexing) was updated.
+     */
+    public void setUpdated(int tabIndex) {
+        updateNeeded.put(tabIndex, false);
     }
 
     /**
@@ -5218,7 +5118,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 try {
                     // change the peptide shaker icon to a "waiting version"
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                    experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails));
+                    experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences));
 
                     String folderPath = currentPSFile.getParentFile().getAbsolutePath();
                     File newFolder = new File(folderPath, currentPSFile.getName().substring(0, currentPSFile.getName().length() - 4) + "_cps");

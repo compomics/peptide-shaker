@@ -2,6 +2,8 @@ package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.preferences.DisplayPreferences;
+import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
@@ -16,7 +18,7 @@ public class PSSettings implements UrParameter {
     /**
      * serial version UID for post-serialization compatibility
      */
-        static final long serialVersionUID = -3531908843597367812L;
+    static final long serialVersionUID = -3531908843597367812L;
     /**
      * The parameters linked to the search
      */
@@ -30,17 +32,24 @@ public class PSSettings implements UrParameter {
      */
     private SpectrumCountingPreferences spectrumCountingPreferences;
     /**
+     * The gui filter preferences
+     */
+    private FilterPreferences filterPreferences;
+    /**
+     * The display preferences
+     */
+    private DisplayPreferences displayPreferences;
+    /**
      * The project details
      */
     private ProjectDetails projectDetails;
-    
+
     /**
      * Blank constructor
      */
     public PSSettings() {
-        
     }
-    
+
     /**
      * Constructor for a Peptide Shaker Settings class.
      * 
@@ -49,14 +58,18 @@ public class PSSettings implements UrParameter {
      * @param spectrumCountingPreferences   The spectrum counting preferences
      * @param projectDetails                The project details
      */
-    public PSSettings(SearchParameters searchParameters, 
-            AnnotationPreferences annotationPreferences, 
+    public PSSettings(SearchParameters searchParameters,
+            AnnotationPreferences annotationPreferences,
             SpectrumCountingPreferences spectrumCountingPreferences,
-            ProjectDetails projectDetails) {
+            ProjectDetails projectDetails,
+            FilterPreferences filterPreferences,
+            DisplayPreferences displayPreferences) {
         this.searchParameters = searchParameters;
         this.annotationPreferences = annotationPreferences;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.projectDetails = projectDetails;
+        this.filterPreferences = filterPreferences;
+        this.displayPreferences = displayPreferences;
     }
 
     /**
@@ -75,7 +88,7 @@ public class PSSettings implements UrParameter {
     public SearchParameters getSearchParameters() {
         return searchParameters;
     }
-    
+
     /**
      * Returns the spectrum counting preferences of the project
      * @return the spectrum counting preferences of the project
@@ -83,13 +96,29 @@ public class PSSettings implements UrParameter {
     public SpectrumCountingPreferences getSpectrumCountingPreferences() {
         return spectrumCountingPreferences;
     }
-    
+
     /**
      * Returns the project details
      * @return the project details
      */
     public ProjectDetails getProjectDetails() {
         return projectDetails;
+    }
+
+    /**
+     * Returns the gui display preferences
+     * @return the gui display preferences
+     */
+    public FilterPreferences getFilterPreferences() {
+        return filterPreferences;
+    }
+
+    /**
+     * Returns the gui display preferences
+     * @return the gui display preferences
+     */
+    public DisplayPreferences getDisplayPreferences() {
+        return displayPreferences;
     }
 
     @Override
