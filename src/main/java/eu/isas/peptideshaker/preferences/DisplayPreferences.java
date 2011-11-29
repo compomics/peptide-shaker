@@ -1,14 +1,18 @@
 package eu.isas.peptideshaker.preferences;
 
+import java.io.Serializable;
+
 /**
- * This class contains the display preferences.
- * Ultimately we ough to have project dependant display preferences and global display preferences
+ * This class contains the display preferences for the current project.
  *
  * @author marc
  */
-public class DisplayPreferences {
-    
-    
+public class DisplayPreferences implements Serializable {
+
+    /**
+     * the serial number for serialization compatibility
+     */
+    static final long serialVersionUID = -7923024103783392695L;
     /**
      * Show/hide the hidden proteins.
      */
@@ -21,14 +25,13 @@ public class DisplayPreferences {
      * Show/hide sliders
      */
     private boolean showSliders = false;
-    
+
     /**
      * Constructor
      */
     public DisplayPreferences() {
-        
     }
-    
+
     /**
      * Sets whether hidden proteins should be displayed
      * @param showHiddenProteins a boolean indicating whether hidden proteins should be displayed
@@ -36,14 +39,14 @@ public class DisplayPreferences {
     public void showHiddenProteins(boolean showHiddenProteins) {
         this.showHiddenProteins = showHiddenProteins;
     }
-    
+
     /**
      * Returns whether hidden proteins should be displayed
      */
     public boolean showHiddenProteins() {
         return showHiddenProteins;
     }
-    
+
     /**
      * Sets whether scores should be displayed
      * @param showHiddenProteins a boolean indicating whether scores should be displayed
@@ -51,7 +54,7 @@ public class DisplayPreferences {
     public void showScores(boolean showScores) {
         this.showScores = showScores;
     }
-    
+
     /**
      * Returns whether scores should be displayed
      */
@@ -74,5 +77,4 @@ public class DisplayPreferences {
     public void setShowSliders(boolean showSliders) {
         this.showSliders = showSliders;
     }
-    
 }
