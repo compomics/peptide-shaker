@@ -18,7 +18,7 @@ import javax.swing.table.TableRowSorter;
  *
  * @author Harald Barsnes
  */
-public class ProteinFilter extends javax.swing.JDialog {
+public class ProteinFilterDialog extends javax.swing.JDialog {
 
     /**
      * The protein table.
@@ -37,7 +37,7 @@ public class ProteinFilter extends javax.swing.JDialog {
      * @param showHiddenProteins                            show/hide the hidden proteins
      * @param visible                                       if true the dialog is made visible
      */
-    public ProteinFilter(PeptideShakerGUI peptideShakerGUI, boolean modal, boolean visible) {
+    public ProteinFilterDialog(PeptideShakerGUI peptideShakerGUI, boolean modal, boolean visible) {
         super(peptideShakerGUI, modal);
 
         this.peptideShakerGUI = peptideShakerGUI;

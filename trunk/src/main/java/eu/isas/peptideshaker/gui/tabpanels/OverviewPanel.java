@@ -25,7 +25,7 @@ import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.ExportFeatureDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.gui.ProteinFilter;
+import eu.isas.peptideshaker.gui.ProteinFilterDialog;
 import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.myparameters.PSMaps;
@@ -1900,14 +1900,18 @@ public class OverviewPanel extends javax.swing.JPanel {
 
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     String key = proteinTableMap.get(getProteinIndex(row));
-                    PSParameter psParameter = new PSParameter();
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(key, psParameter);
-                    psParameter.setStarred((Boolean) proteinTable.getValueAt(row, column));
+                    if ((Boolean) proteinTable.getValueAt(row, column)) {
+                        peptideShakerGUI.starProtein(key);
+                    } else {
+                        peptideShakerGUI.unStarProtein(key);
+                    }
                 } else if (peptideShakerGUI.getDisplayPreferences().showHiddenProteins() && column == proteinTable.getColumn("   ").getModelIndex()) {
                     String key = proteinTableMap.get(getProteinIndex(row));
-                    PSParameter psParameter = new PSParameter();
-                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(key, psParameter);
-                    psParameter.setHidden((Boolean) proteinTable.getValueAt(row, column));
+                    if ((Boolean) proteinTable.getValueAt(row, column)) {
+                        peptideShakerGUI.hideProtein(key);
+                    } else {
+                        peptideShakerGUI.unHideProtein(key);
+                    }
                 }
                 // open protein link in web browser
                 if (column == proteinTable.getColumn("Accession").getModelIndex() + modelShift && evt != null && evt.getButton() == MouseEvent.BUTTON1
@@ -4758,7 +4762,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             }
 
             if (peptideShakerGUI.getOverviewPanel() != null) {
-                ProteinFilter proteinFilter = new ProteinFilter(peptideShakerGUI, true, false);
+                ProteinFilterDialog proteinFilter = new ProteinFilterDialog(peptideShakerGUI, true, false);
                 proteinFilter.filter();
                 proteinFilter.dispose();
             }

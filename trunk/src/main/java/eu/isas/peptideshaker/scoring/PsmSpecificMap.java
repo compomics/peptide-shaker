@@ -189,8 +189,7 @@ public class PsmSpecificMap implements Serializable {
      */
     public Integer getKey(SpectrumMatch spectrumMatch) {
         try {
-            String spectrumKey = spectrumMatch.getKey();
-            return SpectrumFactory.getInstance().getPrecursor(Spectrum.getSpectrumFile(spectrumKey), Spectrum.getSpectrumTitle(spectrumKey)).getCharge().value;
+            return spectrumMatch.getBestAssumption().getIdentificationCharge().value;
         } catch (Exception e) {
             return 0;
         }

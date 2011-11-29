@@ -85,7 +85,6 @@ public class PtmPanel extends javax.swing.JPanel {
      * Indexes for the data tables.
      */
     private enum TableIndex {
-
         MODIFIED_PEPTIDES_TABLE, RELATED_PEPTIDES_TABLE, MODIFIED_PSMS_TABLE, RELATED_PSMS_TABLE
     };
     /**
@@ -127,7 +126,7 @@ public class PtmPanel extends javax.swing.JPanel {
     /**
      * The modification name for no modification
      */
-    private final String NO_MODIFICATION = "no modification";
+    public final static String NO_MODIFICATION = "no modification";
     /**
      * The displayed identification
      */

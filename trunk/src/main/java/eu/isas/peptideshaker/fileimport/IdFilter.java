@@ -3,7 +3,9 @@ package eu.isas.peptideshaker.fileimport;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import eu.isas.peptideshaker.filtering.MatchFilter;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * This class achieves a pre-filtering of the identifications
@@ -40,7 +42,7 @@ public class IdFilter implements Serializable {
      * Boolean indicating the unit of the allowed mass deviation (true: ppm, false: Da)
      */
     private boolean isPpm;
-
+    
     /**
      * Constructor with default settings
      */
@@ -53,7 +55,7 @@ public class IdFilter implements Serializable {
         maxMassDeviation = 10;
         isPpm = true;
     }
-
+    
     /**
      * Constructor for an Identification filter
      *
@@ -74,7 +76,7 @@ public class IdFilter implements Serializable {
         this.maxMassDeviation = maxMassDeviation;
         this.isPpm = isPpm;
     }
-
+    
     /**
      * Validates a peptide assumption
      * 

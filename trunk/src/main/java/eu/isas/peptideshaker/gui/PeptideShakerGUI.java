@@ -22,6 +22,7 @@ import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -33,6 +34,12 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
+import eu.isas.peptideshaker.filtering.MatchFilter;
+import eu.isas.peptideshaker.filtering.MatchFilter.ComparisonType;
+import eu.isas.peptideshaker.filtering.MatchFilter.FilterType;
+import eu.isas.peptideshaker.filtering.PeptideFilter;
+import eu.isas.peptideshaker.filtering.ProteinFilter;
+import eu.isas.peptideshaker.filtering.PsmFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FollowupPreferencesDialog;
@@ -348,6 +355,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * List of caught exceptions
      */
     private ArrayList<String> exceptionCaught = new ArrayList<String>();
+    /**
+     * The actually identified modifications
+     */
+    private ArrayList<String> identifiedModifications = null;
 
     /**
      * The main method used to start PeptideShaker
@@ -550,8 +561,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         spectrumCountingMenuItem = new javax.swing.JMenuItem();
-        filterMenu = new javax.swing.JMenu();
-        proteinFilterJMenuItem = new javax.swing.JMenuItem();
+        jSeparator12 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenuItem3 = new javax.swing.JMenuItem();
         exportJMenu = new javax.swing.JMenu();
         identificationFeaturesMenu = new javax.swing.JMenuItem();
         followUpAnalysisMenu = new javax.swing.JMenuItem();
@@ -1112,23 +1124,22 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         editMenu.add(spectrumCountingMenuItem);
+        editMenu.add(jSeparator12);
 
-        menuBar.add(editMenu);
+        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem2.setText("Find...");
+        editMenu.add(jMenuItem2);
 
-        filterMenu.setMnemonic('L');
-        filterMenu.setText("Filter");
-
-        proteinFilterJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
-        proteinFilterJMenuItem.setText("Proteins");
-        proteinFilterJMenuItem.setEnabled(false);
-        proteinFilterJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem3.setText("Star/Hide Filters");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                proteinFilterJMenuItemActionPerformed(evt);
+                jMenuItem3ActionPerformed(evt);
             }
         });
-        filterMenu.add(proteinFilterJMenuItem);
+        editMenu.add(jMenuItem3);
 
-        menuBar.add(filterMenu);
+        menuBar.add(editMenu);
 
         exportJMenu.setMnemonic('x');
         exportJMenu.setText("Export");
@@ -1335,12 +1346,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 // do nothing
             } else { // no option
                 clearData();
-                NewDialog openDialog = new NewDialog(this, true);
-                openDialog.setVisible(true);
+                NewDialog newDialog = new NewDialog(this, true);
+                newDialog.setVisible(true);
             }
         } else {
-            NewDialog openDialog = new NewDialog(this, true);
-            openDialog.setVisible(true);
+            NewDialog newDialog = new NewDialog(this, true);
+            newDialog.setVisible(true);
         }
     }//GEN-LAST:event_newJMenuItemActionPerformed
 
@@ -1568,10 +1579,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * 
      * @param evt 
      */
-    private void proteinFilterJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinFilterJMenuItemActionPerformed
-        new ProteinFilter(this, true, true);
-    }//GEN-LAST:event_proteinFilterJMenuItemActionPerformed
-
     /**
      * Export the spectrum as a figure.
      * 
@@ -1689,13 +1696,13 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             if (selectedIndex == OVER_VIEW_TAB_INDEX) {
                 if (updateNeeded.get(OVER_VIEW_TAB_INDEX)) {
-                overviewPanel.displayResults();
+                    overviewPanel.displayResults();
                 } else {
                     overviewPanel.updateSelection();
                 }
             } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
                 if (updateNeeded.get(STRUCTURES_TAB_INDEX)) {
-                proteinStructurePanel.displayResults();
+                    proteinStructurePanel.displayResults();
                 } else {
                     proteinStructurePanel.updateSelection();
                 }
@@ -1705,19 +1712,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 // @TODO: reload GO enrichment tab if hidden selection is changed!
             } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
                 if (updateNeeded.get(SPECTRUM_ID_TAB_INDEX)) {
-                spectrumIdentificationPanel.displayResults();
+                    spectrumIdentificationPanel.displayResults();
                 } else {
                     spectrumIdentificationPanel.updateSelection();
                 }
             } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
                 if (updateNeeded.get(MODIFICATIONS_TAB_INDEX)) {
-                ptmPanel.displayResults();
+                    ptmPanel.displayResults();
                 } else {
                     ptmPanel.updateSelection();
                 }
             } else if (selectedIndex == QC_PLOTS_TAB_INDEX
-                && updateNeeded.get(QC_PLOTS_TAB_INDEX)) {
-                    qcPanel.displayResults();
+                    && updateNeeded.get(QC_PLOTS_TAB_INDEX)) {
+                qcPanel.displayResults();
             } else if (selectedIndex == VALIDATION_TAB_INDEX
                     && updateNeeded.get(VALIDATION_TAB_INDEX)) {
                 statsPanel.displayResults();
@@ -1748,9 +1755,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     updateSpectrumAnnotations();
                 }
             });
-
-            // disable the protein filter option if a tab other than the overview tab is selected
-            proteinFilterJMenuItem.setEnabled(selectedIndex == OVER_VIEW_TAB_INDEX);
         }
     }//GEN-LAST:event_allTabsJTabbedPaneStateChanged
 
@@ -2490,6 +2494,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         ptmPanel.updateSeparators();
     }//GEN-LAST:event_spectrumSlidersCheckBoxMenuItemActionPerformed
 
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        new FiltersDialog(this);
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
+
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
@@ -2534,7 +2542,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             // enable the menu items depending on a project being open
             saveMenuItem.setEnabled(true);
             saveAsMenuItem.setEnabled(true);
-            proteinFilterJMenuItem.setEnabled(true);
             identificationFeaturesMenu.setEnabled(true);
             followUpAnalysisMenu.setEnabled(true);
             exportProjectMenuItem.setEnabled(true);
@@ -2621,7 +2628,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu exportSpectrumMenu;
     private javax.swing.JMenuItem exportSpectrumValuesJMenuItem;
     private javax.swing.JMenu fileJMenu;
-    private javax.swing.JMenu filterMenu;
     private javax.swing.JMenuItem followUpAnalysisMenu;
     private javax.swing.JPanel goJPanel;
     private javax.swing.JPanel gradientPanel;
@@ -2638,9 +2644,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
+    private javax.swing.JPopupMenu.Separator jSeparator12;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
@@ -2663,7 +2672,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JCheckBoxMenuItem peptidesAndPsmsJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem precursorCheckBoxMenuItem;
     private javax.swing.JMenuItem projectPropertiesMenuItem;
-    private javax.swing.JMenuItem proteinFilterJMenuItem;
     private javax.swing.JPanel proteinStructureJPanel;
     private javax.swing.JCheckBoxMenuItem proteinsJCheckBoxMenuItem;
     private javax.swing.JPanel ptmJPanel;
@@ -3179,13 +3187,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Opens the Spectrum ID tab.
-     */
-    public void openSpectrumIdTab() {
-        allTabsJTabbedPane.setSelectedIndex(SPECTRUM_ID_TAB_INDEX);
-    }
-
-    /**
      * Returns the color to use for the HTML tags for the selected rows, in HTML color code.
      * 
      * @return the color to use for the HTML tags for the selected rows, in HTML color code
@@ -3223,7 +3224,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         this.selectedPeptideKey = peptideKey;
         this.selectedPsmKey = psmKey;
     }
-    
+
     /**
      * Resets the items selection.
      */
@@ -3447,6 +3448,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         projectDetails = null;
         spectrumAnnotator = new SpectrumAnnotator();
         exceptionCaught = new ArrayList<String>();
+        identifiedModifications = null;
         // reset enzymes, ptms and preferences
         loadEnzymes();
         loadModifications();
@@ -5086,6 +5088,695 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public void setUpdated(int tabIndex) {
         updateNeeded.put(tabIndex, false);
+    }
+
+    public void setUpInitialFilters() {
+        Enzyme enzyme = searchParameters.getEnzyme();
+        ProteinFilter proteinFilter = new ProteinFilter(enzyme.getName());
+        proteinFilter.setProteinDescription(enzyme.getName());
+        proteinFilter.setDescription("Hides " + enzyme.getName() + " related proteins.");
+        filterPreferences.getProteinHideFilters().put(proteinFilter.getName(), proteinFilter);
+        starHide();
+    }
+
+    /**
+     * Sets that a tab needs update
+     * @param tabIndex index of the tab to update
+     */
+    public void setUpdateNeeded(int tabIndex) {
+        updateNeeded.put(tabIndex, true);
+        allTabsJTabbedPaneStateChanged(null);
+    }
+
+    public void starHide() {
+        progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog.doNothingOnClose();
+        progressDialog.setIndeterminate(true);
+        progressDialog.setTitle("Hiding/Starring items. Please Wait...");
+
+        new Thread("Star/Hide") {
+
+            @Override
+            public void run() {
+                progressDialog.setIndeterminate(false);
+                progressDialog.setMax(identification.getProteinIdentification().size());
+                ProteinMatch proteinMatch;
+                PeptideMatch peptideMatch;
+                boolean peptideSurvived, psmSurvived;
+                PSParameter psParameter = new PSParameter();
+                for (String proteinKey : identification.getProteinIdentification()) {
+                    proteinMatch = identification.getProteinMatch(proteinKey);
+                    peptideSurvived = false;
+                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                        peptideMatch = identification.getPeptideMatch(peptideKey);
+                        psmSurvived = false;
+                        for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                            psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
+                            if (isPsmHidden(spectrumKey)) {
+                                psParameter.setHidden(true);
+                            } else {
+                                psParameter.setHidden(false);
+                                psmSurvived = true;
+                            }
+                            psParameter.setStarred(isPsmStarred(spectrumKey));
+                        }
+                        psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
+                        if (!psmSurvived) {
+                            psParameter.setHidden(true);
+                        } else if (isPeptideHidden(peptideKey)) {
+                            psParameter.setHidden(true);
+                        } else {
+                            psParameter.setHidden(false);
+                            peptideSurvived = true;
+                        }
+                        psParameter.setStarred(isPeptideStarred(peptideKey));
+                    }
+                    psParameter = (PSParameter) identification.getMatchParameter(proteinKey, psParameter);
+                    if (!peptideSurvived) {
+                        psParameter.setHidden(true);
+                    } else {
+                        psParameter.setHidden(isProteinHidden(proteinKey));
+                    }
+                    psParameter.setStarred(isProteinStarred(proteinKey));
+                    progressDialog.incrementValue();
+                }
+                progressDialog.setVisible(false);
+                progressDialog.dispose();
+            }
+        }.start();
+
+        progressDialog.setVisible(true);
+    }
+
+    public void starProtein(String match) {
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        boolean validated = false;
+        for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
+            if (matchFilter.getExceptions().contains(match)) {
+                matchFilter.removeException(match);
+            }
+            if (isValidated(match, matchFilter)) {
+                validated = true;
+            }
+        }
+        if (!validated) {
+            ProteinFilter proteinFilter;
+            if (!filterPreferences.getProteinStarFilters().containsKey("manual selection")) {
+                proteinFilter = new ProteinFilter("manual selection");
+                proteinFilter.setDescription("Manual selection via the graphical interface");
+                filterPreferences.getProteinStarFilters().put(proteinFilter.getName(), proteinFilter);
+            } else {
+                proteinFilter = filterPreferences.getProteinStarFilters().get("manual selection");
+            }
+            proteinFilter.addManualValidation(match);
+        }
+        psParameter.setStarred(true);
+    }
+
+    public void unStarProtein(String match) {
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
+            if (matchFilter.getManualValidation().contains(match)) {
+                matchFilter.removeManualValidation(match);
+            }
+            if (isValidated(match, matchFilter)) {
+                matchFilter.addException(match);
+            }
+        }
+        psParameter.setStarred(true);
+    }
+
+    public void hideProtein(String match) {
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        boolean validated = false;
+        for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
+            if (matchFilter.getExceptions().contains(match)) {
+                matchFilter.removeException(match);
+            }
+            if (isValidated(match, matchFilter)) {
+                validated = true;
+            }
+        }
+        if (!validated) {
+            ProteinFilter proteinFilter;
+            if (!filterPreferences.getProteinHideFilters().containsKey("manual selection")) {
+                proteinFilter = new ProteinFilter("manual selection");
+                proteinFilter.setDescription("Manual selection via the graphical interface");
+                filterPreferences.getProteinHideFilters().put(proteinFilter.getName(), proteinFilter);
+            } else {
+                proteinFilter = filterPreferences.getProteinHideFilters().get("manual selection");
+            }
+            proteinFilter.addManualValidation(match);
+        }
+        psParameter.setHidden(true);
+    }
+
+    public void unHideProtein(String match) {
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
+            if (matchFilter.getManualValidation().contains(match)) {
+                matchFilter.removeManualValidation(match);
+            }
+            if (isValidated(match, matchFilter)) {
+                matchFilter.addException(match);
+            }
+        }
+        psParameter.setStarred(true);
+    }
+
+    public void starPeptide(String match) {
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        boolean validated = false;
+        for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
+            if (matchFilter.getExceptions().contains(match)) {
+                matchFilter.removeException(match);
+            }
+            if (isValidated(match, matchFilter)) {
+                validated = true;
+            }
+        }
+        if (!validated) {
+            PeptideFilter peptideFilter;
+            if (!filterPreferences.getPeptideStarFilters().containsKey("manual selection")) {
+                peptideFilter = new PeptideFilter("manual selection", getFoundModifications());
+                peptideFilter.setDescription("Manual selection via the graphical interface");
+                filterPreferences.getPeptideStarFilters().put(peptideFilter.getName(), peptideFilter);
+            } else {
+                peptideFilter = filterPreferences.getPeptideStarFilters().get("manual selection");
+            }
+            peptideFilter.addManualValidation(match);
+        }
+        psParameter.setStarred(true);
+    }
+
+    public void unStarPeptide(String match) {
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
+            if (matchFilter.getManualValidation().contains(match)) {
+                matchFilter.removeManualValidation(match);
+            }
+            if (isValidated(match, matchFilter)) {
+                matchFilter.addException(match);
+            }
+        }
+        psParameter.setStarred(true);
+    }
+
+    public void hidePeptide(String match) {
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        boolean validated = false;
+        for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
+            if (matchFilter.getExceptions().contains(match)) {
+                matchFilter.removeException(match);
+            }
+            if (isValidated(match, matchFilter)) {
+                validated = true;
+            }
+        }
+        if (!validated) {
+            PeptideFilter peptideFilter;
+            if (!filterPreferences.getPeptideHideFilters().containsKey("manual selection")) {
+                peptideFilter = new PeptideFilter("manual selection", getFoundModifications());
+                peptideFilter.setDescription("Manual selection via the graphical interface");
+                filterPreferences.getPeptideHideFilters().put(peptideFilter.getName(), peptideFilter);
+            } else {
+                peptideFilter = filterPreferences.getPeptideHideFilters().get("manual selection");
+            }
+            peptideFilter.addManualValidation(match);
+        }
+        psParameter.setHidden(true);
+    }
+
+    public void unHidePeptide(String match) {
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
+            if (matchFilter.getManualValidation().contains(match)) {
+                matchFilter.removeManualValidation(match);
+            }
+            if (isValidated(match, matchFilter)) {
+                matchFilter.addException(match);
+            }
+        }
+        psParameter.setStarred(true);
+    }
+
+    public void starPsm(String match) {
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        boolean validated = false;
+        if (!validated) {
+            for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
+                if (matchFilter.getExceptions().contains(match)) {
+                    matchFilter.removeException(match);
+                }
+                if (isValidated(match, matchFilter)) {
+                    validated = true;
+                }
+            }
+            PsmFilter psmFilter;
+            if (!filterPreferences.getPsmStarFilters().containsKey("manual selection")) {
+                psmFilter = new PsmFilter("manual selection", getSearchedCharges());
+                psmFilter.setDescription("Manual selection via the graphical interface");
+                filterPreferences.getPsmStarFilters().put(psmFilter.getName(), psmFilter);
+            } else {
+                psmFilter = filterPreferences.getPsmStarFilters().get("manual selection");
+            }
+            psmFilter.addManualValidation(match);
+        }
+        psParameter.setStarred(true);
+    }
+
+    public void unStarPsm(String match) {
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
+            if (matchFilter.getManualValidation().contains(match)) {
+                matchFilter.removeManualValidation(match);
+            }
+            if (isValidated(match, matchFilter)) {
+                matchFilter.addException(match);
+            }
+        }
+        psParameter.setStarred(true);
+    }
+
+    public void hidePsm(String match) {
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        boolean validated = false;
+        if (!validated) {
+            for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
+                if (matchFilter.getExceptions().contains(match)) {
+                    matchFilter.removeException(match);
+                }
+                if (isValidated(match, matchFilter)) {
+                    validated = true;
+                }
+            }
+            PsmFilter psmFilter;
+            if (!filterPreferences.getPsmHideFilters().containsKey("manual selection")) {
+                psmFilter = new PsmFilter("manual selection", getSearchedCharges());
+                psmFilter.setDescription("Manual selection via the graphical interface");
+                filterPreferences.getPsmHideFilters().put(psmFilter.getName(), psmFilter);
+            } else {
+                psmFilter = filterPreferences.getPsmHideFilters().get("manual selection");
+            }
+            psmFilter.addManualValidation(match);
+        }
+        psParameter.setHidden(true);
+    }
+
+    public void unHidePsm(String match) {
+        PSParameter psParameter = new PSParameter();
+        psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+        for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
+            if (matchFilter.getManualValidation().contains(match)) {
+                matchFilter.removeManualValidation(match);
+            }
+            if (isValidated(match, matchFilter)) {
+                matchFilter.addException(match);
+            }
+        }
+        psParameter.setStarred(true);
+    }
+
+    public boolean isProteinHidden(String match) {
+        for (ProteinFilter matchFilter : filterPreferences.getProteinHideFilters().values()) {
+            if (isValidated(match, matchFilter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isPeptideHidden(String match) {
+        for (PeptideFilter matchFilter : filterPreferences.getPeptideHideFilters().values()) {
+            if (isValidated(match, matchFilter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isPsmHidden(String match) {
+        for (PsmFilter matchFilter : filterPreferences.getPsmHideFilters().values()) {
+            if (isValidated(match, matchFilter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isProteinStarred(String match) {
+        for (ProteinFilter matchFilter : filterPreferences.getProteinStarFilters().values()) {
+            if (isValidated(match, matchFilter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isPeptideStarred(String match) {
+        for (PeptideFilter matchFilter : filterPreferences.getPeptideStarFilters().values()) {
+            if (isValidated(match, matchFilter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isPsmStarred(String match) {
+        for (PsmFilter matchFilter : filterPreferences.getPsmStarFilters().values()) {
+            if (isValidated(match, matchFilter)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isValidated(String match, ProteinFilter proteinFilter) {
+        try {
+            if (proteinFilter.getExceptions().contains(match)) {
+                return false;
+            }
+            if (proteinFilter.getManualValidation().contains(match)) {
+                return true;
+            }
+            for (String accession : ProteinMatch.getAccessions(match)) {
+            if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(proteinFilter.getProteinDescription().toLowerCase())) {
+                return true;
+            }
+            }
+            PSParameter psParameter = new PSParameter();
+            psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+            if (psParameter.getGroupClass() == proteinFilter.getPi()) {
+                return true;
+            }
+            if (proteinFilter.getProteinScore() != null) {
+                if (proteinFilter.getProteinScoreComparison() == ComparisonType.BIGGER_THAN) {
+                    if (psParameter.getProteinScore() > proteinFilter.getProteinScore()) {
+                        return true;
+                    }
+                } else if (proteinFilter.getProteinScoreComparison() == ComparisonType.SMALLER_THAN) {
+                    if (psParameter.getProteinScore() < proteinFilter.getProteinScore()) {
+                        return true;
+                    }
+                } else {
+                    if (psParameter.getProteinScore() == proteinFilter.getProteinScore()) {
+                        return true;
+                    }
+                }
+            }
+            if (proteinFilter.getProteinConfidence() != null) {
+                if (proteinFilter.getProteinConfidenceComparison() == ComparisonType.BIGGER_THAN) {
+                    if (psParameter.getProteinConfidence() > proteinFilter.getProteinConfidence()) {
+                        return true;
+                    }
+                } else if (proteinFilter.getProteinConfidenceComparison() == ComparisonType.SMALLER_THAN) {
+                    if (psParameter.getProteinConfidence() < proteinFilter.getProteinConfidence()) {
+                        return true;
+                    }
+                } else {
+                    if (psParameter.getProteinConfidence() == proteinFilter.getProteinConfidence()) {
+                        return true;
+                    }
+                }
+            }
+            if (proteinFilter.getnPeptides() != null
+                    || proteinFilter.getProteinNSpectra() != null
+                    || proteinFilter.getProteinCoverage() != null
+                    || proteinFilter.getSpectrumCounting() != null) {
+                ProteinMatch proteinMatch = identification.getProteinMatch(match);
+
+                if (proteinFilter.getnPeptides() != null) {
+                    if (proteinFilter.getnPeptidesComparison() == ComparisonType.BIGGER_THAN) {
+                        if (proteinMatch.getPeptideMatches().size() > proteinFilter.getnPeptides()) {
+                            return true;
+                        }
+                    } else if (proteinFilter.getnPeptidesComparison() == ComparisonType.SMALLER_THAN) {
+                        if (proteinMatch.getPeptideMatches().size() < proteinFilter.getnPeptides()) {
+                            return true;
+                        }
+                    } else {
+                        if (proteinMatch.getPeptideMatches().size() == proteinFilter.getnPeptides()) {
+                            return true;
+                        }
+                    }
+                }
+                if (proteinFilter.getProteinNSpectra() != null) {
+                    if (proteinFilter.getnSpectraComparison() == ComparisonType.BIGGER_THAN) {
+                        if (getNSpectra(proteinMatch) > proteinFilter.getProteinNSpectra()) {
+                            return true;
+                        }
+                    } else if (proteinFilter.getnSpectraComparison() == ComparisonType.SMALLER_THAN) {
+                        if (getNSpectra(proteinMatch) < proteinFilter.getProteinNSpectra()) {
+                            return true;
+                        }
+                    } else {
+                        if (getNSpectra(proteinMatch) == proteinFilter.getProteinNSpectra()) {
+                            return true;
+                        }
+                    }
+                }
+                if (proteinFilter.getProteinCoverage() != null) {
+                    double sequenceCoverage = 100 * estimateSequenceCoverage(proteinMatch, sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence());
+                    if (proteinFilter.getProteinCoverageComparison() == ComparisonType.BIGGER_THAN) {
+                        if (sequenceCoverage > proteinFilter.getProteinCoverage()) {
+                            return true;
+                        }
+                    } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.SMALLER_THAN) {
+                        if (sequenceCoverage < proteinFilter.getProteinCoverage()) {
+                            return true;
+                        }
+                    } else {
+                        if (sequenceCoverage == proteinFilter.getProteinCoverage()) {
+                            return true;
+                        }
+                    }
+                }
+                if (proteinFilter.getSpectrumCounting() != null) {
+                    double spectrumCounting = getSpectrumCounting(proteinMatch);
+                    if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.BIGGER_THAN) {
+                        if (spectrumCounting > proteinFilter.getSpectrumCounting()) {
+                            return true;
+                        }
+                    } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.SMALLER_THAN) {
+                        if (spectrumCounting < proteinFilter.getSpectrumCounting()) {
+                            return true;
+                        }
+                    } else {
+                        if (spectrumCounting == proteinFilter.getSpectrumCounting()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            catchException(e);
+            return false;
+        }
+    }
+
+    public boolean isValidated(String match, PeptideFilter peptideFilter) {
+        try {
+            PSParameter psParameter = new PSParameter();
+            for (String ptm : peptideFilter.getModificationStatus()) {
+                if (Peptide.isModified(match, ptm)) {
+                    return true;
+                }
+            }
+            psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+            if (psParameter.getGroupClass() == peptideFilter.getPi()) {
+                return true;
+            }
+            if (peptideFilter.getPeptideScore() != null) {
+                if (peptideFilter.getPeptideScoreComparison() == ComparisonType.BIGGER_THAN) {
+                    if (psParameter.getPeptideScore() > peptideFilter.getPeptideScore()) {
+                        return true;
+                    }
+                } else if (peptideFilter.getPeptideScoreComparison() == ComparisonType.SMALLER_THAN) {
+                    if (psParameter.getPeptideScore() < peptideFilter.getPeptideScore()) {
+                        return true;
+                    }
+                } else {
+                    if (psParameter.getPeptideScore() == peptideFilter.getPeptideScore()) {
+                        return true;
+                    }
+                }
+            }
+            if (peptideFilter.getPeptideConfidence() != null) {
+                if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.BIGGER_THAN) {
+                    if (psParameter.getPeptideConfidence() > peptideFilter.getPeptideConfidence()) {
+                        return true;
+                    }
+                } else if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.SMALLER_THAN) {
+                    if (psParameter.getPeptideConfidence() < peptideFilter.getPeptideConfidence()) {
+                        return true;
+                    }
+                } else {
+                    if (psParameter.getPeptideConfidence() == peptideFilter.getPeptideConfidence()) {
+                        return true;
+                    }
+                }
+            }
+            if (peptideFilter.getNSpectra() != null) {
+                PeptideMatch peptideMatch = identification.getPeptideMatch(match);
+                if (peptideFilter.getnSpectraComparison() == ComparisonType.BIGGER_THAN) {
+                    if (peptideMatch.getSpectrumCount() > peptideFilter.getNSpectra()) {
+                        return true;
+                    }
+                } else if (peptideFilter.getnSpectraComparison() == ComparisonType.SMALLER_THAN) {
+                    if (peptideMatch.getSpectrumCount() < peptideFilter.getNSpectra()) {
+                        return true;
+                    }
+                } else {
+                    if (peptideMatch.getSpectrumCount() == peptideFilter.getNSpectra()) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            catchException(e);
+            return false;
+        }
+    }
+
+    public boolean isValidated(String match, PsmFilter psmFilter) {
+        try {
+            PSParameter psParameter = new PSParameter();
+            if (psmFilter.getPsmScore() != null
+                    || psmFilter.getPsmConfidence() != null) {
+                psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
+
+                if (psmFilter.getPsmScore() != null) {
+                    if (psmFilter.getPsmScoreComparison() == ComparisonType.BIGGER_THAN) {
+                        if (psParameter.getPsmScore() > psmFilter.getPsmScore()) {
+                            return true;
+                        }
+                    } else if (psmFilter.getPsmScoreComparison() == ComparisonType.SMALLER_THAN) {
+                        if (psParameter.getPsmScore() < psmFilter.getPsmScore()) {
+                            return true;
+                        }
+                    } else {
+                        if (psParameter.getPsmScore() == psmFilter.getPsmScore()) {
+                            return true;
+                        }
+                    }
+                }
+                if (psmFilter.getPsmConfidence() != null) {
+                    if (psmFilter.getPsmConfidenceComparison() == ComparisonType.BIGGER_THAN) {
+                        if (psParameter.getPsmConfidence() > psmFilter.getPsmConfidence()) {
+                            return true;
+                        }
+                    } else if (psmFilter.getPsmConfidenceComparison() == ComparisonType.SMALLER_THAN) {
+                        if (psParameter.getPsmConfidence() < psmFilter.getPsmConfidence()) {
+                            return true;
+                        }
+                    } else {
+                        if (psParameter.getPsmConfidence() == psmFilter.getPsmConfidence()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            if (psmFilter.getPrecursorMz() != null
+                    || psmFilter.getPrecursorRT() != null
+                    || psmFilter.getPrecursorMzError() != null) {
+                Precursor precursor = getPrecursor(match);
+                if (psmFilter.getPrecursorMzComparison() == ComparisonType.BIGGER_THAN) {
+                    if (precursor.getMz() > psmFilter.getPrecursorMz()) {
+                        return true;
+                    }
+                } else if (psmFilter.getPrecursorMzComparison() == ComparisonType.SMALLER_THAN) {
+                    if (precursor.getMz() < psmFilter.getPrecursorMz()) {
+                        return true;
+                    }
+                } else {
+                    if (precursor.getMz() == psmFilter.getPrecursorMz()) {
+                        return true;
+                    }
+                }
+                if (psmFilter.getPrecursorRTComparison() == ComparisonType.BIGGER_THAN) {
+                    if (precursor.getRt() > psmFilter.getPrecursorRT()) {
+                        return true;
+                    }
+                } else if (psmFilter.getPrecursorRTComparison() == ComparisonType.SMALLER_THAN) {
+                    if (precursor.getRt() < psmFilter.getPrecursorRT()) {
+                        return true;
+                    }
+                } else {
+                    if (precursor.getRt() == psmFilter.getPrecursorRT()) {
+                        return true;
+                    }
+                }
+                if (psmFilter.getPrecursorMzError() != null) {
+                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(match);
+                    double error = Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), getSearchParameters().isPrecursorAccuracyTypePpm()));
+                    if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.BIGGER_THAN) {
+                        if (error > psmFilter.getPrecursorMzError()) {
+                            return true;
+                        }
+                    } else if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.SMALLER_THAN) {
+                        if (error < psmFilter.getPrecursorMzError()) {
+                            return true;
+                        }
+                    } else {
+                        if (error == psmFilter.getPrecursorMzError()) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            e.printStackTrace();
+            catchException(e);
+            return false;
+        }
+    }
+
+    public ArrayList<String> getFoundModifications() {
+        if (identifiedModifications == null) {
+            boolean modified;
+            for (String peptideKey : identification.getPeptideIdentification()) {
+
+                modified = false;
+                identifiedModifications = new ArrayList<String>();
+
+                for (String modificationName : Peptide.getModificationFamily(peptideKey)) {
+
+                    if (!identifiedModifications.contains(modificationName)) {
+                        identifiedModifications.add(modificationName);
+                        modified = true;
+                    }
+                }
+                if (!modified) {
+                    identifiedModifications.add(PtmPanel.NO_MODIFICATION);
+                }
+            }
+        }
+        return identifiedModifications;
+    }
+
+    public ArrayList<Integer> getSearchedCharges() {
+        //@TODO: use search parameters input
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        result.add(2);
+        result.add(3);
+        result.add(4);
+        return result;
     }
 
     /**
