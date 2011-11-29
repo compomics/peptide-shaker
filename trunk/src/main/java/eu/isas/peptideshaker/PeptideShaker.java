@@ -540,11 +540,11 @@ public class PeptideShaker {
                     }
                 }
                 double pMin = Collections.min(identifications.values());
+                bestAssumption = peptideAssumptions.get(pMin);
+                spectrumMatch.setBestAssumption(bestAssumption);
                 psParameter.setSpectrumProbabilityScore(pScore);
                 psParameter.setSecificMapKey(psmMap.getKey(spectrumMatch) + "");
                 identification.addMatchParameter(spectrumKey, psParameter);
-                bestAssumption = peptideAssumptions.get(pMin);
-                spectrumMatch.setBestAssumption(bestAssumption);
                 identification.setMatchChanged(spectrumMatch);
                 if (Peptide.isModified(bestAssumption.getPeptide().getKey())) {
                     modifiedPsms.add(spectrumKey);
