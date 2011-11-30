@@ -4419,7 +4419,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     exportSpectrumJButton.setEnabled(true);
                     exportSequenceCoverageContextJButton.setEnabled(true);
 
-                    peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX);
+                    peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, true);
 
                     updateSelection();
 

@@ -87,7 +87,7 @@ public class FileImporter {
     /**
      * db processing disabled only while testing
      */
-    boolean testing = true;
+    boolean testing = false;
 
     /**
      * Constructor for the importer
@@ -441,17 +441,16 @@ public class FileImporter {
 
             int nTotal = 0;
             int nRetained = 0;
-                ArrayList<String> mgfUsed = new ArrayList<String>();
+            ArrayList<String> mgfUsed = new ArrayList<String>();
 
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             importSequences(waitingDialog, proteomicAnalysis, fastaFile, idFilter, searchParameters);
-
+            
             try {
 
                 PeptideShaker.setPeptideShakerPTMs(searchParameters);
                 waitingDialog.appendReport("Reading identification files.");
                 InputMap inputMap = new InputMap();
-
 
                 for (File idFile : idFiles) {
 
@@ -473,7 +472,6 @@ public class FileImporter {
                     PeptideAssumption firstHit;
 
                     while (matchIt.hasNext()) {
-
 
                         match = matchIt.next();
                         nTotal++;
@@ -571,7 +569,6 @@ public class FileImporter {
          */
         public void importSpectra(WaitingDialog waitingDialog, String targetFileName, SearchParameters searchParameters) {
 
-
             File spectrumFile = spectrumFiles.get(targetFileName);
             
             if (spectrumFile == null) {
@@ -639,8 +636,6 @@ public class FileImporter {
                 waitingDialog.appendReport("Spectrum files import failed when trying to import " + targetFileName + ".");
                 e.printStackTrace();
             }
-
         }
     }
-
 }

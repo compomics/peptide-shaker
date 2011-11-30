@@ -28,7 +28,6 @@ import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.fileimport.FileImporter;
-import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
@@ -137,15 +136,17 @@ public class PeptideShaker {
     /**
      * Method used to import identification from identification result files
      *
-     * @param waitingDialog     A dialog to display the feedback
-     * @param idFilter          The identification filter to use
-     * @param idFiles           The files to import
-     * @param spectrumFiles     The corresponding spectra (can be empty: spectra will not be loaded)
-     * @param fastaFile         The database file in the fasta format
-     * @param searchParameters  The search parameters
-     * @param annotationPreferences the annotation preferences to use for PTM scoring
+     * @param waitingDialog         A dialog to display the feedback
+     * @param idFilter              The identification filter to use
+     * @param idFiles               The files to import
+     * @param spectrumFiles         The corresponding spectra (can be empty: spectra will not be loaded)
+     * @param fastaFile             The database file in the fasta format
+     * @param searchParameters      The search parameters
+     * @param annotationPreferences The annotation preferences to use for PTM scoring
+     * @param projectDetails        The project details
      */
-    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails) {
+    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, 
+            File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails) {
 
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification());

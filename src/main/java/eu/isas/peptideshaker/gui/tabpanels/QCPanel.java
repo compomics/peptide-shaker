@@ -1063,7 +1063,7 @@ public class QCPanel extends javax.swing.JPanel {
                 exportPeptidesPlotJButton.setEnabled(true);
                 exportProteinsPlotJButton.setEnabled(true);
                 
-                peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX);
+                peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, true);
 
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
