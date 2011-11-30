@@ -562,6 +562,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         spectrumCountingMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
         exportJMenu = new javax.swing.JMenu();
@@ -1126,8 +1127,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu.add(spectrumCountingMenuItem);
         editMenu.add(jSeparator12);
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem2.setText("Find...");
+        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem1.setText("Jump to");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        editMenu.add(jMenuItem1);
+
+        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItem2.setText("Find");
         editMenu.add(jMenuItem2);
 
         jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
@@ -2498,6 +2508,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         new FiltersDialog(this);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        new JumpToDialog(this);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
@@ -2644,6 +2658,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
+    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
@@ -3223,6 +3238,20 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         this.selectedProteinKey = proteinKey;
         this.selectedPeptideKey = peptideKey;
         this.selectedPsmKey = psmKey;
+    }
+    
+    public void updateSelectionInCurrentTab() {
+        
+            int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
+            if (selectedIndex == OVER_VIEW_TAB_INDEX) {
+                    overviewPanel.updateSelection();
+            } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
+                    proteinStructurePanel.updateSelection();
+            } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
+                    spectrumIdentificationPanel.updateSelection();
+            } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
+                    ptmPanel.updateSelection();
+            }
     }
 
     /**
