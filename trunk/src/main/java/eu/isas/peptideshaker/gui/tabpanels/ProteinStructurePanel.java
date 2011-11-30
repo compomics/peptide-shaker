@@ -2760,12 +2760,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     exportPdbMatchesJButton.setEnabled(true);
                     exportPdbChainsJButton.setEnabled(true);
                     
-                    updateSelection();
-
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
+                    
+                    updateSelection();
 
-                    peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX);
+                    peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, true);
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 

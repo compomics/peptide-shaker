@@ -34,9 +34,7 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
-import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.MatchFilter.ComparisonType;
-import eu.isas.peptideshaker.filtering.MatchFilter.FilterType;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
@@ -1716,7 +1714,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 } else {
                     proteinStructurePanel.updateSelection();
                 }
-            } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX) {
+            } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX
+                    && updateNeeded.get(GO_ANALYSIS_TAB_INDEX)) {
                 goPanel.displayResults();
                 // @TODO: set species from cps file? 
                 // @TODO: reload GO enrichment tab if hidden selection is changed!
@@ -5114,11 +5113,19 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     /**
      * Sets that the tab was updated
      * @param tabIndex integer indicating which tab (according to the static indexing) was updated.
+     * @param updated boolean indicating wheter the tab is updated or not 
      */
-    public void setUpdated(int tabIndex) {
-        updateNeeded.put(tabIndex, false);
+    public void setUpdated(int tabIndex, boolean updated) {
+        updateNeeded.put(tabIndex, !updated);
+        
+        if (!updated) {
+            allTabsJTabbedPaneStateChanged(null);
+        }
     }
 
+    /**
+     * Set up the initial filters.
+     */
     public void setUpInitialFilters() {
         Enzyme enzyme = searchParameters.getEnzyme();
         ProteinFilter proteinFilter = new ProteinFilter(enzyme.getName());
@@ -5126,15 +5133,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         proteinFilter.setDescription("Hides " + enzyme.getName() + " related proteins.");
         filterPreferences.getProteinHideFilters().put(proteinFilter.getName(), proteinFilter);
         starHide();
-    }
-
-    /**
-     * Sets that a tab needs update
-     * @param tabIndex index of the tab to update
-     */
-    public void setUpdateNeeded(int tabIndex) {
-        updateNeeded.put(tabIndex, true);
-        allTabsJTabbedPaneStateChanged(null);
     }
 
     public void starHide() {
@@ -5500,9 +5498,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 return true;
             }
             for (String accession : ProteinMatch.getAccessions(match)) {
-            if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(proteinFilter.getProteinDescription().toLowerCase())) {
-                return true;
-            }
+                if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(proteinFilter.getProteinDescription().toLowerCase())) {
+                    return true;
+                }
             }
             PSParameter psParameter = new PSParameter();
             psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);

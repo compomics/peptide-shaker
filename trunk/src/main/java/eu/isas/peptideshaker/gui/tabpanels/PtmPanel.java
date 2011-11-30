@@ -2953,7 +2953,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 selectedPeptidesJSplitPane.setDividerLocation(0.5);
                 relatedPeptidesJSplitPane.setDividerLocation(0.5);
 
-                peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX);
+                peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, true);
 
                 if (currentPtmRow != -1) {
                     updatePeptideTable();

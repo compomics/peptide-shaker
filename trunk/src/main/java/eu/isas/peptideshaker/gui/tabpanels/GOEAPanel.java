@@ -330,7 +330,11 @@ public class GOEAPanel extends javax.swing.JPanel {
         if (peptideShakerGUI.getIdentification() != null) {
 
             String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
-            selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
+            
+            if (selectedSpecies.indexOf("[") != -1) {
+                selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
+            }
+            
             String speciesDatabase = speciesMap.get(selectedSpecies);
             String goMappingsPath = mappingsFolderPath + speciesDatabase;
 
@@ -657,6 +661,8 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                             progressDialog.setVisible(false);
                             progressDialog.dispose();
+                            
+                            peptideShakerGUI.setUpdated(PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX, true);
 
                             // return the peptide shaker icon to the standard version
                             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));

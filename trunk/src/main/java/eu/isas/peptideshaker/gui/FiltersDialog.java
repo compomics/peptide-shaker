@@ -1,14 +1,11 @@
 package eu.isas.peptideshaker.gui;
 
 import eu.isas.peptideshaker.filtering.MatchFilter;
-import eu.isas.peptideshaker.filtering.MatchFilter.FilterType;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
-import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -750,9 +747,9 @@ public class FiltersDialog extends javax.swing.JDialog {
         peptideShakerGUI.getFilterPreferences().setPsmHideFilters(psmHideFilters);
         setVisible(false);
         dispose();
-        peptideShakerGUI.setUpdateNeeded(PeptideShakerGUI.OVER_VIEW_TAB_INDEX);
-        peptideShakerGUI.setUpdateNeeded(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX);
-        peptideShakerGUI.setUpdateNeeded(PeptideShakerGUI.STRUCTURES_TAB_INDEX);
+        peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
+        peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
+        peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void starredProteinsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_starredProteinsTableKeyReleased
