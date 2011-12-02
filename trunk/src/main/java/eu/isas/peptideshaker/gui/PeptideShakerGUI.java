@@ -3226,15 +3226,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the protein table from the overview panel.
-     * 
-     * @return the protein table from the overview panel
-     */
-    public JTable getOverviewProteinTable() {
-        return overviewPanel.getProteinTable();
-    }
-
-    /**
      * Sets the keys of the selected protein, peptide and PSM
      * @param proteinKey    the key of the selected protein
      * @param peptideKey    the key of the selected peptide

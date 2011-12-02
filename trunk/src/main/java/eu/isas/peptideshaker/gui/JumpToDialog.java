@@ -11,6 +11,7 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import java.util.ArrayList;
 
@@ -124,7 +125,7 @@ public class JumpToDialog extends javax.swing.JDialog {
         });
 
         xofxLbl.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
-        xofxLbl.setText("xxx of xxx");
+        xofxLbl.setText(" ");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -162,7 +163,7 @@ public class JumpToDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(59, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -179,6 +180,9 @@ public class JumpToDialog extends javax.swing.JDialog {
         types = new ArrayList<Type>();
         String input = inputTxt.getText().trim().toLowerCase();
         if (!input.equals("")) {
+            
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+            
             for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                 if (!ProteinMatch.isDecoy(proteinKey) && proteinKey.toLowerCase().contains(input)) {
                     possibilities.add(proteinKey);
@@ -186,17 +190,22 @@ public class JumpToDialog extends javax.swing.JDialog {
                 }
             }
             ArrayList<String> secondaryCandidates = new ArrayList<String>();
+            PeptideMatch peptideMatch;
             for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
                 if (peptideKey.toLowerCase().startsWith(input)) {
-                    possibilities.add(peptideKey);
-                    types.add(Type.PEPTIDE);
                 } else if (peptideKey.toLowerCase().contains(input)) {
                     secondaryCandidates.add(peptideKey);
                 }
             }
             for (String secondaryCandidate : secondaryCandidates) {
-                possibilities.add(secondaryCandidate);
-                types.add(Type.PEPTIDE);
+                peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(secondaryCandidate);
+                for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                    if (!ProteinMatch.isDecoy(protein)) {
+                        possibilities.add(secondaryCandidate);
+                        types.add(Type.PEPTIDE);
+                        break;
+                    }
+                }
             }
             if (possibilities.size() > 1) {
                 previousButton.setEnabled(true);
@@ -206,6 +215,9 @@ public class JumpToDialog extends javax.swing.JDialog {
                 nextButton.setEnabled(false);
             }
             updateSelectionInTab();
+
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            
         } else {
             xofxLbl.setText("");
             previousButton.setEnabled(false);
