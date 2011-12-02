@@ -34,7 +34,6 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
-import eu.isas.peptideshaker.filtering.MatchFilter.ComparisonType;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
@@ -99,6 +98,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.RowFilter.ComparisonType;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableColumnModel;
@@ -1136,6 +1136,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem2.setText("Find");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         editMenu.add(jMenuItem2);
 
         jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
@@ -1834,8 +1839,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         }
 
-        clearData();
-
         JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
         fileChooser.setDialogTitle("Open PeptideShaker Project");
 
@@ -2510,6 +2513,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         new JumpToDialog(this);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        new FindDialog(this);
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
@@ -4508,7 +4515,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
             ptm = ptmFactory.getPTM(modifications.get(i).getTheoreticPtm());
 
-            if (ptm.getType() == PTM.MODAA && modifications.get(i).isVariable()) { // @TODO: should only PTM.MODAA be included??
+            if (ptm.getType() == PTM.MODAA && modifications.get(i).isVariable()) {
 
                 int modSite = modifications.get(i).getModificationSite();
                 String modName = modifications.get(i).getTheoreticPtm();
@@ -5129,7 +5136,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void setUpInitialFilters() {
         Enzyme enzyme = searchParameters.getEnzyme();
         ProteinFilter proteinFilter = new ProteinFilter(enzyme.getName());
-        proteinFilter.setProteinDescription(enzyme.getName());
+        proteinFilter.setDescriptionRegex(enzyme.getName());
         proteinFilter.setDescription("Hides " + enzyme.getName() + " related proteins.");
         filterPreferences.getProteinHideFilters().put(proteinFilter.getName(), proteinFilter);
         starHide();
@@ -5498,7 +5505,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 return true;
             }
             for (String accession : ProteinMatch.getAccessions(match)) {
-                if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(proteinFilter.getProteinDescription().toLowerCase())) {
+                String test = "test" + sequenceFactory.getHeader(accession).getDescription().toLowerCase() + "test";
+                if (test.split(proteinFilter.getDescriptionRegex().toLowerCase()).length > 1) {
                     return true;
                 }
             }
@@ -5508,30 +5516,30 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 return true;
             }
             if (proteinFilter.getProteinScore() != null) {
-                if (proteinFilter.getProteinScoreComparison() == ComparisonType.BIGGER_THAN) {
+                if (proteinFilter.getProteinScoreComparison() == ComparisonType.AFTER) {
                     if (psParameter.getProteinScore() > proteinFilter.getProteinScore()) {
                         return true;
                     }
-                } else if (proteinFilter.getProteinScoreComparison() == ComparisonType.SMALLER_THAN) {
+                } else if (proteinFilter.getProteinScoreComparison() == ComparisonType.BEFORE) {
                     if (psParameter.getProteinScore() < proteinFilter.getProteinScore()) {
                         return true;
                     }
-                } else {
+                } else if (proteinFilter.getProteinScoreComparison() == ComparisonType.EQUAL) {
                     if (psParameter.getProteinScore() == proteinFilter.getProteinScore()) {
                         return true;
                     }
                 }
             }
             if (proteinFilter.getProteinConfidence() != null) {
-                if (proteinFilter.getProteinConfidenceComparison() == ComparisonType.BIGGER_THAN) {
+                if (proteinFilter.getProteinConfidenceComparison() == ComparisonType.AFTER) {
                     if (psParameter.getProteinConfidence() > proteinFilter.getProteinConfidence()) {
                         return true;
                     }
-                } else if (proteinFilter.getProteinConfidenceComparison() == ComparisonType.SMALLER_THAN) {
+                } else if (proteinFilter.getProteinConfidenceComparison() == ComparisonType.BEFORE) {
                     if (psParameter.getProteinConfidence() < proteinFilter.getProteinConfidence()) {
                         return true;
                     }
-                } else {
+                } else if (proteinFilter.getProteinConfidenceComparison() == ComparisonType.EQUAL) {
                     if (psParameter.getProteinConfidence() == proteinFilter.getProteinConfidence()) {
                         return true;
                     }
@@ -5544,30 +5552,30 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 ProteinMatch proteinMatch = identification.getProteinMatch(match);
 
                 if (proteinFilter.getnPeptides() != null) {
-                    if (proteinFilter.getnPeptidesComparison() == ComparisonType.BIGGER_THAN) {
+                    if (proteinFilter.getnPeptidesComparison() == ComparisonType.AFTER) {
                         if (proteinMatch.getPeptideMatches().size() > proteinFilter.getnPeptides()) {
                             return true;
                         }
-                    } else if (proteinFilter.getnPeptidesComparison() == ComparisonType.SMALLER_THAN) {
+                    } else if (proteinFilter.getnPeptidesComparison() == ComparisonType.BEFORE) {
                         if (proteinMatch.getPeptideMatches().size() < proteinFilter.getnPeptides()) {
                             return true;
                         }
-                    } else {
+                } else if (proteinFilter.getnPeptidesComparison() == ComparisonType.EQUAL) {
                         if (proteinMatch.getPeptideMatches().size() == proteinFilter.getnPeptides()) {
                             return true;
                         }
                     }
                 }
                 if (proteinFilter.getProteinNSpectra() != null) {
-                    if (proteinFilter.getnSpectraComparison() == ComparisonType.BIGGER_THAN) {
+                    if (proteinFilter.getnSpectraComparison() == ComparisonType.AFTER) {
                         if (getNSpectra(proteinMatch) > proteinFilter.getProteinNSpectra()) {
                             return true;
                         }
-                    } else if (proteinFilter.getnSpectraComparison() == ComparisonType.SMALLER_THAN) {
+                    } else if (proteinFilter.getnSpectraComparison() == ComparisonType.BEFORE) {
                         if (getNSpectra(proteinMatch) < proteinFilter.getProteinNSpectra()) {
                             return true;
                         }
-                    } else {
+                } else if (proteinFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
                         if (getNSpectra(proteinMatch) == proteinFilter.getProteinNSpectra()) {
                             return true;
                         }
@@ -5575,15 +5583,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 }
                 if (proteinFilter.getProteinCoverage() != null) {
                     double sequenceCoverage = 100 * estimateSequenceCoverage(proteinMatch, sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence());
-                    if (proteinFilter.getProteinCoverageComparison() == ComparisonType.BIGGER_THAN) {
+                    if (proteinFilter.getProteinCoverageComparison() == ComparisonType.AFTER) {
                         if (sequenceCoverage > proteinFilter.getProteinCoverage()) {
                             return true;
                         }
-                    } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.SMALLER_THAN) {
+                    } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.BEFORE) {
                         if (sequenceCoverage < proteinFilter.getProteinCoverage()) {
                             return true;
                         }
-                    } else {
+                } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.EQUAL) {
                         if (sequenceCoverage == proteinFilter.getProteinCoverage()) {
                             return true;
                         }
@@ -5591,15 +5599,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 }
                 if (proteinFilter.getSpectrumCounting() != null) {
                     double spectrumCounting = getSpectrumCounting(proteinMatch);
-                    if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.BIGGER_THAN) {
+                    if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.AFTER) {
                         if (spectrumCounting > proteinFilter.getSpectrumCounting()) {
                             return true;
                         }
-                    } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.SMALLER_THAN) {
+                    } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.BEFORE) {
                         if (spectrumCounting < proteinFilter.getSpectrumCounting()) {
                             return true;
                         }
-                    } else {
+                } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.EQUAL) {
                         if (spectrumCounting == proteinFilter.getSpectrumCounting()) {
                             return true;
                         }
@@ -5627,30 +5635,30 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 return true;
             }
             if (peptideFilter.getPeptideScore() != null) {
-                if (peptideFilter.getPeptideScoreComparison() == ComparisonType.BIGGER_THAN) {
+                if (peptideFilter.getPeptideScoreComparison() == ComparisonType.AFTER) {
                     if (psParameter.getPeptideScore() > peptideFilter.getPeptideScore()) {
                         return true;
                     }
-                } else if (peptideFilter.getPeptideScoreComparison() == ComparisonType.SMALLER_THAN) {
+                } else if (peptideFilter.getPeptideScoreComparison() == ComparisonType.BEFORE) {
                     if (psParameter.getPeptideScore() < peptideFilter.getPeptideScore()) {
                         return true;
                     }
-                } else {
+                } else if (peptideFilter.getPeptideScoreComparison() == ComparisonType.EQUAL) {
                     if (psParameter.getPeptideScore() == peptideFilter.getPeptideScore()) {
                         return true;
                     }
                 }
             }
             if (peptideFilter.getPeptideConfidence() != null) {
-                if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.BIGGER_THAN) {
+                if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.AFTER) {
                     if (psParameter.getPeptideConfidence() > peptideFilter.getPeptideConfidence()) {
                         return true;
                     }
-                } else if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.SMALLER_THAN) {
+                } else if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.BEFORE) {
                     if (psParameter.getPeptideConfidence() < peptideFilter.getPeptideConfidence()) {
                         return true;
                     }
-                } else {
+                } else if (peptideFilter.getPeptideConfidenceComparison() == ComparisonType.EQUAL) {
                     if (psParameter.getPeptideConfidence() == peptideFilter.getPeptideConfidence()) {
                         return true;
                     }
@@ -5658,15 +5666,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             }
             if (peptideFilter.getNSpectra() != null) {
                 PeptideMatch peptideMatch = identification.getPeptideMatch(match);
-                if (peptideFilter.getnSpectraComparison() == ComparisonType.BIGGER_THAN) {
+                if (peptideFilter.getnSpectraComparison() == ComparisonType.AFTER) {
                     if (peptideMatch.getSpectrumCount() > peptideFilter.getNSpectra()) {
                         return true;
                     }
-                } else if (peptideFilter.getnSpectraComparison() == ComparisonType.SMALLER_THAN) {
+                } else if (peptideFilter.getnSpectraComparison() == ComparisonType.BEFORE) {
                     if (peptideMatch.getSpectrumCount() < peptideFilter.getNSpectra()) {
                         return true;
                     }
-                } else {
+                } else if (peptideFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
                     if (peptideMatch.getSpectrumCount() == peptideFilter.getNSpectra()) {
                         return true;
                     }
@@ -5688,30 +5696,30 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 psParameter = (PSParameter) identification.getMatchParameter(match, psParameter);
 
                 if (psmFilter.getPsmScore() != null) {
-                    if (psmFilter.getPsmScoreComparison() == ComparisonType.BIGGER_THAN) {
+                    if (psmFilter.getPsmScoreComparison() == ComparisonType.AFTER) {
                         if (psParameter.getPsmScore() > psmFilter.getPsmScore()) {
                             return true;
                         }
-                    } else if (psmFilter.getPsmScoreComparison() == ComparisonType.SMALLER_THAN) {
+                    } else if (psmFilter.getPsmScoreComparison() == ComparisonType.BEFORE) {
                         if (psParameter.getPsmScore() < psmFilter.getPsmScore()) {
                             return true;
                         }
-                    } else {
+                } else if (psmFilter.getPsmScoreComparison() == ComparisonType.EQUAL) {
                         if (psParameter.getPsmScore() == psmFilter.getPsmScore()) {
                             return true;
                         }
                     }
                 }
                 if (psmFilter.getPsmConfidence() != null) {
-                    if (psmFilter.getPsmConfidenceComparison() == ComparisonType.BIGGER_THAN) {
+                    if (psmFilter.getPsmConfidenceComparison() == ComparisonType.AFTER) {
                         if (psParameter.getPsmConfidence() > psmFilter.getPsmConfidence()) {
                             return true;
                         }
-                    } else if (psmFilter.getPsmConfidenceComparison() == ComparisonType.SMALLER_THAN) {
+                    } else if (psmFilter.getPsmConfidenceComparison() == ComparisonType.BEFORE) {
                         if (psParameter.getPsmConfidence() < psmFilter.getPsmConfidence()) {
                             return true;
                         }
-                    } else {
+                } else if (psmFilter.getPsmConfidenceComparison() == ComparisonType.EQUAL) {
                         if (psParameter.getPsmConfidence() == psmFilter.getPsmConfidence()) {
                             return true;
                         }
@@ -5722,28 +5730,28 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     || psmFilter.getPrecursorRT() != null
                     || psmFilter.getPrecursorMzError() != null) {
                 Precursor precursor = getPrecursor(match);
-                if (psmFilter.getPrecursorMzComparison() == ComparisonType.BIGGER_THAN) {
+                if (psmFilter.getPrecursorMzComparison() == ComparisonType.AFTER) {
                     if (precursor.getMz() > psmFilter.getPrecursorMz()) {
                         return true;
                     }
-                } else if (psmFilter.getPrecursorMzComparison() == ComparisonType.SMALLER_THAN) {
+                } else if (psmFilter.getPrecursorMzComparison() == ComparisonType.BEFORE) {
                     if (precursor.getMz() < psmFilter.getPrecursorMz()) {
                         return true;
                     }
-                } else {
+                } else if (psmFilter.getPrecursorMzComparison() == ComparisonType.EQUAL) {
                     if (precursor.getMz() == psmFilter.getPrecursorMz()) {
                         return true;
                     }
                 }
-                if (psmFilter.getPrecursorRTComparison() == ComparisonType.BIGGER_THAN) {
+                if (psmFilter.getPrecursorRTComparison() == ComparisonType.AFTER) {
                     if (precursor.getRt() > psmFilter.getPrecursorRT()) {
                         return true;
                     }
-                } else if (psmFilter.getPrecursorRTComparison() == ComparisonType.SMALLER_THAN) {
+                } else if (psmFilter.getPrecursorRTComparison() == ComparisonType.BEFORE) {
                     if (precursor.getRt() < psmFilter.getPrecursorRT()) {
                         return true;
                     }
-                } else {
+                } else if (psmFilter.getPrecursorRTComparison() == ComparisonType.EQUAL) {
                     if (precursor.getRt() == psmFilter.getPrecursorRT()) {
                         return true;
                     }
@@ -5751,15 +5759,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 if (psmFilter.getPrecursorMzError() != null) {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(match);
                     double error = Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), getSearchParameters().isPrecursorAccuracyTypePpm()));
-                    if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.BIGGER_THAN) {
+                    if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.AFTER) {
                         if (error > psmFilter.getPrecursorMzError()) {
                             return true;
                         }
-                    } else if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.SMALLER_THAN) {
+                    } else if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.BEFORE) {
                         if (error < psmFilter.getPrecursorMzError()) {
                             return true;
                         }
-                    } else {
+                } else if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.EQUAL) {
                         if (error == psmFilter.getPrecursorMzError()) {
                             return true;
                         }
@@ -5777,10 +5785,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public ArrayList<String> getFoundModifications() {
         if (identifiedModifications == null) {
             boolean modified;
+                identifiedModifications = new ArrayList<String>();
             for (String peptideKey : identification.getPeptideIdentification()) {
 
                 modified = false;
-                identifiedModifications = new ArrayList<String>();
 
                 for (String modificationName : Peptide.getModificationFamily(peptideKey)) {
 
@@ -5789,7 +5797,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         modified = true;
                     }
                 }
-                if (!modified) {
+                if (!modified && !identifiedModifications.contains(PtmPanel.NO_MODIFICATION)) {
                     identifiedModifications.add(PtmPanel.NO_MODIFICATION);
                 }
             }

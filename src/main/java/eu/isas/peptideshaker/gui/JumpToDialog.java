@@ -12,31 +12,75 @@ package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import java.util.ArrayList;
 
 /**
  *
  * @author vaudel
  */
 public class JumpToDialog extends javax.swing.JDialog {
-    
+
     /**
      * Instance of the main GUI class
      */
     private PeptideShakerGUI peptideShakerGUI;
+    /**
+     * Items matching the criterion
+     */
+    private ArrayList<String> possibilities = new ArrayList<String>();
+    /**
+     * currently selected item
+     */
+    private int currentSelection = 0;
+
+    /**
+     * Type of item selected
+     */
+    private enum Type {
+
+        PROTEIN,
+        PEPTIDE
+    }
+    /**
+     * Type of each possible item
+     */
+    private ArrayList<Type> types = new ArrayList<Type>();
 
     /** Creates new form JumpToDialog */
     public JumpToDialog(PeptideShakerGUI peptideShakerGUI) {
         super(peptideShakerGUI, true);
         initComponents();
-        
+
         this.peptideShakerGUI = peptideShakerGUI;
-        
+
         if (!peptideShakerGUI.getSelectedProteinKey().equals(PeptideShakerGUI.NO_SELECTION)) {
             inputTxt.setText(peptideShakerGUI.getSelectedProteinKey());
+            possibilities.add(peptideShakerGUI.getSelectedProteinKey());
+            types.add(Type.PROTEIN);
         } else if (!peptideShakerGUI.getSelectedPeptideKey().equals(PeptideShakerGUI.NO_SELECTION)) {
             inputTxt.setText(Peptide.getSequence(peptideShakerGUI.getSelectedPeptideKey()));
+            possibilities.add(peptideShakerGUI.getSelectedPeptideKey());
+            types.add(Type.PEPTIDE);
+        } else {
+            xofxLbl.setText("");
+            previousButton.setEnabled(false);
+            nextButton.setEnabled(false);
         }
         setVisible(true);
+    }
+
+    /**
+     * Updates the item selection in the selected tab
+     */
+    public void updateSelectionInTab() {
+        if (types.get(currentSelection) == Type.PROTEIN) {
+            peptideShakerGUI.setSelectedItems(possibilities.get(currentSelection), PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+            peptideShakerGUI.updateSelectionInCurrentTab();
+        } else {
+            peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, possibilities.get(currentSelection), PeptideShakerGUI.NO_SELECTION);
+            peptideShakerGUI.updateSelectionInCurrentTab();
+        }
+        xofxLbl.setText(currentSelection + 1 + " of " + possibilities.size());
     }
 
     /** This method is called from within the constructor to
@@ -51,7 +95,9 @@ public class JumpToDialog extends javax.swing.JDialog {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         inputTxt = new javax.swing.JTextField();
-        closeButton = new javax.swing.JButton();
+        previousButton = new javax.swing.JButton();
+        nextButton = new javax.swing.JButton();
+        xofxLbl = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -63,12 +109,22 @@ public class JumpToDialog extends javax.swing.JDialog {
             }
         });
 
-        closeButton.setText("close");
-        closeButton.addActionListener(new java.awt.event.ActionListener() {
+        previousButton.setText("<");
+        previousButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                closeButtonActionPerformed(evt);
+                previousButtonActionPerformed(evt);
             }
         });
+
+        nextButton.setText(">");
+        nextButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nextButtonActionPerformed(evt);
+            }
+        });
+
+        xofxLbl.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        xofxLbl.setText("xxx of xxx");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -78,9 +134,13 @@ public class JumpToDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(inputTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(inputTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(closeButton)
+                .addComponent(xofxLbl)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(previousButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(nextButton)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -90,7 +150,9 @@ public class JumpToDialog extends javax.swing.JDialog {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(inputTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(closeButton))
+                    .addComponent(xofxLbl)
+                    .addComponent(nextButton)
+                    .addComponent(previousButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -98,51 +160,82 @@ public class JumpToDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
-        dispose();
-    }//GEN-LAST:event_closeButtonActionPerformed
-
     private void inputTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputTxtKeyReleased
+        possibilities = new ArrayList<String>();
+        types = new ArrayList<Type>();
         String input = inputTxt.getText().trim().toLowerCase();
         if (!input.equals("")) {
             for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                 if (!ProteinMatch.isDecoy(proteinKey) && proteinKey.toLowerCase().contains(input)) {
-                    peptideShakerGUI.setSelectedItems(proteinKey, PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
-                    peptideShakerGUI.updateSelectionInCurrentTab();
-                    return;
+                    possibilities.add(proteinKey);
+                    types.add(Type.PROTEIN);
                 }
             }
-            String secondaryCandidate = "";
+            ArrayList<String> secondaryCandidates = new ArrayList<String>();
             for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
                 if (peptideKey.toLowerCase().startsWith(input)) {
-                    peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, peptideKey, PeptideShakerGUI.NO_SELECTION);
-                    peptideShakerGUI.updateSelectionInCurrentTab();
-                    return;
+                    possibilities.add(peptideKey);
+                    types.add(Type.PEPTIDE);
                 } else if (peptideKey.toLowerCase().contains(input)) {
-                    secondaryCandidate = peptideKey;
+                    secondaryCandidates.add(peptideKey);
                 }
             }
-            if (!secondaryCandidate.equals("")) {
-                    peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, secondaryCandidate, PeptideShakerGUI.NO_SELECTION);
-                    peptideShakerGUI.updateSelectionInCurrentTab();
+            for (String secondaryCandidate : secondaryCandidates) {
+                possibilities.add(secondaryCandidate);
+                types.add(Type.PEPTIDE);
             }
+            if (possibilities.size() > 1) {
+                previousButton.setEnabled(true);
+                nextButton.setEnabled(true);
+            } else {
+                previousButton.setEnabled(false);
+                nextButton.setEnabled(false);
+            }
+            updateSelectionInTab();
+        } else {
+            xofxLbl.setText("");
+            previousButton.setEnabled(false);
+            nextButton.setEnabled(false);
         }
     }//GEN-LAST:event_inputTxtKeyReleased
 
+    private void previousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousButtonActionPerformed
+        if (currentSelection == 0) {
+            currentSelection = possibilities.size() - 1;
+        } else {
+            currentSelection--;
+        }
+        updateSelectionInTab();
+    }//GEN-LAST:event_previousButtonActionPerformed
+
+    private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
+        if (currentSelection == possibilities.size() - 1) {
+            currentSelection = 0;
+        } else {
+            currentSelection++;
+        }
+        updateSelectionInTab();
+    }//GEN-LAST:event_nextButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton closeButton;
     private javax.swing.JTextField inputTxt;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JButton nextButton;
+    private javax.swing.JButton previousButton;
+    private javax.swing.JLabel xofxLbl;
     // End of variables declaration//GEN-END:variables
 }

@@ -8,6 +8,7 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.IdentificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import java.util.ArrayList;
+import javax.swing.RowFilter.ComparisonType;
 
 /**
  * Peptide Filter
@@ -15,6 +16,11 @@ import java.util.ArrayList;
  * @author marc
  */
 public class PeptideFilter extends MatchFilter {
+
+    /**
+     * Serial number for serialization compatibility
+     */
+    static final long serialVersionUID = 959658989341486818L;
     /**
      * Number of spectra limit
      */
@@ -47,7 +53,7 @@ public class PeptideFilter extends MatchFilter {
      * The list of modifications allowed for the peptide
      */
     private ArrayList<String> modificationStatus;
-    
+
     /**
      * Constructor
      * @param name the name of the filter
@@ -186,6 +192,4 @@ public class PeptideFilter extends MatchFilter {
     public void setModificationStatus(ArrayList<String> modificationStatus) {
         this.modificationStatus = modificationStatus;
     }
-
-    
 }

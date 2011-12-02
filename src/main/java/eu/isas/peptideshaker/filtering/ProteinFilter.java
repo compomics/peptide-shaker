@@ -5,6 +5,7 @@
 package eu.isas.peptideshaker.filtering;
 
 import java.util.ArrayList;
+import javax.swing.RowFilter.ComparisonType;
 
 /**
  * Protein Filter
@@ -12,10 +13,15 @@ import java.util.ArrayList;
  * @author marc
  */
 public class ProteinFilter extends MatchFilter {
+
     /**
-     * Contained in the description
+     * Serial number for serialization compatibility
      */
-    private String proteinDescription = "";
+    static final long serialVersionUID = 5753850468907866679L;
+    /**
+     * regex in the description
+     */
+    private String descriptionRegex = "";
     /**
      * protein coverage limit
      */
@@ -68,7 +74,7 @@ public class ProteinFilter extends MatchFilter {
      * The current protein inference filter selection.
      */
     private int pi = 5;
-    
+
     /**
      * Constructor
      * @param name the name of the filter
@@ -126,21 +132,21 @@ public class ProteinFilter extends MatchFilter {
     public void setProteinCoverage(Double proteinCoverage) {
         this.proteinCoverage = proteinCoverage;
     }
-    
+
     /**
      * Returns the protein description
      * @return the protein description
      */
-    public String getProteinDescription() {
-        return proteinDescription;
+    public String getDescriptionRegex() {
+        return descriptionRegex;
     }
 
     /**
      * Sets the protein description
-     * @param proteinDescription the protein description
+     * @param descriptionRegex the protein description
      */
-    public void setProteinDescription(String proteinDescription) {
-        this.proteinDescription = proteinDescription;
+    public void setDescriptionRegex(String descriptionRegex) {
+        this.descriptionRegex = descriptionRegex;
     }
 
     /**

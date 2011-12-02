@@ -5,6 +5,7 @@
 package eu.isas.peptideshaker.filtering;
 
 import java.util.ArrayList;
+import javax.swing.RowFilter.ComparisonType;
 
 /**
  * PSM filter
@@ -12,6 +13,11 @@ import java.util.ArrayList;
  * @author marc
  */
 public class PsmFilter extends MatchFilter {
+
+    /**
+     * Serial number for serialization compatibility
+     */
+    static final long serialVersionUID = 2930349531911042645L;
     /**
      * The charges allowed
      */
@@ -56,7 +62,7 @@ public class PsmFilter extends MatchFilter {
      * The type of comparison to be used for the psm confidence
      */
     private ComparisonType psmConfidenceComparison = ComparisonType.EQUAL;
-    
+
     /**
      * Constructor
      * @param name the name of the filter
@@ -236,7 +242,6 @@ public class PsmFilter extends MatchFilter {
         return precursorRTComparison;
     }
 
-
     /**
      * Sets the comparison type used for the precursor RT comparison
      * @param proteinScoreComparison the comparison type used for the precursor RT comparison
@@ -244,6 +249,4 @@ public class PsmFilter extends MatchFilter {
     public void setPrecursorRTComparison(ComparisonType precursorRTComparison) {
         this.precursorRTComparison = precursorRTComparison;
     }
-    
-    
 }

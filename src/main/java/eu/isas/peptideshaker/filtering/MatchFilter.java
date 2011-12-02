@@ -16,7 +16,11 @@ import java.util.ArrayList;
  * @author marc
  */
 public abstract class MatchFilter implements Serializable {
-    
+
+    /**
+     * Serial number for serialization compatibility
+     */
+     static final long serialVersionUID = 7413446840381260115L;
     /**
      * Name of the filter
      */
@@ -53,14 +57,6 @@ public abstract class MatchFilter implements Serializable {
          * a PSM filter
          */
         PSM
-    }
-    /**
-     * Convenience enum for the comparison with a given threshold
-     */
-    public enum ComparisonType {
-        SMALLER_THAN,
-        EQUAL,
-        BIGGER_THAN
     }
     /**
      * The type of filter
