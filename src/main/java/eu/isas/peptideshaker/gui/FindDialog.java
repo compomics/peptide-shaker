@@ -175,9 +175,7 @@ public class FindDialog extends javax.swing.JDialog {
         if (validateInput()) {
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-
-
-
+            
             List<RowFilter<Object, Object>> filters = new ArrayList<RowFilter<Object, Object>>();
 
             // protein accession filter
