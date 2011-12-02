@@ -343,10 +343,12 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Component id="peptidesValidatedPsmsJRadioButton" min="-2" max="-2" attributes="0"/>
+                              <Component id="peptideValidatedPsmsJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                              <Component id="peptidesMissedCleavagesJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="393" max="32767" attributes="0"/>
+                              <Component id="peptideMissedCleavagesJRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="peptideLengthJRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="272" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -355,8 +357,9 @@
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace pref="13" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="peptidesValidatedPsmsJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="peptidesMissedCleavagesJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptideValidatedPsmsJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptideMissedCleavagesJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="peptideLengthJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -364,7 +367,7 @@
                     </DimensionLayout>
                   </Layout>
                   <SubComponents>
-                    <Component class="javax.swing.JRadioButton" name="peptidesValidatedPsmsJRadioButton">
+                    <Component class="javax.swing.JRadioButton" name="peptideValidatedPsmsJRadioButton">
                       <Properties>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="peptideButtonGroup"/>
@@ -375,10 +378,10 @@
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptidesValidatedPsmsJRadioButtonActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideValidatedPsmsJRadioButtonActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JRadioButton" name="peptidesMissedCleavagesJRadioButton">
+                    <Component class="javax.swing.JRadioButton" name="peptideMissedCleavagesJRadioButton">
                       <Properties>
                         <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                           <ComponentRef name="peptideButtonGroup"/>
@@ -388,7 +391,20 @@
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptidesMissedCleavagesJRadioButtonActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideMissedCleavagesJRadioButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JRadioButton" name="peptideLengthJRadioButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="peptideButtonGroup"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Peptide Length"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideLengthJRadioButtonActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>

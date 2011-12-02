@@ -116,8 +116,9 @@ public class QCPanel extends javax.swing.JPanel {
         exportPsmPlotJButton = new javax.swing.JButton();
         peptidePanel = new javax.swing.JPanel();
         peptidesPlotTypePanel = new javax.swing.JPanel();
-        peptidesValidatedPsmsJRadioButton = new javax.swing.JRadioButton();
-        peptidesMissedCleavagesJRadioButton = new javax.swing.JRadioButton();
+        peptideValidatedPsmsJRadioButton = new javax.swing.JRadioButton();
+        peptideMissedCleavagesJRadioButton = new javax.swing.JRadioButton();
+        peptideLengthJRadioButton = new javax.swing.JRadioButton();
         peptidesPlotLayeredPane = new javax.swing.JLayeredPane();
         peptideQCPlotPanel = new javax.swing.JPanel();
         peptidesPlotHelpJButton = new javax.swing.JButton();
@@ -277,24 +278,34 @@ public class QCPanel extends javax.swing.JPanel {
         peptidesPlotTypePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Plot Type"));
         peptidesPlotTypePanel.setOpaque(false);
 
-        peptideButtonGroup.add(peptidesValidatedPsmsJRadioButton);
-        peptidesValidatedPsmsJRadioButton.setSelected(true);
-        peptidesValidatedPsmsJRadioButton.setText("#Validated PSMs");
-        peptidesValidatedPsmsJRadioButton.setIconTextGap(10);
-        peptidesValidatedPsmsJRadioButton.setOpaque(false);
-        peptidesValidatedPsmsJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        peptideButtonGroup.add(peptideValidatedPsmsJRadioButton);
+        peptideValidatedPsmsJRadioButton.setSelected(true);
+        peptideValidatedPsmsJRadioButton.setText("#Validated PSMs");
+        peptideValidatedPsmsJRadioButton.setIconTextGap(10);
+        peptideValidatedPsmsJRadioButton.setOpaque(false);
+        peptideValidatedPsmsJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                peptidesValidatedPsmsJRadioButtonActionPerformed(evt);
+                peptideValidatedPsmsJRadioButtonActionPerformed(evt);
             }
         });
 
-        peptideButtonGroup.add(peptidesMissedCleavagesJRadioButton);
-        peptidesMissedCleavagesJRadioButton.setText("Missed Cleavages");
-        peptidesMissedCleavagesJRadioButton.setIconTextGap(10);
-        peptidesMissedCleavagesJRadioButton.setOpaque(false);
-        peptidesMissedCleavagesJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+        peptideButtonGroup.add(peptideMissedCleavagesJRadioButton);
+        peptideMissedCleavagesJRadioButton.setText("Missed Cleavages");
+        peptideMissedCleavagesJRadioButton.setIconTextGap(10);
+        peptideMissedCleavagesJRadioButton.setOpaque(false);
+        peptideMissedCleavagesJRadioButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                peptidesMissedCleavagesJRadioButtonActionPerformed(evt);
+                peptideMissedCleavagesJRadioButtonActionPerformed(evt);
+            }
+        });
+
+        peptideButtonGroup.add(peptideLengthJRadioButton);
+        peptideLengthJRadioButton.setText("Peptide Length");
+        peptideLengthJRadioButton.setIconTextGap(10);
+        peptideLengthJRadioButton.setOpaque(false);
+        peptideLengthJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptideLengthJRadioButtonActionPerformed(evt);
             }
         });
 
@@ -304,18 +315,21 @@ public class QCPanel extends javax.swing.JPanel {
             peptidesPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptidesPlotTypePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptidesValidatedPsmsJRadioButton)
+                .addComponent(peptideValidatedPsmsJRadioButton)
                 .addGap(18, 18, 18)
-                .addComponent(peptidesMissedCleavagesJRadioButton)
-                .addContainerGap(393, Short.MAX_VALUE))
+                .addComponent(peptideMissedCleavagesJRadioButton)
+                .addGap(18, 18, 18)
+                .addComponent(peptideLengthJRadioButton)
+                .addContainerGap(272, Short.MAX_VALUE))
         );
         peptidesPlotTypePanelLayout.setVerticalGroup(
             peptidesPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptidesPlotTypePanelLayout.createSequentialGroup()
                 .addContainerGap(13, Short.MAX_VALUE)
                 .addGroup(peptidesPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(peptidesValidatedPsmsJRadioButton)
-                    .addComponent(peptidesMissedCleavagesJRadioButton))
+                    .addComponent(peptideValidatedPsmsJRadioButton)
+                    .addComponent(peptideMissedCleavagesJRadioButton)
+                    .addComponent(peptideLengthJRadioButton))
                 .addContainerGap())
         );
 
@@ -643,7 +657,7 @@ public class QCPanel extends javax.swing.JPanel {
      * 
      * @param evt 
      */
-    private void peptidesMissedCleavagesJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesMissedCleavagesJRadioButtonActionPerformed
+    private void peptideMissedCleavagesJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideMissedCleavagesJRadioButtonActionPerformed
 
         if (peptideShakerGUI.getIdentification() != null) {
 
@@ -674,16 +688,16 @@ public class QCPanel extends javax.swing.JPanel {
                 }
             }.start();
         }
-    }//GEN-LAST:event_peptidesMissedCleavagesJRadioButtonActionPerformed
+    }//GEN-LAST:event_peptideMissedCleavagesJRadioButtonActionPerformed
 
     /**
      * Update the peptide qc plot.
      * 
      * @param evt 
      */
-    private void peptidesValidatedPsmsJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidesValidatedPsmsJRadioButtonActionPerformed
-        peptidesMissedCleavagesJRadioButtonActionPerformed(evt);
-    }//GEN-LAST:event_peptidesValidatedPsmsJRadioButtonActionPerformed
+    private void peptideValidatedPsmsJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideValidatedPsmsJRadioButtonActionPerformed
+        peptideMissedCleavagesJRadioButtonActionPerformed(evt);
+    }//GEN-LAST:event_peptideValidatedPsmsJRadioButtonActionPerformed
 
     /**
      * Update the psm qc plot.
@@ -996,18 +1010,29 @@ public class QCPanel extends javax.swing.JPanel {
             }
         });
     }//GEN-LAST:event_proteinsPlotLayeredPaneComponentResized
+
+    /**
+     * Update the peptide qc plot.
+     * 
+     * @param evt 
+     */
+    private void peptideLengthJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideLengthJRadioButtonActionPerformed
+        peptideMissedCleavagesJRadioButtonActionPerformed(evt);
+    }//GEN-LAST:event_peptideLengthJRadioButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton exportPeptidesPlotJButton;
     private javax.swing.JButton exportProteinsPlotJButton;
     private javax.swing.JButton exportPsmPlotJButton;
     private javax.swing.ButtonGroup peptideButtonGroup;
+    private javax.swing.JRadioButton peptideLengthJRadioButton;
+    private javax.swing.JRadioButton peptideMissedCleavagesJRadioButton;
     private javax.swing.JPanel peptidePanel;
     private javax.swing.JPanel peptideQCPlotPanel;
-    private javax.swing.JRadioButton peptidesMissedCleavagesJRadioButton;
+    private javax.swing.JRadioButton peptideValidatedPsmsJRadioButton;
     private javax.swing.JButton peptidesPlotHelpJButton;
     private javax.swing.JLayeredPane peptidesPlotLayeredPane;
     private javax.swing.JPanel peptidesPlotTypePanel;
-    private javax.swing.JRadioButton peptidesValidatedPsmsJRadioButton;
     private javax.swing.ButtonGroup proteinButtonGroup;
     private javax.swing.JRadioButton proteinNumberValidatedPeptidesJRadioButton;
     private javax.swing.JPanel proteinPanel;
@@ -1207,7 +1232,7 @@ public class QCPanel extends javax.swing.JPanel {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
         ArrayList<Double> bins = new ArrayList<Double>();
 
-        if (peptidesValidatedPsmsJRadioButton.isSelected()) {
+        if (peptideValidatedPsmsJRadioButton.isSelected()) {
 
             bins.add(0.0);
             bins.add(1.0);
@@ -1226,12 +1251,26 @@ public class QCPanel extends javax.swing.JPanel {
             getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
             getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
 
-        } else if (peptidesMissedCleavagesJRadioButton.isSelected()) {
+        } else if (peptideMissedCleavagesJRadioButton.isSelected()) {
 
             bins.add(0.0);
             bins.add(1.0);
             bins.add(2.0);
             bins.add(3.0);
+
+            getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+            getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
+            getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
+            getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+            
+        } else if (peptideLengthJRadioButton.isSelected()) {
+            
+            int min = peptideShakerGUI.getIdFilter().getMinPepLength();
+            int max = peptideShakerGUI.getIdFilter().getMaxPepLength();
+            
+            for (int i=min; i<max; i++) {
+                bins.add(new Double(i));
+            }
 
             getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
             getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
@@ -1252,11 +1291,15 @@ public class QCPanel extends javax.swing.JPanel {
 
         ChartPanel chartPanel = new ChartPanel(peptideChart);
 
-        if (peptidesValidatedPsmsJRadioButton.isSelected()) {
+        if (peptideValidatedPsmsJRadioButton.isSelected()) {
             peptideChart.getCategoryPlot().getDomainAxis().setLabel("Number of Validated PSMs");
             peptideChart.setTitle("Peptides QC Plot - Number of Validated PSMs");
-        } else if (peptidesMissedCleavagesJRadioButton.isSelected()) {
+        } else if (peptideMissedCleavagesJRadioButton.isSelected()) {
             peptideChart.getCategoryPlot().getDomainAxis().setLabel("Missed Cleavages");
+            peptideChart.setTitle("Peptides QC Plot - Missed Cleavages");
+        } else if (peptideLengthJRadioButton.isSelected()) {
+            peptideChart.getCategoryPlot().getRangeAxis().setLabel("Frequency");
+            peptideChart.getCategoryPlot().getDomainAxis().setLabel("Peptide Length");
             peptideChart.setTitle("Peptides QC Plot - Missed Cleavages");
         }
 
@@ -1492,7 +1535,7 @@ public class QCPanel extends javax.swing.JPanel {
             PSParameter psParameter = new PSParameter();
             maxValue = Double.MIN_VALUE;
 
-            if (peptidesValidatedPsmsJRadioButton.isSelected()) {
+            if (peptideValidatedPsmsJRadioButton.isSelected()) {
 
                 // Values for the number of validated PSMs
                 validatedValues = new ArrayList<Double>();
@@ -1529,7 +1572,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     progressDialog.incrementValue();
                 }
-            } else if (peptidesMissedCleavagesJRadioButton.isSelected()) {
+            } else if (peptideMissedCleavagesJRadioButton.isSelected()) {
 
                 // Values for the missed cleavages
                 validatedValues = new ArrayList<Double>();
@@ -1558,6 +1601,39 @@ public class QCPanel extends javax.swing.JPanel {
                             validatedDecoyValues.add(value);
                         } else {
                             nonValidatedDecoyValues.add(value);
+                        }
+                    }
+
+                    progressDialog.incrementValue();
+                }
+            } else if (peptideLengthJRadioButton.isSelected()) {
+                
+                // Values for the peptide length
+                validatedValues = new ArrayList<Double>();
+                nonValidatedValues = new ArrayList<Double>();
+                validatedDecoyValues = new ArrayList<Double>();
+                nonValidatedDecoyValues = new ArrayList<Double>();
+
+                for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
+                    PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                    double length = Peptide.getSequence(peptideKey).length();
+                    if (length > 0) {
+                        if (length > maxValue) {
+                            maxValue = length;
+                        }
+                    }
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                    if (!peptideMatch.isDecoy()) {
+                        if (psParameter.isValidated()) {
+                            validatedValues.add(length);
+                        } else {
+                            nonValidatedValues.add(length);
+                        }
+                    } else {
+                        if (psParameter.isValidated()) {
+                            validatedDecoyValues.add(length);
+                        } else {
+                            nonValidatedDecoyValues.add(length);
                         }
                     }
 
