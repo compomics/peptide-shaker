@@ -535,7 +535,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * @param evt
      */
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
-        peptideShakerGUI.clearData();
+        peptideShakerGUI.clearData(); // @TODO: find a better way of clearing this as the current option resets the whole tool...
         this.setVisible(false);
         this.dispose();
 }//GEN-LAST:event_exitButtonActionPerformed
@@ -718,6 +718,12 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
             @Override
             public boolean accept(File myFile) {
+                
+                if (myFile.getName().equalsIgnoreCase("mods.xml") ||
+                    myFile.getName().equalsIgnoreCase("usermods.xml")) {
+                    return false;
+                }
+                
                 return myFile.getName().toLowerCase().endsWith("dat")
                         || myFile.getName().toLowerCase().endsWith("omx")
                         || myFile.getName().toLowerCase().endsWith("xml")
