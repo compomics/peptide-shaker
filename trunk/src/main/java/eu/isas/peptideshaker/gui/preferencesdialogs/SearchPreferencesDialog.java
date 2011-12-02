@@ -1171,10 +1171,18 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
      */
     private String[] loadEnzymes() {
 
-        String[] enzymes = new String[enzymeFactory.getEnzymes().size()];
-
+        ArrayList<String> tempEnzymes = new ArrayList<String>();
+        
         for (int i = 0; i < enzymeFactory.getEnzymes().size(); i++) {
-            enzymes[i] = enzymeFactory.getEnzymes().get(i).getName();
+            tempEnzymes.add(enzymeFactory.getEnzymes().get(i).getName());
+        }
+        
+        Collections.sort(tempEnzymes);
+        
+        String[] enzymes = new String[tempEnzymes.size()];
+        
+        for (int i = 0; i < tempEnzymes.size(); i++) {
+            enzymes[i] = tempEnzymes.get(i);
         }
 
         return enzymes;
