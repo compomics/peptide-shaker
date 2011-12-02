@@ -3236,19 +3236,19 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         this.selectedPeptideKey = peptideKey;
         this.selectedPsmKey = psmKey;
     }
-    
+
     public void updateSelectionInCurrentTab() {
-        
-            int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
-            if (selectedIndex == OVER_VIEW_TAB_INDEX) {
-                    overviewPanel.updateSelection();
-            } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
-                    proteinStructurePanel.updateSelection();
-            } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
-                    spectrumIdentificationPanel.updateSelection();
-            } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
-                    ptmPanel.updateSelection();
-            }
+
+        int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
+        if (selectedIndex == OVER_VIEW_TAB_INDEX) {
+            overviewPanel.updateSelection();
+        } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
+            proteinStructurePanel.updateSelection();
+        } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
+            spectrumIdentificationPanel.updateSelection();
+        } else if (selectedIndex == MODIFICATIONS_TAB_INDEX) {
+            ptmPanel.updateSelection();
+        }
     }
 
     /**
@@ -4868,6 +4868,22 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
+                } catch (OutOfMemoryError error) {
+                    System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
+                    Runtime.getRuntime().gc();
+                    JOptionPane.showMessageDialog(null,
+                            "The task used up all the available memory and had to be stopped.\n"
+                            + "Memory boundaries are set in ../conf/JavaOptions.txt.",
+                            "Out Of Memory Error",
+                            JOptionPane.ERROR_MESSAGE);
+
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+
+                    error.printStackTrace();
                 } catch (Exception e) {
 
                     // change the peptide shaker icon back to the default version
@@ -5115,7 +5131,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public void setUpdated(int tabIndex, boolean updated) {
         updateNeeded.put(tabIndex, !updated);
-        
+
         if (!updated) {
             allTabsJTabbedPaneStateChanged(null);
         }
@@ -5551,7 +5567,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         if (proteinMatch.getPeptideMatches().size() < proteinFilter.getnPeptides()) {
                             return true;
                         }
-                } else if (proteinFilter.getnPeptidesComparison() == ComparisonType.EQUAL) {
+                    } else if (proteinFilter.getnPeptidesComparison() == ComparisonType.EQUAL) {
                         if (proteinMatch.getPeptideMatches().size() == proteinFilter.getnPeptides()) {
                             return true;
                         }
@@ -5566,7 +5582,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         if (getNSpectra(proteinMatch) < proteinFilter.getProteinNSpectra()) {
                             return true;
                         }
-                } else if (proteinFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
+                    } else if (proteinFilter.getnSpectraComparison() == ComparisonType.EQUAL) {
                         if (getNSpectra(proteinMatch) == proteinFilter.getProteinNSpectra()) {
                             return true;
                         }
@@ -5582,7 +5598,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         if (sequenceCoverage < proteinFilter.getProteinCoverage()) {
                             return true;
                         }
-                } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.EQUAL) {
+                    } else if (proteinFilter.getProteinCoverageComparison() == ComparisonType.EQUAL) {
                         if (sequenceCoverage == proteinFilter.getProteinCoverage()) {
                             return true;
                         }
@@ -5598,7 +5614,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         if (spectrumCounting < proteinFilter.getSpectrumCounting()) {
                             return true;
                         }
-                } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.EQUAL) {
+                    } else if (proteinFilter.getSpectrumCountingComparison() == ComparisonType.EQUAL) {
                         if (spectrumCounting == proteinFilter.getSpectrumCounting()) {
                             return true;
                         }
@@ -5695,7 +5711,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         if (psParameter.getPsmScore() < psmFilter.getPsmScore()) {
                             return true;
                         }
-                } else if (psmFilter.getPsmScoreComparison() == ComparisonType.EQUAL) {
+                    } else if (psmFilter.getPsmScoreComparison() == ComparisonType.EQUAL) {
                         if (psParameter.getPsmScore() == psmFilter.getPsmScore()) {
                             return true;
                         }
@@ -5710,7 +5726,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         if (psParameter.getPsmConfidence() < psmFilter.getPsmConfidence()) {
                             return true;
                         }
-                } else if (psmFilter.getPsmConfidenceComparison() == ComparisonType.EQUAL) {
+                    } else if (psmFilter.getPsmConfidenceComparison() == ComparisonType.EQUAL) {
                         if (psParameter.getPsmConfidence() == psmFilter.getPsmConfidence()) {
                             return true;
                         }
@@ -5758,7 +5774,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         if (error < psmFilter.getPrecursorMzError()) {
                             return true;
                         }
-                } else if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.EQUAL) {
+                    } else if (psmFilter.getPrecursorMzErrorComparison() == ComparisonType.EQUAL) {
                         if (error == psmFilter.getPrecursorMzError()) {
                             return true;
                         }
@@ -5776,7 +5792,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public ArrayList<String> getFoundModifications() {
         if (identifiedModifications == null) {
             boolean modified;
-                identifiedModifications = new ArrayList<String>();
+            identifiedModifications = new ArrayList<String>();
             for (String peptideKey : identification.getPeptideIdentification()) {
 
                 modified = false;
