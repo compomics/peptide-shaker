@@ -10,6 +10,7 @@
  */
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
@@ -21,6 +22,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
+import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -81,6 +83,12 @@ public class FindDialog extends javax.swing.JDialog {
             ((DefaultTableModel) chargeTable.getModel()).addRow(new Object[]{
                         true,
                         charge
+                    });
+        }
+        for (String file : peptideShakerGUI.getSearchParameters().getSpectrumFiles()) {
+            ((DefaultTableModel) fileTable.getModel()).addRow(new Object[]{
+                        true,
+                        Util.getFileName(file)
                     });
         }
         proteinTable.setAutoCreateRowSorter(true);
@@ -144,6 +152,69 @@ public class FindDialog extends javax.swing.JDialog {
                 return false;
             }
         }
+        if (!peptideNSpectraTxt.getText().trim().equals("")) {
+            try {
+                Integer test = new Integer(peptideNSpectraTxt.getText().trim());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Please verify the input for peptide number of spectra.",
+                        "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        if (!peptideScoreTxt.getText().trim().equals("")) {
+            try {
+                Double test = new Double(peptideScoreTxt.getText().trim());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Please verify the input for peptide score.",
+                        "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        if (!peptideConfidenceTxt.getText().trim().equals("")) {
+            try {
+                Double test = new Double(peptideConfidenceTxt.getText().trim());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Please verify the input for peptide confidence.",
+                        "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        if (!precursorRTTxt.getText().trim().equals("")) {
+            try {
+                Double test = new Double(precursorRTTxt.getText().trim());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Please verify the input for precursor retention time.",
+                        "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        if (!precursorMzTxt.getText().trim().equals("")) {
+            try {
+                Double test = new Double(precursorMzTxt.getText().trim());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Please verify the input for precursor m/z.",
+                        "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        if (!precursorErrorTxt.getText().trim().equals("")) {
+            try {
+                Double test = new Double(precursorErrorTxt.getText().trim());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Please verify the input for precursor error.",
+                        "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        if (!psmConfidenceTxt.getText().trim().equals("")) {
+            try {
+                Double test = new Double(psmConfidenceTxt.getText().trim());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Please verify the input for PSM confidence.",
+                        "Input Error", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
         return true;
     }
 
@@ -175,11 +246,11 @@ public class FindDialog extends javax.swing.JDialog {
         if (validateInput()) {
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-            
+
             List<RowFilter<Object, Object>> filters = new ArrayList<RowFilter<Object, Object>>();
 
             // protein accession filter
-            // @TODO can we make it not case sensitive?
+            // @TODO can we make this not case sensitive?
             String text = proteinAccessionTxt.getText().trim();
             if (!text.equals("")) {
                 try {
@@ -193,7 +264,7 @@ public class FindDialog extends javax.swing.JDialog {
             }
 
             // protein description filter
-            text = proteinDescriptionTxt.getText().trim().toLowerCase();
+            text = proteinDescriptionTxt.getText().trim();
             if (!text.equals("")) {
                 try {
                     filters.add(RowFilter.regexFilter(text, proteinTable.getColumn("Description").getModelIndex()));
@@ -207,46 +278,46 @@ public class FindDialog extends javax.swing.JDialog {
                 filters.add(RowFilter.numberFilter(getComparisonType(proteinPiComparisonCmb.getSelectedIndex()), pi, proteinTable.getColumn("PI").getModelIndex()));
             }
 
-            text = spectrumCountingTxt.getText().trim().toLowerCase();
+            text = spectrumCountingTxt.getText().trim();
             if (!text.equals("")) {
                 Double value = new Double(text);
                 filters.add(RowFilter.numberFilter(getComparisonType(spectrumCountingCmb.getSelectedIndex()), value, proteinTable.getColumn("Spectrum Counting").getModelIndex()));
             }
 
-            text = proteinCoverageTxt.getText().trim().toLowerCase();
+            text = proteinCoverageTxt.getText().trim();
             if (!text.equals("")) {
                 Double value = new Double(text);
                 filters.add(RowFilter.numberFilter(getComparisonType(proteinCoverageCmb.getSelectedIndex()), value, proteinTable.getColumn("Sequence coverage").getModelIndex()));
             }
 
-            text = nPeptidesTxt.getText().trim().toLowerCase();
+            text = nPeptidesTxt.getText().trim();
             if (!text.equals("")) {
                 Double value = new Double(text);
                 filters.add(RowFilter.numberFilter(getComparisonType(nPeptidesCmb.getSelectedIndex()), value,
                         proteinTable.getColumn("# Peptides").getModelIndex()));
             }
 
-            text = proteinsNSpectraTxt.getText().trim().toLowerCase();
+            text = proteinsNSpectraTxt.getText().trim();
             if (!text.equals("")) {
                 Double value = new Double(text);
                 filters.add(RowFilter.numberFilter(getComparisonType(proteinNSpectraCmb.getSelectedIndex()), value,
                         proteinTable.getColumn("# Spectra").getModelIndex()));
             }
 
-            text = proteinScoreTxt.getText().trim().toLowerCase();
+            text = proteinScoreTxt.getText().trim();
             if (!text.equals("")) {
                 Double value = new Double(text);
                 filters.add(RowFilter.numberFilter(getComparisonType(proteinScoreCmb.getSelectedIndex()), value,
                         proteinTable.getColumn("Score").getModelIndex()));
             }
 
-            text = proteinConfidenceTxt.getText().trim().toLowerCase();
+            text = proteinConfidenceTxt.getText().trim();
             if (!text.equals("")) {
                 Double value = new Double(text);
                 filters.add(RowFilter.numberFilter(getComparisonType(proteinConfidenceCmb.getSelectedIndex()), value,
                         proteinTable.getColumn("Confidence").getModelIndex()));
             }
-            
+
             // set the filters to the table
             RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
             ((TableRowSorter) proteinTable.getRowSorter()).setRowFilter(allFilters);
@@ -430,7 +501,90 @@ public class FindDialog extends javax.swing.JDialog {
     }
 
     /**
+     * Filters the peptide table according to the current filter settings.
+     */
+    public void filterPeptides() {
+
+        if (validateInput()) {
+
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+            List<RowFilter<Object, Object>> filters = new ArrayList<RowFilter<Object, Object>>();
+
+            // protein accession filter
+            String text = proteinAccessionTxt.getText().trim();
+            if (!text.equals("")) {
+                try {
+                    filters.add(RowFilter.regexFilter(text, peptideTable.getColumn("Proteins").getModelIndex()));
+                } catch (PatternSyntaxException pse) {
+                    JOptionPane.showMessageDialog(this, "Incorrect regex pattern for peptide proteins.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            text = peptideSequenceTxt.getText().trim();
+            if (!text.equals("")) {
+                try {
+                    filters.add(RowFilter.regexFilter(text, peptideTable.getColumn("Sequence").getModelIndex()));
+                } catch (PatternSyntaxException pse) {
+                    JOptionPane.showMessageDialog(this, "Incorrect regex pattern for peptide proteins.", "Filter Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+            if (peptidePICmb.getSelectedIndex() > 0) {
+                int pi = peptidePICmb.getSelectedIndex() - 1;
+                filters.add(RowFilter.numberFilter(getComparisonType(peptidePiComparisonCmb.getSelectedIndex()), pi, peptideTable.getColumn("PI").getModelIndex()));
+            }
+
+            text = peptideNSpectraTxt.getText().trim();
+            if (!text.equals("")) {
+                Double value = new Double(text);
+                filters.add(RowFilter.numberFilter(getComparisonType(peptideNSpectraCmb.getSelectedIndex()), value,
+                        peptideTable.getColumn("# Spectra").getModelIndex()));
+            }
+
+            text = peptideScoreTxt.getText().trim();
+            if (!text.equals("")) {
+                Double value = new Double(text);
+                filters.add(RowFilter.numberFilter(getComparisonType(peptideScoreCmb.getSelectedIndex()), value,
+                        peptideTable.getColumn("Score").getModelIndex()));
+            }
+
+            text = peptideConfidenceTxt.getText().trim();
+            if (!text.equals("")) {
+                Double value = new Double(text);
+                filters.add(RowFilter.numberFilter(getComparisonType(peptideConfidenceCmb.getSelectedIndex()), value,
+                        peptideTable.getColumn("Confidence").getModelIndex()));
+            }
+
+            List<RowFilter<Object, Object>> ptmFilters = new ArrayList<RowFilter<Object, Object>>();
+            List<RowFilter<Object, Object>> noPtmFilters = new ArrayList<RowFilter<Object, Object>>();
+            boolean noPTMSelected = false;
+            for (int row = 0; row < modificationTable.getRowCount(); row++) {
+                text = (String) modificationTable.getValueAt(row, 1);
+                if (!text.equals(PtmPanel.NO_MODIFICATION)) {
+                    if ((Boolean) modificationTable.getValueAt(row, 0)) {
+                        ptmFilters.add(RowFilter.regexFilter(text, peptideTable.getColumn("peptideKey").getModelIndex()));
+                    }
+                    noPtmFilters.add(RowFilter.regexFilter(text, peptideTable.getColumn("peptideKey").getModelIndex()));
+                } else if ((Boolean) modificationTable.getValueAt(row, 0)) {
+                    noPTMSelected = true;
+                }
+            }
+            if (noPTMSelected) {
+                ptmFilters.add(RowFilter.notFilter(RowFilter.orFilter(noPtmFilters)));
+            }
+            filters.add(RowFilter.orFilter(ptmFilters));
+
+            // set the filters to the table
+            RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
+            ((TableRowSorter) peptideTable.getRowSorter()).setRowFilter(allFilters);
+
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }
+
+    /**
      * Table model for the peptide table
+     * @TODO: Can we hide the last column?
      */
     private class PeptideTable extends DefaultTableModel {
 
@@ -441,7 +595,7 @@ public class FindDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 9;
+            return 10;
         }
 
         @Override
@@ -465,6 +619,8 @@ public class FindDialog extends javax.swing.JDialog {
                     return "Score";
                 case 8:
                     return "Confidence";
+                case 9:
+                    return "peptideKey";
                 default:
                     return "";
             }
@@ -508,6 +664,8 @@ public class FindDialog extends javax.swing.JDialog {
                     case 8:
                         psParameter = (PSParameter) identification.getMatchParameter(peptideKey, new PSParameter());
                         return psParameter.getPeptideConfidence();
+                    case 9:
+                        return peptideKey;
                     default:
                         return "";
                 }
@@ -530,6 +688,73 @@ public class FindDialog extends javax.swing.JDialog {
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return false;
+        }
+    }
+
+    /**
+     * Filters the psm table according to the current filter settings.
+     */
+    public void filterPsms() {
+
+        if (validateInput()) {
+
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+            List<RowFilter<Object, Object>> filters = new ArrayList<RowFilter<Object, Object>>();
+
+            String text = precursorRTTxt.getText().trim();
+            if (!text.equals("")) {
+                Double value = new Double(text);
+                filters.add(RowFilter.numberFilter(getComparisonType(precursorRTCmb.getSelectedIndex()), value,
+                        psmTable.getColumn("Retention Time").getModelIndex()));
+            }
+
+            text = precursorMzTxt.getText().trim();
+            if (!text.equals("")) {
+                Double value = new Double(text);
+                filters.add(RowFilter.numberFilter(getComparisonType(precursrorMzCmb.getSelectedIndex()), value,
+                        psmTable.getColumn("Precursor m/z").getModelIndex()));
+            }
+
+            text = precursorErrorTxt.getText().trim();
+            if (!text.equals("")) {
+                Double value = new Double(text);
+                filters.add(RowFilter.numberFilter(getComparisonType(precursorErrorCmb.getSelectedIndex()), value,
+                        psmTable.getColumn("Precursor m/z error").getModelIndex()));
+            }
+
+
+            text = psmConfidenceTxt.getText().trim();
+            if (!text.equals("")) {
+                Double value = new Double(text);
+                filters.add(RowFilter.numberFilter(getComparisonType(psmConfidenceCmb.getSelectedIndex()), value,
+                        peptideTable.getColumn("Confidence").getModelIndex()));
+            }
+
+            List<RowFilter<Object, Object>> chargeFilters = new ArrayList<RowFilter<Object, Object>>();
+            for (int row = 0; row < chargeTable.getRowCount(); row++) {
+                if ((Boolean) chargeTable.getValueAt(row, 0)) {
+                    Integer value = (Integer) chargeTable.getValueAt(row, 1);
+                    chargeFilters.add(RowFilter.numberFilter(ComparisonType.EQUAL, value,
+                            psmTable.getColumn("Identification Charge").getModelIndex()));
+                }
+            }
+            filters.add(RowFilter.orFilter(chargeFilters));
+
+            List<RowFilter<Object, Object>> filesFilters = new ArrayList<RowFilter<Object, Object>>();
+            for (int row = 0; row < fileTable.getRowCount(); row++) {
+                if ((Boolean) fileTable.getValueAt(row, 0)) {
+                    text = (String) fileTable.getValueAt(row, 1);
+                    filesFilters.add(RowFilter.regexFilter(text, fileTable.getColumn("File").getModelIndex()));
+                }
+            }
+            filters.add(RowFilter.orFilter(chargeFilters));
+
+            // set the filters to the table
+            RowFilter<Object, Object> allFilters = RowFilter.andFilter(filters);
+            ((TableRowSorter) psmTable.getRowSorter()).setRowFilter(allFilters);
+
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }
 
@@ -716,13 +941,16 @@ public class FindDialog extends javax.swing.JDialog {
         psmConfidenceCmb = new javax.swing.JComboBox();
         jLabel24 = new javax.swing.JLabel();
         precursorMzTxt = new javax.swing.JTextField();
-        precrusrorMzCmb = new javax.swing.JComboBox();
+        precursrorMzCmb = new javax.swing.JComboBox();
         jLabel25 = new javax.swing.JLabel();
         precursorErrorTxt = new javax.swing.JTextField();
-        PrecursorErrorCmb = new javax.swing.JComboBox();
+        precursorErrorCmb = new javax.swing.JComboBox();
         jLabel26 = new javax.swing.JLabel();
         jScrollPane6 = new javax.swing.JScrollPane();
         chargeTable = new javax.swing.JTable();
+        jScrollPane7 = new javax.swing.JScrollPane();
+        fileTable = new javax.swing.JTable();
+        jLabel27 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         psmTable = new javax.swing.JTable();
 
@@ -1016,26 +1244,81 @@ public class FindDialog extends javax.swing.JDialog {
 
         jLabel12.setText("Protein:");
 
-        jLabel13.setFont(new java.awt.Font("Tahoma", 2, 11));
+        peptideProteinTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                peptideProteinTxtKeyReleased(evt);
+            }
+        });
+
+        jLabel13.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel13.setText("RegExp");
 
         jLabel14.setText("PI status:");
 
         peptidePICmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "No requirement", "Single Protein", "Isoforms", "Isoforms and Unrelated protein(s)", "Unrelated proteins" }));
+        peptidePICmb.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                peptidePICmbKeyReleased(evt);
+            }
+        });
 
         jLabel15.setText("# Spectra");
 
+        peptideNSpectraTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                peptideNSpectraTxtKeyReleased(evt);
+            }
+        });
+
         peptideNSpectraCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        peptideNSpectraCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptideNSpectraCmbActionPerformed(evt);
+            }
+        });
 
         jLabel16.setText("Confidence:");
 
+        peptideConfidenceTxt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptideConfidenceTxtActionPerformed(evt);
+            }
+        });
+        peptideConfidenceTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                peptideConfidenceTxtKeyReleased(evt);
+            }
+        });
+
         peptideConfidenceCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        peptideConfidenceCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptideConfidenceCmbActionPerformed(evt);
+            }
+        });
 
         peptideScoreCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        peptideScoreCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptideScoreCmbActionPerformed(evt);
+            }
+        });
+
+        peptideScoreTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                peptideScoreTxtKeyReleased(evt);
+            }
+        });
 
         jLabel17.setText("Score:");
 
         jLabel19.setText("Sequence:");
+
+        peptideSequenceTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                peptideSequenceTxtKeyReleased(evt);
+            }
+        });
 
         jLabel20.setFont(new java.awt.Font("Tahoma", 2, 11));
         jLabel20.setText("RegExp");
@@ -1054,7 +1337,7 @@ public class FindDialog extends javax.swing.JDialog {
                 java.lang.Boolean.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false
+                true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1065,9 +1348,24 @@ public class FindDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
+        modificationTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                modificationTableMouseReleased(evt);
+            }
+        });
         jScrollPane5.setViewportView(modificationTable);
 
         peptidePiComparisonCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=" }));
+        peptidePiComparisonCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                peptidePiComparisonCmbActionPerformed(evt);
+            }
+        });
+        peptidePiComparisonCmb.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                peptidePiComparisonCmbKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -1206,19 +1504,63 @@ public class FindDialog extends javax.swing.JDialog {
 
         jLabel22.setText("Precursor RT:");
 
+        precursorRTTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                precursorRTTxtKeyReleased(evt);
+            }
+        });
+
         precursorRTCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        precursorRTCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                precursorRTCmbActionPerformed(evt);
+            }
+        });
 
         jLabel23.setText("Confidence:");
 
+        psmConfidenceTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                psmConfidenceTxtKeyReleased(evt);
+            }
+        });
+
         psmConfidenceCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        psmConfidenceCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                psmConfidenceCmbActionPerformed(evt);
+            }
+        });
 
         jLabel24.setText("Precursor m/z:");
 
-        precrusrorMzCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        precursorMzTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                precursorMzTxtKeyReleased(evt);
+            }
+        });
+
+        precursrorMzCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        precursrorMzCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                precursrorMzCmbActionPerformed(evt);
+            }
+        });
 
         jLabel25.setText("Precursor error:");
 
-        PrecursorErrorCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        precursorErrorTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                precursorErrorTxtKeyReleased(evt);
+            }
+        });
+
+        precursorErrorCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        precursorErrorCmb.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                precursorErrorCmbActionPerformed(evt);
+            }
+        });
 
         jLabel26.setText("Charge:");
 
@@ -1234,7 +1576,7 @@ public class FindDialog extends javax.swing.JDialog {
                 java.lang.Boolean.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false
+                true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -1245,7 +1587,44 @@ public class FindDialog extends javax.swing.JDialog {
                 return canEdit [columnIndex];
             }
         });
+        chargeTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                chargeTableMouseReleased(evt);
+            }
+        });
         jScrollPane6.setViewportView(chargeTable);
+
+        fileTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                " ", "File"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Boolean.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                true, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        fileTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                fileTableMouseReleased(evt);
+            }
+        });
+        jScrollPane7.setViewportView(fileTable);
+
+        jLabel27.setText("File:");
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -1259,13 +1638,7 @@ public class FindDialog extends javax.swing.JDialog {
                         .addGap(32, 32, 32)
                         .addComponent(precursorRTTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(precursorRTCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(40, 40, 40)
-                        .addComponent(jLabel23)
-                        .addGap(18, 18, 18)
-                        .addComponent(psmConfidenceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(psmConfidenceCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(precursorRTCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel6Layout.createSequentialGroup()
                             .addComponent(jLabel26)
@@ -1280,11 +1653,23 @@ public class FindDialog extends javax.swing.JDialog {
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel6Layout.createSequentialGroup()
                                     .addComponent(precursorMzTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(precrusrorMzCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(precursrorMzCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel6Layout.createSequentialGroup()
                                     .addComponent(precursorErrorTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(PrecursorErrorCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                                    .addComponent(precursorErrorCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE))))))
+                .addGap(40, 40, 40)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel23)
+                        .addGap(18, 18, 18)
+                        .addComponent(psmConfidenceTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(psmConfidenceCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel6Layout.createSequentialGroup()
+                        .addComponent(jLabel27)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 259, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
@@ -1301,20 +1686,24 @@ public class FindDialog extends javax.swing.JDialog {
                             .addComponent(jLabel22)
                             .addComponent(precursorRTTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(precursorRTCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel24)
-                    .addComponent(precursorMzTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(precrusrorMzCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel25)
-                    .addComponent(precursorErrorTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(PrecursorErrorCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel26)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE))
+                    .addComponent(jScrollPane7, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel24)
+                            .addComponent(precursorMzTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(precursrorMzCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel25)
+                            .addComponent(precursorErrorTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(precursorErrorCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel26)
+                            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)))
+                    .addComponent(jLabel27))
                 .addContainerGap())
         );
 
@@ -1481,10 +1870,101 @@ public class FindDialog extends javax.swing.JDialog {
         filterProteins();
     }//GEN-LAST:event_proteinConfidenceCmbActionPerformed
 
+    private void peptideProteinTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideProteinTxtKeyReleased
+        filterPeptides();
+    }//GEN-LAST:event_peptideProteinTxtKeyReleased
+
+    private void peptideSequenceTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideSequenceTxtKeyReleased
+        filterPeptides();
+    }//GEN-LAST:event_peptideSequenceTxtKeyReleased
+
+    private void peptidePICmbKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptidePICmbKeyReleased
+        filterPeptides();
+    }//GEN-LAST:event_peptidePICmbKeyReleased
+
+    private void peptidePiComparisonCmbKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptidePiComparisonCmbKeyReleased
+        filterPeptides();
+    }//GEN-LAST:event_peptidePiComparisonCmbKeyReleased
+
+    private void peptideNSpectraTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideNSpectraTxtKeyReleased
+        filterPeptides();
+    }//GEN-LAST:event_peptideNSpectraTxtKeyReleased
+
+    private void peptideNSpectraCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideNSpectraCmbActionPerformed
+        filterPeptides();
+    }//GEN-LAST:event_peptideNSpectraCmbActionPerformed
+
+    private void peptidePiComparisonCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidePiComparisonCmbActionPerformed
+        filterPeptides();
+    }//GEN-LAST:event_peptidePiComparisonCmbActionPerformed
+
+    private void peptideScoreTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideScoreTxtKeyReleased
+        filterPeptides();
+    }//GEN-LAST:event_peptideScoreTxtKeyReleased
+
+    private void peptideScoreCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideScoreCmbActionPerformed
+        filterPeptides();
+    }//GEN-LAST:event_peptideScoreCmbActionPerformed
+
+    private void peptideConfidenceTxtActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideConfidenceTxtActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_peptideConfidenceTxtActionPerformed
+
+    private void peptideConfidenceTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_peptideConfidenceTxtKeyReleased
+        filterPeptides();
+    }//GEN-LAST:event_peptideConfidenceTxtKeyReleased
+
+    private void peptideConfidenceCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideConfidenceCmbActionPerformed
+        filterPeptides();
+    }//GEN-LAST:event_peptideConfidenceCmbActionPerformed
+
+    private void modificationTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_modificationTableMouseReleased
+        filterPeptides();
+    }//GEN-LAST:event_modificationTableMouseReleased
+
+    private void precursorRTTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precursorRTTxtKeyReleased
+        filterPsms();
+    }//GEN-LAST:event_precursorRTTxtKeyReleased
+
+    private void precursorMzTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precursorMzTxtKeyReleased
+        filterPsms();
+    }//GEN-LAST:event_precursorMzTxtKeyReleased
+
+    private void precursorErrorTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precursorErrorTxtKeyReleased
+        filterPsms();
+    }//GEN-LAST:event_precursorErrorTxtKeyReleased
+
+    private void psmConfidenceTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_psmConfidenceTxtKeyReleased
+        filterPsms();
+    }//GEN-LAST:event_psmConfidenceTxtKeyReleased
+
+    private void precursorRTCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursorRTCmbActionPerformed
+        filterPsms();
+    }//GEN-LAST:event_precursorRTCmbActionPerformed
+
+    private void precursrorMzCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursrorMzCmbActionPerformed
+        filterPsms();
+    }//GEN-LAST:event_precursrorMzCmbActionPerformed
+
+    private void precursorErrorCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursorErrorCmbActionPerformed
+        filterPsms();
+    }//GEN-LAST:event_precursorErrorCmbActionPerformed
+
+    private void psmConfidenceCmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmConfidenceCmbActionPerformed
+        filterPsms();
+    }//GEN-LAST:event_psmConfidenceCmbActionPerformed
+
+    private void chargeTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_chargeTableMouseReleased
+        filterPsms();
+    }//GEN-LAST:event_chargeTableMouseReleased
+
+    private void fileTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_fileTableMouseReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fileTableMouseReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox PrecursorErrorCmb;
     private javax.swing.JTable chargeTable;
     private javax.swing.JButton exitButton;
+    private javax.swing.JTable fileTable;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1503,6 +1983,7 @@ public class FindDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel24;
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1522,6 +2003,7 @@ public class FindDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
+    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable modificationTable;
     private javax.swing.JComboBox nPeptidesCmb;
@@ -1537,11 +2019,12 @@ public class FindDialog extends javax.swing.JDialog {
     private javax.swing.JTextField peptideScoreTxt;
     private javax.swing.JTextField peptideSequenceTxt;
     private javax.swing.JTable peptideTable;
-    private javax.swing.JComboBox precrusrorMzCmb;
+    private javax.swing.JComboBox precursorErrorCmb;
     private javax.swing.JTextField precursorErrorTxt;
     private javax.swing.JTextField precursorMzTxt;
     private javax.swing.JComboBox precursorRTCmb;
     private javax.swing.JTextField precursorRTTxt;
+    private javax.swing.JComboBox precursrorMzCmb;
     private javax.swing.JTextField proteinAccessionTxt;
     private javax.swing.JComboBox proteinConfidenceCmb;
     private javax.swing.JTextField proteinConfidenceTxt;

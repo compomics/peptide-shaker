@@ -545,7 +545,7 @@ public class FileImporter {
                 waitingDialog.setRunCanceled();
                 e.printStackTrace();
             } catch (OutOfMemoryError error) {
-                System.out.println("Ran out of memory!");
+                System.out.println("Ran out of memory! (runtime.maxMemory(): " + Runtime.getRuntime().maxMemory() + ")");
                 Runtime.getRuntime().gc();
                 waitingDialog.appendReportEndLine();
                 waitingDialog.appendReport("Ran out of memory!");
