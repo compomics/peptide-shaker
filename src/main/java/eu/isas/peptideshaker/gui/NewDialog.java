@@ -368,7 +368,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             }
         });
 
-        jLabel14.setText("FASTA File:");
+        jLabel14.setText("Database File (FASTA):");
 
         fastaFileTxt.setEditable(false);
         fastaFileTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
