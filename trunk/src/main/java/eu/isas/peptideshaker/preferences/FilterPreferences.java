@@ -1,21 +1,15 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.preferences;
 
-import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * This class groups the display filter preferences
  *
- * @author marc
+ * @author Marc Vaudel
  */
 public class FilterPreferences implements Serializable {
 
@@ -47,8 +41,6 @@ public class FilterPreferences implements Serializable {
      * The psm hide filters
      */
     private HashMap<String, PsmFilter> psmHideFilters = new HashMap<String, PsmFilter>();
-    
-    
     private String proteinAccession = "";
     private String proteinDescription = "";
     private String proteinCoverage = "";

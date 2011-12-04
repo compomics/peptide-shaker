@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * This class will compile Target/decoy results of a certain target/decoy map according to user's validation criteria
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class TargetDecoyResults implements Serializable {
 
@@ -21,7 +21,6 @@ public class TargetDecoyResults implements Serializable {
      * Boolean indicating whether classical or probabilistic estimators are used
      */
     private boolean classicalEstimators;
-
     /**
      * The confidence limit
      */
@@ -46,7 +45,6 @@ public class TargetDecoyResults implements Serializable {
      * The estimated amount of true positives reachable
      */
     private double nTPTotal;
-
     /**
      * The corresponding score limit
      */
@@ -56,7 +54,6 @@ public class TargetDecoyResults implements Serializable {
      * Constructor
      */
     public TargetDecoyResults() {
-
     }
 
     /**
@@ -160,7 +157,7 @@ public class TargetDecoyResults implements Serializable {
      * @return the estimated number of retained True positives
      */
     public double getnTP() {
-        return n-nFP;
+        return n - nFP;
     }
 
     /**
@@ -210,5 +207,4 @@ public class TargetDecoyResults implements Serializable {
     public void setScoreLimit(double scoreLimit) {
         this.scoreLimit = scoreLimit;
     }
-
 }

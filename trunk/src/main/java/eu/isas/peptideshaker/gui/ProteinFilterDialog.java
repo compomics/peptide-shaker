@@ -34,7 +34,6 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
      *
      * @param peptideShakerGUI                              the PeptideShakerGUI parent frame
      * @param modal                                         if the dialog is modal or not
-     * @param showHiddenProteins                            show/hide the hidden proteins
      * @param visible                                       if true the dialog is made visible
      */
     public ProteinFilterDialog(PeptideShakerGUI peptideShakerGUI, boolean modal, boolean visible) {

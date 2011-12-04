@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.preferences;
 
 import java.io.File;
@@ -12,7 +8,7 @@ import java.util.Date;
 /**
  * This class contains the details about a project
  *
- * @author marc
+ * @author Marc Vaudel
  */
 public class ProjectDetails implements Serializable {
 

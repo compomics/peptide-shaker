@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.preferences;
 
 import java.awt.Color;
@@ -12,7 +8,7 @@ import java.util.Set;
 /**
  * This class stores the information about the modification profile used for the selected project
  *
- * @author marc
+ * @author Marc Vaudel
  */
 public class ModificationProfile implements Serializable {
 

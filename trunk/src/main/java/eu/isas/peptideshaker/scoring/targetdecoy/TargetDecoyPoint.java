@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * This class represents a target/decoy hit in its simplest form
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class TargetDecoyPoint implements Serializable {
 

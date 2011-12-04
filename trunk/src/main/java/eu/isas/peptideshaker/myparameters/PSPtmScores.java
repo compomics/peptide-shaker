@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.myparameters;
 
 import com.compomics.util.experiment.personalization.UrParameter;
@@ -12,7 +8,7 @@ import java.util.HashMap;
 /**
  * This class contains the scores for the locations of the possible modifications.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PSPtmScores implements UrParameter {
 
