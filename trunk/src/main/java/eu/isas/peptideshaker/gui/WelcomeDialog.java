@@ -1,6 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
-import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import java.io.File;
 import java.util.ArrayList;
 import javax.swing.JFileChooser;
