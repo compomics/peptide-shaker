@@ -1,12 +1,12 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.Util;
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.myparameters.PSParameter;
-import eu.isas.peptideshaker.utils.BareBonesBrowserLaunch;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
