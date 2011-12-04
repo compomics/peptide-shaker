@@ -357,6 +357,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The actually identified modifications
      */
     private ArrayList<String> identifiedModifications = null;
+    /**
+     * The Jump To panel.
+     */
+    private JumpToPanel jumpToPanel;
 
     /**
      * The main method used to start PeptideShaker
@@ -390,7 +394,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPanel = new AnnotationPanel(this);
 
         initComponents();
-
+        
+        jumpToPanel = new JumpToPanel(this);
+        jumpToPanel.setEnabled(false);
+        menuBar.add(jumpToPanel);
         exportPrideXmlMenuItem.setVisible(false); // @TODO: remove when PRIDE export is implemented
 
         setUpPanels(true);
@@ -560,9 +567,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         spectrumCountingMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        jumpToJMenuItem = new javax.swing.JMenuItem();
+        findJMenuItem = new javax.swing.JMenuItem();
+        starHideJMenuItem = new javax.swing.JMenuItem();
         exportJMenu = new javax.swing.JMenu();
         identificationFeaturesMenu = new javax.swing.JMenuItem();
         followUpAnalysisMenu = new javax.swing.JMenuItem();
@@ -1125,32 +1132,32 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu.add(spectrumCountingMenuItem);
         editMenu.add(jSeparator12);
 
-        jMenuItem1.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem1.setText("Jump to");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        jumpToJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
+        jumpToJMenuItem.setText("Jump To...");
+        jumpToJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                jumpToJMenuItemActionPerformed(evt);
             }
         });
-        editMenu.add(jMenuItem1);
+        editMenu.add(jumpToJMenuItem);
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem2.setText("Find");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        findJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        findJMenuItem.setText("Find");
+        findJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                findJMenuItemActionPerformed(evt);
             }
         });
-        editMenu.add(jMenuItem2);
+        editMenu.add(findJMenuItem);
 
-        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuItem3.setText("Star/Hide Filters");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+        starHideJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        starHideJMenuItem.setText("Star/Hide Filters");
+        starHideJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
+                starHideJMenuItemActionPerformed(evt);
             }
         });
-        editMenu.add(jMenuItem3);
+        editMenu.add(starHideJMenuItem);
 
         menuBar.add(editMenu);
 
@@ -2498,25 +2505,28 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param evt 
      */
     private void spectrumSlidersCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumSlidersCheckBoxMenuItemActionPerformed
-
         displayPreferences.setShowSliders(spectrumSlidersCheckBoxMenuItem.isSelected());
-
         overviewPanel.updateSeparators();
         spectrumIdentificationPanel.updateSeparators();
         ptmPanel.updateSeparators();
     }//GEN-LAST:event_spectrumSlidersCheckBoxMenuItemActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+    private void starHideJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_starHideJMenuItemActionPerformed
         new FiltersDialog(this);
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+    }//GEN-LAST:event_starHideJMenuItemActionPerformed
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        new JumpToDialog(this);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    /**
+     * Select the Jump To text field.
+     * 
+     * @param evt 
+     */
+    private void jumpToJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumpToJMenuItemActionPerformed
+        jumpToPanel.selectTextField();
+    }//GEN-LAST:event_jumpToJMenuItemActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void findJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findJMenuItemActionPerformed
         new FindDialog(this);
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_findJMenuItemActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
@@ -2560,6 +2570,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
             // enable the menu items depending on a project being open
+            jumpToPanel.setEnabled(true);
             saveMenuItem.setEnabled(true);
             saveAsMenuItem.setEnabled(true);
             identificationFeaturesMenu.setEnabled(true);
@@ -2584,7 +2595,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
             // return the peptide shaker icon to the standard version
             setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
 
             e.printStackTrace();
             catchException(e);
@@ -2648,6 +2658,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu exportSpectrumMenu;
     private javax.swing.JMenuItem exportSpectrumValuesJMenuItem;
     private javax.swing.JMenu fileJMenu;
+    private javax.swing.JMenuItem findJMenuItem;
     private javax.swing.JMenuItem followUpAnalysisMenu;
     private javax.swing.JPanel goJPanel;
     private javax.swing.JPanel gradientPanel;
@@ -2664,9 +2675,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JRadioButtonMenuItem intensityIonTableRadioButtonMenuItem;
     private javax.swing.ButtonGroup ionTableButtonGroup;
     private javax.swing.JMenu ionsMenu;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
     private javax.swing.JPopupMenu.Separator jSeparator11;
@@ -2679,6 +2687,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JPopupMenu.Separator jSeparator9;
+    private javax.swing.JMenuItem jumpToJMenuItem;
     private javax.swing.JMenu lossMenu;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JCheckBoxMenuItem moreThanTwoChargesCheckBoxMenuItem;
@@ -2718,6 +2727,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu splitterMenu5;
     private javax.swing.JMenu splitterMenu6;
     private javax.swing.JMenu splitterMenu7;
+    private javax.swing.JMenuItem starHideJMenuItem;
     private javax.swing.JPanel statsJPanel;
     private javax.swing.JMenu viewJMenu;
     private javax.swing.JCheckBoxMenuItem xIonCheckBoxMenuItem;
