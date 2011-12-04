@@ -1,14 +1,13 @@
 package eu.isas.peptideshaker.scoring.targetdecoy;
 
-import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyResults;
-import eu.isas.peptideshaker.scoring.targetdecoy.TargetDecoyPoint;
 import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * This class will contain the PEP, FDR and FNR values of a target decoy map directly available for plotting
+ * This class will contain the PEP, FDR and FNR values of a target decoy 
+ * map directly available for plotting.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class TargetDecoySeries {
 

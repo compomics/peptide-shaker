@@ -1,9 +1,3 @@
-
-/*
- * FileSelection.java
- *
- * Created on Apr 13, 2011, 6:06:33 PM
- */
 package eu.isas.peptideshaker.gui;
 
 import java.io.File;
@@ -11,7 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- *
+ * @TODO: JavaDoc missing...
+ * 
  * @author Marc Vaudel
  */
 public class FileSelection extends javax.swing.JDialog {

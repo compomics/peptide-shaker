@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.filtering;
 
 import com.compomics.util.experiment.biology.Peptide;
@@ -13,7 +9,7 @@ import javax.swing.RowFilter.ComparisonType;
 /**
  * Peptide Filter
  *
- * @author marc
+ * @author Marc Vaudel
  */
 public class PeptideFilter extends MatchFilter {
 
@@ -75,7 +71,7 @@ public class PeptideFilter extends MatchFilter {
 
     /**
      * Sets the threshold for the peptide confidence
-     * @param proteinConfidence the threshold for the peptide confidence
+     * @param peptideConfidence the threshold for the peptide confidence
      */
     public void setPeptideConfidence(Double peptideConfidence) {
         this.peptideConfidence = peptideConfidence;
@@ -107,7 +103,7 @@ public class PeptideFilter extends MatchFilter {
 
     /**
      * Sets the threshold for the peptide score
-     * @param proteinScore the threshold for the peptide score
+     * @param peptideScore the threshold for the peptide score
      */
     public void setPeptideScore(Double peptideScore) {
         this.peptideScore = peptideScore;
@@ -155,7 +151,7 @@ public class PeptideFilter extends MatchFilter {
 
     /**
      * Sets the comparison type used for the confidence
-     * @param proteinConfidenceComparison the comparison type used for the confidence
+     * @param peptideConfidenceComparison the comparison type used for the confidence
      */
     public void setPeptideConfidenceComparison(ComparisonType peptideConfidenceComparison) {
         this.peptideConfidenceComparison = peptideConfidenceComparison;
@@ -171,7 +167,7 @@ public class PeptideFilter extends MatchFilter {
 
     /**
      * Sets the comparison type used for the peptide score
-     * @param proteinScoreComparison the comparison type used for the peptide score
+     * @param peptideScoreComparison the comparison type used for the peptide score
      */
     public void setPeptideScoreComparison(ComparisonType peptideScoreComparison) {
         this.peptideScoreComparison = peptideScoreComparison;

@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * This class contains the display preferences for the current project.
  *
- * @author marc
+ * @author Marc Vaudel
  */
 public class DisplayPreferences implements Serializable {
 
@@ -42,6 +42,7 @@ public class DisplayPreferences implements Serializable {
 
     /**
      * Returns whether hidden proteins should be displayed
+     * @return true if the hidden proteins should be displayed
      */
     public boolean showHiddenProteins() {
         return showHiddenProteins;
@@ -49,7 +50,7 @@ public class DisplayPreferences implements Serializable {
 
     /**
      * Sets whether scores should be displayed
-     * @param showHiddenProteins a boolean indicating whether scores should be displayed
+     * @param showScores a boolean indicating whether scores should be displayed
      */
     public void showScores(boolean showScores) {
         this.showScores = showScores;
@@ -57,6 +58,7 @@ public class DisplayPreferences implements Serializable {
 
     /**
      * Returns whether scores should be displayed
+     * @return true of the scores are to be displayed
      */
     public boolean showScores() {
         return showScores;

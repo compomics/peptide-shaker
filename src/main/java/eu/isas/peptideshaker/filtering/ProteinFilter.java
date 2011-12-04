@@ -1,16 +1,11 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.filtering;
 
-import java.util.ArrayList;
 import javax.swing.RowFilter.ComparisonType;
 
 /**
  * Protein Filter
  *
- * @author marc
+ * @author Marc Vaudel
  */
 public class ProteinFilter extends MatchFilter {
 
@@ -76,9 +71,9 @@ public class ProteinFilter extends MatchFilter {
     private int pi = 5;
 
     /**
-     * Constructor
+     * Constructor.
+     * 
      * @param name the name of the filter
-     * @param allModifications list of all modifications found in proteins
      */
     public ProteinFilter(String name) {
         this.name = name;

@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.filtering;
 
 import java.util.ArrayList;
@@ -10,7 +6,7 @@ import javax.swing.RowFilter.ComparisonType;
 /**
  * PSM filter
  *
- * @author marc
+ * @author Marc Vaudel
  */
 public class PsmFilter extends MatchFilter {
 
@@ -148,7 +144,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Sets the comparison type used for the confidence
-     * @param proteinConfidenceComparison the comparison type used for the confidence
+     * @param psmConfidenceComparison the comparison type used for the confidence
      */
     public void setPsmConfidenceComparison(ComparisonType psmConfidenceComparison) {
         this.psmConfidenceComparison = psmConfidenceComparison;
@@ -164,7 +160,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Sets the comparison type used for the psm score
-     * @param proteinScoreComparison the comparison type used for the psm score
+     * @param psmScoreComparison the comparison type used for the psm score
      */
     public void setPsmScoreComparison(ComparisonType psmScoreComparison) {
         this.psmScoreComparison = psmScoreComparison;
@@ -180,7 +176,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Sets the threshold for the psm score
-     * @param proteinScore the threshold for the psm score
+     * @param psmScore the threshold for the psm score
      */
     public void setPsmScore(Double psmScore) {
         this.psmScore = psmScore;
@@ -196,7 +192,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Sets the threshold for the psm confidence
-     * @param proteinConfidence the threshold for the psm confidence
+     * @param psmConfidence the threshold for the psm confidence
      */
     public void setPsmConfidence(Double psmConfidence) {
         this.psmConfidence = psmConfidence;
@@ -204,7 +200,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Returns the comparison type used for the precursor m/z comparison
-     * @param proteinScoreComparison the comparison type used for the precursor m/z comparison
+     * @return the comparison type used for the precursor m/z comparison
      */
     public ComparisonType getPrecursorMzComparison() {
         return precursorMzComparison;
@@ -212,7 +208,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Sets the comparison type used for the precursor m/z comparison
-     * @param proteinScoreComparison the comparison type used for the precursor m/z comparison
+     * @param precursorMzComparison the comparison type used for the precursor m/z comparison
      */
     public void setPrecursorMzComparison(ComparisonType precursorMzComparison) {
         this.precursorMzComparison = precursorMzComparison;
@@ -220,7 +216,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Returns the comparison type used for the precursor m/z error comparison
-     * @param proteinScoreComparison the comparison type used for the precursor m/z error comparison
+     * @return  the comparison type used for the precursor m/z error comparison
      */
     public ComparisonType getPrecursorMzErrorComparison() {
         return precursorMzErrorComparison;
@@ -228,7 +224,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Sets the comparison type used for the precursor m/z error comparison
-     * @param proteinScoreComparison the comparison type used for the precursor m/z error comparison
+     * @param precursorMzErrorComparison the comparison type used for the precursor m/z error comparison
      */
     public void setPrecursorMzErrorComparison(ComparisonType precursorMzErrorComparison) {
         this.precursorMzErrorComparison = precursorMzErrorComparison;
@@ -236,7 +232,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Returns the comparison type used for the precursor RT comparison
-     * @param proteinScoreComparison the comparison type used for the precursor RT comparison
+     * @return  the comparison type used for the precursor RT comparison
      */
     public ComparisonType getPrecursorRTComparison() {
         return precursorRTComparison;
@@ -244,7 +240,7 @@ public class PsmFilter extends MatchFilter {
 
     /**
      * Sets the comparison type used for the precursor RT comparison
-     * @param proteinScoreComparison the comparison type used for the precursor RT comparison
+     * @param precursorRTComparison the comparison type used for the precursor RT comparison
      */
     public void setPrecursorRTComparison(ComparisonType precursorRTComparison) {
         this.precursorRTComparison = precursorRTComparison;

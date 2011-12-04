@@ -203,7 +203,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         fragmentIonsJScrollPane.getViewport().setOpaque(false);
         sequenceCoverageTableScrollPane.getViewport().setOpaque(false);
 
-        // make the tabs in the spectrum tabbed pane go from right to left
+        // make the tabs in the spectrum tabbed pane go from right to lef
         spectrumJTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
         updateSeparators();
@@ -3529,7 +3529,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @param displayPeptidesAndPSMs    boolean indicating whether the peptides and psms shall be displayed
      * @param displayCoverage           boolean indicating whether the protein coverage shall be displayed
      * @param displaySpectrum           boolean indicating whether the spectrum shall be displayed
-     * @param displaySpectrumSliders    boolean indicating whether the spectrum sliders shall be displayed 
      */
     public void setDisplayOptions(boolean displayProteins, boolean displayPeptidesAndPSMs,
             boolean displayCoverage, boolean displaySpectrum) {

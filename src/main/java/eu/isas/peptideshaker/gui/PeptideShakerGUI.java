@@ -5005,7 +5005,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     /**
      * Get the current delta masses for use when annotating the spectra.
      * 
-     * @return 
+     * @return the current delta masses
      */
     public HashMap<Double, String> getCurrentMassDeltas() {
 

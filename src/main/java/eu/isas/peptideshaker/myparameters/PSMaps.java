@@ -8,7 +8,7 @@ import eu.isas.peptideshaker.scoring.PsmSpecificMap;
 /**
  * This class contains all scoring maps from PeptideShaker and will be used to store the information
  *
- * @author Marc
+ * @author Marc Vaudel
  */
 public class PSMaps implements UrParameter {
 
@@ -33,7 +33,6 @@ public class PSMaps implements UrParameter {
      * constructor
      */
     public PSMaps() {
-
     }
 
     /**
@@ -72,8 +71,6 @@ public class PSMaps implements UrParameter {
         return proteinMap;
     }
 
-
-
     @Override
     public String getFamilyName() {
         return "PeptideShaker";
@@ -83,5 +80,4 @@ public class PSMaps implements UrParameter {
     public int getIndex() {
         return 1;
     }
-
 }
