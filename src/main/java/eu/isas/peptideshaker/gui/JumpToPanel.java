@@ -301,12 +301,11 @@ public class JumpToPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Override to set the input text field editable or not.
+     * Override to set the input text field enabled or not.
      * 
      * @param enabled 
      */
     public void setEnabled(boolean enabled) {
         inputTxt.setEnabled(enabled);
-        //inputTxt.setRequestFocusEnabled(enabled);
     }
 }
