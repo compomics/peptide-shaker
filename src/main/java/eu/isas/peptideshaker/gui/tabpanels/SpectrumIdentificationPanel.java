@@ -236,6 +236,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         mascotTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) mascotTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
+        
+        omssaTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) omssaTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        xTandemTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) xTandemTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        mascotTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) mascotTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
         searchEngineTable.getColumn("Validated PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         searchEngineTable.getColumn("Unique PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
@@ -289,6 +296,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         omssaTableToolTips.add("Search Engine Peptide Rank");
         omssaTableToolTips.add("Mapping Protein(s)");
         omssaTableToolTips.add("Peptide Sequence");
+        omssaTableToolTips.add("Precursor Charge");
         omssaTableToolTips.add("Peptide e-value");
         omssaTableToolTips.add("Peptide Confidence");
 
@@ -296,6 +304,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         xTandemTableToolTips.add("Search Engine Peptide Rank");
         xTandemTableToolTips.add("Mapping Protein(s)");
         xTandemTableToolTips.add("Peptide Sequence");
+        xTandemTableToolTips.add("Precursor Charge");
         xTandemTableToolTips.add("Peptide e-value");
         xTandemTableToolTips.add("Peptide Confidence");
 
@@ -303,6 +312,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         mascotTableToolTips.add("Search Engine Peptide Rank");
         mascotTableToolTips.add("Mapping Protein(s)");
         mascotTableToolTips.add("Peptide Sequence");
+        mascotTableToolTips.add("Precursor Charge");
         mascotTableToolTips.add("Peptide e-value");
         mascotTableToolTips.add("Peptide Confidence");
     }
@@ -330,6 +340,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) omssaTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) xTandemTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) mascotTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) omssaTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) xTandemTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) mascotTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
 
         searchEngineTable.revalidate();
         searchEngineTable.repaint();
