@@ -142,6 +142,7 @@ public class JumpToPanel extends javax.swing.JPanel {
         });
 
         indexLabel.setFont(indexLabel.getFont().deriveFont((indexLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
+        indexLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         indexLabel.setText(" ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -158,7 +159,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                 .addGap(0, 0, 0)
                 .addComponent(previousButton, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(indexLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 104, Short.MAX_VALUE)
+                .addComponent(indexLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
