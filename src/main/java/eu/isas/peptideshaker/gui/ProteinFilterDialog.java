@@ -41,7 +41,7 @@ public class ProteinFilterDialog extends javax.swing.JDialog {
 
         this.peptideShakerGUI = peptideShakerGUI;
 
-        //proteinTable = peptideShakerGUI.getOverviewProteinTable();
+        //proteinTable = peptideShakerGUI.getOverviewPanel().getProteinTable();
 
         initComponents();
         

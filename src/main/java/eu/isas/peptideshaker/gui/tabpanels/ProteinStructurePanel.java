@@ -3217,10 +3217,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         try {
             if (peptideShakerGUI.getDisplayPreferences().showScores()) {
-                proteinTable.removeColumn(proteinTable.getColumn("Score"));
-            } else {
                 proteinTable.addColumn(proteinScoreColumn);
                 proteinTable.moveColumn(10, 8);
+            } else {
+                proteinTable.removeColumn(proteinTable.getColumn("Score"));
             }
         } catch (IllegalArgumentException e) {
             peptideShakerGUI.catchException(e);
