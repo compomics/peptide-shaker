@@ -1327,6 +1327,7 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
 
         DefaultTableModel dm = (DefaultTableModel) availableModificationsTable.getModel();
         dm.getDataVector().removeAllElements();
+        dm.fireTableDataChanged();
 
         for (int i = 0; i < allModificationsAsArray.length; i++) {
             ((DefaultTableModel) availableModificationsTable.getModel()).addRow(new Object[]{

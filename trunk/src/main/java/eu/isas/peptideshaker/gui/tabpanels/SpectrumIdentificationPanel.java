@@ -2560,6 +2560,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
         DefaultTableModel dm = (DefaultTableModel) spectrumTable.getModel();
         dm.getDataVector().removeAllElements();
+        dm.fireTableDataChanged();
 
         String fileSelected = (String) fileNamesCmb.getSelectedItem();
 
@@ -2708,19 +2709,19 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 // empty the tables
                 DefaultTableModel dm = (DefaultTableModel) peptideShakerJTable.getModel();
                 dm.getDataVector().removeAllElements();
-                ((DefaultTableModel) peptideShakerJTable.getModel()).fireTableDataChanged();
+                dm.fireTableDataChanged();
 
                 dm = (DefaultTableModel) omssaTable.getModel();
                 dm.getDataVector().removeAllElements();
-                ((DefaultTableModel) omssaTable.getModel()).fireTableDataChanged();
+                dm.fireTableDataChanged();
 
                 dm = (DefaultTableModel) mascotTable.getModel();
                 dm.getDataVector().removeAllElements();
-                ((DefaultTableModel) mascotTable.getModel()).fireTableDataChanged();
+                dm.fireTableDataChanged();
 
                 dm = (DefaultTableModel) xTandemTable.getModel();
                 dm.getDataVector().removeAllElements();
-                ((DefaultTableModel) xTandemTable.getModel()).fireTableDataChanged();
+                dm.fireTableDataChanged();
 
                 omssaTablePeptideTooltips = new HashMap<Integer, String>();
                 xTandemTablePeptideTooltips = new HashMap<Integer, String>();

@@ -2747,6 +2747,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 // empty the group table
                 DefaultTableModel dm = (DefaultTableModel) groupSelectionTable.getModel();
                 dm.getDataVector().removeAllElements();
+                dm.fireTableDataChanged();
 
                 PSMaps pSMaps = new PSMaps();
                 pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);

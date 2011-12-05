@@ -1493,6 +1493,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
             DefaultTableModel dm = (DefaultTableModel) pdbChainsJTable.getModel();
             dm.getDataVector().removeAllElements();
+            dm.fireTableDataChanged();
 
             // clear the peptide to pdb mappings in the peptide table
             for (int i = 0; i < peptideTable.getRowCount(); i++) {
@@ -2444,6 +2445,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             try {
                 DefaultTableModel dm = (DefaultTableModel) peptideTable.getModel();
                 dm.getDataVector().removeAllElements();
+                dm.fireTableDataChanged();
 
                 String proteinKey = proteinTableMap.get(getProteinIndex(row));
                 peptideTableMap = new HashMap<Integer, String>();
@@ -2840,9 +2842,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     // delete the previous matches
                     DefaultTableModel dm = (DefaultTableModel) pdbMatchesJTable.getModel();
                     dm.getDataVector().removeAllElements();
+                    dm.fireTableDataChanged();
 
                     dm = (DefaultTableModel) pdbChainsJTable.getModel();
                     dm.getDataVector().removeAllElements();
+                    dm.fireTableDataChanged();
 
                     // clear the peptide to pdb mappings in the peptide table
                     for (int i = 0; i < peptideTable.getRowCount(); i++) {

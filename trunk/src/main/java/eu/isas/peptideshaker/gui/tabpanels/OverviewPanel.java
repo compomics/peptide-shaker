@@ -3989,6 +3989,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                 DefaultTableModel dm = (DefaultTableModel) psmTable.getModel();
                 dm.getDataVector().removeAllElements();
+                dm.fireTableDataChanged();
 
                 spectrumPanel.removeAll();
                 spectrumPanel.revalidate();
@@ -4069,9 +4070,11 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                 DefaultTableModel dm = (DefaultTableModel) peptideTable.getModel();
                 dm.getDataVector().removeAllElements();
+                dm.fireTableDataChanged();
 
                 dm = (DefaultTableModel) psmTable.getModel();
                 dm.getDataVector().removeAllElements();
+                dm.fireTableDataChanged();
 
                 spectrumPanel.removeAll();
                 spectrumPanel.revalidate();

@@ -364,6 +364,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                         // clear old table
                         DefaultTableModel dm = (DefaultTableModel) goMappingsTable.getModel();
                         dm.getDataVector().removeAllElements();
+                        dm.fireTableDataChanged();
 
                         if (!goMappingsFile.exists()) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Mapping file \"" + goMappingsFile.getName() + "\" not found!",
@@ -592,6 +593,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                                             true
                                         });
                             }
+                            
+                            ((DefaultTableModel) goMappingsTable.getModel()).fireTableDataChanged();
 
                             // correct the p-values for multiple testing using benjamini-hochberg
                             sortPValues(pValues, indexes);
@@ -2153,8 +2156,7 @@ public class GOEAPanel extends javax.swing.JPanel {
         // clear old results
         DefaultTableModel dm = (DefaultTableModel) goMappingsTable.getModel();
         dm.getDataVector().removeAllElements();
-
-        ((DefaultTableModel) goMappingsTable.getModel()).fireTableDataChanged();
+        dm.fireTableDataChanged();
 
         goFrequencyPlotPanel.removeAll();
         goFrequencyPlotPanel.revalidate();
