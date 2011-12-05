@@ -4086,9 +4086,11 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                 HashMap<Double, HashMap<Integer, HashMap<String, PeptideMatch>>> peptideMap = new HashMap<Double, HashMap<Integer, HashMap<String, PeptideMatch>>>();
                 PSParameter probabilities = new PSParameter();
+                PSParameter secondaryPSParameter = new PSParameter();
                 double peptideProbabilityScore;
                 PeptideMatch peptideMatch;
                 int spectrumCount;
+                
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, probabilities);
                     peptideProbabilityScore = probabilities.getPeptideProbabilityScore();
@@ -4114,6 +4116,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                 int index = 0;
                 int validatedPeptideCounter = 0;
+                int validatedSpectraCounter = 0;
 
                 for (double score : scores) {
                     nSpectra = new ArrayList<Integer>(peptideMap.get(score).keySet());
@@ -4123,6 +4126,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         spectrumCount = nSpectra.get(i);
                         keys = new ArrayList<String>(peptideMap.get(score).get(spectrumCount).keySet());
                         Collections.sort(keys);
+                        
                         for (String key : keys) {
                             currentMatch = peptideMap.get(score).get(spectrumCount).get(key);
                             probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(key, probabilities);
@@ -4134,6 +4138,16 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     otherProteins.add(accession);
                                 }
                             }
+                            
+                            
+                            validatedSpectraCounter = 0;
+                            for (String spectrumKey : currentMatch.getSpectrumMatches()) {
+                                secondaryPSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, secondaryPSParameter);
+                                if (secondaryPSParameter.isValidated()) {
+                                    validatedSpectraCounter++;
+                                }
+                            }
+                            
 
                             // find and add the peptide start and end indexes
                             int peptideStart = 0;
@@ -4157,6 +4171,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                         peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                                         peptideStart,
                                         peptideEnd,
+                                        //validatedSpectraCounter, @TODO: use this together with spectrumCount in a stacked bar chart
                                         spectrumCount,
                                         probabilities.getPeptideScore(),
                                         probabilities.getPeptideConfidence(),
@@ -4248,18 +4263,20 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             new HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>>();
                     ArrayList<Double> scores = new ArrayList<Double>();
                     PSParameter probabilities = new PSParameter();
+                    PSParameter secondaryPSParameter = new PSParameter();
                     ProteinMatch proteinMatch;
                     double score;
                     int nPeptides, nSpectra;
 
                     for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                        
                         if (!SequenceFactory.isDecoy(proteinKey)) {
                             proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                             probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
                             score = probabilities.getProteinProbabilityScore();
                             nPeptides = -proteinMatch.getPeptideMatches().size();
                             nSpectra = -peptideShakerGUI.getNSpectra(proteinMatch);
-
+                            
                             if (!orderMap.containsKey(score)) {
                                 orderMap.put(score, new HashMap<Integer, HashMap<Integer, ArrayList<String>>>());
                                 scores.add(score);
@@ -4289,6 +4306,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     ArrayList<String> keys;
 
                     int validatedProteinsCounter = 0;
+                    int nValidatedPeptides = 0, nValidatedSpectra = 0;
 
                     progressDialog.setIndeterminate(false);
                     progressDialog.setTitle("Loading Protein Table. Please wait...");
@@ -4311,10 +4329,33 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                 Collections.sort(keys);
 
                                 for (String proteinKey : keys) {
+                                    
+                                    nValidatedPeptides = 0; 
+                                    nValidatedSpectra = 0;
+                                    
                                     proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                                     probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
 
                                     Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                                    
+                                    // get the number of validated peptides
+                                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                                        secondaryPSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, secondaryPSParameter);
+                                        if (secondaryPSParameter.isValidated()) {
+                                            nValidatedPeptides++;
+                                        }
+                                    }
+
+                                    // get the number of validated spectra
+                                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
+                                        PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+                                        for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+                                            secondaryPSParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, secondaryPSParameter);
+                                            if (secondaryPSParameter.isValidated()) {
+                                                nValidatedSpectra++;
+                                            }
+                                        }
+                                    }
 
                                     if (peptideShakerGUI.getSearchParameters().getEnzyme() == null) {
                                         throw new IllegalArgumentException("Unknown enzyme!");
@@ -4336,6 +4377,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                                 peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
                                                 description,
                                                 sequenceCoverage,
+                                                //nValidatedPeptides, @TODO: use these together with currentNP and currentNS in stacked bar charts
+                                                //nValidatedSpectra,
                                                 -currentNP,
                                                 -currentNS,
                                                 spectrumCounting,
@@ -4738,9 +4781,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
         try {
             if (peptideShakerGUI.getDisplayPreferences().showHiddenProteins()) {
-
-                proteinTable.removeColumn(proteinTable.getColumn("   "));
-            } else {
                 proteinTable.addColumn(proteinVisibleColumn);
 
                 if (peptideShakerGUI.getDisplayPreferences().showScores()) {
@@ -4760,6 +4800,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         proteinTable.setValueAt(false, row, proteinTable.getColumn("   ").getModelIndex());
                     }
                 }
+                
+            } else {
+                proteinTable.removeColumn(proteinTable.getColumn("   "));
             }
 
             if (peptideShakerGUI.getOverviewPanel() != null) {
