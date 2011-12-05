@@ -22,6 +22,12 @@ public class PeptideShakerWrapper {
      * given in the pom file.
      */
     private String jarFileName = "PeptideShaker-";
+    /**
+     * True if this the first time the wrapper tries to launch the application. 
+     * If the first launch failes, e.g., due to memory settings, it is set 
+     * to false.
+     */
+    private boolean firstTry = true;
 
     /**
      * Starts the launcher by calling the launch method. Use this as the
@@ -49,16 +55,18 @@ public class PeptideShakerWrapper {
     private void launch() throws Exception {
 
         String temp = "", cmdLine, path;
+        String options = "", currentOption;
 
+        // locate the settings files
         path = this.getClass().getResource("PeptideShakerWrapper.class").getPath();
         path = path.substring(5, path.indexOf(jarFileName));
         path = path.replace("%20", " ");
 
         File javaOptions = new File(path + "conf/JavaOptions.txt");
+        File nonStandardJavaHome = new File(path + "conf/JavaHome.txt");
 
-        String options = "", currentOption;
-
-        if (javaOptions.exists()) {
+        // read any java option settings
+        if (javaOptions.exists() && firstTry) {
 
             try {
                 FileReader f = new FileReader(javaOptions);
@@ -82,14 +90,55 @@ public class PeptideShakerWrapper {
                 ex.printStackTrace();
             }
         } else {
-            options = "-Xms128M -Xmx768M";
+            options = "-Xms128M -Xmx1024M";
         }
 
-        File tempFile = new File(path);
+        // get the default java home location
+        String javaHome = System.getProperty("java.home") + File.separator
+                + "bin" + File.separator;
 
-        String javaHome = System.getProperty("java.home") + File.separator +
-                "bin" + File.separator;
+        // check if the user has set a non-standard Java home location
+        boolean usingStandardJavaHome = true;
 
+        if (nonStandardJavaHome.exists()) {
+
+            try {
+                FileReader f = new FileReader(nonStandardJavaHome);
+                BufferedReader b = new BufferedReader(f);
+
+                String tempLocation = b.readLine();
+
+                if (new File(tempLocation).exists() &&
+                        (new File(tempLocation, "java.exe").exists() || new File(tempLocation, "java").exists())) {
+                    javaHome = tempLocation;
+                    usingStandardJavaHome = false;
+                } else {
+                    if (firstTry) {
+                        JOptionPane.showMessageDialog(null, "Non-standard Java home location not found.\n"
+                                + "Using default Java home.", "Java Home Not Found!", JOptionPane.WARNING_MESSAGE);
+                    }
+                }
+
+                b.close();
+                f.close();
+
+            } catch (FileNotFoundException ex) {
+                if (firstTry) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Non-standard Java home location not found.\n"
+                            + "Using default Java home", "Java Home Not Found!", JOptionPane.WARNING_MESSAGE);
+                }
+            } catch (IOException ex) {
+
+                if (firstTry) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Error when reading non-standard Java home location.\n"
+                            + "Using default Java home.", "Java Home Error", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        }
+
+        // set up the quote type, windows or linux/mac
         String quote = "";
 
         if (System.getProperty("os.name").lastIndexOf("Windows") != -1) {
@@ -99,36 +148,38 @@ public class PeptideShakerWrapper {
         if (debug) {
             JOptionPane.showMessageDialog(null, "original java.home: " + javaHome);
         }
-        
+
         // try to force the use of 64 bit Java if available
-        if (javaHome.lastIndexOf(" (x86)") != -1) {
-            
-            // Java 32 bit home looks like this:    C:\Program Files (x86)\Java\jre6\bin\javaw.exe
-            // Java 64 bit home looks like this:    C:\Program Files\Java\jre6\bin\javaw.exe
-            
+        if (usingStandardJavaHome && javaHome.lastIndexOf(" (x86)") != -1 && System.getProperty("os.name").lastIndexOf("Windows") != -1) {
+
+            // default java 32 bit windows home looks like this:    C:\Program Files (x86)\Java\jre6\bin\javaw.exe
+            // default java 64 bit windows home looks like this:    C:\Program Files\Java\jre6\bin\javaw.exe
+
             String tempJavaHome = javaHome.replaceAll(" \\(x86\\)", "");
-            
+
             if (debug) {
                 JOptionPane.showMessageDialog(null, "temp java.home: " + tempJavaHome);
             }
-            
+
             if (new File(tempJavaHome).exists()) {
                 javaHome = tempJavaHome;
             }
         }
-        
+
         if (debug) {
             JOptionPane.showMessageDialog(null, "new java.home: " + javaHome);
         }
-        
+
+        // create the complete command line
         cmdLine = javaHome + "java " + options + " -cp "
-                + quote + new File(tempFile, jarFileName).getAbsolutePath() + quote
+                + quote + new File(path, jarFileName).getAbsolutePath() + quote
                 + " eu.isas.peptideshaker.gui.PeptideShakerGUI";
 
         if (debug) {
             System.out.println(cmdLine);
         }
 
+        // try to run the command line
         try {
             Process p = Runtime.getRuntime().exec(cmdLine);
 
@@ -171,19 +222,34 @@ public class PeptideShakerWrapper {
                 System.out.println("Process exitValue: " + exitVal);
             }
 
+            // an error occured
             if (error) {
-                File logFile = new File("conf", "PeptideShaker.log");
-                FileWriter f = new FileWriter(logFile, true);
-                f.write("\n\n" + temp + "\n\n");
-                f.close();
-                
-                javax.swing.JOptionPane.showMessageDialog(null,
-                        "Failed to start PeptideShaker.\n\n" +
-                        "Inspect the log file for details: conf/PeptideShaker.log.\n\n" +
-                        "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
-                        "PeptideShaker - Startup Failed", JOptionPane.ERROR_MESSAGE);
 
-                System.exit(0);
+                //if first try, relaunch with minimum memory settings
+                if (firstTry) {
+                    firstTry = false;
+
+                    javax.swing.JOptionPane.showMessageDialog(null,
+                            "Failed to start PeptideShaker.\n\n"
+                            + "Will try to restart with reduced memory requirements.\n\n"
+                            + "See Troubleshooting at http://peptide-shaker.googlecode.com for details.",
+                            "PeptideShaker - Startup Failed", JOptionPane.WARNING_MESSAGE);
+
+                    launch();
+                } else {
+                    File logFile = new File("conf", "PeptideShaker.log");
+                    FileWriter f = new FileWriter(logFile, true);
+                    f.write("\n\n" + temp + "\n\n");
+                    f.close();
+
+                    javax.swing.JOptionPane.showMessageDialog(null,
+                            "Failed to start PeptideShaker.\n\n"
+                            + "Inspect the log file for details: conf/PeptideShaker.log.\n\n"
+                            + "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
+                            "PeptideShaker - Startup Failed", JOptionPane.ERROR_MESSAGE);
+
+                    System.exit(0);
+                }
             }
         } catch (Throwable t) {
             t.printStackTrace();
@@ -201,4 +267,3 @@ public class PeptideShakerWrapper {
         new PeptideShakerWrapper();
     }
 }
-
