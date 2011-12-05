@@ -181,6 +181,7 @@ public class PtmPanel extends javax.swing.JPanel {
         peptidesTable.setAutoCreateRowSorter(true);
         relatedPeptidesTable.setAutoCreateRowSorter(true);
         selectedPsmsTable.setAutoCreateRowSorter(true);
+        relatedPsmsTable.setAutoCreateRowSorter(true);
 
         relatedPeptidesTableJScrollPane.getViewport().setOpaque(false);
         psmsModifiedTableJScrollPane.getViewport().setOpaque(false);
@@ -2918,6 +2919,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
                 DefaultTableModel dm = (DefaultTableModel) ptmJTable.getModel();
                 dm.getDataVector().removeAllElements();
+                dm.fireTableDataChanged();
 
                 for (int i = 0; i < modifications.length; i++) {
 
