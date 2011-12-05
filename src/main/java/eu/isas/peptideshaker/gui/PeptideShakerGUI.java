@@ -92,6 +92,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import javax.swing.Box;
 import javax.swing.JFileChooser;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -397,6 +398,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         
         jumpToPanel = new JumpToPanel(this);
         jumpToPanel.setEnabled(false);
+        
+        menuBar.add(Box.createHorizontalGlue());
+    
         menuBar.add(jumpToPanel);
         exportPrideXmlMenuItem.setVisible(false); // @TODO: remove when PRIDE export is implemented
 

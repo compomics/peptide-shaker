@@ -26,10 +26,10 @@
               <Component id="inputTxt" min="-2" pref="199" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
               <Component id="nextButton" linkSize="3" min="-2" pref="15" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="0" max="-2" attributes="3"/>
               <Component id="previousButton" linkSize="3" min="-2" pref="15" max="-2" attributes="0"/>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="indexLabel" pref="104" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="indexLabel" min="-2" pref="97" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -118,6 +118,7 @@
             <Font component="indexLabel" italic="true" property="font" relativeSize="true" size="0"/>
           </FontInfo>
         </Property>
+        <Property name="horizontalAlignment" type="int" value="0"/>
         <Property name="text" type="java.lang.String" value=" "/>
       </Properties>
     </Component>
