@@ -193,11 +193,9 @@ public class JumpToPanel extends javax.swing.JPanel {
                 inputTxt.setForeground(new Color(204, 204, 204));
             }
 
-            if (evt.getKeyCode() == KeyEvent.VK_UP
-                    && previousButton.isEnabled()) {
+            if (evt.getKeyCode() == KeyEvent.VK_UP && previousButton.isEnabled()) {
                 previousButtonActionPerformed(null);
-            } else if (evt.getKeyCode() == KeyEvent.VK_DOWN
-                    && nextButton.isEnabled()) {
+            } else if (evt.getKeyCode() == KeyEvent.VK_DOWN & nextButton.isEnabled()) {
                 nextButtonActionPerformed(null);
             } else {
                 possibilities = new ArrayList<String>();
@@ -220,9 +218,10 @@ public class JumpToPanel extends javax.swing.JPanel {
                     PeptideMatch peptideMatch;
 
                     for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
-                        if (peptideKey.toLowerCase().startsWith(input)) {
-                            // @TODO: should there be something here??
-                        } else if (peptideKey.toLowerCase().contains(input)) {
+//                        if (peptideKey.toLowerCase().startsWith(input)) {
+//                            // @TODO: should there be something here??
+//                        } else 
+                        if (peptideKey.toLowerCase().contains(input)) {
                             secondaryCandidates.add(peptideKey);
                         }
                     }
@@ -240,9 +239,16 @@ public class JumpToPanel extends javax.swing.JPanel {
                         }
                     }
 
-                    if (possibilities.size() > 1) {
-                        previousButton.setEnabled(true);
-                        nextButton.setEnabled(true);
+                    if (possibilities.size() > 0) {
+                        
+                        if (possibilities.size() > 1) {
+                            previousButton.setEnabled(true);
+                            nextButton.setEnabled(true);
+                        } else { // possibilities.size() == 1
+                            previousButton.setEnabled(false);
+                            nextButton.setEnabled(false);
+                        }
+                        
                         updateSelectionInTab();
                     } else {
                         previousButton.setEnabled(false);
