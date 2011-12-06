@@ -161,9 +161,9 @@
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                               <Table columnCount="4" rowCount="0">
                                 <Column editable="false" title="" type="java.lang.Integer"/>
-                                <Column editable="false" title="" type="java.lang.Boolean"/>
-                                <Column editable="false" title="Name" type="java.lang.String"/>
-                                <Column editable="false" title="Description" type="java.lang.String"/>
+                                <Column editable="true" title="" type="java.lang.Boolean"/>
+                                <Column editable="true" title="Name" type="java.lang.String"/>
+                                <Column editable="true" title="Description" type="java.lang.String"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -205,16 +205,25 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addStarredProteinActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="editStarredProtein">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Edit"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editStarredProteinActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="clearStarredProtein">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Clear"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearStarredProteinActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -278,9 +287,9 @@
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                               <Table columnCount="4" rowCount="0">
                                 <Column editable="false" title="" type="java.lang.Integer"/>
-                                <Column editable="false" title="" type="java.lang.Boolean"/>
-                                <Column editable="false" title="Name" type="java.lang.String"/>
-                                <Column editable="false" title="Description" type="java.lang.String"/>
+                                <Column editable="true" title="" type="java.lang.Boolean"/>
+                                <Column editable="true" title="Name" type="java.lang.String"/>
+                                <Column editable="true" title="Description" type="java.lang.String"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -313,6 +322,7 @@
                           </Properties>
                           <Events>
                             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="hiddenProteinsTableMouseReleased"/>
+                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="hiddenProteinsTableKeyReleased"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -321,16 +331,25 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addHiddenProteinActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="editHiddenProtein">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Edit"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editHiddenProteinActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="clearHiddenProtein">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Clear"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearHiddenProteinActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -431,9 +450,9 @@
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                               <Table columnCount="4" rowCount="0">
                                 <Column editable="false" title="" type="java.lang.Integer"/>
-                                <Column editable="false" title="" type="java.lang.Boolean"/>
-                                <Column editable="false" title="Name" type="java.lang.String"/>
-                                <Column editable="false" title="Description" type="java.lang.String"/>
+                                <Column editable="true" title="" type="java.lang.Boolean"/>
+                                <Column editable="true" title="Name" type="java.lang.String"/>
+                                <Column editable="true" title="Description" type="java.lang.String"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -466,6 +485,7 @@
                           </Properties>
                           <Events>
                             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="starredPeptidesTableMouseReleased"/>
+                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="starredPeptidesTableKeyReleased"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -474,16 +494,25 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addStarredPeptidesActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="editStarredPeptides">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Edit"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editStarredPeptidesActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="clearStarredPeptides">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Clear"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearStarredPeptidesActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -499,7 +528,6 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="601" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jScrollPane4" min="-2" pref="492" max="-2" attributes="0"/>
@@ -515,7 +543,6 @@
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="168" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -546,9 +573,9 @@
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                               <Table columnCount="4" rowCount="0">
                                 <Column editable="false" title="" type="java.lang.Integer"/>
-                                <Column editable="false" title="" type="java.lang.Boolean"/>
-                                <Column editable="false" title="Name" type="java.lang.String"/>
-                                <Column editable="false" title="Description" type="java.lang.String"/>
+                                <Column editable="true" title="" type="java.lang.Boolean"/>
+                                <Column editable="true" title="Name" type="java.lang.String"/>
+                                <Column editable="true" title="Description" type="java.lang.String"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -581,6 +608,7 @@
                           </Properties>
                           <Events>
                             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="hiddenPeptidesTableMouseReleased"/>
+                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="hiddenPeptidesTableKeyReleased"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -589,16 +617,25 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addHiddenPeptidesActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="editHiddenPeptides">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Edit"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editHiddenPeptidesActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="clearHiddenPeptides">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Clear"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearHiddenPeptidesActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -654,8 +691,6 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="601" max="32767" attributes="0"/>
-                          <EmptySpace min="0" pref="601" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jScrollPane5" min="-2" pref="492" max="-2" attributes="0"/>
@@ -671,8 +706,6 @@
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="168" max="32767" attributes="0"/>
-                          <EmptySpace min="0" pref="168" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -703,9 +736,9 @@
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                               <Table columnCount="4" rowCount="0">
                                 <Column editable="false" title="" type="java.lang.Integer"/>
-                                <Column editable="false" title="" type="java.lang.Boolean"/>
-                                <Column editable="false" title="Name" type="java.lang.String"/>
-                                <Column editable="false" title="Description" type="java.lang.String"/>
+                                <Column editable="true" title="" type="java.lang.Boolean"/>
+                                <Column editable="true" title="Name" type="java.lang.String"/>
+                                <Column editable="true" title="Description" type="java.lang.String"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -738,6 +771,7 @@
                           </Properties>
                           <Events>
                             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="starredPsmTableMouseReleased"/>
+                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="starredPsmTableKeyReleased"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -754,11 +788,17 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Edit"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editStarredPsmActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="clearStarredPsm">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Clear"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearStarredPsmActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -775,8 +815,6 @@
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <EmptySpace min="0" pref="601" max="32767" attributes="0"/>
-                          <EmptySpace min="0" pref="601" max="32767" attributes="0"/>
-                          <EmptySpace min="0" pref="601" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jScrollPane6" min="-2" pref="492" max="-2" attributes="0"/>
@@ -792,8 +830,6 @@
                     </DimensionLayout>
                     <DimensionLayout dim="1">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <EmptySpace min="0" pref="168" max="32767" attributes="0"/>
-                          <EmptySpace min="0" pref="168" max="32767" attributes="0"/>
                           <EmptySpace min="0" pref="168" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
@@ -825,9 +861,9 @@
                             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                               <Table columnCount="4" rowCount="0">
                                 <Column editable="false" title="" type="java.lang.Integer"/>
-                                <Column editable="false" title="" type="java.lang.Boolean"/>
-                                <Column editable="false" title="Name" type="java.lang.String"/>
-                                <Column editable="false" title="Description" type="java.lang.String"/>
+                                <Column editable="true" title="" type="java.lang.Boolean"/>
+                                <Column editable="true" title="Name" type="java.lang.String"/>
+                                <Column editable="true" title="Description" type="java.lang.String"/>
                               </Table>
                             </Property>
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -860,6 +896,7 @@
                           </Properties>
                           <Events>
                             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="hiddenPsmTableMouseReleased"/>
+                            <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="hiddenPsmTableKeyReleased"/>
                           </Events>
                         </Component>
                       </SubComponents>
@@ -868,16 +905,25 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Add"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addHiddenPsmActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="editHiddenPsm">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Edit"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editHiddenPsmActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="clearHiddenPsm">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Clear"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearHiddenPsmActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>

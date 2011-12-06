@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import java.awt.Color;
@@ -27,6 +28,10 @@ public class JumpToPanel extends javax.swing.JPanel {
      * currently selected item
      */
     private int currentSelection = 0;
+    /**
+     * Instance of the sequence factory
+     */
+    private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
 
     /**
      * Type of item selected
@@ -186,7 +191,7 @@ public class JumpToPanel extends javax.swing.JPanel {
      */
     private void inputTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputTxtKeyReleased
 
-        if (peptideShakerGUI.getIdentification() != null)  {
+        if (peptideShakerGUI.getIdentification() != null) {
 
             if (!inputTxt.getText().equalsIgnoreCase("(accession or sequence)")) {
                 inputTxt.setForeground(Color.black);
@@ -209,9 +214,19 @@ public class JumpToPanel extends javax.swing.JPanel {
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
                     for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-                        if (!ProteinMatch.isDecoy(proteinKey) && proteinKey.toLowerCase().contains(input)) {
-                            possibilities.add(proteinKey);
-                            types.add(Type.PROTEIN);
+                        if (!ProteinMatch.isDecoy(proteinKey)) {
+                            if (proteinKey.toLowerCase().contains(input)) {
+                                possibilities.add(proteinKey);
+                                types.add(Type.PROTEIN);
+                            }
+                            try {
+                                if (sequenceFactory.getHeader(proteinKey).getDescription().toLowerCase().contains(input)) {
+                                    possibilities.add(proteinKey);
+                                    types.add(Type.PROTEIN);
+                                }
+                            } catch (Exception e) {
+                                // cannot get description, ignore
+                            }
                         }
                     }
 
@@ -219,10 +234,10 @@ public class JumpToPanel extends javax.swing.JPanel {
                     PeptideMatch peptideMatch;
 
                     for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
-//                        if (peptideKey.toLowerCase().startsWith(input)) {
-//                            // @TODO: should there be something here??
-//                        } else 
-                        if (peptideKey.toLowerCase().contains(input)) {
+                        if (peptideKey.toLowerCase().startsWith(input)) {
+                            possibilities.add(peptideKey);
+                            types.add(Type.PEPTIDE);
+                        } else if (peptideKey.toLowerCase().contains(input)) {
                             secondaryCandidates.add(peptideKey);
                         }
                     }
@@ -241,7 +256,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                     }
 
                     if (possibilities.size() > 0) {
-                        
+
                         if (possibilities.size() > 1) {
                             previousButton.setEnabled(true);
                             nextButton.setEnabled(true);
@@ -249,7 +264,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                             previousButton.setEnabled(false);
                             nextButton.setEnabled(false);
                         }
-                        
+
                         updateSelectionInTab();
                     } else {
                         previousButton.setEnabled(false);

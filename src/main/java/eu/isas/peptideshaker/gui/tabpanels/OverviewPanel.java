@@ -4364,7 +4364,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     if (currentProtein == null) {
                                         throw new IllegalArgumentException("Protein not found! Accession: " + proteinMatch.getMainMatch());
                                     }
-
                                     spectrumCounting = peptideShakerGUI.getSpectrumCounting(proteinMatch);
                                     description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
                                     sequenceCoverage = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());

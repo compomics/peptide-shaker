@@ -39,6 +39,10 @@ public abstract class MatchFilter implements Serializable {
     private ArrayList<String> exceptions = new ArrayList<String>();
 
     /**
+     * Name of the manual selection filter
+     */
+    public static final String MANUAL_SELECTION = "manual selection";
+    /**
      * Enum for the type of possible filter
      */
     public enum FilterType {
@@ -69,6 +73,13 @@ public abstract class MatchFilter implements Serializable {
         return name;
     }
 
+    /**
+     * Sets the name of the filter
+     * @param newName the name to be given to the filter
+     */
+    public void setName(String newName) {
+        name = newName;
+    }
     /**
      * Return the type of the filter
      * @return the type of the filter
@@ -134,6 +145,13 @@ public abstract class MatchFilter implements Serializable {
     }
 
     /**
+     * Sets the list of manually validated keys
+     * @param manualValidation list of manually validated keys
+     */
+    public void setManualValidation(ArrayList<String> manualValidation) {
+        this.manualValidation = manualValidation;
+    }
+    /**
      * Adds an exception
      * @param matchKey the key of the exception to add
      */
@@ -141,6 +159,13 @@ public abstract class MatchFilter implements Serializable {
         exceptions.add(matchKey);
     }
 
+    /**
+     * Sets the excepted matches
+     * @param exceptions the excepted matches
+     */
+    public void setExceptions(ArrayList<String> exceptions) {
+        this.exceptions = exceptions;
+    }
     /**
      * Removes a manually validated Match
      * @param matchKey the key of the match to remove

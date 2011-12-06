@@ -58,16 +58,22 @@ public class PsmFilter extends MatchFilter {
      * The type of comparison to be used for the psm confidence
      */
     private ComparisonType psmConfidenceComparison = ComparisonType.EQUAL;
+    /**
+     * List of spectrum files names retained
+     */
+    private ArrayList<String> fileName = null;
 
     /**
      * Constructor
      * @param name the name of the filter
      * @param charges list of allowed charges
+     * @param files list of allowed files
      */
-    public PsmFilter(String name, ArrayList<Integer> charges) {
+    public PsmFilter(String name, ArrayList<Integer> charges, ArrayList<String> files) {
         this.name = name;
-        this.filterType = FilterType.PEPTIDE;
+        this.filterType = FilterType.PSM;
         this.charges = charges;
+        this.fileName = files;
     }
 
     /**
@@ -245,4 +251,20 @@ public class PsmFilter extends MatchFilter {
     public void setPrecursorRTComparison(ComparisonType precursorRTComparison) {
         this.precursorRTComparison = precursorRTComparison;
     }
+    
+    /**
+     * Returns the list of spectrum files containing the desired spectra
+     * @return the list of spectrum files containing the desired spectra
+     */
+    public ArrayList<String> getFileNames() {
+        return fileName;
+    }
+    /**
+     * Sets the list of spectrum files containing the desired spectra
+     * @param filesNames the list of spectrum files containing the desired spectra
+     */
+    public void setFileNames(ArrayList<String> filesNames) {
+        this.fileName = filesNames;
+    }
+    
 }
