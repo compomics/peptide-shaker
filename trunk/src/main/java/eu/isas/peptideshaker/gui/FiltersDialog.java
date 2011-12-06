@@ -5,7 +5,9 @@ import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -22,27 +24,27 @@ public class FiltersDialog extends javax.swing.JDialog {
     /**
      * The protein star filters
      */
-    private HashMap<String, ProteinFilter> proteinStarFilters = new HashMap<String, ProteinFilter>();
+    private HashMap<String, ProteinFilter> proteinStarFilters;
     /**
      * The protein hide filters
      */
-    private HashMap<String, ProteinFilter> proteinHideFilters = new HashMap<String, ProteinFilter>();
+    private HashMap<String, ProteinFilter> proteinHideFilters;
     /**
      * The peptide star filters
      */
-    private HashMap<String, PeptideFilter> peptideStarFilters = new HashMap<String, PeptideFilter>();
+    private HashMap<String, PeptideFilter> peptideStarFilters;
     /**
      * The peptide hide filters
      */
-    private HashMap<String, PeptideFilter> peptideHideFilters = new HashMap<String, PeptideFilter>();
+    private HashMap<String, PeptideFilter> peptideHideFilters;
     /**
      * The psm star filters
      */
-    private HashMap<String, PsmFilter> psmStarFilters = new HashMap<String, PsmFilter>();
+    private HashMap<String, PsmFilter> psmStarFilters;
     /**
      * The psm hide filters
      */
-    private HashMap<String, PsmFilter> psmHideFilters = new HashMap<String, PsmFilter>();
+    private HashMap<String, PsmFilter> psmHideFilters;
 
     /** Creates new form FiltersDialog */
     public FiltersDialog(PeptideShakerGUI peptideShakerGUI) {
@@ -51,13 +53,44 @@ public class FiltersDialog extends javax.swing.JDialog {
         initComponents();
 
         this.peptideShakerGUI = peptideShakerGUI;
+        updateMaps();
+        fillTables();
+    }
+
+    private void updateMaps() {
+        proteinStarFilters = new HashMap<String, ProteinFilter>();
+        proteinHideFilters = new HashMap<String, ProteinFilter>();
+        peptideStarFilters = new HashMap<String, PeptideFilter>();
+        peptideHideFilters = new HashMap<String, PeptideFilter>();
+        psmStarFilters = new HashMap<String, PsmFilter>();
+        psmHideFilters = new HashMap<String, PsmFilter>();
         proteinStarFilters.putAll(peptideShakerGUI.getFilterPreferences().getProteinStarFilters());
         proteinHideFilters.putAll(peptideShakerGUI.getFilterPreferences().getProteinHideFilters());
         peptideStarFilters.putAll(peptideShakerGUI.getFilterPreferences().getPeptideStarFilters());
         peptideHideFilters.putAll(peptideShakerGUI.getFilterPreferences().getPeptideHideFilters());
         psmStarFilters.putAll(peptideShakerGUI.getFilterPreferences().getPsmStarFilters());
         psmHideFilters.putAll(peptideShakerGUI.getFilterPreferences().getPsmHideFilters());
-        fillTables();
+    }
+
+    private void emptyTables() {
+        while (hiddenProteinsTable.getRowCount() > 0) {
+            ((DefaultTableModel) hiddenProteinsTable.getModel()).removeRow(0);
+        }
+        while (starredProteinsTable.getRowCount() > 0) {
+            ((DefaultTableModel) starredProteinsTable.getModel()).removeRow(0);
+        }
+        while (hiddenPeptidesTable.getRowCount() > 0) {
+            ((DefaultTableModel) hiddenPeptidesTable.getModel()).removeRow(0);
+        }
+        while (starredPeptidesTable.getRowCount() > 0) {
+            ((DefaultTableModel) starredPeptidesTable.getModel()).removeRow(0);
+        }
+        while (hiddenPsmTable.getRowCount() > 0) {
+            ((DefaultTableModel) hiddenPsmTable.getModel()).removeRow(0);
+        }
+        while (starredPsmTable.getRowCount() > 0) {
+            ((DefaultTableModel) starredPsmTable.getModel()).removeRow(0);
+        }
     }
 
     private void fillTables() {
@@ -182,7 +215,7 @@ public class FiltersDialog extends javax.swing.JDialog {
                 java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -206,10 +239,25 @@ public class FiltersDialog extends javax.swing.JDialog {
         jScrollPane1.setViewportView(starredProteinsTable);
 
         addStarredProtein.setText("Add");
+        addStarredProtein.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addStarredProteinActionPerformed(evt);
+            }
+        });
 
         editStarredProtein.setText("Edit");
+        editStarredProtein.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editStarredProteinActionPerformed(evt);
+            }
+        });
 
         clearStarredProtein.setText("Clear");
+        clearStarredProtein.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearStarredProteinActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -255,7 +303,7 @@ public class FiltersDialog extends javax.swing.JDialog {
                 java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -271,19 +319,38 @@ public class FiltersDialog extends javax.swing.JDialog {
                 hiddenProteinsTableMouseReleased(evt);
             }
         });
+        hiddenProteinsTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                hiddenProteinsTableKeyReleased(evt);
+            }
+        });
         jScrollPane2.setViewportView(hiddenProteinsTable);
 
         addHiddenProtein.setText("Add");
+        addHiddenProtein.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addHiddenProteinActionPerformed(evt);
+            }
+        });
 
         editHiddenProtein.setText("Edit");
+        editHiddenProtein.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editHiddenProteinActionPerformed(evt);
+            }
+        });
 
         clearHiddenProtein.setText("Clear");
+        clearHiddenProtein.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearHiddenProteinActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 601, Short.MAX_VALUE)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -296,7 +363,6 @@ public class FiltersDialog extends javax.swing.JDialog {
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 168, Short.MAX_VALUE)
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -348,7 +414,7 @@ public class FiltersDialog extends javax.swing.JDialog {
                 java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -364,20 +430,38 @@ public class FiltersDialog extends javax.swing.JDialog {
                 starredPeptidesTableMouseReleased(evt);
             }
         });
+        starredPeptidesTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                starredPeptidesTableKeyReleased(evt);
+            }
+        });
         jScrollPane3.setViewportView(starredPeptidesTable);
 
         addStarredPeptides.setText("Add");
+        addStarredPeptides.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addStarredPeptidesActionPerformed(evt);
+            }
+        });
 
         editStarredPeptides.setText("Edit");
+        editStarredPeptides.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editStarredPeptidesActionPerformed(evt);
+            }
+        });
 
         clearStarredPeptides.setText("Clear");
+        clearStarredPeptides.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearStarredPeptidesActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 601, Short.MAX_VALUE)
-            .addGap(0, 601, Short.MAX_VALUE)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -390,8 +474,6 @@ public class FiltersDialog extends javax.swing.JDialog {
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 168, Short.MAX_VALUE)
-            .addGap(0, 168, Short.MAX_VALUE)
             .addGroup(jPanel7Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -419,7 +501,7 @@ public class FiltersDialog extends javax.swing.JDialog {
                 java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -435,21 +517,38 @@ public class FiltersDialog extends javax.swing.JDialog {
                 hiddenPeptidesTableMouseReleased(evt);
             }
         });
+        hiddenPeptidesTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                hiddenPeptidesTableKeyReleased(evt);
+            }
+        });
         jScrollPane4.setViewportView(hiddenPeptidesTable);
 
         addHiddenPeptides.setText("Add");
+        addHiddenPeptides.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addHiddenPeptidesActionPerformed(evt);
+            }
+        });
 
         editHiddenPeptides.setText("Edit");
+        editHiddenPeptides.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editHiddenPeptidesActionPerformed(evt);
+            }
+        });
 
         clearHiddenPeptides.setText("Clear");
+        clearHiddenPeptides.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearHiddenPeptidesActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 601, Short.MAX_VALUE)
-            .addGap(0, 601, Short.MAX_VALUE)
-            .addGap(0, 601, Short.MAX_VALUE)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -462,9 +561,6 @@ public class FiltersDialog extends javax.swing.JDialog {
         );
         jPanel8Layout.setVerticalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 168, Short.MAX_VALUE)
-            .addGap(0, 168, Short.MAX_VALUE)
-            .addGap(0, 168, Short.MAX_VALUE)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -516,7 +612,7 @@ public class FiltersDialog extends javax.swing.JDialog {
                 java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -532,6 +628,11 @@ public class FiltersDialog extends javax.swing.JDialog {
                 starredPsmTableMouseReleased(evt);
             }
         });
+        starredPsmTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                starredPsmTableKeyReleased(evt);
+            }
+        });
         jScrollPane5.setViewportView(starredPsmTable);
 
         addStarredPsm.setText("Add");
@@ -542,17 +643,23 @@ public class FiltersDialog extends javax.swing.JDialog {
         });
 
         editStarredPsm.setText("Edit");
+        editStarredPsm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editStarredPsmActionPerformed(evt);
+            }
+        });
 
         clearStarredPsm.setText("Clear");
+        clearStarredPsm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearStarredPsmActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
         jPanel9.setLayout(jPanel9Layout);
         jPanel9Layout.setHorizontalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 601, Short.MAX_VALUE)
-            .addGap(0, 601, Short.MAX_VALUE)
-            .addGap(0, 601, Short.MAX_VALUE)
-            .addGap(0, 601, Short.MAX_VALUE)
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -565,10 +672,6 @@ public class FiltersDialog extends javax.swing.JDialog {
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 168, Short.MAX_VALUE)
-            .addGap(0, 168, Short.MAX_VALUE)
-            .addGap(0, 168, Short.MAX_VALUE)
-            .addGap(0, 168, Short.MAX_VALUE)
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -596,7 +699,7 @@ public class FiltersDialog extends javax.swing.JDialog {
                 java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, true, true, true
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -612,22 +715,38 @@ public class FiltersDialog extends javax.swing.JDialog {
                 hiddenPsmTableMouseReleased(evt);
             }
         });
+        hiddenPsmTable.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                hiddenPsmTableKeyReleased(evt);
+            }
+        });
         jScrollPane6.setViewportView(hiddenPsmTable);
 
         addHiddenPsm.setText("Add");
+        addHiddenPsm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                addHiddenPsmActionPerformed(evt);
+            }
+        });
 
         editHiddenPsm.setText("Edit");
+        editHiddenPsm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editHiddenPsmActionPerformed(evt);
+            }
+        });
 
         clearHiddenPsm.setText("Clear");
+        clearHiddenPsm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                clearHiddenPsmActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
         jPanel10.setLayout(jPanel10Layout);
         jPanel10Layout.setHorizontalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 601, Short.MAX_VALUE)
-            .addGap(0, 601, Short.MAX_VALUE)
-            .addGap(0, 601, Short.MAX_VALUE)
-            .addGap(0, 601, Short.MAX_VALUE)
             .addGap(0, 601, Short.MAX_VALUE)
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
@@ -641,10 +760,6 @@ public class FiltersDialog extends javax.swing.JDialog {
         );
         jPanel10Layout.setVerticalGroup(
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 168, Short.MAX_VALUE)
-            .addGap(0, 168, Short.MAX_VALUE)
-            .addGap(0, 168, Short.MAX_VALUE)
-            .addGap(0, 168, Short.MAX_VALUE)
             .addGap(0, 168, Short.MAX_VALUE)
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
@@ -753,7 +868,45 @@ public class FiltersDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void starredProteinsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_starredProteinsTableKeyReleased
-        // TODO add your handling code here:
+        int column = starredProteinsTable.getSelectedColumn();
+        int row = starredProteinsTable.getSelectedRow();
+        if (column == 2) {
+            String newName = (String) starredProteinsTable.getValueAt(row, column);
+            ArrayList<String> others = new ArrayList<String>();
+            for (int i = 0; i < starredProteinsTable.getRowCount(); i++) {
+                if (i != row) {
+                    others.add((String) starredProteinsTable.getValueAt(i, column));
+                }
+            }
+            if (others.contains(newName)) {
+                int outcome = JOptionPane.YES_OPTION;
+                if (peptideShakerGUI.getFilterPreferences().filterExists(newName)) {
+                    outcome = JOptionPane.showConfirmDialog(this,
+                            "Should protein filter " + newName + " be overwritten?", "Selected Name Already Exists",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                }
+                if (outcome != JOptionPane.YES_OPTION) {
+                    for (ProteinFilter proteinFilter : proteinStarFilters.values()) {
+                        if (!others.contains(proteinFilter.getName())) {
+                            starredProteinsTable.setValueAt(proteinFilter.getName(), row, column);
+                        }
+                    }
+                    return;
+                }
+            }
+            for (ProteinFilter proteinFilter : proteinStarFilters.values()) {
+                if (!others.contains(proteinFilter.getName())) {
+                    String oldName = proteinFilter.getName();
+                    proteinFilter.setName(newName);
+                    proteinStarFilters.remove(oldName);
+                    proteinStarFilters.put(newName, proteinFilter);
+                }
+            }
+        }
+        if (column == 3) {
+            String name = (String) starredProteinsTable.getValueAt(row, 2);
+            proteinStarFilters.get(name).setDescription((String) starredProteinsTable.getValueAt(row, column));
+        }
     }//GEN-LAST:event_starredProteinsTableKeyReleased
 
     private void starredProteinsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_starredProteinsTableMouseReleased
@@ -766,10 +919,6 @@ public class FiltersDialog extends javax.swing.JDialog {
             if (evt.getClickCount() == 1) {
                 if (column == 1) {
                     matchFilter.setActive(!matchFilter.isActive());
-                }
-            } else if (evt.getClickCount() == 2) {
-                if (column != 2) {
-                    //@TODO edit matchFilter
                 }
             }
         }
@@ -871,8 +1020,359 @@ public class FiltersDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_hiddenPsmTableMouseReleased
 
     private void addStarredPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStarredPsmActionPerformed
-        // TODO add your handling code here:
+        new FindDialog(peptideShakerGUI, 2);
+        emptyTables();
+        updateMaps();
+        fillTables();
     }//GEN-LAST:event_addStarredPsmActionPerformed
+
+    private void addStarredProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStarredProteinActionPerformed
+        new FindDialog(peptideShakerGUI, 0);
+        emptyTables();
+        updateMaps();
+        fillTables();
+    }//GEN-LAST:event_addStarredProteinActionPerformed
+
+    private void addHiddenProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHiddenProteinActionPerformed
+        new FindDialog(peptideShakerGUI, 0);
+        emptyTables();
+        updateMaps();
+        fillTables();
+    }//GEN-LAST:event_addHiddenProteinActionPerformed
+
+    private void addStarredPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStarredPeptidesActionPerformed
+        new FindDialog(peptideShakerGUI, 1);
+        emptyTables();
+        updateMaps();
+        fillTables();
+    }//GEN-LAST:event_addStarredPeptidesActionPerformed
+
+    private void addHiddenPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHiddenPeptidesActionPerformed
+        new FindDialog(peptideShakerGUI, 1);
+        emptyTables();
+        updateMaps();
+        fillTables();
+    }//GEN-LAST:event_addHiddenPeptidesActionPerformed
+
+    private void addHiddenPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addHiddenPsmActionPerformed
+        new FindDialog(peptideShakerGUI, 2);
+        emptyTables();
+        updateMaps();
+        fillTables();
+    }//GEN-LAST:event_addHiddenPsmActionPerformed
+
+    private void clearStarredProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearStarredProteinActionPerformed
+        proteinStarFilters.clear();
+        ((DefaultTableModel) starredProteinsTable.getModel()).fireTableDataChanged();
+    }//GEN-LAST:event_clearStarredProteinActionPerformed
+
+    private void clearHiddenProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearHiddenProteinActionPerformed
+        proteinHideFilters.clear();
+        ((DefaultTableModel) hiddenProteinsTable.getModel()).fireTableDataChanged();
+    }//GEN-LAST:event_clearHiddenProteinActionPerformed
+
+    private void clearStarredPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearStarredPeptidesActionPerformed
+        peptideStarFilters.clear();
+        ((DefaultTableModel) starredPeptidesTable.getModel()).fireTableDataChanged();
+    }//GEN-LAST:event_clearStarredPeptidesActionPerformed
+
+    private void clearHiddenPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearHiddenPeptidesActionPerformed
+        peptideHideFilters.clear();
+        ((DefaultTableModel) hiddenPeptidesTable.getModel()).fireTableDataChanged();
+    }//GEN-LAST:event_clearHiddenPeptidesActionPerformed
+
+    private void clearStarredPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearStarredPsmActionPerformed
+        psmStarFilters.clear();
+        ((DefaultTableModel) starredPsmTable.getModel()).fireTableDataChanged();
+    }//GEN-LAST:event_clearStarredPsmActionPerformed
+
+    private void clearHiddenPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearHiddenPsmActionPerformed
+        psmHideFilters.clear();
+        ((DefaultTableModel) hiddenPsmTable.getModel()).fireTableDataChanged();
+    }//GEN-LAST:event_clearHiddenPsmActionPerformed
+
+    private void editStarredProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editStarredProteinActionPerformed
+        int row = starredProteinsTable.getSelectedRow();
+        if (row >= 0) {
+            String selectedFilterName = (String) starredProteinsTable.getValueAt(row, 2);
+            ProteinFilter proteinFilter = proteinStarFilters.get(selectedFilterName);
+            new FindDialog(peptideShakerGUI, proteinFilter, null, null);
+            emptyTables();
+            updateMaps();
+            fillTables();
+        }
+    }//GEN-LAST:event_editStarredProteinActionPerformed
+
+    private void editHiddenProteinActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editHiddenProteinActionPerformed
+        int row = hiddenProteinsTable.getSelectedRow();
+        if (row >= 0) {
+            String selectedFilterName = (String) hiddenProteinsTable.getValueAt(row, 2);
+            ProteinFilter proteinFilter = proteinHideFilters.get(selectedFilterName);
+            new FindDialog(peptideShakerGUI, proteinFilter, null, null);
+            emptyTables();
+            updateMaps();
+            fillTables();
+        }
+    }//GEN-LAST:event_editHiddenProteinActionPerformed
+
+    private void editStarredPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editStarredPeptidesActionPerformed
+        int row = starredPeptidesTable.getSelectedRow();
+        if (row >= 0) {
+            String selectedFilterName = (String) starredPeptidesTable.getValueAt(row, 2);
+            PeptideFilter peptideFilter = peptideStarFilters.get(selectedFilterName);
+            new FindDialog(peptideShakerGUI, null, peptideFilter, null);
+            emptyTables();
+            updateMaps();
+            fillTables();
+        }
+    }//GEN-LAST:event_editStarredPeptidesActionPerformed
+
+    private void editHiddenPeptidesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editHiddenPeptidesActionPerformed
+        int row = hiddenPeptidesTable.getSelectedRow();
+        if (row >= 0) {
+            String selectedFilterName = (String) hiddenPeptidesTable.getValueAt(row, 2);
+            PeptideFilter peptideFilter = peptideHideFilters.get(selectedFilterName);
+            new FindDialog(peptideShakerGUI, null, peptideFilter, null);
+            emptyTables();
+            updateMaps();
+            fillTables();
+        }
+    }//GEN-LAST:event_editHiddenPeptidesActionPerformed
+
+    private void editStarredPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editStarredPsmActionPerformed
+        int row = starredPsmTable.getSelectedRow();
+        if (row >= 0) {
+            String selectedFilterName = (String) starredPsmTable.getValueAt(row, 2);
+            PsmFilter psmFilter = psmStarFilters.get(selectedFilterName);
+            new FindDialog(peptideShakerGUI, null, null, psmFilter);
+            emptyTables();
+            updateMaps();
+            fillTables();
+        }
+    }//GEN-LAST:event_editStarredPsmActionPerformed
+
+    private void editHiddenPsmActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editHiddenPsmActionPerformed
+        int row = hiddenPsmTable.getSelectedRow();
+        if (row >= 0) {
+            String selectedFilterName = (String) hiddenPsmTable.getValueAt(row, 2);
+            PsmFilter psmFilter = psmHideFilters.get(selectedFilterName);
+            new FindDialog(peptideShakerGUI, null, null, psmFilter);
+            emptyTables();
+            updateMaps();
+            fillTables();
+        }
+    }//GEN-LAST:event_editHiddenPsmActionPerformed
+
+    private void hiddenProteinsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hiddenProteinsTableKeyReleased
+        int column = hiddenProteinsTable.getSelectedColumn();
+        int row = hiddenProteinsTable.getSelectedRow();
+        if (column == 2) {
+            String newName = (String) hiddenProteinsTable.getValueAt(row, column);
+            ArrayList<String> others = new ArrayList<String>();
+            for (int i = 0; i < hiddenProteinsTable.getRowCount(); i++) {
+                if (i != row) {
+                    others.add((String) hiddenProteinsTable.getValueAt(i, column));
+                }
+            }
+            if (others.contains(newName)) {
+                int outcome = JOptionPane.YES_OPTION;
+                if (peptideShakerGUI.getFilterPreferences().filterExists(newName)) {
+                    outcome = JOptionPane.showConfirmDialog(this,
+                            "Should protein filter " + newName + " be overwritten?", "Selected Name Already Exists",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                }
+                if (outcome != JOptionPane.YES_OPTION) {
+                    for (ProteinFilter proteinFilter : proteinHideFilters.values()) {
+                        if (!others.contains(proteinFilter.getName())) {
+                            hiddenProteinsTable.setValueAt(proteinFilter.getName(), row, column);
+                        }
+                    }
+                    return;
+                }
+            }
+            for (ProteinFilter proteinFilter : proteinHideFilters.values()) {
+                if (!others.contains(proteinFilter.getName())) {
+                    String oldName = proteinFilter.getName();
+                    proteinFilter.setName(newName);
+                    proteinHideFilters.remove(oldName);
+                    proteinHideFilters.put(newName, proteinFilter);
+                }
+            }
+        }
+        if (column == 3) {
+            String name = (String) hiddenProteinsTable.getValueAt(row, 2);
+            proteinHideFilters.get(name).setDescription((String) hiddenProteinsTable.getValueAt(row, column));
+        }
+    }//GEN-LAST:event_hiddenProteinsTableKeyReleased
+
+    private void starredPeptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_starredPeptidesTableKeyReleased
+        int column = starredPeptidesTable.getSelectedColumn();
+        int row = starredPeptidesTable.getSelectedRow();
+        if (column == 2) {
+            String newName = (String) starredPeptidesTable.getValueAt(row, column);
+            ArrayList<String> others = new ArrayList<String>();
+            for (int i = 0; i < starredPeptidesTable.getRowCount(); i++) {
+                if (i != row) {
+                    others.add((String) starredPeptidesTable.getValueAt(i, column));
+                }
+            }
+            if (others.contains(newName)) {
+                int outcome = JOptionPane.YES_OPTION;
+                if (peptideShakerGUI.getFilterPreferences().filterExists(newName)) {
+                    outcome = JOptionPane.showConfirmDialog(this,
+                            "Should peptide filter " + newName + " be overwritten?", "Selected Name Already Exists",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                }
+                if (outcome != JOptionPane.YES_OPTION) {
+                    for (PeptideFilter peptideFilter : peptideStarFilters.values()) {
+                        if (!others.contains(peptideFilter.getName())) {
+                            starredPeptidesTable.setValueAt(peptideFilter.getName(), row, column);
+                        }
+                    }
+                    return;
+                }
+            }
+            for (PeptideFilter peptideFilter : peptideStarFilters.values()) {
+                if (!others.contains(peptideFilter.getName())) {
+                    String oldName = peptideFilter.getName();
+                    peptideFilter.setName(newName);
+                    peptideStarFilters.remove(oldName);
+                    peptideStarFilters.put(newName, peptideFilter);
+                }
+            }
+        }
+        if (column == 3) {
+            String name = (String) starredPeptidesTable.getValueAt(row, 2);
+            peptideStarFilters.get(name).setDescription((String) starredPeptidesTable.getValueAt(row, column));
+        }
+    }//GEN-LAST:event_starredPeptidesTableKeyReleased
+
+    private void hiddenPeptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hiddenPeptidesTableKeyReleased
+        int column = hiddenPeptidesTable.getSelectedColumn();
+        int row = hiddenPeptidesTable.getSelectedRow();
+        if (column == 2) {
+            String newName = (String) hiddenPeptidesTable.getValueAt(row, column);
+            ArrayList<String> others = new ArrayList<String>();
+            for (int i = 0; i < hiddenPeptidesTable.getRowCount(); i++) {
+                if (i != row) {
+                    others.add((String) hiddenPeptidesTable.getValueAt(i, column));
+                }
+            }
+            if (others.contains(newName)) {
+                int outcome = JOptionPane.YES_OPTION;
+                if (peptideShakerGUI.getFilterPreferences().filterExists(newName)) {
+                    outcome = JOptionPane.showConfirmDialog(this,
+                            "Should peptide filter " + newName + " be overwritten?", "Selected Name Already Exists",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                }
+                if (outcome != JOptionPane.YES_OPTION) {
+                    for (PeptideFilter peptideFilter : peptideHideFilters.values()) {
+                        if (!others.contains(peptideFilter.getName())) {
+                            hiddenPeptidesTable.setValueAt(peptideFilter.getName(), row, column);
+                        }
+                    }
+                    return;
+                }
+            }
+            for (PeptideFilter peptideFilter : peptideHideFilters.values()) {
+                if (!others.contains(peptideFilter.getName())) {
+                    String oldName = peptideFilter.getName();
+                    peptideFilter.setName(newName);
+                    peptideHideFilters.remove(oldName);
+                    peptideHideFilters.put(newName, peptideFilter);
+                }
+            }
+        }
+        if (column == 3) {
+            String name = (String) hiddenPeptidesTable.getValueAt(row, 2);
+            peptideHideFilters.get(name).setDescription((String) hiddenPeptidesTable.getValueAt(row, column));
+        }
+    }//GEN-LAST:event_hiddenPeptidesTableKeyReleased
+
+    private void starredPsmTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_starredPsmTableKeyReleased
+        int column = starredPsmTable.getSelectedColumn();
+        int row = starredPsmTable.getSelectedRow();
+        if (column == 2) {
+            String newName = (String) starredPsmTable.getValueAt(row, column);
+            ArrayList<String> others = new ArrayList<String>();
+            for (int i = 0; i < starredPsmTable.getRowCount(); i++) {
+                if (i != row) {
+                    others.add((String) starredPsmTable.getValueAt(i, column));
+                }
+            }
+            if (others.contains(newName)) {
+                int outcome = JOptionPane.YES_OPTION;
+                if (peptideShakerGUI.getFilterPreferences().filterExists(newName)) {
+                    outcome = JOptionPane.showConfirmDialog(this,
+                            "Should psm filter " + newName + " be overwritten?", "Selected Name Already Exists",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                }
+                if (outcome != JOptionPane.YES_OPTION) {
+                    for (PsmFilter psmFilter : psmStarFilters.values()) {
+                        if (!others.contains(psmFilter.getName())) {
+                            starredPsmTable.setValueAt(psmFilter.getName(), row, column);
+                        }
+                    }
+                    return;
+                }
+            }
+            for (PsmFilter psmFilter : psmStarFilters.values()) {
+                if (!others.contains(psmFilter.getName())) {
+                    String oldName = psmFilter.getName();
+                    psmFilter.setName(newName);
+                    psmStarFilters.remove(oldName);
+                    psmStarFilters.put(newName, psmFilter);
+                }
+            }
+        }
+        if (column == 3) {
+            String name = (String) starredPsmTable.getValueAt(row, 2);
+            psmStarFilters.get(name).setDescription((String) starredPsmTable.getValueAt(row, column));
+        }
+    }//GEN-LAST:event_starredPsmTableKeyReleased
+
+    private void hiddenPsmTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hiddenPsmTableKeyReleased
+        int column = hiddenPsmTable.getSelectedColumn();
+        int row = hiddenPsmTable.getSelectedRow();
+        if (column == 2) {
+            String newName = (String) hiddenPsmTable.getValueAt(row, column);
+            ArrayList<String> others = new ArrayList<String>();
+            for (int i = 0; i < hiddenPsmTable.getRowCount(); i++) {
+                if (i != row) {
+                    others.add((String) hiddenPsmTable.getValueAt(i, column));
+                }
+            }
+            if (others.contains(newName)) {
+                int outcome = JOptionPane.YES_OPTION;
+                if (peptideShakerGUI.getFilterPreferences().filterExists(newName)) {
+                    outcome = JOptionPane.showConfirmDialog(this,
+                            "Should psm filter " + newName + " be overwritten?", "Selected Name Already Exists",
+                            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                }
+                if (outcome != JOptionPane.YES_OPTION) {
+                    for (PsmFilter psmFilter : psmHideFilters.values()) {
+                        if (!others.contains(psmFilter.getName())) {
+                            hiddenPsmTable.setValueAt(psmFilter.getName(), row, column);
+                        }
+                    }
+                    return;
+                }
+            }
+            for (PsmFilter psmFilter : psmHideFilters.values()) {
+                if (!others.contains(psmFilter.getName())) {
+                    String oldName = psmFilter.getName();
+                    psmFilter.setName(newName);
+                    psmHideFilters.remove(oldName);
+                    psmHideFilters.put(newName, psmFilter);
+                }
+            }
+        }
+        if (column == 3) {
+            String name = (String) hiddenPsmTable.getValueAt(row, 2);
+            psmHideFilters.get(name).setDescription((String) hiddenPsmTable.getValueAt(row, column));
+        }
+    }//GEN-LAST:event_hiddenPsmTableKeyReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addHiddenPeptides;
     private javax.swing.JButton addHiddenProtein;

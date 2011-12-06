@@ -18,6 +18,14 @@ public class PeptideFilter extends MatchFilter {
      */
     static final long serialVersionUID = 959658989341486818L;
     /**
+     * A protein regex
+     */
+    private String protein = null;
+    /**
+     * sequence regex
+     */
+    private String sequence = null;
+    /**
      * Number of spectra limit
      */
     private Integer nSpectra = null;
@@ -45,6 +53,10 @@ public class PeptideFilter extends MatchFilter {
      * The current protein inference filter selection.
      */
     private int pi = 5;
+    /**
+     * The type of comparison to be used for the PI
+     */
+    private ComparisonType piComparison = ComparisonType.EQUAL;
     /**
      * The list of modifications allowed for the peptide
      */
@@ -188,4 +200,52 @@ public class PeptideFilter extends MatchFilter {
     public void setModificationStatus(ArrayList<String> modificationStatus) {
         this.modificationStatus = modificationStatus;
     }
+
+    /**
+     * Returns a regular exception to be searched in protein which contain the peptide sequence
+     * @return a regular exception to be searched in protein which contain the peptide sequence
+     */
+    public String getProtein() {
+        return protein;
+    }
+
+    /**
+     * Sets a regular exception to be searched in protein which contain the peptide sequence
+     * @param protein a regular exception to be searched in protein which contain the peptide sequence
+     */
+    public void setProtein(String protein) {
+        this.protein = protein;
+    }
+
+    /**
+     * Returns a regex to be found in the sequence
+     * @return a regex to be found in the sequence
+     */
+    public String getSequence() {
+        return sequence;
+    }
+
+    /**
+     * Sets a regex to be found in the sequence
+     * @param sequence a regex to be found in the sequence
+     */
+    public void setSequence(String sequence) {
+        this.sequence = sequence;
+    }
+
+    /**
+     * Returns the comparison type to use for the PI
+     * @return the comparison type to use for the PI
+     */
+    public ComparisonType getPiComparison() {
+        return piComparison;
+    }
+/**
+     * Sets the comparison type to use for the PI
+     * @param piComparison the comparison type to use for the PI
+     */
+    public void setPiComparison(ComparisonType piComparison) {
+        this.piComparison = piComparison;
+    }
+    
 }
