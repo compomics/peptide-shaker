@@ -13,7 +13,7 @@ import javax.swing.table.DefaultTableModel;
 /**
  * Displays the filters used for star/hide items
  *
- * @author vaudel
+ * @author Marc Vaudel
  */
 public class FiltersDialog extends javax.swing.JDialog {
 
@@ -53,6 +53,7 @@ public class FiltersDialog extends javax.swing.JDialog {
         initComponents();
 
         this.peptideShakerGUI = peptideShakerGUI;
+        setLocationRelativeTo(peptideShakerGUI);
         updateMaps();
         fillTables();
     }

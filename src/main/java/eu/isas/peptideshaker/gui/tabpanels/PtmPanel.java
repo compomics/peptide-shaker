@@ -1873,7 +1873,7 @@ public class PtmPanel extends javax.swing.JPanel {
         int row = peptidesTable.rowAtPoint(evt.getPoint());
         int column = peptidesTable.columnAtPoint(evt.getPoint());
 
-        if (peptidesTable.getValueAt(row, column) != null) {
+        if (row != -1 && column != -1 && peptidesTable.getValueAt(row, column) != null) {
             if (column == peptidesTable.getColumn("Sequence").getModelIndex()) {
 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1881,7 +1881,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 try {
                     peptidesTable.setToolTipText(
                             peptideShakerGUI.getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(displayedPeptides.get(
-                            (Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1)).getTheoreticPeptide()));
+                            (Integer) peptidesTable.getValueAt(row, 0) - 1)).getTheoreticPeptide()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     e.printStackTrace();
@@ -1929,7 +1929,7 @@ public class PtmPanel extends javax.swing.JPanel {
         int row = relatedPeptidesTable.rowAtPoint(evt.getPoint());
         int column = relatedPeptidesTable.columnAtPoint(evt.getPoint());
 
-        if (relatedPeptidesTable.getValueAt(row, column) != null) {
+        if (row != -1 && column != -1 && relatedPeptidesTable.getValueAt(row, column) != null) {
 
             if (column == relatedPeptidesTable.getColumn("Sequence").getModelIndex()) {
 
@@ -1938,7 +1938,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 try {
                     relatedPeptidesTable.setToolTipText(
                             peptideShakerGUI.getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(
-                            relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(relatedPeptidesTable.getSelectedRow(), 0) - 1)).getTheoreticPeptide()));
+                            relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(row, 0) - 1)).getTheoreticPeptide()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     e.printStackTrace();
@@ -2101,7 +2101,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         int row = selectedPsmsTable.rowAtPoint(evt.getPoint());
         int column = selectedPsmsTable.columnAtPoint(evt.getPoint());
 
-        if (selectedPsmsTable.getValueAt(row, column) != null) {
+        if (row != -1 && column != -1 && selectedPsmsTable.getValueAt(row, column) != null) {
 
             if (column == selectedPsmsTable.getColumn("Sequence").getModelIndex()) {
 
@@ -2193,7 +2193,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         int row = relatedPsmsTable.rowAtPoint(evt.getPoint());
         int column = relatedPsmsTable.columnAtPoint(evt.getPoint());
 
-        if (relatedPsmsTable.getValueAt(row, column) != null) {
+        if (row != -1 && column != -1 && relatedPsmsTable.getValueAt(row, column) != null) {
 
             if (column == relatedPsmsTable.getColumn("Sequence").getModelIndex()) {
 
@@ -2675,6 +2675,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         popupMenu.show(exportModifiedPeptideProfileJButton, evt.getX(), evt.getY());
     }//GEN-LAST:event_exportModifiedPeptideProfileJButtonMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel contextMenuModPsmsBackgroundPanel;
@@ -3471,8 +3472,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             HashMap<PeptideFragmentIon, ArrayList<IonMatch>> ionMatches = PTMLocationScores.getPTMPlotData(
                     currentPeptide, ptmFactory.getPTM(getSelectedModification()), nPTM, currentSpectrum, annotationPreferences.getIonTypes(),
                     annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                    annotationPreferences.getFragmentIonAccuracy(), annotationPreferences.getAnnotationIntensityLimit());
-
+                    annotationPreferences.getFragmentIonAccuracy(), currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()));
+            
             if (ionMatches.size() > 0) {
 
                 ArrayList<Double> intensities = new ArrayList<Double>();
@@ -4544,13 +4545,13 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private void updateSpectrumSliderToolTip() {
         double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
 
-        spectrumJPanel.setToolTipText("<html>Accuracy: " + Util.roundDouble(accuracy, 2) + " Da<br>"
+        spectrumTabbedPane.setToolTipText("<html>Accuracy: " + Util.roundDouble(accuracy, 2) + " Da<br>"
                 + "Level: " + intensitySlider.getValue() + "%</html>");
 
         // show the tooltip now
         ToolTipManager.sharedInstance().mouseMoved(
-                new MouseEvent(spectrumJPanel, 0, 0, 0,
-                spectrumJPanel.getWidth() - 150, spectrumJPanel.getY() + 20, // X-Y of the mouse for the tool tip
+                new MouseEvent(spectrumTabbedPane, 0, 0, 0,
+                spectrumTabbedPane.getWidth() - 50, spectrumTabbedPane.getY() + 20, // X-Y of the mouse for the tool tip
                 0, false));
     }
 

@@ -1,13 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * CreateFilterDialog.java
- *
- * Created on Dec 3, 2011, 10:11:58 AM
- */
 package eu.isas.peptideshaker.gui;
 
 import eu.isas.peptideshaker.filtering.PeptideFilter;
@@ -17,7 +7,7 @@ import javax.swing.JOptionPane;
 
 /**
  *
- * @author vaudel
+ * @author Marc Vaudel
  */
 public class CreateFilterDialog extends javax.swing.JDialog {
 
@@ -53,6 +43,7 @@ public class CreateFilterDialog extends javax.swing.JDialog {
             jSplitPane2.setDividerLocation(0.5);
         }
 
+        setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
 

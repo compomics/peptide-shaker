@@ -573,6 +573,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         spectrumCountingMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         findJMenuItem = new javax.swing.JMenuItem();
+        filterJMenuItem = new javax.swing.JMenuItem();
         starHideJMenuItem = new javax.swing.JMenuItem();
         exportJMenu = new javax.swing.JMenu();
         identificationFeaturesMenu = new javax.swing.JMenuItem();
@@ -1051,10 +1052,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         fileJMenu.add(openJMenuItem);
 
+        openRecentJMenu.setMnemonic('R');
         openRecentJMenu.setText("Open Recent Project");
         fileJMenu.add(openRecentJMenu);
         fileJMenu.add(jSeparator2);
 
+        projectPropertiesMenuItem.setMnemonic('P');
         projectPropertiesMenuItem.setText("Project Properties");
         projectPropertiesMenuItem.setEnabled(false);
         projectPropertiesMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1101,6 +1104,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu.setMnemonic('E');
         editMenu.setText("Edit");
 
+        searchParametersMenu.setMnemonic('S');
         searchParametersMenu.setText("Search Parameters");
         searchParametersMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1109,6 +1113,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         editMenu.add(searchParametersMenu);
 
+        importFilterMenu.setMnemonic('I');
         importFilterMenu.setText("Import Filters");
         importFilterMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1118,6 +1123,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu.add(importFilterMenu);
         editMenu.add(jSeparator4);
 
+        annotationPreferencesMenu.setMnemonic('A');
         annotationPreferencesMenu.setText("Spectrum Annotations");
         annotationPreferencesMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1126,6 +1132,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         editMenu.add(annotationPreferencesMenu);
 
+        spectrumCountingMenuItem.setMnemonic('Q');
         spectrumCountingMenuItem.setText("MS2 Quantification");
         spectrumCountingMenuItem.setEnabled(false);
         spectrumCountingMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -1137,7 +1144,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu.add(jSeparator12);
 
         findJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
-        findJMenuItem.setText("Find");
+        findJMenuItem.setMnemonic('F');
+        findJMenuItem.setText("Find...");
+        findJMenuItem.setToolTipText("Find a protein or peptide");
         findJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 findJMenuItemActionPerformed(evt);
@@ -1145,7 +1154,19 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         editMenu.add(findJMenuItem);
 
+        filterJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        filterJMenuItem.setMnemonic('L');
+        filterJMenuItem.setText("Filters");
+        filterJMenuItem.setToolTipText("Edit the filters");
+        filterJMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                filterJMenuItemActionPerformed(evt);
+            }
+        });
+        editMenu.add(filterJMenuItem);
+
         starHideJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        starHideJMenuItem.setMnemonic('L');
         starHideJMenuItem.setText("Star/Hide Filters");
         starHideJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1159,6 +1180,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         exportJMenu.setMnemonic('x');
         exportJMenu.setText("Export");
 
+        identificationFeaturesMenu.setMnemonic('I');
         identificationFeaturesMenu.setText("Identification Features");
         identificationFeaturesMenu.setEnabled(false);
         identificationFeaturesMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -1168,6 +1190,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         exportJMenu.add(identificationFeaturesMenu);
 
+        followUpAnalysisMenu.setMnemonic('F');
         followUpAnalysisMenu.setText("Follow-Up Analysis");
         followUpAnalysisMenu.setEnabled(false);
         followUpAnalysisMenu.addActionListener(new java.awt.event.ActionListener() {
@@ -1178,6 +1201,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         exportJMenu.add(followUpAnalysisMenu);
         exportJMenu.add(jSeparator10);
 
+        exportProjectMenuItem.setMnemonic('P');
         exportProjectMenuItem.setText("PeptideShaker Project");
         exportProjectMenuItem.setToolTipText("Export a PeptideShaker project as a single zip file");
         exportProjectMenuItem.setEnabled(false);
@@ -1188,6 +1212,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         exportJMenu.add(exportProjectMenuItem);
 
+        exportPrideXmlMenuItem.setMnemonic('X');
         exportPrideXmlMenuItem.setText("PRIDE XML");
         exportPrideXmlMenuItem.setToolTipText("Export a PeptideShaker project as a PRIDE XML file");
         exportPrideXmlMenuItem.setEnabled(false);
@@ -1203,6 +1228,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         viewJMenu.setMnemonic('V');
         viewJMenu.setText("View");
 
+        overViewTabViewMenu.setMnemonic('O');
         overViewTabViewMenu.setText("Overview");
 
         proteinsJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
@@ -1253,6 +1279,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         viewJMenu.add(jSeparator3);
 
         sparklinesJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        sparklinesJCheckBoxMenuItem.setMnemonic('J');
         sparklinesJCheckBoxMenuItem.setSelected(true);
         sparklinesJCheckBoxMenuItem.setText("JSparklines");
         sparklinesJCheckBoxMenuItem.setToolTipText("View sparklines or the underlying numbers");
@@ -2511,8 +2538,17 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param evt 
      */
     private void findJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findJMenuItemActionPerformed
-        new FindDialog(this);
+        jumpToPanel.selectTextField();
     }//GEN-LAST:event_findJMenuItemActionPerformed
+
+    /**
+     * Open the filter dialog.
+     * 
+     * @param evt 
+     */
+    private void filterJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterJMenuItemActionPerformed
+        new FindDialog(this);
+    }//GEN-LAST:event_filterJMenuItemActionPerformed
 
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
@@ -2644,6 +2680,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu exportSpectrumMenu;
     private javax.swing.JMenuItem exportSpectrumValuesJMenuItem;
     private javax.swing.JMenu fileJMenu;
+    private javax.swing.JMenuItem filterJMenuItem;
     private javax.swing.JMenuItem findJMenuItem;
     private javax.swing.JMenuItem followUpAnalysisMenu;
     private javax.swing.JPanel goJPanel;
