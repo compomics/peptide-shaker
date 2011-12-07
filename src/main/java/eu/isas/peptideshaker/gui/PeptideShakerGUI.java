@@ -4858,9 +4858,14 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         }
                     }
 
-                    progressDialog.setVisible(false); // @TODO: there is sometimes an error here...
+                    try {
+                        progressDialog.setVisible(false); // @TODO: there is sometimes an error here...
+                    } catch (IndexOutOfBoundsException e) {
+                        // do nothing 
+                    }
+                    
                     progressDialog.dispose();
-
+                    
                     peptideShakerGUI.displayResults();
                     peptideShakerGUI.setFrameTitle(experiment.getReference());
 
@@ -5133,14 +5138,17 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void setUpdated(int tabIndex, boolean updated) {
         updateNeeded.put(tabIndex, !updated);
         if (!updated) {
-            resetPanel(tabIndex);
-            repaintPanels();
-            // invoke later to give time for components to update
-            SwingUtilities.invokeLater(new Runnable() {
-                public void run() {
-            allTabsJTabbedPaneStateChanged(null);
+            resetPanel(tabIndex);  
                 }});
         }
+    }
+    
+    /**
+     * Update the tabbed panes.
+     */
+    public void updateTabbedPanes () {
+        repaintPanels();
+        allTabsJTabbedPaneStateChanged(null); 
     }
 
     /**

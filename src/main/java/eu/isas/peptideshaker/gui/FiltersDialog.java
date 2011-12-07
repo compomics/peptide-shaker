@@ -860,11 +860,15 @@ public class FiltersDialog extends javax.swing.JDialog {
         peptideShakerGUI.getFilterPreferences().setPeptideHideFilters(peptideHideFilters);
         peptideShakerGUI.getFilterPreferences().setPsmStarFilters(psmStarFilters);
         peptideShakerGUI.getFilterPreferences().setPsmHideFilters(psmHideFilters);
+        
         setVisible(false);
-        dispose();
+        
         peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
         peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
         peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
+        peptideShakerGUI.updateTabbedPanes();
+        
+        dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
     private void starredProteinsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_starredProteinsTableKeyReleased

@@ -519,6 +519,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             peptideShakerGUI.setDataSaved(false);
             peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
             peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
+            peptideShakerGUI.updateTabbedPanes();
         }
         this.setVisible(false);
         this.dispose();

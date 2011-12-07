@@ -130,19 +130,19 @@ public class OverviewPanel extends javax.swing.JPanel {
     /**
      * boolean indicating whether the spectrum shall be displayed
      */
-    private boolean displaySpectrum;
+    private boolean displaySpectrum = true;
     /**
      * Boolean indicating whether the sequence coverage shall be displayed
      */
-    private boolean displayCoverage;
+    private boolean displayCoverage = true;
     /**
      * Boolean indicating whether the protein table shall be displayed
      */
-    private boolean displayProteins;
+    private boolean displayProteins = true;
     /**
      * Boolean indicating whether the PSMs shall be displayed
      */
-    private boolean displayPeptidesAndPSMs;
+    private boolean displayPeptidesAndPSMs = true;
     /**
      * A mapping of the protein table entries
      */
@@ -184,7 +184,6 @@ public class OverviewPanel extends javax.swing.JPanel {
     public OverviewPanel(PeptideShakerGUI parent) {
 
         this.peptideShakerGUI = parent;
-        this.displayCoverage = false;
 
         initComponents();
 
@@ -4312,7 +4311,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     progressDialog.setTitle("Loading Protein Table. Please wait...");
                     progressDialog.setMax(scores.size());
                     progressDialog.setValue(0);
-
+                    
                     for (double currentScore : scores) {
 
                         nP = new ArrayList(orderMap.get(currentScore).keySet());
@@ -4386,7 +4385,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                                 probabilities.getProteinConfidence(),
                                                 probabilities.isValidated()
                                             });
-
+                                    
                                     proteinTableMap.put(index + 1, proteinKey);
                                     index++;
 
