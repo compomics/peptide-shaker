@@ -230,9 +230,11 @@ public class JumpToPanel extends javax.swing.JPanel {
                                 types.add(Type.PROTEIN);
                             }
                             try {
-                                if (sequenceFactory.getHeader(proteinKey).getDescription().toLowerCase().contains(input)) {
-                                    possibilities.add(proteinKey);
-                                    types.add(Type.PROTEIN);
+                                for (String accession : ProteinMatch.getAccessions(proteinKey)) {
+                                    if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(input)) {
+                                        possibilities.add(proteinKey);
+                                        types.add(Type.PROTEIN);
+                                    }
                                 }
                             } catch (Exception e) {
                                 // cannot get description, ignore
@@ -330,7 +332,6 @@ public class JumpToPanel extends javax.swing.JPanel {
             inputTxt.setText("");
         }
     }//GEN-LAST:event_inputTxtMouseReleased
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel findJLabel;
     private javax.swing.JLabel indexLabel;
