@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
 import org.apache.batik.transcoder.TranscoderException;
 import org.jfree.chart.ChartPanel;
 
@@ -211,8 +212,11 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
         this.setVisible(false);
-        
+
         final JFileChooser chooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+
+        // add the correct file filter based on the format selected
+        addFileFilter(chooser);
 
         int selection = chooser.showSaveDialog(this);
 
@@ -234,7 +238,6 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_cancelJButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.ButtonGroup buttonGroup;
@@ -289,7 +292,7 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
         }
 
         if (saveFile) {
-            
+
             peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
             peptideShakerGUI.setLastSelectedFolder(selectedFile);
 
@@ -334,7 +337,7 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
                         peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
-                        
+
                         if (showSavedMessage) {
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Plot saved to " + finalSelectedFile, "Plot Saved", JOptionPane.INFORMATION_MESSAGE);
                             tempRef.dispose();
@@ -353,5 +356,76 @@ public class ExportGraphicsDialog extends javax.swing.JDialog {
                 }
             }.start();
         }
+    }
+
+    /**
+     * Set the correct file filter based on the format selected.
+     * 
+     * @param chooser the fiel chooser to set the filter for
+     */
+    private void addFileFilter(JFileChooser chooser) {
+
+        FileFilter filter = null;
+
+        if (pngJRadioButton.isSelected()) {
+            filter = new FileFilter() {
+
+                @Override
+                public boolean accept(File myFile) {
+                    return myFile.getName().toLowerCase().endsWith("png")
+                            || myFile.isDirectory();
+                }
+
+                @Override
+                public String getDescription() {
+                    return "PNG (Portable Network Graphics) (.png)";
+                }
+            };
+        } else if (tiffJRadioButton.isSelected()) {
+            filter = new FileFilter() {
+
+                @Override
+                public boolean accept(File myFile) {
+                    return myFile.getName().toLowerCase().endsWith("tif")
+                            || myFile.getName().toLowerCase().endsWith("tiff")
+                            || myFile.isDirectory();
+                }
+
+                @Override
+                public String getDescription() {
+                    return "TIFF (Tagged Image File Format) (.tif)";
+                }
+            };
+        } else if (pdfJRadioButton.isSelected()) {
+            filter = new FileFilter() {
+
+                @Override
+                public boolean accept(File myFile) {
+                    return myFile.getName().toLowerCase().endsWith("pdf")
+                            || myFile.isDirectory();
+                }
+
+                @Override
+                public String getDescription() {
+                    return "PDF (Portable Document Format) (.pdf)";
+                }
+            };
+        } else if (svgJRadioButton.isSelected()) {
+            filter = new FileFilter() {
+
+                @Override
+                public boolean accept(File myFile) {
+                    return myFile.getName().toLowerCase().endsWith("svg")
+                            || myFile.isDirectory();
+                }
+
+                @Override
+                public String getDescription() {
+                    return "SVG (Scalable Vector Graphics) (.svg)";
+                }
+            };
+        }
+
+        chooser.setFileFilter(filter);
     }
 }
