@@ -572,7 +572,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPreferencesMenu = new javax.swing.JMenuItem();
         spectrumCountingMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
-        jumpToJMenuItem = new javax.swing.JMenuItem();
         findJMenuItem = new javax.swing.JMenuItem();
         starHideJMenuItem = new javax.swing.JMenuItem();
         exportJMenu = new javax.swing.JMenu();
@@ -1137,16 +1136,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         editMenu.add(spectrumCountingMenuItem);
         editMenu.add(jSeparator12);
 
-        jumpToJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
-        jumpToJMenuItem.setText("Jump To...");
-        jumpToJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jumpToJMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(jumpToJMenuItem);
-
-        findJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        findJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
         findJMenuItem.setText("Find");
         findJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2525,10 +2515,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * 
      * @param evt 
      */
-    private void jumpToJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jumpToJMenuItemActionPerformed
-        jumpToPanel.selectTextField();
-    }//GEN-LAST:event_jumpToJMenuItemActionPerformed
-
     private void findJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_findJMenuItemActionPerformed
         new FindDialog(this);
     }//GEN-LAST:event_findJMenuItemActionPerformed
@@ -2692,7 +2678,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JPopupMenu.Separator jSeparator9;
-    private javax.swing.JMenuItem jumpToJMenuItem;
     private javax.swing.JMenu lossMenu;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JCheckBoxMenuItem moreThanTwoChargesCheckBoxMenuItem;
@@ -5147,11 +5132,14 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public void setUpdated(int tabIndex, boolean updated) {
         updateNeeded.put(tabIndex, !updated);
-
         if (!updated) {
             resetPanel(tabIndex);
             repaintPanels();
+            // invoke later to give time for components to update
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
             allTabsJTabbedPaneStateChanged(null);
+                }});
         }
     }
 
