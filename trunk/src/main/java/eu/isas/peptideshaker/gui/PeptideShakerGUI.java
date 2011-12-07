@@ -396,12 +396,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         annotationPanel = new AnnotationPanel(this);
 
         initComponents();
-        
+
         jumpToPanel = new JumpToPanel(this);
         jumpToPanel.setEnabled(false);
-        
+
         menuBar.add(Box.createHorizontalGlue());
-    
+
         menuBar.add(jumpToPanel);
         exportPrideXmlMenuItem.setVisible(false); // @TODO: remove when PRIDE export is implemented
 
@@ -4863,9 +4863,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     } catch (IndexOutOfBoundsException e) {
                         // do nothing 
                     }
-                    
+
                     progressDialog.dispose();
-                    
+
                     peptideShakerGUI.displayResults();
                     peptideShakerGUI.setFrameTitle(experiment.getReference());
 
@@ -5138,17 +5138,16 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void setUpdated(int tabIndex, boolean updated) {
         updateNeeded.put(tabIndex, !updated);
         if (!updated) {
-            resetPanel(tabIndex);  
-                }});
+            resetPanel(tabIndex);
         }
     }
-    
+
     /**
      * Update the tabbed panes.
      */
-    public void updateTabbedPanes () {
+    public void updateTabbedPanes() {
         repaintPanels();
-        allTabsJTabbedPaneStateChanged(null); 
+        allTabsJTabbedPaneStateChanged(null);
     }
 
     /**
