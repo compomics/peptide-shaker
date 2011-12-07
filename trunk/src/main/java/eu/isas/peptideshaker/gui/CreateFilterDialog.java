@@ -102,7 +102,7 @@ public class CreateFilterDialog extends javax.swing.JDialog {
         jSplitPane2.setDividerLocation(100);
         jSplitPane2.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
-        psmEffectCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Hide", "Star" }));
+        psmEffectCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Star", "Hide" }));
 
         psmFilterTxt.setText("New filter");
 
@@ -207,7 +207,7 @@ public class CreateFilterDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Effect:");
 
-        proteinEffectCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Hide", "Star" }));
+        proteinEffectCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Star", "Hide" }));
 
         jLabel7.setText("Description:");
 
@@ -252,7 +252,7 @@ public class CreateFilterDialog extends javax.swing.JDialog {
 
         jSplitPane3.setTopComponent(proteinFilterPane);
 
-        peptideEffectCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Hide", "Star" }));
+        peptideEffectCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Star", "Hide" }));
 
         peptideFilterTxt.setText("New filter");
 

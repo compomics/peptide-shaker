@@ -85,6 +85,7 @@ public class PtmPanel extends javax.swing.JPanel {
      * Indexes for the data tables.
      */
     private enum TableIndex {
+
         MODIFIED_PEPTIDES_TABLE, RELATED_PEPTIDES_TABLE, MODIFIED_PSMS_TABLE, RELATED_PSMS_TABLE
     };
     /**
@@ -188,9 +189,6 @@ public class PtmPanel extends javax.swing.JPanel {
         psmsRelatedTableJScrollPane.getViewport().setOpaque(false);
         peptidesTableJScrollPane.getViewport().setOpaque(false);
         ptmJScrollPane.getViewport().setOpaque(false);
-
-        spectrumTabbedPane.setEnabledAt(0, false);
-        spectrumTabbedPane.setEnabledAt(1, false);
 
         setTableProperties();
 
@@ -1020,7 +1018,7 @@ public class PtmPanel extends javax.swing.JPanel {
         psmModProfileJPanel.setLayout(psmModProfileJPanelLayout);
         psmModProfileJPanelLayout.setHorizontalGroup(
             psmModProfileJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 492, Short.MAX_VALUE)
+            .addGap(0, 495, Short.MAX_VALUE)
         );
         psmModProfileJPanelLayout.setVerticalGroup(
             psmModProfileJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1047,10 +1045,10 @@ public class PtmPanel extends javax.swing.JPanel {
         ptmPlotPanel.setLayout(ptmPlotPanelLayout);
         ptmPlotPanelLayout.setHorizontalGroup(
             ptmPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ptmPlotChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
+            .addComponent(ptmPlotChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
             .addGroup(ptmPlotPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ptmPlotJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+                .addComponent(ptmPlotJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
                 .addContainerGap())
         );
         ptmPlotPanelLayout.setVerticalGroup(
@@ -1083,9 +1081,9 @@ public class PtmPanel extends javax.swing.JPanel {
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(spectrumJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
                 .addContainerGap())
-            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 492, Short.MAX_VALUE)
+            .addComponent(spectrumChartJPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
         );
         spectrumJPanelLayout.setVerticalGroup(
             spectrumJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1269,7 +1267,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         selectedPsmsTable.setModel(new SelectedPsmsTable());
         selectedPsmsTable.setOpaque(false);
-        selectedPsmsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        selectedPsmsTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         selectedPsmsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 selectedPsmsTableMouseReleased(evt);
@@ -1395,7 +1393,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         relatedPsmsTable.setModel(new RelatedPsmsTable());
         relatedPsmsTable.setOpaque(false);
-        relatedPsmsTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        relatedPsmsTable.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         relatedPsmsTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 relatedPsmsTableMouseReleased(evt);
@@ -1841,18 +1839,14 @@ public class PtmPanel extends javax.swing.JPanel {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
             try {
                 relatedSelected = false;
-                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
-                updateSpectrum(spectrumKey);
-                ArrayList<String> spectra = new ArrayList<String>();
-                spectra.add(spectrumKey);
-                updateSpectrumPlot(spectra);
+                updateGraphics();
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
                 e.printStackTrace();
             }
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-            if (relatedPsmsTable.getSelectedRow() != -1) {
+            while (relatedPsmsTable.getSelectedRow() >= 0) {
                 relatedPsmsTable.removeRowSelectionInterval(relatedPsmsTable.getSelectedRow(), relatedPsmsTable.getSelectedRow());
             }
 
@@ -2166,18 +2160,14 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
             try {
                 relatedSelected = true;
-                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
-                updateSpectrum(spectrumKey);
-                ArrayList<String> spectra = new ArrayList<String>();
-                spectra.add(spectrumKey);
-                updateSpectrumPlot(spectra);
+                updateGraphics();
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
                 e.printStackTrace();
             }
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-            if (selectedPsmsTable.getSelectedRow() != -1) {
+            while (selectedPsmsTable.getSelectedRow() >= 0) {
                 selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
             }
 
@@ -3003,7 +2993,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         if (displayedPsm.equals(selectedKey)) {
                             selectedPsmsTable.setRowSelectionInterval(row, row);    //@TODO: verify that this is compatible with the resorting of rows
                             selectedPsmsTable.scrollRectToVisible(selectedPsmsTable.getCellRect(row, 0, false));
-                            if (relatedPsmsTable.getSelectedRow() >= 0) {
+
+                            while (relatedPsmsTable.getSelectedRow() >= 0) {
                                 relatedPsmsTable.removeRowSelectionInterval(relatedPsmsTable.getSelectedRow(), relatedPsmsTable.getSelectedRow());
                             }
                             selectedPsmsTableMouseReleased(null);
@@ -3013,7 +3004,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     }
                     selectedPsmsTable.setRowSelectionInterval(0, 0);    //@TODO: verify that this is compatible with the resorting of rows
                     selectedPsmsTable.scrollRectToVisible(selectedPsmsTable.getCellRect(0, 0, false));
-                    if (relatedPsmsTable.getSelectedRow() >= 0) {
+                    while (relatedPsmsTable.getSelectedRow() >= 0) {
                         relatedPsmsTable.removeRowSelectionInterval(relatedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
                     }
                     selectedPsmsTableMouseReleased(null);
@@ -3040,7 +3031,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         if (displayedPsm.equals(selectedKey)) {
                             relatedPsmsTable.setRowSelectionInterval(row, row);    //@TODO: verify that this is compatible with the resorting of rows
                             relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(row, 0, false));
-                            if (selectedPsmsTable.getSelectedRow() >= 0) {
+                            while (selectedPsmsTable.getSelectedRow() >= 0) {
                                 selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
                             }
                             relatedPsmsTableMouseReleased(null);
@@ -3050,7 +3041,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     }
                     relatedPsmsTable.setRowSelectionInterval(0, 0);    //@TODO: verify that this is compatible with the resorting of rows
                     relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(0, 0, false));
-                    if (selectedPsmsTable.getSelectedRow() >= 0) {
+                    while (selectedPsmsTable.getSelectedRow() >= 0) {
                         selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
                     }
                     relatedPsmsTableMouseReleased(null);
@@ -3282,11 +3273,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             selectedPsmsTable.scrollRectToVisible(selectedPsmsTable.getCellRect(0, 0, false));
 
             try {
-                String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
-                updateSpectrum(spectrumKey);
-                ArrayList<String> spectra = new ArrayList<String>();
-                spectra.add(spectrumKey);
-                updateSpectrumPlot(spectra);
+                updateGraphics();
 
                 // update the RT column renderer
                 double lowRT = Double.MAX_VALUE;
@@ -3295,7 +3282,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
                 for (int i = 0; i < selectedPsmsTable.getRowCount(); i++) {
 
-                    spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(i);
+                    String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(i);
                     Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
 
                     if (precursor != null) {
@@ -3353,16 +3340,15 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     relatedPsmsTable.setRowSelectionInterval(0, 0);
                     relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(0, 0, false));
 
-                    String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
-                    updateSpectrum(spectrumKey);
+                    updateGraphics();
 
                 }
 
-                if (selectedPsmsTable.getSelectedRow() != -1) {
+                while (selectedPsmsTable.getSelectedRow() >= 0) {
                     selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
                 }
             } else {
-                if (relatedPsmsTable.getSelectedRow() != -1) {
+                while (relatedPsmsTable.getSelectedRow() >= 0) {
                     relatedPsmsTable.removeRowSelectionInterval(relatedPsmsTable.getSelectedRow(), relatedPsmsTable.getSelectedRow());
                 }
             }
@@ -3418,19 +3404,31 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         relatedPsmsPanel.repaint();
     }
 
-    public void updateSpectrum() {
+    public void updateGraphics() {
 
         try {
-            String spectrumKey;
 
-            if (relatedSelected && relatedPsmsTable.getSelectedRow() != -1) {
-                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
-                updateSpectrum(spectrumKey);
-            } else if (selectedPsmsTable.getSelectedRow() != -1) {
-                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
-                updateSpectrum(spectrumKey);
+            if (!getSelectedPeptide().equals("")) {
+                if (relatedSelected && relatedPsmsTable.getSelectedRow() != -1) {
+                    if (getSelectedPsm().size() == 1) {
+                        spectrumTabbedPane.setEnabledAt(2, true);
+                        updateSpectrum(getSelectedPsm().get(0));
+                    } else {
+                        spectrumTabbedPane.setEnabledAt(2, false);
+                        spectrumTabbedPane.setSelectedIndex(1);
+                    }
+                } else if (selectedPsmsTable.getSelectedRow() != -1) {
+                    if (getSelectedPsm().size() == 1) {
+                        updateSpectrum(getSelectedPsm().get(0));
+                        spectrumTabbedPane.setEnabledAt(2, true);
+                    } else {
+                        spectrumTabbedPane.setEnabledAt(2, false);
+                        spectrumTabbedPane.setSelectedIndex(1);
+                    }
+                }
+                updateSpectrumPlot();
+//@todo update psm modification profile
             }
-
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             e.printStackTrace();
@@ -3442,13 +3440,18 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      * 
      * @param spectrumKeys 
      */
-    private void updateSpectrumPlot(ArrayList<String> spectrumKeys) {
+    public void updateSpectrumPlot() {
 
         AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
 
         XYPlot ptmPlot = new XYPlot();
-
-        for (String spectrumKey : spectrumKeys) {
+        // complete the PTM plot
+        NumberAxis aaAxis = new NumberAxis("Peptide Sequence");
+        NumberAxis deltaAxis = new NumberAxis("Fragment Ion Deviation");
+        ptmPlot.setDomainAxis(aaAxis);
+        ptmPlot.setRangeAxis(deltaAxis);
+        int spectrumCount = 0;
+        for (String spectrumKey : getSelectedPsm()) {
 
             MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
 
@@ -3481,12 +3484,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 }
 
                 Collections.sort(intensities);
-
-                // complete the PTM plot
-                NumberAxis aaAxis = new NumberAxis("Peptide Sequence");
-                NumberAxis deltaAxis = new NumberAxis("Fragment Ion Deviation");
-                ptmPlot.setDomainAxis(aaAxis);
-                ptmPlot.setRangeAxis(deltaAxis);
 
                 XYShapeRenderer renderer = new XYShapeRenderer();
                 DefaultXYDataset dataset = new DefaultXYDataset();
@@ -3640,8 +3637,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 // add tooltips
                 renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
 
-                ptmPlot.setDataset(0, dataset);
-                ptmPlot.setRenderer(0, renderer);
+                ptmPlot.setDataset(spectrumCount, dataset);
+                ptmPlot.setRenderer(spectrumCount, renderer);
+                spectrumCount++;
             }
         }
 
@@ -3800,14 +3798,19 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     }
 
     /**
-     * Returns the key of the selected peptide
+     * Returns the key of the selected psms
      */
-    private String getSelectedPsm(boolean relatedPeptide) {
-        String psmKey;
+    private ArrayList<String> getSelectedPsm(boolean relatedPeptide) {
+        ArrayList<String> psmKey = new ArrayList<String>();
+        PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(relatedPeptide));
         if (relatedPeptide) {
-            psmKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
+            for (int row : relatedPsmsTable.getSelectedRows()) {
+                psmKey.add(peptideMatch.getSpectrumMatches().get(row));
+            }
         } else {
-            psmKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
+            for (int row : selectedPsmsTable.getSelectedRows()) {
+                psmKey.add(peptideMatch.getSpectrumMatches().get(row));
+            }
         }
         return psmKey;
     }
@@ -3815,7 +3818,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     /**
      * Returns the key of the selected peptide
      */
-    private String getSelectedPsm() {
+    private ArrayList<String> getSelectedPsm() {
         return getSelectedPsm(relatedSelected);
     }
 
@@ -4220,25 +4223,16 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         String spectrumAsMgf = "";
         try {
-            String spectrumKey;
-
-            if (relatedSelected) {
-                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(relatedPsmsTable.getSelectedRow());
-            } else {
-                spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(selectedPsmsTable.getSelectedRow());
+            for (String spectrumKey : getSelectedPsm()) {
+                MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
+                spectrumAsMgf += currentSpectrum.asMgf() + "\n";
             }
-
-            MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-            spectrumAsMgf += currentSpectrum.asMgf();
-
             if (!spectrumAsMgf.isEmpty()) {
                 return spectrumAsMgf;
             }
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
-
         }
-
         return null;
     }
 
@@ -4568,7 +4562,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         if (peptideKey.equals("")) {
             peptideKey = PeptideShakerGUI.NO_SELECTION;
         }
-        String psmKey = getSelectedPsm();
+        String psmKey = getSelectedPsm().get(0);
         if (psmKey.equals("")) {
             psmKey = PeptideShakerGUI.NO_SELECTION;
         }

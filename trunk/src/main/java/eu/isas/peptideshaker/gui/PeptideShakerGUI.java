@@ -2904,7 +2904,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
             ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
             ptmPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / searchParameters.getFragmentIonAccuracy()) * 100));
-            ptmPanel.updateSpectrum();
+            ptmPanel.updateGraphics();
         }
     }
 
@@ -5156,7 +5156,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         filterPreferences.addHidingFilter(proteinFilter);
         PeptideFilter peptideFilter = new PeptideFilter(enzyme.getName(), getFoundModifications());
         peptideFilter.setProtein(enzyme.getName());
-        peptideFilter.setProtein("027");
         proteinFilter.setDescription("Hides " + enzyme.getName() + " related peptides.");
         filterPreferences.addHidingFilter(peptideFilter);
         starHide();
@@ -5613,14 +5612,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             }
             if (proteinFilter.getIdentifierRegex() != null) {
                 if (match.split(proteinFilter.getIdentifierRegex()).length == 1) {
-                    return false;
-                }
-                boolean found = false;
-                for (String accession : ProteinMatch.getAccessions(match)) {
-                    String test = "test" + sequenceFactory.getHeader(accession).getDescription() + "test";
-                    if (test.split(proteinFilter.getIdentifierRegex()).length > 1) {
-                        found = true;
-                        break;
+                    boolean found = false;
+                    for (String accession : ProteinMatch.getAccessions(match)) {
+                        String test = "test" + sequenceFactory.getHeader(accession).getDescription() + "test";
+                        if (test.split(proteinFilter.getIdentifierRegex()).length > 1) {
+                            found = true;
+                            break;
+                        }
                     }
                     if (!found) {
                         return false;
@@ -5786,9 +5784,16 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             PSParameter psParameter = new PSParameter();
             boolean found = false;
             for (String ptm : peptideFilter.getModificationStatus()) {
-                if (Peptide.isModified(match, ptm)) {
-                    found = true;
-                    break;
+                if (ptm.equals(PtmPanel.NO_MODIFICATION)) {
+                    if (!Peptide.isModified(match)) {
+                        found = true;
+                        break;
+                    }
+                } else {
+                    if (Peptide.isModified(match, ptm)) {
+                        found = true;
+                        break;
+                    }
                 }
             }
             if (!found) {
@@ -5867,13 +5872,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 if (peptideFilter.getProtein() != null) {
                     found = false;
                     for (String accession : peptideMatch.getTheoreticPeptide().getParentProteins()) {
-                        String test = "test" + accession + "test";
-                        if (test.split(peptideFilter.getProtein()).length > 1) {
+                        if (accession.split(peptideFilter.getProtein()).length > 1) {
                             found = true;
                             break;
                         }
-                        test = "test" + sequenceFactory.getHeader(accession).getDescription() + "test";
-                        if (test.split(peptideFilter.getProtein()).length > 1) {
+                        if (sequenceFactory.getHeader(accession).getDescription().split(peptideFilter.getProtein()).length > 1) {
                             found = true;
                             break;
                         }
@@ -5883,7 +5886,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     }
                 }
             }
-            return false;
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             catchException(e);

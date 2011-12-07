@@ -126,8 +126,8 @@
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                       <StringArray count="2">
-                        <StringItem index="0" value="Hide"/>
-                        <StringItem index="1" value="Star"/>
+                        <StringItem index="0" value="Star"/>
+                        <StringItem index="1" value="Hide"/>
                       </StringArray>
                     </Property>
                   </Properties>
@@ -299,8 +299,8 @@
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                       <StringArray count="2">
-                        <StringItem index="0" value="Hide"/>
-                        <StringItem index="1" value="Star"/>
+                        <StringItem index="0" value="Star"/>
+                        <StringItem index="1" value="Hide"/>
                       </StringArray>
                     </Property>
                   </Properties>
@@ -384,8 +384,8 @@
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                       <StringArray count="2">
-                        <StringItem index="0" value="Hide"/>
-                        <StringItem index="1" value="Star"/>
+                        <StringItem index="0" value="Star"/>
+                        <StringItem index="1" value="Hide"/>
                       </StringArray>
                     </Property>
                   </Properties>
