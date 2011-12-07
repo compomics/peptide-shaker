@@ -1590,11 +1590,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
     }//GEN-LAST:event_bubbleScaleJMenuItemActionPerformed
 
     /**
-     * Opens the ProteinFilter dialog.
-     * 
-     * @param evt 
-     */
-    /**
      * Export the spectrum as a figure.
      * 
      * @param evt 
