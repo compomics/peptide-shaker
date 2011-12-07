@@ -3465,9 +3465,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 }
             }
 
-            // @TODO: the currently selected fragment ion types are not taken into consideration?
-            // @TODO: the slider spectrum values are ignored?
-
             HashMap<PeptideFragmentIon, ArrayList<IonMatch>> ionMatches = PTMLocationScores.getPTMPlotData(
                     currentPeptide, ptmFactory.getPTM(getSelectedModification()), nPTM, currentSpectrum, annotationPreferences.getIonTypes(),
                     annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),

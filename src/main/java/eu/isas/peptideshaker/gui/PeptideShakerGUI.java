@@ -3752,25 +3752,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Update the peptide protein inference.
-     * 
-     * @param proteinInferenceType 
-     */
-    public void updatePeptideProteinInference(int proteinInferenceType) {
-
-        ptmPanel.updatePeptideTable();
-        ptmPanel.updateRelatedPeptidesTable();
-
-        //@TODO update overview and structure panels
-
-//        if (allTabsJTabbedPane.getSelectedIndex() == OVER_VIEW_TAB_INDEX ||
-//                allTabsJTabbedPane.getSelectedIndex() == STRUCTURES_TAB_INDEX) {
-//            overviewPanel.updatePeptideProteinInference(proteinInferenceType);
-//            proteinStructurePanel.updatePeptideProteinInference(proteinInferenceType);
-//        }
-    }
-
-    /**
      * Set whether the current data has been saved to a cps file or not.
      * 
      * @param dataSaved whether the current data has been saved to a cps file or not
