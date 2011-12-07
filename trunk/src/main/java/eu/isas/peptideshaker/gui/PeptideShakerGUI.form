@@ -466,6 +466,7 @@
             </MenuItem>
             <Menu class="javax.swing.JMenu" name="openRecentJMenu">
               <Properties>
+                <Property name="mnemonic" type="int" value="82"/>
                 <Property name="text" type="java.lang.String" value="Open Recent Project"/>
               </Properties>
             </Menu>
@@ -473,6 +474,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="projectPropertiesMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="80"/>
                 <Property name="text" type="java.lang.String" value="Project Properties"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
@@ -526,6 +528,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="searchParametersMenu">
               <Properties>
+                <Property name="mnemonic" type="int" value="83"/>
                 <Property name="text" type="java.lang.String" value="Search Parameters"/>
               </Properties>
               <Events>
@@ -534,6 +537,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="importFilterMenu">
               <Properties>
+                <Property name="mnemonic" type="int" value="73"/>
                 <Property name="text" type="java.lang.String" value="Import Filters"/>
               </Properties>
               <Events>
@@ -544,6 +548,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="annotationPreferencesMenu">
               <Properties>
+                <Property name="mnemonic" type="int" value="65"/>
                 <Property name="text" type="java.lang.String" value="Spectrum Annotations"/>
               </Properties>
               <Events>
@@ -552,6 +557,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="spectrumCountingMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="81"/>
                 <Property name="text" type="java.lang.String" value="MS2 Quantification"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
@@ -566,10 +572,25 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+F"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Find"/>
+                <Property name="mnemonic" type="int" value="70"/>
+                <Property name="text" type="java.lang.String" value="Find..."/>
+                <Property name="toolTipText" type="java.lang.String" value="Find a protein or peptide"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="findJMenuItemActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="filterJMenuItem">
+              <Properties>
+                <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
+                  <KeyStroke key="Shift+Ctrl+F"/>
+                </Property>
+                <Property name="mnemonic" type="int" value="76"/>
+                <Property name="text" type="java.lang.String" value="Filters"/>
+                <Property name="toolTipText" type="java.lang.String" value="Edit the filters"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="filterJMenuItemActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="starHideJMenuItem">
@@ -577,6 +598,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+H"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="76"/>
                 <Property name="text" type="java.lang.String" value="Star/Hide Filters"/>
               </Properties>
               <Events>
@@ -593,6 +615,7 @@
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="identificationFeaturesMenu">
               <Properties>
+                <Property name="mnemonic" type="int" value="73"/>
                 <Property name="text" type="java.lang.String" value="Identification Features"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
@@ -602,6 +625,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="followUpAnalysisMenu">
               <Properties>
+                <Property name="mnemonic" type="int" value="70"/>
                 <Property name="text" type="java.lang.String" value="Follow-Up Analysis"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
@@ -613,6 +637,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exportProjectMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="80"/>
                 <Property name="text" type="java.lang.String" value="PeptideShaker Project"/>
                 <Property name="toolTipText" type="java.lang.String" value="Export a PeptideShaker project as a single zip file"/>
                 <Property name="enabled" type="boolean" value="false"/>
@@ -623,6 +648,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="exportPrideXmlMenuItem">
               <Properties>
+                <Property name="mnemonic" type="int" value="88"/>
                 <Property name="text" type="java.lang.String" value="PRIDE XML"/>
                 <Property name="toolTipText" type="java.lang.String" value="Export a PeptideShaker project as a PRIDE XML file"/>
                 <Property name="enabled" type="boolean" value="false"/>
@@ -641,6 +667,7 @@
           <SubComponents>
             <Menu class="javax.swing.JMenu" name="overViewTabViewMenu">
               <Properties>
+                <Property name="mnemonic" type="int" value="79"/>
                 <Property name="text" type="java.lang.String" value="Overview"/>
               </Properties>
               <SubComponents>
@@ -705,6 +732,7 @@
                 <Property name="accelerator" type="javax.swing.KeyStroke" editor="org.netbeans.modules.form.editors.KeyStrokeEditor">
                   <KeyStroke key="Ctrl+Alt+J"/>
                 </Property>
+                <Property name="mnemonic" type="int" value="74"/>
                 <Property name="selected" type="boolean" value="true"/>
                 <Property name="text" type="java.lang.String" value="JSparklines"/>
                 <Property name="toolTipText" type="java.lang.String" value="View sparklines or the underlying numbers"/>

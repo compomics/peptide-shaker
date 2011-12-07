@@ -177,21 +177,20 @@
                               <Group type="102" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" attributes="0">
-                                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="52" max="-2" attributes="0"/>
-                                          <Component id="proteinAccessionTxt" pref="172" max="32767" attributes="2"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="jLabel10" pref="85" max="32767" attributes="2"/>
+                                          <Component id="proteinAccessionTxt" min="-2" pref="171" max="-2" attributes="2"/>
+                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                          <Component id="jLabel10" pref="82" max="32767" attributes="2"/>
                                           <EmptySpace min="-2" pref="62" max="-2" attributes="0"/>
                                       </Group>
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                                              <Component id="jLabel8" alignment="0" min="-2" max="-2" attributes="0"/>
-                                          </Group>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
                                               <Component id="proteinPICmb" min="-2" pref="172" max="-2" attributes="2"/>
                                               <Component id="proteinCoverageTxt" alignment="0" min="-2" pref="172" max="-2" attributes="2"/>
@@ -214,10 +213,10 @@
                                   </Group>
                                   <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="nPeptidesTxt" alignment="0" pref="173" max="32767" attributes="2"/>
-                                      <Component id="proteinsNSpectraTxt" alignment="0" pref="173" max="32767" attributes="2"/>
-                                      <Component id="proteinScoreTxt" alignment="0" pref="173" max="32767" attributes="2"/>
-                                      <Component id="proteinConfidenceTxt" alignment="1" pref="173" max="32767" attributes="2"/>
+                                      <Component id="nPeptidesTxt" alignment="0" pref="166" max="32767" attributes="2"/>
+                                      <Component id="proteinsNSpectraTxt" alignment="0" pref="166" max="32767" attributes="2"/>
+                                      <Component id="proteinScoreTxt" alignment="0" pref="166" max="32767" attributes="2"/>
+                                      <Component id="proteinConfidenceTxt" alignment="1" pref="166" max="32767" attributes="2"/>
                                   </Group>
                                   <EmptySpace min="-2" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="1" attributes="0">
@@ -269,8 +268,8 @@
                                           <Group type="102" alignment="1" attributes="0">
                                               <Group type="103" groupAlignment="3" attributes="0">
                                                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
-                                                  <Component id="proteinAccessionTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                                                   <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                                                  <Component id="proteinAccessionTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                                               </Group>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Group type="103" groupAlignment="3" attributes="0">
@@ -307,12 +306,12 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel3">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="PI status:"/>
+                            <Property name="text" type="java.lang.String" value="PI Status:"/>
                           </Properties>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel4">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Spectrum counting:"/>
+                            <Property name="text" type="java.lang.String" value="Spectrum Counting:"/>
                           </Properties>
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel5">
@@ -865,7 +864,7 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel14">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="PI status:"/>
+                            <Property name="text" type="java.lang.String" value="PI Status:"/>
                           </Properties>
                         </Component>
                         <Component class="javax.swing.JComboBox" name="peptidePICmb">
@@ -1255,47 +1254,41 @@
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="precursorRTCmb" min="-2" pref="48" max="-2" attributes="2"/>
                                       </Group>
-                                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                          <Group type="102" alignment="0" attributes="1">
-                                              <Component id="jLabel26" min="-2" max="-2" attributes="0"/>
-                                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                              <Component id="jScrollPane6" min="0" pref="0" max="32767" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="0" attributes="0">
+                                              <Component id="jLabel24" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel25" alignment="0" min="-2" max="-2" attributes="0"/>
+                                              <Component id="jLabel26" alignment="0" min="-2" max="-2" attributes="0"/>
                                           </Group>
-                                          <Group type="102" alignment="0" attributes="0">
-                                              <Group type="103" groupAlignment="0" attributes="0">
-                                                  <Component id="jLabel24" alignment="0" min="-2" max="-2" attributes="0"/>
-                                                  <Component id="jLabel25" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                              <Component id="jScrollPane6" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="precursorMzTxt" min="-2" pref="144" max="-2" attributes="2"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="precursorMzCmb" min="-2" pref="48" max="-2" attributes="2"/>
                                               </Group>
-                                              <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
-                                              <Group type="103" groupAlignment="1" attributes="0">
-                                                  <Group type="102" alignment="0" attributes="0">
-                                                      <Component id="precursorMzTxt" min="-2" pref="144" max="-2" attributes="2"/>
-                                                      <EmptySpace max="-2" attributes="0"/>
-                                                      <Component id="precursorMzCmb" min="-2" pref="48" max="-2" attributes="2"/>
-                                                  </Group>
-                                                  <Group type="102" alignment="0" attributes="0">
-                                                      <Component id="precursorErrorTxt" min="-2" pref="144" max="-2" attributes="2"/>
-                                                      <EmptySpace max="-2" attributes="0"/>
-                                                      <Component id="precursorErrorCmb" min="-2" pref="48" max="-2" attributes="2"/>
-                                                  </Group>
+                                              <Group type="102" alignment="0" attributes="0">
+                                                  <Component id="precursorErrorTxt" min="-2" pref="144" max="-2" attributes="2"/>
+                                                  <EmptySpace max="-2" attributes="0"/>
+                                                  <Component id="precursorErrorCmb" min="-2" pref="48" max="-2" attributes="2"/>
                                               </Group>
                                           </Group>
                                       </Group>
                                   </Group>
                                   <EmptySpace pref="156" max="32767" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="jLabel23" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      <Component id="jLabel27" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="jLabel23" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                                           <Component id="psmConfidenceTxt" min="-2" pref="144" max="-2" attributes="2"/>
                                           <EmptySpace min="-2" max="-2" attributes="0"/>
                                           <Component id="psmConfidenceCmb" min="-2" pref="48" max="-2" attributes="3"/>
                                       </Group>
-                                      <Group type="102" alignment="0" attributes="1">
-                                          <Component id="jLabel27" min="-2" max="-2" attributes="0"/>
-                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                                          <Component id="jScrollPane7" min="0" pref="0" max="32767" attributes="1"/>
-                                      </Group>
+                                      <Component id="jScrollPane7" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
                                   </Group>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
@@ -1316,7 +1309,7 @@
                                           </Group>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Group type="102" alignment="0" attributes="0">
+                                              <Group type="102" attributes="0">
                                                   <Component id="jLabel27" min="-2" max="-2" attributes="0"/>
                                                   <EmptySpace pref="121" max="32767" attributes="0"/>
                                               </Group>
@@ -1343,7 +1336,10 @@
                                           </Group>
                                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="jLabel26" min="-2" max="-2" attributes="0"/>
+                                              <Group type="102" attributes="0">
+                                                  <Component id="jLabel26" min="-2" max="-2" attributes="0"/>
+                                                  <EmptySpace pref="59" max="32767" attributes="0"/>
+                                              </Group>
                                               <Component id="jScrollPane6" pref="73" max="32767" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -1431,7 +1427,7 @@
                         </Component>
                         <Component class="javax.swing.JLabel" name="jLabel25">
                           <Properties>
-                            <Property name="text" type="java.lang.String" value="Precursor error:"/>
+                            <Property name="text" type="java.lang.String" value="Precursor Error:"/>
                           </Properties>
                         </Component>
                         <Component class="javax.swing.JTextField" name="precursorErrorTxt">
