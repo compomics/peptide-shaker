@@ -32,6 +32,10 @@ public class JumpToPanel extends javax.swing.JPanel {
      * Instance of the sequence factory
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+    /**
+     * the text to display by default
+     */
+    private final String welcomeText = "(peptide or protein)";
 
     /**
      * Type of item selected
@@ -65,6 +69,7 @@ public class JumpToPanel extends javax.swing.JPanel {
             possibilities.add(peptideShakerGUI.getSelectedPeptideKey());
             types.add(Type.PEPTIDE);
         } else {
+            inputTxt.setText(welcomeText);
             indexLabel.setText("");
             previousButton.setEnabled(false);
             nextButton.setEnabled(false);
@@ -114,8 +119,13 @@ public class JumpToPanel extends javax.swing.JPanel {
 
         inputTxt.setForeground(new java.awt.Color(204, 204, 204));
         inputTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        inputTxt.setText("(accession or sequence)");
+        inputTxt.setText("(peptide or protein)");
         inputTxt.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
+        inputTxt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseReleased(java.awt.event.MouseEvent evt) {
+                inputTxtMouseReleased(evt);
+            }
+        });
         inputTxt.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 inputTxtKeyReleased(evt);
@@ -193,7 +203,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
         if (peptideShakerGUI.getIdentification() != null) {
 
-            if (!inputTxt.getText().equalsIgnoreCase("(accession or sequence)")) {
+            if (!inputTxt.getText().equalsIgnoreCase(welcomeText)) {
                 inputTxt.setForeground(Color.black);
             } else {
                 inputTxt.setForeground(new Color(204, 204, 204));
@@ -270,7 +280,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                         previousButton.setEnabled(false);
                         nextButton.setEnabled(false);
 
-                        if (!inputTxt.getText().equalsIgnoreCase("(accession or sequence)")) {
+                        if (!inputTxt.getText().equalsIgnoreCase(welcomeText)) {
                             indexLabel.setText("(no matches)");
                         } else {
                             indexLabel.setText("");
@@ -314,6 +324,13 @@ public class JumpToPanel extends javax.swing.JPanel {
         }
         updateSelectionInTab();
     }//GEN-LAST:event_nextButtonActionPerformed
+
+    private void inputTxtMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inputTxtMouseReleased
+        if (inputTxt.getText().equals(welcomeText)) {
+            inputTxt.setText("");
+        }
+    }//GEN-LAST:event_inputTxtMouseReleased
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel findJLabel;
     private javax.swing.JLabel indexLabel;
