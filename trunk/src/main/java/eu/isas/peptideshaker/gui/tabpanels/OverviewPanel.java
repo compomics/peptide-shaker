@@ -2516,7 +2516,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 spectrumLayeredPane.repaint();
 
                 // set the sliders split pane divider location
-                if (peptideShakerGUI.getDisplayPreferences().showSliders()) {
+                if (peptideShakerGUI.getUserPreferences().showSliders()) {
                     slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
                 } else {
                     slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
@@ -2990,7 +2990,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         displayProteins = false;
         displayPeptidesAndPSMs = false;
         displayCoverage = false;
-        peptideShakerGUI.getDisplayPreferences().setShowSliders(false);
+        peptideShakerGUI.getUserPreferences().setShowSliders(false);
         displaySpectrum = true;
         peptideShakerGUI.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displayCoverage, displaySpectrum);
     }//GEN-LAST:event_maximizeSpectrumPanelJButtonActionPerformed

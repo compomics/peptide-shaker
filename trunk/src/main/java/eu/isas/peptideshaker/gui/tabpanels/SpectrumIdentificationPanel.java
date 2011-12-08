@@ -1565,7 +1565,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
                     public void run() {
                         // set the sliders split pane divider location
-                        if (peptideShakerGUI.getDisplayPreferences().showSliders()) {
+                        if (peptideShakerGUI.getUserPreferences().showSliders()) {
                             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
                         } else {
                             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
@@ -3272,7 +3272,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      */
     public void updateSeparators() {
         // set the sliders split pane divider location
-        if (peptideShakerGUI.getDisplayPreferences().showSliders()) {
+        if (peptideShakerGUI.getUserPreferences().showSliders()) {
             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
         } else {
             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());

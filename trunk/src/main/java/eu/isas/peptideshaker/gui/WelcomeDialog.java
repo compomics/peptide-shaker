@@ -294,6 +294,9 @@ public class WelcomeDialog extends javax.swing.JDialog {
 
                 this.setVisible(false);
                 peptideShakerGUI.importPeptideShakerFile(newFile);
+                peptideShakerGUI.getUserPreferences().addRecentProject(newFile);
+                peptideShakerGUI.updateRecentProjectsList();
+                peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
                 this.dispose();
             }
         }

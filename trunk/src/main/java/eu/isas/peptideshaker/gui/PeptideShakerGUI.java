@@ -63,6 +63,7 @@ import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
+import eu.isas.peptideshaker.preferences.UserPreferences;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Frame;
@@ -84,6 +85,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -228,6 +230,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private final String USER_MODIFICATIONS_FILE = "conf/peptideshaker_usermods.xml";
     /**
+     * user preferences file
+     */
+    private final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
+    /**
      * File containing the modification profile. By default default.psm in the conf folder.
      */
     private File profileFile = new File("conf/default.psm");
@@ -271,6 +277,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The parameters of the search
      */
     private SearchParameters searchParameters = new SearchParameters();
+    /**
+     * the user preferences
+     */
+    private UserPreferences userPreferences;
     /**
      * The identification filter used for this project
      */
@@ -336,10 +346,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      */
     private int labelWidth = 50;
     /**
-     * The color used for the sparkline bar chart plots.
-     */
-    private Color sparklineColor = new Color(110, 196, 97);
-    /**
      * The color to use for the HTML tags for the selected rows, in HTML color code.
      */
     private String selectedRowHtmlTagFontColor = "#FFFFFF";
@@ -388,6 +394,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         // set up the ErrorLog
         setUpLogFile();
 
+        loadUserPreferences();
+
         overviewPanel = new OverviewPanel(this);
         statsPanel = new StatsPanel(this);
         ptmPanel = new PtmPanel(this);
@@ -409,7 +417,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         repaintPanels();
 
         // load the list of recently used projects
-        loadRecentProjectsList();
+        updateRecentProjectsList();
 
         // set the title
         setFrameTitle(null);
@@ -1893,8 +1901,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         "Wrong File.", JOptionPane.ERROR_MESSAGE);
             } else {
                 clearData();
-                updateRecentProjectsList(newFile);
+                userPreferences.addRecentProject(newFile);
+                updateRecentProjectsList();
                 importPeptideShakerFile(newFile);
+                lastSelectedFolder = newFile.getAbsolutePath();
             }
         }
     }//GEN-LAST:event_openJMenuItemActionPerformed
@@ -2522,7 +2532,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param evt 
      */
     private void spectrumSlidersCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_spectrumSlidersCheckBoxMenuItemActionPerformed
-        displayPreferences.setShowSliders(spectrumSlidersCheckBoxMenuItem.isSelected());
+        userPreferences.setShowSliders(spectrumSlidersCheckBoxMenuItem.isSelected());
         overviewPanel.updateSeparators();
         spectrumIdentificationPanel.updateSeparators();
         ptmPanel.updateSeparators();
@@ -2852,6 +2862,55 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         "Error Creating Log File", JOptionPane.ERROR_MESSAGE);
                 e.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * Returns the user preferences
+     * @return the user preferences
+     */
+    public UserPreferences getUserPreferences() {
+        return userPreferences;
+    }
+
+    /**
+     * Loads the user preferences
+     */
+    private void loadUserPreferences() {
+        try {
+            File file = new File(USER_PREFERENCES_FILE);
+            if (!file.exists()) {
+                userPreferences = new UserPreferences();
+                saveUserPreferences();
+            } else {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream in = new ObjectInputStream(fis);
+                Object inObject = in.readObject();
+                fis.close();
+                in.close();
+                userPreferences = (UserPreferences) inObject;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Saves the user preferences
+     */
+    private void saveUserPreferences() {
+        try {
+            File file = new File(USER_PREFERENCES_FILE);
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdir();
+            }
+            FileOutputStream fos = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(userPreferences);
+            oos.close();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -3218,7 +3277,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @return the sparklineColor
      */
     public Color getSparklineColor() {
-        return sparklineColor;
+        return userPreferences.getSparklineColor();
     }
 
     /**
@@ -3227,7 +3286,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param sparklineColor the sparklineColor to set
      */
     public void setSparklineColor(Color sparklineColor) {
-        this.sparklineColor = sparklineColor;
+        userPreferences.setSparklineColor(sparklineColor);
     }
 
     /**
@@ -4085,6 +4144,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     }
                     spectrumFactory.closeFiles();
                     sequenceFactory.closeFile();
+                    saveUserPreferences();
                 } catch (Exception e) {
                     e.printStackTrace();
                     catchException(e);
@@ -4298,62 +4358,14 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         }
     }
 
-    public String[] getRecentProjects() {
-
-        String path = getJarFilePath() + "/conf/recently_opened_projects.txt";
-
-        File file = new File(path);
-
-        boolean fileExists = file.exists();
-
-        if (!file.exists()) {
-            try {
-                fileExists = file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        ArrayList<String> paths = new ArrayList<String>();
-
-        if (fileExists) {
-
-            try {
-                FileReader r = new FileReader(file);
-                BufferedReader br = new BufferedReader(r);
-
-                String line;
-
-                while ((line = br.readLine()) != null) {
-                    paths.add(line);
-                }
-                br.close();
-                r.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        String[] result = new String[paths.size()];
-        int cpt = 0;
-
-        for (String project : paths) {
-            result[cpt] = project;
-            cpt++;
-        }
-
-        return result;
-    }
-
     /**
      * Add the list of recently used files to the file menu.
      */
-    private void loadRecentProjectsList() {
+    public void updateRecentProjectsList() {
 
         openRecentJMenu.removeAll();
-        String[] paths = getRecentProjects();
+        ArrayList<String> paths = userPreferences.getRecentProjects();
         int counter = 1;
-        ArrayList<String> filesNotFound = new ArrayList<String>(); // @TODO: should this be used?
 
         for (String line : paths) {
             JMenuItem menuItem = new JMenuItem(counter++ + ": " + line);
@@ -4367,6 +4379,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     if (!new File(filePath).exists()) {
                         JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
+                        temp.getUserPreferences().removerRecentProject(filePath);
                     } else {
                         clearData();
                         NewDialog openDialog = new NewDialog(temp, false);
@@ -4382,9 +4395,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         }
 
                         importPeptideShakerFile(new File(filePath));
-                        updateRecentProjectsList(new File(filePath));
+                        userPreferences.addRecentProject(filePath);
                         lastSelectedFolder = new File(filePath).getAbsolutePath();
                     }
+                    updateRecentProjectsList();
                 }
             });
 
@@ -4408,9 +4422,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         final WelcomeDialog tempWelcomeDialog = welcomeDialog;
         menu.removeAll();
-        String[] paths = getRecentProjects();
+        ArrayList<String> paths = userPreferences.getRecentProjects();
         int counter = 1;
-        ArrayList<String> filesNotFound = new ArrayList<String>(); // @TODO: should this be used?
 
         for (String line : paths) {
             JMenuItem menuItem = new JMenuItem(counter++ + ": " + line);
@@ -4424,6 +4437,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     if (!new File(filePath).exists()) {
                         JOptionPane.showMessageDialog(null, "File not found!", "File Error", JOptionPane.ERROR_MESSAGE);
+                        temp.getUserPreferences().removerRecentProject(filePath);
                     } else {
                         clearData();
                         NewDialog openDialog = new NewDialog(temp, false);
@@ -4439,10 +4453,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         }
 
                         importPeptideShakerFile(new File(filePath));
-                        updateRecentProjectsList(new File(filePath));
+                        userPreferences.addRecentProject(filePath);
                         lastSelectedFolder = new File(filePath).getAbsolutePath();
                         tempWelcomeDialog.dispose();
                     }
+                        updateRecentProjectsList();
                 }
             });
 
@@ -4453,68 +4468,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             JMenuItem menuItem = new JMenuItem("(empty)");
             menuItem.setEnabled(false);
             menu.add(menuItem);
-        }
-    }
-
-    /**
-     * Add the given file to the top of the recent projects list.
-     * 
-     * @param file the file to add
-     */
-    public void updateRecentProjectsList(File file) {
-
-        String path = getJarFilePath() + "/conf/recently_opened_projects.txt";
-
-        File recentFiles = new File(path);
-
-        boolean fileExists = recentFiles.exists();
-
-        if (!recentFiles.exists()) {
-            try {
-                fileExists = recentFiles.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        if (fileExists) {
-
-            try {
-                // read the old list
-                FileReader r = new FileReader(recentFiles);
-                BufferedReader br = new BufferedReader(r);
-
-                String line = br.readLine();
-                String oldList = "";
-                int counter = 0;
-
-                while (line != null && counter < 9) {
-
-                    if (!line.equalsIgnoreCase(file.getAbsolutePath())) {
-                        oldList += line + "\n";
-                    }
-
-                    line = br.readLine();
-                    counter++;
-                }
-
-                br.close();
-                r.close();
-
-                // write the new list
-                FileWriter w = new FileWriter(recentFiles);
-                BufferedWriter bw = new BufferedWriter(w);
-                bw.write(file.getAbsolutePath() + "\n" + oldList);
-
-                bw.close();
-                w.close();
-
-                // load the updated list
-                loadRecentProjectsList();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -5147,7 +5100,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     // return the peptide shaker icon to the standard version
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                    updateRecentProjectsList(currentPSFile);
+                    userPreferences.addRecentProject(currentPSFile);
+                    updateRecentProjectsList();
 
                     JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
                     dataSaved = true;
@@ -6170,7 +6124,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     // return the peptide shaker icon to the standard version
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                    updateRecentProjectsList(currentPSFile);
+                    userPreferences.addRecentProject(currentPSFile);
+                    updateRecentProjectsList();
 
                     JOptionPane.showMessageDialog(tempRef, "Project successfully saved.", "Save Successful", JOptionPane.INFORMATION_MESSAGE);
                     dataSaved = true;

@@ -21,10 +21,6 @@ public class DisplayPreferences implements Serializable {
      * Show/hide the hidden proteins.
      */
     private boolean showScores = false;
-    /**
-     * Show/hide sliders
-     */
-    private boolean showSliders = false;
 
     /**
      * Constructor
@@ -62,21 +58,5 @@ public class DisplayPreferences implements Serializable {
      */
     public boolean showScores() {
         return showScores;
-    }
-
-    /**
-     * Returns whether sliders should be displayed
-     * @return  whether sliders should be displayed
-     */
-    public boolean showSliders() {
-        return showSliders;
-    }
-
-    /**
-     * Sets whether sliders should be displayed
-     * @param showSliders  whether sliders should be displayed
-     */
-    public void setShowSliders(boolean showSliders) {
-        this.showSliders = showSliders;
     }
 }

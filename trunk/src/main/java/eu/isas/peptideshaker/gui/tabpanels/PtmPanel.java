@@ -1737,7 +1737,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                     public void run() {
                         // set the sliders split pane divider location
-                        if (peptideShakerGUI.getDisplayPreferences().showSliders()) {
+                        if (peptideShakerGUI.getUserPreferences().showSliders()) {
                             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
                         } else {
                             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
@@ -4532,7 +4532,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     public void updateSeparators() {
         // set the sliders split pane divider location
-        if (peptideShakerGUI.getDisplayPreferences().showSliders()) {
+        if (peptideShakerGUI.getUserPreferences().showSliders()) {
             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth() - 30);
         } else {
             slidersSplitPane.setDividerLocation(slidersSplitPane.getWidth());
