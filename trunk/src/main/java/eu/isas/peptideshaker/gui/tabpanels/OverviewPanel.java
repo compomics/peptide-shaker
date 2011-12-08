@@ -4229,8 +4229,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         progressDialog.setTitle("Loading Overview. Please Wait...");
         progressDialog.setMax(peptideShakerGUI.getIdentification().getProteinIdentification().size());
         progressDialog.setValue(0);
-
-
+        
         new Thread(new Runnable() {
 
             public void run() {
@@ -4244,6 +4243,9 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             public void run() {
 
                 try {
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                    
                     // update spectrum counting column header tooltip
                     if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.EMPAI) {
                         proteinTableToolTips.set(proteinTable.getColumn("MS2 Quantification").getModelIndex(), "Protein MS2 Quantification - emPAI");
@@ -4467,11 +4469,16 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     updateSelection();
 
                     proteinTable.requestFocus();
+                    
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
 
                 } catch (Exception e) {
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     peptideShakerGUI.catchException(e);
                     progressDialog.setVisible(false);
                     progressDialog.dispose();

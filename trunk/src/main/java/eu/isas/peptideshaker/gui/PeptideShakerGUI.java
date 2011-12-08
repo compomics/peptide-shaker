@@ -2587,19 +2587,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             overviewPanel.updateSeparators();
             statsPanel.updateSeparators();
 
-            // change the peptide shaker icon to a "waiting version"
-            setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
             // reset show hidden proteins and scores columns
             showHiddenProteinsJCheckBoxMenuItem.setSelected(true);
             scoresJCheckBoxMenuItem.setSelected(false);
 
             // make sure that all panels are looking the way they should
             repaintPanels();
-
-
-            // return the peptide shaker icon to the standard version
-            setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
             // enable the menu items depending on a project being open
             jumpToPanel.setEnabled(true);
@@ -2618,9 +2611,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             settingsMenu.setEnabled(true);
             exportGraphicsMenu.setEnabled(true);
             helpJMenu.setEnabled(true);
-
-            // return the peptide shaker icon to the standard version
-            setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
             allTabsJTabbedPaneStateChanged(null);
         } catch (Exception e) {

@@ -367,11 +367,11 @@ public class GOEAPanel extends javax.swing.JPanel {
                         dm.fireTableDataChanged();
 
                         if (!goMappingsFile.exists()) {
-                            JOptionPane.showMessageDialog(peptideShakerGUI, "Mapping file \"" + goMappingsFile.getName() + "\" not found!",
-                                    "File Not Found", JOptionPane.ERROR_MESSAGE);
                             progressDialog.setVisible(false);
                             progressDialog.dispose();
-
+                            JOptionPane.showMessageDialog(peptideShakerGUI, "Mapping file \"" + goMappingsFile.getName() + "\" not found!",
+                                    "File Not Found", JOptionPane.ERROR_MESSAGE);
+                            
                             // return the peptide shaker icon to the standard version
                             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             return;
@@ -381,7 +381,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                         TreeMap<String, Integer> datasetGoTermUsage = new TreeMap<String, Integer>();
                         HashMap<String, String> goTermToAccessionMap = new HashMap<String, String>();
                         HashMap<String, ArrayList<String>> proteinToGoMappings = new HashMap<String, ArrayList<String>>();
-
+                        
                         int totalNumberOfProteins = 0;
 
                         try {
@@ -627,8 +627,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 }
                             }
 
-                            ((DefaultTableModel) goMappingsTable.getModel()).fireTableDataChanged();
-
                             ((TitledBorder) mappingsPanel.getBorder()).setTitle("Gene Ontology Mappings (" + significantCounter + "/" + goMappingsTable.getRowCount() + ")");
                             mappingsPanel.revalidate();
                             mappingsPanel.repaint();
@@ -662,7 +660,6 @@ public class GOEAPanel extends javax.swing.JPanel {
                             exportMappingsJButton.setEnabled(true);
                             exportPlotsJButton.setEnabled(true);
 
-                            progressDialog.setVisible(false);
                             progressDialog.dispose();
                             
                             peptideShakerGUI.setUpdated(PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX, true);
@@ -733,8 +730,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 // return the peptide shaker icon to the standard version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             }
+                            }
                         }
-                    }
                 }.start();
             }
         }
@@ -1717,7 +1714,7 @@ public class GOEAPanel extends javax.swing.JPanel {
     private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadButtonActionPerformed
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-
+           
         new Thread(new Runnable() {
 
             public void run() {
@@ -1733,6 +1730,11 @@ public class GOEAPanel extends javax.swing.JPanel {
             public void run() {
 
                 try {
+                    // clear old data
+                    clearOldResults();
+                    
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     // get the current Ensembl version
                     URL url = new URL("http://www.biomart.org/biomart/martservice?type=registry");
@@ -1824,17 +1826,27 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                     bw.close();
                     w.close();
+                    
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
 
-                    JOptionPane.showMessageDialog(peptideShakerGUI, "GO Mappings Downloaded", "GO Mappings", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(peptideShakerGUI, "GO mappings downloaded.\nRe-select to use.", "GO Mappings", JOptionPane.INFORMATION_MESSAGE);
 
-                    int index = speciesJComboBox.getSelectedIndex();
                     loadSpeciesAndGoDomains();
-                    speciesJComboBox.setSelectedIndex(index);
-                    speciesJComboBoxActionPerformed(null);
+                    speciesJComboBox.setSelectedIndex(0);
+                    
+                    // @TODO: the code below ought to work, but results in bugs...
+                    //        therefore the user now has to reselect in the drop down menu
+//                    int index = speciesJComboBox.getSelectedIndex();
+//                    loadSpeciesAndGoDomains();
+//                    speciesJComboBox.setSelectedIndex(index);
+//                    speciesJComboBoxActionPerformed(null);
                 } catch (Exception e) {
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
                     JOptionPane.showMessageDialog(peptideShakerGUI, "An error occured when downloading the mappings.", "Download Error", JOptionPane.ERROR_MESSAGE);

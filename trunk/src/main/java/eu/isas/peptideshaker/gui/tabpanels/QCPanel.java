@@ -1061,7 +1061,7 @@ public class QCPanel extends javax.swing.JPanel {
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
-
+        
         new Thread(new Runnable() {
 
             public void run() {
