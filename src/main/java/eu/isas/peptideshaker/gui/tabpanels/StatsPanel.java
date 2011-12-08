@@ -15,6 +15,7 @@ import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -2722,6 +2723,9 @@ public class StatsPanel extends javax.swing.JPanel {
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
+        
+        // change the peptide shaker icon to a "waiting version"
+        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         new Thread(new Runnable() {
 
@@ -2802,6 +2806,8 @@ public class StatsPanel extends javax.swing.JPanel {
 
                 tabInitiated = true;
 
+                // change the peptide shaker icon back to the default version
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
             }

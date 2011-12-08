@@ -2568,6 +2568,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
+        
+        // change the peptide shaker icon to a "waiting version"
+        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         new Thread(new Runnable() {
 

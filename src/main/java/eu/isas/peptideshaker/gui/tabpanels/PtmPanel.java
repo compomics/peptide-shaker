@@ -2881,6 +2881,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
+        
+        // change the peptide shaker icon to a "waiting version"
+        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
         new Thread(new Runnable() {
 
@@ -2952,6 +2955,8 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     updatePeptideTable();
                 }
 
+                // change the peptide shaker icon back to the default version
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
             }
