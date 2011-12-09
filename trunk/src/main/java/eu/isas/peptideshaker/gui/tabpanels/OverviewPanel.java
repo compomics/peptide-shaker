@@ -1781,7 +1781,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 }//GEN-LAST:event_peptideTableKeyReleased
 
     /**
-     * Updates tha tables according to the currently selected PSM.
+     * Updates the tables according to the currently selected PSM.
      *
      * @param evt
      */
@@ -2203,6 +2203,7 @@ private void coverageTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
                 if (peptideIndexes.size() == 1) {
                     peptideTable.setRowSelectionInterval(peptideIndexes.get(0), peptideIndexes.get(0));
                     peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideIndexes.get(0), peptideIndexes.get(0), false));
+                    peptideShakerGUI.resetSelectedItems();
                     peptideTableKeyReleased(null);
                 } else {
                     JPopupMenu peptidesPopupMenu = new JPopupMenu();
@@ -2235,7 +2236,8 @@ private void coverageTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIR
 
                             public void actionPerformed(java.awt.event.ActionEvent evt) {
                                 peptideTable.setRowSelectionInterval(tempPeptideIndexes.get(tempInt), tempPeptideIndexes.get(tempInt));
-                                peptideTable.scrollRectToVisible(peptideTable.getCellRect(tempPeptideIndexes.get(tempInt), tempPeptideIndexes.get(tempInt), false));
+                                peptideTable.scrollRectToVisible(peptideTable.getCellRect(tempPeptideIndexes.get(tempInt), tempPeptideIndexes.get(tempInt), false));  
+                                peptideShakerGUI.resetSelectedItems();
                                 peptideTableKeyReleased(null);
                             }
                         });
@@ -4761,8 +4763,12 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
         try {
             if (!peptideShakerGUI.getDisplayPreferences().showScores()) {
-                proteinTable.removeColumn(proteinTable.getColumn("Score"));
-                peptideTable.removeColumn(peptideTable.getColumn("Score"));
+                try {
+                    proteinTable.removeColumn(proteinTable.getColumn("Score"));
+                    peptideTable.removeColumn(peptideTable.getColumn("Score"));
+                } catch (IllegalArgumentException e) {
+                    // ignore error
+                }
             } else {
                 proteinTable.addColumn(proteinScoreColumn);
                 if (peptideShakerGUI.getDisplayPreferences().showHiddenProteins()) {
@@ -5193,11 +5199,13 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     }
 
     /**
-     * Returns the row of a desired psm
+     * Returns the row of a desired psm.
+     * 
      * @param psmKey the key of the psm
      * @return the row of the desired psm
      */
     private int getPsmRow(String psmKey) {
+
         int index = -1;
         for (int key : psmTableMap.keySet()) {
             if (psmTableMap.get(key).equals(psmKey)) {
@@ -5205,11 +5213,57 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 break;
             }
         }
-        for (int row = 0; row < psmTable.getRowCount(); row++) {
+
+        for (int row = 0; row < psmTable.getRowCount(); row++) { 
             if ((Integer) psmTable.getValueAt(row, 0) == index) {
                 return row;
             }
         }
         return -1;
+    }
+    
+    /**
+     * Clear all the data.
+     */
+    public void clearData() {
+        
+        displaySpectrum = true;
+        displayCoverage = true;
+        displayProteins = true;
+        displayPeptidesAndPSMs = true;
+        
+        DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
+        dm.getDataVector().removeAllElements();
+        dm.fireTableDataChanged();
+        
+        dm = (DefaultTableModel) peptideTable.getModel();
+        dm.getDataVector().removeAllElements();
+        dm.fireTableDataChanged();
+        
+        dm = (DefaultTableModel) psmTable.getModel();
+        dm.getDataVector().removeAllElements();
+        dm.fireTableDataChanged();
+        
+        proteinTableMap = new HashMap<Integer, String>();
+        peptideTableMap = new HashMap<Integer, String>();
+        psmTableMap = new HashMap<Integer, String>();
+        
+        currentSpectrumKey = "";
+        currentProteinSequence = "";
+        maxPsmMzValue = Double.MIN_VALUE;
+        spectrum = null;
+        
+        coverageTable.setValueAt(null, 0, 0);
+        
+        fragmentIonsJScrollPane.setViewportView(null);
+        bubbleJPanel.removeAll();
+        spectrumPanel.removeAll();
+        secondarySpectrumPlotsJPanel.removeAll();
+        
+        ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle("Proteins");
+        ((TitledBorder) peptidesPanel.getBorder()).setTitle("Peptides");
+        ((TitledBorder) psmsPanel.getBorder()).setTitle("Peptide-Spectrum Matches");
+        ((TitledBorder) spectrumMainPanel.getBorder()).setTitle("Spectrum & Fragment Ions");
+        ((TitledBorder) sequenceCoveragePanel.getBorder()).setTitle("Protein Sequence Coverage");
     }
 }

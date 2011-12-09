@@ -79,7 +79,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -395,16 +394,18 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         setUpLogFile();
 
         loadUserPreferences();
+        
+        initComponents();
 
         overviewPanel = new OverviewPanel(this);
+        overviewJPanel.add(overviewPanel);
+        
         statsPanel = new StatsPanel(this);
         ptmPanel = new PtmPanel(this);
         spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
         proteinStructurePanel = new ProteinStructurePanel(this);
         annotationPanel = new AnnotationPanel(this);
-
-        initComponents();
-
+ 
         jumpToPanel = new JumpToPanel(this);
         jumpToPanel.setEnabled(false);
 
@@ -1502,10 +1503,15 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt
      */
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
-        overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
+        
+        if (overviewPanel != null) {
+            overviewPanel.setDisplayOptions(proteinsJCheckBoxMenuItem.isSelected(), peptidesAndPsmsJCheckBoxMenuItem.isSelected(),
                 sequenceCoverageJCheckBoxMenuItem.isSelected(), spectrumJCheckBoxMenuItem.isSelected());
-        overviewPanel.updateSeparators();
-        statsPanel.updateSeparators();
+            overviewPanel.updateSeparators();
+        }
+        if (statsPanel != null) {
+            statsPanel.updateSeparators();
+        }
     }//GEN-LAST:event_formComponentResized
 
     /**
@@ -3613,9 +3619,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private void resetPanel(int tabIndex) {
         switch (tabIndex) {
             case OVER_VIEW_TAB_INDEX:
-                overviewPanel = new OverviewPanel(this);
-                overviewJPanel.removeAll();
-                overviewJPanel.add(overviewPanel);
+                overviewPanel.clearData();
                 return;
             case MODIFICATIONS_TAB_INDEX:
                 ptmPanel = new PtmPanel(this);
@@ -3667,8 +3671,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             }
             resetPanel(tabIndex);
         }
+        
         // hide/show the score columns
-
         scoresJCheckBoxMenuItemActionPerformed(null);
     }
 
