@@ -4238,7 +4238,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     int nValidatedPeptides = 0, nValidatedSpectra = 0;
 
                     progressDialog.setIndeterminate(false);
-                    progressDialog.setTitle("Loading Protein Table. Please wait...");
+                    progressDialog.setTitle("Loading Protein Table. Please Wait...");
                     progressDialog.setMax(scores.size());
                     progressDialog.setValue(0);
 

@@ -1155,6 +1155,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         findJMenuItem.setMnemonic('F');
         findJMenuItem.setText("Find...");
         findJMenuItem.setToolTipText("Find a protein or peptide");
+        findJMenuItem.setEnabled(false);
         findJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 findJMenuItemActionPerformed(evt);
@@ -1166,6 +1167,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         filterJMenuItem.setMnemonic('L');
         filterJMenuItem.setText("Filters");
         filterJMenuItem.setToolTipText("Edit the filters");
+        filterJMenuItem.setEnabled(false);
         filterJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 filterJMenuItemActionPerformed(evt);
@@ -1176,6 +1178,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         starHideJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
         starHideJMenuItem.setMnemonic('L');
         starHideJMenuItem.setText("Star/Hide Filters");
+        starHideJMenuItem.setEnabled(false);
         starHideJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 starHideJMenuItemActionPerformed(evt);
@@ -2587,6 +2590,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             exportPrideXmlMenuItem.setEnabled(true);
             projectPropertiesMenuItem.setEnabled(true);
             spectrumCountingMenuItem.setEnabled(true);
+            findJMenuItem.setEnabled(true);
+            filterJMenuItem.setEnabled(true);
+            starHideJMenuItem.setEnabled(true);
             ionsMenu.setEnabled(true);
             lossMenu.setEnabled(true);
             otherMenu.setEnabled(true);
