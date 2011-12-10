@@ -599,9 +599,8 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         sparklinesJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         spectrumSlidersCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-        scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         jSeparator11 = new javax.swing.JPopupMenu.Separator();
-        showHiddenProteinsJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
+        scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
         aboutJMenuItem = new javax.swing.JMenuItem();
@@ -1309,6 +1308,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         viewJMenu.add(spectrumSlidersCheckBoxMenuItem);
+        viewJMenu.add(jSeparator11);
 
         scoresJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         scoresJCheckBoxMenuItem.setMnemonic('c');
@@ -1319,18 +1319,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         viewJMenu.add(scoresJCheckBoxMenuItem);
-        viewJMenu.add(jSeparator11);
-
-        showHiddenProteinsJCheckBoxMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        showHiddenProteinsJCheckBoxMenuItem.setMnemonic('h');
-        showHiddenProteinsJCheckBoxMenuItem.setSelected(true);
-        showHiddenProteinsJCheckBoxMenuItem.setText("Hidden Proteins");
-        showHiddenProteinsJCheckBoxMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showHiddenProteinsJCheckBoxMenuItemActionPerformed(evt);
-            }
-        });
-        viewJMenu.add(showHiddenProteinsJCheckBoxMenuItem);
 
         menuBar.add(viewJMenu);
 
@@ -2510,16 +2498,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }//GEN-LAST:event_exportPrideXmlMenuItemActionPerformed
 
     /**
-     * Show/hide hidden proteins.
-     * 
-     * @param evt 
-     */
-    private void showHiddenProteinsJCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showHiddenProteinsJCheckBoxMenuItemActionPerformed
-        displayPreferences.showHiddenProteins(showHiddenProteinsJCheckBoxMenuItem.isSelected());
-        overviewPanel.updateHiddenProteinsColumn();
-    }//GEN-LAST:event_showHiddenProteinsJCheckBoxMenuItemActionPerformed
-
-    /**
      * Save the current project.
      * 
      * @param evt 
@@ -2593,8 +2571,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             overviewPanel.updateSeparators();
             statsPanel.updateSeparators();
 
-            // reset show hidden proteins and scores columns
-            showHiddenProteinsJCheckBoxMenuItem.setSelected(true);
+            // reset show scores columns
             scoresJCheckBoxMenuItem.setSelected(false);
 
             // make sure that all panels are looking the way they should
@@ -2740,7 +2717,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenuItem searchParametersMenu;
     private javax.swing.JCheckBoxMenuItem sequenceCoverageJCheckBoxMenuItem;
     private javax.swing.JMenu settingsMenu;
-    private javax.swing.JCheckBoxMenuItem showHiddenProteinsJCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem singleChargeCheckBoxMenuItem;
     private javax.swing.JCheckBoxMenuItem sparklinesJCheckBoxMenuItem;
     private javax.swing.JMenuItem spectrumCountingMenuItem;
@@ -3571,7 +3547,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         setDefaultPreferences();
 
         // set up the tabs/panels
-        showHiddenProteinsJCheckBoxMenuItem.setSelected(true);
         scoresJCheckBoxMenuItem.setSelected(false);
         setUpPanels(true);
 
@@ -5237,6 +5212,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             proteinFilter.addManualValidation(match);
         }
         psParameter.setStarred(true);
+        dataSaved = false;
     }
 
     /**
@@ -5255,6 +5231,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             }
         }
         psParameter.setStarred(true);
+        dataSaved = false;
     }
 
     /**
@@ -5333,6 +5310,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             peptideFilter.addManualValidation(match);
         }
         psParameter.setStarred(true);
+        dataSaved = false;
     }
 
     /**
@@ -5351,6 +5329,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             }
         }
         psParameter.setStarred(true);
+        dataSaved = false;
     }
 
     /**
@@ -5429,6 +5408,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             psmFilter.addManualValidation(match);
         }
         psParameter.setStarred(true);
+        dataSaved = false;
     }
 
     /**
@@ -5447,6 +5427,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             }
         }
         psParameter.setStarred(true);
+        dataSaved = false;
     }
 
     /**
