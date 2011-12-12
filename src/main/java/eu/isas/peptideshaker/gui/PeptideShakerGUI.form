@@ -573,7 +573,7 @@
                   <KeyStroke key="Ctrl+F"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="70"/>
-                <Property name="text" type="java.lang.String" value="Find"/>
+                <Property name="text" type="java.lang.String" value="Find..."/>
                 <Property name="toolTipText" type="java.lang.String" value="Find a protein or peptide"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>

@@ -1300,7 +1300,7 @@ public class QCPanel extends javax.swing.JPanel {
         } else if (peptideLengthJRadioButton.isSelected()) {
             peptideChart.getCategoryPlot().getRangeAxis().setLabel("Frequency");
             peptideChart.getCategoryPlot().getDomainAxis().setLabel("Peptide Length");
-            peptideChart.setTitle("Peptides QC Plot - Missed Cleavages");
+            peptideChart.setTitle("Peptides QC Plot - Peptide Length");
         }
 
         // set background color
