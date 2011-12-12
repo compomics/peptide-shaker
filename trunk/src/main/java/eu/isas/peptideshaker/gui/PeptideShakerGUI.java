@@ -1153,7 +1153,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         findJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
         findJMenuItem.setMnemonic('F');
-        findJMenuItem.setText("Find");
+        findJMenuItem.setText("Find...");
         findJMenuItem.setToolTipText("Find a protein or peptide");
         findJMenuItem.setEnabled(false);
         findJMenuItem.addActionListener(new java.awt.event.ActionListener() {
