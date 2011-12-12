@@ -1827,6 +1827,7 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void psmTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_psmTableMouseReleased
 
         int row = psmTable.getSelectedRow();
+        int column = psmTable.getSelectedColumn();
 
         if (row != -1) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
@@ -1834,6 +1835,15 @@ public class OverviewPanel extends javax.swing.JPanel {
             updateSpectrum(row, false);
 
             newItemSelection();
+
+                if (column == psmTable.getColumn("  ").getModelIndex()) {
+                    String key = psmTableMap.get(getProteinIndex(row));
+                    if ((Boolean) psmTable.getValueAt(row, column)) {
+                        peptideShakerGUI.starPsm(key);
+                    } else {
+                        peptideShakerGUI.unStarPsm(key);
+                    }
+                }
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
@@ -1935,6 +1945,15 @@ public class OverviewPanel extends javax.swing.JPanel {
             // remember the selection
             newItemSelection();
 
+                if (column == peptideTable.getColumn("  ").getModelIndex()) {
+                    String key = peptideTableMap.get(getProteinIndex(row));
+                    if ((Boolean) peptideTable.getValueAt(row, column)) {
+                        peptideShakerGUI.starPeptide(key);
+                    } else {
+                        peptideShakerGUI.unStarPeptide(key);
+                    }
+                }
+                
             // open the protein inference at the petide level dialog
             if (column == peptideTable.getColumn("PI").getModelIndex()) {
                 try {
