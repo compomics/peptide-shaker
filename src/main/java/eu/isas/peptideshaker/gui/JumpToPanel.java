@@ -329,7 +329,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
     private void inputTxtMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inputTxtMouseReleased
         if (inputTxt.getText().equals(welcomeText)) {
-            inputTxt.setText("");
+        inputTxt.selectAll();
         }
     }//GEN-LAST:event_inputTxtMouseReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables

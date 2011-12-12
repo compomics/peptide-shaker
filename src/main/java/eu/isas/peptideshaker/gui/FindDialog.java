@@ -54,19 +54,42 @@ public class FindDialog extends javax.swing.JDialog {
      */
     private PsmFilter psmFilter = null;
 
+    /**
+     * Creates a new find dialog
+     * @param peptideShakerGUI the main GUI
+     */
     public FindDialog(PeptideShakerGUI peptideShakerGUI) {
         new FindDialog(peptideShakerGUI, null, null, null, 0);
     }
 
+    /**
+     * Creates a new find dialog
+     * @param peptideShakerGUI  the main GUI
+     * @param selectedTab       the tab to select
+     */
     public FindDialog(PeptideShakerGUI peptideShakerGUI, int selectedTab) {
         new FindDialog(peptideShakerGUI, null, null, null, selectedTab);
     }
 
+    /**
+     * Creates a new find dialog
+     * @param peptideShakerGUI  the main GUI
+     * @param proteinFilter     the protein filter to edit (can be null)
+     * @param peptideFilter     the peptide filter to edit (can be null)
+     * @param psmFilter         the psm filter to edit (can be null)
+     */
     public FindDialog(PeptideShakerGUI peptideShakerGUI, ProteinFilter proteinFilter, PeptideFilter peptideFilter, PsmFilter psmFilter) {
         new FindDialog(peptideShakerGUI, proteinFilter, peptideFilter, psmFilter, 0);
     }
 
-    /** Creates new form FindDialog */
+    /**
+     * Creates a new find dialog
+     * @param peptideShakerGUI  the main GUI
+     * @param proteinFilter     the protein filter to edit (can be null)
+     * @param peptideFilter     the peptide filter to edit (can be null)
+     * @param psmFilter         the psm filter to edit (can be null)
+     * @param selectedTab       the tab to select
+     */
     public FindDialog(PeptideShakerGUI peptideShakerGUI, ProteinFilter proteinFilter, PeptideFilter peptideFilter, PsmFilter psmFilter, int selectedTab) {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
@@ -156,6 +179,9 @@ public class FindDialog extends javax.swing.JDialog {
         setVisible(true);
     }
 
+    /**
+     * Fills the protein tab
+     */
     private void fillProteinTab() {
         if (proteinFilter.getIdentifierRegex() != null) {
             proteinAccessionTxt.setText(proteinFilter.getIdentifierRegex());
@@ -212,6 +238,9 @@ public class FindDialog extends javax.swing.JDialog {
         proteinExceptionsTxt.setText(text);
     }
 
+    /**
+     * Fills the peptide tab
+     */
     private void fillPeptideTab() {
         if (peptideFilter.getProtein() != null) {
             peptideProteinTxt.setText(peptideFilter.getProtein());
@@ -265,6 +294,9 @@ public class FindDialog extends javax.swing.JDialog {
         peptideExceptionsTxt.setText(text);
     }
 
+    /**
+     * Fills the psm tab
+     */
     private void fillPsmTab() {
         if (psmFilter.getPrecursorRT() != null) {
             precursorRTTxt.setText(psmFilter.getPrecursorRT() + "");
@@ -296,7 +328,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         boolean first = true;
         String text = "";
-        for (String key : peptideFilter.getManualValidation()) {
+        for (String key : psmFilter.getManualValidation()) {
             if (first) {
                 first = false;
             } else {
@@ -304,10 +336,10 @@ public class FindDialog extends javax.swing.JDialog {
             }
             text += key;
         }
-        peptideManualValidationTxt.setText(text);
+        psmManualValidationTxt.setText(text);
         first = true;
         text = "";
-        for (String accession : peptideFilter.getExceptions()) {
+        for (String accession : psmFilter.getExceptions()) {
             if (first) {
                 first = false;
             } else {
@@ -315,9 +347,13 @@ public class FindDialog extends javax.swing.JDialog {
             }
             text += accession;
         }
-        peptideExceptionsTxt.setText(text);
+        psmExceptionsTxt.setText(text);
     }
 
+    /**
+     * Validates the input
+     * @return a boolean indicating whether the input is valid
+     */
     public boolean validateInput() {
         if (!proteinCoverageTxt.getText().trim().equals("")) {
             try {
@@ -558,6 +594,9 @@ public class FindDialog extends javax.swing.JDialog {
         }
     }
 
+    /**
+     * Creates the protein filter according to the users input
+     */
     public void createProteinFilter() {
         if (validateInput()) {
             Integer pi = null;
@@ -820,6 +859,9 @@ public class FindDialog extends javax.swing.JDialog {
         }
     }
 
+    /**
+     * Creates a peptide filter based on the users input
+     */
     public void createPeptideFilter() {
         if (validateInput()) {
             Integer pi = null;
@@ -1048,6 +1090,9 @@ public class FindDialog extends javax.swing.JDialog {
         }
     }
 
+    /**
+     * Creates the PSM filter based on the users input
+     */
     public void createPsmFilter() {
         if (validateInput()) {
             ArrayList<Integer> charges = new ArrayList<Integer>();
@@ -1193,6 +1238,10 @@ public class FindDialog extends javax.swing.JDialog {
         }
     }
 
+    /**
+     * Indicates whether something was input for the protein filter
+     * @return a boolean indicating whether something was input for the protein filter
+     */
     private boolean proteinInput() {
         return !proteinAccessionTxt.getText().trim().equals("")
                 || proteinPICmb.getSelectedIndex() > 0
@@ -1204,6 +1253,10 @@ public class FindDialog extends javax.swing.JDialog {
                 || !proteinCoverageTxt.getText().trim().equals("");
     }
 
+    /**
+     * Indicates whether something was input for the peptide filter
+     * @return a boolean indicating whether something was input for the peptide filter
+     */
     private boolean peptideInput() {
         if (!peptideProteinTxt.getText().trim().equals("")
                 || !peptideSequenceTxt.getText().trim().equals("")
@@ -1221,6 +1274,10 @@ public class FindDialog extends javax.swing.JDialog {
         return false;
     }
 
+    /**
+     * Indicates whether something was input for the psm filter
+     * @return a boolean indicating whether something was input for the psm filter
+     */
     private boolean psmInput() {
         if (!precursorRTTxt.getText().trim().equals("")
                 || !precursorMzTxt.getText().trim().equals("")
@@ -1241,6 +1298,11 @@ public class FindDialog extends javax.swing.JDialog {
         return false;
     }
 
+    /**
+     * Convenience method parsing keys in the manual validation/exception text fields
+     * @param text  the text in the text field
+     * @return      a list of the parsed keys
+     */
     private ArrayList<String> parseAccessions(String text) {
         ArrayList<String> result = new ArrayList<String>();
         String[] split = text.split(";"); //todo allow other separators

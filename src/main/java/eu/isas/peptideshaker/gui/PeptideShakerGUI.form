@@ -573,7 +573,7 @@
                   <KeyStroke key="Ctrl+F"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="70"/>
-                <Property name="text" type="java.lang.String" value="Find..."/>
+                <Property name="text" type="java.lang.String" value="Find"/>
                 <Property name="toolTipText" type="java.lang.String" value="Find a protein or peptide"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
@@ -587,7 +587,7 @@
                   <KeyStroke key="Shift+Ctrl+F"/>
                 </Property>
                 <Property name="mnemonic" type="int" value="76"/>
-                <Property name="text" type="java.lang.String" value="Filters"/>
+                <Property name="text" type="java.lang.String" value="Filter"/>
                 <Property name="toolTipText" type="java.lang.String" value="Edit the filters"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
