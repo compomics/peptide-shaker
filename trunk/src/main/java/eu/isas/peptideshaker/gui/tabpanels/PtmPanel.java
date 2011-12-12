@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.Util;
+import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
@@ -27,6 +28,7 @@ import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
+import eu.isas.peptideshaker.gui.PtmTable;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.Color;
 import java.awt.Component;
@@ -498,6 +500,8 @@ public class PtmPanel extends javax.swing.JPanel {
         spectrumJToolBar = new javax.swing.JToolBar();
         spectrumAnnotationMenuPanel = new javax.swing.JPanel();
         spectrumChartJPanel = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
+        ptmTableScrollPane = new javax.swing.JScrollPane();
         sliderPanel = new javax.swing.JPanel();
         accuracySlider = new javax.swing.JSlider();
         intensitySlider = new javax.swing.JSlider();
@@ -1095,7 +1099,26 @@ public class PtmPanel extends javax.swing.JPanel {
 
         spectrumTabbedPane.addTab("Spectrum", spectrumJPanel);
 
-        spectrumTabbedPane.setSelectedIndex(2);
+        jPanel1.setOpaque(false);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ptmTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ptmTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        spectrumTabbedPane.addTab("PTM Table", jPanel1);
 
         slidersSplitPane.setLeftComponent(spectrumTabbedPane);
 
@@ -2690,6 +2713,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JButton exportRelatedPsmsJButton;
     private javax.swing.JButton exportSpectrumJButton;
     private javax.swing.JSlider intensitySlider;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel modPsmsPanel;
     private javax.swing.JButton modificationProfileHelpJButton;
     private javax.swing.JPanel modificationProfileRelatedPeptideJPanel;
@@ -2719,6 +2743,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JToolBar ptmPlotJToolBar;
     private javax.swing.JPanel ptmPlotPanel;
     private javax.swing.JButton ptmSelectionHelpJButton;
+    private javax.swing.JScrollPane ptmTableScrollPane;
     private javax.swing.JPanel relatedPeptidesJPanel;
     private javax.swing.JSplitPane relatedPeptidesJSplitPane;
     private javax.swing.JPanel relatedPeptidesPanel;
@@ -3433,6 +3458,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     }
                 }
                 updateSpectrumPlot();
+                updatePtmTable();
 //@todo update psm modification profile
             }
         } catch (Exception e) {
@@ -3440,9 +3466,18 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             e.printStackTrace();
         }
     }
+    
+    /**
+     * Updates the ptm table
+     */
+    public void updatePtmTable() {
+        Peptide selectedPeptide = identification.getPeptideMatch(getSelectedPeptide()).getTheoreticPeptide();
+        PTM ptm = ptmFactory.getPTM(getSelectedModification());
+        ptmTableScrollPane.setViewportView(new PtmTable(peptideShakerGUI, selectedPeptide, ptm, getSelectedPsm()));
+    }
 
     /**
-     * Updates the PSM plot.
+     * Updates the PtM plot.
      * 
      * @param spectrumKeys 
      */
