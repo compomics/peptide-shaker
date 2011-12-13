@@ -812,6 +812,7 @@
                             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                               <Color blue="ff" green="ff" red="ff" type="rgb"/>
                             </Property>
+                            <Property name="selectedIndex" type="int" value="2"/>
                             <Property name="tabPlacement" type="int" value="3"/>
                           </Properties>
                           <Events>
@@ -850,14 +851,16 @@
                                 </DimensionLayout>
                               </Layout>
                             </Container>
-                            <Container class="javax.swing.JPanel" name="ptmPlotPanel">
+                            <Container class="javax.swing.JPanel" name="ptmTableJPanel">
                               <Properties>
-                                <Property name="opaque" type="boolean" value="false"/>
+                                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                </Property>
                               </Properties>
                               <Constraints>
                                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                                  <JTabbedPaneConstraints tabName="PTM Plot">
-                                    <Property name="tabTitle" type="java.lang.String" value="PTM Plot"/>
+                                  <JTabbedPaneConstraints tabName="PTM Table">
+                                    <Property name="tabTitle" type="java.lang.String" value="PTM Table"/>
                                   </JTabbedPaneConstraints>
                                 </Constraint>
                               </Constraints>
@@ -865,26 +868,39 @@
                               <Layout>
                                 <DimensionLayout dim="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="ptmPlotChartPanel" alignment="0" pref="495" max="32767" attributes="0"/>
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                                          <Component id="ptmPlotJToolBar" pref="475" max="32767" attributes="0"/>
-                                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <Group type="102" alignment="1" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Group type="103" groupAlignment="1" attributes="0">
+                                              <Component id="ptmTableJScrollPane" alignment="0" pref="475" max="32767" attributes="0"/>
+                                              <Component id="ptmTableJToolBar" alignment="0" pref="475" max="32767" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                 </DimensionLayout>
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="1" attributes="0">
-                                          <Component id="ptmPlotChartPanel" pref="363" max="32767" attributes="0"/>
-                                          <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
-                                          <Component id="ptmPlotJToolBar" min="-2" max="-2" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="ptmTableJScrollPane" pref="346" max="32767" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="ptmTableJToolBar" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                 </DimensionLayout>
                               </Layout>
                               <SubComponents>
-                                <Container class="javax.swing.JToolBar" name="ptmPlotJToolBar">
+                                <Container class="javax.swing.JScrollPane" name="ptmTableJScrollPane">
+                                  <Properties>
+                                    <Property name="opaque" type="boolean" value="false"/>
+                                  </Properties>
+                                  <Events>
+                                    <EventHandler event="mouseWheelMoved" listener="java.awt.event.MouseWheelListener" parameters="java.awt.event.MouseWheelEvent" handler="ptmTableJScrollPaneMouseWheelMoved"/>
+                                  </Events>
+
+                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                                </Container>
+                                <Container class="javax.swing.JToolBar" name="ptmTableJToolBar">
                                   <Properties>
                                     <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
                                       <Color blue="ff" green="ff" red="ff" type="rgb"/>
@@ -899,18 +915,11 @@
 
                                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
                                   <SubComponents>
-                                    <Container class="javax.swing.JPanel" name="ptmPlotAnnotationMenuPanel">
+                                    <Container class="javax.swing.JPanel" name="ptmTableAnnotationMenuPanel">
 
                                       <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
                                     </Container>
                                   </SubComponents>
-                                </Container>
-                                <Container class="javax.swing.JPanel" name="ptmPlotChartPanel">
-                                  <Properties>
-                                    <Property name="opaque" type="boolean" value="false"/>
-                                  </Properties>
-
-                                  <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
                                 </Container>
                               </SubComponents>
                             </Container>
@@ -979,45 +988,6 @@
                                   <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout">
                                     <Property name="axis" type="int" value="1"/>
                                   </Layout>
-                                </Container>
-                              </SubComponents>
-                            </Container>
-                            <Container class="javax.swing.JPanel" name="jPanel1">
-                              <Properties>
-                                <Property name="opaque" type="boolean" value="false"/>
-                              </Properties>
-                              <Constraints>
-                                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                                  <JTabbedPaneConstraints tabName="PTM Table">
-                                    <Property name="tabTitle" type="java.lang.String" value="PTM Table"/>
-                                  </JTabbedPaneConstraints>
-                                </Constraint>
-                              </Constraints>
-
-                              <Layout>
-                                <DimensionLayout dim="0">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="ptmTableScrollPane" pref="475" max="32767" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                </DimensionLayout>
-                                <DimensionLayout dim="1">
-                                  <Group type="103" groupAlignment="0" attributes="0">
-                                      <Group type="102" alignment="0" attributes="0">
-                                          <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="ptmTableScrollPane" pref="341" max="32767" attributes="0"/>
-                                          <EmptySpace max="-2" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                </DimensionLayout>
-                              </Layout>
-                              <SubComponents>
-                                <Container class="javax.swing.JScrollPane" name="ptmTableScrollPane">
-
-                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                                 </Container>
                               </SubComponents>
                             </Container>
