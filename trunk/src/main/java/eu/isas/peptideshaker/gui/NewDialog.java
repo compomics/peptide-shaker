@@ -765,7 +765,10 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                         if (file.getName().toLowerCase().endsWith("dat")
                                 || file.getName().toLowerCase().endsWith("omx")
                                 || file.getName().toLowerCase().endsWith("xml")) {
+                            if (!file.getName().equals("mods.xml")
+                                    && !file.getName().equals("usermods.xml")) {
                             idFiles.add(file);
+                            }
                         } else if (file.getName().toLowerCase().endsWith(".properties")) {
                             if (!searchParametersFiles.contains(file)) {
                                 searchParametersFiles.add(file);
