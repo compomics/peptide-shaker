@@ -3005,9 +3005,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             int row = 0;
             for (String displayedPeptide : displayedPeptides) {
                 if (displayedPeptide.equals(selectedKey)) {
-                    peptidesTable.setRowSelectionInterval(row, row);   //@TODO: verify that this is compatible with the resorting of rows
-                    //well, apparently it isn't
-                    //@TODO find a resorting compatible method
+                    peptidesTable.setRowSelectionInterval(row, row);
                     peptidesTable.scrollRectToVisible(peptidesTable.getCellRect(row, 0, false));
                     relatedSelected = false;
                     updateRelatedPeptidesTable();
@@ -3022,7 +3020,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(false));
                     for (String displayedPsm : peptideMatch.getSpectrumMatches()) {
                         if (displayedPsm.equals(selectedKey)) {
-                            selectedPsmsTable.setRowSelectionInterval(row, row);    //@TODO: verify that this is compatible with the resorting of rows
+                            selectedPsmsTable.setRowSelectionInterval(row, row);   
                             selectedPsmsTable.scrollRectToVisible(selectedPsmsTable.getCellRect(row, 0, false));
 
                             while (relatedPsmsTable.getSelectedRow() >= 0) {
@@ -3033,7 +3031,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         }
                         row++;
                     }
-                    selectedPsmsTable.setRowSelectionInterval(0, 0);    //@TODO: verify that this is compatible with the resorting of rows
+                    selectedPsmsTable.setRowSelectionInterval(0, 0);  
                     selectedPsmsTable.scrollRectToVisible(selectedPsmsTable.getCellRect(0, 0, false));
                     while (relatedPsmsTable.getSelectedRow() >= 0) {
                         relatedPsmsTable.removeRowSelectionInterval(relatedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
@@ -3046,7 +3044,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             row = 0;
             for (String displayedPeptide : relatedPeptides) {
                 if (displayedPeptide.equals(selectedKey)) {
-                    relatedPeptidesTable.setRowSelectionInterval(row, row);   //@TODO: verify that this is compatible with the resorting of rows
+                    relatedPeptidesTable.setRowSelectionInterval(row, row);  
                     relatedPeptidesTable.scrollRectToVisible(relatedPeptidesTable.getCellRect(row, 0, false));
                     if (peptidesTable.getSelectedRow() >= 0) {
                         peptidesTable.removeRowSelectionInterval(peptidesTable.getSelectedRow(), peptidesTable.getSelectedRow());
@@ -3060,7 +3058,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(false));
                     for (String displayedPsm : peptideMatch.getSpectrumMatches()) {
                         if (displayedPsm.equals(selectedKey)) {
-                            relatedPsmsTable.setRowSelectionInterval(row, row);    //@TODO: verify that this is compatible with the resorting of rows
+                            relatedPsmsTable.setRowSelectionInterval(row, row);    
                             relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(row, 0, false));
                             while (selectedPsmsTable.getSelectedRow() >= 0) {
                                 selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
@@ -3070,7 +3068,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         }
                         row++;
                     }
-                    relatedPsmsTable.setRowSelectionInterval(0, 0);    //@TODO: verify that this is compatible with the resorting of rows
+                    relatedPsmsTable.setRowSelectionInterval(0, 0);  
                     relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(0, 0, false));
                     while (selectedPsmsTable.getSelectedRow() >= 0) {
                         selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
