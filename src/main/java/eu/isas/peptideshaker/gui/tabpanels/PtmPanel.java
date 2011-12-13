@@ -4,13 +4,9 @@ import com.compomics.util.Util;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon;
-import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
 import com.compomics.util.experiment.identification.Identification;
-import com.compomics.util.experiment.identification.PTMLocationScores;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
@@ -62,13 +58,7 @@ import no.uib.jsparklines.renderers.JSparklinesColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.NumberAxis;
-import org.jfree.chart.labels.StandardXYToolTipGenerator;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
-import org.jfree.chart.renderer.xy.XYShapeRenderer;
-import org.jfree.data.xy.DefaultXYDataset;
 
 /**
  * The PTM tab.
@@ -191,6 +181,10 @@ public class PtmPanel extends javax.swing.JPanel {
         psmsRelatedTableJScrollPane.getViewport().setOpaque(false);
         peptidesTableJScrollPane.getViewport().setOpaque(false);
         ptmJScrollPane.getViewport().setOpaque(false);
+        ptmTableJScrollPane.getViewport().setOpaque(false);
+
+        // @TODO: remove when individual psm modification plots are added
+        spectrumTabbedPane.setEnabledAt(0, false);
 
         setTableProperties();
 
@@ -492,16 +486,14 @@ public class PtmPanel extends javax.swing.JPanel {
         slidersSplitPane = new javax.swing.JSplitPane();
         spectrumTabbedPane = new javax.swing.JTabbedPane();
         psmModProfileJPanel = new javax.swing.JPanel();
-        ptmPlotPanel = new javax.swing.JPanel();
-        ptmPlotJToolBar = new javax.swing.JToolBar();
-        ptmPlotAnnotationMenuPanel = new javax.swing.JPanel();
-        ptmPlotChartPanel = new javax.swing.JPanel();
+        ptmTableJPanel = new javax.swing.JPanel();
+        ptmTableJScrollPane = new javax.swing.JScrollPane();
+        ptmTableJToolBar = new javax.swing.JToolBar();
+        ptmTableAnnotationMenuPanel = new javax.swing.JPanel();
         spectrumJPanel = new javax.swing.JPanel();
         spectrumJToolBar = new javax.swing.JToolBar();
         spectrumAnnotationMenuPanel = new javax.swing.JPanel();
         spectrumChartJPanel = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        ptmTableScrollPane = new javax.swing.JScrollPane();
         sliderPanel = new javax.swing.JPanel();
         accuracySlider = new javax.swing.JSlider();
         intensitySlider = new javax.swing.JSlider();
@@ -1031,39 +1023,45 @@ public class PtmPanel extends javax.swing.JPanel {
 
         spectrumTabbedPane.addTab("PTM Profiles", psmModProfileJPanel);
 
-        ptmPlotPanel.setOpaque(false);
+        ptmTableJPanel.setBackground(new java.awt.Color(255, 255, 255));
 
-        ptmPlotJToolBar.setBackground(new java.awt.Color(255, 255, 255));
-        ptmPlotJToolBar.setBorder(null);
-        ptmPlotJToolBar.setFloatable(false);
-        ptmPlotJToolBar.setRollover(true);
-        ptmPlotJToolBar.setBorderPainted(false);
+        ptmTableJScrollPane.setOpaque(false);
+        ptmTableJScrollPane.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                ptmTableJScrollPaneMouseWheelMoved(evt);
+            }
+        });
 
-        ptmPlotAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(ptmPlotAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
-        ptmPlotJToolBar.add(ptmPlotAnnotationMenuPanel);
+        ptmTableJToolBar.setBackground(new java.awt.Color(255, 255, 255));
+        ptmTableJToolBar.setBorder(null);
+        ptmTableJToolBar.setFloatable(false);
+        ptmTableJToolBar.setRollover(true);
+        ptmTableJToolBar.setBorderPainted(false);
 
-        ptmPlotChartPanel.setOpaque(false);
-        ptmPlotChartPanel.setLayout(new javax.swing.BoxLayout(ptmPlotChartPanel, javax.swing.BoxLayout.LINE_AXIS));
+        ptmTableAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(ptmTableAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
+        ptmTableJToolBar.add(ptmTableAnnotationMenuPanel);
 
-        javax.swing.GroupLayout ptmPlotPanelLayout = new javax.swing.GroupLayout(ptmPlotPanel);
-        ptmPlotPanel.setLayout(ptmPlotPanelLayout);
-        ptmPlotPanelLayout.setHorizontalGroup(
-            ptmPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(ptmPlotChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE)
-            .addGroup(ptmPlotPanelLayout.createSequentialGroup()
+        javax.swing.GroupLayout ptmTableJPanelLayout = new javax.swing.GroupLayout(ptmTableJPanel);
+        ptmTableJPanel.setLayout(ptmTableJPanelLayout);
+        ptmTableJPanelLayout.setHorizontalGroup(
+            ptmTableJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ptmTableJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ptmPlotJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                .addGroup(ptmTableJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(ptmTableJScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
+                    .addComponent(ptmTableJToolBar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        ptmPlotPanelLayout.setVerticalGroup(
-            ptmPlotPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ptmPlotPanelLayout.createSequentialGroup()
-                .addComponent(ptmPlotChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
-                .addGap(0, 0, 0)
-                .addComponent(ptmPlotJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        ptmTableJPanelLayout.setVerticalGroup(
+            ptmTableJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ptmTableJPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ptmTableJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(ptmTableJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        spectrumTabbedPane.addTab("PTM Plot", ptmPlotPanel);
+        spectrumTabbedPane.addTab("PTM Table", ptmTableJPanel);
 
         spectrumJPanel.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -1099,26 +1097,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
         spectrumTabbedPane.addTab("Spectrum", spectrumJPanel);
 
-        jPanel1.setOpaque(false);
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(ptmTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 475, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(ptmTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 341, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        spectrumTabbedPane.addTab("PTM Table", jPanel1);
+        spectrumTabbedPane.setSelectedIndex(2);
 
         slidersSplitPane.setLeftComponent(spectrumTabbedPane);
 
@@ -1805,7 +1784,13 @@ public class PtmPanel extends javax.swing.JPanel {
 //                    new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(false), getSelectedModification(), 0);
 //                }
             }
+        } else {
+            relatedSelected = false;
+            updateRelatedPeptidesTable();
+            updateSelectedPsmTable();
+            updateRelatedPsmTable(false);
         }
+
         updateModificationProfiles();
 
         newItemSelection();
@@ -2535,37 +2520,13 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         if (spectrumTabIndex == 0) {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Peptides"); // @TODO: update when psm mod profiles are added!
         } else if (spectrumTabIndex == 1) {
-            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#PTM_Plot");
+            new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#PTM_Table");
         } else if (spectrumTabIndex == 2) {
             new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/PTMPanel.html"), "#Spectrum");
         }
 
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_spectrumHelpJButtonActionPerformed
-
-    /**
-     * Move the annotation menu bar.
-     * 
-     * @param evt 
-     */
-    private void spectrumTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spectrumTabbedPaneStateChanged
-        if (peptideShakerGUI.getAnnotationMenuBar() != null) {
-
-            int index = spectrumTabbedPane.getSelectedIndex();
-
-            if (index == 0) {
-                // no annotation menu bar here
-            } else if (index == 1) {
-                ptmPlotAnnotationMenuPanel.removeAll();
-                ptmPlotAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-                peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, false, false, true);
-            } else if (index == 2) {
-                spectrumAnnotationMenuPanel.removeAll();
-                spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-                peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false, false);
-            }
-        }
-    }//GEN-LAST:event_spectrumTabbedPaneStateChanged
 
     /**
      * Export the spectrum to mgf or figure format.
@@ -2600,28 +2561,13 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
             popupMenu.add(menuItem);
 
-        } else if (index == 1) {
+        } else if (index == 1) { // ptm table
 
-            JMenuItem menuItem = new JMenuItem("Plot As Figure");
-
-            if (chartPanel == null) {
-                menuItem.setEnabled(false);
-            } else {
-                menuItem.addActionListener(new java.awt.event.ActionListener() {
-
-                    public void actionPerformed(java.awt.event.ActionEvent evt) {
-                        new ExportGraphicsDialog(peptideShakerGUI, true, chartPanel);
-                    }
-                });
-            }
-
-            popupMenu.add(menuItem);
-
-            menuItem = new JMenuItem("Spectrum As Figure");
+            JMenuItem menuItem = new JMenuItem("Spectrum As MGF");
             menuItem.addActionListener(new java.awt.event.ActionListener() {
 
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
-                    peptideShakerGUI.exportSpectrumAsFigure();
+                    peptideShakerGUI.exportSpectrumAsMgf();
                 }
             });
 
@@ -2699,6 +2645,38 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         popupMenu.show(exportModifiedPeptideProfileJButton, evt.getX(), evt.getY());
     }//GEN-LAST:event_exportModifiedPeptideProfileJButtonMouseReleased
 
+    /**
+     * Move the annotation menu bar.
+     * 
+     * @param evt 
+     */
+    private void spectrumTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spectrumTabbedPaneStateChanged
+
+        if (peptideShakerGUI.getAnnotationMenuBar() != null) {
+            int index = spectrumTabbedPane.getSelectedIndex();
+            if (index == 0) {
+                // no annotation menu bar here             
+            } else if (index == 1) {
+                ptmTableAnnotationMenuPanel.removeAll();
+                ptmTableAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+                peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, false, false, false);
+            } else if (index == 2) {
+                spectrumAnnotationMenuPanel.removeAll();
+                spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+                peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false, false);
+            }
+        }
+    }//GEN-LAST:event_spectrumTabbedPaneStateChanged
+
+    /**
+     * Updates the slider value when the user scrolls.
+     * 
+     * @param evt 
+     */
+    private void ptmTableJScrollPaneMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_ptmTableJScrollPaneMouseWheelMoved
+        spectrumAndFragmentIonJPanelMouseWheelMoved(evt);     
+    }//GEN-LAST:event_ptmTableJScrollPaneMouseWheelMoved
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JPanel contextMenuModPsmsBackgroundPanel;
@@ -2713,7 +2691,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JButton exportRelatedPsmsJButton;
     private javax.swing.JButton exportSpectrumJButton;
     private javax.swing.JSlider intensitySlider;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel modPsmsPanel;
     private javax.swing.JButton modificationProfileHelpJButton;
     private javax.swing.JPanel modificationProfileRelatedPeptideJPanel;
@@ -2738,12 +2715,11 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     private javax.swing.JLayeredPane ptmLayeredLayeredPane;
     private javax.swing.JPanel ptmLayeredPanel;
     private javax.swing.JPanel ptmPanel;
-    private javax.swing.JPanel ptmPlotAnnotationMenuPanel;
-    private javax.swing.JPanel ptmPlotChartPanel;
-    private javax.swing.JToolBar ptmPlotJToolBar;
-    private javax.swing.JPanel ptmPlotPanel;
     private javax.swing.JButton ptmSelectionHelpJButton;
-    private javax.swing.JScrollPane ptmTableScrollPane;
+    private javax.swing.JPanel ptmTableAnnotationMenuPanel;
+    private javax.swing.JPanel ptmTableJPanel;
+    private javax.swing.JScrollPane ptmTableJScrollPane;
+    private javax.swing.JToolBar ptmTableJToolBar;
     private javax.swing.JPanel relatedPeptidesJPanel;
     private javax.swing.JSplitPane relatedPeptidesJSplitPane;
     private javax.swing.JPanel relatedPeptidesPanel;
@@ -2906,7 +2882,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
-        
+
         // change the peptide shaker icon to a "waiting version"
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
@@ -3020,7 +2996,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(false));
                     for (String displayedPsm : peptideMatch.getSpectrumMatches()) {
                         if (displayedPsm.equals(selectedKey)) {
-                            selectedPsmsTable.setRowSelectionInterval(row, row);   
+                            selectedPsmsTable.setRowSelectionInterval(row, row);
                             selectedPsmsTable.scrollRectToVisible(selectedPsmsTable.getCellRect(row, 0, false));
 
                             while (relatedPsmsTable.getSelectedRow() >= 0) {
@@ -3031,7 +3007,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         }
                         row++;
                     }
-                    selectedPsmsTable.setRowSelectionInterval(0, 0);  
+                    selectedPsmsTable.setRowSelectionInterval(0, 0);
                     selectedPsmsTable.scrollRectToVisible(selectedPsmsTable.getCellRect(0, 0, false));
                     while (relatedPsmsTable.getSelectedRow() >= 0) {
                         relatedPsmsTable.removeRowSelectionInterval(relatedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
@@ -3044,7 +3020,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             row = 0;
             for (String displayedPeptide : relatedPeptides) {
                 if (displayedPeptide.equals(selectedKey)) {
-                    relatedPeptidesTable.setRowSelectionInterval(row, row);  
+                    relatedPeptidesTable.setRowSelectionInterval(row, row);
                     relatedPeptidesTable.scrollRectToVisible(relatedPeptidesTable.getCellRect(row, 0, false));
                     if (peptidesTable.getSelectedRow() >= 0) {
                         peptidesTable.removeRowSelectionInterval(peptidesTable.getSelectedRow(), peptidesTable.getSelectedRow());
@@ -3058,7 +3034,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     PeptideMatch peptideMatch = identification.getPeptideMatch(getSelectedPeptide(false));
                     for (String displayedPsm : peptideMatch.getSpectrumMatches()) {
                         if (displayedPsm.equals(selectedKey)) {
-                            relatedPsmsTable.setRowSelectionInterval(row, row);    
+                            relatedPsmsTable.setRowSelectionInterval(row, row);
                             relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(row, 0, false));
                             while (selectedPsmsTable.getSelectedRow() >= 0) {
                                 selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
@@ -3068,7 +3044,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         }
                         row++;
                     }
-                    relatedPsmsTable.setRowSelectionInterval(0, 0);  
+                    relatedPsmsTable.setRowSelectionInterval(0, 0);
                     relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(0, 0, false));
                     while (selectedPsmsTable.getSelectedRow() >= 0) {
                         selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
@@ -3370,7 +3346,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     relatedPsmsTable.scrollRectToVisible(relatedPsmsTable.getCellRect(0, 0, false));
 
                     updateGraphics();
-
                 }
 
                 while (selectedPsmsTable.getSelectedRow() >= 0) {
@@ -3455,7 +3430,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         spectrumTabbedPane.setSelectedIndex(1);
                     }
                 }
-                updateSpectrumPlot();
+
                 updatePtmTable();
 //@todo update psm modification profile
             }
@@ -3464,241 +3439,14 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Updates the ptm table
      */
     public void updatePtmTable() {
         Peptide selectedPeptide = identification.getPeptideMatch(getSelectedPeptide()).getTheoreticPeptide();
         PTM ptm = ptmFactory.getPTM(getSelectedModification());
-        ptmTableScrollPane.setViewportView(new PtmTable(peptideShakerGUI, selectedPeptide, ptm, getSelectedPsm()));
-    }
-
-    /**
-     * Updates the PtM plot.
-     * 
-     * @param spectrumKeys 
-     */
-    public void updateSpectrumPlot() {
-
-        AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
-
-        XYPlot ptmPlot = new XYPlot();
-        // complete the PTM plot
-        NumberAxis aaAxis = new NumberAxis("Peptide Sequence");
-        NumberAxis deltaAxis = new NumberAxis("Fragment Ion Deviation");
-        ptmPlot.setDomainAxis(aaAxis);
-        ptmPlot.setRangeAxis(deltaAxis);
-        int spectrumCount = 0;
-        for (String spectrumKey : getSelectedPsm()) {
-
-            MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
-
-            // get the spectrum annotations
-            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-            Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
-            annotationPreferences.setCurrentSettings(currentPeptide,
-                    currentSpectrum.getPrecursor().getCharge().value, false); // @TODO: not sure if 'false' is correct here, but 'true' resets the annotation to default...
-
-            int nPTM = 0;
-            for (ModificationMatch modMatch : currentPeptide.getModificationMatches()) {
-                if (modMatch.getTheoreticPtm().equals(getSelectedModification())) {
-                    nPTM++;
-                }
-            }
-
-            HashMap<PeptideFragmentIon, ArrayList<IonMatch>> ionMatches = PTMLocationScores.getPTMPlotData(
-                    currentPeptide, ptmFactory.getPTM(getSelectedModification()), nPTM, currentSpectrum, annotationPreferences.getIonTypes(),
-                    annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
-                    annotationPreferences.getFragmentIonAccuracy(), currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()));
-            
-            if (ionMatches.size() > 0) {
-
-                ArrayList<Double> intensities = new ArrayList<Double>();
-
-                for (ArrayList<IonMatch> list : ionMatches.values()) {
-                    for (IonMatch ionMatch : list) {
-                        intensities.add(ionMatch.peak.intensity);
-                    }
-                }
-
-                Collections.sort(intensities);
-
-                XYShapeRenderer renderer = new XYShapeRenderer();
-                DefaultXYDataset dataset = new DefaultXYDataset();
-
-                int i, seriesCpt = 0;
-                Double intMin, intMax;
-                int binSize = 10;
-
-                for (int bin = 0; bin < 100; bin += binSize) {
-
-                    // Please don't put the size relative to the intensity!
-                    i = bin * intensities.size() / 100;
-                    intMin = intensities.get(i);
-                    i = (bin + binSize) * intensities.size() / 100;
-
-                    if (i < intensities.size()) {
-                        intMax = intensities.get(i);
-                    } else {
-                        intMax = Double.POSITIVE_INFINITY;
-                    }
-
-                    HashMap<Integer, HashMap<PeptideFragmentIon, ArrayList<IonMatch>>> bSerieMap = new HashMap<Integer, HashMap<PeptideFragmentIon, ArrayList<IonMatch>>>();
-                    HashMap<Integer, HashMap<PeptideFragmentIon, ArrayList<IonMatch>>> ySerieMap = new HashMap<Integer, HashMap<PeptideFragmentIon, ArrayList<IonMatch>>>();
-
-                    for (PeptideFragmentIon peptideFragmentIon : ionMatches.keySet()) {
-                        for (IonMatch ionMatch : ionMatches.get(peptideFragmentIon)) {
-                            if (ionMatch.peak.intensity >= intMin && ionMatch.peak.intensity < intMax) {
-                                if (peptideFragmentIon.getType() == PeptideFragmentIonType.A_ION
-                                        || peptideFragmentIon.getType() == PeptideFragmentIonType.B_ION
-                                        || peptideFragmentIon.getType() == PeptideFragmentIonType.C_ION) {
-                                    int aa = peptideFragmentIon.getNumber();
-                                    if (!bSerieMap.containsKey(aa)) {
-                                        bSerieMap.put(aa, new HashMap<PeptideFragmentIon, ArrayList<IonMatch>>());
-                                    }
-                                    if (!bSerieMap.get(aa).containsKey(peptideFragmentIon)) {
-                                        bSerieMap.get(aa).put(peptideFragmentIon, new ArrayList<IonMatch>());
-                                    }
-                                    bSerieMap.get(aa).get(peptideFragmentIon).add(ionMatch);
-                                } else if (peptideFragmentIon.getType() == PeptideFragmentIonType.X_ION
-                                        || peptideFragmentIon.getType() == PeptideFragmentIonType.Y_ION
-                                        || peptideFragmentIon.getType() == PeptideFragmentIonType.Z_ION) {
-                                    int aa = currentPeptide.getSequence().length() + 1 - peptideFragmentIon.getNumber();
-                                    if (!ySerieMap.containsKey(aa)) {
-                                        ySerieMap.put(aa, new HashMap<PeptideFragmentIon, ArrayList<IonMatch>>());
-                                    }
-                                    if (!ySerieMap.get(aa).containsKey(peptideFragmentIon)) {
-                                        ySerieMap.get(aa).put(peptideFragmentIon, new ArrayList<IonMatch>());
-                                    }
-                                    ySerieMap.get(aa).get(peptideFragmentIon).add(ionMatch);
-                                }
-                            }
-                        }
-                    }
-
-                    HashMap<Double, ArrayList<Double>> tempMap;
-                    HashMap<Double, Double> serie = new HashMap<Double, Double>();
-
-                    for (int n : bSerieMap.keySet()) {
-
-                        int nPoints = 0;
-                        tempMap = new HashMap<Double, ArrayList<Double>>();
-                        double noModMass;
-
-                        for (PeptideFragmentIon noModIon : bSerieMap.get(n).keySet()) {
-                            for (IonMatch ionMatch : bSerieMap.get(n).get(noModIon)) {
-                                noModMass = noModIon.theoreticMass;
-                                if (!tempMap.containsKey(noModMass)) {
-                                    tempMap.put(noModMass, new ArrayList<Double>());
-                                }
-                                tempMap.get(noModMass).add(ionMatch.peak.mz * ionMatch.charge.value - ionMatch.charge.value - noModMass);
-                                nPoints++;
-                            }
-                        }
-
-                        double increment = 1.0 / (nPoints + 1);
-                        ArrayList<Double> masses = new ArrayList<Double>(tempMap.keySet());
-                        Collections.sort(masses);
-                        int cpt = 0;
-
-                        for (double mass : masses) {
-                            for (double deltaMass : tempMap.get(mass)) {
-                                serie.put(n + (cpt + 1) * increment, deltaMass);
-                                cpt++;
-                            }
-                        }
-                    }
-
-                    double[][] serieArray = new double[2][serie.size()];
-                    int cpt = 0;
-
-                    for (double x : serie.keySet()) {
-                        serieArray[0][cpt] = x;
-                        serieArray[1][cpt] = serie.get(x);
-                        cpt++;
-                    }
-
-                    int up = Math.min(bin + binSize, 100);
-                    String seriesTitle = bin + "% to " + up + "% most intense peaks - b ions";
-                    dataset.addSeries(seriesTitle, serieArray);
-                    renderer.setSeriesPaint(seriesCpt, new Color(255 - 255 * (bin + binSize) / 100, 255 - 255 * (bin + binSize) / 100, 255));
-                    seriesCpt++;
-
-                    serie = new HashMap<Double, Double>();
-
-                    for (int n : ySerieMap.keySet()) {
-
-                        int nPoints = 0;
-                        tempMap = new HashMap<Double, ArrayList<Double>>();
-                        double noModMass;
-
-                        for (PeptideFragmentIon noModIon : ySerieMap.get(n).keySet()) {
-                            for (IonMatch ionMatch : ySerieMap.get(n).get(noModIon)) {
-                                noModMass = noModIon.theoreticMass;
-                                if (!tempMap.containsKey(noModMass)) {
-                                    tempMap.put(noModMass, new ArrayList<Double>());
-                                }
-                                tempMap.get(noModMass).add(ionMatch.peak.mz * ionMatch.charge.value - ionMatch.charge.value - noModMass);
-                                nPoints++;
-                            }
-                        }
-
-                        double increment = 1.0 / (nPoints + 1);
-                        ArrayList<Double> masses = new ArrayList<Double>(tempMap.keySet());
-                        Collections.sort(masses);
-                        cpt = 0;
-                        for (double mass : masses) {
-                            for (double deltaMass : tempMap.get(mass)) {
-                                serie.put(n + (cpt + 1) * increment, deltaMass);
-                                cpt++;
-                            }
-                        }
-                    }
-
-                    serieArray = new double[2][serie.size()];
-                    cpt = 0;
-
-                    for (double x : serie.keySet()) {
-                        serieArray[0][cpt] = x;
-                        serieArray[1][cpt] = serie.get(x);
-                        cpt++;
-                    }
-
-                    up = Math.min(bin + binSize, 100);
-                    seriesTitle = bin + "% to " + up + "% most intense peaks - y ions";
-                    dataset.addSeries(seriesTitle, serieArray);
-                    renderer.setSeriesPaint(seriesCpt, new Color(255, 255 - 255 * (bin + binSize) / 100, 255 - 255 * (bin + binSize) / 100));
-
-                    seriesCpt++;
-                }
-
-                // add tooltips
-                renderer.setBaseToolTipGenerator(new StandardXYToolTipGenerator());
-
-                ptmPlot.setDataset(spectrumCount, dataset);
-                ptmPlot.setRenderer(spectrumCount, renderer);
-                spectrumCount++;
-            }
-        }
-
-        chartPanel = new ChartPanel(new JFreeChart(ptmPlot));
-
-        // set background color
-        ptmPlot.setBackgroundPaint(Color.WHITE);
-        chartPanel.getChart().setBackgroundPaint(Color.WHITE);
-        chartPanel.setBackground(Color.WHITE);
-
-        // hide the outline
-        ptmPlot.setOutlineVisible(false);
-
-        // hide the legend
-        chartPanel.getChart().getLegend().setVisible(false);
-
-        ptmPlotChartPanel.removeAll();
-        ptmPlotChartPanel.add(chartPanel);
-        ptmPlotChartPanel.revalidate();
-        ptmPlotChartPanel.repaint();
+        ptmTableJScrollPane.setViewportView(new PtmTable(peptideShakerGUI, selectedPeptide, ptm, getSelectedPsm()));
     }
 
     /**
