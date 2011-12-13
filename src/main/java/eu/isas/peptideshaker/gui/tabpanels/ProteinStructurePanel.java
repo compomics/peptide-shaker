@@ -1405,8 +1405,6 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 // update the peptide selection
                 updatedPeptideSelection(row);
                 
-                // remember the selection
-                newItemSelection();
                 
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
@@ -2767,10 +2765,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
-                    
-                    updateSelection();
 
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, true);
+                    
+                    updateSelection();
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -3383,6 +3381,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
             proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
             proteinTableMouseReleased(null);
+            peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
 
             // invoke later to give time for components to update
             SwingUtilities.invokeLater(new Runnable() {

@@ -152,6 +152,7 @@
                 <Container class="javax.swing.JSplitPane" name="proteinSplit">
                   <Properties>
                     <Property name="dividerLocation" type="int" value="200"/>
+                    <Property name="dividerSize" type="int" value="0"/>
                     <Property name="orientation" type="int" value="0"/>
                   </Properties>
 
@@ -507,6 +508,7 @@
                     <Container class="javax.swing.JSplitPane" name="proteinManualSplit">
                       <Properties>
                         <Property name="dividerLocation" type="int" value="380"/>
+                        <Property name="dividerSize" type="int" value="0"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
@@ -544,7 +546,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane4" pref="143" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane4" pref="148" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -587,7 +589,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane8" pref="340" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane8" pref="345" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -596,7 +598,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane8" pref="143" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane8" pref="148" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -689,6 +691,7 @@
                 <Container class="javax.swing.JSplitPane" name="peptideSplit">
                   <Properties>
                     <Property name="dividerLocation" type="int" value="200"/>
+                    <Property name="dividerSize" type="int" value="0"/>
                     <Property name="orientation" type="int" value="0"/>
                   </Properties>
 
@@ -1040,6 +1043,7 @@
                     <Container class="javax.swing.JSplitPane" name="peptideManualSplit">
                       <Properties>
                         <Property name="dividerLocation" type="int" value="380"/>
+                        <Property name="dividerSize" type="int" value="0"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
@@ -1077,7 +1081,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane9" pref="143" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane9" pref="148" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -1120,7 +1124,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane10" pref="340" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane10" pref="345" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -1129,7 +1133,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane10" pref="143" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane10" pref="148" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -1222,6 +1226,7 @@
                 <Container class="javax.swing.JSplitPane" name="psmSplit">
                   <Properties>
                     <Property name="dividerLocation" type="int" value="200"/>
+                    <Property name="dividerSize" type="int" value="0"/>
                     <Property name="orientation" type="int" value="0"/>
                   </Properties>
 
@@ -1543,6 +1548,7 @@
                     <Container class="javax.swing.JSplitPane" name="psmManualSplit">
                       <Properties>
                         <Property name="dividerLocation" type="int" value="380"/>
+                        <Property name="dividerSize" type="int" value="0"/>
                       </Properties>
                       <Constraints>
                         <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
@@ -1580,7 +1586,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane11" pref="143" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane11" pref="148" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -1623,7 +1629,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane12" pref="340" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane12" pref="345" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -1632,7 +1638,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="jScrollPane12" pref="143" max="32767" attributes="0"/>
+                                      <Component id="jScrollPane12" pref="148" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>

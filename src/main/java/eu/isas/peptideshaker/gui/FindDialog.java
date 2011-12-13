@@ -1452,6 +1452,7 @@ public class FindDialog extends javax.swing.JDialog {
         jScrollPane1.setViewportView(proteinTable);
 
         proteinSplit.setDividerLocation(200);
+        proteinSplit.setDividerSize(0);
         proteinSplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter Parameters"));
@@ -1683,6 +1684,7 @@ public class FindDialog extends javax.swing.JDialog {
         proteinSplit.setLeftComponent(jPanel5);
 
         proteinManualSplit.setDividerLocation(380);
+        proteinManualSplit.setDividerSize(0);
 
         jPanel8.setBorder(javax.swing.BorderFactory.createTitledBorder("Manual Validation"));
 
@@ -1703,7 +1705,7 @@ public class FindDialog extends javax.swing.JDialog {
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1721,14 +1723,14 @@ public class FindDialog extends javax.swing.JDialog {
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel9Layout.setVerticalGroup(
             jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel9Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(jScrollPane8, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1768,6 +1770,7 @@ public class FindDialog extends javax.swing.JDialog {
         jScrollPane3.setViewportView(peptideTable);
 
         peptideSplit.setDividerLocation(200);
+        peptideSplit.setDividerSize(0);
         peptideSplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         jPanel7.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter Parameters"));
@@ -2002,6 +2005,7 @@ public class FindDialog extends javax.swing.JDialog {
         peptideSplit.setLeftComponent(jPanel7);
 
         peptideManualSplit.setDividerLocation(380);
+        peptideManualSplit.setDividerSize(0);
 
         jPanel10.setBorder(javax.swing.BorderFactory.createTitledBorder("Manual Validation"));
 
@@ -2022,7 +2026,7 @@ public class FindDialog extends javax.swing.JDialog {
             jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel10Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(jScrollPane9, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2040,14 +2044,14 @@ public class FindDialog extends javax.swing.JDialog {
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel11Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane10, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                .addComponent(jScrollPane10, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel11Layout.setVerticalGroup(
             jPanel11Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel11Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane10, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(jScrollPane10, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2087,6 +2091,7 @@ public class FindDialog extends javax.swing.JDialog {
         jScrollPane2.setViewportView(psmTable);
 
         psmSplit.setDividerLocation(200);
+        psmSplit.setDividerSize(0);
         psmSplit.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
 
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder("Filter Parameters"));
@@ -2301,6 +2306,7 @@ public class FindDialog extends javax.swing.JDialog {
         psmSplit.setLeftComponent(jPanel6);
 
         psmManualSplit.setDividerLocation(380);
+        psmManualSplit.setDividerSize(0);
 
         jPanel12.setBorder(javax.swing.BorderFactory.createTitledBorder("Manual Validation"));
 
@@ -2321,7 +2327,7 @@ public class FindDialog extends javax.swing.JDialog {
             jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel12Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane11, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(jScrollPane11, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2339,14 +2345,14 @@ public class FindDialog extends javax.swing.JDialog {
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel13Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane12, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE)
+                .addComponent(jScrollPane12, javax.swing.GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel13Layout.setVerticalGroup(
             jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel13Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane12, javax.swing.GroupLayout.DEFAULT_SIZE, 143, Short.MAX_VALUE)
+                .addComponent(jScrollPane12, javax.swing.GroupLayout.DEFAULT_SIZE, 148, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
