@@ -4,12 +4,14 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.filtering.PsmFilter;
+import eu.isas.peptideshaker.gui.FindDialog.FilterType;
 import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 /**
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class CreateFilterDialog extends javax.swing.JDialog {
 
@@ -25,15 +27,16 @@ public class CreateFilterDialog extends javax.swing.JDialog {
      * @param proteinFilter
      * @param peptideFilter
      * @param psmFilter 
+     * @param filterType        the current filter type 
      */
-    public CreateFilterDialog(PeptideShakerGUI peptideShakerGUI, ProteinFilter proteinFilter, PeptideFilter peptideFilter, PsmFilter psmFilter) {
+    public CreateFilterDialog(PeptideShakerGUI peptideShakerGUI, ProteinFilter proteinFilter, PeptideFilter peptideFilter, PsmFilter psmFilter, FilterType filterType) {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
         this.proteinFilter = proteinFilter;
         this.peptideFilter = peptideFilter;
         this.psmFilter = psmFilter;
-
+        
         proteinEffectCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         peptideEffectCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         psmEffectCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
@@ -41,14 +44,32 @@ public class CreateFilterDialog extends javax.swing.JDialog {
         if (proteinFilter != null) {
             proteinSplitPane.setDividerLocation(1.0);
             this.setTitle("Protein Filter");
+            if (filterType == FilterType.HIDE) {
+                proteinEffectCmb.setSelectedItem("Hide");
+            } else if (filterType == FilterType.STAR) {
+                proteinEffectCmb.setSelectedItem("Star");
+            }
+            proteinFilterTxt.selectAll();
         } else if (peptideFilter != null) {
             proteinSplitPane.setDividerLocation(0);
             peptideAndPsmsSplitPane.setDividerLocation(0);
             this.setTitle("Peptide Filter");
+            if (filterType == FilterType.HIDE) {
+                peptideEffectCmb.setSelectedItem("Hide");
+            } else if (filterType == FilterType.STAR) {
+                peptideEffectCmb.setSelectedItem("Star");
+            }
+            peptideFilterTxt.selectAll();
         } else if (psmFilter != null) {
             proteinSplitPane.setDividerLocation(0);
             peptideAndPsmsSplitPane.setDividerLocation(1.0);
             this.setTitle("PSM Filter");
+            if (filterType == FilterType.HIDE) {
+                psmEffectCmb.setSelectedItem("Hide");
+            } else if (filterType == FilterType.STAR) {
+                psmEffectCmb.setSelectedItem("Star");
+            }
+            psmFilterTxt.selectAll();
         } else {
             // an error occured, this shoud not happen....
         }
@@ -66,6 +87,7 @@ public class CreateFilterDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        backgroundPanel = new javax.swing.JPanel();
         proteinSplitPane = new javax.swing.JSplitPane();
         peptideAndPsmsSplitPane = new javax.swing.JSplitPane();
         peptideFilterPane = new javax.swing.JPanel();
@@ -94,15 +116,21 @@ public class CreateFilterDialog extends javax.swing.JDialog {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+
         proteinSplitPane.setBorder(null);
         proteinSplitPane.setDividerLocation(0);
         proteinSplitPane.setDividerSize(-1);
         proteinSplitPane.setMinimumSize(new java.awt.Dimension(0, 0));
+        proteinSplitPane.setOpaque(false);
         proteinSplitPane.setPreferredSize(new java.awt.Dimension(99, 83));
 
         peptideAndPsmsSplitPane.setBorder(null);
         peptideAndPsmsSplitPane.setDividerLocation(0);
         peptideAndPsmsSplitPane.setDividerSize(-1);
+        peptideAndPsmsSplitPane.setOpaque(false);
+
+        peptideFilterPane.setOpaque(false);
 
         peptideEffectCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Star", "Hide" }));
 
@@ -129,9 +157,9 @@ public class CreateFilterDialog extends javax.swing.JDialog {
                     .addComponent(jLabel8))
                 .addGap(18, 18, 18)
                 .addGroup(peptideFilterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(peptideEffectCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, 296, Short.MAX_VALUE)
-                    .addComponent(peptideFilterDescription, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE)
-                    .addComponent(peptideFilterTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 296, Short.MAX_VALUE))
+                    .addComponent(peptideEffectCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, 279, Short.MAX_VALUE)
+                    .addComponent(peptideFilterDescription, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE)
+                    .addComponent(peptideFilterTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 279, Short.MAX_VALUE))
                 .addContainerGap())
         );
         peptideFilterPaneLayout.setVerticalGroup(
@@ -153,6 +181,8 @@ public class CreateFilterDialog extends javax.swing.JDialog {
         );
 
         peptideAndPsmsSplitPane.setRightComponent(peptideFilterPane);
+
+        psmFilterPane.setOpaque(false);
 
         psmEffectCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Star", "Hide" }));
 
@@ -179,9 +209,9 @@ public class CreateFilterDialog extends javax.swing.JDialog {
                     .addComponent(jLabel9))
                 .addGap(18, 18, 18)
                 .addGroup(psmFilterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(psmEffectCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, 393, Short.MAX_VALUE)
-                    .addComponent(psmFilterTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE)
-                    .addComponent(psmFilterDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 393, Short.MAX_VALUE))
+                    .addComponent(psmEffectCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, 6, Short.MAX_VALUE)
+                    .addComponent(psmFilterTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 6, Short.MAX_VALUE)
+                    .addComponent(psmFilterDescription))
                 .addContainerGap())
         );
         psmFilterPaneLayout.setVerticalGroup(
@@ -205,6 +235,8 @@ public class CreateFilterDialog extends javax.swing.JDialog {
         peptideAndPsmsSplitPane.setTopComponent(psmFilterPane);
 
         proteinSplitPane.setBottomComponent(peptideAndPsmsSplitPane);
+
+        proteinFilterPane.setOpaque(false);
 
         jLabel1.setText("Filter Name:");
 
@@ -231,9 +263,9 @@ public class CreateFilterDialog extends javax.swing.JDialog {
                     .addComponent(jLabel7))
                 .addGap(13, 13, 13)
                 .addGroup(proteinFilterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(proteinEffectCmb, 0, 241, Short.MAX_VALUE)
-                    .addComponent(proteinFilterDescription, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE)
-                    .addComponent(proteinFilterTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 241, Short.MAX_VALUE))
+                    .addComponent(proteinEffectCmb, 0, 6, Short.MAX_VALUE)
+                    .addComponent(proteinFilterDescription)
+                    .addComponent(proteinFilterTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 6, Short.MAX_VALUE))
                 .addContainerGap())
         );
         proteinFilterPaneLayout.setVerticalGroup(
@@ -270,30 +302,44 @@ public class CreateFilterDialog extends javax.swing.JDialog {
             }
         });
 
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(proteinSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 373, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(cancelButton)))
+                .addContainerGap())
+        );
+
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
+
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(proteinSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cancelButton)
+                    .addComponent(okButton))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(244, Short.MAX_VALUE)
-                .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cancelButton)
-                .addContainerGap())
-            .addComponent(proteinSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
-
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(proteinSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 99, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton))
-                .addContainerGap())
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -364,6 +410,7 @@ public class CreateFilterDialog extends javax.swing.JDialog {
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
