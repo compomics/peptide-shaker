@@ -1848,14 +1848,14 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             newItemSelection();
 
-                if (column == psmTable.getColumn("  ").getModelIndex()) {
-                    String key = psmTableMap.get(getProteinIndex(row));
-                    if ((Boolean) psmTable.getValueAt(row, column)) {
-                        peptideShakerGUI.starPsm(key);
-                    } else {
-                        peptideShakerGUI.unStarPsm(key);
-                    }
+            if (column == psmTable.getColumn("  ").getModelIndex()) {
+                String key = psmTableMap.get(getProteinIndex(row));
+                if ((Boolean) psmTable.getValueAt(row, column)) {
+                    peptideShakerGUI.starPsm(key);
+                } else {
+                    peptideShakerGUI.unStarPsm(key);
                 }
+            }
 
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
@@ -1957,15 +1957,15 @@ public class OverviewPanel extends javax.swing.JPanel {
             // remember the selection
             newItemSelection();
 
-                if (column == peptideTable.getColumn("  ").getModelIndex()) {
-                    String key = peptideTableMap.get(getProteinIndex(row));
-                    if ((Boolean) peptideTable.getValueAt(row, column)) {
-                        peptideShakerGUI.starPeptide(key);
-                    } else {
-                        peptideShakerGUI.unStarPeptide(key);
-                    }
+            if (column == peptideTable.getColumn("  ").getModelIndex()) {
+                String key = peptideTableMap.get(getProteinIndex(row));
+                if ((Boolean) peptideTable.getValueAt(row, column)) {
+                    peptideShakerGUI.starPeptide(key);
+                } else {
+                    peptideShakerGUI.unStarPeptide(key);
                 }
-                
+            }
+
             // open the protein inference at the petide level dialog
             if (column == peptideTable.getColumn("PI").getModelIndex()) {
                 try {
@@ -4213,9 +4213,13 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         proteinTableToolTips.set(proteinTable.getColumn("MS2 Quant.").getModelIndex(), "Protein MS2 Quantification");
                     }
 
-                    int index = 0; maxPeptides = 0; maxSpectra = 0;
+                    int index = 0;
+                    maxPeptides = 0;
+                    maxSpectra = 0;
                     double sequenceCoverage = 0;
-                    double spectrumCounting = 0; maxSpectrumCounting = 0; maxMW = 0;
+                    double spectrumCounting = 0;
+                    maxSpectrumCounting = 0;
+                    maxMW = 0;
                     String description = "";
 
                     // sort the proteins according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
@@ -5172,7 +5176,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         ((TitledBorder) spectrumMainPanel.getBorder()).setTitle("Spectrum & Fragment Ions");
         ((TitledBorder) sequenceCoveragePanel.getBorder()).setTitle("Protein Sequence Coverage");
     }
-    
+
     /**
      * @return the maxPeptides
      */

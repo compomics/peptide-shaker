@@ -2448,7 +2448,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     fileNamesCmb.setModel(new DefaultComboBoxModel(filesArray));
 
                     fileSelectionChanged(progressDialog);
-        updateSelection();
+                    updateSelection();
 
                     // update the slider tooltips
                     double accuracy = (accuracySlider.getValue() / 100.0) * peptideShakerGUI.getSearchParameters().getFragmentIonAccuracy();
@@ -2696,6 +2696,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         }
 
         spectrumSelectionChanged();
+        
+        // change the peptide shaker icon to a "waiting version"
+        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
     }
 
     /**
