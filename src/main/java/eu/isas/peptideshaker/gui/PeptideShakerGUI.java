@@ -378,7 +378,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // update the look and feel after adding the panels
         UtilitiesGUIDefaults.setLookAndFeel();
-
+        
         new PeptideShakerGUI();
     }
 
@@ -582,7 +582,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         spectrumCountingMenuItem = new javax.swing.JMenuItem();
         jSeparator12 = new javax.swing.JPopupMenu.Separator();
         findJMenuItem = new javax.swing.JMenuItem();
-        filterJMenuItem = new javax.swing.JMenuItem();
         starHideJMenuItem = new javax.swing.JMenuItem();
         exportJMenu = new javax.swing.JMenu();
         identificationFeaturesMenu = new javax.swing.JMenuItem();
@@ -1163,21 +1162,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         editMenu.add(findJMenuItem);
 
-        filterJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        filterJMenuItem.setMnemonic('L');
-        filterJMenuItem.setText("Filter");
-        filterJMenuItem.setToolTipText("Edit the filters");
-        filterJMenuItem.setEnabled(false);
-        filterJMenuItem.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                filterJMenuItemActionPerformed(evt);
-            }
-        });
-        editMenu.add(filterJMenuItem);
-
-        starHideJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_H, java.awt.event.InputEvent.CTRL_MASK));
+        starHideJMenuItem.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_L, java.awt.event.InputEvent.CTRL_MASK));
         starHideJMenuItem.setMnemonic('L');
-        starHideJMenuItem.setText("Star/Hide Filters");
+        starHideJMenuItem.setText("Filters");
         starHideJMenuItem.setEnabled(false);
         starHideJMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2543,10 +2530,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * 
      * @param evt 
      */
-    private void filterJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filterJMenuItemActionPerformed
-        new FindDialog(this);
-    }//GEN-LAST:event_filterJMenuItemActionPerformed
-
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
@@ -2591,7 +2574,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             projectPropertiesMenuItem.setEnabled(true);
             spectrumCountingMenuItem.setEnabled(true);
             findJMenuItem.setEnabled(true);
-            filterJMenuItem.setEnabled(true);
             starHideJMenuItem.setEnabled(true);
             ionsMenu.setEnabled(true);
             lossMenu.setEnabled(true);
@@ -2669,7 +2651,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JMenu exportSpectrumMenu;
     private javax.swing.JMenuItem exportSpectrumValuesJMenuItem;
     private javax.swing.JMenu fileJMenu;
-    private javax.swing.JMenuItem filterJMenuItem;
     private javax.swing.JMenuItem findJMenuItem;
     private javax.swing.JMenuItem followUpAnalysisMenu;
     private javax.swing.JPanel goJPanel;
@@ -5134,7 +5115,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         progressDialog = new ProgressDialogX(this, this, true);
         progressDialog.doNothingOnClose();
         progressDialog.setIndeterminate(true);
-        progressDialog.setTitle("Hiding/Starring items. Please Wait...");
+        progressDialog.setTitle("Hiding/Starring Items. Please Wait...");
 
         new Thread("Star/Hide") {
 

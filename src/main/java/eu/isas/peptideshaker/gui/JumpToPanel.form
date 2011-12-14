@@ -22,12 +22,12 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Component id="findJLabel" min="-2" max="-2" attributes="0"/>
-              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
-              <Component id="inputTxt" min="-2" pref="199" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="inputTxt" min="-2" pref="205" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="nextButton" linkSize="3" min="-2" pref="15" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="0" max="-2" attributes="3"/>
               <Component id="previousButton" linkSize="3" min="-2" pref="15" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
+              <Component id="nextButton" linkSize="3" min="-2" pref="15" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="indexLabel" min="-2" pref="97" max="-2" attributes="0"/>
               <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -41,9 +41,9 @@
               <Group type="103" groupAlignment="2" attributes="0">
                   <Component id="findJLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                   <Component id="inputTxt" alignment="2" min="-2" max="-2" attributes="0"/>
-                  <Component id="nextButton" alignment="2" min="-2" pref="15" max="-2" attributes="0"/>
-                  <Component id="previousButton" alignment="2" min="-2" pref="15" max="-2" attributes="0"/>
                   <Component id="indexLabel" alignment="2" min="-2" max="-2" attributes="0"/>
+                  <Component id="previousButton" alignment="2" min="-2" pref="15" max="-2" attributes="0"/>
+                  <Component id="nextButton" alignment="2" min="-2" pref="15" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -79,7 +79,7 @@
     <Component class="javax.swing.JButton" name="previousButton">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/icons/arrowUp_grey.png"/>
+          <Image iconType="3" name="/icons/previous_grey.png"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Previous"/>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
@@ -89,26 +89,30 @@
         <Property name="contentAreaFilled" type="boolean" value="false"/>
         <Property name="iconTextGap" type="int" value="0"/>
         <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/icons/arrowUp.png"/>
+          <Image iconType="3" name="/icons/previous.png"/>
         </Property>
       </Properties>
       <Events>
+        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="previousButtonMouseEntered"/>
+        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="previousButtonMouseExited"/>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="previousButtonActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="nextButton">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/icons/arrowDown_grey.png"/>
+          <Image iconType="3" name="/icons/next_grey.png"/>
         </Property>
         <Property name="toolTipText" type="java.lang.String" value="Next"/>
         <Property name="borderPainted" type="boolean" value="false"/>
         <Property name="contentAreaFilled" type="boolean" value="false"/>
         <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="3" name="/icons/arrowDown.png"/>
+          <Image iconType="3" name="/icons/next.png"/>
         </Property>
       </Properties>
       <Events>
+        <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="nextButtonMouseEntered"/>
+        <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="nextButtonMouseExited"/>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nextButtonActionPerformed"/>
       </Events>
     </Component>
