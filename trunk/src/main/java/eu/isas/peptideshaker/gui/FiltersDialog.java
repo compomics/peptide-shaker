@@ -980,6 +980,7 @@ public class FiltersDialog extends javax.swing.JDialog {
     private void starredProteinsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_starredProteinsTableKeyReleased
         int column = starredProteinsTable.getSelectedColumn();
         int row = starredProteinsTable.getSelectedRow();
+        
         if (column == 2) {
             String newName = (String) starredProteinsTable.getValueAt(row, column);
             ArrayList<String> others = new ArrayList<String>();
@@ -1024,15 +1025,18 @@ public class FiltersDialog extends javax.swing.JDialog {
             String name = (String) starredProteinsTable.getValueAt(row, 2);
             proteinStarFilters.get(name).setDescription((String) starredProteinsTable.getValueAt(row, column));
         }
+        
+        if (row != -1) {
+            editStarredProtein.setEnabled(true);
+        }
     }//GEN-LAST:event_starredProteinsTableKeyReleased
 
     private void starredProteinsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_starredProteinsTableMouseReleased
         int column = starredProteinsTable.getSelectedColumn();
         int row = starredProteinsTable.getSelectedRow();
-        if (evt.getButton() == MouseEvent.BUTTON1) {
-            MatchFilter matchFilter;
+        if (row != -1 && evt.getButton() == MouseEvent.BUTTON1) {
             String key = (String) starredProteinsTable.getValueAt(row, 2);
-            matchFilter = proteinStarFilters.get(key);
+            MatchFilter matchFilter = proteinStarFilters.get(key);
             if (evt.getClickCount() == 1) {
                 if (column == 1) {
                     matchFilter.setActive(!matchFilter.isActive());
@@ -1048,10 +1052,9 @@ public class FiltersDialog extends javax.swing.JDialog {
     private void starredPeptidesTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_starredPeptidesTableMouseReleased
         int column = starredPeptidesTable.getSelectedColumn();
         int row = starredPeptidesTable.getSelectedRow();
-        if (evt.getButton() == MouseEvent.BUTTON1) {
-            MatchFilter matchFilter;
+        if (row != -1 && evt.getButton() == MouseEvent.BUTTON1) {
             String key = (String) starredPeptidesTable.getValueAt(row, 2);
-            matchFilter = peptideStarFilters.get(key);
+            MatchFilter matchFilter = peptideStarFilters.get(key);
             if (evt.getClickCount() == 1) {
                 if (column == 1) {
                     matchFilter.setActive(!matchFilter.isActive());
@@ -1061,16 +1064,19 @@ public class FiltersDialog extends javax.swing.JDialog {
                     //@TODO edit matchFilter
                 }
             }
+        }
+        
+        if (row != -1) {
+            editStarredPeptides.setEnabled(true);
         }
     }//GEN-LAST:event_starredPeptidesTableMouseReleased
 
     private void starredPsmTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_starredPsmTableMouseReleased
         int column = starredPsmTable.getSelectedColumn();
         int row = starredPsmTable.getSelectedRow();
-        if (evt.getButton() == MouseEvent.BUTTON1) {
-            MatchFilter matchFilter;
+        if (row != -1 && evt.getButton() == MouseEvent.BUTTON1) {
             String key = (String) starredPsmTable.getValueAt(row, 2);
-            matchFilter = psmStarFilters.get(key);
+            MatchFilter matchFilter = psmStarFilters.get(key);
             if (evt.getClickCount() == 1) {
                 if (column == 1) {
                     matchFilter.setActive(!matchFilter.isActive());
@@ -1080,16 +1086,19 @@ public class FiltersDialog extends javax.swing.JDialog {
                     //@TODO edit matchFilter
                 }
             }
+        }
+        
+        if (row != -1) {
+            editStarredPsm.setEnabled(true);
         }
     }//GEN-LAST:event_starredPsmTableMouseReleased
 
     private void hiddenProteinsTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hiddenProteinsTableMouseReleased
         int column = hiddenProteinsTable.getSelectedColumn();
         int row = hiddenProteinsTable.getSelectedRow();
-        if (evt.getButton() == MouseEvent.BUTTON1) {
-            MatchFilter matchFilter;
+        if (row != -1 && evt.getButton() == MouseEvent.BUTTON1) {
             String key = (String) hiddenProteinsTable.getValueAt(row, 2);
-            matchFilter = proteinHideFilters.get(key);
+            MatchFilter matchFilter = proteinHideFilters.get(key);
             if (evt.getClickCount() == 1) {
                 if (column == 1) {
                     matchFilter.setActive(!matchFilter.isActive());
@@ -1099,16 +1108,19 @@ public class FiltersDialog extends javax.swing.JDialog {
                     //@TODO edit matchFilter
                 }
             }
+        }
+        
+        if (row != -1) {
+            editHiddenProtein.setEnabled(true);
         }
     }//GEN-LAST:event_hiddenProteinsTableMouseReleased
 
     private void hiddenPeptidesTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hiddenPeptidesTableMouseReleased
         int column = hiddenPeptidesTable.getSelectedColumn();
         int row = hiddenPeptidesTable.getSelectedRow();
-        if (evt.getButton() == MouseEvent.BUTTON1) {
-            MatchFilter matchFilter;
+        if (row != -1 && evt.getButton() == MouseEvent.BUTTON1) {
             String key = (String) hiddenPeptidesTable.getValueAt(row, 2);
-            matchFilter = peptideHideFilters.get(key);
+            MatchFilter matchFilter = peptideHideFilters.get(key);
             if (evt.getClickCount() == 1) {
                 if (column == 1) {
                     matchFilter.setActive(!matchFilter.isActive());
@@ -1119,15 +1131,18 @@ public class FiltersDialog extends javax.swing.JDialog {
                 }
             }
         }
+        
+        if (row != -1) {
+            editHiddenPeptides.setEnabled(true);
+        }
     }//GEN-LAST:event_hiddenPeptidesTableMouseReleased
 
     private void hiddenPsmTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_hiddenPsmTableMouseReleased
         int column = hiddenPsmTable.getSelectedColumn();
         int row = hiddenPsmTable.getSelectedRow();
-        if (evt.getButton() == MouseEvent.BUTTON1) {
-            MatchFilter matchFilter;
+        if (row != -1 && evt.getButton() == MouseEvent.BUTTON1) {
             String key = (String) hiddenPsmTable.getValueAt(row, 2);
-            matchFilter = psmHideFilters.get(key);
+            MatchFilter matchFilter = psmHideFilters.get(key);
             if (evt.getClickCount() == 1) {
                 if (column == 1) {
                     matchFilter.setActive(!matchFilter.isActive());
@@ -1137,6 +1152,10 @@ public class FiltersDialog extends javax.swing.JDialog {
                     //@TODO edit matchFilter
                 }
             }
+        }
+        
+        if (row != -1) {
+            editHiddenPsm.setEnabled(true);
         }
     }//GEN-LAST:event_hiddenPsmTableMouseReleased
 
@@ -1212,9 +1231,6 @@ public class FiltersDialog extends javax.swing.JDialog {
             String selectedFilterName = (String) starredProteinsTable.getValueAt(row, 2);
             ProteinFilter proteinFilter = proteinStarFilters.get(selectedFilterName);
             new FindDialog(peptideShakerGUI, this, proteinFilter, null, null, FilterType.STAR);
-            emptyTables();
-            updateMaps();
-            fillTables();
         }
     }//GEN-LAST:event_editStarredProteinActionPerformed
 
@@ -1224,9 +1240,6 @@ public class FiltersDialog extends javax.swing.JDialog {
             String selectedFilterName = (String) hiddenProteinsTable.getValueAt(row, 2);
             ProteinFilter proteinFilter = proteinHideFilters.get(selectedFilterName);
             new FindDialog(peptideShakerGUI, this, proteinFilter, null, null, FilterType.HIDE);
-            emptyTables();
-            updateMaps();
-            fillTables();
         }
     }//GEN-LAST:event_editHiddenProteinActionPerformed
 
@@ -1236,9 +1249,6 @@ public class FiltersDialog extends javax.swing.JDialog {
             String selectedFilterName = (String) starredPeptidesTable.getValueAt(row, 2);
             PeptideFilter peptideFilter = peptideStarFilters.get(selectedFilterName);
             new FindDialog(peptideShakerGUI, this, null, peptideFilter, null, FilterType.STAR);
-            emptyTables();
-            updateMaps();
-            fillTables();
         }
     }//GEN-LAST:event_editStarredPeptidesActionPerformed
 
@@ -1248,9 +1258,6 @@ public class FiltersDialog extends javax.swing.JDialog {
             String selectedFilterName = (String) hiddenPeptidesTable.getValueAt(row, 2);
             PeptideFilter peptideFilter = peptideHideFilters.get(selectedFilterName);
             new FindDialog(peptideShakerGUI, this, null, peptideFilter, null, FilterType.HIDE);
-            emptyTables();
-            updateMaps();
-            fillTables();
         }
     }//GEN-LAST:event_editHiddenPeptidesActionPerformed
 
@@ -1260,9 +1267,6 @@ public class FiltersDialog extends javax.swing.JDialog {
             String selectedFilterName = (String) starredPsmTable.getValueAt(row, 2);
             PsmFilter psmFilter = psmStarFilters.get(selectedFilterName);
             new FindDialog(peptideShakerGUI, this, null, null, psmFilter, FilterType.STAR);
-            emptyTables();
-            updateMaps();
-            fillTables();
         }
     }//GEN-LAST:event_editStarredPsmActionPerformed
 
@@ -1272,15 +1276,14 @@ public class FiltersDialog extends javax.swing.JDialog {
             String selectedFilterName = (String) hiddenPsmTable.getValueAt(row, 2);
             PsmFilter psmFilter = psmHideFilters.get(selectedFilterName);
             new FindDialog(peptideShakerGUI, this, null, null, psmFilter, FilterType.HIDE);
-            emptyTables();
-            updateMaps();
-            fillTables();
         }
     }//GEN-LAST:event_editHiddenPsmActionPerformed
 
     private void hiddenProteinsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hiddenProteinsTableKeyReleased
+        
         int column = hiddenProteinsTable.getSelectedColumn();
         int row = hiddenProteinsTable.getSelectedRow();
+        
         if (column == 2) {
             String newName = (String) hiddenProteinsTable.getValueAt(row, column);
             ArrayList<String> others = new ArrayList<String>();
@@ -1317,6 +1320,10 @@ public class FiltersDialog extends javax.swing.JDialog {
         if (column == 3) {
             String name = (String) hiddenProteinsTable.getValueAt(row, 2);
             proteinHideFilters.get(name).setDescription((String) hiddenProteinsTable.getValueAt(row, column));
+        }
+        
+        if (row != -1) {
+            editHiddenProtein.setEnabled(true);
         }
     }//GEN-LAST:event_hiddenProteinsTableKeyReleased
 
@@ -1402,6 +1409,10 @@ public class FiltersDialog extends javax.swing.JDialog {
             String name = (String) hiddenPeptidesTable.getValueAt(row, 2);
             peptideHideFilters.get(name).setDescription((String) hiddenPeptidesTable.getValueAt(row, column));
         }
+        
+        if (row != -1) {
+            editHiddenPeptides.setEnabled(true);
+        }
     }//GEN-LAST:event_hiddenPeptidesTableKeyReleased
 
     private void starredPsmTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_starredPsmTableKeyReleased
@@ -1444,6 +1455,10 @@ public class FiltersDialog extends javax.swing.JDialog {
             String name = (String) starredPsmTable.getValueAt(row, 2);
             psmStarFilters.get(name).setDescription((String) starredPsmTable.getValueAt(row, column));
         }
+        
+        if (row != -1) {
+            editStarredPsm.setEnabled(true);
+        }
     }//GEN-LAST:event_starredPsmTableKeyReleased
 
     private void hiddenPsmTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hiddenPsmTableKeyReleased
@@ -1485,6 +1500,10 @@ public class FiltersDialog extends javax.swing.JDialog {
         if (column == 3) {
             String name = (String) hiddenPsmTable.getValueAt(row, 2);
             psmHideFilters.get(name).setDescription((String) hiddenPsmTable.getValueAt(row, column));
+        }
+        
+        if (row != -1) {
+            editHiddenPsm.setEnabled(true);
         }
     }//GEN-LAST:event_hiddenPsmTableKeyReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables

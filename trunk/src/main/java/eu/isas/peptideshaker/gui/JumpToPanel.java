@@ -399,6 +399,16 @@ public class JumpToPanel extends javax.swing.JPanel {
      * @param enabled 
      */
     public void setEnabled(boolean enabled) {
+        
         inputTxt.setEnabled(enabled);
+        indexLabel.setEnabled(enabled);
+        
+        if (possibilities.size() > 0 && enabled) {
+            previousButton.setEnabled(true);
+            nextButton.setEnabled(true);
+        } else {
+            previousButton.setEnabled(false);
+            nextButton.setEnabled(false);
+        }
     }
 }
