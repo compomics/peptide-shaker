@@ -41,7 +41,8 @@ import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 
 /**
- *
+ * The main filter dialog.
+ * 
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
@@ -573,10 +574,13 @@ public class FindDialog extends javax.swing.JDialog {
             peptideConfidenceTxt.setText(peptideFilter.getPeptideConfidence() + "");
             peptideConfidenceCmb.setSelectedIndex(getComparisonIndex(peptideFilter.getPeptideConfidenceComparison()));
         }
+        
         for (int row = 0; row < modificationTable.getRowCount(); row++) {
             if (peptideFilter.getModificationStatus().contains(
                     (String) modificationTable.getValueAt(row, 2))) {
                 modificationTable.setValueAt(true, row, 0);
+            } else {
+                modificationTable.setValueAt(false, row, 0);
             }
         }
         boolean first = true;
@@ -633,6 +637,8 @@ public class FindDialog extends javax.swing.JDialog {
             if (psmFilter.getFileNames().contains(
                     (String) spectrumFilesTable.getValueAt(row, 1))) {
                 spectrumFilesTable.setValueAt(true, row, 0);
+            } else {
+                spectrumFilesTable.setValueAt(false, row, 0);
             }
         }
         boolean first = true;
@@ -1438,6 +1444,7 @@ public class FindDialog extends javax.swing.JDialog {
      * Creates the PSM filter based on the users input
      */
     public void createPsmFilter() {
+    
         if (validateInput()) {
             ArrayList<Integer> charges = new ArrayList<Integer>();
 
@@ -3201,33 +3208,41 @@ public class FindDialog extends javax.swing.JDialog {
             }
         }
         
+        // if filters have been updated, close dialog
+        if (proteinFilter != null || peptideFilter != null || psmFilter != null) {
+            exitButtonActionPerformed(null);
+        }
+        
         ProteinFilter newProteinFilter = null;
         PeptideFilter newPeptideFilter = null;
         PsmFilter newPsmFilter = null;
         
-        if (filterTypeJTabbedPane.getSelectedIndex() == 0) {
+        if (proteinFilter == null && filterTypeJTabbedPane.getSelectedIndex() == 0) {
             if (!proteinInput()) {
                 JOptionPane.showMessageDialog(this, "There seems to be no filters added.", "Empty Filter?", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 createProteinFilter();
                 newProteinFilter = proteinFilter;
                 new CreateFilterDialog(peptideShakerGUI, newProteinFilter, newPeptideFilter, newPsmFilter, currentFilterType);
+                exitButtonActionPerformed(null);
             }
-        } else if (filterTypeJTabbedPane.getSelectedIndex() == 1) {
+        } else if (peptideFilter == null && filterTypeJTabbedPane.getSelectedIndex() == 1) {
             if (!peptideInput()) {
                 JOptionPane.showMessageDialog(this, "There seems to be no filters added.", "Empty Filter?", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 createPeptideFilter();
                 newPeptideFilter = peptideFilter;
                 new CreateFilterDialog(peptideShakerGUI, newProteinFilter, newPeptideFilter, newPsmFilter, currentFilterType);
+                exitButtonActionPerformed(null);
             }
-        } else if (filterTypeJTabbedPane.getSelectedIndex() == 1) {
+        } else if (psmFilter == null && filterTypeJTabbedPane.getSelectedIndex() == 2) {
             if (!psmInput()) {
                 JOptionPane.showMessageDialog(this, "There seems to be no filters added.", "Empty Filter?", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 createPsmFilter();
                 newPsmFilter = psmFilter;
                 new CreateFilterDialog(peptideShakerGUI, newProteinFilter, newPeptideFilter, newPsmFilter, currentFilterType);
+                exitButtonActionPerformed(null);
             }
         }
     }//GEN-LAST:event_saveButtonActionPerformed

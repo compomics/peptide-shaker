@@ -174,7 +174,7 @@
                     <Component class="javax.swing.JTextField" name="peptideFilterTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
-                        <Property name="text" type="java.lang.String" value="New filter"/>
+                        <Property name="text" type="java.lang.String" value="New Filter"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel3">
@@ -220,12 +220,12 @@
                                   <Component id="jLabel9" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="103" groupAlignment="1" attributes="0">
                                   <Component id="psmEffectCmb" alignment="1" pref="6" max="32767" attributes="2"/>
                                   <Component id="psmFilterTxt" alignment="1" pref="6" max="32767" attributes="2"/>
-                                  <Component id="psmFilterDescription" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="psmFilterDescription" alignment="1" max="32767" attributes="2"/>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -235,12 +235,12 @@
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="psmFilterDescription" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="psmFilterTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="psmFilterTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="psmFilterDescription" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
@@ -266,7 +266,7 @@
                     <Component class="javax.swing.JTextField" name="psmFilterTxt">
                       <Properties>
                         <Property name="horizontalAlignment" type="int" value="0"/>
-                        <Property name="text" type="java.lang.String" value="New filter"/>
+                        <Property name="text" type="java.lang.String" value="New Filter"/>
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabel5">
@@ -355,7 +355,7 @@
                 <Component class="javax.swing.JTextField" name="proteinFilterTxt">
                   <Properties>
                     <Property name="horizontalAlignment" type="int" value="0"/>
-                    <Property name="text" type="java.lang.String" value="New filter"/>
+                    <Property name="text" type="java.lang.String" value="New Filter"/>
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel2">

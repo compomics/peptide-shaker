@@ -1776,6 +1776,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 ptmPanel.showSpectrumAnnotationMenu();
                 ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
             }
+            
+            if (selectedIndex == OVER_VIEW_TAB_INDEX 
+                    || selectedIndex == MODIFICATIONS_TAB_INDEX 
+                    || selectedIndex == STRUCTURES_TAB_INDEX) {
+                jumpToPanel.setEnabled(true);
+            } else {
+                jumpToPanel.setEnabled(false);
+            }
 
             // invoke later to give time for components to update
             SwingUtilities.invokeLater(new Runnable() {

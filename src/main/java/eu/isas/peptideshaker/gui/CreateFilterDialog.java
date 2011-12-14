@@ -135,7 +135,7 @@ public class CreateFilterDialog extends javax.swing.JDialog {
         peptideEffectCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Star", "Hide" }));
 
         peptideFilterTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        peptideFilterTxt.setText("New filter");
+        peptideFilterTxt.setText("New Filter");
 
         jLabel3.setText("Filter Name:");
 
@@ -187,7 +187,7 @@ public class CreateFilterDialog extends javax.swing.JDialog {
         psmEffectCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Star", "Hide" }));
 
         psmFilterTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        psmFilterTxt.setText("New filter");
+        psmFilterTxt.setText("New Filter");
 
         jLabel5.setText("Filter Name:");
 
@@ -208,9 +208,9 @@ public class CreateFilterDialog extends javax.swing.JDialog {
                     .addComponent(jLabel6)
                     .addComponent(jLabel9))
                 .addGap(18, 18, 18)
-                .addGroup(psmFilterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(psmEffectCmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, 6, Short.MAX_VALUE)
-                    .addComponent(psmFilterTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 6, Short.MAX_VALUE)
+                .addGroup(psmFilterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(psmEffectCmb, 0, 6, Short.MAX_VALUE)
+                    .addComponent(psmFilterTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 6, Short.MAX_VALUE)
                     .addComponent(psmFilterDescription))
                 .addContainerGap())
         );
@@ -220,11 +220,11 @@ public class CreateFilterDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(psmFilterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(psmFilterDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(psmFilterTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(psmFilterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(psmFilterTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9))
+                    .addComponent(jLabel9)
+                    .addComponent(psmFilterDescription, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(psmFilterPaneLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(psmEffectCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -241,7 +241,7 @@ public class CreateFilterDialog extends javax.swing.JDialog {
         jLabel1.setText("Filter Name:");
 
         proteinFilterTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        proteinFilterTxt.setText("New filter");
+        proteinFilterTxt.setText("New Filter");
 
         jLabel2.setText("Effect:");
 
