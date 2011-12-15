@@ -21,7 +21,6 @@ import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
-import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -143,7 +142,7 @@ public class FileImporter {
 
         try {
             waitingDialog.appendReport("Importing sequences from " + fastaFile.getName() + ".");
-            waitingDialog.setSecondaryProgressDialogIntermediate(true);
+            waitingDialog.setSecondaryProgressDialogIntermediate(false);
             sequenceFactory.loadFastaFile(fastaFile, waitingDialog.getSecondaryProgressBar());
 
             String firstAccession = sequenceFactory.getAccessions().get(0);
