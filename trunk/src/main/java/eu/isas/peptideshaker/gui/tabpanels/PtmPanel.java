@@ -3597,15 +3597,23 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private String getSelectedPeptide(boolean relatedPeptide) {
         if (relatedPeptide) {
-            if (relatedPeptidesTable.getSelectedRow() == -1 || relatedPeptides.isEmpty()) {
+            if (relatedPeptides.isEmpty()) {
                 return "";
             }
-            return relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(relatedPeptidesTable.getSelectedRow(), 0) - 1);
+            int index = relatedPeptidesTable.getSelectedRow();
+            if (index == -1) {
+                index = 0;
+            }
+            return relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(index, 0) - 1);
         } else {
-            if (peptidesTable.getSelectedRow() == -1 || displayedPeptides.isEmpty()) {
+            if (displayedPeptides.isEmpty()) {
                 return "";
             }
-            return displayedPeptides.get((Integer) peptidesTable.getValueAt(peptidesTable.getSelectedRow(), 0) - 1);
+            int index = peptidesTable.getSelectedRow();
+            if (index == -1) {
+                index = 0;
+            }
+            return displayedPeptides.get((Integer) peptidesTable.getValueAt(index, 0) - 1);
         }
     }
 
