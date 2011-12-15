@@ -262,10 +262,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         peptideTable.getColumn("  ").setMinWidth(30);
 
         // the protein inference column
-        proteinTable.getColumn("PI").setMaxWidth(35);
-        proteinTable.getColumn("PI").setMinWidth(35);
-        peptideTable.getColumn("PI").setMaxWidth(35);
-        peptideTable.getColumn("PI").setMinWidth(35);
+        proteinTable.getColumn("PI").setMaxWidth(37);
+        proteinTable.getColumn("PI").setMinWidth(37);
+        peptideTable.getColumn("PI").setMaxWidth(37);
+        peptideTable.getColumn("PI").setMinWidth(37);
 
         proteinTable.getColumn("Confidence").setMaxWidth(90);
         proteinTable.getColumn("Confidence").setMinWidth(90);

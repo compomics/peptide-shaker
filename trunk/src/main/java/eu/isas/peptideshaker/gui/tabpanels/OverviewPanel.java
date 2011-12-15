@@ -4,7 +4,6 @@ import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
-import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
@@ -269,12 +268,12 @@ public class OverviewPanel extends javax.swing.JPanel {
         psmTable.getColumn("  ").setMinWidth(30);
 
         // the protein inference column
-        proteinTable.getColumn("PI").setMaxWidth(35);
-        proteinTable.getColumn("PI").setMinWidth(35);
-        peptideTable.getColumn("PI").setMaxWidth(35);
-        peptideTable.getColumn("PI").setMinWidth(35);
-        psmTable.getColumn("SE").setMaxWidth(35);
-        psmTable.getColumn("SE").setMinWidth(35);
+        proteinTable.getColumn("PI").setMaxWidth(37);
+        proteinTable.getColumn("PI").setMinWidth(37);
+        peptideTable.getColumn("PI").setMaxWidth(37);
+        peptideTable.getColumn("PI").setMinWidth(37);
+        psmTable.getColumn("SE").setMaxWidth(37);
+        psmTable.getColumn("SE").setMinWidth(37);
 
         // set up the protein inference color map
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
@@ -349,13 +348,13 @@ public class OverviewPanel extends javax.swing.JPanel {
         
         // set up the psm color map
         HashMap<Integer, Color> psmColorMap = new HashMap<Integer, Color>();
-        psmColorMap.put(1, peptideShakerGUI.getSparklineColor()); // search engines agree
-        psmColorMap.put(0, Color.YELLOW); // search engines don't agree
+        psmColorMap.put(SpectrumIdentificationPanel.AGREEMENT, peptideShakerGUI.getSparklineColor()); // search engines agree
+        psmColorMap.put(SpectrumIdentificationPanel.CONFLICT, Color.YELLOW); // search engines don't agree
 
         // set up the psm tooltip map
         HashMap<Integer, String> psmTooltipMap = new HashMap<Integer, String>();
-        psmTooltipMap.put(1, "Search Engines Agree");
-        psmTooltipMap.put(0, "Search Engines Disagree");
+        psmTooltipMap.put(SpectrumIdentificationPanel.AGREEMENT, "Search Engines Agree");
+        psmTooltipMap.put(SpectrumIdentificationPanel.CONFLICT, "Search Engines Disagree");
 
         psmTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, psmColorMap, psmTooltipMap));
         psmTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
@@ -4000,7 +3999,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         ((DefaultTableModel) psmTable.getModel()).addRow(new Object[]{
                                     index,
                                     probabilities.isStarred(),
-                                    isBestPsmEqualForAllSearchEngines(spectrumMatch),
+                                    SpectrumIdentificationPanel.isBestPsmEqualForAllSearchEngines(spectrumMatch),
                                     peptideAssumption.getPeptide().getModifiedSequenceAsHtml(
                                     peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                                     peptideAssumption.getIdentificationCharge().value,
@@ -4100,7 +4099,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 ArrayList<String> keys;
                 PeptideMatch currentMatch;
 
-                double maxSpectra = 0;
+                double maxPeptideSpectra = 0;
 
                 int index = 0;
                 int validatedPeptideCounter = 0;
@@ -4173,8 +4172,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                     validatedPeptideCounter++;
                                 }
 
-                                if (maxSpectra < spectrumCount) {
-                                    maxSpectra = spectrumCount;
+                                if (maxPeptideSpectra < spectrumCount) {
+                                    maxPeptideSpectra = spectrumCount;
                                 }
 
                                 peptideTableMap.put(index + 1, currentMatch.getKey());
@@ -4189,7 +4188,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 ((TitledBorder) peptidesPanel.getBorder()).setTitle("Peptides (" + validatedPeptideCounter + "/" + peptideTable.getRowCount() + ")");
                 peptidesPanel.repaint();
 
-                ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
+                ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxPeptideSpectra);
 
                 // select the peptide in the table
                 if (peptideTable.getRowCount() > 0) {
@@ -5247,95 +5246,5 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      */
     public double getMaxMW() {
         return maxMW;
-    }
-
-    /**
-     * Returns true if all the used search engines agree on the top PSM, false 
-     * otherwise.
-     * 
-     * @param spectrumMatch     the PSM to check
-     * @return                  true if all the used search engines agree on the top PSM
-     */
-    private int isBestPsmEqualForAllSearchEngines(SpectrumMatch spectrumMatch) {
-
-        // @TODO: there's probably an easier more elegant way of doing all of this
-        
-        String omssaMatch = null;
-        String xtandemMatch = null;
-        String mascotMatch = null;
-        int omssaCharge = -1;
-        int xtandemCharge = -1;
-        int mascotCharge = -1;
-        
-        if (spectrumMatch.getAllAssumptions(Advocate.OMSSA) != null) {
-            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA).keySet());
-            Collections.sort(eValues);
- 
-            if (eValues.size() > 0) {
-                if (spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValues.get(0)).size() > 0) {
-                    omssaMatch = spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValues.get(0)).get(0).getPeptide().getModifiedSequenceAsString(true);
-                    omssaCharge = spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValues.get(0)).get(0).getIdentificationCharge().value;
-                }
-            }
-        }
-        
-        if (spectrumMatch.getAllAssumptions(Advocate.XTANDEM) != null) {
-            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTANDEM).keySet());
-            Collections.sort(eValues);
- 
-            if (eValues.size() > 0) {
-                if (spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).size() > 0) {
-                    xtandemMatch = spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).get(0).getPeptide().getModifiedSequenceAsString(true);
-                    xtandemCharge = spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).get(0).getIdentificationCharge().value;
-                }
-            }
-        }
-        
-        if (spectrumMatch.getAllAssumptions(Advocate.MASCOT) != null) {
-            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.MASCOT).keySet());
-            Collections.sort(eValues);
- 
-            if (eValues.size() > 0) {
-                if (spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValues.get(0)).size() > 0) {
-                    mascotMatch = spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValues.get(0)).get(0).getPeptide().getModifiedSequenceAsString(true);
-                    mascotCharge = spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValues.get(0)).get(0).getIdentificationCharge().value;
-                }
-            }
-        }
-        
-        
-        if (omssaMatch != null && xtandemMatch != null && mascotMatch != null) {
-            if ((omssaMatch.equalsIgnoreCase(xtandemMatch) && omssaMatch.equalsIgnoreCase(mascotMatch)) 
-                    && (omssaCharge == xtandemCharge && omssaCharge == mascotCharge)) {
-                return 1;
-            } else {
-                return 0;
-            }
-        } else if (omssaMatch != null && xtandemMatch != null) {
-            if (omssaMatch.equalsIgnoreCase(xtandemMatch) 
-                    && omssaCharge == xtandemCharge) {
-                return 1;
-            } else {
-                return 0;
-            }
-        } else if (omssaMatch != null && mascotMatch != null) {
-            if (omssaMatch.equalsIgnoreCase(mascotMatch)
-                    && omssaCharge == mascotCharge) {
-                return 1;
-            } else {
-                return 0;
-            }
-        } else if (xtandemMatch != null && mascotMatch != null) {
-            if (xtandemMatch.equalsIgnoreCase(mascotMatch)
-                    && xtandemCharge == mascotCharge) {
-                return 1;
-            } else {
-                return 0;
-            }
-        } else if (omssaMatch != null || xtandemMatch != null || mascotMatch != null) {
-            return 1;  
-        } else {
-            return 0; // this should not be possible...?
-        }
     }
 }
