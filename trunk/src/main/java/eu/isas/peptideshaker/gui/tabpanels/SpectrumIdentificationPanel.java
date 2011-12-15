@@ -217,10 +217,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         xTandemTable.getColumn(" ").setMinWidth(30);
         xTandemTable.getColumn(" ").setMaxWidth(30);
         
-        peptideShakerJTable.getColumn("SE").setMaxWidth(35);
-        peptideShakerJTable.getColumn("SE").setMinWidth(35);
-        spectrumTable.getColumn("SE").setMaxWidth(35);
-        spectrumTable.getColumn("SE").setMinWidth(35);
+        peptideShakerJTable.getColumn("SE").setMaxWidth(37);
+        peptideShakerJTable.getColumn("SE").setMinWidth(37);
+        spectrumTable.getColumn("SE").setMaxWidth(37);
+        spectrumTable.getColumn("SE").setMinWidth(37);
 
         peptideShakerJTable.getColumn("Confidence").setMaxWidth(90);
         peptideShakerJTable.getColumn("Confidence").setMinWidth(90);
