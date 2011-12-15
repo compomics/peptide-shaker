@@ -203,8 +203,8 @@ public class PtmPanel extends javax.swing.JPanel {
         peptidesTable.getColumn("PTM").setMinWidth(45);
         peptidesTable.getColumn("  ").setMaxWidth(30);
         peptidesTable.getColumn("  ").setMinWidth(30);
-        peptidesTable.getColumn("PI").setMaxWidth(35);
-        peptidesTable.getColumn("PI").setMinWidth(35);
+        peptidesTable.getColumn("PI").setMaxWidth(37);
+        peptidesTable.getColumn("PI").setMinWidth(37);
         peptidesTable.getColumn("Peptide").setMaxWidth(80);
         peptidesTable.getColumn("Peptide").setMinWidth(80);
 
@@ -212,8 +212,8 @@ public class PtmPanel extends javax.swing.JPanel {
         relatedPeptidesTable.getColumn("   ").setMinWidth(30);
         relatedPeptidesTable.getColumn(" ").setMaxWidth(45);
         relatedPeptidesTable.getColumn(" ").setMinWidth(45);
-        relatedPeptidesTable.getColumn("PI").setMaxWidth(35);
-        relatedPeptidesTable.getColumn("PI").setMinWidth(35);
+        relatedPeptidesTable.getColumn("PI").setMaxWidth(37);
+        relatedPeptidesTable.getColumn("PI").setMinWidth(37);
         relatedPeptidesTable.getColumn("  ").setMaxWidth(30);
         relatedPeptidesTable.getColumn("  ").setMinWidth(30);
         relatedPeptidesTable.getColumn("PTM").setMaxWidth(45);
