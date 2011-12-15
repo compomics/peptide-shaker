@@ -4,6 +4,7 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
@@ -238,22 +239,26 @@ public class JumpToPanel extends javax.swing.JPanel {
                 if (!input.equals("")) {
 
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    PSParameter psParameter = new PSParameter();
 
                     for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                         if (!ProteinMatch.isDecoy(proteinKey)) {
-                            if (proteinKey.toLowerCase().contains(input)) {
-                                possibilities.add(proteinKey);
-                                types.add(Type.PROTEIN);
-                            }
-                            try {
-                                for (String accession : ProteinMatch.getAccessions(proteinKey)) {
-                                    if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(input)) {
-                                        possibilities.add(proteinKey);
-                                        types.add(Type.PROTEIN);
-                                    }
+                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
+                            if (!psParameter.isHidden()) {
+                                if (proteinKey.toLowerCase().contains(input)) {
+                                    possibilities.add(proteinKey);
+                                    types.add(Type.PROTEIN);
                                 }
-                            } catch (Exception e) {
-                                // cannot get description, ignore
+                                try {
+                                    for (String accession : ProteinMatch.getAccessions(proteinKey)) {
+                                        if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(input)) {
+                                            possibilities.add(proteinKey);
+                                            types.add(Type.PROTEIN);
+                                        }
+                                    }
+                                } catch (Exception e) {
+                                    // cannot get description, ignore
+                                }
                             }
                         }
                     }
@@ -262,11 +267,14 @@ public class JumpToPanel extends javax.swing.JPanel {
                     PeptideMatch peptideMatch;
 
                     for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
-                        if (peptideKey.toLowerCase().startsWith(input)) {
-                            possibilities.add(peptideKey);
-                            types.add(Type.PEPTIDE);
-                        } else if (peptideKey.toLowerCase().contains(input)) {
-                            secondaryCandidates.add(peptideKey);
+                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                        if (!psParameter.isHidden()) {
+                            if (peptideKey.toLowerCase().startsWith(input)) {
+                                possibilities.add(peptideKey);
+                                types.add(Type.PEPTIDE);
+                            } else if (peptideKey.toLowerCase().contains(input)) {
+                                secondaryCandidates.add(peptideKey);
+                            }
                         }
                     }
 
@@ -384,7 +392,6 @@ public class JumpToPanel extends javax.swing.JPanel {
     private void nextButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextButtonMouseEntered
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
     }//GEN-LAST:event_nextButtonMouseEntered
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel findJLabel;
     private javax.swing.JLabel indexLabel;
@@ -399,10 +406,10 @@ public class JumpToPanel extends javax.swing.JPanel {
      * @param enabled 
      */
     public void setEnabled(boolean enabled) {
-        
+
         inputTxt.setEnabled(enabled);
         indexLabel.setEnabled(enabled);
-        
+
         if (possibilities.size() > 0 && enabled) {
             previousButton.setEnabled(true);
             nextButton.setEnabled(true);
