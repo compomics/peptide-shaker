@@ -3,10 +3,48 @@
 
 ----
 
+*Changes in PeptideShaker 0.12.0 (December 15. 2011):*
+
+ * NEW FEATURE: Added a peptide length QC plot.
+ * NEW FEATURE: Added Confidence and Search Engine Agreement column to the psm table in the Overview tab.
+ * NEW FEATURE: Added the Search Engine Agreement column to the Spectrum IDs tab. Also changed the PSM column in the same tab into a Search Engine Agreement column.
+ * NEW FEATURE: The identification charge is now used instead of the precursor charge.
+ * NEW FEATURE: Added advanced star/hide filter options.
+ * NEW FEATURE: Added a Find feature to the menu bar of the main frame. 
+ * NEW FEATURE: Set up the use of user preferences object saved in the user home folder.
+ * NEW FEATURE: Added selected/starred columns to all tabs where possible.
+ * NEW FEATURE: Implemented a first attempt at a PTM overview table.
+
+ * FEATURE IMPROVEMENT: Improved the cleaning of the project: preferences were not reset.
+ * FEATURE IMPROVEMENT: Made sure that the same protein/peptide/spectrum is always selected.
+ * FEATURE IMPROVEMENT: Fastened the loading of the Overview tab.
+ * FEATURE IMPROVEMENT: The enzymes are now sorted alphabetically in the SearchPreferencesDialog.
+ * FEATURE IMPROVEMENT: mods.xml and usermods.xml are now excluded when browsing for search result files.
+ * FEATURE IMPROVEMENT: Memory errors are now caught even when opening a file.
+ * FEATURE IMPROVEMENT: Tried to make the wrapper a bit smarter. Increased the max default memory setting to -Xmx1500M.
+ * FEATURE IMPROVEMENT: Added file filters for the graphics export dialog.
+ * FEATURE IMPROVEMENT: Extended the default PTM profile.
+ * FEATURE IMPROVEMENT: When opening results from SearchGUI in the New Project dialog the FASTA and MGF files are now searched for in the same folder as the SearchGUI properties file if not found at the given locations.
+
+ * BUG FIX: Fixed a bug where the waiting icon was not turned off when updating the spectrum selection in the Spectrum ID tab.
+ * BUG FIX: Fixed a bug where using the keyboard to move around in the peptide table in the PTM tab did not update the PSM selections.
+ * BUG FIX: The progress dialog now shows the actual progress when loading a FASTA file. 
+ * BUG FIX: Fixed a bug that occured if using ptms with more than one residue type.
+ * BUG FIX: Avoided that PeptideShaker gets stuck when an error occurs in the peptide to protein map creation.
+ * BUG FIX: Corrected a bug when creating a new project while another one is loaded.
+
+ * LIBRARY UPDATE: Updated utilities to version 3.3.9.
+ * LIBRARY UPDATE: Updated the uniprot api to version 2011.12.
+
+
+----
+
 *Changes in PeptideShaker 0.11.2 (November 24. 2011):*
  * NEW FEATURE: Added a maximize button to the Spectrum panel in the Overview tab.
  * BUG FIX: Fixed a bug in the protein filter for the confidence and score filters.
  * BUG FIX: Fixed a minor GUI bug when the user tried to hide all panels in the Overview tab.
+
+Download Count: 77
 
 ----
 
