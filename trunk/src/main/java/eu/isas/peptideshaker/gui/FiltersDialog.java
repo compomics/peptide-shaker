@@ -972,6 +972,8 @@ public class FiltersDialog extends javax.swing.JDialog {
         peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
         peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
         peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
+        peptideShakerGUI.setUpdated(PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX, false);
+        peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
         peptideShakerGUI.updateTabbedPanes();
 
         dispose();
@@ -1026,7 +1028,9 @@ public class FiltersDialog extends javax.swing.JDialog {
             proteinStarFilters.get(name).setDescription((String) starredProteinsTable.getValueAt(row, column));
         }
         
-        if (row != -1) {
+        if (starredProteinsTable.isEditing()) {
+            editStarredProtein.setEnabled(false);
+        } else if (starredProteinsTable.getSelectedRow() != -1) {
             editStarredProtein.setEnabled(true);
         }
     }//GEN-LAST:event_starredProteinsTableKeyReleased
@@ -1044,7 +1048,9 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
         }
 
-        if (row != -1) {
+        if (starredProteinsTable.isEditing()) {
+            editStarredProtein.setEnabled(false);
+        } else if (starredProteinsTable.getSelectedRow() != -1) {
             editStarredProtein.setEnabled(true);
         }
     }//GEN-LAST:event_starredProteinsTableMouseReleased
@@ -1066,7 +1072,9 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
         }
         
-        if (row != -1) {
+        if (starredPeptidesTable.isEditing()) {
+            editStarredPeptides.setEnabled(false);
+        } else if (starredPeptidesTable.getSelectedRow() != -1) {
             editStarredPeptides.setEnabled(true);
         }
     }//GEN-LAST:event_starredPeptidesTableMouseReleased
@@ -1088,7 +1096,9 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
         }
         
-        if (row != -1) {
+        if (starredPsmTable.isEditing()) {
+            editStarredPsm.setEnabled(false);
+        } else if (starredPsmTable.getSelectedRow() != -1) {
             editStarredPsm.setEnabled(true);
         }
     }//GEN-LAST:event_starredPsmTableMouseReleased
@@ -1110,7 +1120,9 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
         }
         
-        if (row != -1) {
+        if (hiddenProteinsTable.isEditing()) {
+            editHiddenProtein.setEnabled(false);
+        } else if (hiddenProteinsTable.getSelectedRow() != -1) {
             editHiddenProtein.setEnabled(true);
         }
     }//GEN-LAST:event_hiddenProteinsTableMouseReleased
@@ -1132,7 +1144,9 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
         }
         
-        if (row != -1) {
+        if (hiddenPeptidesTable.isEditing()) {
+            editHiddenPeptides.setEnabled(false);
+        } else if (hiddenPeptidesTable.getSelectedRow() != -1) {
             editHiddenPeptides.setEnabled(true);
         }
     }//GEN-LAST:event_hiddenPeptidesTableMouseReleased
@@ -1154,7 +1168,9 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
         }
         
-        if (row != -1) {
+        if (hiddenPsmTable.isEditing()) {
+            editHiddenPsm.setEnabled(false);
+        } else if (hiddenPsmTable.getSelectedRow() != -1) {
             editHiddenPsm.setEnabled(true);
         }
     }//GEN-LAST:event_hiddenPsmTableMouseReleased
@@ -1322,7 +1338,9 @@ public class FiltersDialog extends javax.swing.JDialog {
             proteinHideFilters.get(name).setDescription((String) hiddenProteinsTable.getValueAt(row, column));
         }
         
-        if (row != -1) {
+        if (hiddenProteinsTable.isEditing()) {
+            editHiddenProtein.setEnabled(false);
+        } else if (hiddenProteinsTable.getSelectedRow() != -1) {
             editHiddenProtein.setEnabled(true);
         }
     }//GEN-LAST:event_hiddenProteinsTableKeyReleased
@@ -1367,6 +1385,12 @@ public class FiltersDialog extends javax.swing.JDialog {
             String name = (String) starredPeptidesTable.getValueAt(row, 2);
             peptideStarFilters.get(name).setDescription((String) starredPeptidesTable.getValueAt(row, column));
         }
+        
+        if (starredPeptidesTable.isEditing()) {
+            editStarredPeptides.setEnabled(false);
+        } else if (starredPeptidesTable.getSelectedRow() != -1) {
+            editStarredPeptides.setEnabled(true);
+        }
     }//GEN-LAST:event_starredPeptidesTableKeyReleased
 
     private void hiddenPeptidesTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hiddenPeptidesTableKeyReleased
@@ -1410,7 +1434,9 @@ public class FiltersDialog extends javax.swing.JDialog {
             peptideHideFilters.get(name).setDescription((String) hiddenPeptidesTable.getValueAt(row, column));
         }
         
-        if (row != -1) {
+        if (hiddenPeptidesTable.isEditing()) {
+            editHiddenPeptides.setEnabled(false);
+        } else if (hiddenPeptidesTable.getSelectedRow() != -1) {
             editHiddenPeptides.setEnabled(true);
         }
     }//GEN-LAST:event_hiddenPeptidesTableKeyReleased
@@ -1456,7 +1482,9 @@ public class FiltersDialog extends javax.swing.JDialog {
             psmStarFilters.get(name).setDescription((String) starredPsmTable.getValueAt(row, column));
         }
         
-        if (row != -1) {
+        if (starredPsmTable.isEditing()) {
+            editStarredPsm.setEnabled(false);
+        } else if (starredPsmTable.getSelectedRow() != -1) {
             editStarredPsm.setEnabled(true);
         }
     }//GEN-LAST:event_starredPsmTableKeyReleased
@@ -1503,6 +1531,12 @@ public class FiltersDialog extends javax.swing.JDialog {
         }
         
         if (row != -1) {
+            editHiddenPsm.setEnabled(true);
+        }
+        
+        if (hiddenPsmTable.isEditing()) {
+            editHiddenPsm.setEnabled(false);
+        } else if (hiddenPsmTable.getSelectedRow() != -1) {
             editHiddenPsm.setEnabled(true);
         }
     }//GEN-LAST:event_hiddenPsmTableKeyReleased

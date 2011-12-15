@@ -1,6 +1,56 @@
 <?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+  <NonVisualComponents>
+    <Container class="javax.swing.JPopupMenu" name="selectPtmsJPopupMenu">
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+        <Property name="useNullLayout" type="boolean" value="true"/>
+      </Layout>
+      <SubComponents>
+        <MenuItem class="javax.swing.JMenuItem" name="selectAllPtmsMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Select All"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="selectAllPtmsMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="deselectAllPtmsMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Deselect All"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deselectAllPtmsMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+      </SubComponents>
+    </Container>
+    <Container class="javax.swing.JPopupMenu" name="selectFilesJPopupMenu">
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+        <Property name="useNullLayout" type="boolean" value="true"/>
+      </Layout>
+      <SubComponents>
+        <MenuItem class="javax.swing.JMenuItem" name="selectAllFilesMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Select All"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="selectAllFilesMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="deselectAllFilesMenuItem">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Deselect All"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deselectAllFilesMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+      </SubComponents>
+    </Container>
+  </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="title" type="java.lang.String" value="Create Filter"/>
@@ -394,6 +444,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinCoverageCmbActionPerformed"/>
@@ -451,6 +502,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinConfidenceCmbActionPerformed"/>
@@ -474,6 +526,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinScoreCmbActionPerformed"/>
@@ -497,6 +550,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinNSpectraCmbActionPerformed"/>
@@ -520,6 +574,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="nPeptidesCmbActionPerformed"/>
@@ -543,6 +598,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="spectrumCountingCmbActionPerformed"/>
@@ -916,6 +972,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideNSpectraCmbActionPerformed"/>
@@ -945,6 +1002,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideConfidenceCmbActionPerformed"/>
@@ -960,6 +1018,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideScoreCmbActionPerformed"/>
@@ -1435,6 +1494,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="precursorRTCmbActionPerformed"/>
@@ -1463,6 +1523,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmConfidenceCmbActionPerformed"/>
@@ -1491,6 +1552,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="precursorMzCmbActionPerformed"/>
@@ -1519,6 +1581,7 @@
                             <StringItem index="3" value="&gt;"/>
                           </StringArray>
                         </Property>
+                        <Property name="selectedIndex" type="int" value="3"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="precursorErrorCmbActionPerformed"/>
@@ -1823,6 +1886,7 @@
                             <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
                               <TableColumnModel selectionModel="0"/>
                             </Property>
+                            <Property name="opaque" type="boolean" value="false"/>
                             <Property name="tableHeader" type="javax.swing.table.JTableHeader" editor="org.netbeans.modules.form.editors2.JTableHeaderEditor">
                               <TableHeader reorderingAllowed="true" resizingAllowed="true"/>
                             </Property>

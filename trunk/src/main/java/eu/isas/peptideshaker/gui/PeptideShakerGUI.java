@@ -399,11 +399,12 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         overviewPanel = new OverviewPanel(this);
         overviewJPanel.add(overviewPanel);
+        proteinStructurePanel = new ProteinStructurePanel(this);
+        proteinStructureJPanel.add(proteinStructurePanel);
 
         statsPanel = new StatsPanel(this);
         ptmPanel = new PtmPanel(this);
-        spectrumIdentificationPanel = new SpectrumIdentificationPanel(this);
-        proteinStructurePanel = new ProteinStructurePanel(this);
+        spectrumIdentificationPanel = new SpectrumIdentificationPanel(this); 
         annotationPanel = new AnnotationPanel(this);
 
         jumpToPanel = new JumpToPanel(this);
@@ -3602,9 +3603,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 spectrumJPanel.add(spectrumIdentificationPanel);
                 return;
             case STRUCTURES_TAB_INDEX:
-                proteinStructurePanel = new ProteinStructurePanel(this);
-                proteinStructureJPanel.removeAll();
-                proteinStructureJPanel.add(proteinStructurePanel);
+                proteinStructurePanel.clearData();
                 return;
             case ANNOTATION_TAB_INDEX:
                 annotationPanel = new AnnotationPanel(this);

@@ -3286,7 +3286,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 proteinTable.addColumn(proteinScoreColumn);
                 proteinTable.moveColumn(11, 9);
             } else {
-                proteinTable.removeColumn(proteinTable.getColumn("Score"));
+                try {
+                    proteinTable.removeColumn(proteinTable.getColumn("Score"));
+                } catch (IllegalArgumentException e) {
+                    // ignore error
+                }
             }
         } catch (IllegalArgumentException e) {
             peptideShakerGUI.catchException(e);
@@ -3459,9 +3463,12 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     if (!peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
                         peptideRow = getPeptideRow(peptideKey);
                     }
-                    peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
-                    peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideRow, 0, false));
-                    peptideTableMouseReleased(null);
+                    
+                    if (peptideRow != -1) {
+                        peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
+                        peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideRow, 0, false));
+                        peptideTableMouseReleased(null);
+                    }
                 }
             });
         }
@@ -3516,5 +3523,52 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             }
         }
         return -1;
+    }
+    
+    /**
+     * Clear all the data.
+     */
+    public void clearData() {
+
+        DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
+        dm.getDataVector().removeAllElements();
+        dm.fireTableDataChanged();
+
+        dm = (DefaultTableModel) peptideTable.getModel();
+        dm.getDataVector().removeAllElements();
+        dm.fireTableDataChanged();
+
+        dm = (DefaultTableModel) pdbMatchesJTable.getModel();
+        dm.getDataVector().removeAllElements();
+        dm.fireTableDataChanged();
+        
+        dm = (DefaultTableModel) pdbChainsJTable.getModel();
+        dm.getDataVector().removeAllElements();
+        dm.fireTableDataChanged();
+
+        proteinTableMap = new HashMap<Integer, String>();
+        peptideTableMap = new HashMap<Integer, String>();
+
+        peptidePdbArray = new ArrayList<String>();
+        currentlyDisplayedPdbFile = null;
+
+        // empty the jmol panel
+        if (jmolStructureShown) {
+            jmolPanel = new JmolPanel();
+            pdbPanel.removeAll();
+            pdbPanel.add(jmolPanel);
+            pdbPanel.revalidate();
+            pdbPanel.repaint();
+            jmolStructureShown = false;
+            currentlyDisplayedPdbFile = null;
+
+            ((TitledBorder) pdbOuterPanel.getBorder()).setTitle("PDB Structure");
+            pdbOuterPanel.repaint();
+        }
+
+        ((TitledBorder) proteinsPanel.getBorder()).setTitle("Proteins");
+        ((TitledBorder) peptidesPanel.getBorder()).setTitle("Peptides");
+        ((TitledBorder) pdbMatchesPanel.getBorder()).setTitle("Peptide-Spectrum Matches");
+        ((TitledBorder) pdbChainsPanel.getBorder()).setTitle("Spectrum & Fragment Ions");
     }
 }
