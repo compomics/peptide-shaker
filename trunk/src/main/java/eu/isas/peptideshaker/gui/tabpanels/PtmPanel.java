@@ -3478,7 +3478,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     public void updatePtmTable() {
         Peptide selectedPeptide = identification.getPeptideMatch(getSelectedPeptide()).getTheoreticPeptide();
         PTM ptm = ptmFactory.getPTM(getSelectedModification());
-        ptmTableJScrollPane.setViewportView(new PtmTable(peptideShakerGUI, selectedPeptide, ptm, getSelectedPsm()));
+        ptmTableJScrollPane.setViewportView(new PtmTable(peptideShakerGUI, selectedPeptide, ptm, getSelectedPsm(), false));
     }
 
     /**

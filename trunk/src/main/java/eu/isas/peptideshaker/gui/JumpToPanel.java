@@ -84,11 +84,23 @@ public class JumpToPanel extends javax.swing.JPanel {
         inputTxt.requestFocus();
         inputTxt.selectAll();
     }
+    
+    /**
+     * Set the color for the hits.
+     * 
+     * @param color 
+     */
+    public void setColor(Color color) {
+        indexLabel.setForeground(color);
+    }
 
     /**
      * Updates the item selection in the selected tab
      */
     public void updateSelectionInTab() {
+        
+        indexLabel.setForeground(Color.BLACK);
+        
         if (types.get(currentSelection) == Type.PROTEIN) {
             peptideShakerGUI.setSelectedItems(possibilities.get(currentSelection), PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
             peptideShakerGUI.updateSelectionInCurrentTab();
@@ -96,10 +108,10 @@ public class JumpToPanel extends javax.swing.JPanel {
             peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, possibilities.get(currentSelection), PeptideShakerGUI.NO_SELECTION);
             if (peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.MODIFICATIONS_TAB_INDEX
                     && !peptideShakerGUI.getDisplayedPeptides().contains(possibilities.get(currentSelection))) {
-                //@TODO: warn the user that the current selection is not in the tab
-                System.out.println("item not found!");
+                // warn the user that the current selection is not in the tab
+                indexLabel.setForeground(Color.RED);
             } else {
-            peptideShakerGUI.updateSelectionInCurrentTab();
+                peptideShakerGUI.updateSelectionInCurrentTab();
             }
         }
         indexLabel.setText("(" + (currentSelection + 1) + " of " + possibilities.size() + ")");
