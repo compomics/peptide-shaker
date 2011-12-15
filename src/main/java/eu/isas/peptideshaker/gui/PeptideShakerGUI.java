@@ -1785,6 +1785,9 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             } else {
                 jumpToPanel.setEnabled(false);
             }
+            
+            // change jump to color
+            jumpToPanel.setColor(Color.black);
 
             // invoke later to give time for components to update
             SwingUtilities.invokeLater(new Runnable() {
