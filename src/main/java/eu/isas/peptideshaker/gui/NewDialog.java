@@ -567,7 +567,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         if (validateInput()) {
 
             this.setVisible(false);
-            
+
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
             sample = new Sample(sampleNameIdtxt.getText().trim());
             SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(getReplicateNumber()));
@@ -735,12 +735,12 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
             @Override
             public boolean accept(File myFile) {
-                
-                if (myFile.getName().equalsIgnoreCase("mods.xml") ||
-                    myFile.getName().equalsIgnoreCase("usermods.xml")) {
+
+                if (myFile.getName().equalsIgnoreCase("mods.xml")
+                        || myFile.getName().equalsIgnoreCase("usermods.xml")) {
                     return false;
                 }
-                
+
                 return myFile.getName().toLowerCase().endsWith("dat")
                         || myFile.getName().toLowerCase().endsWith("omx")
                         || myFile.getName().toLowerCase().endsWith("xml")
@@ -767,7 +767,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                                 || file.getName().toLowerCase().endsWith("xml")) {
                             if (!file.getName().equals("mods.xml")
                                     && !file.getName().equals("usermods.xml")) {
-                            idFiles.add(file);
+                                idFiles.add(file);
                             }
                         } else if (file.getName().toLowerCase().endsWith(".properties")) {
                             if (!searchParametersFiles.contains(file)) {
@@ -882,7 +882,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         BareBonesBrowserLaunch.openURL("http://code.google.com/p/peptide-shaker/downloads/detail?name=peptide-shaker_test_files.zip");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exampleFilesLabelMouseClicked
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
@@ -927,7 +926,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     public void updateFilterSettingsField(String text) {
         importFilterTxt.setText(text);
     }
-    
+
     /**
      * Validates the input parameters.
      *
@@ -1097,7 +1096,15 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                     fastaFileTxt.setText(file.getName());
                     fastaFile = file;
                 } else {
-                    JOptionPane.showMessageDialog(this, "FASTA file \'" + temp + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+
+                    // try to find it in the same folder as the SearchGUI.properties file
+                    if (new File(searchGUIFile.getParentFile(), file.getName()).exists()) {
+                        searchParameters.setFastaFile(new File(searchGUIFile.getParentFile(), file.getName()));
+                        fastaFileTxt.setText(new File(searchGUIFile.getParentFile(), file.getName()).getName());
+                        fastaFile = new File(searchGUIFile.getParentFile(), file.getName());
+                    } else {
+                        JOptionPane.showMessageDialog(this, "FASTA file \'" + temp + "\' not found.\nPlease locate it manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                    }
                 }
             } catch (Exception e) {
                 // file not found: use manual input
@@ -1148,10 +1155,16 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                                 names.add(newFile.getName());
                                 spectrumFiles.add(newFile);
                             } else {
-                                if (!missing.equals("")) {
-                                    missing += ", ";
+                                // try to find it in the same folder as the SearchGUI.properties file
+                                if (new File(searchGUIFile.getParentFile(), newFile.getName()).exists()) {
+                                    names.add(new File(searchGUIFile.getParentFile(), newFile.getName()).getName());
+                                    spectrumFiles.add(new File(searchGUIFile.getParentFile(), newFile.getName()));
+                                } else {
+                                    if (!missing.equals("")) {
+                                        missing += ", ";
+                                    }
+                                    missing += newFile.getName();
                                 }
-                                missing += newFile.getName();
                             }
                         }
                     } catch (Exception e) {
@@ -1161,7 +1174,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             }
             if (!missing.equals("")) {
                 JOptionPane.showMessageDialog(this, "Input file(s) \'" + missing
-                        + "\' not found.\nPlease locate it manually if needed.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                        + "\' not found.\nPlease locate them manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
                 success = false;
             }
             br.close();
