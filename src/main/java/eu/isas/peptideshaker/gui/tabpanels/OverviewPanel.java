@@ -273,8 +273,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTable.getColumn("PI").setMinWidth(35);
         peptideTable.getColumn("PI").setMaxWidth(35);
         peptideTable.getColumn("PI").setMinWidth(35);
-        psmTable.getColumn("   ").setMaxWidth(35);
-        psmTable.getColumn("   ").setMinWidth(35);
+        psmTable.getColumn("SE").setMaxWidth(35);
+        psmTable.getColumn("SE").setMinWidth(35);
 
         // set up the protein inference color map
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
@@ -357,7 +357,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         psmTooltipMap.put(1, "Search Engines Agree");
         psmTooltipMap.put(0, "Search Engines Disagree");
 
-        psmTable.getColumn("   ").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, psmColorMap, psmTooltipMap));
+        psmTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, psmColorMap, psmTooltipMap));
         psmTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
@@ -1133,7 +1133,7 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "  ", "   ", "Sequence", "Charge", "Mass Error", "Confidence", ""
+                " ", "  ", "SE", "Sequence", "Charge", "Mass Error", "Confidence", ""
             }
         ) {
             Class[] types = new Class [] {

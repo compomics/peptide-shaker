@@ -1093,7 +1093,7 @@
                                                   <Table columnCount="8" rowCount="0">
                                                     <Column editable="false" title=" " type="java.lang.Integer"/>
                                                     <Column editable="true" title="  " type="java.lang.Boolean"/>
-                                                    <Column editable="false" title="   " type="java.lang.Integer"/>
+                                                    <Column editable="false" title="SE" type="java.lang.Integer"/>
                                                     <Column editable="false" title="Sequence" type="java.lang.String"/>
                                                     <Column editable="false" title="Charge" type="java.lang.Integer"/>
                                                     <Column editable="false" title="Mass Error" type="java.lang.Double"/>
