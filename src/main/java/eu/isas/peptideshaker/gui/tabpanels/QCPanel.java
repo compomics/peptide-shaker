@@ -35,6 +35,7 @@ import org.jfree.data.category.DefaultCategoryDataset;
  * @author Harald Barsnes
  */
 public class QCPanel extends javax.swing.JPanel {
+
     /**
      * The main peptide shaker gui.
      */
@@ -1019,7 +1020,6 @@ public class QCPanel extends javax.swing.JPanel {
     private void peptideLengthJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideLengthJRadioButtonActionPerformed
         peptideMissedCleavagesJRadioButtonActionPerformed(evt);
     }//GEN-LAST:event_peptideLengthJRadioButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton exportPeptidesPlotJButton;
     private javax.swing.JButton exportProteinsPlotJButton;
@@ -1061,7 +1061,7 @@ public class QCPanel extends javax.swing.JPanel {
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
-        
+
         new Thread(new Runnable() {
 
             public void run() {
@@ -1087,7 +1087,7 @@ public class QCPanel extends javax.swing.JPanel {
                 exportPsmPlotJButton.setEnabled(true);
                 exportPeptidesPlotJButton.setEnabled(true);
                 exportProteinsPlotJButton.setEnabled(true);
-                
+
                 peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, true);
 
                 progressDialog.setVisible(false);
@@ -1262,13 +1262,13 @@ public class QCPanel extends javax.swing.JPanel {
             getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
             getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
             getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
-            
+
         } else if (peptideLengthJRadioButton.isSelected()) {
-            
+
             int min = peptideShakerGUI.getIdFilter().getMinPepLength();
             int max = peptideShakerGUI.getIdFilter().getMaxPepLength();
-            
-            for (int i=min; i<max; i++) {
+
+            for (int i = min; i < max; i++) {
                 bins.add(new Double(i));
             }
 
@@ -1426,7 +1426,7 @@ public class QCPanel extends javax.swing.JPanel {
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
-                        if (psParameter.isValidated()) {
+                        if (psParameter.isValidated() && !psParameter.isHidden()) {
                             value++;
                         }
                     }
@@ -1434,17 +1434,21 @@ public class QCPanel extends javax.swing.JPanel {
                         maxValue = value;
                     }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
-                    if (!proteinMatch.isDecoy()) {
-                        if (psParameter.isValidated()) {
-                            validatedValues.add(value);
+
+                    if (!psParameter.isHidden()) {
+
+                        if (!proteinMatch.isDecoy()) {
+                            if (psParameter.isValidated()) {
+                                validatedValues.add(value);
+                            } else {
+                                nonValidatedValues.add(value);
+                            }
                         } else {
-                            nonValidatedValues.add(value);
-                        }
-                    } else {
-                        if (psParameter.isValidated()) {
-                            validatedDecoyValues.add(value);
-                        } else {
-                            nonValidatedDecoyValues.add(value);
+                            if (psParameter.isValidated()) {
+                                validatedDecoyValues.add(value);
+                            } else {
+                                nonValidatedDecoyValues.add(value);
+                            }
                         }
                     }
 
@@ -1461,24 +1465,32 @@ public class QCPanel extends javax.swing.JPanel {
 
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                    double value = peptideShakerGUI.getSpectrumCounting(proteinMatch);
-                    if (value > 0) {
-                        if (value > maxValue) {
-                            maxValue = value;
-                        }
-                    }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
-                    if (!proteinMatch.isDecoy()) {
+
+                    if (!psParameter.isHidden()) {
+
+                        double value = peptideShakerGUI.getSpectrumCounting(proteinMatch);
+
                         if (psParameter.isValidated()) {
-                            validatedValues.add(value);
-                        } else {
-                            nonValidatedValues.add(value);
+                            if (value > 0) {
+                                if (value > maxValue) {
+                                    maxValue = value;
+                                }
+                            }
                         }
-                    } else {
-                        if (psParameter.isValidated()) {
-                            validatedDecoyValues.add(value);
+
+                        if (!proteinMatch.isDecoy()) {
+                            if (psParameter.isValidated()) {
+                                validatedValues.add(value);
+                            } else {
+                                nonValidatedValues.add(value);
+                            }
                         } else {
-                            nonValidatedDecoyValues.add(value);
+                            if (psParameter.isValidated()) {
+                                validatedDecoyValues.add(value);
+                            } else {
+                                nonValidatedDecoyValues.add(value);
+                            }
                         }
                     }
 
@@ -1494,23 +1506,28 @@ public class QCPanel extends javax.swing.JPanel {
 
                 for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                     ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
-                    Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                    double value = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
-                    if (value > maxValue) {
-                        maxValue = value;
-                    }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
-                    if (!proteinMatch.isDecoy()) {
-                        if (psParameter.isValidated()) {
-                            validatedValues.add(value);
-                        } else {
-                            nonValidatedValues.add(value);
+
+                    if (!psParameter.isHidden()) {
+
+                        Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                        double value = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
+
+                        if (value > maxValue) {
+                            maxValue = value;
                         }
-                    } else {
-                        if (psParameter.isValidated()) {
-                            validatedDecoyValues.add(value);
+                        if (!proteinMatch.isDecoy()) {
+                            if (psParameter.isValidated()) {
+                                validatedValues.add(value);
+                            } else {
+                                nonValidatedValues.add(value);
+                            }
                         } else {
-                            nonValidatedDecoyValues.add(value);
+                            if (psParameter.isValidated()) {
+                                validatedDecoyValues.add(value);
+                            } else {
+                                nonValidatedDecoyValues.add(value);
+                            }
                         }
                     }
 
@@ -1548,7 +1565,7 @@ public class QCPanel extends javax.swing.JPanel {
                     PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
-                        if (psParameter.isValidated()) {
+                        if (psParameter.isValidated() && !psParameter.isHidden()) {
                             value = value + 1;
                         }
                     }
@@ -1556,17 +1573,21 @@ public class QCPanel extends javax.swing.JPanel {
                         maxValue = value;
                     }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
-                    if (!peptideMatch.isDecoy()) {
-                        if (psParameter.isValidated()) {
-                            validatedValues.add(value);
+
+                    if (!psParameter.isHidden()) {
+
+                        if (!peptideMatch.isDecoy()) {
+                            if (psParameter.isValidated()) {
+                                validatedValues.add(value);
+                            } else {
+                                nonValidatedValues.add(value);
+                            }
                         } else {
-                            nonValidatedValues.add(value);
-                        }
-                    } else {
-                        if (psParameter.isValidated()) {
-                            validatedDecoyValues.add(value);
-                        } else {
-                            nonValidatedDecoyValues.add(value);
+                            if (psParameter.isValidated()) {
+                                validatedDecoyValues.add(value);
+                            } else {
+                                nonValidatedDecoyValues.add(value);
+                            }
                         }
                     }
 
@@ -1583,31 +1604,36 @@ public class QCPanel extends javax.swing.JPanel {
 
                 for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
                     PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-                    double value = Peptide.getNMissedCleavages(Peptide.getSequence(peptideKey), enzyme);
-                    if (value > 0) {
-                        if (value > maxValue) {
-                            maxValue = value;
-                        }
-                    }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
-                    if (!peptideMatch.isDecoy()) {
-                        if (psParameter.isValidated()) {
-                            validatedValues.add(value);
-                        } else {
-                            nonValidatedValues.add(value);
+
+                    if (!psParameter.isHidden()) {
+
+                        double value = Peptide.getNMissedCleavages(Peptide.getSequence(peptideKey), enzyme);
+                        if (value > 0) {
+                            if (value > maxValue) {
+                                maxValue = value;
+                            }
                         }
-                    } else {
-                        if (psParameter.isValidated()) {
-                            validatedDecoyValues.add(value);
+
+                        if (!peptideMatch.isDecoy()) {
+                            if (psParameter.isValidated()) {
+                                validatedValues.add(value);
+                            } else {
+                                nonValidatedValues.add(value);
+                            }
                         } else {
-                            nonValidatedDecoyValues.add(value);
+                            if (psParameter.isValidated()) {
+                                validatedDecoyValues.add(value);
+                            } else {
+                                nonValidatedDecoyValues.add(value);
+                            }
                         }
                     }
 
                     progressDialog.incrementValue();
                 }
             } else if (peptideLengthJRadioButton.isSelected()) {
-                
+
                 // Values for the peptide length
                 validatedValues = new ArrayList<Double>();
                 nonValidatedValues = new ArrayList<Double>();
@@ -1616,24 +1642,29 @@ public class QCPanel extends javax.swing.JPanel {
 
                 for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
                     PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
-                    double length = Peptide.getSequence(peptideKey).length();
-                    if (length > 0) {
-                        if (length > maxValue) {
-                            maxValue = length;
-                        }
-                    }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
-                    if (!peptideMatch.isDecoy()) {
-                        if (psParameter.isValidated()) {
-                            validatedValues.add(length);
-                        } else {
-                            nonValidatedValues.add(length);
+
+                    if (!psParameter.isHidden()) {
+
+                        double length = Peptide.getSequence(peptideKey).length();
+                        if (length > 0) {
+                            if (length > maxValue) {
+                                maxValue = length;
+                            }
                         }
-                    } else {
-                        if (psParameter.isValidated()) {
-                            validatedDecoyValues.add(length);
+
+                        if (!peptideMatch.isDecoy()) {
+                            if (psParameter.isValidated()) {
+                                validatedValues.add(length);
+                            } else {
+                                nonValidatedValues.add(length);
+                            }
                         } else {
-                            nonValidatedDecoyValues.add(length);
+                            if (psParameter.isValidated()) {
+                                validatedDecoyValues.add(length);
+                            } else {
+                                nonValidatedDecoyValues.add(length);
+                            }
                         }
                     }
 
@@ -1670,25 +1701,30 @@ public class QCPanel extends javax.swing.JPanel {
 
                 for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
                     spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    precursor = peptideShakerGUI.getPrecursor(spectrumKey);
-                    double value = Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(
-                            precursor.getMz(),
-                            peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
-                    if (value > maxValue) {
-                        maxValue = value;
-                    }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
-                    if (!spectrumMatch.getBestAssumption().isDecoy()) {
-                        if (psParameter.isValidated()) {
-                            validatedValues.add(value);
-                        } else {
-                            nonValidatedValues.add(value);
+
+                    if (!psParameter.isHidden()) {
+
+                        precursor = peptideShakerGUI.getPrecursor(spectrumKey);
+                        double value = Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(
+                                precursor.getMz(),
+                                peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm()));
+                        if (value > maxValue) {
+                            maxValue = value;
                         }
-                    } else {
-                        if (psParameter.isValidated()) {
-                            validatedDecoyValues.add(value);
+
+                        if (!spectrumMatch.getBestAssumption().isDecoy()) {
+                            if (psParameter.isValidated()) {
+                                validatedValues.add(value);
+                            } else {
+                                nonValidatedValues.add(value);
+                            }
                         } else {
-                            nonValidatedDecoyValues.add(value);
+                            if (psParameter.isValidated()) {
+                                validatedDecoyValues.add(value);
+                            } else {
+                                nonValidatedDecoyValues.add(value);
+                            }
                         }
                     }
 
@@ -1705,22 +1741,27 @@ public class QCPanel extends javax.swing.JPanel {
 
                 for (String spectrumKey : peptideShakerGUI.getIdentification().getSpectrumIdentification()) {
                     spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
-                    double value = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
-                    if (value > maxValue) {
-                        maxValue = value;
-                    }
                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
-                    if (!spectrumMatch.getBestAssumption().isDecoy()) {
-                        if (psParameter.isValidated()) {
-                            validatedValues.add(value);
-                        } else {
-                            nonValidatedValues.add(value);
+
+                    if (!psParameter.isHidden()) {
+
+                        double value = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
+                        if (value > maxValue) {
+                            maxValue = value;
                         }
-                    } else {
-                        if (psParameter.isValidated()) {
-                            validatedDecoyValues.add(value);
+
+                        if (!spectrumMatch.getBestAssumption().isDecoy()) {
+                            if (psParameter.isValidated()) {
+                                validatedValues.add(value);
+                            } else {
+                                nonValidatedValues.add(value);
+                            }
                         } else {
-                            nonValidatedDecoyValues.add(value);
+                            if (psParameter.isValidated()) {
+                                validatedDecoyValues.add(value);
+                            } else {
+                                nonValidatedDecoyValues.add(value);
+                            }
                         }
                     }
 

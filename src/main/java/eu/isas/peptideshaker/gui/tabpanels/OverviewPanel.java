@@ -4,6 +4,7 @@ import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
@@ -244,6 +245,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTable.getColumn("Confidence").setMinWidth(90);
         peptideTable.getColumn("Confidence").setMaxWidth(90);
         peptideTable.getColumn("Confidence").setMinWidth(90);
+        psmTable.getColumn("Confidence").setMaxWidth(90);
+        psmTable.getColumn("Confidence").setMinWidth(90);
         proteinTable.getColumn("Score").setMaxWidth(90);
         proteinTable.getColumn("Score").setMinWidth(90);
         peptideTable.getColumn("Score").setMaxWidth(90);
@@ -270,6 +273,8 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTable.getColumn("PI").setMinWidth(35);
         peptideTable.getColumn("PI").setMaxWidth(35);
         peptideTable.getColumn("PI").setMinWidth(35);
+        psmTable.getColumn("   ").setMaxWidth(35);
+        psmTable.getColumn("   ").setMinWidth(35);
 
         // set up the protein inference color map
         HashMap<Integer, Color> proteinInferenceColorMap = new HashMap<Integer, Color>();
@@ -340,7 +345,22 @@ public class OverviewPanel extends javax.swing.JPanel {
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 "Starred", null, null));
+        
+        
+        // set up the psm color map
+        HashMap<Integer, Color> psmColorMap = new HashMap<Integer, Color>();
+        psmColorMap.put(1, peptideShakerGUI.getSparklineColor()); // search engines agree
+        psmColorMap.put(0, Color.YELLOW); // search engines don't agree
 
+        // set up the psm tooltip map
+        HashMap<Integer, String> psmTooltipMap = new HashMap<Integer, String>();
+        psmTooltipMap.put(1, "Search Engines Agree");
+        psmTooltipMap.put(0, "Search Engines Disagree");
+
+        psmTable.getColumn("   ").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(Color.lightGray, psmColorMap, psmTooltipMap));
+        psmTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
+        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
+                true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
         psmTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 peptideShakerGUI.getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
@@ -403,9 +423,11 @@ public class OverviewPanel extends javax.swing.JPanel {
         psmTableToolTips = new ArrayList<String>();
         psmTableToolTips.add(null);
         psmTableToolTips.add("Starred");
+        psmTableToolTips.add("Search Engine Agreement");
         psmTableToolTips.add("Peptide Sequence");
         psmTableToolTips.add("Precursor Charge");
         psmTableToolTips.add("Mass Error");
+        psmTableToolTips.add("Peptide-Spectrum Match Confidence");
         psmTableToolTips.add("Validated");
     }
 
@@ -1111,14 +1133,14 @@ public class OverviewPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "  ", "Sequence", "Charge", "Mass Error", ""
+                " ", "  ", "   ", "Sequence", "Charge", "Mass Error", "Confidence", ""
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Boolean.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Boolean.class
+                java.lang.Integer.class, java.lang.Boolean.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Double.class, java.lang.Boolean.class
             };
             boolean[] canEdit = new boolean [] {
-                false, true, false, false, false, false
+                false, true, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -3311,7 +3333,12 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @return  the index of the corresponding protein
      */
     private Integer getProteinIndex(int row) {
-        return (Integer) proteinTable.getValueAt(row, 0);
+
+        if (row != -1) {
+            return (Integer) proteinTable.getValueAt(row, 0);
+        } else {
+            return -1;
+        }
     }
 
     /**
@@ -3321,7 +3348,12 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * @return  the index of the corresponding peptide
      */
     private Integer getPeptideIndex(int row) {
-        return (Integer) peptideTable.getValueAt(row, 0);
+
+        if (row != -1) {
+            return (Integer) peptideTable.getValueAt(row, 0);
+        } else {
+            return -1;
+        }
     }
 
     /**
@@ -3968,10 +4000,12 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         ((DefaultTableModel) psmTable.getModel()).addRow(new Object[]{
                                     index,
                                     probabilities.isStarred(),
+                                    isBestPsmEqualForAllSearchEngines(spectrumMatch),
                                     peptideAssumption.getPeptide().getModifiedSequenceAsHtml(
                                     peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
                                     peptideAssumption.getIdentificationCharge().value,
                                     Math.abs(peptideAssumption.getDeltaMass(precursor.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())),
+                                    probabilities.getPsmConfidence(),
                                     probabilities.isValidated()
                                 });
 
@@ -4164,9 +4198,12 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     if (!peptideKey.equals(PeptideShakerGUI.NO_SELECTION)) {
                         peptideRow = getPeptideRow(peptideKey);
                     }
-                    peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
-                    peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideRow, 0, false));
-                    peptideTableKeyReleased(null);
+
+                    if (peptideRow != -1) {
+                        peptideTable.setRowSelectionInterval(peptideRow, peptideRow);
+                        peptideTable.scrollRectToVisible(peptideTable.getCellRect(peptideRow, 0, false));
+                        peptideTableKeyReleased(null);
+                    }
                 }
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
@@ -5062,7 +5099,14 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     public void newItemSelection() {
         String proteinKey = proteinTableMap.get(getProteinIndex(proteinTable.getSelectedRow()));
         String peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
-        String psmKey = psmTableMap.get((Integer) psmTable.getValueAt(psmTable.getSelectedRow(), 0));
+        String psmKey;
+
+        if (psmTable.getSelectedRow() != -1) {
+            psmKey = psmTableMap.get((Integer) psmTable.getValueAt(psmTable.getSelectedRow(), 0));
+        } else {
+            psmKey = null;
+        }
+
         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
     }
 
@@ -5203,5 +5247,95 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      */
     public double getMaxMW() {
         return maxMW;
+    }
+
+    /**
+     * Returns true if all the used search engines agree on the top PSM, false 
+     * otherwise.
+     * 
+     * @param spectrumMatch     the PSM to check
+     * @return                  true if all the used search engines agree on the top PSM
+     */
+    private int isBestPsmEqualForAllSearchEngines(SpectrumMatch spectrumMatch) {
+
+        // @TODO: there's probably an easier more elegant way of doing all of this
+        
+        String omssaMatch = null;
+        String xtandemMatch = null;
+        String mascotMatch = null;
+        int omssaCharge = -1;
+        int xtandemCharge = -1;
+        int mascotCharge = -1;
+        
+        if (spectrumMatch.getAllAssumptions(Advocate.OMSSA) != null) {
+            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.OMSSA).keySet());
+            Collections.sort(eValues);
+ 
+            if (eValues.size() > 0) {
+                if (spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValues.get(0)).size() > 0) {
+                    omssaMatch = spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValues.get(0)).get(0).getPeptide().getModifiedSequenceAsString(true);
+                    omssaCharge = spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValues.get(0)).get(0).getIdentificationCharge().value;
+                }
+            }
+        }
+        
+        if (spectrumMatch.getAllAssumptions(Advocate.XTANDEM) != null) {
+            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.XTANDEM).keySet());
+            Collections.sort(eValues);
+ 
+            if (eValues.size() > 0) {
+                if (spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).size() > 0) {
+                    xtandemMatch = spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).get(0).getPeptide().getModifiedSequenceAsString(true);
+                    xtandemCharge = spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValues.get(0)).get(0).getIdentificationCharge().value;
+                }
+            }
+        }
+        
+        if (spectrumMatch.getAllAssumptions(Advocate.MASCOT) != null) {
+            ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(Advocate.MASCOT).keySet());
+            Collections.sort(eValues);
+ 
+            if (eValues.size() > 0) {
+                if (spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValues.get(0)).size() > 0) {
+                    mascotMatch = spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValues.get(0)).get(0).getPeptide().getModifiedSequenceAsString(true);
+                    mascotCharge = spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValues.get(0)).get(0).getIdentificationCharge().value;
+                }
+            }
+        }
+        
+        
+        if (omssaMatch != null && xtandemMatch != null && mascotMatch != null) {
+            if ((omssaMatch.equalsIgnoreCase(xtandemMatch) && omssaMatch.equalsIgnoreCase(mascotMatch)) 
+                    && (omssaCharge == xtandemCharge && omssaCharge == mascotCharge)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else if (omssaMatch != null && xtandemMatch != null) {
+            if (omssaMatch.equalsIgnoreCase(xtandemMatch) 
+                    && omssaCharge == xtandemCharge) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else if (omssaMatch != null && mascotMatch != null) {
+            if (omssaMatch.equalsIgnoreCase(mascotMatch)
+                    && omssaCharge == mascotCharge) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else if (xtandemMatch != null && mascotMatch != null) {
+            if (xtandemMatch.equalsIgnoreCase(mascotMatch)
+                    && xtandemCharge == mascotCharge) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else if (omssaMatch != null || xtandemMatch != null || mascotMatch != null) {
+            return 1;  
+        } else {
+            return 0; // this should not be possible...?
+        }
     }
 }

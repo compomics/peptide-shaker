@@ -96,12 +96,14 @@ public class FindDialog extends javax.swing.JDialog {
      * The current filter type.
      */
     private FilterType currentFilterType = FilterType.STAR;
+
     /**
      * The supported filter types.
      */
     public enum FilterType {
+
         STAR, HIDE
-    } 
+    }
     /**
      * A reference to the filter selection dialog.
      */
@@ -155,7 +157,7 @@ public class FindDialog extends javax.swing.JDialog {
         this.currentFilterType = filterType;
         identification = peptideShakerGUI.getIdentification();
         this.filterDialog = filterDialog;
-        
+
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
 
         initComponents();
@@ -188,6 +190,7 @@ public class FindDialog extends javax.swing.JDialog {
         proteinScrollPane.getViewport().setOpaque(false);
         modificationsScrollPane.getViewport().setOpaque(false);
         filesScrollPane.getViewport().setOpaque(false);
+        peptidesScrollPane.getViewport().setOpaque(false);
         psmTableScrollPane.getViewport().setOpaque(false);
 
         // set table properties
@@ -248,9 +251,9 @@ public class FindDialog extends javax.swing.JDialog {
             filterPsms();
         }
 
-        
+
         // @TODO: the max precursor m/z ought to be stored in the same way as max charge etc
-        
+
         // find the max m/z-value
         double maxMzValue = Double.MIN_VALUE;
 
@@ -574,7 +577,7 @@ public class FindDialog extends javax.swing.JDialog {
             peptideConfidenceTxt.setText(peptideFilter.getPeptideConfidence() + "");
             peptideConfidenceCmb.setSelectedIndex(getComparisonIndex(peptideFilter.getPeptideConfidenceComparison()));
         }
-        
+
         for (int row = 0; row < modificationTable.getRowCount(); row++) {
             if (peptideFilter.getModificationStatus().contains(
                     (String) modificationTable.getValueAt(row, 2))) {
@@ -1425,7 +1428,7 @@ public class FindDialog extends javax.swing.JDialog {
                     filesFilters.add(RowFilter.regexFilter(text, psmTable.getColumn("File").getModelIndex()));
                 }
             }
-            
+
             filters.add(RowFilter.orFilter(filesFilters));
 
             // set the filters to the table
@@ -1444,7 +1447,7 @@ public class FindDialog extends javax.swing.JDialog {
      * Creates the PSM filter based on the users input
      */
     public void createPsmFilter() {
-    
+
         if (validateInput()) {
             ArrayList<Integer> charges = new ArrayList<Integer>();
 
@@ -1691,6 +1694,12 @@ public class FindDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        selectPtmsJPopupMenu = new javax.swing.JPopupMenu();
+        selectAllPtmsMenuItem = new javax.swing.JMenuItem();
+        deselectAllPtmsMenuItem = new javax.swing.JMenuItem();
+        selectFilesJPopupMenu = new javax.swing.JPopupMenu();
+        selectAllFilesMenuItem = new javax.swing.JMenuItem();
+        deselectAllFilesMenuItem = new javax.swing.JMenuItem();
         backgroundPanel = new javax.swing.JPanel();
         exitButton = new javax.swing.JButton();
         saveButton = new javax.swing.JButton();
@@ -1868,6 +1877,38 @@ public class FindDialog extends javax.swing.JDialog {
             }
         };
 
+        selectAllPtmsMenuItem.setText("Select All");
+        selectAllPtmsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAllPtmsMenuItemActionPerformed(evt);
+            }
+        });
+        selectPtmsJPopupMenu.add(selectAllPtmsMenuItem);
+
+        deselectAllPtmsMenuItem.setText("Deselect All");
+        deselectAllPtmsMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deselectAllPtmsMenuItemActionPerformed(evt);
+            }
+        });
+        selectPtmsJPopupMenu.add(deselectAllPtmsMenuItem);
+
+        selectAllFilesMenuItem.setText("Select All");
+        selectAllFilesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectAllFilesMenuItemActionPerformed(evt);
+            }
+        });
+        selectFilesJPopupMenu.add(selectAllFilesMenuItem);
+
+        deselectAllFilesMenuItem.setText("Deselect All");
+        deselectAllFilesMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deselectAllFilesMenuItemActionPerformed(evt);
+            }
+        });
+        selectFilesJPopupMenu.add(deselectAllFilesMenuItem);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Create Filter");
 
@@ -1949,6 +1990,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         proteinCoverageCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        proteinCoverageCmb.setSelectedIndex(3);
         proteinCoverageCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 proteinCoverageCmbActionPerformed(evt);
@@ -1990,6 +2032,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         proteinConfidenceCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        proteinConfidenceCmb.setSelectedIndex(3);
         proteinConfidenceCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 proteinConfidenceCmbActionPerformed(evt);
@@ -2004,6 +2047,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         proteinScoreCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        proteinScoreCmb.setSelectedIndex(3);
         proteinScoreCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 proteinScoreCmbActionPerformed(evt);
@@ -2018,6 +2062,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         proteinNSpectraCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        proteinNSpectraCmb.setSelectedIndex(3);
         proteinNSpectraCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 proteinNSpectraCmbActionPerformed(evt);
@@ -2032,6 +2077,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         nPeptidesCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        nPeptidesCmb.setSelectedIndex(3);
         nPeptidesCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nPeptidesCmbActionPerformed(evt);
@@ -2046,6 +2092,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         spectrumCountingCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        spectrumCountingCmb.setSelectedIndex(3);
         spectrumCountingCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 spectrumCountingCmbActionPerformed(evt);
@@ -2282,6 +2329,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         peptideNSpectraCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        peptideNSpectraCmb.setSelectedIndex(3);
         peptideNSpectraCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideNSpectraCmbActionPerformed(evt);
@@ -2303,6 +2351,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         peptideConfidenceCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        peptideConfidenceCmb.setSelectedIndex(3);
         peptideConfidenceCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideConfidenceCmbActionPerformed(evt);
@@ -2310,6 +2359,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         peptideScoreCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        peptideScoreCmb.setSelectedIndex(3);
         peptideScoreCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 peptideScoreCmbActionPerformed(evt);
@@ -2612,6 +2662,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         precursorRTCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        precursorRTCmb.setSelectedIndex(3);
         precursorRTCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 precursorRTCmbActionPerformed(evt);
@@ -2628,6 +2679,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         psmConfidenceCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        psmConfidenceCmb.setSelectedIndex(3);
         psmConfidenceCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 psmConfidenceCmbActionPerformed(evt);
@@ -2644,6 +2696,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         precursorMzCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        precursorMzCmb.setSelectedIndex(3);
         precursorMzCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 precursorMzCmbActionPerformed(evt);
@@ -2660,6 +2713,7 @@ public class FindDialog extends javax.swing.JDialog {
         });
 
         precursorErrorCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=", "<", ">" }));
+        precursorErrorCmb.setSelectedIndex(3);
         precursorErrorCmb.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 precursorErrorCmbActionPerformed(evt);
@@ -2895,6 +2949,7 @@ public class FindDialog extends javax.swing.JDialog {
         psmTablePanel.setOpaque(false);
 
         psmTable.setModel(new PsmTable());
+        psmTable.setOpaque(false);
         psmTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 psmTableMouseReleased(evt);
@@ -2991,11 +3046,11 @@ public class FindDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
-        
+
         if (filterDialog != null) {
             filterDialog.updateFilters();
         }
-        
+
         dispose();
     }//GEN-LAST:event_exitButtonActionPerformed
 
@@ -3142,7 +3197,11 @@ public class FindDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_peptideConfidenceCmbActionPerformed
 
     private void modificationTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_modificationTableMouseReleased
-        filterPeptides();
+        if (evt.getButton() == MouseEvent.BUTTON3) {
+            selectPtmsJPopupMenu.show(modificationTable, evt.getX(), evt.getY());
+        } else {
+            filterPeptides();
+        }
     }//GEN-LAST:event_modificationTableMouseReleased
 
     private void precursorRTTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_precursorRTTxtKeyReleased
@@ -3178,11 +3237,15 @@ public class FindDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_psmConfidenceCmbActionPerformed
 
     private void spectrumFilesTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_spectrumFilesTableMouseReleased
-        filterPsms();
+        if (evt.getButton() == MouseEvent.BUTTON3) {
+            selectFilesJPopupMenu.show(spectrumFilesTable, evt.getX(), evt.getY());
+        } else {
+            filterPsms();
+        }   
     }//GEN-LAST:event_spectrumFilesTableMouseReleased
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
-        
+
         if (proteinFilter != null) {
             createProteinFilter();
             if (peptideShakerGUI.getFilterPreferences().getProteinHideFilters().containsKey(proteinFilter.getName())) {
@@ -3207,16 +3270,16 @@ public class FindDialog extends javax.swing.JDialog {
                 peptideShakerGUI.getFilterPreferences().addStarringFilter(psmFilter);
             }
         }
-        
+
         // if filters have been updated, close dialog
         if (proteinFilter != null || peptideFilter != null || psmFilter != null) {
             exitButtonActionPerformed(null);
         }
-        
+
         ProteinFilter newProteinFilter = null;
         PeptideFilter newPeptideFilter = null;
         PsmFilter newPsmFilter = null;
-        
+
         if (proteinFilter == null && filterTypeJTabbedPane.getSelectedIndex() == 0) {
             if (!proteinInput()) {
                 JOptionPane.showMessageDialog(this, "There seems to be no filters added.", "Empty Filter?", JOptionPane.INFORMATION_MESSAGE);
@@ -3270,12 +3333,44 @@ public class FindDialog extends javax.swing.JDialog {
     private void peptidePICmbActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptidePICmbActionPerformed
         filterPeptides();
     }//GEN-LAST:event_peptidePICmbActionPerformed
+
+    private void selectAllPtmsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllPtmsMenuItemActionPerformed
+        for (int i = 0; i < modificationTable.getRowCount(); i++) {
+            modificationTable.setValueAt(true, i, modificationTable.getColumn(" ").getModelIndex());
+        }
+        filterPeptides();
+    }//GEN-LAST:event_selectAllPtmsMenuItemActionPerformed
+
+    private void deselectAllPtmsMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectAllPtmsMenuItemActionPerformed
+
+        for (int i = 0; i < modificationTable.getRowCount(); i++) {
+            modificationTable.setValueAt(false, i, modificationTable.getColumn(" ").getModelIndex());
+        }
+        filterPeptides();
+    }//GEN-LAST:event_deselectAllPtmsMenuItemActionPerformed
+
+    private void selectAllFilesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectAllFilesMenuItemActionPerformed
+        for (int i = 0; i < spectrumFilesTable.getRowCount(); i++) {
+            spectrumFilesTable.setValueAt(true, i, spectrumFilesTable.getColumn(" ").getModelIndex());
+        }
+        filterPsms();
+    }//GEN-LAST:event_selectAllFilesMenuItemActionPerformed
+
+    private void deselectAllFilesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deselectAllFilesMenuItemActionPerformed
+        for (int i = 0; i < spectrumFilesTable.getRowCount(); i++) {
+            spectrumFilesTable.setValueAt(false, i, spectrumFilesTable.getColumn(" ").getModelIndex());
+        }
+        filterPsms();
+    }//GEN-LAST:event_deselectAllFilesMenuItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JCheckBox charge2CheckBox;
     private javax.swing.JCheckBox charge3CheckBox;
     private javax.swing.JCheckBox charge4CheckBox;
     private javax.swing.JCheckBox chargeOver4CheckBox;
+    private javax.swing.JMenuItem deselectAllFilesMenuItem;
+    private javax.swing.JMenuItem deselectAllPtmsMenuItem;
     private javax.swing.JButton exitButton;
     private javax.swing.JScrollPane filesScrollPane;
     private javax.swing.JTabbedPane filterTypeJTabbedPane;
@@ -3374,6 +3469,10 @@ public class FindDialog extends javax.swing.JDialog {
     private javax.swing.JPanel psmTablePanel;
     private javax.swing.JScrollPane psmTableScrollPane;
     private javax.swing.JButton saveButton;
+    private javax.swing.JMenuItem selectAllFilesMenuItem;
+    private javax.swing.JMenuItem selectAllPtmsMenuItem;
+    private javax.swing.JPopupMenu selectFilesJPopupMenu;
+    private javax.swing.JPopupMenu selectPtmsJPopupMenu;
     private javax.swing.JComboBox spectrumCountingCmb;
     private javax.swing.JTextField spectrumCountingTxt;
     private javax.swing.JTable spectrumFilesTable;
