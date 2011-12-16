@@ -8,7 +8,6 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.ptm.PtmtableContent;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.renderers.AlignedTableCellRenderer;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import java.awt.Color;
@@ -23,6 +22,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
+import no.uib.jsparklines.extra.CellHighlighterRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
@@ -64,7 +64,24 @@ public class PtmTable extends JTable {
      * If true, area charts are used, false results in bar charts.
      */
     private boolean areaChart = false;
-
+    /**
+     * The max value for the area charts.
+     */
+    private double maxAreaChartValue = 0;
+    /**
+     * A list of the modification site indexes.
+     */
+    private ArrayList<Integer> modificationSites;
+    
+    /**
+     * Constructor.
+     * 
+     * @param peptideShakerGUI  PeptideShakerGUI parent
+     * @param peptide           the peptide
+     * @param ptm               the ptm
+     * @param spectrumKeys      the spectrum keys
+     * @param areaChart         if true an area chart version will be used, false displays bar charts
+     */
     public PtmTable(PeptideShakerGUI peptideShakerGUI, Peptide peptide, PTM ptm, ArrayList<String> spectrumKeys, boolean areaChart) {
         this.peptideShakerGUI = peptideShakerGUI;
         this.peptide = peptide;
@@ -72,9 +89,12 @@ public class PtmTable extends JTable {
         this.nPTM = 0;
         this.spectrumKeys = spectrumKeys;
         this.areaChart = areaChart;
+        
+        modificationSites = new ArrayList<Integer>();
 
         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
             if (modMatch.getTheoreticPtm().equals(ptm.getName())) {
+                modificationSites.add(modMatch.getModificationSite());
                 nPTM++;
             }
         }
@@ -259,9 +279,9 @@ public class PtmTable extends JTable {
         getColumn("AA").setMinWidth(tempWidth);
 
         // centrally align the columns in the fragment ions table
-        getColumn(" ").setCellRenderer(new AlignedTableCellRenderer(SwingConstants.CENTER, Color.LIGHT_GRAY));
-        getColumn("  ").setCellRenderer(new AlignedTableCellRenderer(SwingConstants.CENTER, Color.LIGHT_GRAY));
-        getColumn("AA").setCellRenderer(new AlignedTableCellRenderer(SwingConstants.CENTER, Color.LIGHT_GRAY));
+        getColumn(" ").setCellRenderer(new CellHighlighterRenderer(Color.LIGHT_GRAY, Color.YELLOW, SwingConstants.CENTER, "*"));
+        getColumn("  ").setCellRenderer(new CellHighlighterRenderer(Color.LIGHT_GRAY, Color.YELLOW, SwingConstants.CENTER, "*"));
+        getColumn("AA").setCellRenderer(new CellHighlighterRenderer(Color.LIGHT_GRAY, Color.YELLOW, SwingConstants.CENTER, "*"));
     }
 
     /**
@@ -278,7 +298,13 @@ public class PtmTable extends JTable {
 
         // insert the sequence
         for (int i = 0; i < peptideSequence.length(); i++) {
-            setValueAt(peptideSequence.charAt(i), i, getColumn("AA").getModelIndex());
+            
+            if (modificationSites.contains(i+1)) {
+                setValueAt(peptideSequence.charAt(i) + "*", i, getColumn("AA").getModelIndex());
+            } else  {
+                setValueAt(peptideSequence.charAt(i), i, getColumn("AA").getModelIndex());
+            }
+            
             setValueAt(peptideSequence.length() - i, i, getColumn("  ").getModelIndex());
         }
     }
@@ -307,22 +333,24 @@ public class PtmTable extends JTable {
                 peptideShakerGUI.catchException(e);
             }
         }
-
+        
+        maxAreaChartValue = 0;
+        
         for (int aa = 0; aa < peptide.getSequence().length(); aa++) {
 
             int column = 1;
 
             for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.A_ION)) {
-                    addAreaChart(tableContent, PeptideFragmentIonType.A_ION, modCpt, aa, column);
+                    addAreaChart(tableContent, PeptideFragmentIonType.A_ION, modCpt, aa+1, column);
                     column++;
                 }
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.B_ION)) {
-                    addAreaChart(tableContent, PeptideFragmentIonType.B_ION, modCpt, aa, column);
+                    addAreaChart(tableContent, PeptideFragmentIonType.B_ION, modCpt, aa+1, column);
                     column++;
                 }
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.C_ION)) {
-                    addAreaChart(tableContent, PeptideFragmentIonType.C_ION, modCpt, aa, column);
+                    addAreaChart(tableContent, PeptideFragmentIonType.C_ION, modCpt, aa+1, column);
                     column++;
                 }
             }
@@ -331,20 +359,20 @@ public class PtmTable extends JTable {
 
             for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.X_ION)) {
-                    addAreaChart(tableContent, PeptideFragmentIonType.X_ION, modCpt, aa, column);
+                    addAreaChart(tableContent, PeptideFragmentIonType.X_ION, modCpt, peptide.getSequence().length() - aa, column);
                     column++;
                 }
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Y_ION)) {
-                    addAreaChart(tableContent, PeptideFragmentIonType.Y_ION, modCpt, aa, column);
+                    addAreaChart(tableContent, PeptideFragmentIonType.Y_ION, modCpt, peptide.getSequence().length() - aa, column);
                     column++;
                 }
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Z_ION)) {
-                    addAreaChart(tableContent, PeptideFragmentIonType.Z_ION, modCpt, aa, column);
+                    addAreaChart(tableContent, PeptideFragmentIonType.Z_ION, modCpt, peptide.getSequence().length() - aa, column);
                     column++;
                 }
             }
         }
-
+        
         // set the column renderers
         for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
 
@@ -360,25 +388,21 @@ public class PtmTable extends JTable {
 
             if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.A_ION)) {
                 try {
-                    getColumn("a" + modification).setCellRenderer(
-                            new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.HORIZONTAL, tableContent.getMaxIntensity()));
+                    getColumn("a" + modification).setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
                 } catch (IllegalArgumentException e) {
                     // do nothing
                 }
             }
             if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.B_ION)) {
                 try {
-                    //getColumn("b" + modification).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, tableContent.getMaxIntensity(), SpectrumPanel.determineFragmentIonColor("b")));
-                    getColumn("b" + modification).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1d, SpectrumPanel.determineFragmentIonColor("b")));
-                    ((JSparklinesBarChartTableCellRenderer) getColumn("b" + modification).getCellRenderer()).setMinimumChartValue(0);
+                    getColumn("b" + modification).setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
                 } catch (IllegalArgumentException e) {
                     // do nothing
                 }
             }
             if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.C_ION)) {
                 try {
-                    getColumn("c" + modification).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, tableContent.getMaxIntensity(), SpectrumPanel.determineFragmentIonColor("c")));
-                    ((JSparklinesBarChartTableCellRenderer) getColumn("c" + modification).getCellRenderer()).setMinimumChartValue(0);
+                    getColumn("c" + modification).setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
                 } catch (IllegalArgumentException e) {
                     // do nothing
                 }
@@ -386,24 +410,21 @@ public class PtmTable extends JTable {
 
             if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.X_ION)) {
                 try {
-                    getColumn("x" + modification).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, tableContent.getMaxIntensity(), SpectrumPanel.determineFragmentIonColor("x")));
-                    ((JSparklinesBarChartTableCellRenderer) getColumn("x" + modification).getCellRenderer()).setMinimumChartValue(0);
+                    getColumn("x" + modification).setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
                 } catch (IllegalArgumentException e) {
                     // do nothing
                 }
             }
             if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Y_ION)) {
                 try {
-                    getColumn("y" + modification).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1d, SpectrumPanel.determineFragmentIonColor("y")));
-                    ((JSparklinesBarChartTableCellRenderer) getColumn("y" + modification).getCellRenderer()).setMinimumChartValue(0);
+                    getColumn("y" + modification).setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
                 } catch (IllegalArgumentException e) {
                     // do nothing
                 }
             }
             if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Z_ION)) {
                 try {
-                    getColumn("z" + modification).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, tableContent.getMaxIntensity(), SpectrumPanel.determineFragmentIonColor("z")));
-                    ((JSparklinesBarChartTableCellRenderer) getColumn("z" + modification).getCellRenderer()).setMinimumChartValue(0);
+                    getColumn("z" + modification).setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
                 } catch (IllegalArgumentException e) {
                     // do nothing
                 }
@@ -411,16 +432,33 @@ public class PtmTable extends JTable {
         }
     }
 
+    /**
+     * Set up and add area charts.
+     * 
+     * @param tableContent
+     * @param fragmentIonType
+     * @param modCpt
+     * @param aa
+     * @param column 
+     */
     private void addAreaChart(PtmtableContent tableContent, PeptideFragmentIonType fragmentIonType, int modCpt, int aa, int column) {
 
         // add the data points to display to an arraylist 
         ArrayList<Double> data = new ArrayList<Double>();
         
-//        int[] histogram = tableContent.getHistogram(modCpt, fragmentIonType, aa + 1, 10);
-//        
-//        for(int i=0; i<histogram.length; i++) {
-//            data.add(new Double(histogram[i]));
-//        }
+        int[] histogram = tableContent.getHistogram(modCpt, fragmentIonType, aa, 10);
+        
+        data.add(0.0);
+        
+        for(int i=0; i<histogram.length; i++) {
+            data.add(new Double(histogram[i]));
+            
+            if (histogram[i] > maxAreaChartValue) {
+                maxAreaChartValue = histogram[i];
+            }
+        }
+        
+        data.add(0.0);
         
         // find area color
         Color areaColor = Color.lightGray;
@@ -429,27 +467,27 @@ public class PtmTable extends JTable {
         switch (fragmentIonType) {
             case A_ION:
                 areaColor = SpectrumPanel.determineFragmentIonColor("a");
-                tooltip = "<html>a<sub>" + (aa + 1) + "</sub></html>";
+                tooltip = "<html>a<sub>" + aa + "</sub></html>";
                 break;
             case B_ION:
                 areaColor = SpectrumPanel.determineFragmentIonColor("b");
-                tooltip = "<html>b<sub>" + (aa + 1) + "</sub></html>";
+                tooltip = "<html>b<sub>" + aa + "</sub></html>";
                 break;
             case C_ION:
                 areaColor = SpectrumPanel.determineFragmentIonColor("c");
-                tooltip = "<html>c<sub>" + (aa + 1) + "</sub></html>";
+                tooltip = "<html>c<sub>" + aa + "</sub></html>";
                 break;
             case X_ION:
                 areaColor = SpectrumPanel.determineFragmentIonColor("x");
-                tooltip = "<html>x<sub>" + (aa + 1) + "</sub></html>";
+                tooltip = "<html>x<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub></html>";
                 break;
             case Y_ION:
                 areaColor = SpectrumPanel.determineFragmentIonColor("y");
-                tooltip = "<html>y<sub>" + (aa + 1) + "</sub></html>";
+                tooltip = "<html>y<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub></html>";
                 break;
             case Z_ION:
                 areaColor = SpectrumPanel.determineFragmentIonColor("z");
-                tooltip = "<html>z<sub>" + (aa + 1) + "</sub></html>";
+                tooltip = "<html>z<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub></html>";
                 break;
         }
 
@@ -462,7 +500,7 @@ public class PtmTable extends JTable {
         JSparklinesDataset dataset = new JSparklinesDataset(sparkLineDataSeriesAll);
 
         // add the data to the table 
-        setValueAt(dataset, aa, column);
+        setValueAt(dataset, aa-1, column);
     }
 
     /**
@@ -511,15 +549,15 @@ public class PtmTable extends JTable {
 
             for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.X_ION)) {
-                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.X_ION, aa + 1, 0.75), aa, column);
+                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.X_ION, peptide.getSequence().length() - aa, 0.75), aa, column);
                     column++;
                 }
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Y_ION)) {
-                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.Y_ION, aa + 1, 0.75), aa, column);
+                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.Y_ION, peptide.getSequence().length() - aa, 0.75), aa, column);
                     column++;
                 }
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Z_ION)) {
-                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.Z_ION, aa + 1, 0.75), aa, column);
+                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.Z_ION, peptide.getSequence().length() - aa, 0.75), aa, column);
                     column++;
                 }
             }

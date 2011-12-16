@@ -1788,7 +1788,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
             int row = peptidesTable.rowAtPoint(evt.getPoint());
             int column = peptidesTable.columnAtPoint(evt.getPoint());
-            
+
             relatedSelected = false;
             updateRelatedPeptidesTable();
             updateSelectedPsmTable();
@@ -3478,7 +3478,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
     public void updatePtmTable() {
         Peptide selectedPeptide = identification.getPeptideMatch(getSelectedPeptide()).getTheoreticPeptide();
         PTM ptm = ptmFactory.getPTM(getSelectedModification());
-        ptmTableJScrollPane.setViewportView(new PtmTable(peptideShakerGUI, selectedPeptide, ptm, getSelectedPsm(), false));
+        PtmTable ptmTable = new PtmTable(peptideShakerGUI, selectedPeptide, ptm, getSelectedPsm(), true);
+        ptmTable.setRowHeight((int) (ptmTable.getRowHeight() * 1.5));
+        ptmTableJScrollPane.setViewportView(ptmTable);
     }
 
     /**
