@@ -1058,8 +1058,8 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
 
                             try {
                                 feature = outputGenerator.getProteinsOutput(progressDialog, null, false, true, true, false,
-                                        false, false, false, false, false,
-                                        false, false, false, false);
+                                        false, false, false, false, false, false,
+                                        false, false, false, false, false, false);
                             } catch (Exception e) {
                                 JOptionPane.showMessageDialog(tempRef, "An error occurred while generating the output.", "Output Error.", JOptionPane.ERROR_MESSAGE);
                                 e.printStackTrace();

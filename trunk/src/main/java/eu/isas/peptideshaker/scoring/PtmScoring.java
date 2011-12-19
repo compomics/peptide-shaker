@@ -55,7 +55,11 @@ public class PtmScoring implements Serializable {
     /**
      * The retained PTM site assignment
      */
-    private String ptmLocation = "";
+    private ArrayList<Integer> ptmLocation = new ArrayList<Integer>();
+    /**
+     * For a peptide, other locations where this modification was found
+     */
+    private ArrayList<Integer> secondaryLocations = new ArrayList<Integer>();
     /**
      * The confidence of the ptm site assignment
      */
@@ -207,20 +211,27 @@ public class PtmScoring implements Serializable {
         for (String positions : anotherScore.getAScorePostions()) {
             addAScore(positions, anotherScore.getAScore(positions));
         }
+        for (int secondaryLocation : anotherScore.getSecondaryPtmLocations()) {
+            if (!secondaryLocations.contains(secondaryLocation)) {
+                secondaryLocations.add(secondaryLocation);
+            }
+        }
         if (siteConfidence < CONFIDENT
                 && anotherScore.getPtmSiteConfidence() > siteConfidence) {
-            ptmLocation = "";
+            for (int location : ptmLocation) {
+                if (!secondaryLocations.contains(location)) {
+                    secondaryLocations.add(location);
+                }
+            }
+            ptmLocation = new ArrayList<Integer>();
             siteConfidence = anotherScore.getPtmSiteConfidence();
         }
         if (siteConfidence == anotherScore.getPtmSiteConfidence()) {
-            ArrayList<Integer> locations = getLocations(ptmLocation);
-            ArrayList<Integer> newLocations = getLocations(anotherScore.getPtmLocation());
-            for (int newLocation : newLocations) {
-                if (!locations.contains(newLocation)) {
-                    locations.add(newLocation);
+            for (int newLocation : anotherScore.getPtmLocation()) {
+                if (!ptmLocation.contains(newLocation)) {
+                    ptmLocation.add(newLocation);
                 }
             }
-            ptmLocation = getKey(locations);
         }
     }
 
@@ -271,7 +282,7 @@ public class PtmScoring implements Serializable {
      * @param ptmSiteConfidence the location confidence as indexed by the static fields
      */
     public void setPtmSite(String location, int ptmSiteConfidence) {
-        this.ptmLocation = location;
+        this.ptmLocation = getLocations(location);
         this.siteConfidence = ptmSiteConfidence;
     }
 
@@ -280,8 +291,17 @@ public class PtmScoring implements Serializable {
      * 
      * @return the PTM location
      */
-    public String getPtmLocation() {
+    public ArrayList<Integer> getPtmLocation() {
         return ptmLocation;
+    }
+
+    /**
+     * Returns the secondary PTM locations as a String which can be translated using the static methods.
+     * 
+     * @return the PTM location
+     */
+    public ArrayList<Integer> getSecondaryPtmLocations() {
+        return secondaryLocations;
     }
 
     /**

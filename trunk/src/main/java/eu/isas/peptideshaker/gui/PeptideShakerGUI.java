@@ -54,6 +54,7 @@ import eu.isas.peptideshaker.gui.tabpanels.QCPanel;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
@@ -3982,7 +3983,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     }
                 }
 
-                return result / currentProtein.getSequence().length();
+                return result / currentProtein.getObservableLength(enyzme, idFilter.getMaxPepLength());
 
             } else { // emPAI
 
@@ -4004,6 +4005,41 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             catchException(e);
             e.printStackTrace();
             return 0.0;
+        }
+    }
+    
+    /**
+     * Returns the protein sequence annotated with modifications
+     * @param proteinKey the key of the protein match
+     * @return the protein sequence annotated with modifications
+     */
+    public String getModifiedSequence(String proteinKey) {
+        try {
+        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+        String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
+        String result = "";
+        PSPtmScores psPtmScores = new PSPtmScores();
+        psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
+        for (int aa = 0 ; aa < sequence.length() ; aa++) {
+            result += sequence.charAt(aa);
+            if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
+            boolean first = true;
+            result += "<";
+            for (String ptm : psPtmScores.getMainModificationsAt(aa)) {
+                if (first) {
+                    first = false;
+                } else {
+                    result += ", ";
+                }
+                result += ptmFactory.getPTM(ptm).getShortName();
+            }
+            result += ">";
+            }
+        }
+        return result;
+        } catch (IOException e) {
+            catchException(e);
+            return "IO exception";
         }
     }
 

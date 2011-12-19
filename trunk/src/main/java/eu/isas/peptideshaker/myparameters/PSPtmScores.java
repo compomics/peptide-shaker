@@ -17,9 +17,17 @@ public class PSPtmScores implements UrParameter {
      */
     static final long serialVersionUID = 7450340838299319636L;
     /**
-     * A map containing all scores indexed by the modification of interest
+     * A map containing all scores indexed by the modification of interest for a peptide or a PSM
      */
     private HashMap<String, PtmScoring> ptmMap = new HashMap<String, PtmScoring>();
+    /**
+     * A list of all modifications validated in a protein
+     */
+    private HashMap<Integer, ArrayList<String>> mainModificationSites = new HashMap<Integer, ArrayList<String>>();
+    /**
+     * A list of all secondary modifications in a protein
+     */
+    private HashMap<Integer, ArrayList<String>> secondaryModificationSites = new HashMap<Integer, ArrayList<String>>();
 
     /**
      * Constructor
@@ -60,6 +68,67 @@ public class PSPtmScores implements UrParameter {
      */
     public ArrayList<String> getScoredPTMs() {
         return new ArrayList<String>(ptmMap.keySet());
+    }
+    
+    /**
+     * Adds a main modification site and removes the corresponding secondary modification site if found
+     * @param modification      the modification
+     * @param modificationSite  the modification site
+     */
+    public void addMainModificationSite(String modification, int modificationSite) {
+        if (!mainModificationSites.containsKey(modificationSite)) {
+            mainModificationSites.put(modificationSite, new ArrayList<String>());
+        }
+        if (!mainModificationSites.get(modificationSite).contains(modification)) {
+            mainModificationSites.get(modificationSite).add(modification);
+        }
+        if (secondaryModificationSites.containsKey(modificationSite)
+                && secondaryModificationSites.get(modificationSite).contains(modification)) {
+            secondaryModificationSites.get(modificationSite).remove(modification);
+        }
+    }
+    
+    /**
+     * Adds a secondary modification site if not present in the main matches
+     * @param modification      the modification to add
+     * @param modificationSite  the modification site
+     */
+    public void addSecondaryModificationSite(String modification, int modificationSite) {
+        if (mainModificationSites.containsKey(modificationSite)
+                && !mainModificationSites.get(modificationSite).contains(modification)) {
+            if (!secondaryModificationSites.containsKey(modificationSite)) {
+                secondaryModificationSites.put(modificationSite, new ArrayList<String>());
+            }
+            if (!secondaryModificationSites.get(modificationSite).contains(modification)) {
+                secondaryModificationSites.get(modificationSite).add(modification);
+            }
+        }
+    }
+    
+    /**
+     * Returns the main potential modifications at the given amino acid index
+     * @param aa the index in the sequence (0 is first amino acid)
+     * @return a list containing all potential modifications as main match, an empty list if none foud
+     */
+    public ArrayList<String> getMainModificationsAt(int aa) {
+        if (mainModificationSites.containsKey(aa)) {
+            return mainModificationSites.get(aa);
+        } else {
+            return new ArrayList<String>();
+        }
+    }
+    
+    /**
+     * Returns the secondary potential modifications at the given amino acid index
+     * @param aa the index in the sequence (0 is first amino acid)
+     * @return a list containing all potential modifications as main match, an empty list if none found
+     */
+    public ArrayList<String> getSecondaryModificationsAt(int aa) {
+        if (secondaryModificationSites.containsKey(aa)) {
+            return secondaryModificationSites.get(aa);
+        } else {
+            return new ArrayList<String>();
+        }
     }
 
     @Override
