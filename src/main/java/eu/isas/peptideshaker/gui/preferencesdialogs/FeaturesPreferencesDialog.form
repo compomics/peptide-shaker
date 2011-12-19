@@ -1,6 +1,15 @@
 <?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+  <NonVisualComponents>
+    <Component class="javax.swing.JCheckBox" name="proteinScore1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Score"/>
+        <Property name="iconTextGap" type="int" value="10"/>
+        <Property name="opaque" type="boolean" value="false"/>
+      </Properties>
+    </Component>
+  </NonVisualComponents>
   <Properties>
     <Property name="title" type="java.lang.String" value="Export Features"/>
     <Property name="resizable" type="boolean" value="false"/>
@@ -28,7 +37,10 @@
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="backgroundPanel" min="-2" max="-2" attributes="0"/>
+          <Group type="102" alignment="0" attributes="0">
+              <Component id="backgroundPanel" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -55,7 +67,7 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           <Component id="helpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                          <EmptySpace pref="645" max="32767" attributes="0"/>
+                          <EmptySpace pref="809" max="32767" attributes="0"/>
                           <Component id="exitButton" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
@@ -98,7 +110,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="exportTextFilesLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="exportAll" pref="525" max="32767" attributes="0"/>
+                      <Component id="exportAll" pref="689" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -147,7 +159,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
-                      <Component id="tabbedPane" pref="697" max="32767" attributes="0"/>
+                      <Component id="tabbedPane" pref="861" max="32767" attributes="0"/>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -190,6 +202,8 @@
                                       <Component id="proteinDescription" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="proteinSequenceCoverage" linkSize="1" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Component id="proteinNsaf" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
@@ -197,29 +211,42 @@
                                           <Component id="proteinPI" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="proteinEmpai" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="proteinNPeptides" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                          <Group type="102" attributes="0">
+                                              <Component id="proteinNPeptides" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="proteinNSpectra" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" attributes="1">
+                                              <Component id="modifiedSequence" min="-2" pref="150" max="-2" attributes="0"/>
+                                              <EmptySpace max="32767" attributes="0"/>
+                                              <Component id="proteinEmpai" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
+                                          </Group>
                                       </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="proteinNSpectra" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="proteinNsaf" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="proteinScore" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Component id="proteinValidated" min="-2" pref="150" max="-2" attributes="0"/>
+                                          </Group>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Component id="proteinConfidence" linkSize="1" min="-2" pref="150" max="-2" attributes="0"/>
+                                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="proteinHidden" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                                  <Component id="proteinStarred" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                              </Group>
+                                          </Group>
                                       </Group>
-                                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="proteinScore" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="proteinConfidence" linkSize="1" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
-                                      </Group>
+                                      <EmptySpace min="-2" pref="14" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="proteinSelectAll" linkSize="12" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="proteinUnselectAll" linkSize="12" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="264" max="32767" attributes="0"/>
-                                      <Component id="proteinExportValidated" linkSize="13" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="proteinExportAll" linkSize="13" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace pref="591" max="32767" attributes="0"/>
+                                      <Component id="proteinExportAll" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -235,25 +262,28 @@
                                   <Component id="proteinScore" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinNPeptides" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinNSpectra" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="proteinValidated" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="proteinPI" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="proteinEmpai" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="proteinNsaf" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinConfidence" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="proteinEmpai" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="modifiedSequence" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="proteinStarred" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="proteinDescription" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinSequenceCoverage" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="proteinNsaf" linkSize="15" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="proteinHidden" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace pref="16" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="proteinSelectAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinUnselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="proteinExportValidated" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -327,7 +357,7 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="proteinExportAll">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Export All"/>
+                        <Property name="text" type="java.lang.String" value="Export"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinExportAllActionPerformed"/>
@@ -349,17 +379,38 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinUnselectAllActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="proteinExportValidated">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Export Validated"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinExportValidatedActionPerformed"/>
-                      </Events>
-                    </Component>
                     <Component class="javax.swing.JCheckBox" name="proteinSequenceCoverage">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Sequence Coverage"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="modifiedSequence">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Modified sequence"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="proteinValidated">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="request validated"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="proteinStarred">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="request starred"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="proteinHidden">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="include hidden"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
@@ -383,39 +434,47 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="0" attributes="0">
+                          <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="peptidePosition" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Group type="102" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Group type="102" attributes="0">
-                                              <Component id="peptideAccession" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="peptidePosition" linkSize="2" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Group type="102" alignment="0" attributes="0">
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Group type="102" attributes="0">
+                                                      <Component id="peptideAccession" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                      <Component id="peptideModification" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                      <Component id="peptideNSpectra" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                                  </Group>
+                                                  <Group type="102" attributes="0">
+                                                      <Component id="peptideSequence" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                      <Component id="peptideLocation" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                                  </Group>
+                                              </Group>
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                                              <Component id="peptideModification" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
-                                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                                              <Component id="peptideNSpectra" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
-                                          </Group>
-                                          <Group type="102" attributes="0">
-                                              <Component id="peptideSequence" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
-                                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                                              <Component id="peptideLocation" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                              <Group type="103" groupAlignment="0" attributes="0">
+                                                  <Component id="peptideConfidence" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                                  <Component id="peptideScore" linkSize="2" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                              </Group>
                                           </Group>
                                       </Group>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="peptideConfidence" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
-                                          <Component id="peptideScore" linkSize="2" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="peptideValidated" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="peptideHidden" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="peptideStarred" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <Group type="102" alignment="1" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
                                       <Component id="peptideSelectAll" linkSize="9" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="peptideUnselectAll" linkSize="9" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="264" max="32767" attributes="0"/>
-                                      <Component id="peptideExportValidated" linkSize="8" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="peptideExportAll" linkSize="8" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace pref="591" max="32767" attributes="0"/>
+                                      <Component id="peptideExportAll" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -426,26 +485,36 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="peptideAccession" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="peptideModification" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="peptideNSpectra" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="peptideScore" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="peptideAccession" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="peptideModification" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="peptideNSpectra" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="peptideScore" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="peptideConfidence" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="peptideSequence" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="peptideLocation" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="peptidePosition" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="peptideValidated" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="peptideStarred" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="peptideHidden" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="peptideConfidence" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="peptideSequence" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="peptideLocation" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="peptidePosition" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="16" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="peptideSelectAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="peptideUnselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="peptideExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="peptideExportValidated" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -508,18 +577,10 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="peptideExportAll">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Export All"/>
+                        <Property name="text" type="java.lang.String" value="Export"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideExportAllActionPerformed"/>
-                      </Events>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="peptideExportValidated">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Export Validated"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="peptideExportValidatedActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JCheckBox" name="peptideSequence">
@@ -540,6 +601,28 @@
                     <Component class="javax.swing.JCheckBox" name="peptideLocation">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Location Scores"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="peptideValidated">
+                      <Properties>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="request validated"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="peptideStarred">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="request starred"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="peptideHidden">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="include hidden"/>
                         <Property name="iconTextGap" type="int" value="10"/>
                         <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
@@ -566,7 +649,7 @@
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="psmAccession" linkSize="3" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="psmSequence" linkSize="3" min="-2" pref="150" max="-2" attributes="0"/>
@@ -587,18 +670,23 @@
                                           <Component id="psmConfidence" linkSize="3" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="psmScore" linkSize="3" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
                                       </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="psmValidated" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="psmHidden" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                          <Component id="psmStarred" alignment="0" min="-2" pref="150" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                                   </Group>
-                                  <Group type="102" alignment="0" attributes="0">
+                                  <Group type="102" alignment="1" attributes="0">
                                       <Component id="psmSelectAll" linkSize="10" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="psmUnselectAll" linkSize="10" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="264" max="32767" attributes="0"/>
-                                      <Component id="psmExportValidated" linkSize="7" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace min="-2" max="-2" attributes="0"/>
-                                      <Component id="psmExportAll" linkSize="7" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace pref="591" max="32767" attributes="0"/>
+                                      <Component id="psmExportAll" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -606,29 +694,39 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="psmAccession" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="psmModification" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="psmFile" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="psmScore" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="psmAccession" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="psmModification" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="psmFile" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="psmScore" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="3" attributes="0">
+                                          <Component id="psmSequence" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="psmLocation" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="psmTitle" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
+                                          <Component id="psmConfidence" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="psmPrecursor" linkSize="17" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="psmValidated" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="psmStarred" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="psmHidden" min="-2" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="psmSequence" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="psmLocation" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="psmTitle" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="psmConfidence" linkSize="17" alignment="3" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="psmPrecursor" linkSize="17" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="16" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="psmSelectAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="psmUnselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="psmExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="psmExportValidated" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -719,19 +817,33 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="psmExportAll">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Export All"/>
+                        <Property name="text" type="java.lang.String" value="Export"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmExportAllActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="psmExportValidated">
+                    <Component class="javax.swing.JCheckBox" name="psmValidated">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Export Validated"/>
+                        <Property name="selected" type="boolean" value="true"/>
+                        <Property name="text" type="java.lang.String" value="request validated"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="psmExportValidatedActionPerformed"/>
-                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="psmStarred">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="request starred"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="psmHidden">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="include hidden"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -755,7 +867,7 @@
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
+                                  <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="assumptionAccession" linkSize="5" min="-2" pref="150" max="-2" attributes="0"/>
                                           <Component id="assumptionSequence" linkSize="5" min="-2" pref="150" max="-2" attributes="0"/>
@@ -774,17 +886,15 @@
                                           <Component id="assumptionScores" min="-2" pref="158" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
-                                  <Group type="102" alignment="0" attributes="0">
+                                  <Group type="102" alignment="1" attributes="0">
                                       <Component id="assumptionsExportAll" linkSize="11" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="assumptionUnselectAll" linkSize="11" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace pref="264" max="32767" attributes="0"/>
-                                      <Component id="assumptionsExportValidated" linkSize="6" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace pref="591" max="32767" attributes="0"/>
+                                      <Component id="assumptionExportAll" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="assumptionExportAll" linkSize="6" min="-2" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -806,12 +916,11 @@
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="assumptionPrecursor" linkSize="18" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="16" max="32767" attributes="0"/>
+                              <EmptySpace min="-2" pref="16" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="assumptionsExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="assumptionUnselectAll" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="assumptionExportAll" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="assumptionsExportValidated" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -898,18 +1007,10 @@
                     </Component>
                     <Component class="javax.swing.JButton" name="assumptionExportAll">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Export All"/>
+                        <Property name="text" type="java.lang.String" value="Export"/>
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionExportAllActionPerformed"/>
-                      </Events>
-                    </Component>
-                    <Component class="javax.swing.JButton" name="assumptionsExportValidated">
-                      <Properties>
-                        <Property name="text" type="java.lang.String" value="Export Validated"/>
-                      </Properties>
-                      <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="assumptionsExportValidatedActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>

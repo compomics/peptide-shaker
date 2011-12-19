@@ -145,7 +145,7 @@ public class PeptideShaker {
      * @param annotationPreferences The annotation preferences to use for PTM scoring
      * @param projectDetails        The project details
      */
-    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles, 
+    public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails) {
 
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
@@ -185,7 +185,7 @@ public class PeptideShaker {
             waitingDialog.appendReport("Selecting best hit per spectrum.");
             setFirstHit(waitingDialog);
             waitingDialog.appendReport("Generating PSM map.");
-            ArrayList<String> modifiedPsms = fillPsmMap(inputMap, waitingDialog);
+            fillPsmMap(inputMap, waitingDialog);
             psmMap.cure();
             waitingDialog.appendReport("Computing PSM probabilities.");
             psmMap.estimateProbabilities(waitingDialog);
@@ -196,10 +196,6 @@ public class PeptideShaker {
             peptideMap.cure();
             peptideMap.estimateProbabilities(waitingDialog);
             attachPeptideProbabilities();
-            waitingDialog.appendReport("Scoring PTMs.");
-            scorePSMPTMs(modifiedPsms, waitingDialog, searchParameters, annotationPreferences);
-            waitingDialog.appendReport("Scoring Peptide PTMs.");
-            scorePeptidePTMs(waitingDialog);
             waitingDialog.appendReport("Computing protein probabilities.");
             fillProteinMap(waitingDialog);
             proteinMap.estimateProbabilities(waitingDialog);
@@ -225,6 +221,10 @@ public class PeptideShaker {
 
         waitingDialog.appendReport("Validating identifications at 1% FDR.");
         fdrValidation(waitingDialog);
+        waitingDialog.appendReport("Scoring PTMs in peptides.");
+        scorePeptidePtms(waitingDialog, searchParameters, annotationPreferences);
+        waitingDialog.appendReport("Scoring PTMs in proteins.");
+        scoreProteinPtms(waitingDialog, searchParameters, annotationPreferences);
 
         String report = "Identification processing completed.\n\n";
         ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();
@@ -506,7 +506,7 @@ public class PeptideShaker {
      * @param inputMap       The input map
      * @param waitingDialog waiting dialog used to display the progress
      */
-    private ArrayList<String> fillPsmMap(InputMap inputMap, WaitingDialog waitingDialog) throws Exception {
+    private void fillPsmMap(InputMap inputMap, WaitingDialog waitingDialog) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         int max = identification.getSpectrumIdentification().size();
         waitingDialog.setSecondaryProgressDialogIntermediate(false);
@@ -516,7 +516,6 @@ public class PeptideShaker {
         PSParameter psParameter;
         PeptideAssumption peptideAssumption, bestAssumption;
         SpectrumMatch spectrumMatch;
-        ArrayList<String> modifiedPsms = new ArrayList<String>();
         if (inputMap.isMultipleSearchEngines()) {
             for (String spectrumKey : identification.getSpectrumIdentification()) {
                 psParameter = new PSParameter();
@@ -547,9 +546,6 @@ public class PeptideShaker {
                 psParameter.setSecificMapKey(psmMap.getKey(spectrumMatch) + "");
                 identification.addMatchParameter(spectrumKey, psParameter);
                 identification.setMatchChanged(spectrumMatch);
-                if (Peptide.isModified(bestAssumption.getPeptide().getKey())) {
-                    modifiedPsms.add(spectrumKey);
-                }
                 psmMap.addPoint(pScore, spectrumMatch);
                 waitingDialog.increaseSecondaryProgressValue();
             }
@@ -564,9 +560,6 @@ public class PeptideShaker {
                     psParameter.setSpectrumProbabilityScore(eValue);
                     spectrumMatch.setBestAssumption(peptideAssumption);
                     identification.setMatchChanged(spectrumMatch);
-                    if (Peptide.isModified(peptideAssumption.getPeptide().getKey())) {
-                        modifiedPsms.add(spectrumKey);
-                    }
                     psmMap.addPoint(eValue, spectrumMatch);
                 }
                 psParameter.setSecificMapKey(psmMap.getKey(spectrumMatch) + "");
@@ -575,7 +568,6 @@ public class PeptideShaker {
             }
         }
         waitingDialog.setSecondaryProgressDialogIntermediate(true);
-        return modifiedPsms;
     }
 
     /**
@@ -663,12 +655,13 @@ public class PeptideShaker {
     }
 
     /**
-     * Attaches scores to possible PTM locations to peptide matches
-     * 
-     * @param waitingDialog a reference to the waiting dialog
-     * @throws Exception 
+     * Scores the PTMs of all validated peptides.
+     * @param waitingDialog         waiting dialog which provides feedback to the user
+     * @param searchParameters      the search parameters
+     * @param annotationPreferences the annotation preferences
+     * @throws Exception    exception thrown whenever a problem occurred while deserializing a match
      */
-    public void scorePeptidePTMs(WaitingDialog waitingDialog) throws Exception {
+    public void scorePeptidePtms(WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PeptideMatch peptideMatch;
 
@@ -677,28 +670,112 @@ public class PeptideShaker {
         waitingDialog.setMaxSecondaryProgressValue(max);
 
         for (String peptideKey : identification.getPeptideIdentification()) {
-
+            peptideMatch = identification.getPeptideMatch(peptideKey);
+            scorePTMs(peptideMatch, searchParameters, annotationPreferences);
             waitingDialog.increaseSecondaryProgressValue();
-
-            if (Peptide.isModified(peptideKey)) {
-                peptideMatch = identification.getPeptideMatch(peptideKey);
-                scorePTMs(peptideMatch);
-            }
         }
 
         waitingDialog.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
+     * Scores the PTMs of all validated proteins.
+     * @param waitingDialog         waiting dialog which provides feedback to the user
+     * @param searchParameters      the search parameters
+     * @param annotationPreferences the annotation preferences
+     * @throws Exception    exception thrown whenever a problem occurred while deserializing a match
+     */
+    public void scoreProteinPtms(WaitingDialog waitingDialog, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        ProteinMatch proteinMatch;
+
+        int max = identification.getProteinIdentification().size();
+        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+        waitingDialog.setMaxSecondaryProgressValue(max);
+
+        for (String proteinKey : identification.getProteinIdentification()) {
+            proteinMatch = identification.getProteinMatch(proteinKey);
+            scorePTMs(proteinMatch, searchParameters, annotationPreferences, false);
+            waitingDialog.increaseSecondaryProgressValue();
+        }
+
+        waitingDialog.setSecondaryProgressDialogIntermediate(true);
+    }
+
+    /**
+     * Scores ptms in a protein match
+     * @param proteinMatch          the protein match
+     * @param searchParameters      the search parameters
+     * @param annotationPreferences the annotation preferences
+     * @param scorePeptides         if true peptide scores will be recalculated
+     * @throws Exception exception thrown whenever an error occurred while deserilalizing a match
+     */
+    public void scorePTMs(ProteinMatch proteinMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, boolean scorePeptides) throws Exception {
+        PSPtmScores peptideScores = new PSPtmScores();
+        PSPtmScores proteinScores = new PSPtmScores();
+        PtmScoring ptmScoring;
+        PSParameter psParameter = new PSParameter();
+        Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        PeptideMatch peptideMath;
+        String peptideSequence, proteinSequence = null;
+        for (String peptideKey : proteinMatch.getPeptideMatches()) {
+            psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
+            if (psParameter.isValidated() && Peptide.isModified(peptideKey)) {
+                peptideMath = identification.getPeptideMatch(peptideKey);
+                peptideSequence = Peptide.getSequence(peptideKey);
+                if (peptideMath.getUrParam(proteinScores) == null || scorePeptides) {
+                    scorePTMs(peptideMath, searchParameters, annotationPreferences);
+                }
+                peptideScores = (PSPtmScores) peptideMath.getUrParam(proteinScores);
+                for (String modification : peptideScores.getScoredPTMs()) {
+                    if (proteinSequence == null) {
+                        proteinSequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
+                    }
+                    ptmScoring = peptideScores.getPtmScoring(modification);
+                    for (int pos : getProteinModificationIndexes(proteinSequence, peptideSequence, ptmScoring.getPtmLocation())) {
+                        proteinScores.addMainModificationSite(modification, pos);
+                    }
+                    for (int pos : getProteinModificationIndexes(proteinSequence, peptideSequence, ptmScoring.getSecondaryPtmLocations())) {
+                        proteinScores.addSecondaryModificationSite(modification, pos);
+                    }
+                }
+            }
+        }
+        proteinMatch.addUrParam(proteinScores);
+    }
+
+    /**
+     * Returns the protein indexes of a modification found in a peptide
+     * @param proteinSequence   The protein sequence
+     * @param peptideKey        The key of the peptide
+     * @param positionInPeptide The position(s) of the modification in the peptide sequence
+     * @return the possible modification sites in a protein
+     */
+    public static ArrayList<Integer> getProteinModificationIndexes(String proteinSequence, String peptideSequence, ArrayList<Integer> positionInPeptide) {
+        ArrayList<Integer> result = new ArrayList<Integer>();
+        String tempSequence = proteinSequence;
+
+        while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
+            int peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
+            for (int pos : positionInPeptide) {
+                result.add(peptideTempStart + pos - 2);
+            }
+            tempSequence = proteinSequence.substring(0, peptideTempStart);
+        }
+        return result;
+    }
+
+    /**
      * Scores the PTMs for a peptide match
      * 
-     * @param peptideMatch
-     * @throws Exception  
+     * @param peptideMatch the peptide match of interest
+     * @throws Exception   exception thrown whenever an error occurred while deserializing a match
      */
-    public void scorePTMs(PeptideMatch peptideMatch) throws Exception { //@TODO: use only validated PSMs?
+    public void scorePTMs(PeptideMatch peptideMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSPtmScores psmScores, peptideScores = new PSPtmScores();
         PtmScoring spectrumScoring;
+        PSParameter psParameter = new PSParameter();
         ArrayList<String> variableModifications = new ArrayList<String>();
         SpectrumMatch spectrumMatch;
         PTM ptm;
@@ -713,16 +790,20 @@ public class PeptideShaker {
         }
         if (variableModifications.size() > 0) {
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                for (String modification : variableModifications) {
-                    if (!peptideScores.containsPtm(modification)) {
-                        peptideScores.addPtmScoring(modification, new PtmScoring(modification));
-                    }
-                    psmScores = (PSPtmScores) spectrumMatch.getUrParam(peptideScores);
-                    if (psmScores != null) {
-                        spectrumScoring = psmScores.getPtmScoring(modification);
-                        if (spectrumScoring != null) {
-                            peptideScores.getPtmScoring(modification).addAll(spectrumScoring);
+                psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
+                if (psParameter.isValidated()) {
+                    spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                    scorePTMs(spectrumMatch, searchParameters, annotationPreferences);
+                    for (String modification : variableModifications) {
+                        if (!peptideScores.containsPtm(modification)) {
+                            peptideScores.addPtmScoring(modification, new PtmScoring(modification));
+                        }
+                        psmScores = (PSPtmScores) spectrumMatch.getUrParam(peptideScores);
+                        if (psmScores != null) {
+                            spectrumScoring = psmScores.getPtmScoring(modification);
+                            if (spectrumScoring != null) {
+                                peptideScores.getPtmScoring(modification).addAll(spectrumScoring);
+                            }
                         }
                     }
                 }
@@ -750,7 +831,7 @@ public class PeptideShaker {
                 ptmScoring = ptmScores.getPtmScoring(modification);
                 String bestKey = ptmScoring.getBestAScoreLocations();
                 int confidence = PtmScoring.RANDOM;
-                if (bestKey == null || ptmScoring.getAScore(bestKey) <= 50) {
+                if (ptmScoring.getAScore(bestKey) <= 50) {
                     bestKey = ptmScoring.getBestDeltaScoreLocations();
                     if (ptmScoring.getDeltaScore(bestKey) > 50) {
                         confidence = PtmScoring.DOUBTFUL;

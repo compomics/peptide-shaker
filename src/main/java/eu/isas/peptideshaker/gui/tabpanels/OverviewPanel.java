@@ -4973,18 +4973,18 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             ArrayList<String> selectedProteins = getDisplayedProteins();
                             clipboardString = outputGenerator.getProteinsOutput(
                                     progressDialog, selectedProteins, true, false, true, true,
-                                    true, true, true, true, true,
-                                    true, true, true, true);
+                                    true, true, true, true, false, true,
+                                    true, true, true, true, false, false);
                         } else if (tableIndex == TableIndex.PEPTIDE_TABLE) {
                             ArrayList<String> selectedPeptides = getDisplayedPeptides();
                             clipboardString = outputGenerator.getPeptidesOutput(
                                     progressDialog, selectedPeptides, null, true, false, true, true,
-                                    true, true, true, true, true, true, true);
+                                    true, true, true, true, true, true, true, false, false);
                         } else if (tableIndex == TableIndex.PSM_TABLE) {
                             ArrayList<String> selectedPsms = getDisplayedPsms();
                             clipboardString = outputGenerator.getPSMsOutput(
                                     progressDialog, selectedPsms, true, false, true, true, true,
-                                    true, true, true, true, true, true, true);
+                                    true, true, true, true, true, true, true, false, false);
                         }
 
                         StringSelection stringSelection = new StringSelection(clipboardString);
