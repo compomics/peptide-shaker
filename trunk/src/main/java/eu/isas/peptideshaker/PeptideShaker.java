@@ -727,16 +727,18 @@ public class PeptideShaker {
                     scorePTMs(peptideMath, searchParameters, annotationPreferences);
                 }
                 peptideScores = (PSPtmScores) peptideMath.getUrParam(proteinScores);
-                for (String modification : peptideScores.getScoredPTMs()) {
-                    if (proteinSequence == null) {
-                        proteinSequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
-                    }
-                    ptmScoring = peptideScores.getPtmScoring(modification);
-                    for (int pos : getProteinModificationIndexes(proteinSequence, peptideSequence, ptmScoring.getPtmLocation())) {
-                        proteinScores.addMainModificationSite(modification, pos);
-                    }
-                    for (int pos : getProteinModificationIndexes(proteinSequence, peptideSequence, ptmScoring.getSecondaryPtmLocations())) {
-                        proteinScores.addSecondaryModificationSite(modification, pos);
+                if (peptideScores != null) {
+                    for (String modification : peptideScores.getScoredPTMs()) {
+                        if (proteinSequence == null) {
+                            proteinSequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
+                        }
+                        ptmScoring = peptideScores.getPtmScoring(modification);
+                        for (int pos : getProteinModificationIndexes(proteinSequence, peptideSequence, ptmScoring.getPtmLocation())) {
+                            proteinScores.addMainModificationSite(modification, pos);
+                        }
+                        for (int pos : getProteinModificationIndexes(proteinSequence, peptideSequence, ptmScoring.getSecondaryPtmLocations())) {
+                            proteinScores.addSecondaryModificationSite(modification, pos);
+                        }
                     }
                 }
             }
@@ -829,22 +831,37 @@ public class PeptideShaker {
             PtmScoring ptmScoring;
             for (String modification : ptmScores.getScoredPTMs()) {
                 ptmScoring = ptmScores.getPtmScoring(modification);
-                String bestKey = ptmScoring.getBestAScoreLocations();
+                String bestAKey = ptmScoring.getBestAScoreLocations();
+                String bestDKey = ptmScoring.getBestDeltaScoreLocations();
+                String retainedKey;
                 int confidence = PtmScoring.RANDOM;
-                if (ptmScoring.getAScore(bestKey) <= 50) {
-                    bestKey = ptmScoring.getBestDeltaScoreLocations();
-                    if (ptmScoring.getDeltaScore(bestKey) > 50) {
-                        confidence = PtmScoring.DOUBTFUL;
+                if (bestAKey != null) {
+                    retainedKey = bestAKey;
+                    if (ptmScoring.getAScore(bestAKey) <= 50) {
+                        if (bestAKey.equals(bestDKey)) {
+                            confidence = PtmScoring.DOUBTFUL;
+                            if (ptmScoring.getDeltaScore(bestDKey) > 50) {
+                                confidence = PtmScoring.CONFIDENT;
+                            }
+                        }
+                    } else if (bestAKey.equals(bestDKey)) {
+                        confidence = PtmScoring.VERY_CONFIDENT;
+                    } else {
+                        confidence = PtmScoring.CONFIDENT;
                     }
+
                 } else {
-                    if (!bestKey.equals(ptmScoring.getBestDeltaScoreLocations())) {
+                    retainedKey = bestDKey;
+                    if (ptmScoring.getDeltaScore(bestDKey) > 50) {
                         confidence = PtmScoring.CONFIDENT;
                     } else {
-                        confidence = PtmScoring.VERY_CONFIDENT;
+                        confidence = PtmScoring.DOUBTFUL;
                     }
                 }
-                if (bestKey != null) {
-                    ptmScoring.setPtmSite(bestKey, confidence);
+                if (retainedKey != null) {
+                    ptmScoring.setPtmSite(retainedKey, confidence);
+                } else {
+                    int debug = 1;
                 }
             }
         }
