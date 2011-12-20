@@ -74,7 +74,11 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         }
 
         initComponents();
-        
+
+        if (peptideScoring != null) {
+            peptidePtmConfidence.setSelectedIndex(peptideScoring.getPtmSiteConfidence()+1);
+        }
+
         // set sequence
         sequenceLabel.setText(peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(
                 peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true));
@@ -111,7 +115,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 case 2:
                     return "Secondary site";
                 default:
-                    int psmNumber = column - 2;
+                    int psmNumber = column - 3;
                     return "PSM " + psmNumber;
             }
         }
@@ -123,23 +127,23 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                     case 0:
                         return Peptide.getSequence(peptideKey).charAt(row);
                     case 1:
-                        if (peptideScoring != null && peptideScoring.getPtmLocation().contains(row)) {
+                        if (peptideScoring != null && peptideScoring.getPtmLocation().contains(row + 1)) {
                             return true;
                         }
                         return false;
                     case 2:
-                        if (peptideScoring != null && peptideScoring.getSecondaryPtmLocations().contains(row)) {
+                        if (peptideScoring != null && peptideScoring.getSecondaryPtmLocations().contains(row + 1)) {
                             return true;
                         }
                         return false;
                     default:
-                        int psmNumber = column - 2;
+                        int psmNumber = column - 3;
                         PSPtmScores psmScores = (PSPtmScores) psms.get(psmNumber).getUrParam(new PSPtmScores());
                         if (psmScores != null) {
                             PtmScoring psmScoring = psmScores.getPtmScoring(ptm.getName());
                             if (psmScoring != null) {
-                                if (psmScoring.getPtmLocation().contains(row)) {
-                                return psmScoring.getPtmSiteConfidence();
+                                if (psmScoring.getPtmLocation().contains(row + 1)) {
+                                    return psmScoring.getPtmSiteConfidence();
                                 } else {
                                     return PtmScoring.NOT_FOUND;
                                 }
@@ -253,8 +257,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         cancelButton.setText("Cancel");
@@ -277,16 +281,16 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(553, 553, 553)
                         .addComponent(okbutton, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -295,12 +299,12 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okbutton))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -311,7 +315,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -324,7 +328,6 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     private void okbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okbuttonActionPerformed
         // TODO update back-end data and reload panels
     }//GEN-LAST:event_okbuttonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel jLabel1;
