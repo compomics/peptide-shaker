@@ -84,7 +84,7 @@ public class JumpToPanel extends javax.swing.JPanel {
         inputTxt.requestFocus();
         inputTxt.selectAll();
     }
-    
+
     /**
      * Set the color for the hits.
      * 
@@ -98,9 +98,9 @@ public class JumpToPanel extends javax.swing.JPanel {
      * Updates the item selection in the selected tab
      */
     public void updateSelectionInTab() {
-        
+
         indexLabel.setForeground(Color.BLACK);
-        
+
         if (types.get(currentSelection) == Type.PROTEIN) {
             peptideShakerGUI.setSelectedItems(possibilities.get(currentSelection), PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
             peptideShakerGUI.updateSelectionInCurrentTab();
@@ -266,16 +266,17 @@ public class JumpToPanel extends javax.swing.JPanel {
                                 if (proteinKey.toLowerCase().contains(input)) {
                                     possibilities.add(proteinKey);
                                     types.add(Type.PROTEIN);
-                                }
-                                try {
-                                    for (String accession : ProteinMatch.getAccessions(proteinKey)) {
-                                        if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(input)) {
-                                            possibilities.add(proteinKey);
-                                            types.add(Type.PROTEIN);
+                                } else {
+                                    try {
+                                        for (String accession : ProteinMatch.getAccessions(proteinKey)) {
+                                            if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(input)) {
+                                                possibilities.add(proteinKey);
+                                                types.add(Type.PROTEIN);
+                                            }
                                         }
+                                    } catch (Exception e) {
+                                        // cannot get description, ignore
                                     }
-                                } catch (Exception e) {
-                                    // cannot get description, ignore
                                 }
                             }
                         }

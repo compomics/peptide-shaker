@@ -24,6 +24,7 @@ import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
+import eu.isas.peptideshaker.gui.PtmSiteInferenceDialog;
 import eu.isas.peptideshaker.gui.PtmTable;
 import eu.isas.peptideshaker.myparameters.PSMaps;
 import java.awt.Color;
@@ -1807,9 +1808,9 @@ public class PtmPanel extends javax.swing.JPanel {
                         peptideShakerGUI.catchException(e);
                     }
                 }
-//                else if (column == peptidesTable.getColumn("PTM").getModelIndex()) {
-//                    new PtmLocationDialog(peptideShakerGUI, getSelectedPeptide(false), getSelectedModification(), 0);
-//                }
+                else if (column == peptidesTable.getColumn("PTM").getModelIndex()) {
+                    new PtmSiteInferenceDialog(peptideShakerGUI, getSelectedPeptide(), ptmFactory.getPTM(getSelectedModification()));
+                }
             }
         } else {
             relatedSelected = false;

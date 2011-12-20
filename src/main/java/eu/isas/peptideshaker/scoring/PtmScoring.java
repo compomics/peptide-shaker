@@ -31,11 +31,11 @@ public class PtmScoring implements Serializable {
     /**
      * index for a confident assignment
      */
-    public static final int CONFIDENT = 3;
+    public static final int CONFIDENT = 2;
     /**
      * index for a very confident assignment
      */
-    public static final int VERY_CONFIDENT = 4;
+    public static final int VERY_CONFIDENT = 3;
     /**
      * The delta scores indexed by the modification location possibility
      */
@@ -311,5 +311,37 @@ public class PtmScoring implements Serializable {
      */
     public int getPtmSiteConfidence() {
         return siteConfidence;
+    }
+
+    /**
+     * Convenience method returning all confidence levels as string
+     * @return an array with all confidence levels as string
+     */
+    public static String[] getPossibleConfidenceLevels() {
+        String[] result = new String[5];
+        result[0] = "Not Found";
+        result[1] = "Random";
+        result[2] = "Doubtful";
+        result[3] = "Confident";
+        result[4] = "Very doubtful";
+        return result;
+    }
+
+    
+    public static String getConfidenceLevel(int index) {
+        switch (index) {
+            case -1:
+                return "Not Found";
+            case 0:
+                return "Random";
+            case 1:
+                return "Doubtful";
+            case 2:
+                return "Confident";
+            case 3:
+                return "Very doubtful";
+            default:
+                return "";
+        }
     }
 }
