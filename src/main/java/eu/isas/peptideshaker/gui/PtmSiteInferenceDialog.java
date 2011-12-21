@@ -3,9 +3,11 @@ package eu.isas.peptideshaker.gui;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import com.compomics.util.gui.renderers.AlignedTableCellRenderer;
+import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import java.awt.Color;
@@ -20,6 +22,7 @@ import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 
 /**
+ * This dialog allows the user to verify/update the modification site
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -47,6 +50,13 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      */
     private ArrayList<SpectrumMatch> psms = new ArrayList<SpectrumMatch>();
     /**
+     * Main ptm site selection
+     */
+    private boolean[] mainSelection;
+    /**
+     * Secondary ptm site selection
+     */
+    private boolean[] secondarySelection;/**
      * PTM confidence tooltip map, key: ptm confidence type, element: ptm confidence as a string.
      */
     private HashMap<Integer, String> ptmConfidenceTooltipMap;
@@ -68,6 +78,16 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             PSPtmScores peptideScores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
             if (peptideScores != null) {
                 this.peptideScoring = peptideScores.getPtmScoring(ptm.getName());
+                mainSelection = new boolean[Peptide.getSequence(peptideKey).length()];
+                secondarySelection = new boolean[Peptide.getSequence(peptideKey).length()];
+                for (int aa = 0; aa < Peptide.getSequence(peptideKey).length(); aa++) {
+                    if (peptideScoring.getPtmLocation().contains(aa + 1)) {
+                        mainSelection[aa] = true;
+                    }
+                    if (peptideScoring.getSecondaryPtmLocations().contains(aa + 1)) {
+                        secondarySelection[aa] = true;
+                    }
+                }
             }
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psms.add(peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey));
@@ -82,12 +102,11 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         setTableProperties();
         
         if (peptideScoring != null) {
-            peptidePtmConfidence.setSelectedIndex(peptideScoring.getPtmSiteConfidence());
+            peptidePtmConfidence.setSelectedIndex(peptideScoring.getPtmSiteConfidence() + 1);
         }
 
         // set sequence
-        sequenceLabel.setText(peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getModifiedSequenceAsHtml(
-                peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true));
+        updateSequenceLabel();
 
         // set the modification tooltip
         String tooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide());
@@ -144,6 +163,46 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                     new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
         }
     }
+    
+    /**
+     * Updates the sequence label based on the selection in the table
+     */
+    private void updateSequenceLabel() {
+        PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+        PSPtmScores ptmScores = new PSPtmScores();
+        ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+        HashMap<Integer, ArrayList<String>> mainLocations = ptmScores.getMainModificationSites();
+        HashMap<Integer, ArrayList<String>> secondaryLocations = ptmScores.getSecondaryModificationSites();
+        String modName = ptm.getName();
+        for (int i = 0 ; i < mainSelection.length ; i++) {
+            if (mainSelection[i]) {
+                if (!mainLocations.containsKey(i)) {
+                    mainLocations.put(i, new ArrayList<String>());
+                }
+                if (!mainLocations.get(i).contains(modName)) {
+                    mainLocations.get(i).add(modName);
+                }
+            } else {
+                if (mainLocations.containsKey(i) && mainLocations.get(i).contains(modName)) {
+                    mainLocations.get(i).remove(modName);
+                }
+            }
+            if (secondarySelection[i]) {
+                if (!secondaryLocations.containsKey(i)) {
+                    secondaryLocations.put(i, new ArrayList<String>());
+                }
+                if (!secondaryLocations.get(i).contains(modName)) {
+                    secondaryLocations.get(i).add(modName);
+                }
+            } else {
+                if (secondaryLocations.containsKey(i) && secondaryLocations.get(i).contains(modName)) {
+                    secondaryLocations.get(i).remove(modName);
+                }
+            }
+        }
+        sequenceLabel.setText(Peptide.getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), 
+                true, peptideMatch.getTheoreticPeptide(), mainLocations, secondaryLocations));
+    }
 
     /**
      * Table model for the ptm site selection table
@@ -182,15 +241,9 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                     case 0:
                         return Peptide.getSequence(peptideKey).charAt(row);
                     case 1:
-                        if (peptideScoring != null && peptideScoring.getPtmLocation().contains(row + 1)) {
-                            return true;
-                        }
-                        return false;
+                        return mainSelection[row];
                     case 2:
-                        if (peptideScoring != null && peptideScoring.getSecondaryPtmLocations().contains(row + 1)) {
-                            return true;
-                        }
-                        return false;
+                        return secondarySelection[row];
                     default:
                         int psmNumber = column - 3;
                         PSPtmScores psmScores = (PSPtmScores) psms.get(psmNumber).getUrParam(new PSPtmScores());
@@ -231,6 +284,23 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             }
 
             return false;
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int row, int column) {
+            if (column == 1) {
+                mainSelection[row] = !mainSelection[row];
+                if (mainSelection[row] && secondarySelection[row]) {
+                    secondarySelection[row] = false;
+                }
+                updateSequenceLabel();
+            } else if (column == 2) {
+                secondarySelection[row] = !secondarySelection[row];
+                if (mainSelection[row] && secondarySelection[row]) {
+                    mainSelection[row] = false;
+                }
+                updateSequenceLabel();
+            }
         }
     }
 
@@ -388,7 +458,62 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cancelButtonActionPerformed
 
     private void okbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okbuttonActionPerformed
-        // TODO update back-end data and reload panels
+        boolean changed = false;
+        for (int aa = 0; aa < mainSelection.length; aa++) {
+            if (mainSelection[aa]) {
+                if (!peptideScoring.getPtmLocation().contains(aa + 1)) {
+                    peptideScoring.addPtmLocation(aa);
+                    changed = true;
+                }
+            } else {
+                if (peptideScoring.getPtmLocation().contains(aa + 1)) {
+                    peptideScoring.removePtmLocation(aa);
+                    changed = true;
+                }
+            }
+            if (secondarySelection[aa]) {
+                if (!peptideScoring.getSecondaryPtmLocations().contains(aa + 1)) {
+                    peptideScoring.addPtmSecondaryLocation(aa);
+                    changed = true;
+                }
+            } else {
+                if (peptideScoring.getSecondaryPtmLocations().contains(aa + 1)) {
+                    peptideScoring.removePtmSecondaryLocation(aa);
+                    changed = true;
+                }
+            }
+        }
+        if (changed) {
+            // save changes in the peptide match
+            PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+            PSPtmScores scores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
+            scores.addPtmScoring(ptm.getName(), peptideScoring);
+            peptideShakerGUI.getIdentification().setMatchChanged(peptideMatch);
+            // update protein level PTM scoring
+            PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber());
+            ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteins();
+            ProteinMatch proteinMatch;
+            boolean candidate;
+            for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                candidate = false;
+                for (String protein : proteins) {
+                    if (proteinKey.contains(protein)) {
+                        candidate = true;
+                    }
+                }
+                if (candidate) {
+                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                    if (proteins.contains(proteinMatch.getMainMatch())) {
+                        try {
+                            miniShaker.scorePTMs(proteinMatch, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), false);
+                        } catch (Exception e) {
+                            peptideShakerGUI.catchException(e);
+                        }
+                    }
+                }
+            }
+        }
+        dispose();
     }//GEN-LAST:event_okbuttonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;

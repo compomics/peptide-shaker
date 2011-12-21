@@ -1633,7 +1633,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt 
      */
     private void allTabsJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_allTabsJTabbedPaneStateChanged
- 
+
         if (identification != null) {
 
             final int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
@@ -1787,7 +1787,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 ptmPanel.showSpectrumAnnotationMenu();
                 ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
             }
-            
+
             if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == SPECTRUM_ID_TAB_INDEX || selectedIndex == MODIFICATIONS_TAB_INDEX) {
                 // invoke later to give time for components to update
                 SwingUtilities.invokeLater(new Runnable() {
@@ -1808,7 +1808,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
 
             // change jump to color
-            jumpToPanel.setColor(Color.black); 
+            jumpToPanel.setColor(Color.black);
         }
     }//GEN-LAST:event_allTabsJTabbedPaneStateChanged
 
@@ -2575,7 +2575,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void initiateDisplay() {
         allTabsJTabbedPaneStateChanged(null);
     }
-    
+
     /**
      * This method will display results in all panels
      */
@@ -2616,7 +2616,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             settingsMenu.setEnabled(true);
             exportGraphicsMenu.setEnabled(true);
             helpJMenu.setEnabled(true);
-   
+
         } catch (Exception e) {
 
             // return the peptide shaker icon to the standard version
@@ -3612,7 +3612,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void reloadData() {
 
         dataSaved = false;
-        
+
         // clear the selections
         resetSelectedItems();
 
@@ -3876,6 +3876,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param proteinInferenceType  the protein inference group type
      */
     public void updateMainMatch(String mainMatch, int proteinInferenceType) {
+        try {
+            PeptideShaker miniShaker = new PeptideShaker(experiment, sample, replicateNumber);
+            miniShaker.scorePTMs(identification.getProteinMatch(selectedProteinKey), searchParameters, annotationPreferences, false);
+        } catch (Exception e) {
+            catchException(e);
+        }
         overviewPanel.updateMainMatch(mainMatch, proteinInferenceType);
         proteinStructurePanel.updateMainMatch(mainMatch, proteinInferenceType);
     }
@@ -6182,6 +6188,28 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         result.add(3);
         result.add(4);
         return result;
+    }
+    
+    /**
+     * Returns the peptide with modification sites colored on the sequence. Shall be used for peptides, not PSMs.
+     * @return the colored peptide sequence
+     */
+    public String getColoredPeptideSequence(String peptideKey, boolean includeHtmlStartEndTag) {
+        //@TODO: is includeHtmlStartEndTag not always true?
+        PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+        PSPtmScores ptmScores = new PSPtmScores();
+        ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
+        if (ptmScores != null) {
+        HashMap<Integer, ArrayList<String>> mainLocations = ptmScores.getMainModificationSites();
+        HashMap<Integer, ArrayList<String>> secondaryLocations = ptmScores.getSecondaryModificationSites();
+        return Peptide.getModifiedSequenceAsHtml(searchParameters.getModificationProfile().getPtmColors(), 
+                includeHtmlStartEndTag, peptideMatch.getTheoreticPeptide(), 
+                mainLocations, secondaryLocations);
+        } else {
+            return peptideMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
+                    searchParameters.getModificationProfile().getPtmColors(), includeHtmlStartEndTag);
+        }
+        
     }
 
     /**

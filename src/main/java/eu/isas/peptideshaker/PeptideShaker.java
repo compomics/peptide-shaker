@@ -743,6 +743,7 @@ public class PeptideShaker {
             }
         }
         proteinMatch.addUrParam(proteinScores);
+        identification.setMatchChanged(proteinMatch);
     }
 
     /**
@@ -808,6 +809,17 @@ public class PeptideShaker {
                                 peptideScores.getPtmScoring(modification).addAll(spectrumScoring);
                             }
                         }
+                    }
+                }
+            }
+            for (String modification : variableModifications) {
+                PtmScoring scoring = peptideScores.getPtmScoring(modification);
+                if (scoring != null) {
+                    for (int mainLocation : scoring.getPtmLocation()) {
+                        peptideScores.addMainModificationSite(modification, mainLocation);
+                    }
+                    for (int secondaryLocation : scoring.getSecondaryPtmLocations()) {
+                        peptideScores.addSecondaryModificationSite(modification, secondaryLocation);
                     }
                 }
             }
@@ -1302,7 +1314,7 @@ public class PeptideShaker {
         if (description == null) {
             return new ArrayList<String>();
         }
-        
+
         ArrayList<String> result = new ArrayList<String>();
         for (String component : description.split(" ")) {
             if (component.length() > 3) {

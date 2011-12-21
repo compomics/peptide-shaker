@@ -4173,8 +4173,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                             index + 1,
                                             probabilities.isStarred(),
                                             proteinInferenceType,
-                                            currentMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
-                                            peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true),
+                                            peptideShakerGUI.getColoredPeptideSequence(key, true),
                                             peptideStart,
                                             peptideEnd,
                                             //validatedSpectraCounter, @TODO: use this together with spectrumCount in a stacked bar chart
