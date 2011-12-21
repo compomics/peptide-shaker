@@ -977,12 +977,13 @@ public class PeptideShaker {
             }
             if (!modifications.isEmpty()) {
                 MSnSpectrum spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumMatch.getKey());
-                annotationPreferences.setCurrentSettings(spectrumMatch.getBestAssumption().getPeptide(), spectrum.getPrecursor().getCharge().value, true);
+                annotationPreferences.setCurrentSettings(spectrumMatch.getBestAssumption().getPeptide(), spectrumMatch.getBestAssumption().getIdentificationCharge().value, true);
                 for (String mod : modifications.keySet()) {
                     if (nMod.get(mod) == 1) {
                         HashMap<ArrayList<Integer>, Double> aScores = PTMLocationScores.getAScore(spectrumMatch.getBestAssumption().getPeptide(),
                                 modifications.get(mod), nMod.get(mod), spectrum, annotationPreferences.getIonTypes(),
                                 annotationPreferences.getNeutralLosses(), annotationPreferences.getValidatedCharges(),
+                                spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                                 searchParameters.getFragmentIonAccuracy());
                         ptmScoring = ptmScores.getPtmScoring(mod);
                         if (ptmScoring == null) {

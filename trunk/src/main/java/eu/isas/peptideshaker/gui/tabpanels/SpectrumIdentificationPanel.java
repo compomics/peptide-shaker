@@ -2649,13 +2649,10 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                             searchEngineAgreement,
                             Spectrum.getSpectrumTitle(spectrumKey),
                             precursor.getMz(),
-                            precursor.getCharge().value,
+                            //precursor.getPossibleCharges();
                             retentionTime,
                         });
 
-                if (precursor.getCharge().value > maxCharge) {
-                    maxCharge = precursor.getCharge().value;
-                }
 
                 if (lLowRT > retentionTime) {
                     lLowRT = retentionTime;
@@ -2946,11 +2943,11 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                 if (currentSpectrum != null) {
                     Precursor precursor = currentSpectrum.getPrecursor();
-
+SpectrumMatch spectrumMatch = identification.getSpectrumMatch(currentSpectrumKey);
                     if (currentSpectrum.getMzValuesAsArray().length > 0 && currentSpectrum.getIntensityValuesAsArray().length > 0) {
                         spectrum = new SpectrumPanel(
                                 currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
-                                precursor.getMz(), precursor.getCharge().toString(),
+                                precursor.getMz(), spectrumMatch.getBestAssumption().getIdentificationCharge().toString(),
                                 "", 40, false, false, false, 2, false);
                         spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                         spectrum.setDeltaMassWindow(annotationPreferences.getFragmentIonAccuracy());
@@ -2993,10 +2990,11 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 }
 
                                 annotationPreferences.setCurrentSettings(currentPeptide,
-                                        currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
+                                        spectrumMatch.getBestAssumption().getIdentificationCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
                                 ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         annotationPreferences.getValidatedCharges(),
+                                        spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                                         currentSpectrum, currentPeptide,
                                         currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                         annotationPreferences.getFragmentIonAccuracy());
@@ -3033,10 +3031,11 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 }
 
                                 annotationPreferences.setCurrentSettings(currentPeptide,
-                                        currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
+                                        spectrumMatch.getBestAssumption().getIdentificationCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
                                 ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         annotationPreferences.getValidatedCharges(),
+                                        spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                                         currentSpectrum, currentPeptide,
                                         currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                         annotationPreferences.getFragmentIonAccuracy());
@@ -3073,10 +3072,11 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 }
 
                                 annotationPreferences.setCurrentSettings(currentPeptide,
-                                        currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
+                                        spectrumMatch.getBestAssumption().getIdentificationCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
                                 ArrayList<IonMatch> annotations = specificAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                         annotationPreferences.getNeutralLosses(),
                                         annotationPreferences.getValidatedCharges(),
+                                        spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                                         currentSpectrum, currentPeptide,
                                         currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                         annotationPreferences.getFragmentIonAccuracy());

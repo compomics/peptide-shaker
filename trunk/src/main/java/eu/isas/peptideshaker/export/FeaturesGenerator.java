@@ -700,7 +700,7 @@ public class FeaturesGenerator {
                         if (precursor) {
                             Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());
                             result += prec.getMz() + SEPARATOR;
-                            result += prec.getCharge() + SEPARATOR;
+                            result += bestAssumption.getIdentificationCharge().value + SEPARATOR;
                             result += prec.getRt() + SEPARATOR;
                             result += bestAssumption.getPeptide().getMass() + SEPARATOR;
                             result += Math.abs(bestAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR;
@@ -871,7 +871,7 @@ public class FeaturesGenerator {
                             if (precursor) {
                                 Precursor prec = spectrumFactory.getPrecursor(spectrumMatch.getKey());
                                 result += prec.getMz() + SEPARATOR;
-                                result += prec.getCharge() + SEPARATOR;
+                                result += peptideAssumption.getIdentificationCharge().value + SEPARATOR;
                                 result += prec.getRt() + SEPARATOR;
                                 result += peptideAssumption.getPeptide().getMass() + SEPARATOR;
                                 result += Math.abs(peptideAssumption.getDeltaMass(prec.getMz(), peptideShakerGUI.getSearchParameters().isPrecursorAccuracyTypePpm())) + SEPARATOR;
