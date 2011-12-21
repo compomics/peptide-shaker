@@ -131,6 +131,22 @@ public class PSPtmScores implements UrParameter {
         }
     }
 
+    /**
+     * Returns the map of the main modification sites
+     * @return the map of the main modification sites
+     */
+    public HashMap<Integer, ArrayList<String>> getMainModificationSites() {
+        return mainModificationSites;
+    }
+
+    /**
+     * Returns the map of the secondary modification sites
+     * @return the map of the secondary modification sites
+     */
+    public HashMap<Integer, ArrayList<String>> getSecondaryModificationSites() {
+        return secondaryModificationSites;
+    }
+    
     @Override
     public String getFamilyName() {
         return "PeptideShaker";

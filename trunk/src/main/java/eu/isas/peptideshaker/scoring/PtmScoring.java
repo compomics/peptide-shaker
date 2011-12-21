@@ -316,6 +316,43 @@ public class PtmScoring implements Serializable {
     public ArrayList<Integer> getSecondaryPtmLocations() {
         return secondaryLocations;
     }
+    
+    /**
+     * Adds a ptm location
+     * @param newLocation the new location
+     */
+    public void addPtmLocation(int newLocation) {
+        if (!ptmLocation.contains(newLocation)) {
+            ptmLocation.add(newLocation);
+        }
+    }
+    
+    /**
+     * Adds a ptm secondary location
+     * @param newLocation the ptm secondary location
+     */
+    public void addPtmSecondaryLocation(int newLocation) {
+        if (!secondaryLocations.contains(newLocation)) {
+            secondaryLocations.add(newLocation);
+        }
+    }
+    
+    /**
+     * Removes a ptm location
+     * @param location the location to remove
+     */
+    public void removePtmLocation(Integer location) {
+        ptmLocation.remove(location);
+    }
+    
+    /**
+     * Removes a secondary location
+     * @param location the location to remove
+     */
+    public void removePtmSecondaryLocation(Integer location) {
+        secondaryLocations.remove(location);
+    }
+
 
     /**
      * Returns the PTM location confidence as indexed by the satic fields.
@@ -340,6 +377,11 @@ public class PtmScoring implements Serializable {
         return result;
     }
 
+    /**
+     * Convenience method returning the given confidence level as a string
+     * @param index the confidence level
+     * @return the corresponding string
+     */
     public static String getConfidenceLevel(int index) {
         switch (index) {
             case -1:
@@ -356,4 +398,5 @@ public class PtmScoring implements Serializable {
                 return "";
         }
     }
+    
 }

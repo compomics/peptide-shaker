@@ -69,6 +69,10 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * The identification
      */
     private Identification identification;
+    /**
+     * the selected main match
+     */
+    private int mainMatch;
 
     /** 
      * Creates new form ProteinInferenceDialog
@@ -158,13 +162,13 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         proteinMatchTable.getColumn("").setMinWidth(30);
         uniqueHitsTable.getColumn("").setMinWidth(30);
         relatedHitsTable.getColumn("").setMinWidth(30);
-        
+
         // the score and confidence columns
         uniqueHitsTable.getColumn("Confidence").setMaxWidth(90);
         uniqueHitsTable.getColumn("Confidence").setMinWidth(90);
         uniqueHitsTable.getColumn("Score").setMaxWidth(90);
         uniqueHitsTable.getColumn("Score").setMinWidth(90);
-        
+
         relatedHitsTable.getColumn("Confidence").setMaxWidth(90);
         relatedHitsTable.getColumn("Confidence").setMinWidth(90);
         relatedHitsTable.getColumn("Score").setMaxWidth(90);
@@ -537,8 +541,13 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        peptideShakerGUI.updateMainMatch(inspectedMatch.getMainMatch(), groupClassJComboBox.getSelectedIndex());
-        peptideShakerGUI.setDataSaved(false);
+
+        PSParameter psParameter = (PSParameter) identification.getMatchParameter(inspectedMatch.getKey(), new PSParameter());
+        if (!inspectedMatch.getMainMatch().equals(accessions.get(mainMatch))
+                || groupClassJComboBox.getSelectedIndex() != psParameter.getGroupClass()) {
+            peptideShakerGUI.updateMainMatch(inspectedMatch.getMainMatch(), groupClassJComboBox.getSelectedIndex());
+            peptideShakerGUI.setDataSaved(false);
+        }
         this.dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -773,10 +782,9 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_relatedHitsTableMouseReleased
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
-                this.setVisible(false);
+        this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;

@@ -3745,8 +3745,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         probabilities = (PSParameter) identification.getMatchParameter(displayedPeptides.get(row), probabilities);
                         return probabilities.getGroupClass();
                     case 3:
-                        return identification.getPeptideMatch(displayedPeptides.get(row)).getTheoreticPeptide().getModifiedSequenceAsHtml(
-                                peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
+                        return peptideShakerGUI.getColoredPeptideSequence(displayedPeptides.get(row), true);
                     case 4:
                         PSPtmScores ptmScores = new PSPtmScores();
                         ptmScores = (PSPtmScores) identification.getPeptideMatch(displayedPeptides.get(row)).getUrParam(ptmScores);
@@ -3842,8 +3841,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         probabilities = (PSParameter) identification.getMatchParameter(relatedPeptides.get(row), probabilities);
                         return probabilities.getGroupClass();
                     case 3:
-                        return identification.getPeptideMatch(relatedPeptides.get(row)).getTheoreticPeptide().getModifiedSequenceAsHtml(
-                                peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true);
+                        return peptideShakerGUI.getColoredPeptideSequence(relatedPeptides.get(row), true);
                     case 4:
                         PSPtmScores ptmScores = new PSPtmScores();
                         ptmScores = (PSPtmScores) identification.getPeptideMatch(relatedPeptides.get(row)).getUrParam(ptmScores);
