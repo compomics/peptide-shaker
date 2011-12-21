@@ -556,15 +556,15 @@ public class PtmTable extends JTable {
 
             for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.X_ION)) {
-                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.X_ION, aa, 0.75), aa, column);
+                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.X_ION, aa + 1, 0.75), aa, column);
                     column++;
                 }
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Y_ION)) {
-                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.Y_ION, aa, 0.75), aa, column);
+                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.Y_ION, aa + 1, 0.75), aa, column);
                     column++;
                 }
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Z_ION)) {
-                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.Z_ION, aa, 0.75), aa, column);
+                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.Z_ION, aa + 1, 0.75), aa, column);
                     column++;
                 }
             }
