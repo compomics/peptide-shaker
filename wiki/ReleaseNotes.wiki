@@ -3,6 +3,23 @@
 
 ----
 
+*Changes in PeptideShaker 0.12.1 (December 21. 2011):*
+
+ * NEW FEATURE: Added the handling of hide/star properties in the export options.
+ * NEW FEATURE: Added the modified sequence in the protein export.
+ * NEW FEATURE: NCBI accession numbers will now be turned into HTML links similar to for UniProt.
+ * NEW FEATURE: MGF files with multiple precursor charges are now supported.
+ * NEW FEATURE: Protein descriptions that are too long for the column width are now shown as tooltips for the Overview and 3D Structure tabs.
+ * BUG FIX: Better handling of closing a New Project dialog.
+ * BUG FIX: Minor bug fix in the jump to dialog.
+ * BUG FIX: Fixed a bug that occurred when trying to reload the data with the new validation settings.
+ * BUG FIX: Fixed a bug where the protein accession number HTML links where not active in the two protein inference dialogs.
+ * BUG FIX: Fixed a bug where the fragment ion menu bar had gone missing in the Spectrum IDs tab. 
+ * LIBRARY UPDATE: Updated jsparklines to version 0.5.28. 
+ * LIBRARY UPDATE: Updated utilities to version 3.3.12.
+
+----
+
 *Changes in PeptideShaker 0.12.0 (December 15. 2011):*
 
  * NEW FEATURE: Added a peptide length QC plot.
@@ -36,6 +53,7 @@
  * LIBRARY UPDATE: Updated utilities to version 3.3.9.
  * LIBRARY UPDATE: Updated the uniprot api to version 2011.12.
 
+Download Count: 24
 
 ----
 
