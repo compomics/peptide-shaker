@@ -296,7 +296,7 @@ public class PtmScoring implements Serializable {
      */
     public void setPtmSite(String location, int ptmSiteConfidence) {
         this.siteConfidence = ptmSiteConfidence;
-            this.ptmLocation = getLocations(location);
+        this.ptmLocation = getLocations(location);
     }
 
     /**

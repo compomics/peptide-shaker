@@ -322,6 +322,7 @@
                   <Events>
                     <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="retainedProteinJTableMouseExited"/>
                     <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="retainedProteinJTableMouseReleased"/>
+                    <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="retainedProteinJTableMouseMoved"/>
                   </Events>
                 </Component>
               </SubComponents>

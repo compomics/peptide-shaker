@@ -1827,6 +1827,8 @@ public class OverviewPanel extends javax.swing.JPanel {
     private void proteinTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_proteinTableMouseMoved
         int row = proteinTable.rowAtPoint(evt.getPoint());
         int column = proteinTable.columnAtPoint(evt.getPoint());
+        
+        proteinTable.setToolTipText(null);
 
         if (row != -1 && column != -1 && column == proteinTable.getColumn("Accession").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
 
@@ -1839,6 +1841,11 @@ public class OverviewPanel extends javax.swing.JPanel {
             }
         } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
+            if (peptideShakerGUI.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
+                proteinTable.setToolTipText("" + proteinTable.getValueAt(row, column));
+            }
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         } else {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
@@ -3206,6 +3213,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         displaySpectrum = false;
         peptideShakerGUI.setDisplayOptions(displayProteins, displayPeptidesAndPSMs, displayCoverage, displaySpectrum);
     }//GEN-LAST:event_hideSpectrumPanelJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JSlider accuracySlider;
     private javax.swing.JLayeredPane backgroundLayeredPane;

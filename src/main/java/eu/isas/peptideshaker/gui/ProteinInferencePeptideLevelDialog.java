@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.gui;
 
+import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -317,6 +318,11 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 retainedProteinJTableMouseReleased(evt);
             }
         });
+        retainedProteinJTable.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                retainedProteinJTableMouseMoved(evt);
+            }
+        });
         otherProteinsJScrollPane.setViewportView(retainedProteinJTable);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -434,16 +440,24 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void otherProteinJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_otherProteinJTableMouseReleased
-        int row = otherProteinJTable.getSelectedRow();
-        int column = otherProteinJTable.getSelectedColumn();
+        int row = otherProteinJTable.rowAtPoint(evt.getPoint());
+        int column = otherProteinJTable.columnAtPoint(evt.getPoint());
 
         if (row != -1) {
-            if (column == otherProteinJTable.getColumn("Accession").getModelIndex()) {
 
-                // open protein links in web browser
-                if (evt != null && evt.getButton() == MouseEvent.BUTTON1
-                        && ((String) otherProteinJTable.getValueAt(row, column)).lastIndexOf("a href=") != -1) {
-                    peptideShakerGUI.openProteinLinks((String) otherProteinJTable.getValueAt(row, column));
+            if (column == 1) {
+
+                // open protein link in web browser
+                if (evt.getButton() == MouseEvent.BUTTON1
+                        && ((String) otherProteinJTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                    String link = (String) otherProteinJTable.getValueAt(row, column);
+                    link = link.substring(link.indexOf("\"") + 1);
+                    link = link.substring(0, link.indexOf("\""));
+
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    BareBonesBrowserLaunch.openURL(link);
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 }
             }
         }
@@ -459,6 +473,8 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         int row = otherProteinJTable.rowAtPoint(evt.getPoint());
         int column = otherProteinJTable.columnAtPoint(evt.getPoint());
 
+        otherProteinJTable.setToolTipText(null);
+
         if (otherProteinJTable.getValueAt(row, column) != null) {
             if (column == otherProteinJTable.getColumn("Accession").getModelIndex()) {
                 String tempValue = (String) otherProteinJTable.getValueAt(row, column);
@@ -469,6 +485,11 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 }
             }
+        } else if (column == otherProteinJTable.getColumn("Description").getModelIndex() && otherProteinJTable.getValueAt(row, column) != null) {
+            if (peptideShakerGUI.getPreferredWidthOfCell(otherProteinJTable, row, column) > otherProteinJTable.getColumn("Description").getWidth()) {
+                otherProteinJTable.setToolTipText("" + otherProteinJTable.getValueAt(row, column));
+            }
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         } else {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
@@ -483,22 +504,32 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_otherProteinJTableMouseExited
 
+    /**
+     * Opens the link in a web browser.
+     * 
+     * @param evt 
+     */
     private void retainedProteinJTableMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_retainedProteinJTableMouseReleased
         int row = retainedProteinJTable.rowAtPoint(evt.getPoint());
         int column = retainedProteinJTable.columnAtPoint(evt.getPoint());
 
-        if (retainedProteinJTable.getValueAt(row, column) != null) {
-            if (column == retainedProteinJTable.getColumn("Accession").getModelIndex()) {
-                String tempValue = (String) retainedProteinJTable.getValueAt(row, column);
+        if (row != -1) {
 
-                if (tempValue.lastIndexOf("a href=") != -1) {
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-                } else {
+            if (column == 1) {
+
+                // open protein link in web browser
+                if (evt.getButton() == MouseEvent.BUTTON1
+                        && ((String) retainedProteinJTable.getValueAt(row, column)).lastIndexOf("<html>") != -1) {
+
+                    String link = (String) retainedProteinJTable.getValueAt(row, column);
+                    link = link.substring(link.indexOf("\"") + 1);
+                    link = link.substring(0, link.indexOf("\""));
+
+                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    BareBonesBrowserLaunch.openURL(link);
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
                 }
             }
-        } else {
-            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }
     }//GEN-LAST:event_retainedProteinJTableMouseReleased
 
@@ -553,6 +584,37 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
         new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/ProteinInferencePeptideLevel.html"));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_helpJButtonActionPerformed
+
+    /**
+     * Changes the cursor into a hand cursor if the table cell contains an
+     * HTML link.
+     *
+     * @param evt
+     */
+    private void retainedProteinJTableMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_retainedProteinJTableMouseMoved
+        int row = retainedProteinJTable.rowAtPoint(evt.getPoint());
+        int column = retainedProteinJTable.columnAtPoint(evt.getPoint());
+
+        retainedProteinJTable.setToolTipText(null);
+
+        if (column == 1 && retainedProteinJTable.getValueAt(row, column) != null) {
+
+            String tempValue = (String) retainedProteinJTable.getValueAt(row, column);
+
+            if (tempValue.lastIndexOf("<html>") != -1) {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+            } else {
+                this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+            }
+        } else if (column == retainedProteinJTable.getColumn("Description").getModelIndex() && retainedProteinJTable.getValueAt(row, column) != null) {
+            if (peptideShakerGUI.getPreferredWidthOfCell(retainedProteinJTable, row, column) > retainedProteinJTable.getColumn("Description").getWidth()) {
+                retainedProteinJTable.setToolTipText("" + retainedProteinJTable.getValueAt(row, column));
+            }
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        } else {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        }
+    }//GEN-LAST:event_retainedProteinJTableMouseMoved
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;

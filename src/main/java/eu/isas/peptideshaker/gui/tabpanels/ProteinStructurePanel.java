@@ -1333,6 +1333,8 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
         int row = proteinTable.rowAtPoint(evt.getPoint());
         int column = proteinTable.columnAtPoint(evt.getPoint());
 
+        proteinTable.setToolTipText(null);
+        
         if (column == proteinTable.getColumn("Accession").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
 
             String tempValue = (String) proteinTable.getValueAt(row, column);
@@ -1344,6 +1346,11 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             }
         } else if (column == proteinTable.getColumn("PI").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        } else if (column == proteinTable.getColumn("Description").getModelIndex() && proteinTable.getValueAt(row, column) != null) {
+            if (peptideShakerGUI.getPreferredWidthOfCell(proteinTable, row, column) > proteinTable.getColumn("Description").getWidth()) {
+                proteinTable.setToolTipText("" + proteinTable.getValueAt(row, column));
+            }
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         } else {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }

@@ -535,13 +535,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumJPanel = new javax.swing.JPanel();
         spectrumLayeredPane = new javax.swing.JLayeredPane();
         spectrumPanel = new javax.swing.JPanel();
-        spectrumJToolBar = new javax.swing.JToolBar();
-        spectrumAnnotationMenuPanel = new javax.swing.JPanel();
         slidersSplitPane = new javax.swing.JSplitPane();
-        spectrumChartPanel = new javax.swing.JPanel();
         slidersPanel = new javax.swing.JPanel();
         accuracySlider = new javax.swing.JSlider();
         intensitySlider = new javax.swing.JSlider();
+        spectrumJPanel1 = new javax.swing.JPanel();
+        spectrumJToolBar = new javax.swing.JToolBar();
+        spectrumAnnotationMenuPanel = new javax.swing.JPanel();
+        spectrumChartPanel = new javax.swing.JPanel();
         spectrumHelpJButton = new javax.swing.JButton();
         exportSpectrumJButton = new javax.swing.JButton();
         contextMenuSpectrumBackgroundPanel = new javax.swing.JPanel();
@@ -1233,23 +1234,10 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         spectrumPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Spectrum"));
         spectrumPanel.setOpaque(false);
 
-        spectrumJToolBar.setBackground(new java.awt.Color(255, 255, 255));
-        spectrumJToolBar.setBorder(null);
-        spectrumJToolBar.setFloatable(false);
-        spectrumJToolBar.setRollover(true);
-        spectrumJToolBar.setBorderPainted(false);
-
-        spectrumAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(spectrumAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
-        spectrumJToolBar.add(spectrumAnnotationMenuPanel);
-
         slidersSplitPane.setBorder(null);
         slidersSplitPane.setDividerLocation(550);
         slidersSplitPane.setDividerSize(0);
         slidersSplitPane.setOpaque(false);
-
-        spectrumChartPanel.setBackground(new java.awt.Color(255, 255, 255));
-        spectrumChartPanel.setLayout(new javax.swing.BoxLayout(spectrumChartPanel, javax.swing.BoxLayout.Y_AXIS));
-        slidersSplitPane.setLeftComponent(spectrumChartPanel);
 
         slidersPanel.setOpaque(false);
 
@@ -1299,14 +1287,48 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         slidersPanelLayout.setVerticalGroup(
             slidersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, slidersPanelLayout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
+                .addGap(36, 36, 36)
+                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
                 .addGap(30, 30, 30)
-                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
+                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         slidersSplitPane.setRightComponent(slidersPanel);
+
+        spectrumJPanel1.setBackground(new java.awt.Color(255, 255, 255));
+
+        spectrumJToolBar.setBackground(new java.awt.Color(255, 255, 255));
+        spectrumJToolBar.setBorder(null);
+        spectrumJToolBar.setFloatable(false);
+        spectrumJToolBar.setRollover(true);
+        spectrumJToolBar.setBorderPainted(false);
+
+        spectrumAnnotationMenuPanel.setLayout(new javax.swing.BoxLayout(spectrumAnnotationMenuPanel, javax.swing.BoxLayout.LINE_AXIS));
+        spectrumJToolBar.add(spectrumAnnotationMenuPanel);
+
+        spectrumChartPanel.setOpaque(false);
+        spectrumChartPanel.setLayout(new javax.swing.BoxLayout(spectrumChartPanel, javax.swing.BoxLayout.Y_AXIS));
+
+        javax.swing.GroupLayout spectrumJPanel1Layout = new javax.swing.GroupLayout(spectrumJPanel1);
+        spectrumJPanel1.setLayout(spectrumJPanel1Layout);
+        spectrumJPanel1Layout.setHorizontalGroup(
+            spectrumJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(spectrumJPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 530, Short.MAX_VALUE)
+                .addContainerGap())
+            .addComponent(spectrumChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 550, Short.MAX_VALUE)
+        );
+        spectrumJPanel1Layout.setVerticalGroup(
+            spectrumJPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumJPanel1Layout.createSequentialGroup()
+                .addComponent(spectrumChartPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
+                .addGap(0, 0, 0)
+                .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        slidersSplitPane.setLeftComponent(spectrumJPanel1);
 
         javax.swing.GroupLayout spectrumPanelLayout = new javax.swing.GroupLayout(spectrumPanel);
         spectrumPanel.setLayout(spectrumPanelLayout);
@@ -1316,23 +1338,12 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(slidersSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 598, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(spectrumPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(spectrumJToolBar, javax.swing.GroupLayout.DEFAULT_SIZE, 561, Short.MAX_VALUE)
-                    .addGap(47, 47, 47)))
         );
         spectrumPanelLayout.setVerticalGroup(
             spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(spectrumPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(slidersSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 301, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, spectrumPanelLayout.createSequentialGroup()
+                .addComponent(slidersSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
                 .addContainerGap())
-            .addGroup(spectrumPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(spectrumPanelLayout.createSequentialGroup()
-                    .addContainerGap()
-                    .addComponent(spectrumJToolBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap()))
         );
 
         spectrumPanel.setBounds(0, 0, 630, 350);
@@ -2344,6 +2355,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
     private javax.swing.JPanel spectrumChartPanel;
     private javax.swing.JButton spectrumHelpJButton;
     private javax.swing.JPanel spectrumJPanel;
+    private javax.swing.JPanel spectrumJPanel1;
     private javax.swing.JSplitPane spectrumJSplitPane;
     private javax.swing.JToolBar spectrumJToolBar;
     private javax.swing.JLayeredPane spectrumLayeredPane;
@@ -2649,10 +2661,13 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                             searchEngineAgreement,
                             Spectrum.getSpectrumTitle(spectrumKey),
                             precursor.getMz(),
-                            //precursor.getPossibleCharges();
-                            retentionTime,
+                            precursor.getPossibleCharges().get(0).value, // @TODO: this is just a temporary fix until we find a better way of handling mulitple charges...
+                            retentionTime
                         });
 
+                if (precursor.getPossibleCharges().get(0).value > maxCharge) { 
+                    maxCharge = precursor.getPossibleCharges().get(0).value;
+                } 
 
                 if (lLowRT > retentionTime) {
                     lLowRT = retentionTime;
@@ -2688,7 +2703,6 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).setMaxValue(maxCharge);
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
-
     }
 
     /**
@@ -2943,11 +2957,10 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                 if (currentSpectrum != null) {
                     Precursor precursor = currentSpectrum.getPrecursor();
-SpectrumMatch spectrumMatch = identification.getSpectrumMatch(currentSpectrumKey);
                     if (currentSpectrum.getMzValuesAsArray().length > 0 && currentSpectrum.getIntensityValuesAsArray().length > 0) {
                         spectrum = new SpectrumPanel(
                                 currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
-                                precursor.getMz(), spectrumMatch.getBestAssumption().getIdentificationCharge().toString(),
+                                precursor.getMz(), "",
                                 "", 40, false, false, false, 2, false);
                         spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                         spectrum.setDeltaMassWindow(annotationPreferences.getFragmentIonAccuracy());
