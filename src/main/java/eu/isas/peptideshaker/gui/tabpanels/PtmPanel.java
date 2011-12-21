@@ -3961,7 +3961,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         return identification.getSpectrumMatch(spectrumKey).getBestAssumption().getIdentificationCharge().value;
                     case 5:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
-                        Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey);
+                        Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey); // @TODO: there is sometimes an IOException when closing the tool...
                         return precursor.getRt();
                     case 6:
                         spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
