@@ -207,7 +207,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         fragmentIonsJScrollPane.getViewport().setOpaque(false);
         sequenceCoverageTableScrollPane.getViewport().setOpaque(false);
 
-        // make the tabs in the spectrum tabbed pane go from right to lef
+        // make the tabs in the spectrum tabbed pane go from right to left
         spectrumJTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 
         updateSeparators();
@@ -344,8 +344,8 @@ public class OverviewPanel extends javax.swing.JPanel {
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 "Starred", null, null));
-        
-        
+
+
         // set up the psm color map
         HashMap<Integer, Color> psmColorMap = new HashMap<Integer, Color>();
         psmColorMap.put(SpectrumIdentificationPanel.AGREEMENT, peptideShakerGUI.getSparklineColor()); // search engines agree
@@ -4033,9 +4033,12 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     if (!psmKey.equals(PeptideShakerGUI.NO_SELECTION)) {
                         psmRow = getPsmRow(psmKey);
                     }
-                    psmTable.setRowSelectionInterval(psmRow, psmRow);
-                    psmTable.scrollRectToVisible(psmTable.getCellRect(psmRow, 0, false));
-                    psmTableKeyReleased(null);
+
+                    if (psmRow != -1) {
+                        psmTable.setRowSelectionInterval(psmRow, psmRow);
+                        psmTable.scrollRectToVisible(psmTable.getCellRect(psmRow, 0, false));
+                        psmTableKeyReleased(null);
+                    }
                 }
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
@@ -4465,16 +4468,21 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     exportSequenceCoverageContextJButton.setEnabled(true);
 
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, true);
-
-                    updateSelection();
-
-                    proteinTable.requestFocus();
-
+                    
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
+
+                    // invoke later to give time for components to update
+                    SwingUtilities.invokeLater(new Runnable() {
+
+                        public void run() {
+                            updateSelection();
+                            proteinTable.requestFocus();
+                        }
+                    });   
 
                 } catch (Exception e) {
                     // change the peptide shaker icon back to the default version
@@ -5096,16 +5104,20 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
      * Provides to the PeptideShakerGUI instance the currently selected protein, peptide and psm
      */
     public void newItemSelection() {
-        String proteinKey = proteinTableMap.get(getProteinIndex(proteinTable.getSelectedRow()));
-        String peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
-        String psmKey;
+        String proteinKey = PeptideShakerGUI.NO_SELECTION;
+        String peptideKey = PeptideShakerGUI.NO_SELECTION;
+        String psmKey = PeptideShakerGUI.NO_SELECTION;
 
+        if (proteinTable.getSelectedRow() != -1) {
+            proteinKey = proteinTableMap.get(getProteinIndex(proteinTable.getSelectedRow()));
+        }
+        if (peptideTable.getSelectedRow() != -1) {
+            peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
+        }
         if (psmTable.getSelectedRow() != -1) {
             psmKey = psmTableMap.get((Integer) psmTable.getValueAt(psmTable.getSelectedRow(), 0));
-        } else {
-            psmKey = null;
-        }
-
+        } 
+        
         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
     }
 

@@ -567,7 +567,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         if (validateInput()) {
 
             this.setVisible(false);
-
+            
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
             sample = new Sample(sampleNameIdtxt.getText().trim());
             SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(getReplicateNumber()));
@@ -612,6 +612,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
                 peptideShakerGUI.setUpInitialFilters();
                 peptideShakerGUI.displayResults();
+                peptideShakerGUI.initiateDisplay(); // display the overview tab
                 peptideShakerGUI.setFrameTitle(projectNameIdTxt.getText().trim());
                 this.dispose();
             }
