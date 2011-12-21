@@ -464,7 +464,7 @@ public class CsvExporter {
         String fileName = Spectrum.getSpectrumFile(spectrumMatch.getKey());
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumMatch.getKey());
         Precursor precursor = spectrumFactory.getPrecursor(fileName, spectrumTitle);
-        line += precursor.getCharge() + SEPARATOR;
+        line += spectrumMatch.getBestAssumption().getIdentificationCharge().value + SEPARATOR;
         line += fileName + SEPARATOR;
         line += spectrumTitle + SEPARATOR;
 
@@ -581,7 +581,7 @@ public class CsvExporter {
                     }
 
                     line += SEPARATOR;
-                    line += precursor.getCharge() + SEPARATOR;
+                    line += assumption.getIdentificationCharge().value + SEPARATOR;
                     line += spectrumTitle + SEPARATOR;
                     line += fileName + SEPARATOR;
 

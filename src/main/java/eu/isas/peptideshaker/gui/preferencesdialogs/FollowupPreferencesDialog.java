@@ -720,7 +720,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     double mzMax = precursor.getMz() + deltaMZ;
                     return rt + "," + range + "," + mzMin + "," + mzMax + "\n";
                 } else { // Dalton
-                    double deltaMZ = peptideShakerGUI.getSearchParameters().getPrecursorAccuracy() / precursor.getCharge().value;
+                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
+                    double deltaMZ = peptideShakerGUI.getSearchParameters().getPrecursorAccuracy() / spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                     double mzMin = precursor.getMz() - deltaMZ;
                     double mzMax = precursor.getMz() + deltaMZ;
                     return rt + "," + range + "," + mzMin + "," + mzMax + "\n";

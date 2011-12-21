@@ -3502,23 +3502,24 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
             if (currentSpectrum != null && currentSpectrum.getMzValuesAsArray().length > 0) {
 
                 Precursor precursor = currentSpectrum.getPrecursor();
+                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                 spectrum = new SpectrumPanel(
                         currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
-                        precursor.getMz(), precursor.getCharge().toString(),
+                        precursor.getMz(), spectrumMatch.getBestAssumption().getIdentificationCharge().toString(),
                         "", 40, false, false, false, 2, false);
                 spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                 spectrum.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
                 spectrum.setBorder(null);
 
                 // get the spectrum annotations
-                SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                 Peptide currentPeptide = spectrumMatch.getBestAssumption().getPeptide();
 
                 annotationPreferences.setCurrentSettings(currentPeptide,
-                        currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
+                        spectrumMatch.getBestAssumption().getIdentificationCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumMatch.getKey()));
                 ArrayList<IonMatch> annotations = annotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                         annotationPreferences.getNeutralLosses(),
                         annotationPreferences.getValidatedCharges(),
+                        spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                         currentSpectrum, currentPeptide,
                         currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                         annotationPreferences.getFragmentIonAccuracy());
@@ -4368,7 +4369,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 results += FeaturesGenerator.getPeptideModificationLocations(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide(),
                         identification.getPeptideMatch(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getKey())) + "\t";
 
-                results += peptideShakerGUI.getPrecursor(spectrumKey).getCharge().value + "\t";
+                results += identification.getSpectrumMatch(spectrumKey).getBestAssumption().getIdentificationCharge().value + "\t";
 
                 PSParameter probabilities = new PSParameter();
                 spectrumKey = identification.getPeptideMatch(getSelectedPeptide(!modifiedPeptides)).getSpectrumMatches().get(i);

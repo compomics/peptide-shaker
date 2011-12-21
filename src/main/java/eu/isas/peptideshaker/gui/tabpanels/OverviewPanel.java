@@ -4,6 +4,7 @@ import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
@@ -3553,12 +3554,15 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                         MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
                         if (currentSpectrum != null) {
+                            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                             annotationPreferences.setCurrentSettings(
                                     selectedPeptideMatch.getTheoreticPeptide(),
-                                    currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
+                                    spectrumMatch.getBestAssumption().getIdentificationCharge().value,
+                                    !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
+                                    spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                                     currentSpectrum,
                                     selectedPeptideMatch.getTheoreticPeptide(),
                                     currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
@@ -3766,9 +3770,10 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                             // add the data to the spectrum panel
                             Precursor precursor = currentSpectrum.getPrecursor();
+                            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                             spectrum = new SpectrumPanel(
                                     currentSpectrum.getMzValuesAsArray(), currentSpectrum.getIntensityValuesAsArray(),
-                                    precursor.getMz(), precursor.getCharge().toString(),
+                                    precursor.getMz(), spectrumMatch.getBestAssumption().getIdentificationCharge().toString(),
                                     "", 40, false, false, false, 2, false);
                             spectrum.setKnownMassDeltas(peptideShakerGUI.getCurrentMassDeltas());
                             spectrum.setDeltaMassWindow(peptideShakerGUI.getAnnotationPreferences().getFragmentIonAccuracy());
@@ -3780,11 +3785,12 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             SpectrumAnnotator spectrumAnnotator = peptideShakerGUI.getSpectrumAnnorator();
                             AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
                             annotationPreferences.setCurrentSettings(
-                                    currentPeptide, currentSpectrum.getPrecursor().getCharge().value,
+                                    currentPeptide, spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                                     !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                             ArrayList<IonMatch> annotations = spectrumAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                                     annotationPreferences.getNeutralLosses(),
                                     annotationPreferences.getValidatedCharges(),
+                                    spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                                     currentSpectrum, currentPeptide,
                                     currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                                     annotationPreferences.getFragmentIonAccuracy());
@@ -3828,7 +3834,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                             // create the sequence fragment ion view
                             secondarySpectrumPlotsJPanel.removeAll();
-                            SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                             PeptideAssumption peptideAssumption = spectrumMatch.getBestAssumption();
 
                             SequenceFragmentationPanel sequenceFragmentationPanel = new SequenceFragmentationPanel(
@@ -4468,7 +4473,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     exportSequenceCoverageContextJButton.setEnabled(true);
 
                     peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, true);
-                    
+
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -4482,7 +4487,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             updateSelection();
                             proteinTable.requestFocus();
                         }
-                    });   
+                    });
 
                 } catch (Exception e) {
                     // change the peptide shaker icon back to the default version
@@ -4542,14 +4547,16 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 String spectrumKey = psmTableMap.get((Integer) psmTable.getValueAt(selectedRows[i], 0));
                 MSnSpectrum currentSpectrum = peptideShakerGUI.getSpectrum(spectrumKey);
                 if (currentSpectrum != null) {
+                    SpectrumMatch spectrumMatch = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey);
                     // get the spectrum annotations
                     String peptideKey = peptideTableMap.get(getPeptideIndex(peptideTable.getSelectedRow()));
                     Peptide currentPeptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
                     annotationPreferences.setCurrentSettings(currentPeptide,
-                            currentSpectrum.getPrecursor().getCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
+                            spectrumMatch.getBestAssumption().getIdentificationCharge().value, !currentSpectrumKey.equalsIgnoreCase(spectrumKey));
                     ArrayList<IonMatch> annotations = miniAnnotator.getSpectrumAnnotation(annotationPreferences.getIonTypes(),
                             annotationPreferences.getNeutralLosses(),
                             annotationPreferences.getValidatedCharges(),
+                            spectrumMatch.getBestAssumption().getIdentificationCharge().value,
                             currentSpectrum, currentPeptide,
                             currentSpectrum.getIntensityLimit(annotationPreferences.getAnnotationIntensityLimit()),
                             annotationPreferences.getFragmentIonAccuracy());
@@ -4919,20 +4926,16 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         try {
             PeptideAssumption peptideAssumption = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKey).getBestAssumption();
 
-            if (peptideAssumption.getPeptide().isSameAs(currentPeptide)) {
-                modifiedSequence = peptideAssumption.getPeptide().getModifiedSequenceAsString(false);
-            } else {
-                // @TODO: do we need to do something here??
-            }
+            modifiedSequence = peptideAssumption.getPeptide().getModifiedSequenceAsString(false);
+            ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
+                    "Spectrum & Fragment Ions (" + before + modifiedSequence + after
+                    + "   " + peptideAssumption.getIdentificationCharge().toString() + "   "
+                    + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 4) + " m/z)");
         } catch (Exception e) {
             peptideShakerGUI.catchException(e);
             e.printStackTrace();
         }
 
-        ((TitledBorder) spectrumMainPanel.getBorder()).setTitle(
-                "Spectrum & Fragment Ions (" + before + modifiedSequence + after
-                + "   " + currentSpectrum.getPrecursor().getCharge().toString() + "   "
-                + Util.roundDouble(currentSpectrum.getPrecursor().getMz(), 4) + " m/z)");
     }
 
     /**
@@ -5116,8 +5119,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         }
         if (psmTable.getSelectedRow() != -1) {
             psmKey = psmTableMap.get((Integer) psmTable.getValueAt(psmTable.getSelectedRow(), 0));
-        } 
-        
+        }
+
         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
     }
 
