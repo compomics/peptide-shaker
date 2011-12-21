@@ -4760,6 +4760,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             peptideShakerGUI.catchException(e);
         }
         proteinTable.setValueAt(description, proteinTable.getSelectedRow(), proteinTable.getColumn("Description").getModelIndex());
+        updateSequenceCoverage(mainMatch);
     }
 
     /**
