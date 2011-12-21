@@ -1,28 +1,28 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
-/*
- * PtmInferenceDialog.java
- *
- * Created on Dec 19, 2011, 3:45:30 PM
- */
 package eu.isas.peptideshaker.gui;
 
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import com.compomics.util.gui.renderers.AlignedTableCellRenderer;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
+import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
+import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 
 /**
  *
- * @author vaudel
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
@@ -46,6 +46,10 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      * list of psms for this peptide
      */
     private ArrayList<SpectrumMatch> psms = new ArrayList<SpectrumMatch>();
+    /**
+     * PTM confidence tooltip map, key: ptm confidence type, element: ptm confidence as a string.
+     */
+    private HashMap<Integer, String> ptmConfidenceTooltipMap;
 
     /**
      * Constructor
@@ -74,9 +78,11 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         }
 
         initComponents();
-
+        
+        setTableProperties();
+        
         if (peptideScoring != null) {
-            peptidePtmConfidence.setSelectedIndex(peptideScoring.getPtmSiteConfidence()+1);
+            peptidePtmConfidence.setSelectedIndex(peptideScoring.getPtmSiteConfidence());
         }
 
         // set sequence
@@ -87,7 +93,56 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         String tooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide());
         sequenceLabel.setToolTipText(tooltip);
 
+        setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
+    }
+    
+    /**
+     * Set up the properties of the tables.
+     */
+    private void setTableProperties() {
+        
+        peptidePtmConfidence.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
+        ptmSiteTableScrollPane.getViewport().setOpaque(false);
+        ptmSiteTable.getTableHeader().setReorderingAllowed(false);
+        
+        // centrally align the column headers 
+        TableCellRenderer renderer = ptmSiteTable.getTableHeader().getDefaultRenderer();
+        JLabel label = (JLabel) renderer;
+        label.setHorizontalAlignment(JLabel.CENTER);
+        
+        // cell renderers
+        ptmSiteTable.getColumn("AA").setCellRenderer(new AlignedTableCellRenderer(SwingConstants.CENTER, Color.LIGHT_GRAY));
+        ptmSiteTable.getColumn("S1").setCellRenderer(new NimbusCheckBoxRenderer());
+        ptmSiteTable.getColumn("S2").setCellRenderer(new NimbusCheckBoxRenderer());
+     
+        ptmSiteTable.getColumn("AA").setMinWidth(25);
+        ptmSiteTable.getColumn("AA").setMaxWidth(25);
+        ptmSiteTable.getColumn("S1").setMinWidth(25);
+        ptmSiteTable.getColumn("S1").setMaxWidth(25);
+        ptmSiteTable.getColumn("S2").setMinWidth(25);
+        ptmSiteTable.getColumn("S2").setMaxWidth(25);
+        
+        // set up the PTM confidence color map
+        HashMap<Integer, Color> ptmConfidenceColorMap = new HashMap<Integer, Color>();
+        ptmConfidenceColorMap.put(PtmScoring.NOT_FOUND, Color.lightGray);
+        ptmConfidenceColorMap.put(PtmScoring.RANDOM, Color.RED);
+        ptmConfidenceColorMap.put(PtmScoring.DOUBTFUL, Color.ORANGE);
+        ptmConfidenceColorMap.put(PtmScoring.CONFIDENT, Color.YELLOW);
+        ptmConfidenceColorMap.put(PtmScoring.VERY_CONFIDENT, peptideShakerGUI.getSparklineColor());
+
+        // set up the PTM confidence tooltip map
+        ptmConfidenceTooltipMap = new HashMap<Integer, String>();
+        ptmConfidenceTooltipMap.put(-1, "Not Found");
+        ptmConfidenceTooltipMap.put(PtmScoring.RANDOM, "Random Assignment");
+        ptmConfidenceTooltipMap.put(PtmScoring.DOUBTFUL, "Doubtful Assignment");
+        ptmConfidenceTooltipMap.put(PtmScoring.CONFIDENT, "Confident Assignment");
+        ptmConfidenceTooltipMap.put(PtmScoring.VERY_CONFIDENT, "Very Confident Assignment");
+ 
+        for (int i = 3; i < ptmSiteTable.getColumnCount(); i++) {
+            ptmSiteTable.getColumn(ptmSiteTable.getColumnName(i)).setCellRenderer(
+                    new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
+        }
     }
 
     /**
@@ -111,12 +166,12 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 case 0:
                     return "AA";
                 case 1:
-                    return "Main site";
+                    return "S1";
                 case 2:
-                    return "Secondary site";
+                    return "S2";
                 default:
-                    int psmNumber = column - 3;
-                    return "PSM " + psmNumber;
+                    int psmNumber = column - 2;
+                    return "" + psmNumber;
             }
         }
 
@@ -188,23 +243,26 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jPanel1 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        backgroundPanel = new javax.swing.JPanel();
+        peptidePanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         peptidePtmConfidence = new javax.swing.JComboBox();
         jLabel2 = new javax.swing.JLabel();
         sequenceLabel = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        ptmSitePanel = new javax.swing.JPanel();
+        ptmSiteTableScrollPane = new javax.swing.JScrollPane();
         ptmSiteTable = new javax.swing.JTable();
         cancelButton = new javax.swing.JButton();
         okbutton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide"));
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        jLabel1.setText("Site assignment confidence:");
+        peptidePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Peptide"));
+        peptidePanel.setOpaque(false);
+
+        jLabel1.setText("Site Assignment Confidence:");
 
         peptidePtmConfidence.setModel(new DefaultComboBoxModel(PtmScoring.getPossibleConfidenceLevels()));
 
@@ -212,52 +270,56 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         sequenceLabel.setText("Peptide Sequence");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        javax.swing.GroupLayout peptidePanelLayout = new javax.swing.GroupLayout(peptidePanel);
+        peptidePanel.setLayout(peptidePanelLayout);
+        peptidePanelLayout.setHorizontalGroup(
+            peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peptidePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(18, 18, 18)
                 .addComponent(peptidePtmConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(63, 63, 63)
+                .addGap(26, 26, 26)
                 .addComponent(jLabel2)
-                .addGap(18, 18, 18)
-                .addComponent(sequenceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 217, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(sequenceLabel, javax.swing.GroupLayout.DEFAULT_SIZE, 259, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
+        peptidePanelLayout.setVerticalGroup(
+            peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(peptidePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(peptidePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(peptidePtmConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
-                    .addComponent(sequenceLabel))
+                    .addComponent(sequenceLabel)
+                    .addComponent(jLabel2))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Potential Modification Sites"));
+        ptmSitePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Potential Modification Sites"));
+        ptmSitePanel.setOpaque(false);
+
+        ptmSiteTableScrollPane.setOpaque(false);
 
         ptmSiteTable.setModel(new SiteSelectionTable());
-        jScrollPane1.setViewportView(ptmSiteTable);
+        ptmSiteTable.setOpaque(false);
+        ptmSiteTableScrollPane.setViewportView(ptmSiteTable);
 
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        javax.swing.GroupLayout ptmSitePanelLayout = new javax.swing.GroupLayout(ptmSitePanel);
+        ptmSitePanel.setLayout(ptmSitePanelLayout);
+        ptmSitePanelLayout.setHorizontalGroup(
+            ptmSitePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ptmSitePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE)
+                .addComponent(ptmSiteTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE)
                 .addContainerGap())
         );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
+        ptmSitePanelLayout.setVerticalGroup(
+            ptmSitePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ptmSitePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
+                .addComponent(ptmSiteTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -275,33 +337,33 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             }
         });
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(553, 553, 553)
-                        .addComponent(okbutton, javax.swing.GroupLayout.DEFAULT_SIZE, 65, Short.MAX_VALUE)
+        javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
+        backgroundPanel.setLayout(backgroundPanelLayout);
+        backgroundPanelLayout.setHorizontalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addComponent(okbutton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(cancelButton))
+                    .addComponent(ptmSitePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(peptidePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+
+        backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okbutton});
+
+        backgroundPanelLayout.setVerticalGroup(
+            backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(peptidePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(ptmSitePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cancelButton)
                     .addComponent(okbutton))
                 .addContainerGap())
@@ -311,11 +373,11 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -329,16 +391,16 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         // TODO update back-end data and reload panels
     }//GEN-LAST:event_okbuttonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton cancelButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel3;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton okbutton;
+    private javax.swing.JPanel peptidePanel;
     private javax.swing.JComboBox peptidePtmConfidence;
+    private javax.swing.JPanel ptmSitePanel;
     private javax.swing.JTable ptmSiteTable;
+    private javax.swing.JScrollPane ptmSiteTableScrollPane;
     private javax.swing.JLabel sequenceLabel;
     // End of variables declaration//GEN-END:variables
 }

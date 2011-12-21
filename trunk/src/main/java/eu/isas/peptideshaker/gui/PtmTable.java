@@ -139,7 +139,7 @@ public class PtmTable extends JTable {
         // control the cell selection
         setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
 
-        // centrally align the column headers in the fragment ions table
+        // centrally align the column headers 
         TableCellRenderer renderer = getTableHeader().getDefaultRenderer();
         JLabel label = (JLabel) renderer;
         label.setHorizontalAlignment(JLabel.CENTER);
@@ -556,15 +556,15 @@ public class PtmTable extends JTable {
 
             for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.X_ION)) {
-                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.X_ION, peptide.getSequence().length() - aa, 0.75), aa, column);
+                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.X_ION, aa, 0.75), aa, column);
                     column++;
                 }
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Y_ION)) {
-                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.Y_ION, peptide.getSequence().length() - aa, 0.75), aa, column);
+                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.Y_ION, aa, 0.75), aa, column);
                     column++;
                 }
                 if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Z_ION)) {
-                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.Z_ION, peptide.getSequence().length() - aa, 0.75), aa, column);
+                    setValueAt(tableContent.getQuantile(modCpt, PeptideFragmentIonType.Z_ION, aa, 0.75), aa, column);
                     column++;
                 }
             }

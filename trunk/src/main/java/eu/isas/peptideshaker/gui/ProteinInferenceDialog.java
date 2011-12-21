@@ -632,6 +632,8 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         int row = proteinMatchTable.rowAtPoint(evt.getPoint());
         int column = proteinMatchTable.columnAtPoint(evt.getPoint());
 
+        proteinMatchTable.setToolTipText(null);
+        
         if (column == 2 && proteinMatchTable.getValueAt(row, column) != null) {
 
             String tempValue = (String) proteinMatchTable.getValueAt(row, column);
@@ -641,6 +643,11 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             } else {
                 this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
             }
+        } else if (column == proteinMatchTable.getColumn("Description").getModelIndex() && proteinMatchTable.getValueAt(row, column) != null) {
+            if (peptideShakerGUI.getPreferredWidthOfCell(proteinMatchTable, row, column) > proteinMatchTable.getColumn("Description").getWidth()) {
+                proteinMatchTable.setToolTipText("" + proteinMatchTable.getValueAt(row, column));
+            }
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         } else {
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         }

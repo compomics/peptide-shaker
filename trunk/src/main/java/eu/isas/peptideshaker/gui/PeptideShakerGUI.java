@@ -1370,13 +1370,11 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             if (value == JOptionPane.YES_OPTION) {
                 saveMenuItemActionPerformed(null);
-                clearData();
                 NewDialog openDialog = new NewDialog(this, true);
                 openDialog.setVisible(true);
             } else if (value == JOptionPane.CANCEL_OPTION) {
                 // do nothing
             } else { // no option
-                clearData();
                 NewDialog newDialog = new NewDialog(this, true);
                 newDialog.setVisible(true);
             }
@@ -1911,6 +1909,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         "Wrong File.", JOptionPane.ERROR_MESSAGE);
             } else {
                 clearData();
+                clearPreferences();
                 userPreferences.addRecentProject(newFile);
                 updateRecentProjectsList();
                 importPeptideShakerFile(newFile);
@@ -3226,7 +3225,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     /**
      * Loads the modifications from the modification file.
      */
-    private void loadModifications() {
+    public void loadModifications() {
         try {
             ptmFactory.importModifications(new File(MODIFICATIONS_FILE));
         } catch (Exception e) {
@@ -3571,25 +3570,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         selectedProteinKey = NO_SELECTION;
         selectedPeptideKey = NO_SELECTION;
         selectedPsmKey = NO_SELECTION;
-        annotationPreferences = new AnnotationPreferences();
-        spectrumCountingPreferences = new SpectrumCountingPreferences();
-        filterPreferences = new FilterPreferences();
-        displayPreferences = new DisplayPreferences();
-        searchParameters = new SearchParameters();
-        idFilter = new IdFilter();
+          
         projectDetails = null;
         spectrumAnnotator = new SpectrumAnnotator();
         exceptionCaught = new ArrayList<String>();
         identifiedModifications = null;
-        // reset enzymes, ptms and preferences
-        loadEnzymes();
-        loadModifications();
-        setDefaultPreferences();
-
+        
         // set up the tabs/panels
         scoresJCheckBoxMenuItem.setSelected(false);
         setUpPanels(true);
-
 
         // repaint the panels
         repaintPanels();
@@ -3598,6 +3587,23 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
         currentPSFile = null;
         dataSaved = false;
+    }
+    
+    /**
+     * Clears the preferences.
+     */
+    public void clearPreferences() {
+        annotationPreferences = new AnnotationPreferences();
+        spectrumCountingPreferences = new SpectrumCountingPreferences();
+        filterPreferences = new FilterPreferences();
+        displayPreferences = new DisplayPreferences();
+        searchParameters = new SearchParameters();
+        idFilter = new IdFilter();
+        
+        // reset enzymes, ptms and preferences
+        loadEnzymes();
+        loadModifications();
+        setDefaultPreferences();
     }
 
     /**
@@ -3817,6 +3823,37 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         // add margin
         width += 2 * margin;
+
+        return width;
+    }
+    
+    /**
+     * Returns the preferred width of a given cell in a table.
+     * 
+     * @param table         the table
+     * @param colIndex      the colum index
+     * @param rowIndex      the row index
+     * @return              the prefereed width of the cell 
+     */
+    public int getPreferredWidthOfCell(JTable table, int rowIndex, int colIndex) {
+        
+        DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();
+        TableColumn col = colModel.getColumn(colIndex);
+        int width = 0;
+
+        // get width of column header
+        TableCellRenderer renderer = col.getHeaderRenderer();
+        if (renderer == null) {
+            renderer = table.getTableHeader().getDefaultRenderer();
+        }
+
+        Component comp = renderer.getTableCellRendererComponent(table, col.getHeaderValue(), false, false, 0, 0);
+
+        // get width of column data
+        renderer = table.getCellRenderer(rowIndex, colIndex);
+        comp = renderer.getTableCellRendererComponent(
+                table, table.getValueAt(rowIndex, colIndex), false, false, rowIndex, colIndex);
+        width = Math.max(width, comp.getPreferredSize().width);
 
         return width;
     }
@@ -4438,6 +4475,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         temp.getUserPreferences().removerRecentProject(filePath);
                     } else {
                         clearData();
+                        clearPreferences();
                         NewDialog openDialog = new NewDialog(temp, false);
                         openDialog.setSearchParamatersFiles(new ArrayList<File>());
 
@@ -4496,6 +4534,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         temp.getUserPreferences().removerRecentProject(filePath);
                     } else {
                         clearData();
+                        clearPreferences();
                         NewDialog openDialog = new NewDialog(temp, false);
                         openDialog.setSearchParamatersFiles(new ArrayList<File>());
 
@@ -4700,6 +4739,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                         "An error occured while reading " + experimentSettings.getSearchParameters().getFastaFile() + ".\nOpen cancelled.",
                                         "File Input Error", JOptionPane.ERROR_MESSAGE);
                                 clearData();
+                                clearPreferences();
 
                                 progressDialog.setVisible(false);
                                 progressDialog.dispose();
@@ -4711,6 +4751,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                         } else {
                             clearData();
+                            clearPreferences();
 
                             progressDialog.setVisible(false);
                             progressDialog.dispose();
@@ -4798,6 +4839,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                                 new File(filePath).getName() + " was not found in the given folder.",
                                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
                                         clearData();
+                                        clearPreferences();
 
                                         progressDialog.setVisible(false);
                                         progressDialog.dispose();
@@ -4808,6 +4850,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                     }
                                 } else {
                                     clearData();
+                                    clearPreferences();
 
                                     progressDialog.setVisible(false);
                                     progressDialog.dispose();
@@ -4822,6 +4865,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                     "An error occured while looking for the spectrum files.",
                                     "File Input Error", JOptionPane.ERROR_MESSAGE);
                             clearData();
+                            clearPreferences();
 
                             progressDialog.setVisible(false);
                             progressDialog.dispose();
@@ -4888,6 +4932,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                     "An error occured while importing " + spectrumFile + ".",
                                     "File Input Error", JOptionPane.ERROR_MESSAGE);
                             clearData();
+                            clearPreferences();
 
                             progressDialog.setVisible(false);
                             progressDialog.dispose();

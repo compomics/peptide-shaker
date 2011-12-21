@@ -841,15 +841,45 @@
                               <Layout>
                                 <DimensionLayout dim="0">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <EmptySpace min="0" pref="495" max="32767" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="modProfilesScrollPane" pref="475" max="32767" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
                                 </DimensionLayout>
                                 <DimensionLayout dim="1">
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <EmptySpace min="0" pref="363" max="32767" attributes="0"/>
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="modProfilesScrollPane" pref="341" max="32767" attributes="0"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                      </Group>
                                   </Group>
                                 </DimensionLayout>
                               </Layout>
+                              <SubComponents>
+                                <Container class="javax.swing.JScrollPane" name="modProfilesScrollPane">
+                                  <Properties>
+                                    <Property name="opaque" type="boolean" value="false"/>
+                                  </Properties>
+                                  <AuxValues>
+                                    <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+                                  </AuxValues>
+
+                                  <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                                  <SubComponents>
+                                    <Component class="javax.swing.JTable" name="psmModProfilesTable">
+                                      <Properties>
+                                        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                                          <Table columnCount="0" rowCount="0"/>
+                                        </Property>
+                                        <Property name="opaque" type="boolean" value="false"/>
+                                      </Properties>
+                                    </Component>
+                                  </SubComponents>
+                                </Container>
+                              </SubComponents>
                             </Container>
                             <Container class="javax.swing.JPanel" name="ptmTableJPanel">
                               <Properties>

@@ -12,6 +12,7 @@ import com.compomics.util.experiment.io.identifications.IdentificationParameters
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.PeptideShaker;
+import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
@@ -98,6 +99,18 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * The peptide shaker class which will take care of the pre-processing..
      */
     private PeptideShaker peptideShaker;
+    /**
+     * The previous search parameters.
+     */
+    //private final SearchParameters oldSearchParameters;
+    /**
+     * The previous modification profile file.
+     */
+    //private final File oldProfileFile;
+    /**
+     * The previous id filter.
+     */
+    //private final IdFilter oldIdFilter;
 
     /**
      * Creates a new open dialog.
@@ -108,6 +121,14 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     public NewDialog(PeptideShakerGUI peptideShaker, boolean modal) {
         super(peptideShaker, modal);
         this.peptideShakerGUI = peptideShaker;
+        
+        // @TODO: this does not work! have to create a new object and transfer all the values...
+        
+        // store the current settings  
+//        oldSearchParameters = peptideShakerGUI.getSearchParameters();
+//        oldProfileFile = peptideShakerGUI.getModificationProfileFile();
+//        oldIdFilter = peptideShakerGUI.getIdFilter();
+        
         setUpGui();
         this.setLocationRelativeTo(peptideShaker);
     }
@@ -128,6 +149,14 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         this.experiment = experiment;
         this.sample = sample;
         this.replicateNumber = replicateNumber;
+        
+        // @TODO: this does not work! have to create a new object and transfer all the values...
+        
+        // store the current settings
+//        oldSearchParameters = peptideShakerGUI.getSearchParameters();
+//        oldProfileFile = peptideShakerGUI.getModificationProfileFile();
+//        oldIdFilter = peptideShakerGUI.getIdFilter();
+        
         setUpGui();
         this.setLocationRelativeTo(peptideShaker);
     }
@@ -552,7 +581,14 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * @param evt
      */
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
-        peptideShakerGUI.clearData(); // @TODO: find a better way of clearing this as the current option resets the whole tool...
+
+        // @TODO: this does not work! have to create a new object and transfer all the values...
+        
+        // reset the preferences as this can have been changed
+//        peptideShakerGUI.setSearchParameters(oldSearchParameters);
+//        peptideShakerGUI.setModificationProfileFile(oldProfileFile);
+//        peptideShakerGUI.setIdFilter(oldIdFilter);
+        
         this.setVisible(false);
         this.dispose();
 }//GEN-LAST:event_exitButtonActionPerformed
@@ -567,6 +603,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         if (validateInput()) {
 
             this.setVisible(false);
+            
+            peptideShakerGUI.clearData();
             
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
             sample = new Sample(sampleNameIdtxt.getText().trim());
@@ -983,7 +1021,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     public void importSearchParameters(File searchGUIFile) {
 
         SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
-
+        peptideShakerGUI.loadModifications(); // reload the ptms from file. // @TODO: not sure why this is needed, but if not all ptms are not found...
+        
         try {
             Properties props = IdentificationParametersReader.loadProperties(searchGUIFile);
             ArrayList<String> variableMods = new ArrayList<String>();
