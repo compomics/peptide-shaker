@@ -1635,10 +1635,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @param evt 
      */
     private void allTabsJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_allTabsJTabbedPaneStateChanged
-
+ 
         if (identification != null) {
 
-            int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
+            final int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
 
             // check if we have re-loaded the data using the current threshold and PEP window settings
             if (selectedIndex != VALIDATION_TAB_INDEX && statsPanel.isInitiated()) {
@@ -1649,7 +1649,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
 
                     int value = JOptionPane.showConfirmDialog(
-                            this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results 1?",
+                            this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results?",
                             JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
                     if (value == JOptionPane.YES_OPTION) {
@@ -1657,67 +1657,78 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                         statsPanel.revalidateData();
                         allTabsJTabbedPane.setSelectedIndex(selectedIndex);
                         ignorePepWindowUpdate = false;
+                        return;
                     } else if (value == JOptionPane.NO_OPTION) {
 
                         // reset the test, i.e., don't ask twice without changes in between
                         ignoreThresholdUpdate = true;
 
                         value = JOptionPane.showConfirmDialog(
-                                this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes 1?",
+                                this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes?",
                                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
                         if (value == JOptionPane.YES_OPTION) {
                             statsPanel.applyPepWindow();
                             allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                            return;
                         } else if (value == JOptionPane.NO_OPTION) {
                             // reset the test, i.e., don't ask twice without changes in between
                             ignorePepWindowUpdate = true;
                             allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                            return;
                         } else {
                             // cancel the move
                             allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+                            return;
                         }
                     } else {
                         // cancel the move
                         allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+                        return;
                     }
                 } else if (!statsPanel.thresholdUpdated() && !ignoreThresholdUpdate) {
 
                     allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
 
                     int value = JOptionPane.showConfirmDialog(
-                            this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results 2?",
+                            this, "Do you want to revalidate your data using the current threshold?", "Revalidate Results?",
                             JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
                     if (value == JOptionPane.YES_OPTION) {
                         statsPanel.revalidateData();
                         allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                        return;
                     } else if (value == JOptionPane.NO_OPTION) {
                         // reset the test, i.e., don't ask twice without changes in between
                         ignoreThresholdUpdate = true;
                         allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                        return;
                     } else {
                         // cancel the move
                         allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+                        return;
                     }
                 } else if (!statsPanel.pepWindowApplied() && !ignorePepWindowUpdate) {
 
                     allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
 
                     int value = JOptionPane.showConfirmDialog(
-                            this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes 3?",
+                            this, "Do you want to apply the changes to your data using the current PEP window?", "Apply Changes?",
                             JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
                     if (value == JOptionPane.YES_OPTION) {
                         statsPanel.applyPepWindow();
                         allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                        return;
                     } else if (value == JOptionPane.NO_OPTION) {
                         // reset the test, i.e., don't ask twice without changes in between
                         ignorePepWindowUpdate = true;
                         allTabsJTabbedPane.setSelectedIndex(selectedIndex);
+                        return;
                     } else {
                         // cancel the move
                         allTabsJTabbedPane.setSelectedIndex(VALIDATION_TAB_INDEX);
+                        return;
                     }
                 }
             } else {
@@ -1778,6 +1789,17 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 ptmPanel.showSpectrumAnnotationMenu();
                 ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
             }
+            
+            if (selectedIndex == OVER_VIEW_TAB_INDEX || selectedIndex == SPECTRUM_ID_TAB_INDEX || selectedIndex == MODIFICATIONS_TAB_INDEX) {
+                // invoke later to give time for components to update
+                SwingUtilities.invokeLater(new Runnable() {
+
+                    public void run() {
+                        // set the preferred size of the accession column
+                        updateSpectrumAnnotations();
+                    }
+                });
+            }
 
             if (selectedIndex == OVER_VIEW_TAB_INDEX
                     || selectedIndex == MODIFICATIONS_TAB_INDEX
@@ -1788,16 +1810,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
 
             // change jump to color
-            jumpToPanel.setColor(Color.black);
-
-            // invoke later to give time for components to update
-            SwingUtilities.invokeLater(new Runnable() {
-
-                public void run() {
-                    // set the preferred size of the accession column
-                    updateSpectrumAnnotations();
-                }
-            });
+            jumpToPanel.setColor(Color.black); 
         }
     }//GEN-LAST:event_allTabsJTabbedPaneStateChanged
 
@@ -2556,6 +2569,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
+     * Initiate the display by displaying the data in the currently selected tab.
+     * Was previously a part of the displayResults methods, but had to be split 
+     * into a separate method due to threading issues.
+     */
+    public void initiateDisplay() {
+        allTabsJTabbedPaneStateChanged(null);
+    }
+    
+    /**
      * This method will display results in all panels
      */
     public void displayResults() {
@@ -2595,8 +2617,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             settingsMenu.setEnabled(true);
             exportGraphicsMenu.setEnabled(true);
             helpJMenu.setEnabled(true);
-
-            allTabsJTabbedPaneStateChanged(null);
+   
         } catch (Exception e) {
 
             // return the peptide shaker icon to the standard version
@@ -3431,6 +3452,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         accessionNumberWithLink = "<html><a href=\"" + getUniProtAccessionLink(proteinAccession)
                                 + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
                                 + proteinAccession + "</font></a></html>";
+                    } else if (databaseType == DatabaseType.NCBI) {
+                        accessionNumberWithLink = "<html><a href=\"" + getNcbiAccessionLink(proteinAccession)
+                                + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
+                                + proteinAccession + "</font></a></html>";
                     } else {
                         // unknown database!
                     }
@@ -3478,6 +3503,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             accessionNumberWithLink += "<a href=\"" + getUniProtAccessionLink(proteinAccession)
                                     + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
                                     + proteinAccession + "</font></a>, ";
+                        } else if (database == DatabaseType.NCBI) {
+                            accessionNumberWithLink += "<a href=\"" + getNcbiAccessionLink(proteinAccession)
+                                    + "\"><font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
+                                    + proteinAccession + "</font></a>, ";
                         } else {
                             // unknown database!
                             accessionNumberWithLink += "<font color=\"" + getNotSelectedRowHtmlTagFontColor() + "\">"
@@ -3520,6 +3549,17 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public String getUniProtAccessionLink(String proteinAccession) {
         return "http://www.uniprot.org/uniprot/" + proteinAccession;
+    }
+
+    /**
+     * Returns the protein accession number as a web link to the given 
+     * protein at http://www.ncbi.nlm.nih.gov/protein.
+     * 
+     * @param proteinAccession  the protein accession number
+     * @return                  the protein accession web link
+     */
+    public String getNcbiAccessionLink(String proteinAccession) {
+        return "http://www.ncbi.nlm.nih.gov/protein/" + proteinAccession;
     }
 
     /**
@@ -3566,6 +3606,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void reloadData() {
 
         dataSaved = false;
+        
+        // clear the selections
+        resetSelectedItems();
 
         // set up the tabs/panels
         setUpPanels(false);
@@ -3638,11 +3681,17 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         updateNeeded = new HashMap<Integer, Boolean>();
         for (int tabIndex = 0; tabIndex < allTabsJTabbedPane.getTabCount(); tabIndex++) {
-            if (tabIndex != VALIDATION_TAB_INDEX
-                    || setupValidationTab) {
+            if (tabIndex == VALIDATION_TAB_INDEX) {
+                if (setupValidationTab) {
+                    updateNeeded.put(tabIndex, true);
+                    resetPanel(tabIndex);
+                } else {
+                    updateNeeded.put(tabIndex, false);
+                }
+            } else {
                 updateNeeded.put(tabIndex, true);
+                resetPanel(tabIndex);
             }
-            resetPanel(tabIndex);
         }
 
         // hide/show the score columns
@@ -4007,7 +4056,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             return 0.0;
         }
     }
-    
+
     /**
      * Returns the protein sequence annotated with modifications
      * @param proteinKey the key of the protein match
@@ -4015,28 +4064,28 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public String getModifiedSequence(String proteinKey) {
         try {
-        ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-        String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
-        String result = "";
-        PSPtmScores psPtmScores = new PSPtmScores();
-        psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
-        for (int aa = 0 ; aa < sequence.length() ; aa++) {
-            result += sequence.charAt(aa);
-            if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
-            boolean first = true;
-            result += "<";
-            for (String ptm : psPtmScores.getMainModificationsAt(aa)) {
-                if (first) {
-                    first = false;
-                } else {
-                    result += ", ";
+            ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
+            String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
+            String result = "";
+            PSPtmScores psPtmScores = new PSPtmScores();
+            psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
+            for (int aa = 0; aa < sequence.length(); aa++) {
+                result += sequence.charAt(aa);
+                if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
+                    boolean first = true;
+                    result += "<";
+                    for (String ptm : psPtmScores.getMainModificationsAt(aa)) {
+                        if (first) {
+                            first = false;
+                        } else {
+                            result += ", ";
+                        }
+                        result += ptmFactory.getPTM(ptm).getShortName();
+                    }
+                    result += ">";
                 }
-                result += ptmFactory.getPTM(ptm).getShortName();
             }
-            result += ">";
-            }
-        }
-        return result;
+            return result;
         } catch (IOException e) {
             catchException(e);
             return "IO exception";
@@ -4081,12 +4130,17 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         "Error",
                         JOptionPane.ERROR_MESSAGE);
             } else {
+
+                String error = "";
+
+                if (e.getLocalizedMessage() != null) {
+                    error = ": " + e.getLocalizedMessage();
+                }
+
                 JOptionPane.showMessageDialog(this,
-                        "An error occured: "
-                        + e.getLocalizedMessage()
-                        + ".\nPlease contact the developpers.",
-                        "Error",
-                        JOptionPane.ERROR_MESSAGE);
+                        "An error occured" + error + ".\n"
+                        + "Please contact the developers.",
+                        "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
@@ -4854,6 +4908,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     progressDialog.dispose();
 
                     peptideShakerGUI.displayResults();
+                    allTabsJTabbedPaneStateChanged(null); // display the overview tab data
                     peptideShakerGUI.setFrameTitle(experiment.getReference());
 
                     dataSaved = true;
@@ -5775,7 +5830,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     /**
      * Tests whether a peptide match is validated by a given filter
      * @param match         the key of the peptide match
-     * @param proteinFilter the filter
+     * @param peptideFilter the filter
      * @return a boolean indicating whether a peptide match is validated by a given filter
      */
     public boolean isValidated(String match, PeptideFilter peptideFilter) {
@@ -5885,7 +5940,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             found = true;
                             break;
                         }
-                        if (sequenceFactory.getHeader(accession).getDescription().split(peptideFilter.getProtein()).length > 1) {
+                        if (sequenceFactory.getHeader(accession).getDescription() != null
+                                && sequenceFactory.getHeader(accession).getDescription().split(peptideFilter.getProtein()).length > 1) {
                             found = true;
                             break;
                         }
@@ -5906,7 +5962,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     /**
      * Tests whether a psm match is validated by a given filter
      * @param match         the key of the psm match
-     * @param proteinFilter the filter
+     * @param psmFilter the filter
      * @return a boolean indicating whether a psm match is validated by a given filter
      */
     public boolean isValidated(String match, PsmFilter psmFilter) {

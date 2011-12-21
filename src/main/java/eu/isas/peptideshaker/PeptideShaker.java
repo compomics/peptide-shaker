@@ -156,7 +156,6 @@ public class PeptideShaker {
         identification.setSerializationDirectory(SERIALIZATION_DIRECTORY);
         fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
         fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences);
-
     }
 
     /**
@@ -749,7 +748,7 @@ public class PeptideShaker {
     /**
      * Returns the protein indexes of a modification found in a peptide
      * @param proteinSequence   The protein sequence
-     * @param peptideKey        The key of the peptide
+     * @param peptideSequence   The peptide sequence
      * @param positionInPeptide The position(s) of the modification in the peptide sequence
      * @return the possible modification sites in a protein
      */
@@ -771,6 +770,8 @@ public class PeptideShaker {
      * Scores the PTMs for a peptide match
      * 
      * @param peptideMatch the peptide match of interest
+     * @param searchParameters 
+     * @param annotationPreferences 
      * @throws Exception   exception thrown whenever an error occurred while deserializing a match
      */
     public void scorePTMs(PeptideMatch peptideMatch, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) throws Exception {
@@ -1257,7 +1258,7 @@ public class PeptideShaker {
                             otherProtein = true;
                             primaryDescription = parseDescription(mainMatch);
                             secondaryDescription = parseDescription(protein);
-                            if (!getSimilarity(primaryDescription, secondaryDescription)) {
+                            if (primaryDescription == null || secondaryDescription == null || !getSimilarity(primaryDescription, secondaryDescription)) {
                                 unrelated = true;
                                 break;
                             }
@@ -1297,6 +1298,10 @@ public class PeptideShaker {
     private ArrayList<String> parseDescription(String proteinAccession) throws IOException, IllegalArgumentException {
         String description = sequenceFactory.getHeader(proteinAccession).getDescription();
 
+        if (description == null) {
+            return new ArrayList<String>();
+        }
+        
         ArrayList<String> result = new ArrayList<String>();
         for (String component : description.split(" ")) {
             if (component.length() > 3) {
