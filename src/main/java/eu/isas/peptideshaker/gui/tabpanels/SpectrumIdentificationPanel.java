@@ -2618,7 +2618,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
         String fileSelected = (String) fileNamesCmb.getSelectedItem();
 
-        int maxCharge = 2;
+        int maxCharge = 0;
         double maxMz = Double.MIN_VALUE;
 
         double lLowRT = Double.MAX_VALUE;
