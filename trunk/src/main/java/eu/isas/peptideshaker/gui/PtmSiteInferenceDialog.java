@@ -56,7 +56,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     /**
      * Secondary ptm site selection
      */
-    private boolean[] secondarySelection;/**
+    private boolean[] secondarySelection;
+    /**
      * PTM confidence tooltip map, key: ptm confidence type, element: ptm confidence as a string.
      */
     private HashMap<Integer, String> ptmConfidenceTooltipMap;
@@ -98,9 +99,9 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         }
 
         initComponents();
-        
+
         setTableProperties();
-        
+
         if (peptideScoring != null) {
             peptidePtmConfidence.setSelectedIndex(peptideScoring.getPtmSiteConfidence() + 1);
         }
@@ -115,33 +116,33 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
-    
+
     /**
      * Set up the properties of the tables.
      */
     private void setTableProperties() {
-        
+
         peptidePtmConfidence.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         ptmSiteTableScrollPane.getViewport().setOpaque(false);
         ptmSiteTable.getTableHeader().setReorderingAllowed(false);
-        
+
         // centrally align the column headers 
         TableCellRenderer renderer = ptmSiteTable.getTableHeader().getDefaultRenderer();
         JLabel label = (JLabel) renderer;
         label.setHorizontalAlignment(JLabel.CENTER);
-        
+
         // cell renderers
         ptmSiteTable.getColumn("AA").setCellRenderer(new AlignedTableCellRenderer(SwingConstants.CENTER, Color.LIGHT_GRAY));
         ptmSiteTable.getColumn("S1").setCellRenderer(new NimbusCheckBoxRenderer());
         ptmSiteTable.getColumn("S2").setCellRenderer(new NimbusCheckBoxRenderer());
-     
+
         ptmSiteTable.getColumn("AA").setMinWidth(25);
         ptmSiteTable.getColumn("AA").setMaxWidth(25);
         ptmSiteTable.getColumn("S1").setMinWidth(25);
         ptmSiteTable.getColumn("S1").setMaxWidth(25);
         ptmSiteTable.getColumn("S2").setMinWidth(25);
         ptmSiteTable.getColumn("S2").setMaxWidth(25);
-        
+
         // set up the PTM confidence color map
         HashMap<Integer, Color> ptmConfidenceColorMap = new HashMap<Integer, Color>();
         ptmConfidenceColorMap.put(PtmScoring.NOT_FOUND, Color.lightGray);
@@ -157,13 +158,13 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         ptmConfidenceTooltipMap.put(PtmScoring.DOUBTFUL, "Doubtful Assignment");
         ptmConfidenceTooltipMap.put(PtmScoring.CONFIDENT, "Confident Assignment");
         ptmConfidenceTooltipMap.put(PtmScoring.VERY_CONFIDENT, "Very Confident Assignment");
- 
+
         for (int i = 3; i < ptmSiteTable.getColumnCount(); i++) {
             ptmSiteTable.getColumn(ptmSiteTable.getColumnName(i)).setCellRenderer(
                     new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
         }
     }
-    
+
     /**
      * Updates the sequence label based on the selection in the table
      */
@@ -174,7 +175,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         HashMap<Integer, ArrayList<String>> mainLocations = ptmScores.getMainModificationSites();
         HashMap<Integer, ArrayList<String>> secondaryLocations = ptmScores.getSecondaryModificationSites();
         String modName = ptm.getName();
-        for (int i = 0 ; i < mainSelection.length ; i++) {
+        for (int i = 0; i < mainSelection.length; i++) {
             if (mainSelection[i]) {
                 if (!mainLocations.containsKey(i)) {
                     mainLocations.put(i, new ArrayList<String>());
@@ -200,7 +201,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 }
             }
         }
-        sequenceLabel.setText(Peptide.getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), 
+
+        sequenceLabel.setText(Peptide.getModifiedSequenceAsHtml(peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(),
                 true, peptideMatch.getTheoreticPeptide(), mainLocations, secondaryLocations));
     }
 
