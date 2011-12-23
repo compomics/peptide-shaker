@@ -465,25 +465,27 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
     private void okbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okbuttonActionPerformed
         boolean changed = false;
-        for (int aa = 0; aa < mainSelection.length; aa++) {
-            if (mainSelection[aa]) {
-                if (!peptideScoring.getPtmLocation().contains(aa + 1)) {
+        int aa;
+        for (int i = 0; i < mainSelection.length; i++) {
+            aa = i+1;
+            if (mainSelection[i]) {
+                if (!peptideScoring.getPtmLocation().contains(aa)) {
                     peptideScoring.addPtmLocation(aa);
                     changed = true;
                 }
             } else {
-                if (peptideScoring.getPtmLocation().contains(aa + 1)) {
+                if (peptideScoring.getPtmLocation().contains(aa)) {
                     peptideScoring.removePtmLocation(aa);
                     changed = true;
                 }
             }
-            if (secondarySelection[aa]) {
-                if (!peptideScoring.getSecondaryPtmLocations().contains(aa + 1)) {
+            if (secondarySelection[i]) {
+                if (!peptideScoring.getSecondaryPtmLocations().contains(aa)) {
                     peptideScoring.addPtmSecondaryLocation(aa);
                     changed = true;
                 }
             } else {
-                if (peptideScoring.getSecondaryPtmLocations().contains(aa + 1)) {
+                if (peptideScoring.getSecondaryPtmLocations().contains(aa)) {
                     peptideScoring.removePtmSecondaryLocation(aa);
                     changed = true;
                 }
@@ -494,6 +496,12 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
             PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
             PSPtmScores scores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
             scores.addPtmScoring(ptm.getName(), peptideScoring);
+            for (int mainLocation : peptideScoring.getPtmLocation()) {
+                scores.addMainModificationSite(ptm.getName(), mainLocation);
+            }
+            for (int secondaryLocation : peptideScoring.getSecondaryPtmLocations()) {
+                scores.addSecondaryModificationSite(ptm.getName(), secondaryLocation);
+            }
             peptideShakerGUI.getIdentification().setMatchChanged(peptideMatch);
             // update protein level PTM scoring
             PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber());
