@@ -153,7 +153,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         // set up the PTM confidence tooltip map
         ptmConfidenceTooltipMap = new HashMap<Integer, String>();
-        ptmConfidenceTooltipMap.put(-1, "Not Found");
+        ptmConfidenceTooltipMap.put(PtmScoring.NOT_FOUND, "Not Found");
         ptmConfidenceTooltipMap.put(PtmScoring.RANDOM, "Random Assignment");
         ptmConfidenceTooltipMap.put(PtmScoring.DOUBTFUL, "Doubtful Assignment");
         ptmConfidenceTooltipMap.put(PtmScoring.CONFIDENT, "Confident Assignment");
@@ -172,32 +172,36 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
         PSPtmScores ptmScores = new PSPtmScores();
         ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
-        HashMap<Integer, ArrayList<String>> mainLocations = ptmScores.getMainModificationSites();
-        HashMap<Integer, ArrayList<String>> secondaryLocations = ptmScores.getSecondaryModificationSites();
+        HashMap<Integer, ArrayList<String>> mainLocations = new HashMap<Integer, ArrayList<String>>();
+        mainLocations.putAll(ptmScores.getMainModificationSites());
+        HashMap<Integer, ArrayList<String>> secondaryLocations = new HashMap<Integer, ArrayList<String>>();
+        secondaryLocations.putAll(ptmScores.getSecondaryModificationSites());
         String modName = ptm.getName();
+        int aa;
         for (int i = 0; i < mainSelection.length; i++) {
+            aa = i + 1;
             if (mainSelection[i]) {
-                if (!mainLocations.containsKey(i)) {
-                    mainLocations.put(i, new ArrayList<String>());
+                if (!mainLocations.containsKey(aa)) {
+                    mainLocations.put(aa, new ArrayList<String>());
                 }
-                if (!mainLocations.get(i).contains(modName)) {
-                    mainLocations.get(i).add(modName);
+                if (!mainLocations.get(aa).contains(modName)) {
+                    mainLocations.get(aa).add(modName);
                 }
             } else {
-                if (mainLocations.containsKey(i) && mainLocations.get(i).contains(modName)) {
-                    mainLocations.get(i).remove(modName);
+                if (mainLocations.containsKey(aa) && mainLocations.get(aa).contains(modName)) {
+                    mainLocations.get(aa).remove(modName);
                 }
             }
             if (secondarySelection[i]) {
-                if (!secondaryLocations.containsKey(i)) {
-                    secondaryLocations.put(i, new ArrayList<String>());
+                if (!secondaryLocations.containsKey(aa)) {
+                    secondaryLocations.put(aa, new ArrayList<String>());
                 }
-                if (!secondaryLocations.get(i).contains(modName)) {
-                    secondaryLocations.get(i).add(modName);
+                if (!secondaryLocations.get(aa).contains(modName)) {
+                    secondaryLocations.get(aa).add(modName);
                 }
             } else {
-                if (secondaryLocations.containsKey(i) && secondaryLocations.get(i).contains(modName)) {
-                    secondaryLocations.get(i).remove(modName);
+                if (secondaryLocations.containsKey(aa) && secondaryLocations.get(aa).contains(modName)) {
+                    secondaryLocations.get(aa).remove(modName);
                 }
             }
         }
