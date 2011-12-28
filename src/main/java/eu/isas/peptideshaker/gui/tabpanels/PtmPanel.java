@@ -1839,7 +1839,7 @@ public class PtmPanel extends javax.swing.JPanel {
                     }
                 }
                 else if (column == peptidesTable.getColumn("PTM").getModelIndex()) {
-                    new PtmSiteInferenceDialog(peptideShakerGUI, getSelectedPeptide(), ptmFactory.getPTM(getSelectedModification()));
+                    //new PtmSiteInferenceDialog(peptideShakerGUI, getSelectedPeptide(), ptmFactory.getPTM(getSelectedModification()));
                 }
             }
         } else {
