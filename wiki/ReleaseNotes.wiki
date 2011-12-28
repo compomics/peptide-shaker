@@ -3,6 +3,21 @@
 
 ----
 
+*Changes in PeptideShaker 0.12.2 (December 28. 2011):*
+  
+ * NEW FEATURE: Split the display of the number of peptides and spectra into validated and non-validated.
+ * FEATURE IMPROVEMENT: Removed the hardcoded white chart color for selected rows.
+ * BUG FIX: Re-enabled the FASTA protein inference parsing.
+ * BUG FIX: Fixed minor GUI bugs in the FilterDialog.
+ * BUG FIX: Fixed a couple of filtering bugs in the FindDialog related to the fact that the names of the columns had changed.
+ * BUG FIX: Minor GUI fixes in the export dialog.
+ * BUG FIX: The sequence coverage panel is now updated when changing the main match in the protein table in the Overview or 3D Structure tab.
+ * BUG FIX: Fixed it so that the same PI colors are used in the PTM tab as for the other tabs.
+ * LIBRARY UPDATE: Updated jsparklines to version 0.5.30. 
+ * LIBRARY UPDATE: Updated utilities to version 3.3.14.
+
+----
+
 *Changes in PeptideShaker 0.12.1 (December 21. 2011):*
 
  * NEW FEATURE: Added the handling of hide/star properties in the export options.
@@ -17,6 +32,8 @@
  * BUG FIX: Fixed a bug where the fragment ion menu bar had gone missing in the Spectrum IDs tab. 
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.28. 
  * LIBRARY UPDATE: Updated utilities to version 3.3.12.
+
+Download Count: 21
 
 ----
 
