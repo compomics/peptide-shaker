@@ -21,6 +21,10 @@ public class UserPreferences implements Serializable {
      */
     private Color sparklineColor = new Color(110, 196, 97);
     /**
+     * The color used for the non-validated sparkline bar chart plots.
+     */
+    private Color sparklineColorNonValidated = new Color(255, 0, 0);
+    /**
      * The recent projects
      */
     private ArrayList<String> recentProjects = new ArrayList<String>();
@@ -28,11 +32,11 @@ public class UserPreferences implements Serializable {
      * Show/hide sliders
      */
     private boolean showSliders = false;
+
     /**
      * Constructor
      */
     public UserPreferences() {
-        
     }
 
     /**
@@ -49,6 +53,22 @@ public class UserPreferences implements Serializable {
      */
     public void setSparklineColor(Color sparklineColor) {
         this.sparklineColor = sparklineColor;
+    }
+
+    /**
+     * Getter for the non-validated sparkline color
+     * @return the non-validated sparkline color
+     */
+    public Color getSparklineColorNonValidated() {
+        return sparklineColorNonValidated;
+    }
+
+    /**
+     * Setter for the non-validated sparkline color
+     * @param sparklineColorNonValidated the non-validated sparkline color
+     */
+    public void setSparklineColorNonValidated(Color sparklineColorNonValidated) {
+        this.sparklineColorNonValidated = sparklineColorNonValidated;
     }
 
     /**
@@ -74,6 +94,7 @@ public class UserPreferences implements Serializable {
     public ArrayList<String> getRecentProjects() {
         return recentProjects;
     }
+
     /**
      * Removes a recent project from the list
      * @param recentProject the recent project to remove
@@ -81,6 +102,7 @@ public class UserPreferences implements Serializable {
     public void removerRecentProject(String recentProject) {
         recentProjects.remove(recentProject);
     }
+
     /**
      * Adds a recent project to the list and limits the list of recent projects to a size of 10
      * @param recentProject the path of the recent project to add
@@ -91,9 +113,10 @@ public class UserPreferences implements Serializable {
         }
         recentProjects.add(0, recentProject);
         while (recentProjects.size() > 10) {
-            recentProjects.remove(recentProjects.size()-1);
+            recentProjects.remove(recentProjects.size() - 1);
         }
     }
+
     /**
      * Adds a recent project to the list and limits the list of recent projects to a size of 10
      * @param recentProject the recent project to add

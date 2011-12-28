@@ -44,19 +44,21 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <Component id="tabbedPane" pref="618" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="1" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                          <Component id="openDialogHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
+                          <EmptySpace pref="375" max="32767" attributes="0"/>
                           <Component id="okButton" linkSize="1" min="-2" pref="65" max="-2" attributes="0"/>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Component id="cancelButton" linkSize="1" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
+                      </Group>
+                      <Group type="102" alignment="0" attributes="0">
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="tabbedPane" pref="544" max="32767" attributes="0"/>
                       </Group>
                   </Group>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -64,11 +66,12 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="tabbedPane" pref="440" max="32767" attributes="0"/>
+                  <Component id="tabbedPane" pref="430" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="cancelButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="okButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="openDialogHelpJButton" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="okButton" linkSize="2" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="cancelButton" linkSize="2" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -77,11 +80,21 @@
       </Layout>
       <SubComponents>
         <Container class="javax.swing.JTabbedPane" name="tabbedPane">
+          <Events>
+            <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="tabbedPaneComponentResized"/>
+          </Events>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout"/>
           <SubComponents>
-            <Container class="javax.swing.JPanel" name="proteinsPanel">
+            <Container class="javax.swing.JSplitPane" name="proteinsSplitPane">
               <Properties>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="null"/>
+                </Property>
+                <Property name="dividerLocation" type="int" value="200"/>
+                <Property name="dividerSize" type="int" value="-1"/>
+                <Property name="orientation" type="int" value="0"/>
+                <Property name="resizeWeight" type="double" value="0.5"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Constraints>
@@ -92,31 +105,7 @@
                 </Constraint>
               </Constraints>
 
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="starredProteinsPanel" alignment="1" pref="599" max="32767" attributes="0"/>
-                              <Component id="hiddenProteinsPanel" alignment="1" pref="599" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="starredProteinsPanel" min="-2" pref="194" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="hiddenProteinsPanel" pref="190" max="32767" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
               <SubComponents>
                 <Container class="javax.swing.JPanel" name="starredProteinsPanel">
                   <Properties>
@@ -130,20 +119,25 @@
                       <Dimension value="[613, 195]"/>
                     </Property>
                   </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                      <JSplitPaneConstraints position="left"/>
+                    </Constraint>
+                  </Constraints>
 
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="starredProteinsScrollPane" min="-2" pref="492" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="editStarredProtein" alignment="1" pref="57" max="32767" attributes="0"/>
-                                  <Component id="addStarredProtein" alignment="1" pref="57" max="32767" attributes="0"/>
-                                  <Component id="clearStarredProtein" max="32767" attributes="2"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="starredProteinsScrollPane" pref="440" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="editStarredProtein" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="addStarredProtein" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="clearStarredProtein" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -152,14 +146,14 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="starredProteinsScrollPane" alignment="0" pref="145" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="addStarredProtein" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="editStarredProtein" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="clearStarredProtein" min="-2" max="-2" attributes="0"/>
                                   </Group>
+                                  <Component id="starredProteinsScrollPane" alignment="0" pref="151" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -261,20 +255,25 @@
                       <Dimension value="[613, 195]"/>
                     </Property>
                   </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                      <JSplitPaneConstraints position="right"/>
+                    </Constraint>
+                  </Constraints>
 
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="hiddenProteinsScrollPane" min="-2" pref="492" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="editHiddenProtein" alignment="1" pref="57" max="32767" attributes="0"/>
-                                  <Component id="addHiddenProtein" alignment="1" pref="57" max="32767" attributes="0"/>
-                                  <Component id="clearHiddenProtein" alignment="0" max="32767" attributes="2"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="hiddenProteinsScrollPane" pref="440" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="editHiddenProtein" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="addHiddenProtein" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="clearHiddenProtein" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -283,14 +282,14 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="hiddenProteinsScrollPane" alignment="0" pref="141" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="addHiddenProtein" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="editHiddenProtein" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="clearHiddenProtein" min="-2" max="-2" attributes="0"/>
                                   </Group>
+                                  <Component id="hiddenProteinsScrollPane" alignment="0" pref="154" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -382,8 +381,15 @@
                 </Container>
               </SubComponents>
             </Container>
-            <Container class="javax.swing.JPanel" name="peptidesPanel">
+            <Container class="javax.swing.JSplitPane" name="peptidesSplitPane">
               <Properties>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="null"/>
+                </Property>
+                <Property name="dividerLocation" type="int" value="200"/>
+                <Property name="dividerSize" type="int" value="-1"/>
+                <Property name="orientation" type="int" value="0"/>
+                <Property name="resizeWeight" type="double" value="0.5"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Constraints>
@@ -394,31 +400,7 @@
                 </Constraint>
               </Constraints>
 
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="starredPeptidesPanel" alignment="0" pref="599" max="32767" attributes="0"/>
-                              <Component id="hiddenPeptidesPanel" alignment="0" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="starredPeptidesPanel" pref="194" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="hiddenPeptidesPanel" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
               <SubComponents>
                 <Container class="javax.swing.JPanel" name="starredPeptidesPanel">
                   <Properties>
@@ -432,20 +414,25 @@
                       <Dimension value="[613, 195]"/>
                     </Property>
                   </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                      <JSplitPaneConstraints position="left"/>
+                    </Constraint>
+                  </Constraints>
 
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="starredPeptidesScrollPane" min="-2" pref="492" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="editStarredPeptides" alignment="1" pref="57" max="32767" attributes="0"/>
-                                  <Component id="addStarredPeptides" alignment="1" pref="57" max="32767" attributes="0"/>
-                                  <Component id="clearStarredPeptides" alignment="0" max="32767" attributes="2"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="starredPeptidesScrollPane" pref="440" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="editStarredPeptides" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="addStarredPeptides" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="clearStarredPeptides" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -454,14 +441,14 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="starredPeptidesScrollPane" alignment="0" pref="145" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="addStarredPeptides" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="editStarredPeptides" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="clearStarredPeptides" min="-2" max="-2" attributes="0"/>
                                   </Group>
+                                  <Component id="starredPeptidesScrollPane" alignment="0" pref="151" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -560,20 +547,25 @@
                     </Property>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                      <JSplitPaneConstraints position="right"/>
+                    </Constraint>
+                  </Constraints>
 
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="hiddenPeptidesScrollPane" min="-2" pref="492" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="editHiddenPeptides" alignment="1" pref="57" max="32767" attributes="0"/>
-                                  <Component id="addHiddenPeptides" alignment="1" pref="57" max="32767" attributes="0"/>
-                                  <Component id="clearHiddenPeptides" alignment="0" max="32767" attributes="2"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="hiddenPeptidesScrollPane" pref="440" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="editHiddenPeptides" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="addHiddenPeptides" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="clearHiddenPeptides" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -582,14 +574,14 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="hiddenPeptidesScrollPane" alignment="0" pref="141" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="addHiddenPeptides" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="editHiddenPeptides" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="clearHiddenPeptides" min="-2" max="-2" attributes="0"/>
                                   </Group>
+                                  <Component id="hiddenPeptidesScrollPane" alignment="0" pref="154" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -681,8 +673,15 @@
                 </Container>
               </SubComponents>
             </Container>
-            <Container class="javax.swing.JPanel" name="psmPanel">
+            <Container class="javax.swing.JSplitPane" name="psmsSplitPane">
               <Properties>
+                <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+                  <Border info="null"/>
+                </Property>
+                <Property name="dividerLocation" type="int" value="200"/>
+                <Property name="dividerSize" type="int" value="-1"/>
+                <Property name="orientation" type="int" value="0"/>
+                <Property name="resizeWeight" type="double" value="0.5"/>
                 <Property name="opaque" type="boolean" value="false"/>
               </Properties>
               <Constraints>
@@ -693,31 +692,7 @@
                 </Constraint>
               </Constraints>
 
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="starredPsmsPanel" alignment="0" pref="599" max="32767" attributes="0"/>
-                              <Component id="hiddenPsmsPanel" alignment="0" max="32767" attributes="0"/>
-                          </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="1" attributes="0">
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="starredPsmsPanel" pref="194" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="hiddenPsmsPanel" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout"/>
               <SubComponents>
                 <Container class="javax.swing.JPanel" name="starredPsmsPanel">
                   <Properties>
@@ -731,20 +706,25 @@
                       <Dimension value="[613, 195]"/>
                     </Property>
                   </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                      <JSplitPaneConstraints position="left"/>
+                    </Constraint>
+                  </Constraints>
 
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="starredPsmsScrollPane" min="-2" pref="492" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="editStarredPsm" alignment="1" pref="57" max="32767" attributes="0"/>
-                                  <Component id="addStarredPsm" alignment="1" pref="57" max="32767" attributes="0"/>
-                                  <Component id="clearStarredPsm" alignment="0" max="32767" attributes="2"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="starredPsmsScrollPane" pref="440" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="editStarredPsm" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="addStarredPsm" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="clearStarredPsm" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -753,14 +733,14 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="starredPsmsScrollPane" alignment="0" pref="145" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="addStarredPsm" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="editStarredPsm" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="clearStarredPsm" min="-2" max="-2" attributes="0"/>
                                   </Group>
+                                  <Component id="starredPsmsScrollPane" alignment="0" pref="151" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -859,20 +839,25 @@
                     </Property>
                     <Property name="opaque" type="boolean" value="false"/>
                   </Properties>
+                  <Constraints>
+                    <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JSplitPaneSupportLayout$JSplitPaneConstraintsDescription">
+                      <JSplitPaneConstraints position="right"/>
+                    </Constraint>
+                  </Constraints>
 
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="hiddenPsmsScrollPane" min="-2" pref="492" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="editHiddenPsm" alignment="1" pref="57" max="32767" attributes="0"/>
-                                  <Component id="addHiddenPsm" alignment="1" pref="57" max="32767" attributes="0"/>
-                                  <Component id="clearHiddenPsm" alignment="0" max="32767" attributes="2"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
+                              <Component id="hiddenPsmsScrollPane" pref="440" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="editHiddenPsm" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="addHiddenPsm" alignment="1" min="-2" pref="57" max="-2" attributes="0"/>
+                                  <Component id="clearHiddenPsm" alignment="0" max="32767" attributes="1"/>
                               </Group>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -881,14 +866,14 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="hiddenPsmsScrollPane" alignment="0" pref="141" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="addHiddenPsm" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="editHiddenPsm" min="-2" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
+                                      <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="clearHiddenPsm" min="-2" max="-2" attributes="0"/>
                                   </Group>
+                                  <Component id="hiddenPsmsScrollPane" alignment="0" pref="154" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -999,6 +984,24 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="okButtonActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="openDialogHelpJButton">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help.GIF"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Help"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
+            </Property>
+            <Property name="borderPainted" type="boolean" value="false"/>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="openDialogHelpJButtonMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="openDialogHelpJButtonMouseExited"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="openDialogHelpJButtonActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>

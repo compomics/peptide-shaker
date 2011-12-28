@@ -3280,6 +3280,24 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void setSparklineColor(Color sparklineColor) {
         userPreferences.setSparklineColor(sparklineColor);
     }
+    
+    /**
+     * Get the non-validated sparklines color.
+     *
+     * @return the non-validated sparklineColor
+     */
+    public Color getSparklineColorNonValidated() {
+        return userPreferences.getSparklineColorNonValidated();
+    }
+
+    /**
+     * Set the non-validated sparklines color.
+     *
+     * @param sparklineColorNonValidated the non-validated sparklineColor to set
+     */
+    public void setSparklineColorNonValidated(Color sparklineColorNonValidated) {
+        userPreferences.setSparklineColorNonValidated(sparklineColorNonValidated);
+    }
 
     /**
      * Returns the bubble plot scale value.

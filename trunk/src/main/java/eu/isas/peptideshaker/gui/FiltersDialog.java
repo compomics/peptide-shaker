@@ -18,6 +18,7 @@ import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
  * Displays the filters used for star/hide items
  *
  * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class FiltersDialog extends javax.swing.JDialog {
 
@@ -55,7 +56,7 @@ public class FiltersDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, true);
 
         initComponents();
-
+        
         setTableProperties();
 
         this.peptideShakerGUI = peptideShakerGUI;
@@ -227,7 +228,7 @@ public class FiltersDialog extends javax.swing.JDialog {
 
         backgroundPanel = new javax.swing.JPanel();
         tabbedPane = new javax.swing.JTabbedPane();
-        proteinsPanel = new javax.swing.JPanel();
+        proteinsSplitPane = new javax.swing.JSplitPane();
         starredProteinsPanel = new javax.swing.JPanel();
         starredProteinsScrollPane = new javax.swing.JScrollPane();
         starredProteinsTable = new javax.swing.JTable();
@@ -240,7 +241,7 @@ public class FiltersDialog extends javax.swing.JDialog {
         addHiddenProtein = new javax.swing.JButton();
         editHiddenProtein = new javax.swing.JButton();
         clearHiddenProtein = new javax.swing.JButton();
-        peptidesPanel = new javax.swing.JPanel();
+        peptidesSplitPane = new javax.swing.JSplitPane();
         starredPeptidesPanel = new javax.swing.JPanel();
         starredPeptidesScrollPane = new javax.swing.JScrollPane();
         starredPeptidesTable = new javax.swing.JTable();
@@ -253,7 +254,7 @@ public class FiltersDialog extends javax.swing.JDialog {
         addHiddenPeptides = new javax.swing.JButton();
         editHiddenPeptides = new javax.swing.JButton();
         clearHiddenPeptides = new javax.swing.JButton();
-        psmPanel = new javax.swing.JPanel();
+        psmsSplitPane = new javax.swing.JSplitPane();
         starredPsmsPanel = new javax.swing.JPanel();
         starredPsmsScrollPane = new javax.swing.JScrollPane();
         starredPsmTable = new javax.swing.JTable();
@@ -268,13 +269,25 @@ public class FiltersDialog extends javax.swing.JDialog {
         clearHiddenPsm = new javax.swing.JButton();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
+        openDialogHelpJButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Filter Selection");
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        proteinsPanel.setOpaque(false);
+        tabbedPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                tabbedPaneComponentResized(evt);
+            }
+        });
+
+        proteinsSplitPane.setBorder(null);
+        proteinsSplitPane.setDividerLocation(200);
+        proteinsSplitPane.setDividerSize(-1);
+        proteinsSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        proteinsSplitPane.setResizeWeight(0.5);
+        proteinsSplitPane.setOpaque(false);
 
         starredProteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Starred Proteins"));
         starredProteinsPanel.setOpaque(false);
@@ -344,11 +357,11 @@ public class FiltersDialog extends javax.swing.JDialog {
             starredProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(starredProteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(starredProteinsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(starredProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(editStarredProtein, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
-                    .addComponent(addStarredProtein, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
+                .addComponent(starredProteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(starredProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(editStarredProtein, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addStarredProtein, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(clearStarredProtein, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -357,15 +370,17 @@ public class FiltersDialog extends javax.swing.JDialog {
             .addGroup(starredProteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(starredProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(starredProteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
                     .addGroup(starredProteinsPanelLayout.createSequentialGroup()
                         .addComponent(addStarredProtein)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editStarredProtein)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(clearStarredProtein)))
+                        .addComponent(clearStarredProtein))
+                    .addComponent(starredProteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        proteinsSplitPane.setLeftComponent(starredProteinsPanel);
 
         hiddenProteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Hidden Proteins"));
         hiddenProteinsPanel.setOpaque(false);
@@ -435,11 +450,11 @@ public class FiltersDialog extends javax.swing.JDialog {
             hiddenProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(hiddenProteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(hiddenProteinsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(hiddenProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(editHiddenProtein, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
-                    .addComponent(addHiddenProtein, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
+                .addComponent(hiddenProteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(hiddenProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(editHiddenProtein, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addHiddenProtein, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(clearHiddenProtein, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -448,40 +463,26 @@ public class FiltersDialog extends javax.swing.JDialog {
             .addGroup(hiddenProteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(hiddenProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(hiddenProteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
                     .addGroup(hiddenProteinsPanelLayout.createSequentialGroup()
                         .addComponent(addHiddenProtein)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editHiddenProtein)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(clearHiddenProtein)))
+                        .addComponent(clearHiddenProtein))
+                    .addComponent(hiddenProteinsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout proteinsPanelLayout = new javax.swing.GroupLayout(proteinsPanel);
-        proteinsPanel.setLayout(proteinsPanelLayout);
-        proteinsPanelLayout.setHorizontalGroup(
-            proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(proteinsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(starredProteinsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE)
-                    .addComponent(hiddenProteinsPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        proteinsPanelLayout.setVerticalGroup(
-            proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(proteinsPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(starredProteinsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 194, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(hiddenProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 190, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        proteinsSplitPane.setRightComponent(hiddenProteinsPanel);
 
-        tabbedPane.addTab("Proteins", proteinsPanel);
+        tabbedPane.addTab("Proteins", proteinsSplitPane);
 
-        peptidesPanel.setOpaque(false);
+        peptidesSplitPane.setBorder(null);
+        peptidesSplitPane.setDividerLocation(200);
+        peptidesSplitPane.setDividerSize(-1);
+        peptidesSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        peptidesSplitPane.setResizeWeight(0.5);
+        peptidesSplitPane.setOpaque(false);
 
         starredPeptidesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Starred Peptides"));
         starredPeptidesPanel.setOpaque(false);
@@ -551,11 +552,11 @@ public class FiltersDialog extends javax.swing.JDialog {
             starredPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(starredPeptidesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(starredPeptidesScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(starredPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(editStarredPeptides, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
-                    .addComponent(addStarredPeptides, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
+                .addComponent(starredPeptidesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(starredPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(editStarredPeptides, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addStarredPeptides, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(clearStarredPeptides, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -564,15 +565,17 @@ public class FiltersDialog extends javax.swing.JDialog {
             .addGroup(starredPeptidesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(starredPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(starredPeptidesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
                     .addGroup(starredPeptidesPanelLayout.createSequentialGroup()
                         .addComponent(addStarredPeptides)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editStarredPeptides)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(clearStarredPeptides)))
+                        .addComponent(clearStarredPeptides))
+                    .addComponent(starredPeptidesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        peptidesSplitPane.setLeftComponent(starredPeptidesPanel);
 
         hiddenPeptidesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Hidden Peptides"));
         hiddenPeptidesPanel.setOpaque(false);
@@ -641,11 +644,11 @@ public class FiltersDialog extends javax.swing.JDialog {
             hiddenPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(hiddenPeptidesPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(hiddenPeptidesScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(hiddenPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(editHiddenPeptides, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
-                    .addComponent(addHiddenPeptides, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
+                .addComponent(hiddenPeptidesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(hiddenPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(editHiddenPeptides, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addHiddenPeptides, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(clearHiddenPeptides, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -654,40 +657,26 @@ public class FiltersDialog extends javax.swing.JDialog {
             .addGroup(hiddenPeptidesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(hiddenPeptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(hiddenPeptidesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
                     .addGroup(hiddenPeptidesPanelLayout.createSequentialGroup()
                         .addComponent(addHiddenPeptides)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editHiddenPeptides)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(clearHiddenPeptides)))
+                        .addComponent(clearHiddenPeptides))
+                    .addComponent(hiddenPeptidesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout peptidesPanelLayout = new javax.swing.GroupLayout(peptidesPanel);
-        peptidesPanel.setLayout(peptidesPanelLayout);
-        peptidesPanelLayout.setHorizontalGroup(
-            peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptidesPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(starredPeptidesPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE)
-                    .addComponent(hiddenPeptidesPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        peptidesPanelLayout.setVerticalGroup(
-            peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptidesPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(starredPeptidesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(hiddenPeptidesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        peptidesSplitPane.setRightComponent(hiddenPeptidesPanel);
 
-        tabbedPane.addTab("Peptides", peptidesPanel);
+        tabbedPane.addTab("Peptides", peptidesSplitPane);
 
-        psmPanel.setOpaque(false);
+        psmsSplitPane.setBorder(null);
+        psmsSplitPane.setDividerLocation(200);
+        psmsSplitPane.setDividerSize(-1);
+        psmsSplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+        psmsSplitPane.setResizeWeight(0.5);
+        psmsSplitPane.setOpaque(false);
 
         starredPsmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Starred PSMs"));
         starredPsmsPanel.setOpaque(false);
@@ -757,11 +746,11 @@ public class FiltersDialog extends javax.swing.JDialog {
             starredPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(starredPsmsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(starredPsmsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(starredPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(editStarredPsm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
-                    .addComponent(addStarredPsm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
+                .addComponent(starredPsmsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(starredPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(editStarredPsm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addStarredPsm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(clearStarredPsm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -770,15 +759,17 @@ public class FiltersDialog extends javax.swing.JDialog {
             .addGroup(starredPsmsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(starredPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(starredPsmsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 145, Short.MAX_VALUE)
                     .addGroup(starredPsmsPanelLayout.createSequentialGroup()
                         .addComponent(addStarredPsm)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editStarredPsm)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(clearStarredPsm)))
+                        .addComponent(clearStarredPsm))
+                    .addComponent(starredPsmsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
                 .addContainerGap())
         );
+
+        psmsSplitPane.setLeftComponent(starredPsmsPanel);
 
         hiddenPsmsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Hidden PSMs"));
         hiddenPsmsPanel.setOpaque(false);
@@ -847,11 +838,11 @@ public class FiltersDialog extends javax.swing.JDialog {
             hiddenPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(hiddenPsmsPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(hiddenPsmsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 492, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addGroup(hiddenPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(editHiddenPsm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
-                    .addComponent(addHiddenPsm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 57, Short.MAX_VALUE)
+                .addComponent(hiddenPsmsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(hiddenPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(editHiddenPsm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addHiddenPsm, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(clearHiddenPsm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -860,38 +851,19 @@ public class FiltersDialog extends javax.swing.JDialog {
             .addGroup(hiddenPsmsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(hiddenPsmsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(hiddenPsmsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
                     .addGroup(hiddenPsmsPanelLayout.createSequentialGroup()
                         .addComponent(addHiddenPsm)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(editHiddenPsm)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(clearHiddenPsm)))
+                        .addComponent(clearHiddenPsm))
+                    .addComponent(hiddenPsmsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        javax.swing.GroupLayout psmPanelLayout = new javax.swing.GroupLayout(psmPanel);
-        psmPanel.setLayout(psmPanelLayout);
-        psmPanelLayout.setHorizontalGroup(
-            psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, psmPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(starredPsmsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 599, Short.MAX_VALUE)
-                    .addComponent(hiddenPsmsPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
-        );
-        psmPanelLayout.setVerticalGroup(
-            psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, psmPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(starredPsmsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 194, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(hiddenPsmsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        psmsSplitPane.setRightComponent(hiddenPsmsPanel);
 
-        tabbedPane.addTab("PSMs", psmPanel);
+        tabbedPane.addTab("PSMs", psmsSplitPane);
 
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(new java.awt.event.ActionListener() {
@@ -908,21 +880,42 @@ public class FiltersDialog extends javax.swing.JDialog {
             }
         });
 
+        openDialogHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        openDialogHelpJButton.setToolTipText("Help");
+        openDialogHelpJButton.setBorder(null);
+        openDialogHelpJButton.setBorderPainted(false);
+        openDialogHelpJButton.setContentAreaFilled(false);
+        openDialogHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                openDialogHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                openDialogHelpJButtonMouseExited(evt);
+            }
+        });
+        openDialogHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openDialogHelpJButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 618, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 375, Short.MAX_VALUE)
                         .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton)
-                        .addGap(19, 19, 19))))
+                        .addComponent(cancelButton))
+                    .addGroup(backgroundPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {cancelButton, okButton});
@@ -931,11 +924,12 @@ public class FiltersDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 440, Short.MAX_VALUE)
+                .addComponent(tabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 430, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(cancelButton)
-                    .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(openDialogHelpJButton)
+                    .addComponent(okButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cancelButton))
                 .addContainerGap())
         );
 
@@ -982,7 +976,7 @@ public class FiltersDialog extends javax.swing.JDialog {
     private void starredProteinsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_starredProteinsTableKeyReleased
         int column = starredProteinsTable.getSelectedColumn();
         int row = starredProteinsTable.getSelectedRow();
-        
+
         if (column == 2) {
             String newName = (String) starredProteinsTable.getValueAt(row, column);
             ArrayList<String> others = new ArrayList<String>();
@@ -1027,7 +1021,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             String name = (String) starredProteinsTable.getValueAt(row, 2);
             proteinStarFilters.get(name).setDescription((String) starredProteinsTable.getValueAt(row, column));
         }
-        
+
         if (starredProteinsTable.isEditing()) {
             editStarredProtein.setEnabled(false);
         } else if (starredProteinsTable.getSelectedRow() != -1) {
@@ -1071,7 +1065,7 @@ public class FiltersDialog extends javax.swing.JDialog {
                 }
             }
         }
-        
+
         if (starredPeptidesTable.isEditing()) {
             editStarredPeptides.setEnabled(false);
         } else if (starredPeptidesTable.getSelectedRow() != -1) {
@@ -1095,7 +1089,7 @@ public class FiltersDialog extends javax.swing.JDialog {
                 }
             }
         }
-        
+
         if (starredPsmTable.isEditing()) {
             editStarredPsm.setEnabled(false);
         } else if (starredPsmTable.getSelectedRow() != -1) {
@@ -1119,7 +1113,7 @@ public class FiltersDialog extends javax.swing.JDialog {
                 }
             }
         }
-        
+
         if (hiddenProteinsTable.isEditing()) {
             editHiddenProtein.setEnabled(false);
         } else if (hiddenProteinsTable.getSelectedRow() != -1) {
@@ -1143,7 +1137,7 @@ public class FiltersDialog extends javax.swing.JDialog {
                 }
             }
         }
-        
+
         if (hiddenPeptidesTable.isEditing()) {
             editHiddenPeptides.setEnabled(false);
         } else if (hiddenPeptidesTable.getSelectedRow() != -1) {
@@ -1167,7 +1161,7 @@ public class FiltersDialog extends javax.swing.JDialog {
                 }
             }
         }
-        
+
         if (hiddenPsmTable.isEditing()) {
             editHiddenPsm.setEnabled(false);
         } else if (hiddenPsmTable.getSelectedRow() != -1) {
@@ -1296,10 +1290,10 @@ public class FiltersDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_editHiddenPsmActionPerformed
 
     private void hiddenProteinsTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_hiddenProteinsTableKeyReleased
-        
+
         int column = hiddenProteinsTable.getSelectedColumn();
         int row = hiddenProteinsTable.getSelectedRow();
-        
+
         if (column == 2) {
             String newName = (String) hiddenProteinsTable.getValueAt(row, column);
             ArrayList<String> others = new ArrayList<String>();
@@ -1337,7 +1331,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             String name = (String) hiddenProteinsTable.getValueAt(row, 2);
             proteinHideFilters.get(name).setDescription((String) hiddenProteinsTable.getValueAt(row, column));
         }
-        
+
         if (hiddenProteinsTable.isEditing()) {
             editHiddenProtein.setEnabled(false);
         } else if (hiddenProteinsTable.getSelectedRow() != -1) {
@@ -1385,7 +1379,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             String name = (String) starredPeptidesTable.getValueAt(row, 2);
             peptideStarFilters.get(name).setDescription((String) starredPeptidesTable.getValueAt(row, column));
         }
-        
+
         if (starredPeptidesTable.isEditing()) {
             editStarredPeptides.setEnabled(false);
         } else if (starredPeptidesTable.getSelectedRow() != -1) {
@@ -1433,7 +1427,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             String name = (String) hiddenPeptidesTable.getValueAt(row, 2);
             peptideHideFilters.get(name).setDescription((String) hiddenPeptidesTable.getValueAt(row, column));
         }
-        
+
         if (hiddenPeptidesTable.isEditing()) {
             editHiddenPeptides.setEnabled(false);
         } else if (hiddenPeptidesTable.getSelectedRow() != -1) {
@@ -1481,7 +1475,7 @@ public class FiltersDialog extends javax.swing.JDialog {
             String name = (String) starredPsmTable.getValueAt(row, 2);
             psmStarFilters.get(name).setDescription((String) starredPsmTable.getValueAt(row, column));
         }
-        
+
         if (starredPsmTable.isEditing()) {
             editStarredPsm.setEnabled(false);
         } else if (starredPsmTable.getSelectedRow() != -1) {
@@ -1529,17 +1523,58 @@ public class FiltersDialog extends javax.swing.JDialog {
             String name = (String) hiddenPsmTable.getValueAt(row, 2);
             psmHideFilters.get(name).setDescription((String) hiddenPsmTable.getValueAt(row, column));
         }
-        
+
         if (row != -1) {
             editHiddenPsm.setEnabled(true);
         }
-        
+
         if (hiddenPsmTable.isEditing()) {
             editHiddenPsm.setEnabled(false);
         } else if (hiddenPsmTable.getSelectedRow() != -1) {
             editHiddenPsm.setEnabled(true);
         }
     }//GEN-LAST:event_hiddenPsmTableKeyReleased
+
+    /**
+     * Change the cursor icon to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void openDialogHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_openDialogHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor icon to the default icon.
+     * 
+     * @param evt 
+     */
+    private void openDialogHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_openDialogHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void openDialogHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FiltersDialog.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
+
+    /**
+     * Make sure that the split pane dividers all have the same location.
+     * 
+     * @param evt 
+     */
+    private void tabbedPaneComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_tabbedPaneComponentResized
+        proteinsSplitPane.setDividerLocation(0.5);
+        peptidesSplitPane.setDividerLocation(0.5);
+        psmsSplitPane.setDividerLocation(0.5);    
+    }//GEN-LAST:event_tabbedPaneComponentResized
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addHiddenPeptides;
     private javax.swing.JButton addHiddenProtein;
@@ -1571,9 +1606,10 @@ public class FiltersDialog extends javax.swing.JDialog {
     private javax.swing.JPanel hiddenPsmsPanel;
     private javax.swing.JScrollPane hiddenPsmsScrollPane;
     private javax.swing.JButton okButton;
-    private javax.swing.JPanel peptidesPanel;
-    private javax.swing.JPanel proteinsPanel;
-    private javax.swing.JPanel psmPanel;
+    private javax.swing.JButton openDialogHelpJButton;
+    private javax.swing.JSplitPane peptidesSplitPane;
+    private javax.swing.JSplitPane proteinsSplitPane;
+    private javax.swing.JSplitPane psmsSplitPane;
     private javax.swing.JPanel starredPeptidesPanel;
     private javax.swing.JScrollPane starredPeptidesScrollPane;
     private javax.swing.JTable starredPeptidesTable;
@@ -1589,7 +1625,7 @@ public class FiltersDialog extends javax.swing.JDialog {
     /**
      * Updates the tables with the filters.
      */
-    public void updateFilters () {
+    public void updateFilters() {
         emptyTables();
         updateMaps();
         fillTables();

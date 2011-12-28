@@ -867,13 +867,13 @@ public class FindDialog extends javax.swing.JDialog {
             text = spectrumCountingTxt.getText().trim();
             if (!text.equals("")) {
                 Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(spectrumCountingCmb.getSelectedIndex()), value, proteinTable.getColumn("Spectrum Counting").getModelIndex()));
+                filters.add(RowFilter.numberFilter(getComparisonType(spectrumCountingCmb.getSelectedIndex()), value, proteinTable.getColumn("MS2 Quant.").getModelIndex()));
             }
 
             text = proteinCoverageTxt.getText().trim();
             if (!text.equals("")) {
                 Double value = new Double(text);
-                filters.add(RowFilter.numberFilter(getComparisonType(proteinCoverageCmb.getSelectedIndex()), value, proteinTable.getColumn("Sequence coverage").getModelIndex()));
+                filters.add(RowFilter.numberFilter(getComparisonType(proteinCoverageCmb.getSelectedIndex()), value, proteinTable.getColumn("Coverage").getModelIndex()));
             }
 
             text = nPeptidesTxt.getText().trim();
@@ -1061,7 +1061,7 @@ public class FindDialog extends javax.swing.JDialog {
                         for (String peptideKey : proteinMatch.getPeptideMatches()) {
                             peptideMatch = identification.getPeptideMatch(peptideKey);
                             cpt += peptideMatch.getSpectrumCount();
-                        }
+                                }
                         return cpt;
                     case 10:
                         proteinMatch = identification.getProteinMatch(proteinKey);
@@ -1876,6 +1876,7 @@ public class FindDialog extends javax.swing.JDialog {
                 };
             }
         };
+        openDialogHelpJButton = new javax.swing.JButton();
 
         selectAllPtmsMenuItem.setText("Select All");
         selectAllPtmsMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -3000,21 +3001,42 @@ public class FindDialog extends javax.swing.JDialog {
 
         filterTypeJTabbedPane.addTab("PSMs", psmPanel);
 
+        openDialogHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
+        openDialogHelpJButton.setToolTipText("Help");
+        openDialogHelpJButton.setBorder(null);
+        openDialogHelpJButton.setBorderPainted(false);
+        openDialogHelpJButton.setContentAreaFilled(false);
+        openDialogHelpJButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                openDialogHelpJButtonMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                openDialogHelpJButtonMouseExited(evt);
+            }
+        });
+        openDialogHelpJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openDialogHelpJButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(backgroundPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, backgroundPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(filterTypeJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 973, Short.MAX_VALUE))
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addComponent(filterTypeJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 973, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 820, Short.MAX_VALUE)
                         .addComponent(saveButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(exitButton)
-                        .addGap(21, 21, 21))))
+                        .addComponent(exitButton)))
+                .addContainerGap())
         );
 
         backgroundPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {exitButton, saveButton});
@@ -3023,11 +3045,12 @@ public class FindDialog extends javax.swing.JDialog {
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filterTypeJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 673, Short.MAX_VALUE)
+                .addComponent(filterTypeJTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 673, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exitButton)
-                    .addComponent(saveButton))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
+                    .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                    .addComponent(saveButton)
+                    .addComponent(exitButton))
                 .addContainerGap())
         );
 
@@ -3241,7 +3264,7 @@ public class FindDialog extends javax.swing.JDialog {
             selectFilesJPopupMenu.show(spectrumFilesTable, evt.getX(), evt.getY());
         } else {
             filterPsms();
-        }   
+        }
     }//GEN-LAST:event_spectrumFilesTableMouseReleased
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
@@ -3363,6 +3386,34 @@ public class FindDialog extends javax.swing.JDialog {
         filterPsms();
     }//GEN-LAST:event_deselectAllFilesMenuItemActionPerformed
 
+    /**
+     * Change the cursor icon to a hand icon.
+     * 
+     * @param evt 
+     */
+    private void openDialogHelpJButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonMouseEntered
+        setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+    }//GEN-LAST:event_openDialogHelpJButtonMouseEntered
+
+    /**
+     * Change the cursor icon to the default icon.
+     * 
+     * @param evt 
+     */
+    private void openDialogHelpJButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonMouseExited
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_openDialogHelpJButtonMouseExited
+
+    /**
+     * Open the help dialog.
+     * 
+     * @param evt 
+     */
+    private void openDialogHelpJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openDialogHelpJButtonActionPerformed
+        setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+        new HelpDialog(peptideShakerGUI, getClass().getResource("/helpFiles/FindDialog.html"));
+        setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_openDialogHelpJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JCheckBox charge2CheckBox;
@@ -3403,6 +3454,7 @@ public class FindDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane modificationsScrollPane;
     private javax.swing.JComboBox nPeptidesCmb;
     private javax.swing.JTextField nPeptidesTxt;
+    private javax.swing.JButton openDialogHelpJButton;
     private javax.swing.JComboBox peptideConfidenceCmb;
     private javax.swing.JTextField peptideConfidenceTxt;
     private javax.swing.JTextArea peptideExceptionsTxt;
