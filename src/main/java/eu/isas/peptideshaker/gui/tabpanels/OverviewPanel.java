@@ -3703,7 +3703,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     if (covered) {
 
                         if (selectedPeptideEnd.contains(new Integer(i + 1))) {
-                            sparklineDataseries = new JSparklinesDataSeries(data, new Color(255, 0, 0), null); // @TODO: selected color ought not be hardcoded here...
+                            sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 255), null); // @TODO: selected color ought not be hardcoded here...
                         } else {
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
                         }
