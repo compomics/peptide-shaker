@@ -203,11 +203,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinNsaf.setIconTextGap(10);
         proteinNsaf.setOpaque(false);
 
-        proteinScore.setText("Score");
+        proteinScore.setText("Protein Score");
         proteinScore.setIconTextGap(10);
         proteinScore.setOpaque(false);
 
-        proteinConfidence.setText("Confidence");
+        proteinConfidence.setText("Protein Confidence");
         proteinConfidence.setIconTextGap(10);
         proteinConfidence.setOpaque(false);
 
@@ -359,12 +359,12 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideNSpectra.setIconTextGap(10);
         peptideNSpectra.setOpaque(false);
 
-        peptideScore.setText("Score");
+        peptideScore.setText("Peptide Score");
         peptideScore.setIconTextGap(10);
         peptideScore.setOpaque(false);
 
         peptideConfidence.setSelected(true);
-        peptideConfidence.setText("Confidence");
+        peptideConfidence.setText("Peptide Confidence");
         peptideConfidence.setIconTextGap(10);
         peptideConfidence.setOpaque(false);
 
@@ -528,12 +528,12 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         psmModification.setIconTextGap(10);
         psmModification.setOpaque(false);
 
-        psmScore.setText("Score");
+        psmScore.setText("PSM Score");
         psmScore.setIconTextGap(10);
         psmScore.setOpaque(false);
 
         psmConfidence.setSelected(true);
-        psmConfidence.setText("Confidence");
+        psmConfidence.setText("PSM Confidence");
         psmConfidence.setIconTextGap(10);
         psmConfidence.setOpaque(false);
 
@@ -939,8 +939,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinConfidence.setSelected(true);
         proteinSequenceCoverage.setSelected(true);
         proteinValidated.setSelected(true);
-        proteinStarred.setSelected(true);
-        proteinHidden.setSelected(true);
     }//GEN-LAST:event_proteinSelectAllActionPerformed
 
     /**
@@ -981,8 +979,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideLocation.setSelected(true);
         peptidePosition.setSelected(true);
         peptideValidated.setSelected(true);
-        peptideStarred.setSelected(true);
-        peptideHidden.setSelected(true);
     }//GEN-LAST:event_peptideSelectAllActionPerformed
 
     /**
@@ -1021,8 +1017,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         psmScore.setSelected(true);
         psmConfidence.setSelected(true);
         psmValidated.setSelected(true);
-        psmStarred.setSelected(true);
-        psmHidden.setSelected(true);
     }//GEN-LAST:event_psmSelectAllActionPerformed
 
     /**
