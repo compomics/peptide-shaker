@@ -22,7 +22,7 @@ import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 
 /**
- * This dialog allows the user to verify/update the modification site
+ * This dialog allows the user to verify/update the modification site.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -30,23 +30,23 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
     /**
-     * The main GUI
+     * The main GUI.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The PTM investigated
+     * The PTM investigated.
      */
     private PTM ptm;
     /**
-     * The peptide scoring
+     * The peptide scoring.
      */
     private PtmScoring peptideScoring = null;
     /**
-     * The key of the investigated peptide
+     * The key of the investigated peptide.
      */
     private String peptideKey;
     /**
-     * list of psms for this peptide
+     * list of psms for this peptide.
      */
     private ArrayList<SpectrumMatch> psms = new ArrayList<SpectrumMatch>();
     /**
@@ -54,7 +54,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
      */
     private boolean[] mainSelection;
     /**
-     * Secondary ptm site selection
+     * Secondary ptm site selection.
      */
     private boolean[] secondarySelection;
     /**
@@ -64,6 +64,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
     /**
      * Constructor
+     * 
      * @param peptideShakerGUI  The main GUI
      * @param peptideKey        The peptide key of the investigated peptide
      * @param ptm               The PTM investigated
@@ -166,7 +167,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Updates the sequence label based on the selection in the table
+     * Updates the sequence label based on the selection in the table.
      */
     private void updateSequenceLabel() {
         PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
@@ -211,7 +212,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Table model for the ptm site selection table
+     * Table model for the ptm site selection table.
      */
     private class SiteSelectionTable extends DefaultTableModel {
 
@@ -307,6 +308,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 }
                 updateSequenceLabel();
             }
+            
+            fireTableDataChanged();
         }
     }
 
@@ -438,18 +441,20 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(ptmSitePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(ptmSitePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(peptidePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
                         .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 510, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton))
-                    .addComponent(peptidePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(cancelButton)))
                 .addContainerGap())
         );
 
@@ -462,13 +467,13 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 .addComponent(peptidePanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ptmSitePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(cancelButton)
                         .addComponent(okButton))
                     .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGap(16, 16, 16))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -485,13 +490,24 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Closes the dialog without saving.
+     * 
+     * @param evt 
+     */
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed
         dispose();
     }//GEN-LAST:event_cancelButtonActionPerformed
 
+    /**
+     * Updates the data and then closes the dialog.
+     * 
+     * @param evt 
+     */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         boolean changed = false;
         int aa;
+        
         for (int i = 0; i < mainSelection.length; i++) {
             aa = i + 1;
             if (mainSelection[i]) {
@@ -517,23 +533,29 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 }
             }
         }
+        
         if (changed) {
             // save changes in the peptide match
             PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
             PSPtmScores scores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
             scores.addPtmScoring(ptm.getName(), peptideScoring);
+            
             for (int mainLocation : peptideScoring.getPtmLocation()) {
                 scores.addMainModificationSite(ptm.getName(), mainLocation);
             }
+            
             for (int secondaryLocation : peptideScoring.getSecondaryPtmLocations()) {
                 scores.addSecondaryModificationSite(ptm.getName(), secondaryLocation);
             }
+            
             peptideShakerGUI.getIdentification().setMatchChanged(peptideMatch);
+            
             // update protein level PTM scoring
             PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber());
             ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteins();
             ProteinMatch proteinMatch;
             boolean candidate;
+            
             for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                 candidate = false;
                 for (String protein : proteins) {
