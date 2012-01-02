@@ -3040,15 +3040,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
+            JOptionPane.showMessageDialog(this, "An error occured while reading:\n" + aFile.getName() + ".\n\n"
                     + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
+            JOptionPane.showMessageDialog(this, "An error occured while reading:\n" + aFile.getName() + ".\n\n"
                     + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
         } catch (ClassCastException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "An error occured while reading " + aFile.getName() + ".\n"
+            JOptionPane.showMessageDialog(this, "An error occured while reading:\n" + aFile.getName() + ".\n\n"
                     + "Please verify the version compatibility.", "File Import Error", JOptionPane.WARNING_MESSAGE);
         }
     }
@@ -4725,7 +4725,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         }
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(peptideShakerGUI,
-                                "An error occured while reading:\n" + experimentSettings.getSearchParameters().getFastaFile() + ".\nPlease select the FASTA file manually.",
+                                "An error occured while reading:\n" + experimentSettings.getSearchParameters().getFastaFile() + "."
+                                + "\n\nPlease select the FASTA file manually.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
 
                         JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
@@ -4760,7 +4761,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             } catch (Exception e2) {
                                 e2.printStackTrace();
                                 JOptionPane.showMessageDialog(peptideShakerGUI,
-                                        "An error occured while reading " + experimentSettings.getSearchParameters().getFastaFile() + ".\nOpen cancelled.",
+                                        "An error occured while reading:\n" + experimentSettings.getSearchParameters().getFastaFile() + "."
+                                        + "\n\nOpen cancelled.",
                                         "File Input Error", JOptionPane.ERROR_MESSAGE);
                                 clearData();
                                 clearPreferences();
@@ -4810,8 +4812,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                 spectrumFiles.add(new File(dataFolder, fileName).getAbsolutePath());
                             } else {
                                 JOptionPane.showMessageDialog(peptideShakerGUI,
-                                        "An error occured while reading:\n" + new File(filePath).getName() + ".\n"
-                                        + "Please select the spectrum file or the folder containing it manually.",
+                                        "An error occured while reading:\n" + new File(filePath).getName() + "."
+                                        + "\n\nPlease select the spectrum file or the folder containing it manually.",
                                         "File Input Error", JOptionPane.ERROR_MESSAGE);
 
                                 JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
@@ -5010,7 +5012,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     progressDialog.dispose();
 
                     JOptionPane.showMessageDialog(peptideShakerGUI,
-                            "An error occured while reading " + currentPSFile + ".\n"
+                            "An error occured while reading:\n" + currentPSFile + ".\n\n"
                             + "Please verify that the compomics-utilities version used to create\n"
                             + "the file is compatible with your version of PeptideShaker.",
                             "File Input Error", JOptionPane.ERROR_MESSAGE);
