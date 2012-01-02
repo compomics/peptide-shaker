@@ -3114,6 +3114,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
      */
     private void updateSelection(ProgressDialogX progressDialog) {
 
+        // @TODO: we need to move to the correct ptm type in the ptmJTable before updating the selection!!
+        // @TODO: if the given peptide has more than one ptm -> the user must choose the ptm to display 
+        
         String selectedKey = peptideShakerGUI.getSelectedPeptideKey();
         if (selectedKey.equals(PeptideShakerGUI.NO_SELECTION)
                 && !peptideShakerGUI.getSelectedPsmKey().equals(PeptideShakerGUI.NO_SELECTION)) {
