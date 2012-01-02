@@ -2992,7 +2992,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         } else if (selectedTabIndex == MODIFICATIONS_TAB_INDEX) {
             ptmPanel.setIntensitySliderValue((int) (annotationPreferences.getAnnotationIntensityLimit() * 100));
             ptmPanel.setAccuracySliderValue((int) ((annotationPreferences.getFragmentIonAccuracy() / searchParameters.getFragmentIonAccuracy()) * 100));
-            ptmPanel.updateGraphics();
+            ptmPanel.updateGraphics(null);
         }
     }
 
