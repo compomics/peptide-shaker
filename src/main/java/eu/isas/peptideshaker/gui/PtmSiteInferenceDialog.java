@@ -125,24 +125,34 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         peptidePtmConfidence.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         ptmSiteTableScrollPane.getViewport().setOpaque(false);
+        ptmsTableScrollPane.getViewport().setOpaque(false);
         ptmSiteTable.getTableHeader().setReorderingAllowed(false);
+        ptmsTable.getTableHeader().setReorderingAllowed(false);
 
         // centrally align the column headers 
         TableCellRenderer renderer = ptmSiteTable.getTableHeader().getDefaultRenderer();
         JLabel label = (JLabel) renderer;
         label.setHorizontalAlignment(JLabel.CENTER);
 
-        // cell renderers
-        ptmSiteTable.getColumn("AA").setCellRenderer(new AlignedTableCellRenderer(SwingConstants.CENTER, Color.LIGHT_GRAY));
-        ptmSiteTable.getColumn("S1").setCellRenderer(new NimbusCheckBoxRenderer());
-        ptmSiteTable.getColumn("S2").setCellRenderer(new NimbusCheckBoxRenderer());
+        // remove the column header in the ptm table
+        ptmsTableScrollPane.setColumnHeaderView(null);
 
-        ptmSiteTable.getColumn("AA").setMinWidth(25);
-        ptmSiteTable.getColumn("AA").setMaxWidth(25);
-        ptmSiteTable.getColumn("S1").setMinWidth(25);
-        ptmSiteTable.getColumn("S1").setMaxWidth(25);
-        ptmSiteTable.getColumn("S2").setMinWidth(25);
-        ptmSiteTable.getColumn("S2").setMaxWidth(25);
+        // cell renderers
+        ptmSiteTable.getColumn("").setCellRenderer(new AlignedTableCellRenderer(SwingConstants.CENTER, Color.LIGHT_GRAY));
+
+        for (int i = 1; i < ptmSiteTable.getColumnCount(); i++) {
+            ptmSiteTable.getColumn(ptmSiteTable.getColumnName(i)).setCellRenderer(new NimbusCheckBoxRenderer());
+        }
+
+
+        ptmsTable.getColumn("").setCellRenderer(new AlignedTableCellRenderer(SwingConstants.CENTER, Color.LIGHT_GRAY));
+
+
+        ptmSiteTable.getColumn("").setMinWidth(35);
+        ptmSiteTable.getColumn("").setMaxWidth(35);
+        ptmsTable.getColumn("").setMinWidth(35);
+        ptmsTable.getColumn("").setMaxWidth(35);
+
 
         // set up the PTM confidence color map
         HashMap<Integer, Color> ptmConfidenceColorMap = new HashMap<Integer, Color>();
@@ -160,8 +170,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         ptmConfidenceTooltipMap.put(PtmScoring.CONFIDENT, "Confident Assignment");
         ptmConfidenceTooltipMap.put(PtmScoring.VERY_CONFIDENT, "Very Confident Assignment");
 
-        for (int i = 3; i < ptmSiteTable.getColumnCount(); i++) {
-            ptmSiteTable.getColumn(ptmSiteTable.getColumnName(i)).setCellRenderer(
+        for (int i = 1; i < ptmsTable.getColumnCount(); i++) {
+            ptmsTable.getColumn(ptmsTable.getColumnName(i)).setCellRenderer(
                     new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), ptmConfidenceColorMap, ptmConfidenceTooltipMap));
         }
     }
@@ -218,53 +228,122 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public int getRowCount() {
-            return Peptide.getSequence(peptideKey).length();
+            return 2;
         }
 
         @Override
         public int getColumnCount() {
-            return psms.size() + 3;
+            return Peptide.getSequence(peptideKey).length() + 1;
         }
 
         @Override
         public String getColumnName(int column) {
             switch (column) {
                 case 0:
-                    return "AA";
-                case 1:
-                    return "S1";
-                case 2:
-                    return "S2";
+                    return "";
                 default:
-                    int psmNumber = column - 2;
-                    return "" + psmNumber;
+                    return "" + Peptide.getSequence(peptideKey).charAt(column - 1) + column;
+            }
+        }
+
+        @Override
+        public Object getValueAt(int row, int column) {
+
+            if (column == 0) {
+                if (row == 0) {
+                    return "S1";
+                } else {
+                    return "S2";
+                }
+            } else {
+                if (row == 0) {
+                    return mainSelection[column - 1];
+                } else if (row == 1) {
+                    return secondarySelection[column - 1];
+                } else {
+                    return null;
+                }
+            }
+        }
+
+        @Override
+        public Class getColumnClass(int columnIndex) {
+            if (columnIndex == 0) {
+                return String.class;
+            } else {
+                return Boolean.class;
+            }
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return columnIndex != 0;
+        }
+
+        @Override
+        public void setValueAt(Object aValue, int row, int column) {
+            if (row == 0) {
+                mainSelection[column - 1] = !mainSelection[column - 1];
+                if (mainSelection[column - 1] && secondarySelection[column - 1]) {
+                    secondarySelection[column - 1] = false;
+                }
+                updateSequenceLabel();
+            } else if (row == 1) {
+                secondarySelection[column - 1] = !secondarySelection[column - 1];
+                if (mainSelection[column - 1] && secondarySelection[column - 1]) {
+                    mainSelection[column - 1] = false;
+                }
+                updateSequenceLabel();
+            }
+
+            fireTableDataChanged();
+        }
+    }
+
+    /**
+     * Table model for the ptm table.
+     */
+    private class PtmTable extends DefaultTableModel {
+
+        @Override
+        public int getRowCount() {
+            return psms.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return Peptide.getSequence(peptideKey).length() + 1;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0:
+                    return "";
+                default:
+                    return "" + Peptide.getSequence(peptideKey).charAt(column - 1) + column;
             }
         }
 
         @Override
         public Object getValueAt(int row, int column) {
             try {
-                switch (column) {
-                    case 0:
-                        return Peptide.getSequence(peptideKey).charAt(row);
-                    case 1:
-                        return mainSelection[row];
-                    case 2:
-                        return secondarySelection[row];
-                    default:
-                        int psmNumber = column - 3;
-                        PSPtmScores psmScores = (PSPtmScores) psms.get(psmNumber).getUrParam(new PSPtmScores());
-                        if (psmScores != null) {
-                            PtmScoring psmScoring = psmScores.getPtmScoring(ptm.getName());
-                            if (psmScoring != null) {
-                                if (psmScoring.getPtmLocation().contains(row + 1)) {
-                                    return psmScoring.getPtmSiteConfidence();
-                                } else {
-                                    return PtmScoring.NOT_FOUND;
-                                }
+                if (column == 0) {
+                    return row + 1;
+                } else {
+                    int psmNumber = row;
+                    PSPtmScores psmScores = (PSPtmScores) psms.get(psmNumber).getUrParam(new PSPtmScores());
+                    if (psmScores != null) {
+                        PtmScoring psmScoring = psmScores.getPtmScoring(ptm.getName());
+                        if (psmScoring != null) {
+                            if (psmScoring.getPtmLocation().contains(column)) {
+                                return psmScoring.getPtmSiteConfidence();
+                            } else {
+                                return PtmScoring.NOT_FOUND;
                             }
                         }
-                        return PtmScoring.RANDOM;
+                    }
+                    return PtmScoring.RANDOM;
                 }
 
             } catch (Exception e) {
@@ -275,41 +354,12 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
 
         @Override
         public Class getColumnClass(int columnIndex) {
-            for (int i = 0; i < getRowCount(); i++) {
-                if (getValueAt(i, columnIndex) != null) {
-                    return getValueAt(i, columnIndex).getClass();
-                }
-            }
-            return (new Double(0.0)).getClass();
+            return Integer.class;
         }
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-
-            if (columnIndex == 1 || columnIndex == 2) {
-                return true;
-            }
-
             return false;
-        }
-
-        @Override
-        public void setValueAt(Object aValue, int row, int column) {
-            if (column == 1) {
-                mainSelection[row] = !mainSelection[row];
-                if (mainSelection[row] && secondarySelection[row]) {
-                    secondarySelection[row] = false;
-                }
-                updateSequenceLabel();
-            } else if (column == 2) {
-                secondarySelection[row] = !secondarySelection[row];
-                if (mainSelection[row] && secondarySelection[row]) {
-                    mainSelection[row] = false;
-                }
-                updateSequenceLabel();
-            }
-            
-            fireTableDataChanged();
         }
     }
 
@@ -331,6 +381,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         ptmSitePanel = new javax.swing.JPanel();
         ptmSiteTableScrollPane = new javax.swing.JScrollPane();
         ptmSiteTable = new javax.swing.JTable();
+        ptmsTableScrollPane = new javax.swing.JScrollPane();
+        ptmsTable = new javax.swing.JTable();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         openDialogHelpJButton = new javax.swing.JButton();
@@ -381,26 +433,38 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         ptmSitePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Potential Modification Sites"));
         ptmSitePanel.setOpaque(false);
 
+        ptmSiteTableScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         ptmSiteTableScrollPane.setOpaque(false);
 
         ptmSiteTable.setModel(new SiteSelectionTable());
+        ptmSiteTable.setFillsViewportHeight(true);
         ptmSiteTable.setOpaque(false);
         ptmSiteTableScrollPane.setViewportView(ptmSiteTable);
+
+        ptmsTableScrollPane.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        ptmsTableScrollPane.setOpaque(false);
+
+        ptmsTable.setModel(new PtmTable());
+        ptmsTable.setOpaque(false);
+        ptmsTableScrollPane.setViewportView(ptmsTable);
 
         javax.swing.GroupLayout ptmSitePanelLayout = new javax.swing.GroupLayout(ptmSitePanel);
         ptmSitePanel.setLayout(ptmSitePanelLayout);
         ptmSitePanelLayout.setHorizontalGroup(
             ptmSitePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ptmSitePanelLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ptmSitePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(ptmSiteTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE)
+                .addGroup(ptmSitePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(ptmsTableScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE)
+                    .addComponent(ptmSiteTableScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 647, Short.MAX_VALUE))
                 .addContainerGap())
         );
         ptmSitePanelLayout.setVerticalGroup(
             ptmSitePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ptmSitePanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(ptmSiteTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 365, Short.MAX_VALUE)
+                .addComponent(ptmSiteTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2)
+                .addComponent(ptmsTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 315, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -468,12 +532,11 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(ptmSitePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(cancelButton)
-                        .addComponent(okButton))
-                    .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE))
-                .addGap(16, 16, 16))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(okButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -507,7 +570,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         boolean changed = false;
         int aa;
-        
+
         for (int i = 0; i < mainSelection.length; i++) {
             aa = i + 1;
             if (mainSelection[i]) {
@@ -533,29 +596,29 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
                 }
             }
         }
-        
+
         if (changed) {
             // save changes in the peptide match
             PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
             PSPtmScores scores = (PSPtmScores) peptideMatch.getUrParam(new PSPtmScores());
             scores.addPtmScoring(ptm.getName(), peptideScoring);
-            
+
             for (int mainLocation : peptideScoring.getPtmLocation()) {
                 scores.addMainModificationSite(ptm.getName(), mainLocation);
             }
-            
+
             for (int secondaryLocation : peptideScoring.getSecondaryPtmLocations()) {
                 scores.addSecondaryModificationSite(ptm.getName(), secondaryLocation);
             }
-            
+
             peptideShakerGUI.getIdentification().setMatchChanged(peptideMatch);
-            
+
             // update protein level PTM scoring
             PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber());
             ArrayList<String> proteins = peptideMatch.getTheoreticPeptide().getParentProteins();
             ProteinMatch proteinMatch;
             boolean candidate;
-            
+
             for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
                 candidate = false;
                 for (String protein : proteins) {
@@ -618,6 +681,8 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
     private javax.swing.JPanel ptmSitePanel;
     private javax.swing.JTable ptmSiteTable;
     private javax.swing.JScrollPane ptmSiteTableScrollPane;
+    private javax.swing.JTable ptmsTable;
+    private javax.swing.JScrollPane ptmsTableScrollPane;
     private javax.swing.JLabel sequenceLabel;
     // End of variables declaration//GEN-END:variables
 }
