@@ -133,6 +133,7 @@ public class QCPanel extends javax.swing.JPanel {
         proteinSpectrumCountingScoreJRadioButton = new javax.swing.JRadioButton();
         proteinNumberValidatedPeptidesJRadioButton = new javax.swing.JRadioButton();
         proteinSequenceCoverageJRadioButton = new javax.swing.JRadioButton();
+        proteinSequenceLengthJRadioButton = new javax.swing.JRadioButton();
 
         setBackground(new java.awt.Color(255, 255, 255));
 
@@ -513,6 +514,16 @@ public class QCPanel extends javax.swing.JPanel {
             }
         });
 
+        proteinButtonGroup.add(proteinSequenceLengthJRadioButton);
+        proteinSequenceLengthJRadioButton.setText("Sequence Length");
+        proteinSequenceLengthJRadioButton.setIconTextGap(10);
+        proteinSequenceLengthJRadioButton.setOpaque(false);
+        proteinSequenceLengthJRadioButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                proteinSequenceLengthJRadioButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout proteinPlotTypePanelLayout = new javax.swing.GroupLayout(proteinPlotTypePanel);
         proteinPlotTypePanel.setLayout(proteinPlotTypePanelLayout);
         proteinPlotTypePanelLayout.setHorizontalGroup(
@@ -524,7 +535,9 @@ public class QCPanel extends javax.swing.JPanel {
                 .addComponent(proteinSpectrumCountingScoreJRadioButton)
                 .addGap(18, 18, 18)
                 .addComponent(proteinSequenceCoverageJRadioButton)
-                .addContainerGap(190, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(proteinSequenceLengthJRadioButton)
+                .addContainerGap(57, Short.MAX_VALUE))
         );
         proteinPlotTypePanelLayout.setVerticalGroup(
             proteinPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -533,7 +546,8 @@ public class QCPanel extends javax.swing.JPanel {
                 .addGroup(proteinPlotTypePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(proteinNumberValidatedPeptidesJRadioButton)
                     .addComponent(proteinSpectrumCountingScoreJRadioButton)
-                    .addComponent(proteinSequenceCoverageJRadioButton))
+                    .addComponent(proteinSequenceCoverageJRadioButton)
+                    .addComponent(proteinSequenceLengthJRadioButton))
                 .addContainerGap())
         );
 
@@ -1020,6 +1034,11 @@ public class QCPanel extends javax.swing.JPanel {
     private void peptideLengthJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideLengthJRadioButtonActionPerformed
         peptideMissedCleavagesJRadioButtonActionPerformed(evt);
     }//GEN-LAST:event_peptideLengthJRadioButtonActionPerformed
+
+    private void proteinSequenceLengthJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinSequenceLengthJRadioButtonActionPerformed
+        proteinNumberValidatedPeptidesJRadioButtonActionPerformed(evt);
+    }//GEN-LAST:event_proteinSequenceLengthJRadioButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton exportPeptidesPlotJButton;
     private javax.swing.JButton exportProteinsPlotJButton;
@@ -1039,6 +1058,7 @@ public class QCPanel extends javax.swing.JPanel {
     private javax.swing.JPanel proteinPlotTypePanel;
     private javax.swing.JPanel proteinQCPlotPanel;
     private javax.swing.JRadioButton proteinSequenceCoverageJRadioButton;
+    private javax.swing.JRadioButton proteinSequenceLengthJRadioButton;
     private javax.swing.JRadioButton proteinSpectrumCountingScoreJRadioButton;
     private javax.swing.JButton proteinsPlotHelpJButton;
     private javax.swing.JLayeredPane proteinsPlotLayeredPane;
@@ -1170,6 +1190,23 @@ public class QCPanel extends javax.swing.JPanel {
             getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
             getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
             getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
+            
+        } else if (proteinSequenceLengthJRadioButton.isSelected()) {
+            
+            bins.add(0.0);
+            bins.add(100.0);
+            bins.add(250.0);
+            bins.add(500.0);
+            bins.add(1000.0);
+            bins.add(1500.0);
+            bins.add(2000.0);
+            bins.add(2500.0);
+            bins.add(3000.0);
+
+            getBinData(bins, validatedValues, dataset, "Validated True Positives", true);
+            getBinData(bins, validatedDecoyValues, dataset, "Validated False Positives", true);
+            getBinData(bins, nonValidatedValues, dataset, "Non-Validated True Positives", true);
+            getBinData(bins, nonValidatedDecoyValues, dataset, "Non-Validated False Positives", true);
         }
 
         JFreeChart proteinChart = ChartFactory.createStackedBarChart(null, null, "Amount of Proteins", dataset, PlotOrientation.VERTICAL, true, true, true);
@@ -1200,6 +1237,9 @@ public class QCPanel extends javax.swing.JPanel {
         } else if (proteinSequenceCoverageJRadioButton.isSelected()) {
             proteinChart.getCategoryPlot().getDomainAxis().setLabel("Sequence Coverage");
             proteinChart.setTitle("Protein QC Plot - Sequence Coverage");
+        } else if (proteinSequenceLengthJRadioButton.isSelected()) {
+            proteinChart.getCategoryPlot().getDomainAxis().setLabel("Sequence Length");
+            proteinChart.setTitle("Protein QC Plot - Sequence Length");
         }
 
         // set background color
@@ -1213,7 +1253,7 @@ public class QCPanel extends javax.swing.JPanel {
 
         // hide the outline
         proteinChart.getPlot().setOutlineVisible(false);
-
+        
         proteinQCPlotPanel.removeAll();
         proteinQCPlotPanel.add(chartPanel);
         proteinQCPlotPanel.revalidate();
@@ -1512,6 +1552,42 @@ public class QCPanel extends javax.swing.JPanel {
 
                         Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                         double value = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
+
+                        if (value > maxValue) {
+                            maxValue = value;
+                        }
+                        if (!proteinMatch.isDecoy()) {
+                            if (psParameter.isValidated()) {
+                                validatedValues.add(value);
+                            } else {
+                                nonValidatedValues.add(value);
+                            }
+                        } else {
+                            if (psParameter.isValidated()) {
+                                validatedDecoyValues.add(value);
+                            } else {
+                                nonValidatedDecoyValues.add(value);
+                            }
+                        }
+                    }
+
+                    progressDialog.incrementValue();
+                }
+            } else if (proteinSequenceLengthJRadioButton.isSelected()) {
+                // Values for the sequence length
+                validatedValues = new ArrayList<Double>();
+                nonValidatedValues = new ArrayList<Double>();
+                validatedDecoyValues = new ArrayList<Double>();
+                nonValidatedDecoyValues = new ArrayList<Double>();
+
+                for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
+
+                    if (!psParameter.isHidden()) {
+
+                        Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+                        double value = currentProtein.getSequence().length();
 
                         if (value > maxValue) {
                             maxValue = value;

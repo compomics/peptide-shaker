@@ -68,7 +68,6 @@ import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
-import no.uib.jsparklines.renderers.util.ReferenceArea;
 import org.jfree.chart.plot.PlotOrientation;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -875,7 +874,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(sequenceCoveragePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(sequencePtmTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 918, Short.MAX_VALUE)
-                    .addComponent(sequenceCoverageTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 918, Short.MAX_VALUE))
+                    .addComponent(sequenceCoverageTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 918, Short.MAX_VALUE))
                 .addContainerGap())
         );
         sequenceCoveragePanelLayout.setVerticalGroup(
@@ -885,7 +884,7 @@ public class OverviewPanel extends javax.swing.JPanel {
                 .addComponent(sequenceCoverageTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(sequencePtmTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(13, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         sequenceCoveragePanel.setBounds(0, 0, 950, 70);
@@ -3754,7 +3753,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             if (currentProteinSequence.length() < MAX_SEQUENCE_LENGTH) {
 
                 String tempSequence = currentProteinSequence;
-                ArrayList<ReferenceArea> ptmReferenceAreas = new ArrayList<ReferenceArea>();
 
                 if (peptideTable.getSelectedRow() != -1) {
 
@@ -3882,7 +3880,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         if (peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors().get(firstPtm) != null){
                             ptmColor = peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors().get(firstPtm);
                         }
-                        
+                         
                         data = new ArrayList<Double>();
                         data.add(new Double(1));
                         sparklineDataseriesPtm = new JSparklinesDataSeries(data, ptmColor, null);
@@ -3908,10 +3906,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                   
                 dataset = new JSparklinesDataset(sparkLineDataSeriesPtm);
                 ptmTable.setValueAt(dataset, 0, 0);
-                
-                for (int i=0;i<ptmReferenceAreas.size(); i++) {
-                    ((JSparklinesTableCellRenderer) ptmTable.getColumn(" ").getCellRenderer()).addReferenceArea(ptmReferenceAreas.get(i));
-                }
                 
             } else {
                 ((TitledBorder) sequenceCoveragePanel.getBorder()).setTitle("Protein Sequence Coverage ("
