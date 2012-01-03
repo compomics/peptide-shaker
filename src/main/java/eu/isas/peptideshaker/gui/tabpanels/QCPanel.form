@@ -625,7 +625,9 @@
                               <Component id="proteinSpectrumCountingScoreJRadioButton" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="proteinSequenceCoverageJRadioButton" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="190" max="32767" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="proteinSequenceLengthJRadioButton" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="57" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -637,6 +639,7 @@
                                   <Component id="proteinNumberValidatedPeptidesJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinSpectrumCountingScoreJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="proteinSequenceCoverageJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="proteinSequenceLengthJRadioButton" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -682,6 +685,19 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinSequenceCoverageJRadioButtonActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JRadioButton" name="proteinSequenceLengthJRadioButton">
+                      <Properties>
+                        <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
+                          <ComponentRef name="proteinButtonGroup"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Sequence Length"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="proteinSequenceLengthJRadioButtonActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
