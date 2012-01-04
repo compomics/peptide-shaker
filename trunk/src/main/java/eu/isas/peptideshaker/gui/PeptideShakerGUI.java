@@ -2509,7 +2509,109 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param evt 
      */
     private void exportPrideXmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideXmlMenuItemActionPerformed
+
         JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
+        
+//        JFileChooser fileChooser = new JFileChooser(this.getLastSelectedFolder());
+//        fileChooser.setDialogTitle("Select Destination File");
+//        fileChooser.setMultiSelectionEnabled(false);
+//
+//        FileFilter filter = new FileFilter() {
+//
+//            @Override
+//            public boolean accept(File myFile) {
+//                return myFile.isDirectory() || myFile.getName().endsWith(".xml");
+//            }
+//
+//            @Override
+//            public String getDescription() {
+//                return "(PRIDE XML File) *.xml";
+//            }
+//        };
+//
+//        fileChooser.setFileFilter(filter);
+//
+//        int returnVal = fileChooser.showSaveDialog(this);
+//
+//        if (returnVal == JFileChooser.APPROVE_OPTION) {
+//
+//            File outputFile = fileChooser.getSelectedFile();
+//            int outcome = JOptionPane.YES_OPTION;
+//
+//            if (outputFile.exists()) {
+//                outcome = JOptionPane.showConfirmDialog(this,
+//                        "Should " + outputFile + " be overwritten?", "Selected File Already Exists",
+//                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+//            }
+//
+//            if (outcome == JOptionPane.YES_OPTION) {
+//
+//                if (!outputFile.getName().endsWith(".xml")) {
+//                    outputFile = new File(outputFile.getParent(), outputFile.getName() + ".xml");
+//                }
+//                
+//                final File finalOutputFile = outputFile;
+//
+//                progressDialog = new ProgressDialogX(this, this, true);
+//                progressDialog.doNothingOnClose();
+//
+//                final PeptideShakerGUI finalRef = this;
+//
+//                new Thread(new Runnable() {
+//
+//                    public void run() {
+//                        progressDialog.setIndeterminate(true);
+//                        progressDialog.setTitle("Exporting. Please Wait...");
+//                        progressDialog.setVisible(true);
+//                    }
+//                }, "ProgressDialog").start();
+//
+//                new Thread("ExportThread") {
+//
+//                    @Override
+//                    public void run() {
+//
+//                        try {
+//                            FileWriter w = new FileWriter(finalOutputFile);
+//                            BufferedWriter bw = new BufferedWriter(w);
+//
+//                            // get the experiment properties (title, description, label, projetc)
+//                            // get the contact information
+//                            // get the references
+//                            // get the sample properties
+//                            // get the protocol properties
+//                            // get the instrument details
+//                            // add experiment user params?
+//                            // add resubmission details
+//                            
+//                            // get the ids and link them to the spectra!!
+//                            // get the peptides
+//                            // get the proteins
+//                            // get the scores
+//                            // get the ptms
+//                            // spectra: select validated vs. all?? what about hidden??
+//                            
+//
+//                            SpectrumExporter.exportSpectra(finalRef, bw, progressDialog);
+//                            
+//                            bw.close();
+//                            w.close();
+//                            
+//                            JOptionPane.showMessageDialog(finalRef, "Project exported to " + finalOutputFile + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                            JOptionPane.showMessageDialog(finalRef, "An error occured when exporting the project.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+//                        } catch (MzMLUnmarshallerException e) {
+//                            e.printStackTrace();
+//                            JOptionPane.showMessageDialog(finalRef, "An error occured when exporting the project.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+//                        }
+//                        
+//                        progressDialog.setVisible(false);
+//                        progressDialog.dispose();
+//                    }
+//                }.start();
+//            }
+//        }
     }//GEN-LAST:event_exportPrideXmlMenuItemActionPerformed
 
     /**
@@ -3280,7 +3382,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void setSparklineColor(Color sparklineColor) {
         userPreferences.setSparklineColor(sparklineColor);
     }
-    
+
     /**
      * Get the non-validated sparklines color.
      *
@@ -3588,12 +3690,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         selectedProteinKey = NO_SELECTION;
         selectedPeptideKey = NO_SELECTION;
         selectedPsmKey = NO_SELECTION;
-          
+
         projectDetails = null;
         spectrumAnnotator = new SpectrumAnnotator();
         exceptionCaught = new ArrayList<String>();
         identifiedModifications = null;
-        
+
         // set up the tabs/panels
         scoresJCheckBoxMenuItem.setSelected(false);
         setUpPanels(true);
@@ -3606,7 +3708,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         currentPSFile = null;
         dataSaved = false;
     }
-    
+
     /**
      * Clears the preferences.
      */
@@ -3617,7 +3719,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         displayPreferences = new DisplayPreferences();
         searchParameters = new SearchParameters();
         idFilter = new IdFilter();
-        
+
         // reset enzymes, ptms and preferences
         loadEnzymes();
         loadModifications();
@@ -3844,7 +3946,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         return width;
     }
-    
+
     /**
      * Returns the preferred width of a given cell in a table.
      * 
@@ -3854,7 +3956,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @return              the prefereed width of the cell 
      */
     public int getPreferredWidthOfCell(JTable table, int rowIndex, int colIndex) {
-        
+
         DefaultTableColumnModel colModel = (DefaultTableColumnModel) table.getColumnModel();
         TableColumn col = colModel.getColumn(colIndex);
         int width = 0;
@@ -6209,7 +6311,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         result.add(4);
         return result;
     }
-    
+
     /**
      * Returns the peptide with modification sites colored on the sequence. Shall be used for peptides, not PSMs.
      * @return the colored peptide sequence
@@ -6220,16 +6322,16 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         PSPtmScores ptmScores = new PSPtmScores();
         ptmScores = (PSPtmScores) peptideMatch.getUrParam(ptmScores);
         if (ptmScores != null) {
-        HashMap<Integer, ArrayList<String>> mainLocations = ptmScores.getMainModificationSites();
-        HashMap<Integer, ArrayList<String>> secondaryLocations = ptmScores.getSecondaryModificationSites();
-        return Peptide.getModifiedSequenceAsHtml(searchParameters.getModificationProfile().getPtmColors(), 
-                includeHtmlStartEndTag, peptideMatch.getTheoreticPeptide(), 
-                mainLocations, secondaryLocations);
+            HashMap<Integer, ArrayList<String>> mainLocations = ptmScores.getMainModificationSites();
+            HashMap<Integer, ArrayList<String>> secondaryLocations = ptmScores.getSecondaryModificationSites();
+            return Peptide.getModifiedSequenceAsHtml(searchParameters.getModificationProfile().getPtmColors(),
+                    includeHtmlStartEndTag, peptideMatch.getTheoreticPeptide(),
+                    mainLocations, secondaryLocations);
         } else {
             return peptideMatch.getTheoreticPeptide().getModifiedSequenceAsHtml(
                     searchParameters.getModificationProfile().getPtmColors(), includeHtmlStartEndTag);
         }
-        
+
     }
 
     /**

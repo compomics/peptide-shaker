@@ -323,63 +323,64 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
     private void exportMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMgfButtonActionPerformed
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        fileChooser.setDialogTitle("Select Destination File");
+        fileChooser.setMultiSelectionEnabled(false);
 
-        final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
-
-        new Thread(new Runnable() {
-
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
-
-        new Thread("SaveThread") {
+        FileFilter filter = new FileFilter() {
 
             @Override
-            public void run() {
-                final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-                fileChooser.setDialogTitle("Select destination file");
-                fileChooser.setMultiSelectionEnabled(false);
+            public boolean accept(File myFile) {
+                return myFile.isDirectory() || myFile.getName().endsWith(".mgf");
+            }
 
-                FileFilter filter = new FileFilter() {
+            @Override
+            public String getDescription() {
+                return "(Mascot Generic File) *.mgf";
+            }
+        };
+
+        fileChooser.setFileFilter(filter);
+
+        int returnVal = fileChooser.showSaveDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+            File outputFile = fileChooser.getSelectedFile();
+            int outcome = JOptionPane.YES_OPTION;
+
+            if (outputFile.exists()) {
+                outcome = JOptionPane.showConfirmDialog(this,
+                        "Should " + outputFile + " be overwritten?", "Selected File Already Exists",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            }
+
+            if (outcome == JOptionPane.YES_OPTION) {
+
+                if (!outputFile.getName().endsWith(".mgf")) {
+                    outputFile = new File(outputFile.getParent(), outputFile.getName() + ".mgf");
+                }
+
+                final File finalOutputFile = outputFile;
+
+                progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+                progressDialog.doNothingOnClose();
+
+                final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
+
+                new Thread(new Runnable() {
+
+                    public void run() {
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Exporting. Please Wait...");
+                        progressDialog.setVisible(true);
+                    }
+                }, "ProgressDialog").start();
+
+                new Thread("SaveThread") {
 
                     @Override
-                    public boolean accept(File myFile) {
-                        return myFile.isDirectory() || myFile.getName().endsWith(".mgf");
-                    }
-
-                    @Override
-                    public String getDescription() {
-                        return "(Mascot Generic File) *.mgf";
-                    }
-                };
-
-                fileChooser.setFileFilter(filter);
-
-                int returnVal = fileChooser.showSaveDialog(tempRef);
-
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-
-                    File outputFile = fileChooser.getSelectedFile();
-
-
-                    int outcome = JOptionPane.YES_OPTION;
-
-                    if (outputFile.exists()) {
-                        outcome = JOptionPane.showConfirmDialog(tempRef,
-                                "Should " + outputFile + " be overwritten?", "Selected File Already Exists",
-                                JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-                    }
-
-                    if (outcome == JOptionPane.YES_OPTION) {
-
-                        if (!outputFile.getName().endsWith(".mgf")) {
-                            outputFile = new File(outputFile.getParent(), outputFile.getName() + ".mgf");
-                        }
+                    public void run() {
 
                         try {
                             progressDialog.setIndeterminate(false);
@@ -388,7 +389,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 total += spectrumFactory.getSpectrumTitles(mgfFile).size();
                             }
                             progressDialog.setMax(total);
-                            FileWriter f = new FileWriter(outputFile);
+                            FileWriter f = new FileWriter(finalOutputFile);
                             BufferedWriter b = new BufferedWriter(f);
                             String spectrumKey;
                             int cpt = 0;
@@ -405,19 +406,19 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             b.close();
                             f.close();
 
-                            JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + outputFile + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + finalOutputFile + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                         } catch (Exception e) {
                             e.printStackTrace();
                             JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                         }
-                    }
-                }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
-            }
-        }.start();
-    }//GEN-LAST:event_exportMgfButtonActionPerformed
 
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                    }
+                }.start();
+            }
+        }
+    }//GEN-LAST:event_exportMgfButtonActionPerformed
     private void inclusionListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inclusionListButtonActionPerformed
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
