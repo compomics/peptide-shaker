@@ -3,6 +3,19 @@
 
 ----
 
+*Changes in PeptideShaker 0.13.0 (January 4. 2012):*
+ * NEW FEATURE: It is now possible to change the location of a given PTM in the Modifications tab.
+ * NEW FEATURE: Added a new protein QC plot: protein sequence length.
+ * NEW FEATURE: PTMs are now indicated in the protein sequence coverage panel in the Overview tab.
+ * FEATURE IMPROVEMENT: Added progress bars when changing modification type or peptide selection in the Modifications tab.
+ * FEATURE IMPROVEMENT: The tool now remembers the hidden/shown panels when maximizing the spectrum panel in the Overview tab, so that a second click on the maximize button resets the previously shown panels.
+ * FEATURE IMPROVEMENT: Changed the selected peptide color in the protein coverage from red to blue, as red represents non-validated and blue is the row selection color in the tables.
+ * BUG FIX: Fixed an issue where 'Request Starred' was included in the 'Select All' features in the 'FeaturesPreferencesDialog' resulting in empty exports if nothing was starred.
+ * BUG FIX: Fixed a bug in the PTM tab where the tabbed pane moved to the PTM table tab when selecting a related peptide.
+ * LIBRARY UPDATE: Updated jsparklines to version 0.5.31.
+
+----
+
 *Changes in PeptideShaker 0.12.2 (December 28. 2011):*
   
  * NEW FEATURE: Split the display of the number of peptides and spectra into validated and non-validated.
@@ -15,6 +28,8 @@
  * BUG FIX: Fixed it so that the same PI colors are used in the PTM tab as for the other tabs.
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.30. 
  * LIBRARY UPDATE: Updated utilities to version 3.3.14.
+
+Download Count: 16
 
 ----
 
