@@ -38,12 +38,12 @@
     <MSModSpec_type>
       <MSModType value="modaa">0</MSModType>
     </MSModSpec_type>
-    <MSModSpec_name>User modification 3</MSModSpec_name>
-    <MSModSpec_monomass>0</MSModSpec_monomass>
-    <MSModSpec_averagemass>0</MSModSpec_averagemass>
+    <MSModSpec_name>GTP DesthiobiotinC12</MSModSpec_name>
+    <MSModSpec_monomass>196.121178</MSModSpec_monomass>
+    <MSModSpec_averagemass>196.2462</MSModSpec_averagemass>
     <MSModSpec_n15mass>0</MSModSpec_n15mass>
     <MSModSpec_residues>
-      <MSModSpec_residues_E>X</MSModSpec_residues_E>
+      <MSModSpec_residues_E>K</MSModSpec_residues_E>
     </MSModSpec_residues>
   </MSModSpec>
   <MSModSpec>
@@ -53,12 +53,12 @@
     <MSModSpec_type>
       <MSModType value="modaa">0</MSModType>
     </MSModSpec_type>
-    <MSModSpec_name>User modification 4</MSModSpec_name>
-    <MSModSpec_monomass>0</MSModSpec_monomass>
-    <MSModSpec_averagemass>0</MSModSpec_averagemass>
+    <MSModSpec_name>GTP DesthiobiotinC13</MSModSpec_name>
+    <MSModSpec_monomass>202.141307</MSModSpec_monomass>
+    <MSModSpec_averagemass>202.2022</MSModSpec_averagemass>
     <MSModSpec_n15mass>0</MSModSpec_n15mass>
     <MSModSpec_residues>
-      <MSModSpec_residues_E>X</MSModSpec_residues_E>
+      <MSModSpec_residues_E>K</MSModSpec_residues_E>
     </MSModSpec_residues>
   </MSModSpec>
   <MSModSpec>
