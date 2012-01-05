@@ -179,26 +179,33 @@ public class PeptideShaker {
         try {
             waitingDialog.appendReport("Computing assumptions probabilities.");
             inputMap.estimateProbabilities(waitingDialog);
+            waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Adding assumptions probabilities.");
             attachAssumptionsProbabilities(inputMap, waitingDialog);
+            waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Selecting best hit per spectrum.");
             setFirstHit(waitingDialog);
+            waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Generating PSM map.");
             fillPsmMap(inputMap, waitingDialog);
             psmMap.cure();
+            waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Computing PSM probabilities.");
             psmMap.estimateProbabilities(waitingDialog);
             attachSpectrumProbabilities();
+            waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Computing peptide probabilities.");
             identification.buildPeptidesAndProteins();
             fillPeptideMaps();
             peptideMap.cure();
             peptideMap.estimateProbabilities(waitingDialog);
             attachPeptideProbabilities();
+            waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Computing protein probabilities.");
             fillProteinMap(waitingDialog);
             proteinMap.estimateProbabilities(waitingDialog);
             attachProteinProbabilities();
+            waitingDialog.increaseProgressValue();
         } catch (Exception e) {
             throw e;
         }
@@ -206,6 +213,7 @@ public class PeptideShaker {
         try {
             waitingDialog.appendReport("Trying to resolve protein inference issues.");
             cleanProteinGroups(waitingDialog);
+            waitingDialog.increaseProgressValue();
         } catch (IllegalArgumentException e) {
             waitingDialog.appendReport("An error occured while trying to resolve protein inference issues.");
             throw e;
@@ -217,13 +225,17 @@ public class PeptideShaker {
         waitingDialog.appendReport("Correcting protein probabilities.");
         proteinMap.estimateProbabilities(waitingDialog);
         attachProteinProbabilities();
+        waitingDialog.increaseProgressValue();
 
         waitingDialog.appendReport("Validating identifications at 1% FDR.");
         fdrValidation(waitingDialog);
+        waitingDialog.increaseProgressValue();
         waitingDialog.appendReport("Scoring PTMs in peptides.");
         scorePeptidePtms(waitingDialog, searchParameters, annotationPreferences);
+        waitingDialog.increaseProgressValue();
         waitingDialog.appendReport("Scoring PTMs in proteins.");
         scoreProteinPtms(waitingDialog, searchParameters, annotationPreferences);
+        waitingDialog.increaseProgressValue();
 
         String report = "Identification processing completed.\n\n";
         ArrayList<Integer> suspiciousInput = inputMap.suspiciousInput();

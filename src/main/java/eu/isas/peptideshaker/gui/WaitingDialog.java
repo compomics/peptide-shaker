@@ -471,11 +471,6 @@ public class WaitingDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Saves the progress report to file.
-     *
-     * @param evt
-     */
-    /**
      * Cancels the analysis if ongoing or opens the results if finished.
      *
      * @param evt
@@ -771,7 +766,7 @@ public class WaitingDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Saves the report in the given file
+     * Saves the report in the given file.
      *
      * @param aFile file to save the report in
      */

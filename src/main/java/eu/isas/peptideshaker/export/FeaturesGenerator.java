@@ -141,9 +141,6 @@ public class FeaturesGenerator {
                 result += "Validated" + SEPARATOR;
                 result += "Decoy" + SEPARATOR;
             }
-            if (!onlyStarred) {
-                result += "Starred" + SEPARATOR;
-            }
             if (includeHidden) {
                 result += "Hidden" + SEPARATOR;
             }
@@ -286,9 +283,6 @@ public class FeaturesGenerator {
                                     result += 0 + SEPARATOR;
                                 }
                             }
-                            if (!onlyStarred) {
-                                result += proteinPSParameter.isStarred() + SEPARATOR;
-                            }
                             if (includeHidden) {
                                 result += proteinPSParameter.isHidden() + SEPARATOR;
                             }
@@ -379,9 +373,6 @@ public class FeaturesGenerator {
             if (!onlyValidated) {
                 result += "Validated" + SEPARATOR;
                 result += "Decoy" + SEPARATOR;
-            }
-            if (!onlyStarred) {
-                result += "Starred" + SEPARATOR;
             }
             if (includeHidden) {
                 result += "Hidden" + SEPARATOR;
@@ -493,9 +484,6 @@ public class FeaturesGenerator {
                                     result += 0 + SEPARATOR;
                                 }
                             }
-                            if (!onlyStarred) {
-                                result += peptidePSParameter.isStarred() + SEPARATOR;
-                            }
                             if (includeHidden) {
                                 result += peptidePSParameter.isHidden() + SEPARATOR;
                             }
@@ -591,9 +579,6 @@ public class FeaturesGenerator {
             if (!onlyValidated) {
                 result += "Validated" + SEPARATOR;
                 result += "Decoy" + SEPARATOR;
-            }
-            if (!onlyStarred) {
-                result += "Starred" + SEPARATOR;
             }
             if (includeHidden) {
                 result += "Hidden" + SEPARATOR;
@@ -740,9 +725,6 @@ public class FeaturesGenerator {
                                 } else {
                                     result += 0 + SEPARATOR;
                                 }
-                            }
-                            if (!onlyStarred) {
-                                result += psParameter.isStarred() + SEPARATOR;
                             }
                             if (includeHidden) {
                                 result += psParameter.isHidden() + SEPARATOR;

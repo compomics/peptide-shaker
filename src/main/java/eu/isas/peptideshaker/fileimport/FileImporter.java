@@ -628,7 +628,6 @@ public class FileImporter {
                 waitingDialog.resetSecondaryProgressBar();
                 spectrumFactory.addSpectra(spectrumFile, waitingDialog.getSecondaryProgressBar());
                 waitingDialog.resetSecondaryProgressBar();
-                waitingDialog.increaseProgressValue();
                 searchParameters.addSpectrumFile(spectrumFile.getAbsolutePath());
                 waitingDialog.appendReport(targetFileName + " imported.");
             } catch (Exception e) {
