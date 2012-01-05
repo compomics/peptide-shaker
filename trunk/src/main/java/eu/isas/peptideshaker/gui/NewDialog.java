@@ -618,13 +618,19 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
             WaitingDialog waitingDialog = new WaitingDialog(peptideShakerGUI, true, experiment.getReference());
 
-            int progressCounter = idFiles.size() + spectrumFiles.size() + 1;
+            int progressCounter = idFiles.size() + spectrumFiles.size();
 
-
+            progressCounter++; // the FASTA file
+            progressCounter++; // the peptide to protein map
+            progressCounter += 7; // computing probabilities etc
+            progressCounter += 1; // resolving protein inference
+            progressCounter += 4; // Correcting protein probabilities, Validating identifications at 1% FDR, Scoring PTMs in peptides, Scoring PTMs in proteins.
+            
             // add one more just to not start at 0%
             progressCounter++;
 
             waitingDialog.setMaxProgressValue(progressCounter);
+            waitingDialog.increaseProgressValue(); // just to not start at 0%
 
             boolean needDialog = false;
 
@@ -1200,10 +1206,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                                     names.add(new File(searchGUIFile.getParentFile(), newFile.getName()).getName());
                                     spectrumFiles.add(new File(searchGUIFile.getParentFile(), newFile.getName()));
                                 } else {
-                                    if (!missing.equals("")) {
-                                        missing += ", ";
-                                    }
-                                    missing += newFile.getName();
+                                    missing += newFile.getName() + "\n";
                                 }
                             }
                         }
@@ -1213,8 +1216,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                 }
             }
             if (!missing.equals("")) {
-                JOptionPane.showMessageDialog(this, "Input file(s) \'" + missing
-                        + "\' not found.\nPlease locate them manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Input file(s) not found:\n" + missing
+                        + "\nPlease locate them manually.", "File Not Found", JOptionPane.WARNING_MESSAGE);
                 success = false;
             }
             br.close();
