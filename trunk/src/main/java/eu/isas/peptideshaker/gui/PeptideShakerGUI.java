@@ -3329,13 +3329,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public void loadModifications() {
         try {
-            ptmFactory.importModifications(new File(MODIFICATIONS_FILE));
+            ptmFactory.importModifications(new File(MODIFICATIONS_FILE), false);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "An error (" + e.getMessage() + ") occured when trying to load the modifications from " + MODIFICATIONS_FILE + ".",
                     "Configuration import Error", JOptionPane.ERROR_MESSAGE);
         }
         try {
-            ptmFactory.importModifications(new File(USER_MODIFICATIONS_FILE));
+            ptmFactory.importModifications(new File(USER_MODIFICATIONS_FILE), true);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "An error (" + e.getMessage() + ") occured when trying to load the modifications from " + USER_MODIFICATIONS_FILE + ".",
                     "Configuration import Error", JOptionPane.ERROR_MESSAGE);
@@ -5261,8 +5261,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         // get the list of all ptms
         HashMap<String, PTM> ptms = new HashMap<String, PTM>();
 
-        for (PTM ptm : ptmFactory.getPtmMap().values()) {
-            ptms.put(ptm.getName().toLowerCase(), ptm);
+        for (String ptm : ptmFactory.getPTMs()) {
+            ptms.put(ptm, ptmFactory.getPTM(ptm));
         }
 
         // iterate the modifications list and add the non-terminal modifications

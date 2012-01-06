@@ -419,7 +419,7 @@ public class FileImporter {
             }
 
             try {
-                ptmFactory.importModifications(new File(MODIFICATION_FILE));
+                ptmFactory.importModifications(new File(MODIFICATION_FILE), false);
             } catch (Exception e) {
                 waitingDialog.appendReport("Failed importing modifications from " + MODIFICATION_FILE);
                 waitingDialog.setRunCanceled();
@@ -427,7 +427,7 @@ public class FileImporter {
             }
 
             try {
-                ptmFactory.importModifications(new File(USER_MODIFICATION_FILE));
+                ptmFactory.importModifications(new File(USER_MODIFICATION_FILE), true);
             } catch (Exception e) {
                 waitingDialog.appendReport("Failed importing modifications from " + USER_MODIFICATION_FILE);
                 waitingDialog.setRunCanceled();
@@ -628,6 +628,7 @@ public class FileImporter {
                 waitingDialog.resetSecondaryProgressBar();
                 spectrumFactory.addSpectra(spectrumFile, waitingDialog.getSecondaryProgressBar());
                 waitingDialog.resetSecondaryProgressBar();
+                waitingDialog.increaseProgressValue();
                 searchParameters.addSpectrumFile(spectrumFile.getAbsolutePath());
                 waitingDialog.appendReport(targetFileName + " imported.");
             } catch (Exception e) {

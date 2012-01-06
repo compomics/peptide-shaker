@@ -9,7 +9,7 @@ import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.identification.AdvocateFactory;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
-import com.compomics.util.experiment.identification.PTMLocationScores;
+import com.compomics.util.experiment.identification.ptm.PTMLocationScores;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.identifications.Ms2Identification;
