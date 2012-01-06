@@ -190,6 +190,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         loadProfileBtn = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         availableModificationsTable = new javax.swing.JTable();
+        jButton1 = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         fileTxt = new javax.swing.JTextField();
@@ -419,6 +420,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         });
         jScrollPane3.setViewportView(availableModificationsTable);
 
+        jButton1.setText("Load");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -447,9 +455,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(addModifications)))
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
-                    .addComponent(jLabel6))
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
@@ -475,7 +484,9 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(saveAsProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(saveProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(loadProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(clearProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(clearProfileBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButton1))
                             .addComponent(profileTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addContainerGap())
         );
@@ -614,13 +625,13 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             searchParameters.setEnzyme(enzymeFactory.getEnzyme((String) enzymesCmb.getSelectedItem()));
             searchParameters.setIonSearched1((String) ion1Cmb.getSelectedItem());
             searchParameters.setIonSearched2((String) ion2Cmb.getSelectedItem());
-            
+
             if (((String) precursorUnit.getSelectedItem()).equalsIgnoreCase("ppm")) {
                 searchParameters.setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.PPM);
             } else { // Da
                 searchParameters.setPrecursorAccuracyType(SearchParameters.PrecursorAccuracyType.DA);
             }
-            
+
             searchParameters.setPrecursorAccuracy(new Double(precursorAccuracy.getText()));
             peptideShakerGUI.setSearchParameters(searchParameters);
             peptideShakerGUI.updateAnnotationPreferencesFromSearchSettings();
@@ -697,7 +708,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
         JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        
+
         FileFilter filter = new FileFilter() {
 
             @Override
@@ -712,7 +723,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         };
 
         fc.setFileFilter(filter);
-        
+
         int result = fc.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
@@ -752,7 +763,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void loadProfileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadProfileBtnActionPerformed
         JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        
+
         FileFilter filter = new FileFilter() {
 
             @Override
@@ -767,7 +778,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         };
 
         fc.setFileFilter(filter);
-        
+
         int result = fc.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
@@ -985,6 +996,38 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
         }
     }
 }//GEN-LAST:event_expectedModificationsTableMouseClicked
+
+private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    JFileChooser fc = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+
+    FileFilter filter = new FileFilter() {
+
+        @Override
+        public boolean accept(File myFile) {
+            return myFile.getName().toLowerCase().endsWith("usermods.xml") || myFile.isDirectory();
+        }
+
+        @Override
+        public String getDescription() {
+            return "(user modification file) *usermods.xml";
+        }
+    };
+
+    fc.setFileFilter(filter);
+
+    int result = fc.showOpenDialog(this);
+    if (result == JFileChooser.APPROVE_OPTION) {
+        File file = fc.getSelectedFile();
+        try {
+            ptmFactory.importModifications(file, true);
+            loadModifications();
+            updateModificationLists();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "An error occurred while importing " + file.getName() + ".", "User Modification File Error", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+}//GEN-LAST:event_jButton1ActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addModifications;
     private javax.swing.JTable availableModificationsTable;
@@ -998,6 +1041,7 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
     private javax.swing.JLabel helpLineLabel;
     private javax.swing.JComboBox ion1Cmb;
     private javax.swing.JComboBox ion2Cmb;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -1074,32 +1118,52 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
         String temp = aProps.getProperty(IdentificationParametersReader.VARIABLE_MODIFICATIONS);
 
         if (temp != null && !temp.trim().equals("")) {
-            try {
-                variableMods = IdentificationParametersReader.parseModificationLine(temp, ptmFactory);
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(this, e.getMessage(), "Modification Not Found", JOptionPane.WARNING_MESSAGE);
-            }
+            variableMods = IdentificationParametersReader.parseModificationLine(temp);
         }
 
+        ArrayList<String> missing = new ArrayList<String>();
         for (String name : variableMods) {
             if (!modificationList.contains(name)) {
-                searchParameters.getModificationProfile().setPeptideShakerName(name, name);
-                if (!searchParameters.getModificationProfile().getPeptideShakerNames().contains(name)) {
-                    int index = name.length() - 1;
-                    if (name.lastIndexOf(" ") > 0) {
-                        index = name.indexOf(" ");
+                if (!ptmFactory.containsPTM(name)) {
+                    missing.add(name);
+                } else {
+                    searchParameters.getModificationProfile().setPeptideShakerName(name, name);
+                    if (!searchParameters.getModificationProfile().getPeptideShakerNames().contains(name)) {
+                        int index = name.length() - 1;
+                        if (name.lastIndexOf(" ") > 0) {
+                            index = name.indexOf(" ");
+                        }
+                        if (name.lastIndexOf("-") > 0) {
+                            index = Math.min(index, name.indexOf("-"));
+                        }
+                        searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
+                        searchParameters.getModificationProfile().setColor(name, Color.lightGray);  // @TODO: color should not be hardcoded!
                     }
-                    if (name.lastIndexOf("-") > 0) {
-                        index = Math.min(index, name.indexOf("-"));
-                    }
-                    searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
-                    searchParameters.getModificationProfile().setColor(name, Color.lightGray);  // @TODO: color should not be hardcoded!
+                    modificationList.add(name);
                 }
-                modificationList.add(name);
             }
         }
-
+        if (!missing.isEmpty()) {
+            if (missing.size() == 1) {
+                JOptionPane.showMessageDialog(this, "The following modification is currently not recognized by PeptideShaker: "
+                        + missing.get(0) + ".\nPlease import it by opening a usermods.xml file.", "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+            } else {
+                String output = "The following modifications are currently not recognized by PeptideShaker:\n";
+                boolean first = true;
+                for (String ptm : missing) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        output += ", ";
+                    }
+                    output += ptm;
+                }
+                output += ".\nPlease import it by opening a usermods.xml file.";
+                JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+            }
+        }
         updateModificationLists();
+
         temp = aProps.getProperty(IdentificationParametersReader.ENZYME);
 
         if (temp != null && !temp.equals("")) {
@@ -1133,11 +1197,11 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
         }
 
         temp = aProps.getProperty(IdentificationParametersReader.PRECURSOR_MASS_ACCURACY_UNIT);
- 
+
         if (temp != null) {
             precursorUnit.setSelectedItem(temp);
         }
-        
+
 
         temp = aProps.getProperty(IdentificationParametersReader.FRAGMENT_ION_MASS_ACCURACY);
 
@@ -1172,15 +1236,15 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
     private String[] loadEnzymes() {
 
         ArrayList<String> tempEnzymes = new ArrayList<String>();
-        
+
         for (int i = 0; i < enzymeFactory.getEnzymes().size(); i++) {
             tempEnzymes.add(enzymeFactory.getEnzymes().get(i).getName());
         }
-        
+
         Collections.sort(tempEnzymes);
-        
+
         String[] enzymes = new String[tempEnzymes.size()];
-        
+
         for (int i = 0; i < tempEnzymes.size(); i++) {
             enzymes[i] = tempEnzymes.get(i);
         }
@@ -1198,13 +1262,13 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
         enzymesCmb.setRenderer(new AlignedListCellRenderer(SwingConstants.CENTER));
         enzymesCmb.setSelectedItem(searchParameters.getEnzyme().getName());
         missedCleavagesTxt.setText(searchParameters.getnMissedCleavages() + "");
-        
+
         if (searchParameters.getPrecursorAccuracyType() == SearchParameters.PrecursorAccuracyType.PPM) {
             precursorUnit.setSelectedItem("ppm");
         } else { // Dalton
             precursorUnit.setSelectedItem("Da");
         }
-        
+
         precursorAccuracy.setText(searchParameters.getPrecursorAccuracy() + "");
         setIons();
         if (searchParameters.getParametersFile() != null) {
@@ -1288,8 +1352,8 @@ private void expectedModificationsTableMouseClicked(java.awt.event.MouseEvent ev
      * Loads the modifications from the modification file.
      */
     private void loadModifications() {
-        for (PTM ptm : ptmFactory.getPtmMap().values()) {
-            ptms.put(ptm.getName().toLowerCase(), ptm);
+        for (String ptm : ptmFactory.getPTMs()) {
+            ptms.put(ptm, ptmFactory.getPTM(ptm));
         }
     }
 

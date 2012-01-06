@@ -42,7 +42,6 @@ public class JumpToPanel extends javax.swing.JPanel {
      * Type of item selected
      */
     private enum Type {
-
         PROTEIN,
         PEPTIDE
     }
@@ -244,9 +243,9 @@ public class JumpToPanel extends javax.swing.JPanel {
                 inputTxt.setForeground(new Color(204, 204, 204));
             }
 
-            if (evt.getKeyCode() == KeyEvent.VK_UP && previousButton.isEnabled()) {
+            if (evt.getKeyCode() == KeyEvent.VK_RIGHT && previousButton.isEnabled()) {
                 previousButtonActionPerformed(null);
-            } else if (evt.getKeyCode() == KeyEvent.VK_DOWN & nextButton.isEnabled()) {
+            } else if (evt.getKeyCode() == KeyEvent.VK_LEFT & nextButton.isEnabled()) {
                 nextButtonActionPerformed(null);
             } else {
                 possibilities = new ArrayList<String>();

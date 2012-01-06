@@ -15,6 +15,7 @@ import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
+import eu.isas.peptideshaker.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
@@ -71,6 +72,10 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      */
     private ArrayList<File> searchParametersFiles = new ArrayList<File>();
     /**
+     * The xml modification files found.
+     */
+    private ArrayList<File> modificationFiles = new ArrayList<File>();
+    /**
      * A file where the input will be stored.
      */
     private final static String SEARCHGUI_INPUT = "searchGUI_input.txt";
@@ -99,6 +104,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * The peptide shaker class which will take care of the pre-processing..
      */
     private PeptideShaker peptideShaker;
+
     /**
      * The previous search parameters.
      */
@@ -111,7 +117,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * The previous id filter.
      */
     //private final IdFilter oldIdFilter;
-
     /**
      * Creates a new open dialog.
      *
@@ -121,14 +126,14 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     public NewDialog(PeptideShakerGUI peptideShaker, boolean modal) {
         super(peptideShaker, modal);
         this.peptideShakerGUI = peptideShaker;
-        
+
         // @TODO: this does not work! have to create a new object and transfer all the values...
-        
+
         // store the current settings  
 //        oldSearchParameters = peptideShakerGUI.getSearchParameters();
 //        oldProfileFile = peptideShakerGUI.getModificationProfileFile();
 //        oldIdFilter = peptideShakerGUI.getIdFilter();
-        
+
         setUpGui();
         this.setLocationRelativeTo(peptideShaker);
     }
@@ -149,14 +154,14 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         this.experiment = experiment;
         this.sample = sample;
         this.replicateNumber = replicateNumber;
-        
+
         // @TODO: this does not work! have to create a new object and transfer all the values...
-        
+
         // store the current settings
 //        oldSearchParameters = peptideShakerGUI.getSearchParameters();
 //        oldProfileFile = peptideShakerGUI.getModificationProfileFile();
 //        oldIdFilter = peptideShakerGUI.getIdFilter();
-        
+
         setUpGui();
         this.setLocationRelativeTo(peptideShaker);
     }
@@ -583,12 +588,12 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
 
         // @TODO: this does not work! have to create a new object and transfer all the values...
-        
+
         // reset the preferences as this can have been changed
 //        peptideShakerGUI.setSearchParameters(oldSearchParameters);
 //        peptideShakerGUI.setModificationProfileFile(oldProfileFile);
 //        peptideShakerGUI.setIdFilter(oldIdFilter);
-        
+
         this.setVisible(false);
         this.dispose();
 }//GEN-LAST:event_exitButtonActionPerformed
@@ -603,9 +608,9 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         if (validateInput()) {
 
             this.setVisible(false);
-            
+
             peptideShakerGUI.clearData();
-            
+
             experiment = new MsExperiment(projectNameIdTxt.getText().trim());
             sample = new Sample(sampleNameIdtxt.getText().trim());
             SampleAnalysisSet analysisSet = new SampleAnalysisSet(sample, new ProteomicAnalysis(getReplicateNumber()));
@@ -625,7 +630,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             progressCounter += 7; // computing probabilities etc
             progressCounter += 1; // resolving protein inference
             progressCounter += 4; // Correcting protein probabilities, Validating identifications at 1% FDR, Scoring PTMs in peptides, Scoring PTMs in proteins.
-            
+
             // add one more just to not start at 0%
             progressCounter++;
 
@@ -813,6 +818,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                             if (!file.getName().equals("mods.xml")
                                     && !file.getName().equals("usermods.xml")) {
                                 idFiles.add(file);
+                            } else if (file.getName().endsWith("usermods.xml")) {
+                                modificationFiles.add(file);
                             }
                         } else if (file.getName().toLowerCase().endsWith(".properties")) {
                             if (!searchParametersFiles.contains(file)) {
@@ -829,6 +836,9 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                                 searchParametersFiles.add(file);
                             }
                         }
+                        if (file.getName().endsWith("usermods.xml")) {
+                            modificationFiles.add(file);
+                        }
                     }
                 }
                 peptideShakerGUI.setLastSelectedFolder(newFile.getAbsolutePath());
@@ -839,7 +849,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             } else if (searchParametersFiles.size() > 1) {
                 new FileSelection(this, searchParametersFiles);
             }
-
             boolean importSuccessfull = true;
 
             for (int i = 0; i < folders.size() && importSuccessfull; i++) {
@@ -1027,35 +1036,71 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     public void importSearchParameters(File searchGUIFile) {
 
         SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
-        peptideShakerGUI.loadModifications(); // reload the ptms from file. // @TODO: not sure why this is needed, but if not all ptms are not found...
-        
+        peptideShakerGUI.loadModifications(); // reload the ptms from file.
+
         try {
             Properties props = IdentificationParametersReader.loadProperties(searchGUIFile);
             ArrayList<String> variableMods = new ArrayList<String>();
             String temp = props.getProperty(IdentificationParametersReader.VARIABLE_MODIFICATIONS);
 
             if (temp != null && !temp.trim().equals("")) {
-                try {
-                    variableMods = IdentificationParametersReader.parseModificationLine(temp, ptmFactory);
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(this, e.getMessage(), "Modification Not Found", JOptionPane.WARNING_MESSAGE);
-                }
+                variableMods = IdentificationParametersReader.parseModificationLine(temp);
             }
 
+            ArrayList<String> missing = new ArrayList<String>();
             for (String name : variableMods) {
-                if (!searchParameters.getModificationProfile().getUtilitiesNames().contains(name)) {
-                    searchParameters.getModificationProfile().setPeptideShakerName(name, name);
-                    if (!searchParameters.getModificationProfile().getPeptideShakerNames().contains(name)) {
-                        int index = name.length() - 1;
-                        if (name.lastIndexOf(" ") > 0) {
-                            index = name.indexOf(" ");
+                if (!ptmFactory.containsPTM(name)) {
+                    missing.add(name);
+                } else {
+                    if (!searchParameters.getModificationProfile().getUtilitiesNames().contains(name)) {
+                        searchParameters.getModificationProfile().setPeptideShakerName(name, name);
+                        if (!searchParameters.getModificationProfile().getPeptideShakerNames().contains(name)) {
+                            int index = name.length() - 1;
+                            if (name.lastIndexOf(" ") > 0) {
+                                index = name.indexOf(" ");
+                            }
+                            if (name.lastIndexOf("-") > 0) {
+                                index = Math.min(index, name.indexOf("-"));
+                            }
+                            searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
+                            searchParameters.getModificationProfile().setColor(name, Color.lightGray);
                         }
-                        if (name.lastIndexOf("-") > 0) {
-                            index = Math.min(index, name.indexOf("-"));
-                        }
-                        searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
-                        searchParameters.getModificationProfile().setColor(name, Color.lightGray);
                     }
+                }
+            }
+            if (!missing.isEmpty()) {
+                for (File modFile : modificationFiles) {
+                    try {
+                        ptmFactory.importModifications(modFile, true);
+                    } catch (Exception e) {
+                        // ignore error
+                    }
+                }
+                ArrayList<String> missing2 = new ArrayList<String>();
+                for (String ptmName : missing) {
+                    if (!ptmFactory.containsPTM(ptmName)) {
+                        missing2.add(ptmName);
+                    }
+                }
+                if (!missing2.isEmpty()) {
+                    if (missing2.size() == 1) {
+                        JOptionPane.showMessageDialog(this, "The following modification is currently not recognized by PeptideShaker: "
+                                + missing2.get(0) + ".\nPlease import it by editing the search parameters.", "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+                    } else {
+                        String output = "The following modifications are currently not recognized by PeptideShaker:\n";
+                        boolean first = true;
+                        for (String ptm : missing2) {
+                            if (first) {
+                                first = false;
+                            } else {
+                                output += ", ";
+                            }
+                            output += ptm;
+                        }
+                        output += ".\nPlease import it by editing the search parameters.";
+                        JOptionPane.showMessageDialog(this, output, "Modification Not Found", JOptionPane.WARNING_MESSAGE);
+                    }
+
                 }
             }
 
@@ -1254,6 +1299,10 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         this.searchParametersFiles = searchParametersFiles;
     }
 
+    /**
+     * Creates the project details for this new project
+     * @return 
+     */
     private ProjectDetails getProjectDetails() {
         ProjectDetails projectDetails = new ProjectDetails();
         projectDetails.setCreationDate(new Date());

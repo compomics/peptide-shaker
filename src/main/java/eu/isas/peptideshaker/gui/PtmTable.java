@@ -3,7 +3,7 @@ package eu.isas.peptideshaker.gui;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
-import com.compomics.util.experiment.identification.PTMLocationScores;
+import com.compomics.util.experiment.identification.ptm.PTMLocationScores;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.identification.ptm.PtmtableContent;
@@ -321,8 +321,6 @@ public class PtmTable extends JTable {
         SpectrumMatch spectrumMatch;
         SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
-        // @TODO: intensities are not total intensity normalized??
-
         for (String spectrumKey : spectrumKeys) {
             try {
                 spectrum = (MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey);
@@ -450,7 +448,7 @@ public class PtmTable extends JTable {
         // add the data points to display to an arraylist 
         ArrayList<Double> data = new ArrayList<Double>();
         
-        int[] histogram = tableContent.getHistogram(modCpt, fragmentIonType, aa, 10);
+        int[] histogram = tableContent.getHistogram(modCpt, fragmentIonType, aa, 50);
         
         data.add(0.0);
         
