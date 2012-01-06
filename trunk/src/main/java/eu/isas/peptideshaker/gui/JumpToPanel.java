@@ -243,9 +243,9 @@ public class JumpToPanel extends javax.swing.JPanel {
                 inputTxt.setForeground(new Color(204, 204, 204));
             }
 
-            if (evt.getKeyCode() == KeyEvent.VK_RIGHT && previousButton.isEnabled()) {
+            if (evt.getKeyCode() == KeyEvent.VK_LEFT && previousButton.isEnabled()) {
                 previousButtonActionPerformed(null);
-            } else if (evt.getKeyCode() == KeyEvent.VK_LEFT & nextButton.isEnabled()) {
+            } else if (evt.getKeyCode() == KeyEvent.VK_RIGHT & nextButton.isEnabled()) {
                 nextButtonActionPerformed(null);
             } else {
                 possibilities = new ArrayList<String>();
