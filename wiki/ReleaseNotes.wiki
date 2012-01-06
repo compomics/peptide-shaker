@@ -3,6 +3,16 @@
 
 ----
 
+*Changes in PeptideShaker 0.13.1 (January 6. 2012):*
+ * NEW FEATURE: The GO analysis now uses ENSEMBL 65.
+ * FEATURE IMPROVEMENT: The QC plots are now only loaded when selected, and also not reloaded if not needed.
+ * FEATURE IMPROVEMENT: Improved the use of the primary progress bar in the WaitingDialog. 
+ * FEATURE IMPROVEMENT: Removed the 'Starred' column when exporting and 'Request Starred' was not selected. 
+ * BUG FIX: Fixed a bug with the parsing of mgf files with spectrum titles containing `\`.
+ * LIBRARY UPDATE: Updated utilities to version 3.3.17.
+
+----
+
 *Changes in PeptideShaker 0.13.0 (January 4. 2012):*
  * NEW FEATURE: It is now possible to change the location of a given PTM in the Modifications tab.
  * NEW FEATURE: Added a new protein QC plot: protein sequence length.
@@ -13,6 +23,8 @@
  * BUG FIX: Fixed an issue where 'Request Starred' was included in the 'Select All' features in the 'FeaturesPreferencesDialog' resulting in empty exports if nothing was starred.
  * BUG FIX: Fixed a bug in the PTM tab where the tabbed pane moved to the PTM table tab when selecting a related peptide.
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.31.
+
+Download Count: 13
 
 ----
 
