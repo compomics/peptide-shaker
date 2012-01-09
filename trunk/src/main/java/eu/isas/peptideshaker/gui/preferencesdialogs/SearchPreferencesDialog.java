@@ -663,7 +663,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             String name = (String) availableModificationsTable.getValueAt(selectedRows[i], 1);
             searchParameters.getModificationProfile().setPeptideShakerName(name, name);
             if (!searchParameters.getModificationProfile().getPeptideShakerNames().contains(name)) {
-                int index = name.length() - 1;
+                int index = name.length();
                 if (name.lastIndexOf(" ") > 0) {
                     index = name.indexOf(" ");
                 }
@@ -690,7 +690,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
         ArrayList<String> toRemove = new ArrayList<String>();
 
         for (int selectedRow : expectedModificationsTable.getSelectedRows()) {
-            toRemove.add((String) expectedModificationsTable.getValueAt(selectedRow, 1));
+            toRemove.add((String) expectedModificationsTable.getValueAt(selectedRow, 2));
         }
 
         for (String name : toRemove) {
