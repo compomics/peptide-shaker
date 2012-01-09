@@ -431,7 +431,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         this.setExtendedState(MAXIMIZED_BOTH);
 
         loadEnzymes();
-        loadModifications();
+        resetPtmFactory();
         setDefaultPreferences();
 
         setLocationRelativeTo(null);
@@ -2511,7 +2511,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private void exportPrideXmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideXmlMenuItemActionPerformed
 
         JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
-        
+
 //        JFileChooser fileChooser = new JFileChooser(this.getLastSelectedFolder());
 //        fileChooser.setDialogTitle("Select Destination File");
 //        fileChooser.setMultiSelectionEnabled(false);
@@ -3327,16 +3327,22 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     /**
      * Loads the modifications from the modification file.
      */
-    public void loadModifications() {
+    public void resetPtmFactory() {
+
+        // reset ptm factory
+        ptmFactory.reloadFactory();
+        ptmFactory = PTMFactory.getInstance();
         try {
             ptmFactory.importModifications(new File(MODIFICATIONS_FILE), false);
         } catch (Exception e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error (" + e.getMessage() + ") occured when trying to load the modifications from " + MODIFICATIONS_FILE + ".",
                     "Configuration import Error", JOptionPane.ERROR_MESSAGE);
         }
         try {
             ptmFactory.importModifications(new File(USER_MODIFICATIONS_FILE), true);
         } catch (Exception e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "An error (" + e.getMessage() + ") occured when trying to load the modifications from " + USER_MODIFICATIONS_FILE + ".",
                     "Configuration import Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -3722,7 +3728,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
         // reset enzymes, ptms and preferences
         loadEnzymes();
-        loadModifications();
+        resetPtmFactory();
         setDefaultPreferences();
     }
 
@@ -4161,6 +4167,23 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             catchException(e);
         }
         return result;
+    }
+
+    /**
+     * Returns the best protein coverage possible according to the given cleavage settings
+     * @param proteinMatch the protein match
+     * @return the best protein coverage possible according to the given cleavage settings
+     */
+    public double getObservableCoverage(ProteinMatch proteinMatch) {
+        try {
+            Enzyme enyzme = searchParameters.getEnzyme();
+            Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
+            return ((double) currentProtein.getObservableLength(enyzme, idFilter.getMaxPepLength()))/currentProtein.getLength();
+        } catch (IOException e) {
+            catchException(e);
+            e.printStackTrace();
+            return 1;
+        }
     }
 
     /**
@@ -4786,7 +4809,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 try {
                     // reset enzymes, ptms and preferences
                     loadEnzymes();
-                    loadModifications();
+                    resetPtmFactory();
                     setDefaultPreferences();
 
                     // change the peptide shaker icon to a "waiting version"

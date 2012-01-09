@@ -168,7 +168,7 @@ public class FileImporter {
             waitingDialog.setSecondaryProgressDialogIntermediate(true);
 
             if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !testing) {
-                
+
                 waitingDialog.appendReport("Creating peptide to protein map.");
 
                 Enzyme enzyme = searchParameters.getEnzyme();
@@ -190,7 +190,7 @@ public class FileImporter {
                     waitingDialog.increaseSecondaryProgressValue();
 
                     String sequence = sequenceFactory.getProtein(proteinKey).getSequence();
-                    
+
                     for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
                         if (!sequences.containsKey(peptide)) {
                             sequences.put(peptide, new ArrayList<String>());
@@ -206,10 +206,10 @@ public class FileImporter {
 
                 waitingDialog.setSecondaryProgressDialogIntermediate(true);
             }
-            
+
             waitingDialog.appendReport("FASTA file import completed.");
             waitingDialog.increaseProgressValue();
-            
+
         } catch (FileNotFoundException e) {
             waitingDialog.appendReport("File " + fastaFile + " was not found. Please select a different FASTA file.");
             e.printStackTrace();
@@ -441,10 +441,11 @@ public class FileImporter {
             int nTotal = 0;
             int nRetained = 0;
             ArrayList<String> mgfUsed = new ArrayList<String>();
+            boolean unknown = false;
 
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             importSequences(waitingDialog, proteomicAnalysis, fastaFile, idFilter, searchParameters);
-            
+
             try {
 
                 PeptideShaker.setPeptideShakerPTMs(searchParameters);
@@ -496,6 +497,12 @@ public class FileImporter {
                             for (PeptideAssumption assumptions : match.getAllAssumptions()) {
                                 peptide = assumptions.getPeptide();
                                 for (ModificationMatch seMod : peptide.getModificationMatches()) {
+                                    if (seMod.getTheoreticPtm().equals("unknown")) {
+                                        if (!unknown) {
+                                            waitingDialog.appendReport("An unknown modification was encountered and will impair further processing.\nPlease make sure that all modifications are loaded in the search parameters and reload the data.");
+                                            unknown = true;
+                                        }
+                                    }
                                     seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), peptide.getSequence(), searchParameters));
                                 }
                             }
@@ -569,7 +576,7 @@ public class FileImporter {
         public void importSpectra(WaitingDialog waitingDialog, String targetFileName, SearchParameters searchParameters) {
 
             File spectrumFile = spectrumFiles.get(targetFileName);
-            
+
             if (spectrumFile == null) {
 
                 JOptionPane.showMessageDialog(null,

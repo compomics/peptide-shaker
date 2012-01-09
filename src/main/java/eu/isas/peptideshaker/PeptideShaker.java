@@ -194,10 +194,11 @@ public class PeptideShaker {
             psmMap.estimateProbabilities(waitingDialog);
             attachSpectrumProbabilities();
             waitingDialog.increaseProgressValue();
-            waitingDialog.appendReport("Computing peptide probabilities.");
+            waitingDialog.appendReport("Building peptides and proteins.");
             identification.buildPeptidesAndProteins();
             fillPeptideMaps();
             peptideMap.cure();
+            waitingDialog.appendReport("Computing peptide probabilities.");
             peptideMap.estimateProbabilities(waitingDialog);
             attachPeptideProbabilities();
             waitingDialog.increaseProgressValue();

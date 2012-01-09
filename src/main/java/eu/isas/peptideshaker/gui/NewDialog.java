@@ -1036,7 +1036,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     public void importSearchParameters(File searchGUIFile) {
 
         SearchParameters searchParameters = peptideShakerGUI.getSearchParameters();
-        peptideShakerGUI.loadModifications(); // reload the ptms from file.
+        peptideShakerGUI.resetPtmFactory(); // reload the ptms
 
         try {
             Properties props = IdentificationParametersReader.loadProperties(searchGUIFile);
