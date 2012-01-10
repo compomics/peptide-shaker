@@ -11,7 +11,6 @@ import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
-import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.biology.ions.PeptideFragmentIon.PeptideFragmentIonType;
 import com.compomics.util.experiment.identification.Identification;
@@ -19,10 +18,6 @@ import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
-import com.compomics.util.experiment.identification.matches.ModificationMatch;
-import com.compomics.util.experiment.identification.matches.PeptideMatch;
-import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -31,13 +26,10 @@ import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.UtilitiesGUIDefaults;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
-import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
-import eu.isas.peptideshaker.filtering.MatchFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
-import eu.isas.peptideshaker.filtering.PsmFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FollowupPreferencesDialog;
@@ -53,8 +45,6 @@ import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.gui.tabpanels.QCPanel;
 import eu.isas.peptideshaker.gui.tabpanels.SpectrumIdentificationPanel;
 import eu.isas.peptideshaker.gui.tabpanels.StatsPanel;
-import eu.isas.peptideshaker.myparameters.PSParameter;
-import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.myparameters.PSSettings;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.DisplayPreferences;
@@ -104,7 +94,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
-import javax.swing.RowFilter.ComparisonType;
 import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableColumnModel;
@@ -1937,90 +1926,160 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         new SpectrumCountingPreferencesDialog(this);
     }//GEN-LAST:event_spectrumCountingMenuItemActionPerformed
 
+    /**
+     * Open the features export dialog.
+     * 
+     * @param evt 
+     */
     private void identificationFeaturesMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identificationFeaturesMenuActionPerformed
         new FeaturesPreferencesDialog(this);
     }//GEN-LAST:event_identificationFeaturesMenuActionPerformed
 
+    /**
+     * Open the follow up export dialog. 
+     * 
+     * @param evt 
+     */
     private void followUpAnalysisMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followUpAnalysisMenuActionPerformed
         new FollowupPreferencesDialog(this);
     }//GEN-LAST:event_followUpAnalysisMenuActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void aIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_aIonCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void bIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bIonCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_bIonCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void cIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cIonCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_cIonCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void xIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_xIonCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_xIonCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void yIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_yIonCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_yIonCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void zIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_zIonCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_zIonCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void h2oIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_h2oIonCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_h2oIonCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void nh3IonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nh3IonCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_nh3IonCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void h3po4IonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_h3po4IonCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_h3po4IonCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void hpo3IonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_hpo3IonCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_hpo3IonCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void ch4osIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ch4osIonCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_ch4osIonCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void precursorCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_precursorCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_precursorCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void immoniumCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_immoniumCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_immoniumCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void singleChargeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_singleChargeCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_singleChargeCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void doubleChargeCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_doubleChargeCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_doubleChargeCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void moreThanTwoChargesCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moreThanTwoChargesCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_moreThanTwoChargesCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void allCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_allCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_allCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void barsCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_barsCheckBoxMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_barsCheckBoxMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void intensityIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_intensityIonTableRadioButtonMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_intensityIonTableRadioButtonMenuItemActionPerformed
 
+    /**
+     * @see #updateAnnotationPreferences() 
+     */
 private void mzIonTableRadioButtonMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mzIonTableRadioButtonMenuItemActionPerformed
     updateAnnotationPreferences();
 }//GEN-LAST:event_mzIonTableRadioButtonMenuItemActionPerformed
@@ -2177,6 +2236,11 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
     updateAnnotationPreferences();
 }//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
 
+/**
+ * Open the project details dialog.
+ * 
+ * @param evt 
+ */
 private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectPropertiesMenuItemActionPerformed
     new ProjectDetailsDialog(this);
 }//GEN-LAST:event_projectPropertiesMenuItemActionPerformed
@@ -2519,9 +2583,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * @param evt 
      */
     private void exportPrideXmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideXmlMenuItemActionPerformed
-
-        JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
-
+        //JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
 //        JFileChooser fileChooser = new JFileChooser(this.getLastSelectedFolder());
 //        fileChooser.setDialogTitle("Select Destination File");
 //        fileChooser.setMultiSelectionEnabled(false);
@@ -2649,6 +2711,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         ptmPanel.updateSeparators();
     }//GEN-LAST:event_spectrumSlidersCheckBoxMenuItemActionPerformed
 
+    /**
+     * Open the filter dialog.
+     * 
+     * @param evt 
+     */
     private void starHideJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_starHideJMenuItemActionPerformed
         new FiltersDialog(this);
     }//GEN-LAST:event_starHideJMenuItemActionPerformed
@@ -2662,11 +2729,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         jumpToPanel.selectTextField();
     }//GEN-LAST:event_findJMenuItemActionPerformed
 
-    /**
-     * Open the filter dialog.
-     * 
-     * @param evt 
-     */
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
@@ -2970,7 +3032,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the user preferences
+     * Returns the user preferences.
+     * 
      * @return the user preferences
      */
     public UserPreferences getUserPreferences() {
@@ -2978,7 +3041,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Loads the user preferences
+     * Loads the user preferences.
      */
     private void loadUserPreferences() {
         try {
@@ -3000,7 +3063,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Saves the user preferences
+     * Saves the user preferences.
      */
     private void saveUserPreferences() {
         try {
@@ -3056,7 +3119,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Updates the ions used for fragment annotation
+     * Updates the ions used for fragment annotation.
      */
     public void updateAnnotationPreferencesFromSearchSettings() {
         annotationPreferences.clearIonTypes();
@@ -3068,7 +3131,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the spectrum annotator
+     * Returns the spectrum annotator.
+     * 
      * @return the spectrum annotator 
      */
     public SpectrumAnnotator getSpectrumAnnorator() {
@@ -3076,7 +3140,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Convenience method returning the current annotations without requesting the specification of the spectrum and peptide
+     * Convenience method returning the current annotations without requesting 
+     * the specification of the spectrum and peptide.
+     * 
      * @return the current annotations without requesting the specification of the spectrum and peptide
      * @throws MzMLUnmarshallerException exception thrown whenever an error occurred while reading the mzML file
      */
@@ -3109,7 +3175,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the modification profile file
+     * Returns the modification profile file.
+     * 
      * @return the modification profile file 
      */
     public File getModificationProfileFile() {
@@ -3117,7 +3184,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Sets the modification profile file
+     * Sets the modification profile file.
+     * 
      * @param profileFile the modification profile file
      */
     public void setModificationProfileFile(File profileFile) {
@@ -3138,7 +3206,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Loads the modification profile from the given file
+     * Loads the modification profile from the given file.
+     * 
      * @param aFile the given file
      */
     private void loadModificationProfile(File aFile) {
@@ -3202,7 +3271,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the desired spectrum
+     * Returns the desired spectrum.
+     * 
      * @param spectrumKey   the key of the spectrum
      * @return the desired spectrum
      */
@@ -3218,7 +3288,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the precursor of a given spectrum
+     * Returns the precursor of a given spectrum.
+     * 
      * @param spectrumKey   the key of the given spectrum
      * @return  the precursor
      */
@@ -3227,7 +3298,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the precursor of a given spectrum
+     * Returns the precursor of a given spectrum.
+     * 
      * @param spectrumKey   the key of the given spectrum
      * @param save          boolean indicating whether the precursor should be saved in memory for later re-use
      * @return  the precursor
@@ -3251,7 +3323,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Return the filter preferences to use
+     * Return the filter preferences to use.
+     * 
      * @return the filter preferences to use
      */
     public FilterPreferences getFilterPreferences() {
@@ -3259,7 +3332,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Return the display preferences to use
+     * Return the display preferences to use.
+     * 
      * @return the display preferences to use
      */
     public DisplayPreferences getDisplayPreferences() {
@@ -3267,7 +3341,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Sets the gui filter preferences to use
+     * Sets the gui filter preferences to use.
+     * .\
      * @param filterPreferences the gui filter preferences to use
      */
     public void setFilterPreferences(FilterPreferences filterPreferences) {
@@ -3275,7 +3350,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Sets the display preferences to use
+     * Sets the display preferences to use.
+     * 
      * @param displayPreferences  the display preferences to use
      */
     public void setDisplayPreferences(DisplayPreferences displayPreferences) {
@@ -3283,7 +3359,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the spectrum counting preferences
+     * Returns the spectrum counting preferences.
+     * 
      * @return the spectrum counting preferences 
      */
     public SpectrumCountingPreferences getSpectrumCountingPreferences() {
@@ -3291,7 +3368,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Sets new spectrum counting preferences
+     * Sets new spectrum counting preferences.
+     * 
      * @param spectrumCountingPreferences new spectrum counting preferences
      */
     public void setSpectrumCountingPreferences(SpectrumCountingPreferences spectrumCountingPreferences) {
@@ -3457,7 +3535,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Updates the selected items in the currently opened tab
+     * Updates the selected items in the currently opened tab.
      */
     public void updateSelectionInCurrentTab() {
 
@@ -3481,7 +3559,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Sets the selected item based on the selected tab
+     * Sets the selected item based on the selected tab.
      */
     public void setSelectedItems() {
         int selectedIndex = allTabsJTabbedPane.getSelectedIndex();
@@ -3495,7 +3573,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the key of the selected protein 
+     * Returns the key of the selected protein.
+     * 
      * @return the key of the selected protein
      */
     public String getSelectedProteinKey() {
@@ -3503,7 +3582,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the key of the selected peptide 
+     * Returns the key of the selected peptide.
+     * 
      * @return the key of the selected peptide
      */
     public String getSelectedPeptideKey() {
@@ -3520,7 +3600,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Clear the data from the previous experiment
+     * Clear the data from the previous experiment.
      */
     public void clearData() {
 
@@ -3595,7 +3675,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Resets the content of a panel indexed by the given integer
+     * Resets the content of a panel indexed by the given integer.
+     * 
      * @param tabIndex index of the panel to reset
      */
     private void resetPanel(int tabIndex) {
@@ -3882,7 +3963,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns a list of keys of the currently displayed peptides
+     * Returns a list of keys of the currently displayed peptides.
+     * 
      * @return a list of keys of the currently displayed peptides
      */
     public ArrayList<String> getDisplayedPeptides() {
@@ -3900,7 +3982,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns a list of keys of the currently displayed psms
+     * Returns a list of keys of the currently displayed psms.
+     * 
      * @return a list of keys of the currently displayed psms
      */
     public ArrayList<String> getDisplayedPSMs() {
@@ -3916,7 +3999,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns a list of keys of the currently displayed assumptions
+     * Returns a list of keys of the currently displayed assumptions.
+     * 
      * @return a list of keys of the currently displayed assumptions
      */
     public ArrayList<String> getDisplayedAssumptions() {
@@ -4002,7 +4086,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Method called whenever an exception is caught
+     * Method called whenever an exception is caught.
+     * 
      * @param e the exception caught
      */
     public void catchException(Exception e) {
@@ -4420,7 +4505,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the project details
+     * Returns the project details.
+     * 
      * @return the project details
      */
     public ProjectDetails getProjectDetails() {
@@ -4428,7 +4514,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Sets the project details
+     * Sets the project details.
+     * 
      * @param projectDetails the project details
      */
     public void setProjectDetails(ProjectDetails projectDetails) {
@@ -4876,7 +4963,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the identification filter used
+     * Returns the identification filter used.
+     * 
      * @return the identification filter used
      */
     public IdFilter getIdFilter() {
@@ -4977,7 +5065,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Saves the modifications made to the project
+     * Saves the modifications made to the project.
      */
     private void saveProject() {
 
@@ -5028,7 +5116,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Sets that the tab was updated
+     * Sets that the tab was updated.
+     * 
      * @param tabIndex integer indicating which tab (according to the static indexing) was updated.
      * @param updated boolean indicating wheter the tab is updated or not 
      */
@@ -5064,7 +5153,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the modifications found in this project
+     * Returns the modifications found in this project.
+     * 
      * @return the modifications found in this project
      */
     public ArrayList<String> getFoundModifications() {
@@ -5090,8 +5180,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         return identifiedModifications;
     }
 
+    /**
+     * Returns a list of the search charges.
+     * 
+     * @return a list of the search charges
+     */
     public ArrayList<Integer> getSearchedCharges() {
+        
         //@TODO: use search parameters input
+        
         ArrayList<Integer> result = new ArrayList<Integer>();
         result.add(2);
         result.add(3);
@@ -5100,23 +5197,25 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the object responsible for starring/hiding matches
+     * Returns the object responsible for starring/hiding matches.
+     * 
      * @return the object responsible for starring/hiding matches
      */
     public StarHider getStarHider() {
         return starHider;
     }
-    
+
     /**
-     * Returns the identification features generator
+     * Returns the identification features generator.
+     * 
      * @return the identification features generator
      */
     public IdentificationFeaturesGenerator getIdentificationFeaturesGenerator() {
         return identificationFeaturesGenerator;
     }
-    
+
     /**
-     * Resetes the feature generator
+     * Resetes the feature generator.
      */
     public void resetFeatureGenerator() {
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(this);
