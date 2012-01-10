@@ -1048,9 +1048,7 @@ public class FindDialog extends javax.swing.JDialog {
                         proteinMatch = identification.getProteinMatch(proteinKey);
                         return sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
                     case 7:
-                        proteinMatch = identification.getProteinMatch(proteinKey);
-                        String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
-                        return 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, sequence);
+                        return 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
                     case 8:
                         proteinMatch = identification.getProteinMatch(proteinKey);
                         return proteinMatch.getPeptideCount();
@@ -1064,8 +1062,7 @@ public class FindDialog extends javax.swing.JDialog {
                                 }
                         return cpt;
                     case 10:
-                        proteinMatch = identification.getProteinMatch(proteinKey);
-                        return peptideShakerGUI.getSpectrumCounting(proteinMatch);
+                        return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
                     case 11:
                         psParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
                         return psParameter.getProteinScore();

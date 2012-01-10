@@ -72,4 +72,14 @@ public class SpectrumCountingPreferences implements Serializable {
     public void setValidatedHits(boolean validatedHits) {
         this.validatedHits = validatedHits;
     }
+    
+    /**
+     * Compares two spectrum counting preferences
+     * @param anotherSpectrumCountingPreferences another spectrum counting preferences
+     * @return a boolean indicating whether the other spectrum counting preferences is the same as this one
+     */
+    public boolean isSameAs(SpectrumCountingPreferences anotherSpectrumCountingPreferences) {
+        return anotherSpectrumCountingPreferences.getSelectedMethod() == selectedMethod
+                && anotherSpectrumCountingPreferences.isValidatedHits() == validatedHits;
+    }
 }

@@ -620,6 +620,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         if (validateInput()) {
+            //@TODO the displayed data ought to be updated here if any change was made
             searchParameters.setFragmentIonAccuracy(new Double(fragmentIonAccuracyTxt.getText()));
             searchParameters.setnMissedCleavages(new Integer(missedCleavagesTxt.getText()));
             searchParameters.setEnzyme(enzymeFactory.getEnzyme((String) enzymesCmb.getSelectedItem()));

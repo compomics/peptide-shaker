@@ -961,7 +961,7 @@ public class FiltersDialog extends javax.swing.JDialog {
         peptideShakerGUI.getFilterPreferences().setPsmStarFilters(psmStarFilters);
         peptideShakerGUI.getFilterPreferences().setPsmHideFilters(psmHideFilters);
         setVisible(false);
-        peptideShakerGUI.starHide();
+        peptideShakerGUI.getStarHider().starHide();
 
         peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
         peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);

@@ -1991,7 +1991,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 try {
                     peptidesTable.setToolTipText(
-                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(displayedPeptides.get(
+                            peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(displayedPeptides.get(
                             (Integer) peptidesTable.getValueAt(row, 0) - 1)).getTheoreticPeptide()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -2048,7 +2048,7 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 try {
                     relatedPeptidesTable.setToolTipText(
-                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(
+                            peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideModificationTooltipAsHtml(identification.getPeptideMatch(
                             relatedPeptides.get((Integer) relatedPeptidesTable.getValueAt(row, 0) - 1)).getTheoreticPeptide()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
@@ -2265,7 +2265,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(row);
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     selectedPsmsTable.setToolTipText(
-                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide()));
+                            peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     e.printStackTrace();
@@ -2349,7 +2349,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                     String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(true)).getSpectrumMatches().get(row);
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     relatedPsmsTable.setToolTipText(
-                            peptideShakerGUI.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide()));
+                            peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide()));
                 } catch (Exception e) {
                     peptideShakerGUI.catchException(e);
                     e.printStackTrace();
@@ -3889,7 +3889,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         probabilities = (PSParameter) identification.getMatchParameter(displayedPeptides.get(row), probabilities);
                         return probabilities.getGroupClass();
                     case 3:
-                        return peptideShakerGUI.getColoredPeptideSequence(displayedPeptides.get(row), true);
+                        return peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(displayedPeptides.get(row), true);
                     case 4:
                         PSPtmScores ptmScores = new PSPtmScores();
                         ptmScores = (PSPtmScores) identification.getPeptideMatch(displayedPeptides.get(row)).getUrParam(ptmScores);
@@ -3985,7 +3985,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         probabilities = (PSParameter) identification.getMatchParameter(relatedPeptides.get(row), probabilities);
                         return probabilities.getGroupClass();
                     case 3:
-                        return peptideShakerGUI.getColoredPeptideSequence(relatedPeptides.get(row), true);
+                        return peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(relatedPeptides.get(row), true);
                     case 4:
                         PSPtmScores ptmScores = new PSPtmScores();
                         ptmScores = (PSPtmScores) identification.getPeptideMatch(relatedPeptides.get(row)).getUrParam(ptmScores);
