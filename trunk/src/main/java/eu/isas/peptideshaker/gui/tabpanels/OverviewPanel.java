@@ -9,7 +9,6 @@ import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
-import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
@@ -47,6 +46,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -67,11 +67,13 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
+import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.TrueFalseIconRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
+import no.uib.jsparklines.renderers.JSparklinesTwoValueBarChartTableCellRenderer;
 import org.jfree.chart.plot.PlotOrientation;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
@@ -304,10 +306,12 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         proteinTable.getColumn("Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
         proteinTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), proteinInferenceColorMap, proteinInferenceTooltipMap));
-        proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.stackedBarChartIntegerWithUpperRange, PlotOrientation.HORIZONTAL, 0.0, 10.0));
-        ((JSparklinesTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.stackedBarChartIntegerWithUpperRange, PlotOrientation.HORIZONTAL, 0.0, 10.0));
-        ((JSparklinesTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        proteinTable.getColumn("#Peptides").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, 
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
+        proteinTable.getColumn("#Spectra").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, 
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
         proteinTable.getColumn("MS2 Quant.").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         proteinTable.getColumn("MW").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, peptideShakerGUI.getSparklineColor()));
@@ -315,11 +319,9 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
-        //proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        //((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        //((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).setMinimumChartValue(5d);
-        proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.stackedBarChartIntegerWithUpperRange, PlotOrientation.HORIZONTAL, 0.0, 100.0));
-        ((JSparklinesTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        proteinTable.getColumn("Coverage").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, 
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), true));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0.00"));
         proteinTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
@@ -346,8 +348,9 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         peptideTable.getColumn("PI").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(peptideShakerGUI.getSparklineColor(), peptideInferenceColorMap, peptideInferenceTooltipMap));
         peptideTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
-        peptideTable.getColumn("#Spectra").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.stackedBarChartIntegerWithUpperRange, PlotOrientation.HORIZONTAL, 0.0, 10.0));
-        ((JSparklinesTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        peptideTable.getColumn("#Spectra").setCellRenderer(new JSparklinesTwoValueBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10.0, 
+                peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColorNonValidated(), false));
+        ((JSparklinesTwoValueBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth(), new DecimalFormat("0"));
         ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
         peptideTable.getColumn("").setCellRenderer(new TrueFalseIconRenderer(
@@ -417,9 +420,9 @@ public class OverviewPanel extends javax.swing.JPanel {
         proteinTableToolTips.add("Protein Inference Class");
         proteinTableToolTips.add("Protein Accession Number");
         proteinTableToolTips.add("Protein Description");
-        proteinTableToolTips.add("Protein Seqeunce Coverage (%)");
-        proteinTableToolTips.add("Number of Peptides (Validated / Non-Validated)");
-        proteinTableToolTips.add("Number of Spectra (Validated / Non-Validated)");
+        proteinTableToolTips.add("Protein Seqeunce Coverage (%) (Observed / Possible)");
+        proteinTableToolTips.add("Number of Peptides (Validated / Total)");
+        proteinTableToolTips.add("Number of Spectra (Validated / Total)");
         proteinTableToolTips.add("MS2 Quantification");
         proteinTableToolTips.add("Protein Molecular Weight (kDa)");
         proteinTableToolTips.add("Protein Score");
@@ -3442,11 +3445,11 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     public void showSparkLines(boolean showSparkLines) {
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("Coverage").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
-        ((JSparklinesTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesTwoValueBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
 
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).showNumbers(!showSparkLines);
@@ -3762,8 +3765,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             String proteinKey = proteinTableMap.get(getProteinIndex(proteinTable.getSelectedRow()));
             ((TitledBorder) sequenceCoveragePanel.getBorder()).setTitle("Protein Sequence Coverage ("
                     + Util.roundDouble(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey)*100, 2)
-                    + " of " + Util.roundDouble(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey)*100, 2) + "% observable; sequence length: "
-                    + currentProteinSequence.length() + " AA)");
+                    + "% of max " + Util.roundDouble(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey)*100, 2) + "%"
+                    + "   " + currentProteinSequence.length() + " AA)");
             sequenceCoveragePanel.repaint();
 
             if (currentProteinSequence.length() < MAX_SEQUENCE_LENGTH) {
@@ -3806,18 +3809,28 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         }
                     }
                 }
-
+                
+                // get the possible coverage
+                boolean[] possibleCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getCoverableAA(proteinKey);
+                
                 // create the coverage plot
                 ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
 
                 for (int i = 0; i < coverage.length; i++) {
 
                     boolean covered = coverage[i] > 0;
-                    int counter = 1;
-
+                    boolean possibleToCover = true;
+                    
+                    if (i>0) {
+                        possibleToCover = possibleCoverage[i-1];
+                    }
+                    
+                    int sequenceCounter = 1;
+                    int impossibleToCoverCounter = 0;
+    
                     if (covered) {
                         while (i + 1 < coverage.length && coverage[i + 1] > 0) {
-                            counter++;
+                            sequenceCounter++;
                             i++;
 
                             // we need to start a new peptide in order to highlight
@@ -3825,27 +3838,36 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                 break;
                             }
                         }
+                    } else if (!possibleToCover) {
+                        
+                        impossibleToCoverCounter++;
+                        
+                        while (i < possibleCoverage.length && !possibleCoverage[i]) {
+                            impossibleToCoverCounter++;
+                            sequenceCounter++;
+                            i++;
+                        }
                     } else {
                         while (i + 1 < coverage.length && coverage[i + 1] == 0) {
-                            counter++;
+                            sequenceCounter++;
                             i++;
                         }
                     }
 
                     ArrayList<Double> data = new ArrayList<Double>();
-                    data.add(new Double(counter));
+                    data.add(new Double(sequenceCounter));
 
                     JSparklinesDataSeries sparklineDataseries;
                     
                     if (covered) {
-
                         if (selectedPeptideEnd.contains(new Integer(i + 1))) {
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUserPreferences().getPeptideSelected(), null);
                         } else {
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
                         }
-                        
-                    } else {
+                    } else if (impossibleToCoverCounter > 0) { 
+                        sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), null);
+                    } else { 
                         sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                     }
                     
@@ -3866,7 +3888,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 sparkLineDataSeriesPtm.add(sparklineDataseriesPtm);
 
                 PSPtmScores psPtmScores = new PSPtmScores();
-            ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+                ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                 psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
                 
                 String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
@@ -4381,20 +4403,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                 }
                                 int proteinInferenceType = probabilities.getGroupClass();
 
-                                // set up the spectra jsparklines dataset
-                                ArrayList<Double> dataValidatedSpectra = new ArrayList<Double>();
-                                dataValidatedSpectra.add(new Double(validatedSpectraCounter));
-                                JSparklinesDataSeries sparklineDataseriesValidatedSpectra = new JSparklinesDataSeries(dataValidatedSpectra, peptideShakerGUI.getSparklineColor(), "Validated");
-
-                                ArrayList<Double> dataNonValidatedSpectra = new ArrayList<Double>();
-                                dataNonValidatedSpectra.add(new Double(spectrumCount - validatedSpectraCounter));
-                                JSparklinesDataSeries sparklineDataseriesNonValidatedSpectra = new JSparklinesDataSeries(dataNonValidatedSpectra, peptideShakerGUI.getSparklineColorNonValidated(), "Not Validated");
-
-                                ArrayList<JSparklinesDataSeries> sparkLineDataSeriesSpectra = new ArrayList<JSparklinesDataSeries>();
-                                sparkLineDataSeriesSpectra.add(sparklineDataseriesValidatedSpectra);
-                                sparkLineDataSeriesSpectra.add(sparklineDataseriesNonValidatedSpectra);
-                                JSparklinesDataset datasetSpectra = new JSparklinesDataset(sparkLineDataSeriesSpectra);
-
                                 ((DefaultTableModel) peptideTable.getModel()).addRow(new Object[]{
                                             index + 1,
                                             probabilities.isStarred(),
@@ -4402,7 +4410,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                             peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(key, true),
                                             peptideStart,
                                             peptideEnd,
-                                            datasetSpectra,
+                                            new XYDataPoint(validatedSpectraCounter, spectrumCount - validatedSpectraCounter, false),
                                             probabilities.getPeptideScore(),
                                             probabilities.getPeptideConfidence(),
                                             probabilities.isValidated()
@@ -4428,7 +4436,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 ((TitledBorder) peptidesPanel.getBorder()).setTitle("Peptides (" + validatedPeptideCounter + "/" + peptideTable.getRowCount() + ")");
                 peptidesPanel.repaint();
 
-                ((JSparklinesTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxPeptideSpectra);
+                ((JSparklinesTwoValueBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxPeptideSpectra);
 
                 // select the peptide in the table
                 if (peptideTable.getRowCount() > 0) {
@@ -4611,58 +4619,16 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                         description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
                                         sequenceCoverage = 100 * featuresGenerator.getSequenceCoverage(proteinKey);
                                         possibleCoverage = 100 * featuresGenerator.getObservableCoverage(proteinKey);
-
-                                        // set up the coverage jsparklines datasets
-                                        ArrayList<Double> coveredSequence = new ArrayList<Double>();
-                                        coveredSequence.add(sequenceCoverage);
-                                        JSparklinesDataSeries sparklineDataseriesCovered = new JSparklinesDataSeries(coveredSequence, peptideShakerGUI.getSparklineColor(), "Covered");
-
-                                        ArrayList<Double> leftSequence = new ArrayList<Double>();
-                                        leftSequence.add(new Double(possibleCoverage-sequenceCoverage));
-                                        JSparklinesDataSeries sparklineDataseriesCoverable = new JSparklinesDataSeries(leftSequence, peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), "Not Covered");
-                                        
-                                        ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
-                                        sparkLineDataSeriesCoverage.add(sparklineDataseriesCovered);
-                                        sparkLineDataSeriesCoverage.add(sparklineDataseriesCoverable);
-                                        JSparklinesDataset datasetCoverage = new JSparklinesDataset(sparkLineDataSeriesCoverage);
-                                        
-                                        // set up the peptides and spectra jsparklines datasets
-                                        ArrayList<Double> dataValidatedPeptides = new ArrayList<Double>();
-                                        dataValidatedPeptides.add(new Double(nValidatedPeptides));
-                                        JSparklinesDataSeries sparklineDataseriesValidatedPeptides = new JSparklinesDataSeries(dataValidatedPeptides, peptideShakerGUI.getSparklineColor(), "Validated");
-
-                                        ArrayList<Double> dataNonValidatedPeptides = new ArrayList<Double>();
-                                        dataNonValidatedPeptides.add(new Double(-currentNP - nValidatedPeptides));
-                                        JSparklinesDataSeries sparklineDataseriesNonValidatedPeptides = new JSparklinesDataSeries(dataNonValidatedPeptides, peptideShakerGUI.getSparklineColorNonValidated(), "Not Validated");
-
-                                        ArrayList<JSparklinesDataSeries> sparkLineDataSeriesPeptides = new ArrayList<JSparklinesDataSeries>();
-                                        sparkLineDataSeriesPeptides.add(sparklineDataseriesValidatedPeptides);
-                                        sparkLineDataSeriesPeptides.add(sparklineDataseriesNonValidatedPeptides);
-                                        JSparklinesDataset datasetPeptides = new JSparklinesDataset(sparkLineDataSeriesPeptides);
-
-
-                                        ArrayList<Double> dataValidatedSpectra = new ArrayList<Double>();
-                                        dataValidatedSpectra.add(new Double(nValidatedSpectra));
-                                        JSparklinesDataSeries sparklineDataseriesValidatedSpectra = new JSparklinesDataSeries(dataValidatedSpectra, peptideShakerGUI.getSparklineColor(), "Validated");
-
-                                        ArrayList<Double> dataNonValidatedSpectra = new ArrayList<Double>();
-                                        dataNonValidatedSpectra.add(new Double(-currentNS - nValidatedSpectra));
-                                        JSparklinesDataSeries sparklineDataseriesNonValidatedSpectra = new JSparklinesDataSeries(dataNonValidatedSpectra, peptideShakerGUI.getSparklineColorNonValidated(), "Not Validated");
-
-                                        ArrayList<JSparklinesDataSeries> sparkLineDataSeriesSpectra = new ArrayList<JSparklinesDataSeries>();
-                                        sparkLineDataSeriesSpectra.add(sparklineDataseriesValidatedSpectra);
-                                        sparkLineDataSeriesSpectra.add(sparklineDataseriesNonValidatedSpectra);
-                                        JSparklinesDataset datasetSpectra = new JSparklinesDataset(sparkLineDataSeriesSpectra);
-
+                                         
                                         ((DefaultTableModel) proteinTable.getModel()).addRow(new Object[]{
                                                     index + 1,
                                                     probabilities.isStarred(),
                                                     probabilities.getGroupClass(),
                                                     featuresGenerator.addDatabaseLink(proteinMatch.getMainMatch()),
                                                     description,
-                                                    datasetCoverage,
-                                                    datasetPeptides,
-                                                    datasetSpectra,
+                                                    new XYDataPoint(sequenceCoverage, possibleCoverage-sequenceCoverage, true),
+                                                    new XYDataPoint(nValidatedPeptides, -currentNP - nValidatedPeptides, false),
+                                                    new XYDataPoint(nValidatedSpectra, -currentNS - nValidatedSpectra, false),
                                                     spectrumCounting,
                                                     currentProtein.computeMolecularWeight() / 1000,
                                                     probabilities.getProteinScore(),
@@ -4710,8 +4676,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     ((TitledBorder) proteinsLayeredPanel.getBorder()).setTitle("Proteins (" + validatedProteinsCounter + "/" + proteinTable.getRowCount() + ")");
                     proteinsLayeredPanel.repaint();
 
-                    ((JSparklinesTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
-                    ((JSparklinesTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
+                    ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(maxPeptides);
+                    ((JSparklinesTwoValueBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(maxSpectra);
                     ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).setMaxValue(maxSpectrumCounting);
                     ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MW").getCellRenderer()).setMaxValue(maxMW);
 

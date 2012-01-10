@@ -23,11 +23,11 @@ public class UserPreferences implements Serializable {
     /**
      * The color used for the non-validated sparkline bar chart plots.
      */
-    private Color sparklineColorNonValidated = new Color(255, 0, 0);
+    private Color sparklineColorNonValidated = new Color(208, 19, 19);
     /**
      * The color used for the not found sparkline bar chart plots
      */
-    private Color sparklineColorNotFound = Color.LIGHT_GRAY;
+    private Color sparklineColorNotFound = new Color(212, 212, 212);
     /**
      * The color of the selected peptide
      */
