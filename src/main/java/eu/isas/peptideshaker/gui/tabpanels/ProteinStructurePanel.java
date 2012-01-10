@@ -24,6 +24,7 @@ import eu.isas.peptideshaker.gui.ProteinInferenceDialog;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -1462,9 +1463,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 if (column == proteinTable.getColumn("  ").getModelIndex()) {
                     String key = proteinTableMap.get(getProteinIndex(row));
                     if ((Boolean) proteinTable.getValueAt(row, column)) {
-                        peptideShakerGUI.starProtein(key);
+                        peptideShakerGUI.getStarHider().starProtein(key);
                     } else {
-                        peptideShakerGUI.unStarProtein(key);
+                        peptideShakerGUI.getStarHider().unStarProtein(key);
                     }
                 }
             } catch (Exception e) {
@@ -1502,9 +1503,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 if (column == peptideTable.getColumn("  ").getModelIndex()) {
                     String key = peptideTableMap.get(getProteinIndex(row));
                     if ((Boolean) peptideTable.getValueAt(row, column)) {
-                        peptideShakerGUI.starPeptide(key);
+                        peptideShakerGUI.getStarHider().starPeptide(key);
                     } else {
-                        peptideShakerGUI.unStarPeptide(key);
+                        peptideShakerGUI.getStarHider().unStarPeptide(key);
                     }
                 }
 
@@ -1840,7 +1841,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                     try {
                         String peptideKey = peptideTableMap.get(getPeptideIndex(row));
                         Peptide peptide = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide();
-                        String tooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(peptide);
+                        String tooltip = peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptide);
                         peptideTable.setToolTipText(tooltip);
                     } catch (Exception e) {
                         peptideShakerGUI.catchException(e);
@@ -2684,7 +2685,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                             probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
                             score = probabilities.getProteinProbabilityScore();
                             nPeptides = -proteinMatch.getPeptideMatches().size();
-                            nSpectra = -peptideShakerGUI.getNSpectra(proteinMatch);
+                            nSpectra = -peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
 
                             if (!orderMap.containsKey(score)) {
                                 orderMap.put(score, new HashMap<Integer, HashMap<Integer, ArrayList<String>>>());
@@ -2774,9 +2775,10 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                                 }
                                             }
 
-                                            spectrumCounting = peptideShakerGUI.getSpectrumCounting(proteinMatch);
+                                        IdentificationFeaturesGenerator featuresGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
+                                            spectrumCounting = featuresGenerator.getSpectrumCounting(proteinKey);
                                             description = sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
-                                            sequenceCoverage = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
+                                            sequenceCoverage = 100 * featuresGenerator.getSequenceCoverage(proteinKey);
                                         } catch (Exception e) {
                                             peptideShakerGUI.catchException(e);
                                             e.printStackTrace();
@@ -2814,7 +2816,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                                     index + 1,
                                                     probabilities.isStarred(),
                                                     probabilities.getGroupClass(),
-                                                    peptideShakerGUI.addDatabaseLink(proteinMatch.getMainMatch()),
+                                                    peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(proteinMatch.getMainMatch()),
                                                     description,
                                                     sequenceCoverage,
                                                     datasetPeptides,
@@ -3294,7 +3296,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
     public void updateMainMatch(String mainMatch, int proteinInferenceType) {
 
         if (proteinTable.getRowCount() > 0) {
-            proteinTable.setValueAt(peptideShakerGUI.addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex());
+            proteinTable.setValueAt(peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex());
             proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex());
             String description = "";
             try {

@@ -24,6 +24,7 @@ import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Component;
 import java.awt.MediaTracker;
 import java.awt.Toolkit;
@@ -2665,9 +2666,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                             retentionTime
                         });
 
-                if (precursor.getPossibleCharges().get(0).value > maxCharge) { 
+                if (precursor.getPossibleCharges().get(0).value > maxCharge) {
                     maxCharge = precursor.getPossibleCharges().get(0).value;
-                } 
+                }
 
                 if (lLowRT > retentionTime) {
                     lLowRT = retentionTime;
@@ -2800,8 +2801,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     PSParameter probabilities = new PSParameter();
                     probabilities = (PSParameter) identification.getMatchParameter(key, probabilities);
 
+                    IdentificationFeaturesGenerator featuresGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
                     // Fill peptide shaker table
-                    String proteins = peptideShakerGUI.addDatabaseLinks(spectrumMatch.getBestAssumption().getPeptide().getParentProteins());
+                    String proteins = featuresGenerator.addDatabaseLinks(spectrumMatch.getBestAssumption().getPeptide().getParentProteins());
 
                     ((DefaultTableModel) peptideShakerJTable.getModel()).addRow(new Object[]{
                                 1,
@@ -2814,7 +2816,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 probabilities.isValidated()
                             });
 
-                    peptideShakerJTablePeptideTooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide());
+                    peptideShakerJTablePeptideTooltip = featuresGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide());
 
                     // Fill Mascot table
                     if (spectrumMatch.getAllAssumptions(Advocate.MASCOT) != null) {
@@ -2824,7 +2826,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                         for (double eValue : eValues) {
                             for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.MASCOT).get(eValue)) {
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-                                proteins = peptideShakerGUI.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins());
+                                proteins = featuresGenerator.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins());
 
                                 ((DefaultTableModel) mascotTable.getModel()).addRow(new Object[]{
                                             ++rank,
@@ -2836,7 +2838,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                             probabilities.getSearchEngineConfidence()
                                         });
 
-                                mascotTablePeptideTooltips.put(rank, peptideShakerGUI.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide()));
+                                mascotTablePeptideTooltips.put(rank, featuresGenerator.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide()));
                                 mascotPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
                             }
                         }
@@ -2852,7 +2854,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                         for (double eValue : eValues) {
                             for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.OMSSA).get(eValue)) {
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-                                proteins = peptideShakerGUI.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins());
+                                proteins = featuresGenerator.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins());
 
                                 ((DefaultTableModel) omssaTable.getModel()).addRow(new Object[]{
                                             ++rank,
@@ -2864,7 +2866,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                             probabilities.getSearchEngineConfidence()
                                         });
 
-                                omssaTablePeptideTooltips.put(rank, peptideShakerGUI.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide()));
+                                omssaTablePeptideTooltips.put(rank, featuresGenerator.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide()));
                                 omssaPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
                             }
                         }
@@ -2880,7 +2882,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                         for (double eValue : eValues) {
                             for (PeptideAssumption currentAssumption : spectrumMatch.getAllAssumptions(Advocate.XTANDEM).get(eValue)) {
                                 probabilities = (PSParameter) currentAssumption.getUrParam(probabilities);
-                                proteins = peptideShakerGUI.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins());
+                                proteins = featuresGenerator.addDatabaseLinks(currentAssumption.getPeptide().getParentProteins());
 
                                 ((DefaultTableModel) xTandemTable.getModel()).addRow(new Object[]{
                                             ++rank,
@@ -2892,7 +2894,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                             probabilities.getSearchEngineConfidence()
                                         });
 
-                                xTandemTablePeptideTooltips.put(rank, peptideShakerGUI.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide()));
+                                xTandemTablePeptideTooltips.put(rank, featuresGenerator.getPeptideModificationTooltipAsHtml(currentAssumption.getPeptide()));
                                 xtandemPeptideKeys.put(rank, currentAssumption.getPeptide().getKey());
                             }
                         }

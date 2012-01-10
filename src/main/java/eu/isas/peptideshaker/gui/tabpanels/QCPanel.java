@@ -1579,7 +1579,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (!psParameter.isHidden()) {
 
-                        double value = peptideShakerGUI.getSpectrumCounting(proteinMatch);
+                        double value = peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
 
                         if (psParameter.isValidated()) {
                             if (value > 0) {
@@ -1620,8 +1620,7 @@ public class QCPanel extends javax.swing.JPanel {
 
                     if (!psParameter.isHidden()) {
 
-                        Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                        double value = 100 * peptideShakerGUI.estimateSequenceCoverage(proteinMatch, currentProtein.getSequence());
+                        double value = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
 
                         if (value > maxValue) {
                             maxValue = value;

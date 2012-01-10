@@ -191,13 +191,13 @@ public class FeaturesGenerator {
                             }
                             if (sequenceCoverage) {
                                 try {
-                                    result += peptideShakerGUI.estimateSequenceCoverage(proteinMatch, sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence()) * 100 + SEPARATOR;
+                                    result += peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR;
                                 } catch (Exception e) {
                                     result += "Protein not found" + SEPARATOR;
                                 }
                             }
                             if (modifiedSequence) {
-                                result += peptideShakerGUI.getModifiedSequence(proteinKey) + SEPARATOR;
+                                result += peptideShakerGUI.getIdentificationFeaturesGenerator().getModifiedSequence(proteinKey) + SEPARATOR;
                             }
 
                             double emPAIScore = 0.0;

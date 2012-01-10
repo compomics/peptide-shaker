@@ -81,7 +81,7 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
                 peptideShakerGUI.getSearchParameters().getModificationProfile().getPtmColors(), true));
 
         // set the modification tooltip
-        String tooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey).getTheoreticPeptide());
+        String tooltip = peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey).getTheoreticPeptide());
         sequenceLabel.setToolTipText(tooltip);
 
         PeptideMatch tempPeptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideMatchKey);
@@ -116,13 +116,13 @@ public class ProteinInferencePeptideLevelDialog extends javax.swing.JDialog {
             if (retainedProteins.contains(protein)) {
                 ((DefaultTableModel) retainedProteinJTable.getModel()).addRow(new Object[]{
                             (++retainedCpt),
-                            peptideShakerGUI.addDatabaseLink(protein),
+                            peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(protein),
                             description
                         });
             } else {
                 ((DefaultTableModel) otherProteinJTable.getModel()).addRow(new Object[]{
                             (++possibleCpt),
-                            peptideShakerGUI.addDatabaseLink(protein),
+                            peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(protein),
                             description
                         });
             }

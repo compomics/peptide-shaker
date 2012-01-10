@@ -111,7 +111,7 @@ public class PtmSiteInferenceDialog extends javax.swing.JDialog {
         updateSequenceLabel();
 
         // set the modification tooltip
-        String tooltip = peptideShakerGUI.getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide());
+        String tooltip = peptideShakerGUI.getIdentificationFeaturesGenerator().getPeptideModificationTooltipAsHtml(peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide());
         sequenceLabel.setToolTipText(tooltip);
 
         setLocationRelativeTo(peptideShakerGUI);
