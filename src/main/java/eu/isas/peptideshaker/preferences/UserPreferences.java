@@ -25,6 +25,14 @@ public class UserPreferences implements Serializable {
      */
     private Color sparklineColorNonValidated = new Color(255, 0, 0);
     /**
+     * The color used for the not found sparkline bar chart plots
+     */
+    private Color sparklineColorNotFound = Color.LIGHT_GRAY;
+    /**
+     * The color of the selected peptide
+     */
+    private Color peptideSelected = new Color(0, 0, 255);
+    /**
      * The recent projects
      */
     private ArrayList<String> recentProjects = new ArrayList<String>();
@@ -60,7 +68,32 @@ public class UserPreferences implements Serializable {
      * @return the non-validated sparkline color
      */
     public Color getSparklineColorNonValidated() {
+        if (sparklineColorNonValidated == null) {
+            sparklineColorNonValidated = new Color(255, 0, 0);
+        }
         return sparklineColorNonValidated;
+    }
+
+    /**
+     * Returns the color for a selected peptide
+     * @return the color for a selected peptide
+     */
+    public Color getPeptideSelected() {
+        if (peptideSelected == null) {
+            peptideSelected = new Color(0, 0, 255);
+        }
+        return peptideSelected;
+    }
+
+    /**
+     * Returns the color for a not found sparkline bar chart plots
+     * @return the color for a not found sparkline bar chart plots
+     */
+    public Color getSparklineColorNotFound() {
+        if (sparklineColorNotFound == null) {
+            sparklineColorNotFound = Color.LIGHT_GRAY;
+        }
+        return sparklineColorNotFound;
     }
 
     /**
