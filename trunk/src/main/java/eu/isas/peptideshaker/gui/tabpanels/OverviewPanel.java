@@ -3761,8 +3761,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             currentProteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
             String proteinKey = proteinTableMap.get(getProteinIndex(proteinTable.getSelectedRow()));
             ((TitledBorder) sequenceCoveragePanel.getBorder()).setTitle("Protein Sequence Coverage ("
-                    + Util.roundDouble(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey), 2)
-                    + "% of " + Util.roundDouble(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey), 2) + "% observable; "
+                    + Util.roundDouble(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey)*100, 2)
+                    + " of " + Util.roundDouble(peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey)*100, 2) + "% observable; sequence length: "
                     + currentProteinSequence.length() + " AA)");
             sequenceCoveragePanel.repaint();
 
@@ -3840,7 +3840,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     if (covered) {
 
                         if (selectedPeptideEnd.contains(new Integer(i + 1))) {
-                            sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 255), null); // @TODO: selected color ought not be hardcoded here...
+                            sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUserPreferences().getPeptideSelected(), null);
                         } else {
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
                         }
@@ -4619,7 +4619,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                                         ArrayList<Double> leftSequence = new ArrayList<Double>();
                                         leftSequence.add(new Double(possibleCoverage-sequenceCoverage));
-                                        JSparklinesDataSeries sparklineDataseriesCoverable = new JSparklinesDataSeries(leftSequence, peptideShakerGUI.getSparklineColorNonValidated(), "Not Covered");
+                                        JSparklinesDataSeries sparklineDataseriesCoverable = new JSparklinesDataSeries(leftSequence, peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), "Not Covered");
                                         
                                         ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
                                         sparkLineDataSeriesCoverage.add(sparklineDataseriesCovered);
