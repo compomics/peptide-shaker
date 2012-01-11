@@ -642,7 +642,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
         int column = proteinMatchTable.columnAtPoint(evt.getPoint());
 
         proteinMatchTable.setToolTipText(null);
-        
+
         if (column == 2 && proteinMatchTable.getValueAt(row, column) != null) {
 
             String tempValue = (String) proteinMatchTable.getValueAt(row, column);

@@ -887,6 +887,10 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
+                        
+                        // change the peptide shaker icon to a "waiting version"
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                        
                         feature = outputGenerator.getProteinsOutput(progressDialog, null, false, proteinValidated.isSelected(), proteinAccession.isSelected(), proteinPI.isSelected(),
                                 proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), modifiedSequence.isSelected(), proteinNSpectra.isSelected(),
                                 proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true, proteinStarred.isSelected(), proteinHidden.isSelected());
@@ -902,12 +906,19 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
+                        
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                         JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                     } catch (IOException e) {
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     } catch (Exception e) {
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
@@ -1111,6 +1122,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
+                        // change the peptide shaker icon to a "waiting version"
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                        
                         feature = outputGenerator.getPeptidesOutput(progressDialog, null, null, peptideValidated.isSelected(), false,
                                 peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
                                 peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
@@ -1127,12 +1141,19 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
+                        
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                         JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                     } catch (IOException e) {
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     } catch (Exception e) {
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
@@ -1181,6 +1202,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 @Override
                 public void run() {
                     try {
+                        // change the peptide shaker icon to a "waiting version"
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                        
                         feature = outputGenerator.getPSMsOutput(progressDialog, null, false, psmValidated.isSelected(), psmAccession.isSelected(), psmSequence.isSelected(),
                                 psmModification.isSelected(), psmLocation.isSelected(), psmFile.isSelected(), psmTitle.isSelected(),
                                 psmPrecursor.isSelected(), psmScore.isSelected(), psmConfidence.isSelected(), true, psmStarred.isSelected(), psmHidden.isSelected());
@@ -1196,12 +1220,19 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
                         progressDialog.setVisible(false);
                         progressDialog.dispose();
+                        
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                         JOptionPane.showMessageDialog(tempRef, "Features saved to \'" + saveFile.getName() + "\'.", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                     } catch (IOException e) {
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     } catch (Exception e) {
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                         JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                         e.printStackTrace();
                     }
@@ -1351,15 +1382,15 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                     
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                    
                     if (exported) {
                         JOptionPane.showMessageDialog(tempRef, "Identification results saved to folder \'" + fileChooser.getSelectedFile().getName() + "\'.",
                                 "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                     } else {
                         JOptionPane.showMessageDialog(tempRef, "An error occured during saving. See conf/PeptideShaker.log for details.", "Save Error", JOptionPane.ERROR_MESSAGE);
                     }
-
-                    progressDialog.setVisible(false);
-                    progressDialog.dispose();
                 }
             }.start();
         }

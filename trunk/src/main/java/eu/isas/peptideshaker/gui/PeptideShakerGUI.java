@@ -3613,6 +3613,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         spectrumAnnotator = new SpectrumAnnotator();
         exceptionCaught = new ArrayList<String>();
         identifiedModifications = null;
+        
+        identification = null;
 
         // set up the tabs/panels
         scoresJCheckBoxMenuItem.setSelected(false);
