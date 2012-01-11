@@ -598,8 +598,7 @@ public class IdentificationFeaturesGenerator {
                                     + proteinAccession + "</font></a>, ";
                         } else {
                             // unknown database!
-                            accessionNumberWithLink += "<font color=\"" + peptideShakerGUI.getNotSelectedRowHtmlTagFontColor() + "\">"
-                                    + proteinAccession + "</font>" + ", ";
+                            accessionNumberWithLink += proteinAccession + ", ";
                         }
                     }
                 } else {

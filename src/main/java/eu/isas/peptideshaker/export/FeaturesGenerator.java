@@ -743,6 +743,135 @@ public class FeaturesGenerator {
     }
 
     /**
+     * Returns the PSM results as a tab separated text file in the Phenyx 
+     * format as supported by Progenesis.
+     * 
+     * @param progressDialog the progress dialog (can be null)
+     * @param psmKeys
+     * @return the PSM output based on the given argument
+     * @throws Exception 
+     */
+    public String getPSMsProgenesisExport(ProgressDialogX progressDialog, ArrayList<String> psmKeys) throws Exception {
+
+        if (psmKeys == null) {
+            psmKeys = identification.getSpectrumIdentification();
+        }
+        if (progressDialog != null) {
+            progressDialog.setIndeterminate(false);
+            progressDialog.setMax(psmKeys.size());
+        }
+
+        String result = "";
+        result += "sequence" + SEPARATOR;
+        result += "modif" + SEPARATOR;
+        result += "score" + SEPARATOR;
+        result += "main AC" + SEPARATOR;
+        result += "description" + SEPARATOR;
+        result += "compound" + SEPARATOR;
+        result += "jobid" + SEPARATOR;
+        result += "pmkey" + SEPARATOR;
+        result += "\n";
+
+        PSParameter psParameter = new PSParameter();
+        PeptideAssumption bestAssumption;
+        SpectrumMatch spectrumMatch;
+        int progress = 0;
+
+        for (String psmKey : psmKeys) {
+
+            if (progress < 50) {
+
+                spectrumMatch = identification.getSpectrumMatch(psmKey);
+                psParameter = (PSParameter) identification.getMatchParameter(psmKey, psParameter);
+                bestAssumption = spectrumMatch.getBestAssumption();
+
+                if (!bestAssumption.isDecoy()) {
+
+                    // peptide sequence
+                    result += bestAssumption.getPeptide().getSequence() + SEPARATOR;
+
+                    // modifications
+                    HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+                    for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
+                        if (modificationMatch.isVariable()) {
+                            if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                                modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                            }
+                            modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
+                        }
+                    }
+                    
+                    ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+                    
+                    for (int i=0; i<bestAssumption.getPeptide().getSequence().length() + 1; i++) {
+                        
+                        for (String mod : mods) {
+                            if (modMap.get(mod).contains(new Integer(i))) {
+                                result += mod; // @TODO: what about multiple ptms on the same residue??
+                            }
+                        }
+                        
+                        result += ":";
+                    }
+                    
+                    result += SEPARATOR;
+                    
+
+//                    for (String mod : mods) {
+//
+//                        result += mod + "(";
+//                        for (int aa : modMap.get(mod)) {
+//                            result += ", ";
+//                            result += aa;
+//                        }
+//                        result += ")";
+//                    }
+//                    result += SEPARATOR;
+
+                    // score
+                    result += psParameter.getPsmConfidence() + SEPARATOR;
+
+                    // main AC
+                    result += bestAssumption.getPeptide().getParentProteins().get(0) + SEPARATOR;
+                    
+                    // @TODO: what about protein inference and multiple proteins for a given PSM??
+
+                    //                    boolean first = true;
+//                    for (String protein : bestAssumption.getPeptide().getParentProteins()) {
+//                        if (first) {
+//                            first = false;
+//                        } else {
+//                            result += ", ";
+//                        }
+//                        result += protein;
+//                    }
+//                    result += SEPARATOR;
+
+                    // description
+                    result += "" + SEPARATOR; // @TODO: how to get the description???
+
+                    // compound
+                    result += Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR;
+
+                    // jobid
+                    result += "N/A" + SEPARATOR;
+
+                    // pmkey
+                    result += "N/A" + SEPARATOR;
+
+                    result += "\n";
+
+                    progress++;
+                    if (progressDialog != null) {
+                        progressDialog.setValue(progress);
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    /**
      * Returns the assumption output based on the given arguments
      * 
      * @param progressDialog the progress dialog (can be null)

@@ -644,7 +644,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void proteinNumberValidatedPeptidesJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proteinNumberValidatedPeptidesJRadioButtonActionPerformed
-        if (peptideShakerGUI.getIdentification() != null) {
+        if (peptideShakerGUI.getIdentification() != null && peptideShakerGUI.getIdentification() != null) {
             updateProteinQCPlot();
             exportProteinsPlotJButton.setEnabled(true);
         }
@@ -674,7 +674,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void peptideMissedCleavagesJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_peptideMissedCleavagesJRadioButtonActionPerformed
-        if (peptideShakerGUI.getIdentification() != null) {
+        if (peptideShakerGUI.getIdentification() != null && peptideShakerGUI.getIdentification() != null) {
             updatePeptideQCPlot();
             exportPeptidesPlotJButton.setEnabled(true);
         }
@@ -695,7 +695,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void psmPrecursorMassErrorJRadioButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_psmPrecursorMassErrorJRadioButtonActionPerformed
-        if (peptideShakerGUI.getIdentification() != null) {
+        if (peptideShakerGUI.getIdentification() != null && peptideShakerGUI.getIdentification() != null) {
             updatePsmQCPlot();
             exportPsmPlotJButton.setEnabled(true);
         }
@@ -1007,8 +1007,7 @@ public class QCPanel extends javax.swing.JPanel {
             } else if (tabbedPane.getSelectedIndex() == 1) { // peptides
                 updatePeptideQCPlot();
                 exportPeptidesPlotJButton.setEnabled(true);
-            }
-            if (tabbedPane.getSelectedIndex() == 2) { // proteins
+            } else if (tabbedPane.getSelectedIndex() == 2) { // proteins
                 updateProteinQCPlot();
                 exportProteinsPlotJButton.setEnabled(true);
             }
@@ -1054,22 +1053,25 @@ public class QCPanel extends javax.swing.JPanel {
      */
     public void displayResults() {
 
-        currentProteinPlotType = PlotType.None;
-        currentPeptidePlotType = PlotType.None;
-        currentPsmPlotType = PlotType.None;
+        if (peptideShakerGUI.getIdentification() != null) {
 
-        if (tabbedPane.getSelectedIndex() == 0) { // psms
-            updatePsmQCPlot();
-            exportPsmPlotJButton.setEnabled(true);
-        } else if (tabbedPane.getSelectedIndex() == 1) { // peptides
-            updatePeptideQCPlot();
-            exportPeptidesPlotJButton.setEnabled(true);
-        } else if (tabbedPane.getSelectedIndex() == 2) { // proteins
-            updateProteinQCPlot();
-            exportProteinsPlotJButton.setEnabled(true);
+            currentProteinPlotType = PlotType.None;
+            currentPeptidePlotType = PlotType.None;
+            currentPsmPlotType = PlotType.None;
+
+            if (tabbedPane.getSelectedIndex() == 0) { // psms
+                updatePsmQCPlot();
+                exportPsmPlotJButton.setEnabled(true);
+            } else if (tabbedPane.getSelectedIndex() == 1) { // peptides
+                updatePeptideQCPlot();
+                exportPeptidesPlotJButton.setEnabled(true);
+            } else if (tabbedPane.getSelectedIndex() == 2) { // proteins
+                updateProteinQCPlot();
+                exportProteinsPlotJButton.setEnabled(true);
+            }
+
+            peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, true);
         }
-
-        peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, true);
     }
 
     /**

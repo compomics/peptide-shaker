@@ -10,12 +10,15 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
+import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SearchParameters;
+import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.JFileChooser;
@@ -94,6 +97,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         jLabel6 = new javax.swing.JLabel();
         rtWindow = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        progenesisPanel = new javax.swing.JPanel();
+        exportProgenesisButton = new javax.swing.JButton();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Export");
@@ -123,7 +130,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addGap(31, 31, 31)
-                .addComponent(spectrumValidationCmb, 0, 419, Short.MAX_VALUE)
+                .addComponent(spectrumValidationCmb, 0, 422, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
                 .addComponent(exportMgfButton)
                 .addContainerGap())
@@ -171,6 +178,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         srmButton.setText("Generate SRM Transitions");
         srmButton.setEnabled(false);
+        srmButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                srmButtonActionPerformed(evt);
+            }
+        });
 
         jLabel5.setText("Ignored Proteins:");
 
@@ -194,6 +206,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         jLabel6.setText("Minimum RT Window:");
 
+        rtWindow.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         rtWindow.setText("20");
 
         jLabel7.setText("s");
@@ -229,7 +242,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                         .addComponent(miscleavedCheck)
                                         .addGap(11, 11, 11)
                                         .addComponent(reactiveCheck)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(degeneratedCheck)
@@ -286,15 +299,56 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        progenesisPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Progenesis Export"));
+        progenesisPanel.setOpaque(false);
+
+        exportProgenesisButton.setText("Progenesis Tab Separated Phenyx Format");
+        exportProgenesisButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportProgenesisButtonActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setText("Spectrum IDs To:");
+
+        jLabel9.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel9.setText("Under Development");
+
+        javax.swing.GroupLayout progenesisPanelLayout = new javax.swing.GroupLayout(progenesisPanel);
+        progenesisPanel.setLayout(progenesisPanelLayout);
+        progenesisPanelLayout.setHorizontalGroup(
+            progenesisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(progenesisPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel8)
+                .addGap(50, 50, 50)
+                .addComponent(exportProgenesisButton, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        progenesisPanelLayout.setVerticalGroup(
+            progenesisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(progenesisPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(progenesisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(exportProgenesisButton)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel9))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
+            .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(spectraPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(inclusionListPanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(progenesisPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(spectraPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(inclusionListPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
@@ -303,8 +357,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(spectraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(progenesisPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(inclusionListPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -383,6 +439,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     public void run() {
 
                         try {
+                            // change the peptide shaker icon to a "waiting version"
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
                             progressDialog.setIndeterminate(false);
                             int total = 0;
                             for (String mgfFile : spectrumFactory.getMgfFileNames()) {
@@ -405,15 +464,25 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             }
                             b.close();
                             f.close();
+                            
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+
+                            // change the peptide shaker icon back to the default version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                             JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + finalOutputFile + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                         } catch (Exception e) {
+                            // change the peptide shaker icon back to the default version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             e.printStackTrace();
                             JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                         }
 
-                        progressDialog.setVisible(false);
-                        progressDialog.dispose();
+                        if (progressDialog != null) {
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+                        }
                     }
                 }.start();
             }
@@ -502,6 +571,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             }
 
                             try {
+                                
+                                // change the peptide shaker icon to a "waiting version"
+                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                                
                                 ArrayList<String> inspectedProteins;
                                 if (idSelectionCmb.getSelectedIndex() == 4) {
                                     inspectedProteins = peptideShakerGUI.getDisplayedProteins();
@@ -552,20 +625,144 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 }
                                 b.close();
                                 f.close();
+                                
+                                progressDialog.setVisible(false);
+                                progressDialog.dispose();
+                                
+                                // change the peptide shaker icon back to the default version
+                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                                 JOptionPane.showMessageDialog(tempRef, "Inclusion list saved to " + fileChooser.getSelectedFile().getName() + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
                             } catch (Exception e) {
+                                // change the peptide shaker icon back to the default version
+                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                                 e.printStackTrace();
                                 JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                             }
                         }
                     }
                 }
-                progressDialog.setVisible(false);
-                progressDialog.dispose();
+                if (progressDialog != null) {
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                }
             }
         }.start();
     }//GEN-LAST:event_inclusionListButtonActionPerformed
+
+    /**
+     * Export the Spectrum IDs as a Phenyx tab separated text file for input 
+     * to Progenesis. Only works if the mgf files came from Progenesis in 
+     * the first place.
+     * 
+     * @param evt 
+     */
+    private void exportProgenesisButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProgenesisButtonActionPerformed
+
+        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        fileChooser.setDialogTitle("Select Destination File");
+        fileChooser.setMultiSelectionEnabled(false);
+
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.isDirectory() || myFile.getName().endsWith(".txt");
+            }
+
+            @Override
+            public String getDescription() {
+                return "(Tab Separated Text File) *.txt";
+            }
+        };
+
+        fileChooser.setFileFilter(filter);
+
+        int returnVal = fileChooser.showSaveDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+            File outputFile = fileChooser.getSelectedFile();
+            int outcome = JOptionPane.YES_OPTION;
+
+            if (outputFile.exists()) {
+                outcome = JOptionPane.showConfirmDialog(this,
+                        "Should " + outputFile + " be overwritten?", "Selected File Already Exists",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            }
+
+            if (outcome == JOptionPane.YES_OPTION) {
+
+                if (!outputFile.getName().endsWith(".txt")) {
+                    outputFile = new File(outputFile.getParent(), outputFile.getName() + ".txt");
+                }
+
+                final File finalOutputFile = outputFile;
+
+                progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+                progressDialog.doNothingOnClose();
+
+                final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
+
+                new Thread(new Runnable() {
+
+                    public void run() {
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Exporting. Please Wait...");
+                        progressDialog.setVisible(true);
+                    }
+                }, "ProgressDialog").start();
+
+                new Thread("ExoportThread") {
+
+                    @Override
+                    public void run() {
+
+                        try {
+                            FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
+                            String output = outputGenerator.getPSMsProgenesisExport(progressDialog, null);
+
+                            progressDialog.setIndeterminate(true);
+                            progressDialog.setTitle("Exporting. Please Wait...");
+
+                            FileWriter f = new FileWriter(finalOutputFile);
+                            BufferedWriter b = new BufferedWriter(f);
+                            b.write(output);
+                            b.close();
+                            f.close();
+
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+
+                            JOptionPane.showMessageDialog(tempRef, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+
+                        } catch (IOException e) {
+                            JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                            e.printStackTrace();
+                        }
+
+                        if (progressDialog != null) {
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+                        }
+                    }
+                }.start();
+            }
+        }
+
+    }//GEN-LAST:event_exportProgenesisButtonActionPerformed
+
+    /**
+     * Export SRM transitinos. Not yet implemented
+     * 
+     * @param evt 
+     */
+    private void srmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_srmButtonActionPerformed
+        // @TODO: implement me!!
+    }//GEN-LAST:event_srmButtonActionPerformed
 
     /**
      * Indicates whether a spectrum is validated according to the user's settings.
@@ -739,6 +936,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JCheckBox degeneratedCheck;
     private javax.swing.JButton exportMgfButton;
+    private javax.swing.JButton exportProgenesisButton;
     private javax.swing.JComboBox idSelectionCmb;
     private javax.swing.JButton inclusionListButton;
     private javax.swing.JPanel inclusionListPanel;
@@ -751,7 +949,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JCheckBox miscleavedCheck;
+    private javax.swing.JPanel progenesisPanel;
     private javax.swing.JCheckBox reactiveCheck;
     private javax.swing.JTextField rtWindow;
     private javax.swing.JPanel spectraPanel;
