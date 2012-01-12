@@ -65,8 +65,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         proteinScore1 = new javax.swing.JCheckBox();
         backgroundPanel = new javax.swing.JPanel();
-        projectPanel = new javax.swing.JPanel();
-        exportAll = new javax.swing.JButton();
         featuresPanel = new javax.swing.JPanel();
         tabbedPane = new javax.swing.JTabbedPane();
         proteinsPanel = new javax.swing.JPanel();
@@ -87,6 +85,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinValidated = new javax.swing.JCheckBox();
         proteinStarred = new javax.swing.JCheckBox();
         proteinHidden = new javax.swing.JCheckBox();
+        jLabel4 = new javax.swing.JLabel();
         peptidesPanel = new javax.swing.JPanel();
         peptideAccession = new javax.swing.JCheckBox();
         peptideModification = new javax.swing.JCheckBox();
@@ -102,6 +101,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideValidated = new javax.swing.JCheckBox();
         peptideStarred = new javax.swing.JCheckBox();
         peptideHidden = new javax.swing.JCheckBox();
+        jLabel5 = new javax.swing.JLabel();
         psmPanel = new javax.swing.JPanel();
         psmAccession = new javax.swing.JCheckBox();
         psmSequence = new javax.swing.JCheckBox();
@@ -118,6 +118,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         psmValidated = new javax.swing.JCheckBox();
         psmStarred = new javax.swing.JCheckBox();
         psmHidden = new javax.swing.JCheckBox();
+        jLabel6 = new javax.swing.JLabel();
         searchEnginePanel = new javax.swing.JPanel();
         assumptionAccession = new javax.swing.JCheckBox();
         assumptionSequence = new javax.swing.JCheckBox();
@@ -130,6 +131,12 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         assumptionsExportAll = new javax.swing.JButton();
         assumptionUnselectAll = new javax.swing.JButton();
         assumptionExportAll = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        projectPanel = new javax.swing.JPanel();
+        exportAll = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
         exitButton = new javax.swing.JButton();
         helpJButton = new javax.swing.JButton();
 
@@ -141,33 +148,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         setResizable(false);
 
         backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
-
-        projectPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Project"));
-        projectPanel.setOpaque(false);
-
-        exportAll.setText("Export All Identification Results as Text Files");
-        exportAll.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportAllActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout projectPanelLayout = new javax.swing.GroupLayout(projectPanel);
-        projectPanel.setLayout(projectPanelLayout);
-        projectPanelLayout.setHorizontalGroup(
-            projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, projectPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(exportAll, javax.swing.GroupLayout.DEFAULT_SIZE, 843, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        projectPanelLayout.setVerticalGroup(
-            projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(projectPanelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(exportAll)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
 
         featuresPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Features"));
         featuresPanel.setOpaque(false);
@@ -253,6 +233,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinHidden.setIconTextGap(10);
         proteinHidden.setOpaque(false);
 
+        jLabel4.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel4.setText("Export Protein Features");
+
         javax.swing.GroupLayout proteinsPanelLayout = new javax.swing.GroupLayout(proteinsPanel);
         proteinsPanel.setLayout(proteinsPanelLayout);
         proteinsPanelLayout.setHorizontalGroup(
@@ -265,7 +248,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(proteinUnselectAll)
                         .addGap(18, 18, 18)
-                        .addComponent(proteinExportAll))
+                        .addComponent(proteinExportAll)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel4))
                     .addGroup(proteinsPanelLayout.createSequentialGroup()
                         .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(proteinsPanelLayout.createSequentialGroup()
@@ -336,7 +321,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(proteinSelectAll)
                     .addComponent(proteinUnselectAll)
-                    .addComponent(proteinExportAll))
+                    .addComponent(proteinExportAll)
+                    .addComponent(jLabel4))
                 .addContainerGap())
         );
 
@@ -415,6 +401,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideHidden.setIconTextGap(10);
         peptideHidden.setOpaque(false);
 
+        jLabel5.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel5.setText("Export Peptide Features");
+
         javax.swing.GroupLayout peptidesPanelLayout = new javax.swing.GroupLayout(peptidesPanel);
         peptidesPanel.setLayout(peptidesPanelLayout);
         peptidesPanelLayout.setHorizontalGroup(
@@ -451,7 +440,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(peptideUnselectAll)
                         .addGap(18, 18, 18)
-                        .addComponent(peptideExportAll)))
+                        .addComponent(peptideExportAll)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel5)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -487,7 +478,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(peptideSelectAll)
                     .addComponent(peptideUnselectAll)
-                    .addComponent(peptideExportAll))
+                    .addComponent(peptideExportAll)
+                    .addComponent(jLabel5))
                 .addContainerGap())
         );
 
@@ -571,6 +563,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         psmHidden.setIconTextGap(10);
         psmHidden.setOpaque(false);
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel6.setText("Export PSM Features");
+
         javax.swing.GroupLayout psmPanelLayout = new javax.swing.GroupLayout(psmPanel);
         psmPanel.setLayout(psmPanelLayout);
         psmPanelLayout.setHorizontalGroup(
@@ -605,7 +600,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(psmUnselectAll)
                         .addGap(18, 18, 18)
-                        .addComponent(psmExportAll)))
+                        .addComponent(psmExportAll)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel6)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -642,7 +639,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(psmSelectAll)
                     .addComponent(psmUnselectAll)
-                    .addComponent(psmExportAll))
+                    .addComponent(psmExportAll)
+                    .addComponent(jLabel6))
                 .addContainerGap())
         );
 
@@ -710,6 +708,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
+        jLabel7.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel7.setText("Export Search Engine Features");
+
         javax.swing.GroupLayout searchEnginePanelLayout = new javax.swing.GroupLayout(searchEnginePanel);
         searchEnginePanel.setLayout(searchEnginePanelLayout);
         searchEnginePanelLayout.setHorizontalGroup(
@@ -737,7 +738,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(assumptionUnselectAll)
                         .addGap(18, 18, 18)
-                        .addComponent(assumptionExportAll)))
+                        .addComponent(assumptionExportAll)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel7)))
                 .addContainerGap(166, Short.MAX_VALUE))
         );
 
@@ -765,13 +768,63 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addGroup(searchEnginePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(assumptionsExportAll)
                     .addComponent(assumptionUnselectAll)
-                    .addComponent(assumptionExportAll))
+                    .addComponent(assumptionExportAll)
+                    .addComponent(jLabel7))
                 .addContainerGap())
         );
 
         searchEnginePanelLayout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {assumptionAccession, assumptionConfidence, assumptionFile, assumptionModification, assumptionPrecursor, assumptionScores, assumptionSequence, assumptionTitle});
 
         tabbedPane.addTab("Search Engine Results", searchEnginePanel);
+
+        projectPanel.setBackground(new java.awt.Color(230, 230, 230));
+
+        exportAll.setText("Export Project");
+        exportAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportAllActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("All Identification Results:");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel2.setText("Note: Advanced export. For expert use only.");
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel3.setText("Exports all the identification results as four tab separated text files.");
+
+        javax.swing.GroupLayout projectPanelLayout = new javax.swing.GroupLayout(projectPanel);
+        projectPanel.setLayout(projectPanelLayout);
+        projectPanelLayout.setHorizontalGroup(
+            projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(projectPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addGroup(projectPanelLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addComponent(exportAll)
+                        .addGap(18, 18, 18)
+                        .addComponent(jLabel2)))
+                .addContainerGap(354, Short.MAX_VALUE))
+        );
+        projectPanelLayout.setVerticalGroup(
+            projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, projectPanelLayout.createSequentialGroup()
+                .addGap(22, 22, 22)
+                .addGroup(projectPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(exportAll)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                .addComponent(jLabel3)
+                .addContainerGap())
+        );
+
+        tabbedPane.addTab("Project", projectPanel);
 
         javax.swing.GroupLayout featuresPanelLayout = new javax.swing.GroupLayout(featuresPanel);
         featuresPanel.setLayout(featuresPanelLayout);
@@ -822,23 +875,19 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(backgroundPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
+                    .addComponent(featuresPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, backgroundPanelLayout.createSequentialGroup()
                         .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 752, Short.MAX_VALUE)
-                        .addComponent(exitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(featuresPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(projectPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 762, Short.MAX_VALUE)
+                        .addComponent(exitButton, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         backgroundPanelLayout.setVerticalGroup(
             backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(projectPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(featuresPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(helpJButton)
                     .addComponent(exitButton))
@@ -853,7 +902,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(backgroundPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(backgroundPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1456,6 +1505,13 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton exportAll;
     private javax.swing.JPanel featuresPanel;
     private javax.swing.JButton helpJButton;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JCheckBox modifiedSequence;
     private javax.swing.JCheckBox peptideAccession;
     private javax.swing.JCheckBox peptideConfidence;
@@ -1543,13 +1599,27 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             peptideShakerGUI.setLastSelectedFolder(fileChooser.getSelectedFile().getAbsolutePath());
 
-            String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+            File outputFile = fileChooser.getSelectedFile();
+            int outcome = JOptionPane.YES_OPTION;
 
-            if (!filePath.endsWith(".txt")) {
-                filePath = filePath + ".txt";
+            if (outputFile.exists()) {
+                outcome = JOptionPane.showConfirmDialog(this,
+                        "Should " + outputFile + " be overwritten?", "Selected File Already Exists",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
             }
 
-            return new File(filePath);
+            if (outcome == JOptionPane.YES_OPTION) {
+                
+                String filePath = fileChooser.getSelectedFile().getAbsolutePath();
+                
+                if (!filePath.endsWith(".txt")) {
+                    filePath = filePath + ".txt";
+                }
+                
+                return new File(filePath);
+            } else {
+                return null;
+            }   
         } else {
             return null;
         }
