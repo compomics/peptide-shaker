@@ -385,7 +385,7 @@ public class StarHider {
             }
             PsmFilter psmFilter;
             if (!filterPreferences.getPsmStarFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getMetricsForHarald().getFoundCharges(), peptideShakerGUI.getSearchParameters().getSpectrumFiles());
+                psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getMetrics().getFoundCharges(), peptideShakerGUI.getSearchParameters().getSpectrumFiles());
                 psmFilter.setDescription("Manual selection via the graphical interface");
                 filterPreferences.getPsmStarFilters().put(psmFilter.getName(), psmFilter);
             } else {
@@ -447,7 +447,7 @@ public class StarHider {
             }
             PsmFilter psmFilter;
             if (!filterPreferences.getPsmHideFilters().containsKey(MatchFilter.MANUAL_SELECTION)) {
-                psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getMetricsForHarald().getFoundCharges(), peptideShakerGUI.getSearchParameters().getSpectrumFiles());
+                psmFilter = new PsmFilter(MatchFilter.MANUAL_SELECTION, peptideShakerGUI.getMetrics().getFoundCharges(), peptideShakerGUI.getSearchParameters().getSpectrumFiles());
                 psmFilter.setDescription("Manual selection via the graphical interface");
                 filterPreferences.getPsmHideFilters().put(psmFilter.getName(), psmFilter);
             } else {
@@ -1060,7 +1060,7 @@ public class StarHider {
                     }
                 }
             }
-            if (psmFilter.getCharges().size() != peptideShakerGUI.getMetricsForHarald().getFoundCharges().size()) {
+            if (psmFilter.getCharges().size() != peptideShakerGUI.getMetrics().getFoundCharges().size()) {
                 SpectrumMatch spectrumMatch = identification.getSpectrumMatch(match);
                 int charge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
                 if (!psmFilter.getCharges().contains(charge)) {

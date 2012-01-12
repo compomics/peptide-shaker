@@ -35,7 +35,7 @@ import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.preferences.SearchParameters;
-import eu.isas.peptideshaker.utils.MetricsForHarald;
+import eu.isas.peptideshaker.utils.Metrics;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,19 +56,19 @@ public class PeptideShaker {
      */
     private boolean detailedReport = false;
     /**
-     * The experiment conducted
+     * The experiment conducted.
      */
     private MsExperiment experiment;
     /**
-     * The sample analyzed
+     * The sample analyzed.
      */
     private Sample sample;
     /**
-     * The replicate number
+     * The replicate number.
      */
     private int replicateNumber;
     /**
-     * The psm map
+     * The psm map.
      */
     private PsmSpecificMap psmMap;
     /**
@@ -76,33 +76,33 @@ public class PeptideShaker {
      */
     private PeptideSpecificMap peptideMap;
     /**
-     * The protein map
+     * The protein map.
      */
     private ProteinMap proteinMap;
     /**
-     * The id importer will import and process the identifications
+     * The id importer will import and process the identifications.
      */
     private FileImporter fileImporter = null;
     /**
-     * The sequence factory
+     * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The location of the folder used for serialization of matches
+     * The location of the folder used for serialization of matches.
      */
     public final static String SERIALIZATION_DIRECTORY = "matches";
     /**
-     * The compomics PTM factory
+     * The compomics PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
-     * Metrics to be picked when loading the identification
+     * Metrics to be picked when loading the identification.
      */
-    private MetricsForHarald metricsForHarald = new MetricsForHarald();
+    private Metrics metrics = new Metrics();
 
     /**
      * Constructor without mass specification. Calculation will be done on new maps
@@ -613,9 +613,9 @@ public class PeptideShaker {
                 }
             }
         }
-        metricsForHarald.setFoundCharges(charges);
-        metricsForHarald.setMaxPrecursorErrorDa(maxErrorDa);
-        metricsForHarald.setMaxPrecursorErrorPpm(maxErrorPpm);
+        metrics.setFoundCharges(charges);
+        metrics.setMaxPrecursorErrorDa(maxErrorDa);
+        metrics.setMaxPrecursorErrorPpm(maxErrorPpm);
         waitingDialog.setSecondaryProgressDialogIntermediate(true);
     }
 
@@ -1394,17 +1394,19 @@ public class PeptideShaker {
         }
         return false;
     }
-    
+
     /**
-     * Returns the metrics picked-up for Harald while loading the files
-     * @return 
+     * Returns the metrics picked-up while loading the files.
+     * 
+     * @return the metrics picked-up while loading the files
      */
-    public MetricsForHarald getMetricsForHarald() {
-        return metricsForHarald;
+    public Metrics getMetrics() {
+        return metrics;
     }
 
     /**
      * Replaces the needed PTMs by PeptideShaker PTMs in the factory.
+     * 
      * @param searchParameters the search parameters containing the modification profile to use
      */
     public static void setPeptideShakerPTMs(SearchParameters searchParameters) {

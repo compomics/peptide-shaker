@@ -1,41 +1,43 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.utils;
 
-import com.compomics.util.experiment.massspectrometry.Charge;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * this class contains metrics from the dataset for Harald
+ * This class contains metrics from the dataset for later use.
  *
- * @author Marc
+ * @author Marc Vaudel
  */
-public class MetricsForHarald implements Serializable {
-    
+public class Metrics implements Serializable {
+
     /**
-     * Serial number for versions compatibility
+     * Serial number for versions compatibility.
      */
     static final long serialVersionUID = 5905881057533649517L;
     /**
-     * The maximal precursor error in Da in all PSMs (only the best hit per spectrum)
+     * The maximal precursor error in Da in all PSMs (only the best hit per spectrum).
      */
     private double maxPrecursorErrorDa = 0;
     /**
-     * The maximal precursor error in ppm in all PSMs (only the best hit per spectrum)
+     * The maximal precursor error in ppm in all PSMs (only the best hit per spectrum).
      */
     private double maxPrecursorErrorPpm = 0;
     /**
-     * The chares found in all PSMs (only the best hit per spectrum)
+     * The chares found in all PSMs (only the best hit per spectrum).
      */
     private ArrayList<Integer> foundCharges = new ArrayList<Integer>();
-    
-    public MetricsForHarald() {
-        
+
+    /**
+     * Constructor.
+     */
+    public Metrics() {
     }
 
+    /**
+     * Returns the found charges.
+     * 
+     * @return the found charges.
+     */
     public ArrayList<Integer> getFoundCharges() {
         if (foundCharges.isEmpty()) {
             // code for backward compatibility, quite uggly I agree...
@@ -46,22 +48,47 @@ public class MetricsForHarald implements Serializable {
         return foundCharges;
     }
 
+    /**
+     * Set the list of charges found.
+     * 
+     * @param foundCharges the charges to set
+     */
     public void setFoundCharges(ArrayList<Integer> foundCharges) {
         this.foundCharges = foundCharges;
     }
 
+    /**
+     * Return the max precursor mass error in Dalton.
+     * 
+     * @return the max precursor mass error in Dalton
+     */
     public double getMaxPrecursorErrorDa() {
         return maxPrecursorErrorDa;
     }
 
+    /**
+     * Set the max precursor mass error in Dalton.
+     * 
+     * @param maxPrecursorErrorDa the mass error to set 
+     */
     public void setMaxPrecursorErrorDa(double maxPrecursorErrorDa) {
         this.maxPrecursorErrorDa = maxPrecursorErrorDa;
     }
 
+    /**
+     * Returns the max precursor mass error in ppm.
+     * 
+     * @return the max precursor mass error in ppm
+     */
     public double getMaxPrecursorErrorPpm() {
         return maxPrecursorErrorPpm;
     }
 
+    /**
+     * Set the max precursor mass error in ppm.
+     * 
+     * @param maxPrecursorErrorPpm the max precursor mass error in ppm
+     */
     public void setMaxPrecursorErrorPpm(double maxPrecursorErrorPpm) {
         this.maxPrecursorErrorPpm = maxPrecursorErrorPpm;
     }
