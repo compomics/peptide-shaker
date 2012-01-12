@@ -56,6 +56,7 @@ import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
+import eu.isas.peptideshaker.utils.MetricsForHarald;
 import eu.isas.peptideshaker.utils.StarHider;
 import java.awt.Color;
 import java.awt.Component;
@@ -368,6 +369,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * The class used to provide sexy features out of the identification
      */
     private IdentificationFeaturesGenerator identificationFeaturesGenerator = new IdentificationFeaturesGenerator(this);
+    /**
+     * Metrics picked-up while loading the files
+     */
+    private MetricsForHarald metricsForHarald;
 
     /**
      * The main method used to start PeptideShaker
@@ -4572,6 +4577,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     setSearchParameters(experimentSettings.getSearchParameters());
                     setFilterPreferences(experimentSettings.getFilterPreferences());
                     setDisplayPreferences(experimentSettings.getDisplayPreferences());
+                    setMetricsForHarald(experimentSettings.getMetricsForHarald());
 
                     PeptideShaker.setPeptideShakerPTMs(searchParameters);
 
@@ -5183,19 +5189,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns a list of the search charges.
-     * 
-     * @return a list of the search charges
+     * Returns the charges found in the dataset
+     * @return the charges found in the dataset
      */
-    public ArrayList<Integer> getSearchedCharges() {
-        
-        //@TODO: use search parameters input
-        
-        ArrayList<Integer> result = new ArrayList<Integer>();
-        result.add(2);
-        result.add(3);
-        result.add(4);
-        return result;
+    public ArrayList<Integer> getCharges() {
+        return metricsForHarald.getFoundCharges();
     }
 
     /**
@@ -5221,6 +5219,22 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public void resetFeatureGenerator() {
         identificationFeaturesGenerator = new IdentificationFeaturesGenerator(this);
+    }
+
+    /**
+     * Returns the metrics for Harald
+     * @return the metrics for Harald
+     */
+    public MetricsForHarald getMetricsForHarald() {
+        return metricsForHarald;
+    }
+
+    /**
+     * Sets the metrics for Harald
+     * @param metricsForHarald the metrics for Harald
+     */
+    public void setMetricsForHarald(MetricsForHarald metricsForHarald) {
+        this.metricsForHarald = metricsForHarald;
     }
 
     /**
@@ -5253,7 +5267,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 try {
                     // change the peptide shaker icon to a "waiting version"
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                    experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences));
+                    experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metricsForHarald));
 
                     String folderPath = currentPSFile.getParentFile().getAbsolutePath();
                     File newFolder = new File(folderPath, currentPSFile.getName().substring(0, currentPSFile.getName().length() - 4) + "_cps");
