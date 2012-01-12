@@ -35,6 +35,7 @@ import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import eu.isas.peptideshaker.preferences.SearchParameters;
+import eu.isas.peptideshaker.utils.MetricsForHarald;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -98,6 +99,10 @@ public class PeptideShaker {
      * The compomics PTM factory
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
+    /**
+     * Metrics to be picked when loading the identification
+     */
+    private MetricsForHarald metricsForHarald = new MetricsForHarald();
 
     /**
      * Constructor without mass specification. Calculation will be done on new maps
@@ -528,6 +533,9 @@ public class PeptideShaker {
         PSParameter psParameter;
         PeptideAssumption peptideAssumption, bestAssumption;
         SpectrumMatch spectrumMatch;
+        ArrayList<Integer> charges = new ArrayList<Integer>();
+        int currentCharge;
+        double precursorMz, error, maxErrorPpm = 0, maxErrorDa = 0;
         if (inputMap.isMultipleSearchEngines()) {
             for (String spectrumKey : identification.getSpectrumIdentification()) {
                 psParameter = new PSParameter();
@@ -560,6 +568,19 @@ public class PeptideShaker {
                 identification.setMatchChanged(spectrumMatch);
                 psmMap.addPoint(pScore, spectrumMatch);
                 waitingDialog.increaseSecondaryProgressValue();
+                currentCharge = bestAssumption.getIdentificationCharge().value;
+                if (!charges.contains(currentCharge)) {
+                    charges.add(currentCharge);
+                }
+                precursorMz = spectrumFactory.getPrecursor(spectrumKey, false).getMz();
+                error = bestAssumption.getDeltaMass(precursorMz, true);
+                if (error > maxErrorPpm) {
+                    maxErrorPpm = error;
+                }
+                error = bestAssumption.getDeltaMass(precursorMz, false);
+                if (error > maxErrorDa) {
+                    maxErrorDa = error;
+                }
             }
         } else {
             double eValue;
@@ -577,8 +598,24 @@ public class PeptideShaker {
                 psParameter.setSecificMapKey(psmMap.getKey(spectrumMatch) + "");
                 identification.addMatchParameter(spectrumKey, psParameter);
                 waitingDialog.increaseSecondaryProgressValue();
+                currentCharge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
+                if (!charges.contains(currentCharge)) {
+                    charges.add(currentCharge);
+                }
+                precursorMz = spectrumFactory.getPrecursor(spectrumKey, false).getMz();
+                error = spectrumMatch.getBestAssumption().getDeltaMass(precursorMz, true);
+                if (error > maxErrorPpm) {
+                    maxErrorPpm = error;
+                }
+                error = spectrumMatch.getBestAssumption().getDeltaMass(precursorMz, false);
+                if (error > maxErrorDa) {
+                    maxErrorDa = error;
+                }
             }
         }
+        metricsForHarald.setFoundCharges(charges);
+        metricsForHarald.setMaxPrecursorErrorDa(maxErrorDa);
+        metricsForHarald.setMaxPrecursorErrorPpm(maxErrorPpm);
         waitingDialog.setSecondaryProgressDialogIntermediate(true);
     }
 
@@ -1356,6 +1393,14 @@ public class PeptideShaker {
             }
         }
         return false;
+    }
+    
+    /**
+     * Returns the metrics picked-up for Harald while loading the files
+     * @return 
+     */
+    public MetricsForHarald getMetricsForHarald() {
+        return metricsForHarald;
     }
 
     /**

@@ -104,19 +104,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * The peptide shaker class which will take care of the pre-processing..
      */
     private PeptideShaker peptideShaker;
-
-    /**
-     * The previous search parameters.
-     */
-    //private final SearchParameters oldSearchParameters;
-    /**
-     * The previous modification profile file.
-     */
-    //private final File oldProfileFile;
-    /**
-     * The previous id filter.
-     */
-    //private final IdFilter oldIdFilter;
     /**
      * Creates a new open dialog.
      *
@@ -659,6 +646,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
             if (!needDialog || !waitingDialog.isRunCanceled()) {
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
+                peptideShakerGUI.setMetricsForHarald(peptideShaker.getMetricsForHarald());
                 peptideShakerGUI.setUpInitialFilters();
                 peptideShakerGUI.displayResults();
                 peptideShakerGUI.initiateDisplay(); // display the overview tab

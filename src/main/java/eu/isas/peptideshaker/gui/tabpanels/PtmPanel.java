@@ -183,7 +183,7 @@ public class PtmPanel extends javax.swing.JPanel {
         modProfilesScrollPane.getViewport().setOpaque(false);
 
         // @TODO: remove when individual psm modification plots are added
-        spectrumTabbedPane.setEnabledAt(0, false);
+        //spectrumTabbedPane.setEnabledAt(0, false);
 
         setTableProperties();
 

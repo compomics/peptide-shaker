@@ -7,6 +7,7 @@ import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
+import eu.isas.peptideshaker.utils.MetricsForHarald;
 
 /**
  * This class will be used to save all settings needed in PeptideShaker
@@ -43,6 +44,10 @@ public class PSSettings implements UrParameter {
      * The project details
      */
     private ProjectDetails projectDetails;
+    /**
+     * The metrics for Harald
+     */
+    private MetricsForHarald metricsForHarald;
 
     /**
      * Blank constructor
@@ -63,13 +68,15 @@ public class PSSettings implements UrParameter {
             SpectrumCountingPreferences spectrumCountingPreferences,
             ProjectDetails projectDetails,
             FilterPreferences filterPreferences,
-            DisplayPreferences displayPreferences) {
+            DisplayPreferences displayPreferences,
+            MetricsForHarald metricsForHarald) {
         this.searchParameters = searchParameters;
         this.annotationPreferences = annotationPreferences;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.projectDetails = projectDetails;
         this.filterPreferences = filterPreferences;
         this.displayPreferences = displayPreferences;
+        this.metricsForHarald = metricsForHarald;
     }
 
     /**
@@ -119,6 +126,17 @@ public class PSSettings implements UrParameter {
      */
     public DisplayPreferences getDisplayPreferences() {
         return displayPreferences;
+    }
+
+    /**
+     * Returns the metrics for Harald
+     * @return the metrics for Harald
+     */
+    public MetricsForHarald getMetricsForHarald() {
+        if (metricsForHarald == null) {
+            metricsForHarald = new MetricsForHarald();
+        }
+        return metricsForHarald;
     }
 
     @Override
