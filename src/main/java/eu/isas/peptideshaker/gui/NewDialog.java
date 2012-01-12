@@ -12,10 +12,8 @@ import com.compomics.util.experiment.io.identifications.IdentificationParameters
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.PeptideShaker;
-import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
-import eu.isas.peptideshaker.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
@@ -646,7 +644,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
             if (!needDialog || !waitingDialog.isRunCanceled()) {
                 peptideShakerGUI.setProject(experiment, sample, replicateNumber);
-                peptideShakerGUI.setMetricsForHarald(peptideShaker.getMetricsForHarald());
+                peptideShakerGUI.setMetrics(peptideShaker.getMetrics());
                 peptideShakerGUI.setUpInitialFilters();
                 peptideShakerGUI.displayResults();
                 peptideShakerGUI.initiateDisplay(); // display the overview tab

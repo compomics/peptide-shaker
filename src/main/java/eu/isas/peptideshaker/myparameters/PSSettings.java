@@ -7,7 +7,7 @@ import eu.isas.peptideshaker.preferences.FilterPreferences;
 import eu.isas.peptideshaker.preferences.ProjectDetails;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
-import eu.isas.peptideshaker.utils.MetricsForHarald;
+import eu.isas.peptideshaker.utils.Metrics;
 
 /**
  * This class will be used to save all settings needed in PeptideShaker
@@ -17,7 +17,7 @@ import eu.isas.peptideshaker.utils.MetricsForHarald;
 public class PSSettings implements UrParameter {
 
     /**
-     * serial version UID for post-serialization compatibility
+     * Serial version UID for post-serialization compatibility.
      */
     static final long serialVersionUID = -3531908843597367812L;
     /**
@@ -45,12 +45,12 @@ public class PSSettings implements UrParameter {
      */
     private ProjectDetails projectDetails;
     /**
-     * The metrics for Harald
+     * The metrics saved when loading the files.
      */
-    private MetricsForHarald metricsForHarald;
+    private Metrics metrics;
 
     /**
-     * Blank constructor
+     * Blank constructor.
      */
     public PSSettings() {
     }
@@ -62,6 +62,9 @@ public class PSSettings implements UrParameter {
      * @param annotationPreferences         The annotation preferences
      * @param spectrumCountingPreferences   The spectrum counting preferences
      * @param projectDetails                The project details
+     * @param filterPreferences             The filter preferences  
+     * @param displayPreferences            The display preferences
+     * @param metrics                       The metrics saved when loading the files
      */
     public PSSettings(SearchParameters searchParameters,
             AnnotationPreferences annotationPreferences,
@@ -69,14 +72,14 @@ public class PSSettings implements UrParameter {
             ProjectDetails projectDetails,
             FilterPreferences filterPreferences,
             DisplayPreferences displayPreferences,
-            MetricsForHarald metricsForHarald) {
+            Metrics metrics) {
         this.searchParameters = searchParameters;
         this.annotationPreferences = annotationPreferences;
         this.spectrumCountingPreferences = spectrumCountingPreferences;
         this.projectDetails = projectDetails;
         this.filterPreferences = filterPreferences;
         this.displayPreferences = displayPreferences;
-        this.metricsForHarald = metricsForHarald;
+        this.metrics = metrics;
     }
 
     /**
@@ -129,14 +132,14 @@ public class PSSettings implements UrParameter {
     }
 
     /**
-     * Returns the metrics for Harald
-     * @return the metrics for Harald
+     * Returns the metrics saved when loading the files.
+     * @return the metrics saved when loading the files
      */
-    public MetricsForHarald getMetricsForHarald() {
-        if (metricsForHarald == null) {
-            metricsForHarald = new MetricsForHarald();
+    public Metrics getMetrics() {
+        if (metrics == null) {
+            metrics = new Metrics();
         }
-        return metricsForHarald;
+        return metrics;
     }
 
     @Override

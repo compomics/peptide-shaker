@@ -71,7 +71,7 @@ public class IdentificationFeaturesGenerator {
     /**
      * The number of spectra
      */
-    private HashMap<String, Integer> nSpectra = new HashMap<String, Integer>();
+    private HashMap<String, Integer> numberOfSpectra = new HashMap<String, Integer>();
     /**
      * The compomics PTM factory
      */
@@ -80,10 +80,25 @@ public class IdentificationFeaturesGenerator {
      * a map containing the list of coverable amino acids for each protein in the big object cache
      */
     private HashMap<String, boolean[]> coverableAA = new HashMap<String, boolean[]>();
+    /**
+     * The current protein key.
+     */
     private String currentProteinKey = "";
+    /**
+     * The current peptide key.
+     */
     private String currentPeptideKey = "";
+    /**
+     * The protein list.
+     */
     private ArrayList<String> proteinList = null;
+    /**
+     * The peptide list.
+     */
     private ArrayList<String> peptideList;
+    /**
+     * The psm list.
+     */
     private ArrayList<String> psmList;
 
     /**
@@ -424,7 +439,7 @@ public class IdentificationFeaturesGenerator {
      * @return the number of spectra for the given protein match
      */
     public Integer getNSpectra(String proteinMatchKey) {
-        Integer result = nSpectra.get(proteinMatchKey);
+        Integer result = numberOfSpectra.get(proteinMatchKey);
 
         if (result == null) {
             if (smallObjectsCache.size() >= smallObjectsCacheSize) {
@@ -432,7 +447,7 @@ public class IdentificationFeaturesGenerator {
                 ArrayList<String> toRemove = new ArrayList<String>();
 
                 for (String tempKey : smallObjectsCache) {
-                    if (nSpectra.containsKey(tempKey)) {
+                    if (numberOfSpectra.containsKey(tempKey)) {
                         toRemove.add(tempKey);
                         if (toRemove.size() == nRemove) {
                             break;
@@ -445,7 +460,7 @@ public class IdentificationFeaturesGenerator {
                 }
             }
             result = estimateNSpectra(proteinMatchKey);
-            nSpectra.put(proteinMatchKey, result);
+            numberOfSpectra.put(proteinMatchKey, result);
             smallObjectsCache.remove(proteinMatchKey);
             smallObjectsCache.add(proteinMatchKey);
         }
@@ -725,7 +740,8 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the sorted list of protein keys
+     * Returns the sorted list of protein keys.
+     * 
      * @param progressDialog the progress dialog, can be null
      * @return the sorted list of protein keys
      */
@@ -733,7 +749,7 @@ public class IdentificationFeaturesGenerator {
         if (proteinList == null) {
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(false);
-                progressDialog.setTitle("Sorting proteins. Please Wait...");
+                progressDialog.setTitle("Sorting Proteins. Please Wait...");
                 progressDialog.setMax(2 * peptideShakerGUI.getIdentification().getProteinIdentification().size());
                 progressDialog.setValue(0);
             }
@@ -805,7 +821,8 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * returns a sorted list of peptide keys from the protein of interest
+     * Returns a sorted list of peptide keys from the protein of interest.
+     * 
      * @param proteinKey the key of the protein of interest
      * @return a sorted list of the corresponding peptide keys
      */
@@ -852,7 +869,8 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * returns the ordered list of spectrum keys for a given peptide
+     * Returns the ordered list of spectrum keys for a given peptide.
+     * 
      * @param peptideKey the key of the peptide of interest
      * @return the ordered list of spectrum keys
      */
