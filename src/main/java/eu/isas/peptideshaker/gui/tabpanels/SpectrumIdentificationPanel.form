@@ -132,7 +132,7 @@
                     <Component class="javax.swing.JTable" name="searchEngineTable">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="8" rowCount="0">
+                          <Table columnCount="9" rowCount="0">
                             <Column editable="false" title=" " type="java.lang.Integer"/>
                             <Column editable="false" title="Search Engine" type="java.lang.String"/>
                             <Column editable="false" title="Validated PSMs" type="java.lang.Integer"/>
@@ -141,6 +141,7 @@
                             <Column editable="false" title="X!Tandem" type="java.lang.Integer"/>
                             <Column editable="false" title="Mascot" type="java.lang.Integer"/>
                             <Column editable="false" title="All" type="java.lang.Integer"/>
+                            <Column editable="false" title="Unassigned" type="java.lang.Integer"/>
                           </Table>
                         </Property>
                         <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
@@ -170,6 +171,9 @@
                 </Container>
                 <Component class="javax.swing.JButton" name="vennDiagramButton">
                   <Properties>
+                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                    </Property>
                     <Property name="borderPainted" type="boolean" value="false"/>
                     <Property name="contentAreaFilled" type="boolean" value="false"/>
                     <Property name="focusable" type="boolean" value="false"/>
