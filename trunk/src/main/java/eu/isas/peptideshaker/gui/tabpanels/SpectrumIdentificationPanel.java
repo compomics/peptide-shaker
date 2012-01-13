@@ -6,8 +6,10 @@ import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
+import com.compomics.util.experiment.identification.advocates.SearchEngine;
 import com.compomics.util.experiment.identification.matches.IonMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
+import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
@@ -31,6 +33,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -280,12 +283,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEngineTable.getColumn("X!Tandem").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         searchEngineTable.getColumn("Mascot").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         searchEngineTable.getColumn("All").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
+        searchEngineTable.getColumn("Unassigned").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("OMSSA").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unassigned").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
         // set up the psm color map
         HashMap<Integer, java.awt.Color> searchEngineSpectrumLevelColorMap = new HashMap<Integer, java.awt.Color>();
@@ -311,12 +316,13 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEngineTableToolTips = new ArrayList<String>();
         searchEngineTableToolTips.add(null);
         searchEngineTableToolTips.add("Search Engine");
-        searchEngineTableToolTips.add("Number of Validated Peptide-Spectrum Matches");
-        searchEngineTableToolTips.add("Number of Unique Pepttide-Spectrum Matches");
+        searchEngineTableToolTips.add("Validated Peptide-Spectrum Matches");
+        searchEngineTableToolTips.add("Unique Pepttide-Spectrum Matches");
         searchEngineTableToolTips.add("Overlapping Peptide-Spectrum Matches with OMSSA");
         searchEngineTableToolTips.add("Overlapping Peptide-Spectrum Matches with X!Tandem");
         searchEngineTableToolTips.add("Overlapping Peptide-Spectrum Matches with Mascot");
         searchEngineTableToolTips.add("Overlapping Peptide-Spectrum Matches All Search Engines");
+        searchEngineTableToolTips.add("Unassigned Spectra");
 
         spectrumTableToolTips = new ArrayList<String>();
         spectrumTableToolTips.add(null);
@@ -567,14 +573,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             },
             new String [] {
-                " ", "Search Engine", "Validated PSMs", "Unique PSMs", "OMSSA", "X!Tandem", "Mascot", "All"
+                " ", "Search Engine", "Validated PSMs", "Unique PSMs", "OMSSA", "X!Tandem", "Mascot", "All", "Unassigned"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -588,6 +594,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEngineTable.setOpaque(false);
         searchEnginetableJScrollPane.setViewportView(searchEngineTable);
 
+        vennDiagramButton.setBackground(new java.awt.Color(255, 255, 255));
         vennDiagramButton.setBorderPainted(false);
         vennDiagramButton.setContentAreaFilled(false);
         vennDiagramButton.setFocusable(false);
@@ -1289,9 +1296,9 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
             slidersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, slidersPanelLayout.createSequentialGroup()
                 .addGap(36, 36, 36)
-                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                .addComponent(accuracySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 117, Short.MAX_VALUE)
                 .addGap(30, 30, 30)
-                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+                .addComponent(intensitySlider, javax.swing.GroupLayout.DEFAULT_SIZE, 118, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -1462,7 +1469,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
             public void run() {
                 progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Updating Data. Please Wait...");
+                progressDialog.setTitle("Loading Data. Please Wait...");
                 progressDialog.setVisible(true);
             }
         }, "ProgressDialog").start();
@@ -2385,7 +2392,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
             public void run() {
                 progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Updating Data. Please Wait...");
+                progressDialog.setTitle("Loading Data. Please Wait...");
                 progressDialog.setVisible(true);
             }
         }, "ProgressDialog").start();
@@ -2400,7 +2407,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                 try {
                     identification = peptideShakerGUI.getIdentification();
-                    int m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0;
+                    int m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0, no_m = 0, no_x = 0, no_o = 0;
                     boolean mascot, omssa, xTandem;
                     PSParameter probabilities = new PSParameter();
                     SpectrumMatch spectrumMatch;
@@ -2408,6 +2415,32 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     progressDialog.setIndeterminate(false);
                     progressDialog.setMax(identification.getSpectrumIdentification().size());
                     progressDialog.setValue(0);
+
+
+                    // get the list of search engines used
+                    IdfileReaderFactory idFileReaderFactory = IdfileReaderFactory.getInstance();
+                    ArrayList<File> idFiles = peptideShakerGUI.getProjectDetails().getIdentificationFiles();
+
+                    boolean omssaUsed = false;
+                    boolean xtandemUsed = false;
+                    boolean mascotUsed = false;
+
+                    for (int i = 0; i < idFiles.size(); i++) {
+                        if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SearchEngine.OMSSA) {
+                            omssaUsed = true;
+                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SearchEngine.XTANDEM) {
+                            xtandemUsed = true;
+                        } else if (idFileReaderFactory.getSearchEngine(idFiles.get(i)) == SearchEngine.MASCOT) {
+                            mascotUsed = true;
+                        }
+                    }
+
+                    // hide the unused search engine columns in the Search Engine Performance table
+                    // @TODO: hide the columns in the table for the search engines that are not used...
+                    // @TODO: calculate the 'All' column values based on only the used search engines and not all three like now...
+
+                    // @TODO: hide the unused search engine tables at the bottom of the screen? or rather use tabs instead?
+
 
                     for (String spectrumKey : identification.getSpectrumIdentification()) {
                         spectrumMatch = identification.getSpectrumMatch(spectrumKey);
@@ -2450,6 +2483,16 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                             x++;
                         }
 
+                        if (!mascot) {
+                            no_m++;
+                        }
+                        if (!xTandem) {
+                            no_x++;
+                        }
+                        if (!omssa) {
+                            no_o++;
+                        }
+
                         progressDialog.incrementValue();
                     }
 
@@ -2461,23 +2504,46 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     int nXTandem = omx + mx + ox + x;
 
                     double biggestValue = Math.max(Math.max(nMascot, nOMSSA), nXTandem);
+                    biggestValue = Math.max(biggestValue, Math.max(Math.max(no_o, no_x), no_m));
 
-                    updateVennDiagram(vennDiagramButton, nOMSSA, nXTandem, nMascot,
-                            (ox + omx), (mo + omx), (mx + omx), omx,
-                            "OMSSA", "X!Tandem", "Mascot");
+                    if (omssaUsed && xtandemUsed && mascotUsed) {
+                        updateThreeWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, nMascot,
+                                (ox + omx), (mo + omx), (mx + omx), omx,
+                                "OMSSA", "X!Tandem", "Mascot");
+                    } else if (omssaUsed && xtandemUsed) {
+                        updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, ox, "OMSSA", "X!Tandem");
+                    } else if (xtandemUsed && mascotUsed) {
+                        updateTwoWayVennDiagram(vennDiagramButton, nXTandem, nMascot, mx, "X!Tandem", "Mascot");
+                    } else if (omssaUsed && mascotUsed) {
+                        updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nMascot, mo, "OMSSA", "Mascot");
+                    } else {
+                        vennDiagramButton.setText(null);
+                        vennDiagramButton.setToolTipText(null);
+                        vennDiagramButton.setIcon(null);
+                    }
 
-                    ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                                1, "OMSSA",
-                                nOMSSA, o, nOMSSA, ox + omx, mo + omx, omx
-                            });
-                    ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                                2, "X!Tandem",
-                                nXTandem, x, ox + omx, nXTandem, mx + omx, omx
-                            });
-                    ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
-                                3, "Mascot",
-                                nMascot, m, mo + omx, mx + omx, nMascot, omx
-                            });
+                    int searchEngineRowCounter = 0;
+
+                    if (omssaUsed) {
+                        ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                    ++searchEngineRowCounter, "OMSSA",
+                                    nOMSSA, o, nOMSSA, ox + omx, mo + omx, omx, no_o
+                                });
+                    }
+
+                    if (xtandemUsed) {
+                        ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                    ++searchEngineRowCounter, "X!Tandem",
+                                    nXTandem, x, ox + omx, nXTandem, mx + omx, omx, no_x
+                                });
+                    }
+
+                    if (mascotUsed) {
+                        ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
+                                    ++searchEngineRowCounter, "Mascot",
+                                    nMascot, m, mo + omx, mx + omx, nMascot, omx, no_m
+                                });
+                    }
 
                     ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Validated PSMs").getCellRenderer()).setMaxValue(biggestValue);
                     ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unique PSMs").getCellRenderer()).setMaxValue(biggestValue);
@@ -2485,6 +2551,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("X!Tandem").getCellRenderer()).setMaxValue(biggestValue);
                     ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Mascot").getCellRenderer()).setMaxValue(biggestValue);
                     ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("All").getCellRenderer()).setMaxValue(biggestValue);
+                    ((JSparklinesBarChartTableCellRenderer) searchEngineTable.getColumn("Unassigned").getCellRenderer()).setMaxValue(biggestValue);
 
                     searchEngineTable.revalidate();
                     searchEngineTable.repaint();
@@ -2553,7 +2620,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @param titleB            the title of dataset B
      * @param titleC            the title of dataset C
      */
-    private void updateVennDiagram(JButton diagramButton, int a, int b, int c, int ab, int ac, int bc, int abc,
+    private void updateThreeWayVennDiagram(JButton diagramButton, int a, int b, int c, int ab, int ac, int bc, int abc,
             String titleA, String titleB, String titleC) {
 
         double maxValue = Math.max(Math.max(a, b), c);
@@ -2595,6 +2662,62 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                         + titleA + " & " + titleC + ": " + ac + "<br>"
                         + titleB + " & " + titleC + ": " + bc + "<br><br>"
                         + titleA + " & " + titleB + " & " + titleC + ": " + abc
+                        + "</html>");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            diagramButton.setText("<html><p align=center><i>Venn Diagram<br>Not Available</i></html>");
+            diagramButton.setToolTipText("Not available due to an error occuring");
+        }
+    }
+
+    /**
+     * Create a Venn diagram and add it to the given button.
+     * 
+     * @param diagramButton     the button to add the diagram to
+     * @param a                 the size of A
+     * @param b                 the size of B
+     * @param ab                the overlapp of A and B
+     * @param titleA            the title of dataset A
+     * @param titleB            the title of dataset B
+     */
+    private void updateTwoWayVennDiagram(JButton diagramButton, int a, int b, int ab, String titleA, String titleB) {
+
+        double maxValue = Math.max(a, b);
+        if (maxValue < 1) {
+            maxValue = 1;
+        }
+
+        // @TODO: move this method to utilities?
+
+        final VennDiagram chart = GCharts.newVennDiagram(
+                a / maxValue, b / maxValue, 0, ab / maxValue, 0, 0, 0);
+
+        // @TODO: remove the hardcoding below!!!
+
+        if (diagramButton.getWidth() == 0) {
+            chart.setSize(173, searchEngineTable.getHeight());
+        } else {
+            chart.setSize(diagramButton.getWidth(), diagramButton.getHeight() - 10);
+        }
+
+        chart.setCircleLegends(titleA, titleB, "");
+        chart.setCircleColors(Color.GREEN, Color.RED, Color.newColor(Util.color2Hex(diagramButton.getBackground())));
+
+        try {
+            diagramButton.setText("");
+            ImageIcon icon = new ImageIcon(new URL(chart.toURLString()));
+
+            if (icon.getImageLoadStatus() == MediaTracker.ERRORED) {
+                diagramButton.setText("<html><p align=center><i>Venn Diagram<br>Not Available</i></html>");
+                diagramButton.setToolTipText("Not available in off line mode");
+            } else {
+                diagramButton.setIcon(icon);
+
+                diagramButton.setToolTipText("<html>"
+                        + titleA + ": " + a + "<br>"
+                        + titleB + ": " + b + "<br>"
+                        + titleA + " & " + titleB + ": " + ab
                         + "</html>");
             }
         } catch (IOException e) {
