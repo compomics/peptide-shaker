@@ -3,6 +3,14 @@
 
 ----
 
+*Changes in PeptideShaker 0.14.1 (January 13. 2012):*
+ * NEW FEATURE: Added the display of the unassigned spectra count to the Spectrum IDs tab.
+ * NEW FEATURE: Added the option of exporting the unidentified proteins to a tab separated text file from the Follow-Up Analysis Dialog.
+ * BUG FIX: Solved a bug impairing the portability of projects.
+ * BUG FIX: Solved a bug in the protein inference dialog related to especially complicated protein inference issues.
+
+----
+
 *Changes in PeptideShaker 0.14 (January 13. 2012):*
  * NEW FEATURE: Added the observable coverage in the Overview tab.
  * NEW FEATURE: PeptideShaker now keeps in memory the most recent results.
@@ -16,6 +24,8 @@
  * BUG FIX: Fixed a bug in the addDatabaseLinks method: when multiple accession numbers were provided the html link color was used even when no links were added.
  * LIBRARY UPDATE: Updated utilities to version 3.3.20.
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.33.
+
+Download Count: 3
 
 ----
 
