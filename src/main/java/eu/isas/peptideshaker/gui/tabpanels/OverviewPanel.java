@@ -4937,7 +4937,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 }
             } else {
                 proteinTable.addColumn(proteinScoreColumn);
-                proteinTable.moveColumn(12, 11);
+                proteinTable.moveColumn(12, 10);
 
                 peptideTable.addColumn(peptideScoreColumn);
                 peptideTable.moveColumn(9, 7);
