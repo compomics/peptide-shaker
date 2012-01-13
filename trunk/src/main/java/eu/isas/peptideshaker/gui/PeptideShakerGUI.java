@@ -3499,6 +3499,24 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void setSparklineColorNonValidated(Color sparklineColorNonValidated) {
         userPreferences.setSparklineColorNonValidated(sparklineColorNonValidated);
     }
+    
+    /**
+     * Get the possible sparklines color.
+     *
+     * @return the possible sparklineColor
+     */
+    public Color getSparklineColorPossible() {
+        return userPreferences.getSparklineColorPossible();
+    }
+
+    /**
+     * Set the possible sparklines color.
+     *
+     * @param sparklineColorPossible the possible sparklineColor to set
+     */
+    public void setSparklineColorPossible(Color sparklineColorPossible) {
+        userPreferences.setSparklineColorPossible(sparklineColorPossible);
+    }
 
     /**
      * Returns the bubble plot scale value.
@@ -3620,6 +3638,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         identifiedModifications = null;
         
         identification = null;
+        resetFeatureGenerator();
 
         // set up the tabs/panels
         scoresJCheckBoxMenuItem.setSelected(false);
@@ -4818,17 +4837,17 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     setProject(tempExperiment, tempSample, tempReplicate);
 
                     File mgfFile;
-                    int cpt = 0;
+                    int cpt = 1;
                     progressDialog.setTitle("Importing Spectrum Files. Please Wait...");
+                    progressDialog.setIndeterminate(true);
 
                     for (String spectrumFile : spectrumFiles) {
-                        progressDialog.setIndeterminate(false);
-                        progressDialog.setMax(spectrumFiles.size() + 1);
-                        progressDialog.setValue(++cpt);
+                        
+                        progressDialog.setTitle("Importing Spectrum Files (" + cpt++ + "/" + spectrumFiles.size() + "). Please Wait...");
+                        
                         try {
                             mgfFile = new File(spectrumFile);
                             spectrumFactory.addSpectra(mgfFile, progressDialog.getProgressBar());
-                            progressDialog.incrementValue();
                         } catch (Exception e) {
                             JOptionPane.showMessageDialog(peptideShakerGUI,
                                     "An error occured while importing " + spectrumFile + ".",

@@ -3864,9 +3864,13 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         } else {
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
                         }
-                    } else if (impossibleToCoverCounter > 0) {
-                        sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), null);
-                    } else {
+                        
+                        // @TODO: move and enable the display of the impossible to cover regions
+                        
+//                    } else if (impossibleToCoverCounter > 0) {
+//                        sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), null);
+                    } 
+                    else {
                         sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                     }
 

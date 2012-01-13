@@ -2662,7 +2662,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                             searchEngineAgreement,
                             Spectrum.getSpectrumTitle(spectrumKey),
                             precursor.getMz(),
-                            precursor.getPossibleCharges().get(0).value, // @TODO: this is just a temporary fix until we find a better way of handling mulitple charges...
+                            precursor.getPossibleCharges().get(0).value, // @TODO: this is just a temporary fix until we find a better way of handling multiple charges...
                             retentionTime
                         });
 

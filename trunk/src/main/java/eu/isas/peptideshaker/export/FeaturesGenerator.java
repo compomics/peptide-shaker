@@ -773,49 +773,49 @@ public class FeaturesGenerator {
         result += "\n";
 
         PSParameter psParameter = new PSParameter();
-        PeptideAssumption bestAssumption;
-        SpectrumMatch spectrumMatch;
         int progress = 0;
 
         for (String psmKey : psmKeys) {
 
-            if (progress < 50) {
+            //if (progress < 100) {
 
-                spectrumMatch = identification.getSpectrumMatch(psmKey);
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
                 psParameter = (PSParameter) identification.getMatchParameter(psmKey, psParameter);
-                bestAssumption = spectrumMatch.getBestAssumption();
+                PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
 
                 if (!bestAssumption.isDecoy()) {
 
-                    // peptide sequence
-                    result += bestAssumption.getPeptide().getSequence() + SEPARATOR;
+                    for (int j = 0; j < bestAssumption.getPeptide().getParentProteins().size(); j++) {
 
-                    // modifications
-                    HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
-                    for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
-                        if (modificationMatch.isVariable()) {
-                            if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                                modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
-                            }
-                            modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
-                        }
-                    }
-                    
-                    ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
-                    
-                    for (int i=0; i<bestAssumption.getPeptide().getSequence().length() + 1; i++) {
-                        
-                        for (String mod : mods) {
-                            if (modMap.get(mod).contains(new Integer(i))) {
-                                result += mod; // @TODO: what about multiple ptms on the same residue??
+                        // peptide sequence
+                        result += bestAssumption.getPeptide().getSequence() + SEPARATOR;
+
+                        // modifications
+                        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+                        for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
+                            if (modificationMatch.isVariable()) {
+                                if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                                    modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                                }
+                                modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
                             }
                         }
-                        
-                        result += ":";
-                    }
-                    
-                    result += SEPARATOR;
-                    
+
+                        ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+
+                        for (int i = 0; i < bestAssumption.getPeptide().getSequence().length() + 1; i++) {
+
+                            for (String mod : mods) {
+                                if (modMap.get(mod).contains(new Integer(i))) {
+                                    result += mod; // @TODO: what about multiple ptms on the same residue??
+                                }
+                            }
+
+                            result += ":";
+                        }
+
+                        result += SEPARATOR;
+
 
 //                    for (String mod : mods) {
 //
@@ -828,44 +828,32 @@ public class FeaturesGenerator {
 //                    }
 //                    result += SEPARATOR;
 
-                    // score
-                    result += psParameter.getPsmConfidence() + SEPARATOR;
+                        // score
+                        result += psParameter.getPsmConfidence() + SEPARATOR;
 
-                    // main AC
-                    result += bestAssumption.getPeptide().getParentProteins().get(0) + SEPARATOR;
-                    
-                    // @TODO: what about protein inference and multiple proteins for a given PSM??
+                        // main AC
+                        result += bestAssumption.getPeptide().getParentProteins().get(j) + SEPARATOR;
 
-                    //                    boolean first = true;
-//                    for (String protein : bestAssumption.getPeptide().getParentProteins()) {
-//                        if (first) {
-//                            first = false;
-//                        } else {
-//                            result += ", ";
-//                        }
-//                        result += protein;
-//                    }
-//                    result += SEPARATOR;
+                        // description
+                        result += "" + SEPARATOR; // @TODO: how to get the description???
 
-                    // description
-                    result += "" + SEPARATOR; // @TODO: how to get the description???
+                        // compound
+                        result += Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR;
 
-                    // compound
-                    result += Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR;
+                        // jobid
+                        result += "N/A" + SEPARATOR;
 
-                    // jobid
-                    result += "N/A" + SEPARATOR;
+                        // pmkey
+                        result += "N/A" + SEPARATOR;
 
-                    // pmkey
-                    result += "N/A" + SEPARATOR;
-
-                    result += "\n";
-
-                    progress++;
-                    if (progressDialog != null) {
-                        progressDialog.setValue(progress);
+                        result += "\n";
                     }
                 }
+            //}
+
+            progress++;
+            if (progressDialog != null) {
+                progressDialog.setValue(progress);
             }
         }
         return result;
