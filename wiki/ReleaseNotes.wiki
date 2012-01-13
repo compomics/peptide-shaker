@@ -3,6 +3,22 @@
 
 ----
 
+*Changes in PeptideShaker 0.14 (January 13. 2012):*
+ * NEW FEATURE: Added the observable coverage in the Overview tab.
+ * NEW FEATURE: PeptideShaker now keeps in memory the most recent results.
+ * NEW FEATURE: Added a first attempt at a Progenesis export option. Needs more testing!
+ * FEATURE IMPROVEMENT: Improved the way missing ptms are handled.
+ * FEATURE IMPROVEMENT: Improved the use of the jsparklines for the peptide and spectra columns in the Overview tab.
+ * FEATURE IMPROVEMENT: Improved the color used for the non-validated jsparklines.
+ * FEATURE IMPROVEMENT: GUI improvements to the Export Features dialog.
+ * FEATURE IMPROVEMENT: Improved the use of the waiting icon when exporting data.
+ * BUG FIX: Fixed a minor bug in the Find feature.
+ * BUG FIX: Fixed a bug in the addDatabaseLinks method: when multiple accession numbers were provided the html link color was used even when no links were added.
+ * LIBRARY UPDATE: Updated utilities to version 3.3.20.
+ * LIBRARY UPDATE: Updated jsparklines to version 0.5.33.
+
+----
+
 *Changes in PeptideShaker 0.13.1 (January 6. 2012):*
  * NEW FEATURE: The GO analysis now uses ENSEMBL 65.
  * FEATURE IMPROVEMENT: The QC plots are now only loaded when selected, and also not reloaded if not needed.
@@ -10,6 +26,8 @@
  * FEATURE IMPROVEMENT: Removed the 'Starred' column when exporting and 'Request Starred' was not selected. 
  * BUG FIX: Fixed a bug with the parsing of mgf files with spectrum titles containing `\`.
  * LIBRARY UPDATE: Updated utilities to version 3.3.17.
+
+Download Count: 27
 
 ----
 
