@@ -47,8 +47,9 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="spectraPanel" max="32767" attributes="2"/>
+                      <Component id="unidentifiedProteinsPanel" alignment="0" max="32767" attributes="2"/>
                       <Component id="progenesisPanel" alignment="0" max="32767" attributes="0"/>
-                      <Component id="spectraPanel" alignment="1" max="32767" attributes="2"/>
                       <Component id="inclusionListPanel" alignment="1" max="32767" attributes="2"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -60,6 +61,8 @@
               <Group type="102" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="spectraPanel" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="unidentifiedProteinsPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="progenesisPanel" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -441,6 +444,57 @@
                 </Property>
                 <Property name="text" type="java.lang.String" value="Under Development"/>
               </Properties>
+            </Component>
+          </SubComponents>
+        </Container>
+        <Container class="javax.swing.JPanel" name="unidentifiedProteinsPanel">
+          <Properties>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
+                <TitledBorder title="Unidentified Proteins"/>
+              </Border>
+            </Property>
+            <Property name="opaque" type="boolean" value="false"/>
+          </Properties>
+
+          <Layout>
+            <DimensionLayout dim="0">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="90" max="32767" attributes="0"/>
+                      <Component id="exportUnidentifiedSpectraButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+            <DimensionLayout dim="1">
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="exportUnidentifiedSpectraButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
+                  </Group>
+              </Group>
+            </DimensionLayout>
+          </Layout>
+          <SubComponents>
+            <Component class="javax.swing.JLabel" name="jLabel10">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Export all the unidentified protein accession numbers to a tab separated text file for further analysis:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="exportUnidentifiedSpectraButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Export as CSV"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportUnidentifiedSpectraButtonActionPerformed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
