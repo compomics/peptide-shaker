@@ -1,6 +1,8 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.biology.Protein;
+import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
@@ -101,6 +103,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         exportProgenesisButton = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        unidentifiedProteinsPanel = new javax.swing.JPanel();
+        jLabel10 = new javax.swing.JLabel();
+        exportUnidentifiedSpectraButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Export");
@@ -311,7 +316,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         jLabel8.setText("Spectrum IDs To:");
 
-        jLabel9.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel9.setFont(new java.awt.Font("Tahoma", 2, 11));
         jLabel9.setForeground(new java.awt.Color(255, 0, 0));
         jLabel9.setText("Under Development");
 
@@ -339,6 +344,39 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        unidentifiedProteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Unidentified Proteins"));
+        unidentifiedProteinsPanel.setOpaque(false);
+
+        jLabel10.setText("Export all the unidentified protein accession numbers to a tab separated text file for further analysis:");
+
+        exportUnidentifiedSpectraButton.setText("Export as CSV");
+        exportUnidentifiedSpectraButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportUnidentifiedSpectraButtonActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout unidentifiedProteinsPanelLayout = new javax.swing.GroupLayout(unidentifiedProteinsPanel);
+        unidentifiedProteinsPanel.setLayout(unidentifiedProteinsPanelLayout);
+        unidentifiedProteinsPanelLayout.setHorizontalGroup(
+            unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(unidentifiedProteinsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel10)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
+                .addComponent(exportUnidentifiedSpectraButton)
+                .addContainerGap())
+        );
+        unidentifiedProteinsPanelLayout.setVerticalGroup(
+            unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(unidentifiedProteinsPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(exportUnidentifiedSpectraButton))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout backgroundPanelLayout = new javax.swing.GroupLayout(backgroundPanel);
         backgroundPanel.setLayout(backgroundPanelLayout);
         backgroundPanelLayout.setHorizontalGroup(
@@ -346,8 +384,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(spectraPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(unidentifiedProteinsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(progenesisPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(spectraPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(inclusionListPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -356,6 +395,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(backgroundPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(spectraPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(unidentifiedProteinsPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(progenesisPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -448,23 +489,23 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 total += spectrumFactory.getSpectrumTitles(mgfFile).size();
                             }
                             progressDialog.setMax(total);
+
                             FileWriter f = new FileWriter(finalOutputFile);
                             BufferedWriter b = new BufferedWriter(f);
-                            String spectrumKey;
-                            int cpt = 0;
+
                             for (String mgfFile : spectrumFactory.getMgfFileNames()) {
                                 for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
-                                    spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
+                                    String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
                                     if (!isValidated(spectrumKey)) {
                                         b.write(((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey)).asMgf());
                                     }
-                                    cpt++;
-                                    progressDialog.setValue(cpt);
+                                    progressDialog.incrementValue();
                                 }
                             }
+
                             b.close();
                             f.close();
-                            
+
                             progressDialog.setVisible(false);
                             progressDialog.dispose();
 
@@ -571,10 +612,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             }
 
                             try {
-                                
+
                                 // change the peptide shaker icon to a "waiting version"
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-                                
+
                                 ArrayList<String> inspectedProteins;
                                 if (idSelectionCmb.getSelectedIndex() == 4) {
                                     inspectedProteins = peptideShakerGUI.getDisplayedProteins();
@@ -625,10 +666,10 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 }
                                 b.close();
                                 f.close();
-                                
+
                                 progressDialog.setVisible(false);
                                 progressDialog.dispose();
-                                
+
                                 // change the peptide shaker icon back to the default version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -763,6 +804,124 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private void srmButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_srmButtonActionPerformed
         // @TODO: implement me!!
     }//GEN-LAST:event_srmButtonActionPerformed
+
+    /**
+     * Export all the unidentified protein accession numbers to a tab separated text file.
+     * 
+     * @param evt 
+     */
+    private void exportUnidentifiedSpectraButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportUnidentifiedSpectraButtonActionPerformed
+
+        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
+        fileChooser.setDialogTitle("Select Destination File");
+        fileChooser.setMultiSelectionEnabled(false);
+
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.isDirectory() || myFile.getName().endsWith(".txt");
+            }
+
+            @Override
+            public String getDescription() {
+                return "(Tab Separated Text File) *.txt";
+            }
+        };
+
+        fileChooser.setFileFilter(filter);
+
+        int returnVal = fileChooser.showSaveDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+            File outputFile = fileChooser.getSelectedFile();
+            int outcome = JOptionPane.YES_OPTION;
+
+            if (outputFile.exists()) {
+                outcome = JOptionPane.showConfirmDialog(this,
+                        "Should " + outputFile + " be overwritten?", "Selected File Already Exists",
+                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+            }
+
+            if (outcome == JOptionPane.YES_OPTION) {
+
+                if (!outputFile.getName().endsWith(".txt")) {
+                    outputFile = new File(outputFile.getParent(), outputFile.getName() + ".txt");
+                }
+
+                final File finalOutputFile = outputFile;
+
+                progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+                progressDialog.doNothingOnClose();
+
+                final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
+
+                new Thread(new Runnable() {
+
+                    public void run() {
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Exporting. Please Wait...");
+                        progressDialog.setVisible(true);
+                    }
+                }, "ProgressDialog").start();
+
+                new Thread("ExportThread") {
+
+                    @Override
+                    public void run() {
+
+                        try {
+                            // change the peptide shaker icon to a "waiting version"
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+
+                            progressDialog.setIndeterminate(false);
+
+                            SequenceFactory sequenceFactory = SequenceFactory.getInstance();
+                            progressDialog.setMax(sequenceFactory.getNTargetSequences());
+
+                            FileWriter f = new FileWriter(finalOutputFile);
+                            BufferedWriter b = new BufferedWriter(f);
+
+                            ArrayList<String> accessions = sequenceFactory.getAccessions();
+
+                            for (int i = 0; i < accessions.size(); i++) {
+                                
+                                Protein tempProtein = sequenceFactory.getProtein(accessions.get(i));
+                             
+                                if (!tempProtein.isDecoy() && !peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
+                                    b.write(accessions.get(i) + "\n");
+                                }
+                                
+                                progressDialog.incrementValue();
+                            }
+
+                            b.close();
+                            f.close();
+
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+
+                            // change the peptide shaker icon back to the default version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                            JOptionPane.showMessageDialog(tempRef, "Undentified proteins exported to " + finalOutputFile + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        } catch (Exception e) {
+                            // change the peptide shaker icon back to the default version
+                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                            e.printStackTrace();
+                            JOptionPane.showMessageDialog(tempRef, "An error occured when exporting the data.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                        }
+
+                        if (progressDialog != null) {
+                            progressDialog.setVisible(false);
+                            progressDialog.dispose();
+                        }
+                    }
+                }.start();
+            }
+        }
+    }//GEN-LAST:event_exportUnidentifiedSpectraButtonActionPerformed
 
     /**
      * Indicates whether a spectrum is validated according to the user's settings.
@@ -937,12 +1096,14 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox degeneratedCheck;
     private javax.swing.JButton exportMgfButton;
     private javax.swing.JButton exportProgenesisButton;
+    private javax.swing.JButton exportUnidentifiedSpectraButton;
     private javax.swing.JComboBox idSelectionCmb;
     private javax.swing.JButton inclusionListButton;
     private javax.swing.JPanel inclusionListPanel;
     private javax.swing.JCheckBox isoformsCheck;
     private javax.swing.JCheckBox isoformsUnrelatedCheck;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -958,6 +1119,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JPanel spectraPanel;
     private javax.swing.JComboBox spectrumValidationCmb;
     private javax.swing.JButton srmButton;
+    private javax.swing.JPanel unidentifiedProteinsPanel;
     private javax.swing.JCheckBox unrelatedCheck;
     private javax.swing.JComboBox vendorCmb;
     // End of variables declaration//GEN-END:variables
