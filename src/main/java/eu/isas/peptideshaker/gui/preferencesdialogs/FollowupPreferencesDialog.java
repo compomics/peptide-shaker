@@ -106,6 +106,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         unidentifiedProteinsPanel = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         exportUnidentifiedSpectraButton = new javax.swing.JButton();
+        includeNonValidatedCheckBox = new javax.swing.JCheckBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Export");
@@ -347,7 +348,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         unidentifiedProteinsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Unidentified Proteins"));
         unidentifiedProteinsPanel.setOpaque(false);
 
-        jLabel10.setText("Export all the unidentified protein accession numbers to a tab separated text file for further analysis:");
+        jLabel10.setText("Export all the unidentified protein accession numbers to a tab separated text file:");
 
         exportUnidentifiedSpectraButton.setText("Export as CSV");
         exportUnidentifiedSpectraButton.addActionListener(new java.awt.event.ActionListener() {
@@ -356,6 +357,12 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
+        includeNonValidatedCheckBox.setSelected(true);
+        includeNonValidatedCheckBox.setText("Include Non-Validated");
+        includeNonValidatedCheckBox.setToolTipText("Include non-validated protein identification");
+        includeNonValidatedCheckBox.setIconTextGap(10);
+        includeNonValidatedCheckBox.setOpaque(false);
+
         javax.swing.GroupLayout unidentifiedProteinsPanelLayout = new javax.swing.GroupLayout(unidentifiedProteinsPanel);
         unidentifiedProteinsPanel.setLayout(unidentifiedProteinsPanelLayout);
         unidentifiedProteinsPanelLayout.setHorizontalGroup(
@@ -363,7 +370,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(unidentifiedProteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel10)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 90, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addComponent(includeNonValidatedCheckBox)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
                 .addComponent(exportUnidentifiedSpectraButton)
                 .addContainerGap())
         );
@@ -373,7 +382,8 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(unidentifiedProteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel10)
-                    .addComponent(exportUnidentifiedSpectraButton))
+                    .addComponent(exportUnidentifiedSpectraButton)
+                    .addComponent(includeNonValidatedCheckBox))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -884,13 +894,22 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             BufferedWriter b = new BufferedWriter(f);
 
                             ArrayList<String> accessions = sequenceFactory.getAccessions();
+                            PSParameter probabilities = new PSParameter();
 
                             for (int i = 0; i < accessions.size(); i++) {
                                 
                                 Protein tempProtein = sequenceFactory.getProtein(accessions.get(i));
                              
-                                if (!tempProtein.isDecoy() && !peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
-                                    b.write(accessions.get(i) + "\n");
+                                if (!tempProtein.isDecoy()) {
+                                    if(!peptideShakerGUI.getIdentification().matchExists(accessions.get(i))) {
+                                        b.write(accessions.get(i) + "\n");
+                                    } else if (includeNonValidatedCheckBox.isSelected()) {
+                                        probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(accessions.get(i), probabilities);
+                                        
+                                        if (!probabilities.isValidated()) {
+                                            b.write(accessions.get(i) + "\n");
+                                        }  
+                                    }
                                 }
                                 
                                 progressDialog.incrementValue();
@@ -1098,6 +1117,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton exportProgenesisButton;
     private javax.swing.JButton exportUnidentifiedSpectraButton;
     private javax.swing.JComboBox idSelectionCmb;
+    private javax.swing.JCheckBox includeNonValidatedCheckBox;
     private javax.swing.JButton inclusionListButton;
     private javax.swing.JPanel inclusionListPanel;
     private javax.swing.JCheckBox isoformsCheck;
