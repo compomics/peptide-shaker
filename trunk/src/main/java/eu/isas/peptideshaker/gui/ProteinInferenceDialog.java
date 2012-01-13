@@ -103,7 +103,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
             if (ProteinMatch.getNProteins(proteinKey) > 1 && !associatedMatches.contains(proteinKey) && !proteinKey.equals(inspectedMatch)) {
                 for (String proteinAccession : accessions) {
                     if (proteinKey.contains(proteinAccession)) {
-                        associatedMatches.add(proteinAccession);
+                        associatedMatches.add(proteinKey);
                         break;
                     }
                 }
