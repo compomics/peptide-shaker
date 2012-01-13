@@ -4835,6 +4835,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     }
 
                     setProject(tempExperiment, tempSample, tempReplicate);
+                    
+                    identification.setSerializationDirectory(getDefaultSerializationDirectory().getAbsolutePath());
 
                     File mgfFile;
                     int cpt = 1;
@@ -5257,6 +5259,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void setMetrics(Metrics metrics) {
         this.metrics = metrics;
     }
+    
+    /**
+     * Returns the default serialization directory for the currently loaded cpsFile
+     * @return the default serialization directory for the currently loaded cpsFile
+     */
+    private File getDefaultSerializationDirectory() {
+        String folderPath = currentPSFile.getParentFile().getAbsolutePath();
+        return new File(folderPath, currentPSFile.getName().substring(0, currentPSFile.getName().length() - 4) + "_cps");
+    }
 
     /**
      * Save the project to the currentPSFile location.
@@ -5290,8 +5301,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     tempRef.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
                     experiment.addUrParam(new PSSettings(searchParameters, annotationPreferences, spectrumCountingPreferences, projectDetails, filterPreferences, displayPreferences, metrics));
 
-                    String folderPath = currentPSFile.getParentFile().getAbsolutePath();
-                    File newFolder = new File(folderPath, currentPSFile.getName().substring(0, currentPSFile.getName().length() - 4) + "_cps");
+                    File newFolder = getDefaultSerializationDirectory();
 
                     if (newFolder.exists()) {
                         String[] fileList = newFolder.list();
