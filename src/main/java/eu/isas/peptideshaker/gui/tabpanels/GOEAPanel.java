@@ -54,6 +54,7 @@ import javax.xml.xpath.XPathFactory;
 import no.uib.jsparklines.data.JSparklinesDataSeries;
 import no.uib.jsparklines.data.JSparklinesDataset;
 import no.uib.jsparklines.data.ValueAndBooleanDataPoint;
+import no.uib.jsparklines.data.XYDataPoint;
 import no.uib.jsparklines.extra.HtmlLinksRenderer;
 import no.uib.jsparklines.extra.NimbusCheckBoxRenderer;
 import no.uib.jsparklines.renderers.JSparklinesBarChartTableCellRenderer;
@@ -189,6 +190,12 @@ public class GOEAPanel extends javax.swing.JPanel {
         goMappingsTable.getColumn("  ").setMaxWidth(30);
         goMappingsTable.getColumn("  ").setMinWidth(30);
 
+        double significanceLevel = 0.05;
+
+        if (onePercentRadioButton.isSelected()) {
+            significanceLevel = 0.01;
+        }
+
         // cell renderers
         goMappingsTable.getColumn("  ").setCellRenderer(new NimbusCheckBoxRenderer());
         goMappingsTable.getColumn("GO Accession").setCellRenderer(new HtmlLinksRenderer(peptideShakerGUI.getSelectedRowHtmlTagFontColor(), peptideShakerGUI.getNotSelectedRowHtmlTagFontColor()));
@@ -196,10 +203,11 @@ public class GOEAPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Frequency All (%)").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         goMappingsTable.getColumn("Frequency Dataset (%)").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Frequency Dataset (%)").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        goMappingsTable.getColumn("p-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, peptideShakerGUI.getSparklineColor()));
+        goMappingsTable.getColumn("p-value").setCellRenderer(
+                new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 1.0, peptideShakerGUI.getSparklineColor(), Color.lightGray, significanceLevel));
         ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("p-value").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         goMappingsTable.getColumn("Log2 Diff").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
-                PlotOrientation.HORIZONTAL, -10.0, 10.0, Color.RED, peptideShakerGUI.getSparklineColor(), Color.GRAY, 0));
+                PlotOrientation.HORIZONTAL, -10.0, 10.0, Color.RED, peptideShakerGUI.getSparklineColor(), Color.lightGray, 0));
         ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         goMappingsTable.getColumn("Frequency (%)").setCellRenderer(new JSparklinesTableCellRenderer(
                 JSparklinesTableCellRenderer.PlotType.barChart,
@@ -330,11 +338,11 @@ public class GOEAPanel extends javax.swing.JPanel {
         if (peptideShakerGUI.getIdentification() != null) {
 
             String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
-            
+
             if (selectedSpecies.indexOf("[") != -1) {
                 selectedSpecies = selectedSpecies.substring(0, selectedSpecies.indexOf("[") - 1);
             }
-            
+
             String speciesDatabase = speciesMap.get(selectedSpecies);
             String goMappingsPath = mappingsFolderPath + speciesDatabase;
 
@@ -371,7 +379,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             progressDialog.dispose();
                             JOptionPane.showMessageDialog(peptideShakerGUI, "Mapping file \"" + goMappingsFile.getName() + "\" not found!",
                                     "File Not Found", JOptionPane.ERROR_MESSAGE);
-                            
+
                             // return the peptide shaker icon to the standard version
                             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             return;
@@ -381,7 +389,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                         TreeMap<String, Integer> datasetGoTermUsage = new TreeMap<String, Integer>();
                         HashMap<String, String> goTermToAccessionMap = new HashMap<String, String>();
                         HashMap<String, ArrayList<String>> proteinToGoMappings = new HashMap<String, ArrayList<String>>();
-                        
+
                         int totalNumberOfProteins = 0;
 
                         try {
@@ -593,7 +601,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                                             true
                                         });
                             }
-                            
+
                             ((DefaultTableModel) goMappingsTable.getModel()).fireTableDataChanged();
 
                             // correct the p-values for multiple testing using benjamini-hochberg
@@ -609,20 +617,21 @@ public class GOEAPanel extends javax.swing.JPanel {
                             ((ValueAndBooleanDataPoint) goMappingsTable.getValueAt(
                                     indexes.get(0), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(
                                     pValues.get(0) < significanceLevel);
-                            goMappingsTable.setValueAt(pValues.get(0), indexes.get(0), goMappingsTable.getColumn("p-value").getModelIndex());
+                            goMappingsTable.setValueAt(new XYDataPoint(pValues.get(0), pValues.get(0)), indexes.get(0), goMappingsTable.getColumn("p-value").getModelIndex());
 
                             if (pValues.get(0) < significanceLevel) {
                                 significantCounter++;
                             }
 
                             for (int i = 1; i < pValues.size(); i++) {
+                                
+                                double tempPvalue = pValues.get(i) * pValues.size() / (pValues.size() - i);
+                                
                                 ((ValueAndBooleanDataPoint) goMappingsTable.getValueAt(
-                                        indexes.get(i), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(
-                                        pValues.get(i) * pValues.size() / (pValues.size() - i) < significanceLevel);
-                                goMappingsTable.setValueAt(
-                                        pValues.get(i) * pValues.size() / (pValues.size() - i), indexes.get(i), goMappingsTable.getColumn("p-value").getModelIndex());
+                                        indexes.get(i), goMappingsTable.getColumn("Log2 Diff").getModelIndex())).setSignificant(tempPvalue < significanceLevel);
+                                goMappingsTable.setValueAt(new XYDataPoint(tempPvalue, tempPvalue), indexes.get(i), goMappingsTable.getColumn("p-value").getModelIndex());
 
-                                if (pValues.get(i) * pValues.size() / (pValues.size() - i) < significanceLevel) {
+                                if (tempPvalue < significanceLevel) {
                                     significantCounter++;
                                 }
                             }
@@ -650,7 +659,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             maxLog2Diff = Math.ceil(maxLog2Diff);
 
                             goMappingsTable.getColumn("Log2 Diff").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
-                                    PlotOrientation.HORIZONTAL, -maxLog2Diff, maxLog2Diff, Color.RED, peptideShakerGUI.getSparklineColor(), Color.GRAY, 0));
+                                    PlotOrientation.HORIZONTAL, -maxLog2Diff, maxLog2Diff, Color.RED, peptideShakerGUI.getSparklineColor(), Color.lightGray, 0));
                             ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("Log2 Diff").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
                             // update the plots
@@ -661,7 +670,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                             exportPlotsJButton.setEnabled(true);
 
                             progressDialog.dispose();
-                            
+
                             peptideShakerGUI.setUpdated(PeptideShakerGUI.GO_ANALYSIS_TAB_INDEX, true);
 
                             // return the peptide shaker icon to the standard version
@@ -730,8 +739,8 @@ public class GOEAPanel extends javax.swing.JPanel {
                                 // return the peptide shaker icon to the standard version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             }
-                            }
                         }
+                    }
                 }.start();
             }
         }
@@ -1714,7 +1723,7 @@ public class GOEAPanel extends javax.swing.JPanel {
     private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadButtonActionPerformed
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-           
+
         new Thread(new Runnable() {
 
             public void run() {
@@ -1732,7 +1741,7 @@ public class GOEAPanel extends javax.swing.JPanel {
                 try {
                     // clear old data
                     clearOldResults();
-                    
+
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
@@ -1826,7 +1835,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                     bw.close();
                     w.close();
-                    
+
                     // change the peptide shaker icon back to the default version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -1837,7 +1846,7 @@ public class GOEAPanel extends javax.swing.JPanel {
 
                     loadSpeciesAndGoDomains();
                     speciesJComboBox.setSelectedIndex(0);
-                    
+
                     // @TODO: the code below ought to work, but results in bugs...
                     //        therefore the user now has to reselect in the drop down menu
 //                    int index = speciesJComboBox.getSelectedIndex();
@@ -2112,6 +2121,18 @@ public class GOEAPanel extends javax.swing.JPanel {
      * Update the GO mappings.
      */
     private void updateMappings() {
+
+        // update the p-value sparkline significance color
+        double significanceLevel = 0.05;
+
+        if (onePercentRadioButton.isSelected()) {
+            significanceLevel = 0.01;
+        }
+
+        goMappingsTable.getColumn("p-value").setCellRenderer(new JSparklinesBarChartTableCellRenderer(
+                PlotOrientation.HORIZONTAL, 1.0, peptideShakerGUI.getSparklineColor(), Color.lightGray, significanceLevel));
+ 
+        ((JSparklinesBarChartTableCellRenderer) goMappingsTable.getColumn("p-value").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
 
         String selectedSpecies = (String) speciesJComboBox.getSelectedItem();
 
