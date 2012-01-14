@@ -311,6 +311,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
 
         // set up the table header tooltips
         searchEngineTableToolTips = new ArrayList<String>();
@@ -2822,6 +2823,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     PlotOrientation.HORIZONTAL, lLowRT - widthOfMarker / 2, lHighRT + widthOfMarker / 2, widthOfMarker,
                     peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor());
             spectrumTable.getColumn("RT").setCellRenderer(lRTCellRenderer);
+            lRTCellRenderer.showReferenceLine(true, 0.02, java.awt.Color.BLACK);
             lRTCellRenderer.showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
         }
 

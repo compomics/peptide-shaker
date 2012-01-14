@@ -417,7 +417,7 @@
                     <Component class="javax.swing.JTable" name="proteinTable">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="12" rowCount="0">
+                          <Table columnCount="13" rowCount="0">
                             <Column editable="false" title=" " type="java.lang.Integer"/>
                             <Column editable="true" title="  " type="java.lang.Boolean"/>
                             <Column editable="false" title="PI" type="java.lang.Integer"/>
@@ -427,6 +427,7 @@
                             <Column editable="false" title="#Peptides" type="java.lang.Integer"/>
                             <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
                             <Column editable="false" title="MS2 Quant." type="java.lang.Double"/>
+                            <Column editable="false" title="MW" type="java.lang.Double"/>
                             <Column editable="false" title="Score" type="java.lang.Double"/>
                             <Column editable="false" title="Confidence" type="java.lang.Double"/>
                             <Column editable="false" title="" type="java.lang.Boolean"/>
@@ -675,13 +676,12 @@
                     <Component class="javax.swing.JTable" name="peptideTable">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                          <Table columnCount="8" rowCount="0">
+                          <Table columnCount="7" rowCount="0">
                             <Column editable="false" title=" " type="java.lang.Integer"/>
                             <Column editable="true" title="  " type="java.lang.Boolean"/>
                             <Column editable="false" title="PI" type="java.lang.Integer"/>
                             <Column editable="false" title="Sequence" type="java.lang.String"/>
                             <Column editable="false" title="Start" type="java.lang.Integer"/>
-                            <Column editable="false" title="End" type="java.lang.Integer"/>
                             <Column editable="false" title="PDB" type="java.lang.Boolean"/>
                             <Column editable="false" title="" type="java.lang.Boolean"/>
                           </Table>
