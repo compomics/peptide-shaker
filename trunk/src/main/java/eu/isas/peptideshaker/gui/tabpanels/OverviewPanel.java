@@ -4471,7 +4471,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     maxPeptides = 0;
                     maxSpectra = 0;
                     double sequenceCoverage = 0, possibleCoverage = 0;
-                    double spectrumCounting = 0;
+                    double spectrumCounting = 0, spectrumCountingSum = 0;
                     maxSpectrumCounting = 0;
                     maxMW = 0;
                     String description = "";
@@ -4556,13 +4556,15 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                                         probabilities.isValidated()
                                     });
 
+                            spectrumCountingSum += spectrumCounting;
+
                             proteinTableMap.put(index + 1, proteinMatchKey);
                             index++;
 
                             if (probabilities.isValidated()) {
                                 validatedProteinsCounter++;
                             }
-                            if (getMaxSpectrumCounting() < spectrumCounting) {
+                            if (maxSpectrumCounting < spectrumCounting) {
                                 maxSpectrumCounting = spectrumCounting;
                             }
                             if (getMaxMW() < currentProtein.computeMolecularWeight() / 1000) {
@@ -4577,6 +4579,26 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         }
 
                         progressDialog.incrementValue();
+                    }
+
+                    // normalize the NSAF spectrum counts
+                    if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF && spectrumCountingSum > 0) {
+                        
+                        // @TODO: has to be a faster way of doing this??
+                        
+                        maxSpectrumCounting = 0;
+                        
+                        for (int i = 0; i < proteinTable.getRowCount(); i++) {
+
+                            double tempSpectrumCount = (Double) proteinTable.getValueAt(i, proteinTable.getColumn("MS2 Quant.").getModelIndex());
+                            tempSpectrumCount /= spectrumCountingSum;
+                            
+                            proteinTable.setValueAt(tempSpectrumCount, i, proteinTable.getColumn("MS2 Quant.").getModelIndex());
+
+                            if (maxSpectrumCounting < tempSpectrumCount) {
+                                maxSpectrumCounting = tempSpectrumCount;
+                            }
+                        }
                     }
 
                     // invoke later to give time for components to update
