@@ -3446,7 +3446,7 @@ public class StatsPanel extends javax.swing.JPanel {
      * Reload the data to update validation status and scores.
      */
     private void reloadData() {
-        peptideShakerGUI.reloadData();
+        peptideShakerGUI.reloadData(false);
     }
 
     /**

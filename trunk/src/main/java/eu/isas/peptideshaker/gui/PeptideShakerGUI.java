@@ -2241,11 +2241,11 @@ private void adaptCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt
     updateAnnotationPreferences();
 }//GEN-LAST:event_adaptCheckBoxMenuItemActionPerformed
 
-/**
- * Open the project details dialog.
- * 
- * @param evt 
- */
+    /**
+     * Open the project details dialog.
+     * 
+     * @param evt 
+     */
 private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_projectPropertiesMenuItemActionPerformed
     new ProjectDetailsDialog(this);
 }//GEN-LAST:event_projectPropertiesMenuItemActionPerformed
@@ -3499,7 +3499,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void setSparklineColorNonValidated(Color sparklineColorNonValidated) {
         userPreferences.setSparklineColorNonValidated(sparklineColorNonValidated);
     }
-    
+
     /**
      * Get the possible sparklines color.
      *
@@ -3636,7 +3636,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         spectrumAnnotator = new SpectrumAnnotator();
         exceptionCaught = new ArrayList<String>();
         identifiedModifications = null;
-        
+
         identification = null;
         resetFeatureGenerator();
 
@@ -3651,6 +3651,17 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         allTabsJTabbedPane.setSelectedIndex(OVER_VIEW_TAB_INDEX);
         currentPSFile = null;
         dataSaved = false;
+    }
+
+    /**
+     * Selects a given tab.
+     * 
+     * @param tabIndex the tab index to select
+     */
+    public void selectTab(int tabIndex) {
+        if (tabIndex < allTabsJTabbedPane.getTabCount()) {
+            allTabsJTabbedPane.setSelectedIndex(tabIndex);
+        }   
     }
 
     /**
@@ -3672,8 +3683,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
     /**
      * Reloads the data.
+     * 
+     * @param reloadValidationTab
      */
-    public void reloadData() {
+    public void reloadData(boolean reloadValidationTab) {
 
         dataSaved = false;
 
@@ -3681,7 +3694,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         resetSelectedItems();
 
         // set up the tabs/panels
-        setUpPanels(false);
+        setUpPanels(reloadValidationTab);
 
         // repaint the panels
         repaintPanels();
@@ -4835,7 +4848,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     }
 
                     setProject(tempExperiment, tempSample, tempReplicate);
-                    
+
                     identification.setSerializationDirectory(getDefaultSerializationDirectory().getAbsolutePath());
 
                     File mgfFile;
@@ -4844,9 +4857,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     progressDialog.setIndeterminate(true);
 
                     for (String spectrumFile : spectrumFiles) {
-                        
+
                         progressDialog.setTitle("Importing Spectrum Files (" + cpt++ + "/" + spectrumFiles.size() + "). Please Wait...");
-                        
+
                         try {
                             mgfFile = new File(spectrumFile);
                             spectrumFactory.addSpectra(mgfFile, progressDialog.getProgressBar());
@@ -5259,7 +5272,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void setMetrics(Metrics metrics) {
         this.metrics = metrics;
     }
-    
+
     /**
      * Returns the default serialization directory for the currently loaded cpsFile
      * @return the default serialization directory for the currently loaded cpsFile

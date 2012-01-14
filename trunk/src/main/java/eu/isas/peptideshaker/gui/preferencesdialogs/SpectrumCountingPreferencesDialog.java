@@ -6,6 +6,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 /**
  * Spectrum counting options dialog.
@@ -205,15 +206,21 @@ public class SpectrumCountingPreferencesDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
         setVisible(false);
+        
+        // move to the overview tab to reduce the chance of issues with the other tabs
+        peptideShakerGUI.selectTab(PeptideShakerGUI.OVER_VIEW_TAB_INDEX);
+        
         if (methodCmb.getSelectedIndex() == 0) {
             spectrumCountingPreferences.setSelectedMethod(SpectralCountingMethod.NSAF);
         } else {
             spectrumCountingPreferences.setSelectedMethod(SpectralCountingMethod.EMPAI);
         }
+        
         spectrumCountingPreferences.setValidatedHits(validatedCheck.isSelected());
         peptideShakerGUI.setSpectrumCountingPreferences(spectrumCountingPreferences);
         peptideShakerGUI.resetFeatureGenerator();
-        peptideShakerGUI.reloadData(); // @TODO: maybe there is a simpler way to update this column?
+        peptideShakerGUI.reloadData(true); // @TODO: maybe there is a simpler way to update this column?
+        peptideShakerGUI.initiateDisplay();
         peptideShakerGUI.setDataSaved(false);
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
