@@ -1000,7 +1000,7 @@ public class QCPanel extends javax.swing.JPanel {
      * @param evt 
      */
     private void tabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_tabbedPaneStateChanged
-        if (peptideShakerGUI.getIdentification() != null) {
+        if (peptideShakerGUI.getIdentification() != null && peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.QC_PLOTS_TAB_INDEX) {
             if (tabbedPane.getSelectedIndex() == 0) { // psms
                 updatePsmQCPlot();
                 exportPsmPlotJButton.setEnabled(true);
@@ -1408,6 +1408,7 @@ public class QCPanel extends javax.swing.JPanel {
 
             progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
             progressDialog.doNothingOnClose();
+
             new Thread(new Runnable() {
 
                 public void run() {
