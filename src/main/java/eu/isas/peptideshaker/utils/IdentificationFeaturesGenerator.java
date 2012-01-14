@@ -336,10 +336,15 @@ public class IdentificationFeaturesGenerator {
         try {
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
             if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF) {
+                
+                // NSAF
+                
                 if (currentProtein == null) {
                     return 0.0;
                 }
+                
                 result = 0;
+                
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
                     PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
                     for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
@@ -352,10 +357,13 @@ public class IdentificationFeaturesGenerator {
 
                 return result / currentProtein.getObservableLength(enyzme, peptideShakerGUI.getIdFilter().getMaxPepLength());
 
-            } else { // emPAI
+            } else {
 
+                // emPAI
+                
                 if (peptideShakerGUI.getSpectrumCountingPreferences().isValidatedHits()) {
                     result = 0;
+                    
                     for (String peptideKey : proteinMatch.getPeptideMatches()) {
                         pSParameter = (PSParameter) identification.getMatchParameter(peptideKey, pSParameter);
                         if (pSParameter.isValidated()) {

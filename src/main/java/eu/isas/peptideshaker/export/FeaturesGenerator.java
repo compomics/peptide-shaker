@@ -217,7 +217,8 @@ public class FeaturesGenerator {
                                         result += cpt + SEPARATOR;
                                     }
                                     if (emPAI) {
-                                        double pai = cpt / mainMatch.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
+                                        double pai = cpt; 
+                                        pai = pai / mainMatch.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme()); 
                                         double empai = Math.pow(10, pai) - 1;
                                         emPAIScore = empai;
                                     }
@@ -246,7 +247,8 @@ public class FeaturesGenerator {
                                         result += cpt + SEPARATOR;
                                     }
                                     if (nsaf) {
-                                        double index = cpt / mainMatch.getSequence().length();
+                                        double index = cpt; 
+                                        index = index / mainMatch.getSequence().length();  // @TODO: should be "normalized by the sum of all the protein abundances in the set"!?
                                         nsafScore = index;
                                     }
                                 } catch (Exception e) {

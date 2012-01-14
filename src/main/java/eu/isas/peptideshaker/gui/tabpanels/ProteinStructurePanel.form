@@ -426,7 +426,7 @@
                             <Column editable="false" title="Coverage" type="java.lang.Double"/>
                             <Column editable="false" title="#Peptides" type="java.lang.Integer"/>
                             <Column editable="false" title="#Spectra" type="java.lang.Integer"/>
-                            <Column editable="false" title="MS2 Quantification" type="java.lang.Double"/>
+                            <Column editable="false" title="MS2 Quant." type="java.lang.Double"/>
                             <Column editable="false" title="Score" type="java.lang.Double"/>
                             <Column editable="false" title="Confidence" type="java.lang.Double"/>
                             <Column editable="false" title="" type="java.lang.Boolean"/>
