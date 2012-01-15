@@ -2724,7 +2724,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
-        
+
         // change the peptide shaker icon to a "waiting version"
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
@@ -2806,7 +2806,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 benefitPlotExportJButton.setEnabled(true);
 
                 tabInitiated = true;
-                
+
                 // change the peptide shaker icon back to the default version
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                 progressDialog.setVisible(false);

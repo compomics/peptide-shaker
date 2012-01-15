@@ -24,6 +24,7 @@ import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -271,11 +272,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
                 true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
 
         omssaTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) omssaTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) omssaTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() - 30);
         xTandemTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) xTandemTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) xTandemTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() - 30);
         mascotTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
-        ((JSparklinesBarChartTableCellRenderer) mascotTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) mascotTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() - 30);
 
         searchEngineTable.getColumn("Validated PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
         searchEngineTable.getColumn("Unique PSMs").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
@@ -306,10 +307,11 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         spectrumTable.getColumn("SE").setCellRenderer(new JSparklinesIntegerColorTableCellRenderer(java.awt.Color.lightGray, searchEngineSpectrumLevelColorMap, searchEngineSpectrumLevelTooltipMap));
         spectrumTable.getColumn("m/z").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        spectrumTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
-        spectrumTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, 10d, peptideShakerGUI.getSparklineColor()));
+        spectrumTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 4d, peptideShakerGUI.getSparklineColor()));
+        spectrumTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d,
+                1000d, 10d, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
-        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
+        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() - 30);
         ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
         ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
 
@@ -2408,6 +2410,16 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                 try {
                     identification = peptideShakerGUI.getIdentification();
+
+                    // now we have data and can update the jsparklines depending on this
+                    spectrumTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
+                            new Integer(((PSMaps) identification.getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge()).doubleValue(), peptideShakerGUI.getSparklineColor()));
+                    spectrumTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMinRT(),
+                            SpectrumFactory.getInstance().getMaxRT(), SpectrumFactory.getInstance().getMaxRT() / 50, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
+                    ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() - 30);
+                    ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+                    ((JSparklinesIntervalChartTableCellRenderer) spectrumTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
+
                     int m = 0, o = 0, x = 0, mo = 0, mx = 0, ox = 0, omx = 0, no_m = 0, no_x = 0, no_o = 0;
                     boolean mascot, omssa, xTandem;
                     PSParameter probabilities = new PSParameter();
@@ -2444,6 +2456,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
 
                     for (String spectrumKey : identification.getSpectrumIdentification()) {
+                        
                         spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         mascot = false;
                         omssa = false;
@@ -2470,17 +2483,23 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                         if (mascot && omssa && xTandem) {
                             omx++;
-                        } else if (mascot && omssa) {
+                        } 
+                        if (mascot && omssa) {
                             mo++;
-                        } else if (omssa && xTandem) {
+                        } 
+                        if (omssa && xTandem) {
                             ox++;
-                        } else if (mascot && xTandem) {
+                        } 
+                        if (mascot && xTandem) {
                             mx++;
-                        } else if (mascot) {
+                        } 
+                        if (mascot) {
                             m++;
-                        } else if (omssa) {
+                        } 
+                        if (omssa) {
                             o++;
-                        } else if (xTandem) {
+                        } 
+                        if (xTandem) {
                             x++;
                         }
 
@@ -2500,16 +2519,16 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Updating Tables. Please Wait...");
 
-                    int nMascot = omx + mo + mx + m;
-                    int nOMSSA = omx + mo + ox + o;
-                    int nXTandem = omx + mx + ox + x;
-
+                    int nMascot = m;
+                    int nOMSSA = o;
+                    int nXTandem = x;
+                    
                     double biggestValue = Math.max(Math.max(nMascot, nOMSSA), nXTandem);
                     biggestValue = Math.max(biggestValue, Math.max(Math.max(no_o, no_x), no_m));
 
                     if (omssaUsed && xtandemUsed && mascotUsed) {
                         updateThreeWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, nMascot,
-                                (ox + omx), (mo + omx), (mx + omx), omx,
+                                ox, mo, mx, omx,
                                 "OMSSA", "X!Tandem", "Mascot");
                     } else if (omssaUsed && xtandemUsed) {
                         updateTwoWayVennDiagram(vennDiagramButton, nOMSSA, nXTandem, ox, "OMSSA", "X!Tandem");
@@ -2528,21 +2547,21 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     if (omssaUsed) {
                         ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
                                     ++searchEngineRowCounter, "OMSSA",
-                                    nOMSSA, o, nOMSSA, ox + omx, mo + omx, omx, no_o
+                                    nOMSSA, nOMSSA-ox-mo+omx, nOMSSA, ox, mo, omx, no_o
                                 });
                     }
 
                     if (xtandemUsed) {
                         ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
                                     ++searchEngineRowCounter, "X!Tandem",
-                                    nXTandem, x, ox + omx, nXTandem, mx + omx, omx, no_x
+                                    nXTandem, nXTandem-ox-mx+omx, ox, nXTandem, mx, omx, no_x
                                 });
                     }
 
                     if (mascotUsed) {
                         ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
                                     ++searchEngineRowCounter, "Mascot",
-                                    nMascot, m, mo + omx, mx + omx, nMascot, omx, no_m
+                                    nMascot, nMascot-mo-mx+omx, mo, mx, nMascot, omx, no_m
                                 });
                     }
 
@@ -2742,14 +2761,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         dm.fireTableDataChanged();
 
         String fileSelected = (String) fileNamesCmb.getSelectedItem();
-
-        int maxCharge = 0;
         double maxMz = Double.MIN_VALUE;
-
-        double lLowRT = Double.MAX_VALUE;
-        double lHighRT = Double.MIN_VALUE;
-
         int counter = 0;
+        int notIdentifiedCounter = 0;
 
         progressDialog.setIndeterminate(false);
         progressDialog.setMax(SpectrumFactory.getInstance().getSpectrumTitles(fileSelected).size());
@@ -2776,6 +2790,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                 if (!identification.matchExists(spectrumKey)) {
                     searchEngineAgreement = NO_ID;
+                    notIdentifiedCounter++;
                 } else {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     searchEngineAgreement = isBestPsmEqualForAllSearchEngines(spectrumMatch);
@@ -2786,21 +2801,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                             searchEngineAgreement,
                             Spectrum.getSpectrumTitle(spectrumKey),
                             precursor.getMz(),
-                            precursor.getPossibleCharges().get(0).value, // @TODO: this is just a temporary fix until we find a better way of handling multiple charges...
+                            precursor.getPossibleCharges().get(0).value, // @TODO: this is just a temporary fix until we find a better way of displaying multiple charges...
                             retentionTime
                         });
-
-                if (precursor.getPossibleCharges().get(0).value > maxCharge) {
-                    maxCharge = precursor.getPossibleCharges().get(0).value;
-                }
-
-                if (lLowRT > retentionTime) {
-                    lLowRT = retentionTime;
-                }
-
-                if (lHighRT < retentionTime) {
-                    lHighRT = retentionTime;
-                }
 
                 if (precursor.getMz() > maxMz) {
                     maxMz = precursor.getMz();
@@ -2808,26 +2811,9 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
             }
         }
 
-        ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("Spectrum Selection (" + spectrumTable.getRowCount() + ")");
+        ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("Spectrum Selection (" + (spectrumTable.getRowCount() - notIdentifiedCounter) + "/" + spectrumTable.getRowCount() + ")");
         spectrumSelectionPanel.repaint();
 
-
-        if (retentionTimeValues) {
-
-            // @TODO: min and max retention time from the project should be used as boundaries instead
-
-            lLowRT = 100;
-            double widthOfMarker = 200;
-
-            JSparklinesIntervalChartTableCellRenderer lRTCellRenderer = new JSparklinesIntervalChartTableCellRenderer(
-                    PlotOrientation.HORIZONTAL, lLowRT - widthOfMarker / 2, lHighRT + widthOfMarker / 2, widthOfMarker,
-                    peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor());
-            spectrumTable.getColumn("RT").setCellRenderer(lRTCellRenderer);
-            lRTCellRenderer.showReferenceLine(true, 0.02, java.awt.Color.BLACK);
-            lRTCellRenderer.showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
-        }
-
-        ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("Charge").getCellRenderer()).setMaxValue(maxCharge);
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
     }
 
@@ -2844,13 +2830,17 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * Updates the spectrum selected according to the last user's selection
      */
     public void updateSelection() {
+        
         String spectrumKey = peptideShakerGUI.getSelectedPsmKey();
+        
         if (spectrumKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             spectrumTable.setRowSelectionInterval(0, 0);
             spectrumKey = getSelectedSpectrumKey();
         } else {
             selectSpectrum(spectrumKey);
         }
+        
+        spectrumSelectionChanged();
     }
 
     /**
@@ -2940,7 +2930,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 probabilities.getPsmConfidence(),
                                 probabilities.isValidated()
                             });
-
+                    
                     peptideShakerJTablePeptideTooltip = featuresGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide());
 
                     // Fill Mascot table

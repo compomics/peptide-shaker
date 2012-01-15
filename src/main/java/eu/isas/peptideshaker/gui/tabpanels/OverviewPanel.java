@@ -4297,6 +4297,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         psmTable.setRowSelectionInterval(psmRow, psmRow);
                         psmTable.scrollRectToVisible(psmTable.getCellRect(psmRow, 0, false));
                         psmTableKeyReleased(null);
+                        newItemSelection();
                     }
                 }
             } catch (Exception e) {
@@ -4597,24 +4598,24 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     }
 
                     // normalize the NSAF spectrum counts
-                    if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF && spectrumCountingSum > 0) {
-                        
-                        // @TODO: has to be a faster way of doing this??
-                        
-                        maxSpectrumCounting = 0;
-                        
-                        for (int i = 0; i < proteinTable.getRowCount(); i++) {
-
-                            double tempSpectrumCount = (Double) proteinTable.getValueAt(i, proteinTable.getColumn("MS2 Quant.").getModelIndex());
-                            tempSpectrumCount /= spectrumCountingSum;
-                            
-                            proteinTable.setValueAt(tempSpectrumCount, i, proteinTable.getColumn("MS2 Quant.").getModelIndex());
-
-                            if (maxSpectrumCounting < tempSpectrumCount) {
-                                maxSpectrumCounting = tempSpectrumCount;
-                            }
-                        }
-                    }
+//                    if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF && spectrumCountingSum > 0) {
+//                        
+//                        // @TODO: has to be a faster way of doing this??
+//                        
+//                        maxSpectrumCounting = 0;
+//                        
+//                        for (int i = 0; i < proteinTable.getRowCount(); i++) {
+//
+//                            double tempSpectrumCount = (Double) proteinTable.getValueAt(i, proteinTable.getColumn("MS2 Quant.").getModelIndex());
+//                            tempSpectrumCount /= spectrumCountingSum;
+//                            
+//                            proteinTable.setValueAt(tempSpectrumCount, i, proteinTable.getColumn("MS2 Quant.").getModelIndex());
+//
+//                            if (maxSpectrumCounting < tempSpectrumCount) {
+//                                maxSpectrumCounting = tempSpectrumCount;
+//                            }
+//                        }
+//                    }
 
                     // invoke later to give time for components to update
                     SwingUtilities.invokeLater(new Runnable() {
@@ -5290,7 +5291,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
             proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
             proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
             proteinTableMouseReleased(null);
-            peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
         }
 
         // invoke later to give time for components to update
@@ -5347,7 +5347,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
         if (psmTable.getSelectedRow() != -1) {
             psmKey = psmTableMap.get((Integer) psmTable.getValueAt(psmTable.getSelectedRow(), 0));
         }
-
+        
         peptideShakerGUI.setSelectedItems(proteinKey, peptideKey, psmKey);
     }
 
