@@ -117,7 +117,7 @@ public class FeaturesGenerator {
                 result += "Sequence Coverage (%)" + SEPARATOR;
             }
             if (modifiedSequence) {
-                result += "Modified sequence" + SEPARATOR;
+                result += "Modified Sequence" + SEPARATOR;
             }
             if (nPeptides) {
                 result += "#Validated Peptides" + SEPARATOR;
@@ -169,8 +169,8 @@ public class FeaturesGenerator {
                             }
                             if (piDetails) {
                                 result += proteinPSParameter.getGroupName() + SEPARATOR;
+                                boolean first = true;
                                 for (String otherProtein : proteinMatch.getTheoreticProteinsAccessions()) {
-                                    boolean first = true;
                                     if (!otherProtein.equals(proteinMatch.getMainMatch())) {
                                         if (first) {
                                             first = false;
