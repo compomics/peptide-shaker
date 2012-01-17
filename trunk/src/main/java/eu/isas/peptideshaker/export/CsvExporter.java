@@ -237,12 +237,12 @@ public class CsvExporter {
         line += nSpectra + SEPARATOR;
         line += nValidatedPeptides + SEPARATOR + nValidatedPsms + SEPARATOR;
         try {
-        line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getNPossiblePeptides(enzyme) + SEPARATOR;
-        line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence().length() + SEPARATOR;
+            line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getNPossiblePeptides(enzyme) + SEPARATOR;
+            line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence().length() + SEPARATOR;
         } catch (Exception e) {
-            line+= "protein not found " + SEPARATOR + SEPARATOR;
+            line += "protein not found " + SEPARATOR + SEPARATOR;
         }
-        
+
         try {
             line += probabilities.getProteinProbabilityScore() + SEPARATOR
                     + probabilities.getProteinProbability() + SEPARATOR;
@@ -262,7 +262,7 @@ public class CsvExporter {
             line += "0" + SEPARATOR;
         }
         try {
-        line += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
+            line += sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
         } catch (Exception e) {
             line += "Protein not found";
         }
@@ -311,7 +311,7 @@ public class CsvExporter {
                 if (first2) {
                     first2 = false;
                 } else {
-                line += ", ";
+                    line += ", ";
                 }
                 line += aa;
             }
@@ -425,7 +425,7 @@ public class CsvExporter {
                 if (first2) {
                     first2 = false;
                 } else {
-                line += ", ";
+                    line += ", ";
                 }
                 line += aa;
             }
@@ -440,25 +440,27 @@ public class CsvExporter {
             } else {
                 line += ", ";
             }
-            ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
-            line += mod + " (";
-            if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
-                int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
-                if (ptmConfidence == PtmScoring.NOT_FOUND) {
-                    line += "Not Scored"; // Well this should not happen
-                } else if (ptmConfidence == PtmScoring.RANDOM) {
-                    line += "Random";
-                } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
-                    line += "Doubtfull";
-                } else if (ptmConfidence == PtmScoring.CONFIDENT) {
-                    line += "Confident";
-                } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
-                    line += "Very Confident";
+            if (spectrumMatch.getUrParam(ptmScores) != null) {
+                ptmScores = (PSPtmScores) spectrumMatch.getUrParam(ptmScores);
+                line += mod + " (";
+                if (ptmScores != null && ptmScores.getPtmScoring(mod) != null) {
+                    int ptmConfidence = ptmScores.getPtmScoring(mod).getPtmSiteConfidence();
+                    if (ptmConfidence == PtmScoring.NOT_FOUND) {
+                        line += "Not Scored"; // Well this should not happen
+                    } else if (ptmConfidence == PtmScoring.RANDOM) {
+                        line += "Random";
+                    } else if (ptmConfidence == PtmScoring.DOUBTFUL) {
+                        line += "Doubtfull";
+                    } else if (ptmConfidence == PtmScoring.CONFIDENT) {
+                        line += "Confident";
+                    } else if (ptmConfidence == PtmScoring.VERY_CONFIDENT) {
+                        line += "Very Confident";
+                    }
+                } else {
+                    line += "Not Scored";
                 }
-            } else {
-                line += "Not Scored";
+                line += ")";
             }
-            line += ")";
         }
         line += SEPARATOR;
         String fileName = Spectrum.getSpectrumFile(spectrumMatch.getKey());
