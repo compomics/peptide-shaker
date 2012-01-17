@@ -27,7 +27,7 @@ public class UserPreferences implements Serializable {
     /**
      * The color used for the not found sparkline bar chart plots
      */
-    private Color sparklineColorNotFound = new Color(212, 212, 212);
+    private Color sparklineColorNotFound = new Color(222, 222, 222);
     /**
      * The color used for the possible values sparkline bar chart plots
      */
@@ -95,7 +95,7 @@ public class UserPreferences implements Serializable {
      */
     public Color getSparklineColorNotFound() {
         if (sparklineColorNotFound == null) {
-            sparklineColorNotFound = Color.LIGHT_GRAY;
+            sparklineColorNotFound = new Color(222, 222, 222);
         }
         return sparklineColorNotFound;
     }

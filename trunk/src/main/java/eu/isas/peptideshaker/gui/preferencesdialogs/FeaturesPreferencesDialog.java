@@ -102,6 +102,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideStarred = new javax.swing.JCheckBox();
         peptideHidden = new javax.swing.JCheckBox();
         jLabel5 = new javax.swing.JLabel();
+        precursorCharges = new javax.swing.JCheckBox();
         psmPanel = new javax.swing.JPanel();
         psmAccession = new javax.swing.JCheckBox();
         psmSequence = new javax.swing.JCheckBox();
@@ -233,7 +234,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinHidden.setIconTextGap(10);
         proteinHidden.setOpaque(false);
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Tahoma", 2, 11));
         jLabel4.setText("Export Protein Features");
 
         javax.swing.GroupLayout proteinsPanelLayout = new javax.swing.GroupLayout(proteinsPanel);
@@ -401,8 +402,12 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideHidden.setIconTextGap(10);
         peptideHidden.setOpaque(false);
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Tahoma", 2, 11));
         jLabel5.setText("Export Peptide Features");
+
+        precursorCharges.setText("Precursor Charge(s)");
+        precursorCharges.setIconTextGap(10);
+        precursorCharges.setOpaque(false);
 
         javax.swing.GroupLayout peptidesPanelLayout = new javax.swing.GroupLayout(peptidesPanel);
         peptidesPanel.setLayout(peptidesPanelLayout);
@@ -425,7 +430,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                                     .addGroup(peptidesPanelLayout.createSequentialGroup()
                                         .addComponent(peptideSequence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(precursorCharges, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(18, 18, 18)
                                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(peptideConfidence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -465,7 +472,8 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(peptideConfidence)
                             .addComponent(peptideSequence)
-                            .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(peptideLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(precursorCharges))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(peptidePosition))
                     .addGroup(peptidesPanelLayout.createSequentialGroup()
@@ -563,7 +571,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         psmHidden.setIconTextGap(10);
         psmHidden.setOpaque(false);
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Tahoma", 2, 11));
         jLabel6.setText("Export PSM Features");
 
         javax.swing.GroupLayout psmPanelLayout = new javax.swing.GroupLayout(psmPanel);
@@ -708,7 +716,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel7.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Tahoma", 2, 11));
         jLabel7.setText("Export Search Engine Features");
 
         javax.swing.GroupLayout searchEnginePanelLayout = new javax.swing.GroupLayout(searchEnginePanel);
@@ -788,11 +796,11 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         jLabel1.setText("All Identification Results:");
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tahoma", 2, 11));
         jLabel2.setForeground(new java.awt.Color(255, 0, 0));
         jLabel2.setText("Note: Advanced export. For expert use only.");
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Tahoma", 2, 11));
         jLabel3.setText("Exports all the identification results as four tab separated text files.");
 
         javax.swing.GroupLayout projectPanelLayout = new javax.swing.GroupLayout(projectPanel);
@@ -1033,6 +1041,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideSequence.setSelected(true);
         peptideModification.setSelected(true);
         peptideLocation.setSelected(true);
+        precursorCharges.setSelected(true);
         peptideNSpectra.setSelected(true);
         peptideScore.setSelected(true);
         peptideConfidence.setSelected(true);
@@ -1051,6 +1060,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         peptideSequence.setSelected(false);
         peptideModification.setSelected(false);
         peptideLocation.setSelected(false);
+        precursorCharges.setSelected(false);
         peptideNSpectra.setSelected(false);
         peptideScore.setSelected(false);
         peptideConfidence.setSelected(false);
@@ -1176,7 +1186,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                         
                         feature = outputGenerator.getPeptidesOutput(progressDialog, null, null, peptideValidated.isSelected(), false,
                                 peptideAccession.isSelected(), peptidePosition.isSelected(), peptideSequence.isSelected(),
-                                peptideModification.isSelected(), peptideLocation.isSelected(), peptideNSpectra.isSelected(),
+                                peptideModification.isSelected(), peptideLocation.isSelected(), precursorCharges.isSelected(), peptideNSpectra.isSelected(),
                                 peptideScore.isSelected(), peptideConfidence.isSelected(), true, peptideStarred.isSelected(), peptideHidden.isSelected());
 
                         progressDialog.setIndeterminate(true);
@@ -1528,6 +1538,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JButton peptideUnselectAll;
     private javax.swing.JCheckBox peptideValidated;
     private javax.swing.JPanel peptidesPanel;
+    private javax.swing.JCheckBox precursorCharges;
     private javax.swing.JPanel projectPanel;
     private javax.swing.JCheckBox proteinAccession;
     private javax.swing.JCheckBox proteinConfidence;

@@ -408,6 +408,8 @@
                                                       <Component id="peptideSequence" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
                                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                                       <Component id="peptideLocation" linkSize="2" min="-2" pref="150" max="-2" attributes="0"/>
+                                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                                      <Component id="precursorCharges" min="-2" pref="150" max="-2" attributes="0"/>
                                                   </Group>
                                               </Group>
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -455,6 +457,7 @@
                                           <Component id="peptideConfidence" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="peptideSequence" linkSize="16" alignment="3" min="-2" max="-2" attributes="0"/>
                                           <Component id="peptideLocation" alignment="3" min="-2" pref="16" max="-2" attributes="0"/>
+                                          <Component id="precursorCharges" alignment="3" min="-2" max="-2" attributes="0"/>
                                       </Group>
                                       <EmptySpace min="-2" max="-2" attributes="0"/>
                                       <Component id="peptidePosition" min="-2" max="-2" attributes="0"/>
@@ -591,6 +594,13 @@
                           <Font name="Tahoma" size="11" style="2"/>
                         </Property>
                         <Property name="text" type="java.lang.String" value="Export Peptide Features"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JCheckBox" name="precursorCharges">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Precursor Charge(s)"/>
+                        <Property name="iconTextGap" type="int" value="10"/>
+                        <Property name="opaque" type="boolean" value="false"/>
                       </Properties>
                     </Component>
                   </SubComponents>
