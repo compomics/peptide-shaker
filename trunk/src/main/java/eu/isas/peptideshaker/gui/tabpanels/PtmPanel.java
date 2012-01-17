@@ -11,6 +11,7 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.protein.SequenceModificationPanel;
 import com.compomics.util.gui.spectrum.SpectrumPanel;
@@ -328,8 +329,10 @@ public class PtmPanel extends javax.swing.JPanel {
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
-        selectedPsmsTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, 10d, peptideShakerGUI.getSparklineColor()));
+        selectedPsmsTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d,
+                1000d, 10d, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesIntervalChartTableCellRenderer) selectedPsmsTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        ((JSparklinesIntervalChartTableCellRenderer) selectedPsmsTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
         selectedPsmsTable.getColumn("   ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/star_yellow.png")),
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
@@ -342,8 +345,10 @@ public class PtmPanel extends javax.swing.JPanel {
                 new ImageIcon(this.getClass().getResource("/icons/accept.png")),
                 new ImageIcon(this.getClass().getResource("/icons/Error_3.png")),
                 "Validated", "Not Validated"));
-        relatedPsmsTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, 10d, peptideShakerGUI.getSparklineColor()));
+        relatedPsmsTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d,
+                1000d, 10d, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesIntervalChartTableCellRenderer) relatedPsmsTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        ((JSparklinesIntervalChartTableCellRenderer) relatedPsmsTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
         relatedPsmsTable.getColumn("   ").setCellRenderer(new TrueFalseIconRenderer(
                 new ImageIcon(this.getClass().getResource("/icons/star_yellow.png")),
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
@@ -3045,6 +3050,16 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 // change the peptide shaker icon to a "waiting version"
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
+                // now we have date so we can update the RT cell renderers max and min values
+                selectedPsmsTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMinRT(),
+                        SpectrumFactory.getInstance().getMaxRT(), SpectrumFactory.getInstance().getMaxRT() / 50, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
+                ((JSparklinesIntervalChartTableCellRenderer) selectedPsmsTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+                ((JSparklinesIntervalChartTableCellRenderer) selectedPsmsTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
+                relatedPsmsTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMinRT(),
+                        SpectrumFactory.getInstance().getMaxRT(), SpectrumFactory.getInstance().getMaxRT() / 50, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
+                ((JSparklinesIntervalChartTableCellRenderer) relatedPsmsTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+                ((JSparklinesIntervalChartTableCellRenderer) relatedPsmsTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
+
                 identification = peptideShakerGUI.getIdentification();
                 createPeptideMap(progressDialog);
                 String[] modifications = new String[peptideMap.size()];
@@ -3118,7 +3133,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         // @TODO: if the given peptide has more than one ptm -> the user must choose the ptm to display 
 
         String selectedKey = peptideShakerGUI.getSelectedPeptideKey();
-        
+
         if (selectedKey.equals(PeptideShakerGUI.NO_SELECTION)
                 && !peptideShakerGUI.getSelectedPsmKey().equals(PeptideShakerGUI.NO_SELECTION)) {
             String psmKey = peptideShakerGUI.getSelectedPsmKey();
@@ -3129,9 +3144,9 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
         }
 
         if (!selectedKey.equals(PeptideShakerGUI.NO_SELECTION)) {
-            
+
             // @TODO: the selection should not be updated if it's the same as the current one, e.g, when moving back and forth between tabs
-            
+
             int row = 0;
             for (String displayedPeptide : displayedPeptides) {
                 if (displayedPeptide.equals(selectedKey)) {
@@ -3461,56 +3476,6 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         selectedPsmsTable.removeRowSelectionInterval(selectedPsmsTable.getSelectedRow(), selectedPsmsTable.getSelectedRow());
                     }
                 }
-
-                // update the RT column renderer
-                double lowRT = Double.MAX_VALUE;
-                double highRT = Double.MIN_VALUE;
-                boolean retentionTimeValues = false;
-
-                progressDialog.setTitle("Updating Seleected PSMs. Please Wait...");
-                progressDialog.setIndeterminate(false);
-                progressDialog.setValue(0);
-                progressDialog.setMax(selectedPsmsTable.getRowCount());
-
-                for (int i = 0; i < selectedPsmsTable.getRowCount(); i++) {
-
-                    progressDialog.incrementValue();
-
-                    String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(false)).getSpectrumMatches().get(i);
-                    Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
-
-                    if (precursor != null) {
-
-                        double retentionTime = precursor.getRt();
-
-                        if (!retentionTimeValues && retentionTime != -1) {
-                            retentionTimeValues = true;
-                        }
-
-                        if (lowRT > retentionTime) {
-                            lowRT = retentionTime;
-                        }
-
-                        if (highRT < retentionTime) {
-                            highRT = retentionTime;
-                        }
-                    }
-                }
-
-                if (retentionTimeValues) {
-
-                    // @TODO: min and max retention time from the project should be used as boundaries instead
-
-                    lowRT = 100;
-                    double widthOfMarker = 200;
-
-                    JSparklinesIntervalChartTableCellRenderer rtCellRenderer = new JSparklinesIntervalChartTableCellRenderer(
-                            PlotOrientation.HORIZONTAL, lowRT - widthOfMarker / 2, highRT + widthOfMarker / 2, widthOfMarker,
-                            peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor());
-                    selectedPsmsTable.getColumn("RT").setCellRenderer(rtCellRenderer);
-                    rtCellRenderer.showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
-                }
-
             } catch (Exception e) {
                 peptideShakerGUI.catchException(e);
                 e.printStackTrace();
@@ -3597,6 +3562,7 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                         peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor());
                 relatedPsmsTable.getColumn("RT").setCellRenderer(rtCellRenderer);
                 rtCellRenderer.showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+                ((JSparklinesIntervalChartTableCellRenderer) relatedPsmsTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
             }
 
         } catch (Exception e) {
