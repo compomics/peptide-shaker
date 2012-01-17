@@ -3,11 +3,32 @@
 
 ----
 
+*Changes in PeptideShaker 0.14.2 (January 17. 2012):*
+ * NEW FEATURE: The possible coverage is now shown in the protein sequence coverage panel in the Overview tab.
+ * NEW FEATURE: Added precursor charge(s) to the peptide features export.
+ * NEW FEATURE: Added precursor end position to the peptide features export.
+ * NEW FEATURE: Added the MW column to the Structure tab.
+ * FEATURE IMPROVEMENT: Fixed it so that the selections in the Overview and Structure tabs are not re-loaded if they are the same as the current selections.
+ * FEATURE IMPROVEMENT: Improved the GUI of the PDB-Protein overlap column in the Structure tab.
+ * FEATURE IMPROVEMENT: Improved the GUI for the RT column in the Spectrum IDs tab.
+ * FEATURE IMPROVEMENT: Improved the way the start index of the peptides is displayed in the Overview and Structure tabs. (Removed the End index.)
+ * FEATURE IMPROVEMENT: The jsparkline for the p-value in the GO tab is now light gray when not significant and green when significant. Also replaced the gray color of the Log2 Diff column with light gray in order to be consistent.
+ * BUG FIX: Fixed a bug where the Score column in the protein table in the Overview tab did not have at the correct location when displayed.
+ * BUG FIX: Fixed some GUI bugs related to changing the spectrum counts method.
+ * BUG FIX: Fixed various issues related to always making sure that the same protein, peptide and psm is selected when moving between tabs.
+ * BUG FIX: Fixed a bug in the protein export where there was no separator between protein accession numbers in the Other proteinScoreColumn(s) column.
+ * LIBRARY UPDATE: Updated jsparklines to version 0.5.34.
+ * LIBRARY UPDATE: Updated utilities to version 3.3.23.
+
+----
+
 *Changes in PeptideShaker 0.14.1 (January 13. 2012):*
  * NEW FEATURE: Added the display of the unassigned spectra count to the Spectrum IDs tab.
  * NEW FEATURE: Added the option of exporting the unidentified proteins to a tab separated text file from the Follow-Up Analysis Dialog.
  * BUG FIX: Solved a bug impairing the portability of projects.
  * BUG FIX: Solved a bug in the protein inference dialog related to especially complicated protein inference issues.
+
+Download Count: 11
 
 ----
 
