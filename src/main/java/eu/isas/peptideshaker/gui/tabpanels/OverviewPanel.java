@@ -3821,43 +3821,43 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
                 // get the possible coverage
                 boolean[] possibleCoverage = peptideShakerGUI.getIdentificationFeaturesGenerator().getCoverableAA(proteinKey);
-
+                
                 // create the coverage plot
                 ArrayList<JSparklinesDataSeries> sparkLineDataSeriesCoverage = new ArrayList<JSparklinesDataSeries>();
 
                 for (int i = 0; i < coverage.length; i++) {
 
                     boolean covered = coverage[i] > 0;
-                    boolean possibleToCover = true;
+                    boolean possibleToCover = false;
 
                     if (i > 0) {
                         possibleToCover = possibleCoverage[i - 1];
                     }
 
                     int sequenceCounter = 1;
-                    int impossibleToCoverCounter = 0;
+                    int possibleToCoverCounter = 0;
 
                     if (covered) {
                         while (i + 1 < coverage.length && coverage[i + 1] > 0) {
                             sequenceCounter++;
                             i++;
 
-                            // we need to start a new peptide in order to highlight
+                            // we need to start a new peptide in order to be able to highlight a given peptide
                             if (selectedPeptideEnd.contains(new Integer(i + 1)) || selectedPeptideStart.contains(new Integer(i + 1))) {
                                 break;
                             }
                         }
-                    } else if (!possibleToCover) {
+                    } else if (possibleToCover) {
 
-                        impossibleToCoverCounter++;
+                        possibleToCoverCounter++;
 
-                        while (i < possibleCoverage.length && !possibleCoverage[i]) {
-                            impossibleToCoverCounter++;
+                        while (i < possibleCoverage.length && possibleCoverage[i] && coverage[i + 1] == 0) {
+                            possibleToCoverCounter++;
                             sequenceCounter++;
                             i++;
                         }
                     } else {
-                        while (i + 1 < coverage.length && coverage[i + 1] == 0) {
+                        while (i + 1 < coverage.length && coverage[i + 1] == 0 && !possibleCoverage[i]) {
                             sequenceCounter++;
                             i++;
                         }
@@ -3874,11 +3874,8 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         } else {
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
                         }
-
-                        // @TODO: move and enable the display of the impossible to cover regions
-
-//                    } else if (impossibleToCoverCounter > 0) {
-//                        sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), null);
+                    } else if (possibleToCoverCounter > 0) {
+                        sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), null);
                     } else {
                         sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                     }
@@ -4597,26 +4594,6 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                         progressDialog.incrementValue();
                     }
 
-                    // normalize the NSAF spectrum counts
-//                    if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF && spectrumCountingSum > 0) {
-//                        
-//                        // @TODO: has to be a faster way of doing this??
-//                        
-//                        maxSpectrumCounting = 0;
-//                        
-//                        for (int i = 0; i < proteinTable.getRowCount(); i++) {
-//
-//                            double tempSpectrumCount = (Double) proteinTable.getValueAt(i, proteinTable.getColumn("MS2 Quant.").getModelIndex());
-//                            tempSpectrumCount /= spectrumCountingSum;
-//                            
-//                            proteinTable.setValueAt(tempSpectrumCount, i, proteinTable.getColumn("MS2 Quant.").getModelIndex());
-//
-//                            if (maxSpectrumCounting < tempSpectrumCount) {
-//                                maxSpectrumCounting = tempSpectrumCount;
-//                            }
-//                        }
-//                    }
-
                     // invoke later to give time for components to update
                     SwingUtilities.invokeLater(new Runnable() {
 
@@ -5193,7 +5170,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                             ArrayList<String> selectedPeptides = getDisplayedPeptides();
                             clipboardString = outputGenerator.getPeptidesOutput(
                                     progressDialog, selectedPeptides, null, true, false, true, true,
-                                    true, true, true, true, true, true, true, false, false);
+                                    true, true, true, true, true, true, true, true, false, false);
                         } else if (tableIndex == TableIndex.PSM_TABLE) {
                             ArrayList<String> selectedPsms = getDisplayedPsms();
                             clipboardString = outputGenerator.getPSMsOutput(

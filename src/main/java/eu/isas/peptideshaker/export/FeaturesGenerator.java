@@ -314,6 +314,7 @@ public class FeaturesGenerator {
      * @param sequence
      * @param modifications
      * @param nSpectra
+     * @param charges 
      * @param ptmLocations 
      * @param score
      * @param confidence
@@ -325,7 +326,7 @@ public class FeaturesGenerator {
      */
     public String getPeptidesOutput(ProgressDialogX progressDialog, ArrayList<String> peptideKeys,
             ArrayList<String> peptidePdbArray, boolean indexes, boolean onlyValidated, boolean accession,
-            boolean location, boolean sequence, boolean modifications, boolean ptmLocations,
+            boolean location, boolean sequence, boolean modifications, boolean ptmLocations, boolean charges,
             boolean nSpectra, boolean score, boolean confidence, boolean includeHeader, boolean onlyStarred, boolean includeHidden) throws Exception {
 
         if (peptideKeys == null) {
@@ -351,12 +352,16 @@ public class FeaturesGenerator {
             }
             if (location) {
                 result += "Peptide Start" + SEPARATOR;
+                result += "Peptide End" + SEPARATOR;
             }
             if (modifications) {
                 result += "Variable Modification" + SEPARATOR;
             }
             if (ptmLocations) {
                 result += "Location Confidence" + SEPARATOR;
+            }
+            if (charges) {
+                result += "Precursor Charge(s)" + SEPARATOR;
             }
             if (nSpectra) {
                 result += "#Validated Spectra" + SEPARATOR;
@@ -419,30 +424,42 @@ public class FeaturesGenerator {
                             }
 
                             if (location) {
+                                
+                                String start = "", end = "";
+                                
                                 if (peptide.getParentProteins().size() == 1) {
+                                      
                                     try {
-                                        ArrayList<Integer> positions = new ArrayList<Integer>();
+                                        ArrayList<Integer> startPositions = new ArrayList<Integer>();
+                                        ArrayList<Integer> endPositions = new ArrayList<Integer>();
                                         String tempSequence = sequenceFactory.getProtein(peptide.getParentProteins().get(0)).getSequence();
                                         int index = tempSequence.indexOf(peptide.getSequence());
                                         while (index >= 0 && tempSequence.length() > 1) {
-                                            positions.add(index);
+                                            startPositions.add(index);
+                                            endPositions.add(index + peptide.getSequence().length());
                                             tempSequence = tempSequence.substring(index + peptide.getSequence().length());
                                             index = tempSequence.indexOf(peptide.getSequence());
                                         }
-                                        boolean first = true;
-                                        for (int position : positions) {
-                                            if (first) {
-                                                first = false;
-                                            } else {
-                                                result += ", ";
+ 
+                                        for (int i=0; i<startPositions.size(); i++) {
+                                            if (i>0) {
+                                                start += ", ";
+                                                end += ", ";
                                             }
-                                            result += position;
-                                        }
+                                            start += startPositions.get(i);
+                                            end += endPositions.get(i);
+                                        }  
                                     } catch (Exception e) {
-                                        result += "Error";
+                                        e.printStackTrace();
+                                        start += "Error";
+                                        end += "Error";
                                     }
+                                } else {
+                                    start += "#Proteins > 1!";
+                                    end += "#Proteins > 1!";
                                 }
-                                result += SEPARATOR;
+                                
+                                result += start + SEPARATOR + end + SEPARATOR;
                             }
 
                             if (modifications) {
@@ -451,6 +468,10 @@ public class FeaturesGenerator {
                             }
                             if (ptmLocations) {
                                 result += getPeptideModificationLocations(peptide, peptideMatch);
+                                result += SEPARATOR;
+                            }
+                            if (charges) {
+                                result += getPeptidePrecursorChargesAsString(peptideMatch);
                                 result += SEPARATOR;
                             }
                             if (nSpectra) {
@@ -1033,6 +1054,46 @@ public class FeaturesGenerator {
                 progressDialog.setValue(progress);
             }
         }
+        return result;
+    }
+    
+    /**
+     * Returns the possible precursor charges for a given peptide match. The 
+     * charges are returned in increading order with each charge only appearing 
+     * once.
+     * 
+     * @param peptideMatch the peptide match
+     * @return the possible precursor charges
+     */
+    public String getPeptidePrecursorChargesAsString(PeptideMatch peptideMatch) {
+        
+        String result = "";
+        
+        ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatches();
+        ArrayList<Integer> charges = new ArrayList<Integer>(5);
+        
+        // find all unique the charges
+        for (int i=0; i<spectrumKeys.size(); i++) {
+            
+            int tempCharge = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKeys.get(i)).getBestAssumption().getIdentificationCharge().value;
+            
+            if (!charges.contains(tempCharge)) {
+                charges.add(tempCharge);
+            }
+        }
+        
+        // sort the charges
+        Collections.sort(charges);
+        
+        // add the charges to the output
+        for (int i=0; i<charges.size(); i++) {
+            if (i>0) {
+                result += ", ";
+            }
+            
+            result += charges.get(i);
+        }
+
         return result;
     }
 
