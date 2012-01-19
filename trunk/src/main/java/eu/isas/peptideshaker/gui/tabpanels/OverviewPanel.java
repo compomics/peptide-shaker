@@ -3463,6 +3463,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).showNumbers(!showSparkLines);
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumbers(!showSparkLines);
+        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Confidence").getCellRenderer()).showNumbers(!showSparkLines);
 
         try {
             ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("Score").getCellRenderer()).showNumbers(!showSparkLines);
@@ -4954,7 +4955,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 proteinTable.moveColumn(12, 10);
 
                 peptideTable.addColumn(peptideScoreColumn);
-                peptideTable.moveColumn(9, 7);
+                peptideTable.moveColumn(8, 6);
             }
         } catch (IllegalArgumentException e) {
             peptideShakerGUI.catchException(e);
