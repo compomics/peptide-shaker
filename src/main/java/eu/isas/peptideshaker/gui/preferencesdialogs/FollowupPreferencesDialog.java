@@ -770,15 +770,15 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     public void run() {
 
                         try {
-                            FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
-                            String output = outputGenerator.getPSMsProgenesisExport(progressDialog, null);
-
                             progressDialog.setIndeterminate(true);
                             progressDialog.setTitle("Exporting. Please Wait...");
 
                             FileWriter f = new FileWriter(finalOutputFile);
                             BufferedWriter b = new BufferedWriter(f);
-                            b.write(output);
+                            
+                            FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
+                            outputGenerator.getPSMsProgenesisExport(progressDialog, null, b);
+
                             b.close();
                             f.close();
 

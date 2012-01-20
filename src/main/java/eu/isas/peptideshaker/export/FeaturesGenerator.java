@@ -19,6 +19,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -217,8 +218,8 @@ public class FeaturesGenerator {
                                         result += cpt + SEPARATOR;
                                     }
                                     if (emPAI) {
-                                        double pai = cpt; 
-                                        pai = pai / mainMatch.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme()); 
+                                        double pai = cpt;
+                                        pai = pai / mainMatch.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
                                         double empai = Math.pow(10, pai) - 1;
                                         emPAIScore = empai;
                                     }
@@ -247,7 +248,7 @@ public class FeaturesGenerator {
                                         result += cpt + SEPARATOR;
                                     }
                                     if (nsaf) {
-                                        double index = cpt; 
+                                        double index = cpt;
                                         index = index / mainMatch.getSequence().length();  // @TODO: should be "normalized by the sum of all the protein abundances in the set"!?
                                         nsafScore = index;
                                     }
@@ -424,11 +425,11 @@ public class FeaturesGenerator {
                             }
 
                             if (location) {
-                                
+
                                 String start = "", end = "";
-                                
+
                                 if (peptide.getParentProteins().size() == 1) {
-                                      
+
                                     try {
                                         ArrayList<Integer> startPositions = new ArrayList<Integer>();
                                         ArrayList<Integer> endPositions = new ArrayList<Integer>();
@@ -440,15 +441,15 @@ public class FeaturesGenerator {
                                             tempSequence = tempSequence.substring(index + peptide.getSequence().length());
                                             index = tempSequence.indexOf(peptide.getSequence());
                                         }
- 
-                                        for (int i=0; i<startPositions.size(); i++) {
-                                            if (i>0) {
+
+                                        for (int i = 0; i < startPositions.size(); i++) {
+                                            if (i > 0) {
                                                 start += ", ";
                                                 end += ", ";
                                             }
                                             start += startPositions.get(i);
                                             end += endPositions.get(i);
-                                        }  
+                                        }
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                         start += "Error";
@@ -458,7 +459,7 @@ public class FeaturesGenerator {
                                     start += "#Proteins > 1!";
                                     end += "#Proteins > 1!";
                                 }
-                                
+
                                 result += start + SEPARATOR + end + SEPARATOR;
                             }
 
@@ -769,10 +770,10 @@ public class FeaturesGenerator {
      * 
      * @param progressDialog the progress dialog (can be null)
      * @param psmKeys
-     * @return the PSM output based on the given argument
+     * @param writer the buffered writer to send the output to
      * @throws Exception 
      */
-    public String getPSMsProgenesisExport(ProgressDialogX progressDialog, ArrayList<String> psmKeys) throws Exception {
+    public void getPSMsProgenesisExport(ProgressDialogX progressDialog, ArrayList<String> psmKeys, BufferedWriter writer) throws Exception {
 
         if (psmKeys == null) {
             psmKeys = identification.getSpectrumIdentification();
@@ -782,102 +783,98 @@ public class FeaturesGenerator {
             progressDialog.setMax(psmKeys.size());
         }
 
-        String result = "";
-        result += "sequence" + SEPARATOR;
-        result += "modif" + SEPARATOR;
-        result += "score" + SEPARATOR;
-        result += "main AC" + SEPARATOR;
-        result += "description" + SEPARATOR;
-        result += "compound" + SEPARATOR;
-        result += "jobid" + SEPARATOR;
-        result += "pmkey" + SEPARATOR;
-        result += "\n";
+        writer.write("sequence" + SEPARATOR);
+        writer.write("modif" + SEPARATOR);
+        writer.write("score" + SEPARATOR);
+        writer.write("main AC" + SEPARATOR);
+        writer.write("description" + SEPARATOR);
+        writer.write("compound" + SEPARATOR);
+        writer.write("jobid" + SEPARATOR);
+        writer.write("pmkey" + SEPARATOR);
+        writer.write("\n");
 
         PSParameter psParameter = new PSParameter();
         int progress = 0;
 
         for (String psmKey : psmKeys) {
 
-            //if (progress < 100) {
+            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
+            psParameter = (PSParameter) identification.getMatchParameter(psmKey, psParameter);
+            PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
 
-                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(psmKey);
-                psParameter = (PSParameter) identification.getMatchParameter(psmKey, psParameter);
-                PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
+            if (!bestAssumption.isDecoy()) {
 
-                if (!bestAssumption.isDecoy()) {
+                for (int j = 0; j < bestAssumption.getPeptide().getParentProteins().size(); j++) {
 
-                    for (int j = 0; j < bestAssumption.getPeptide().getParentProteins().size(); j++) {
+                    // peptide sequence
+                    writer.write(bestAssumption.getPeptide().getSequence() + SEPARATOR);
 
-                        // peptide sequence
-                        result += bestAssumption.getPeptide().getSequence() + SEPARATOR;
+                    // modifications
+                    HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
+                    for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
+                        if (modificationMatch.isVariable()) {
+                            if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
+                                modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
+                            }
+                            modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
+                        }
+                    }
 
-                        // modifications
-                        HashMap<String, ArrayList<Integer>> modMap = new HashMap<String, ArrayList<Integer>>();
-                        for (ModificationMatch modificationMatch : bestAssumption.getPeptide().getModificationMatches()) {
-                            if (modificationMatch.isVariable()) {
-                                if (!modMap.containsKey(modificationMatch.getTheoreticPtm())) {
-                                    modMap.put(modificationMatch.getTheoreticPtm(), new ArrayList<Integer>());
-                                }
-                                modMap.get(modificationMatch.getTheoreticPtm()).add(modificationMatch.getModificationSite());
+                    ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+
+                    for (int i = 0; i < bestAssumption.getPeptide().getSequence().length() + 1; i++) {
+
+                        for (String mod : mods) {
+                            if (modMap.get(mod).contains(new Integer(i))) {
+                                writer.write(mod); // @TODO: what about multiple ptms on the same residue??
                             }
                         }
 
-                        ArrayList<String> mods = new ArrayList<String>(modMap.keySet());
+                        writer.write(":");
+                    }
 
-                        for (int i = 0; i < bestAssumption.getPeptide().getSequence().length() + 1; i++) {
-
-                            for (String mod : mods) {
-                                if (modMap.get(mod).contains(new Integer(i))) {
-                                    result += mod; // @TODO: what about multiple ptms on the same residue??
-                                }
-                            }
-
-                            result += ":";
-                        }
-
-                        result += SEPARATOR;
+                    writer.write(SEPARATOR);
 
 
 //                    for (String mod : mods) {
 //
-//                        result += mod + "(";
+//                        writer.write(mod + "(");
 //                        for (int aa : modMap.get(mod)) {
-//                            result += ", ";
-//                            result += aa;
+//                            writer.write(", ");
+//                            writer.write(aa);
 //                        }
-//                        result += ")";
+//                        writer.write(")");
 //                    }
-//                    result += SEPARATOR;
+//                    writer.write(SEPARATOR);
 
-                        // score
-                        result += psParameter.getPsmConfidence() + SEPARATOR;
+                    // score
+                    writer.write(psParameter.getPsmConfidence() + SEPARATOR);
 
-                        // main AC
-                        result += bestAssumption.getPeptide().getParentProteins().get(j) + SEPARATOR;
+                    // main AC
+                    writer.write(bestAssumption.getPeptide().getParentProteins().get(j) + SEPARATOR);
 
-                        // description
-                        result += "" + SEPARATOR; // @TODO: how to get the description???
+                    // description
+                    writer.write("" + SEPARATOR); // @TODO: how to get the description???
 
-                        // compound
-                        result += Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR;
+                    // compound
+                    writer.write(Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR);
 
-                        // jobid
-                        result += "N/A" + SEPARATOR;
+                    // jobid
+                    writer.write("N/A" + SEPARATOR);
 
-                        // pmkey
-                        result += "N/A" + SEPARATOR;
+                    // pmkey
+                    writer.write("N/A" + SEPARATOR);
 
-                        result += "\n";
-                    }
+                    // new line
+                    writer.write("\n");
                 }
-            //}
+            }
 
-            progress++;
+            
             if (progressDialog != null) {
-                progressDialog.setValue(progress);
+                progressDialog.setValue(++progress);
             }
         }
-        return result;
     }
 
     /**
@@ -1056,7 +1053,7 @@ public class FeaturesGenerator {
         }
         return result;
     }
-    
+
     /**
      * Returns the possible precursor charges for a given peptide match. The 
      * charges are returned in increading order with each charge only appearing 
@@ -1066,31 +1063,31 @@ public class FeaturesGenerator {
      * @return the possible precursor charges
      */
     public String getPeptidePrecursorChargesAsString(PeptideMatch peptideMatch) {
-        
+
         String result = "";
-        
+
         ArrayList<String> spectrumKeys = peptideMatch.getSpectrumMatches();
         ArrayList<Integer> charges = new ArrayList<Integer>(5);
-        
+
         // find all unique the charges
-        for (int i=0; i<spectrumKeys.size(); i++) {
-            
+        for (int i = 0; i < spectrumKeys.size(); i++) {
+
             int tempCharge = peptideShakerGUI.getIdentification().getSpectrumMatch(spectrumKeys.get(i)).getBestAssumption().getIdentificationCharge().value;
-            
+
             if (!charges.contains(tempCharge)) {
                 charges.add(tempCharge);
             }
         }
-        
+
         // sort the charges
         Collections.sort(charges);
-        
+
         // add the charges to the output
-        for (int i=0; i<charges.size(); i++) {
-            if (i>0) {
+        for (int i = 0; i < charges.size(); i++) {
+            if (i > 0) {
                 result += ", ";
             }
-            
+
             result += charges.get(i);
         }
 

@@ -2456,7 +2456,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
 
                     for (String spectrumKey : identification.getSpectrumIdentification()) {
-                        
+
                         spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                         mascot = false;
                         omssa = false;
@@ -2483,22 +2483,22 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                         if (mascot && omssa && xTandem) {
                             omx++;
-                        } 
+                        }
                         if (mascot && omssa) {
                             mo++;
-                        } 
+                        }
                         if (omssa && xTandem) {
                             ox++;
-                        } 
+                        }
                         if (mascot && xTandem) {
                             mx++;
-                        } 
+                        }
                         if (mascot) {
                             m++;
-                        } 
+                        }
                         if (omssa) {
                             o++;
-                        } 
+                        }
                         if (xTandem) {
                             x++;
                         }
@@ -2522,7 +2522,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     int nMascot = m;
                     int nOMSSA = o;
                     int nXTandem = x;
-                    
+
                     double biggestValue = Math.max(Math.max(nMascot, nOMSSA), nXTandem);
                     biggestValue = Math.max(biggestValue, Math.max(Math.max(no_o, no_x), no_m));
 
@@ -2547,21 +2547,21 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     if (omssaUsed) {
                         ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
                                     ++searchEngineRowCounter, "OMSSA",
-                                    nOMSSA, nOMSSA-ox-mo+omx, nOMSSA, ox, mo, omx, no_o
+                                    nOMSSA, nOMSSA - ox - mo + omx, nOMSSA, ox, mo, omx, no_o
                                 });
                     }
 
                     if (xtandemUsed) {
                         ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
                                     ++searchEngineRowCounter, "X!Tandem",
-                                    nXTandem, nXTandem-ox-mx+omx, ox, nXTandem, mx, omx, no_x
+                                    nXTandem, nXTandem - ox - mx + omx, ox, nXTandem, mx, omx, no_x
                                 });
                     }
 
                     if (mascotUsed) {
                         ((DefaultTableModel) searchEngineTable.getModel()).addRow(new Object[]{
                                     ++searchEngineRowCounter, "Mascot",
-                                    nMascot, nMascot-mo-mx+omx, mo, mx, nMascot, omx, no_m
+                                    nMascot, nMascot - mo - mx + omx, mo, mx, nMascot, omx, no_m
                                 });
                     }
 
@@ -2830,16 +2830,16 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * Updates the spectrum selected according to the last user's selection
      */
     public void updateSelection() {
-        
+
         String spectrumKey = peptideShakerGUI.getSelectedPsmKey();
-        
+
         if (spectrumKey.equals(PeptideShakerGUI.NO_SELECTION)) {
             spectrumTable.setRowSelectionInterval(0, 0);
             spectrumKey = getSelectedSpectrumKey();
         } else {
             selectSpectrum(spectrumKey);
         }
-        
+
         spectrumSelectionChanged();
     }
 
@@ -2930,7 +2930,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                 probabilities.getPsmConfidence(),
                                 probabilities.isValidated()
                             });
-                    
+
                     peptideShakerJTablePeptideTooltip = featuresGenerator.getPeptideModificationTooltipAsHtml(spectrumMatch.getBestAssumption().getPeptide());
 
                     // Fill Mascot table
