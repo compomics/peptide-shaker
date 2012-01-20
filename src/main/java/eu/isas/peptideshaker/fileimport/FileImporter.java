@@ -466,19 +466,16 @@ public class FileImporter {
                     int progress = 0;
                     waitingDialog.setSecondaryProgressDialogIntermediate(false);
                     waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
-                    Precursor precursor;
-                    String spectrumKey, fileName;
-                    SpectrumMatch match;
-                    PeptideAssumption firstHit;
 
                     while (matchIt.hasNext()) {
 
-                        match = matchIt.next();
+                        SpectrumMatch match = matchIt.next();
                         nTotal++;
 
-                        firstHit = match.getFirstHit(searchEngine);
-                        spectrumKey = match.getKey();
-                        fileName = Spectrum.getSpectrumFile(spectrumKey);
+                        PeptideAssumption firstHit = match.getFirstHit(searchEngine);
+                        String spectrumKey = match.getKey();
+                        String fileName = Spectrum.getSpectrumFile(spectrumKey);
+                        
                         if (!mgfUsed.contains(fileName)) {
                             importSpectra(waitingDialog, fileName, searchParameters);
                             waitingDialog.setSecondaryProgressDialogIntermediate(false);
@@ -487,19 +484,20 @@ public class FileImporter {
                             mgfUsed.add(fileName);
                         }
 
-                        precursor = spectrumFactory.getPrecursor(spectrumKey, false);
+                        Precursor precursor = spectrumFactory.getPrecursor(spectrumKey, false);
 
                         if (!idFilter.validateId(firstHit, precursor.getMz())) {
                             matchIt.remove();
                         } else {
-                            Peptide peptide;
+
                             // use search engine independant PTMs
                             for (PeptideAssumption assumptions : match.getAllAssumptions()) {
-                                peptide = assumptions.getPeptide();
+                                Peptide peptide = assumptions.getPeptide();
                                 for (ModificationMatch seMod : peptide.getModificationMatches()) {
                                     if (seMod.getTheoreticPtm().equals("unknown")) {
                                         if (!unknown) {
-                                            waitingDialog.appendReport("An unknown modification was encountered and will impair further processing.\nPlease make sure that all modifications are loaded in the search parameters and reload the data.");
+                                            waitingDialog.appendReport("An unknown modification was encountered and will impair further processing."
+                                                    + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.");
                                             unknown = true;
                                         }
                                     }
@@ -508,23 +506,24 @@ public class FileImporter {
                             }
 
                             inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
-                            peptide = firstHit.getPeptide();
+                            Peptide peptide = firstHit.getPeptide();
                             ArrayList<String> proteins = getProteins(peptide.getSequence(), waitingDialog);
+                            
                             if (!proteins.isEmpty()) {
                                 peptide.setParentProteins(proteins);
                             }
 
                             identification.addSpectrumMatch(match);
-
                             nRetained++;
                         }
 
                         if (waitingDialog.isRunCanceled()) {
                             return 1;
                         }
+                        
                         waitingDialog.setSecondaryProgressValue(++progress);
-
                     }
+                    
                     waitingDialog.setSecondaryProgressDialogIntermediate(true);
                     waitingDialog.increaseProgressValue();
                 }
@@ -540,9 +539,7 @@ public class FileImporter {
 
                 waitingDialog.appendReport("Identification file(s) import completed. "
                         + nTotal + " identifications imported, " + nRetained + " identifications retained.");
-
                 waitingDialog.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
-
                 peptideShaker.processIdentifications(inputMap, waitingDialog, searchParameters, annotationPreferences);
 
             } catch (Exception e) {
