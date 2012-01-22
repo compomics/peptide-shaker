@@ -1,10 +1,12 @@
 package eu.isas.peptideshaker.fileimport;
 
+import com.compomics.mascotdatfile.util.mascot.enumeration.MascotDatfileType;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
+import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.PeptideAssumption;
@@ -13,6 +15,7 @@ import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
+import com.compomics.util.experiment.io.identifications.idfilereaders.MascotIdfileReader;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
@@ -86,7 +89,11 @@ public class FileImporter {
     /**
      * db processing disabled only while testing
      */
-    private boolean testing = false;
+    private boolean testing = true;
+    /**
+     * If a Mascot dat file is bigger than this size, an indexed parsing will be used
+     */
+    public static final double mascotMaxSize = 200;
 
     /**
      * Constructor for the importer
@@ -456,8 +463,14 @@ public class FileImporter {
 
                     waitingDialog.appendReport("Reading file: " + idFile.getName());
 
+                    IdfileReader fileReader;
                     int searchEngine = readerFactory.getSearchEngine(idFile);
-                    IdfileReader fileReader = readerFactory.getFileReader(idFile);
+                    if (searchEngine == Advocate.MASCOT
+                            && idFile.length() > mascotMaxSize * 1048576) {
+                        fileReader = new MascotIdfileReader(idFile, MascotDatfileType.INDEX);
+                    } else {
+                        fileReader = readerFactory.getFileReader(idFile);
+                    }
                     HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches();
 
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();

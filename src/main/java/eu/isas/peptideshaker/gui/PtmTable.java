@@ -73,7 +73,7 @@ public class PtmTable extends JTable {
      * A list of the modification site indexes.
      */
     private ArrayList<Integer> modificationSites;
-    
+
     /**
      * Constructor.
      * 
@@ -90,7 +90,7 @@ public class PtmTable extends JTable {
         this.nPTM = 0;
         this.spectrumKeys = spectrumKeys;
         this.areaChart = areaChart;
-        
+
         modificationSites = new ArrayList<Integer>();
 
         for (ModificationMatch modMatch : peptide.getModificationMatches()) {
@@ -156,96 +156,65 @@ public class PtmTable extends JTable {
 
         AnnotationPreferences annotationPreferences = peptideShakerGUI.getAnnotationPreferences();
 
-        for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
-
-            String modification = "";
-            String tooltip = "";
-
-            if (modCpt > 0) {
-                if (modCpt == 1) {
-                    modification = " <" + ptm.getShortName() + ">";
-                    tooltip = " with " + ptm.getName();
-                } else {
-                    modification = " <" + modCpt + ptm.getShortName() + ">";
-                    tooltip = " with " + modCpt + " " + ptm.getName();
-                }
+        if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.A_ION)) {
+            columnHeaders.add("a");
+            if (areaChart) {
+                tempColumnTypes.add(JSparklinesDataset.class);
+            } else {
+                tempColumnTypes.add(Double.class);
             }
-
-            if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.A_ION)) {
-                columnHeaders.add("a" + modification);
-                if (areaChart) {
-                    tempColumnTypes.add(JSparklinesDataset.class);
-                } else {
-                    tempColumnTypes.add(Double.class);
-                }
-                tooltips.add("a-ion" + tooltip);
+            tooltips.add("a-ion");
+        }
+        if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.B_ION)) {
+            columnHeaders.add("b");
+            if (areaChart) {
+                tempColumnTypes.add(JSparklinesDataset.class);
+            } else {
+                tempColumnTypes.add(Double.class);
             }
-            if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.B_ION)) {
-                columnHeaders.add("b" + modification);
-                if (areaChart) {
-                    tempColumnTypes.add(JSparklinesDataset.class);
-                } else {
-                    tempColumnTypes.add(Double.class);
-                }
-                tooltips.add("b-ion" + tooltip);
+            tooltips.add("b-ion");
+        }
+        if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.C_ION)) {
+            columnHeaders.add("c");
+            if (areaChart) {
+                tempColumnTypes.add(JSparklinesDataset.class);
+            } else {
+                tempColumnTypes.add(Double.class);
             }
-            if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.C_ION)) {
-                columnHeaders.add("c" + modification);
-                if (areaChart) {
-                    tempColumnTypes.add(JSparklinesDataset.class);
-                } else {
-                    tempColumnTypes.add(Double.class);
-                }
-                tooltips.add("c-ion" + tooltip);
-            }
+            tooltips.add("c-ion");
         }
 
         columnHeaders.add("AA");
         tempColumnTypes.add(java.lang.String.class);
         tooltips.add("amino acid sequence");
 
-        for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
 
-            String modification = "";
-            String tooltip = "";
-
-            if (modCpt > 0) {
-                if (modCpt == 1) {
-                    modification = " <" + ptm.getShortName() + ">";
-                    tooltip = " with " + ptm.getName();
-                } else {
-                    modification = " <" + modCpt + ptm.getShortName() + ">";
-                    tooltip = " with " + modCpt + " " + ptm.getName();
-                }
+        if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.X_ION)) {
+            columnHeaders.add("x");
+            if (areaChart) {
+                tempColumnTypes.add(JSparklinesDataset.class);
+            } else {
+                tempColumnTypes.add(Double.class);
             }
-
-            if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.X_ION)) {
-                columnHeaders.add("x" + modification);
-                if (areaChart) {
-                    tempColumnTypes.add(JSparklinesDataset.class);
-                } else {
-                    tempColumnTypes.add(Double.class);
-                }
-                tooltips.add("x-ion" + tooltip);
+            tooltips.add("x-ion");
+        }
+        if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Y_ION)) {
+            columnHeaders.add("y");
+            if (areaChart) {
+                tempColumnTypes.add(JSparklinesDataset.class);
+            } else {
+                tempColumnTypes.add(Double.class);
             }
-            if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Y_ION)) {
-                columnHeaders.add("y" + modification);
-                if (areaChart) {
-                    tempColumnTypes.add(JSparklinesDataset.class);
-                } else {
-                    tempColumnTypes.add(Double.class);
-                }
-                tooltips.add("y-ion" + tooltip);
+            tooltips.add("y-ion");
+        }
+        if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Z_ION)) {
+            columnHeaders.add("z");
+            if (areaChart) {
+                tempColumnTypes.add(JSparklinesDataset.class);
+            } else {
+                tempColumnTypes.add(Double.class);
             }
-            if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Z_ION)) {
-                columnHeaders.add("z" + modification);
-                if (areaChart) {
-                    tempColumnTypes.add(JSparklinesDataset.class);
-                } else {
-                    tempColumnTypes.add(Double.class);
-                }
-                tooltips.add("z-ion" + tooltip);
-            }
+            tooltips.add("z-ion");
         }
 
         // the second index column
@@ -299,13 +268,13 @@ public class PtmTable extends JTable {
 
         // insert the sequence
         for (int i = 0; i < peptideSequence.length(); i++) {
-            
-            if (modificationSites.contains(i+1)) {
+
+            if (modificationSites.contains(i + 1)) {
                 setValueAt(peptideSequence.charAt(i) + "*", i, getColumn("AA").getModelIndex());
-            } else  {
+            } else {
                 setValueAt(peptideSequence.charAt(i), i, getColumn("AA").getModelIndex());
             }
-            
+
             setValueAt(peptideSequence.length() - i, i, getColumn("  ").getModelIndex());
         }
     }
@@ -335,101 +304,83 @@ public class PtmTable extends JTable {
                 peptideShakerGUI.catchException(e);
             }
         }
-        
+
         maxAreaChartValue = 0;
-        
+
         for (int aa = 0; aa < peptide.getSequence().length(); aa++) {
 
             int column = 1;
-
-            for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
-                if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.A_ION)) {
-                    addAreaChart(tableContent, PeptideFragmentIonType.A_ION, modCpt, aa+1, column);
-                    column++;
-                }
-                if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.B_ION)) {
-                    addAreaChart(tableContent, PeptideFragmentIonType.B_ION, modCpt, aa+1, column);
-                    column++;
-                }
-                if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.C_ION)) {
-                    addAreaChart(tableContent, PeptideFragmentIonType.C_ION, modCpt, aa+1, column);
-                    column++;
-                }
+            if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.A_ION)) {
+                addAreaChart(tableContent, PeptideFragmentIonType.A_ION, aa + 1, column);
+                column++;
+            }
+            if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.B_ION)) {
+                addAreaChart(tableContent, PeptideFragmentIonType.B_ION, aa + 1, column);
+                column++;
+            }
+            if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.C_ION)) {
+                addAreaChart(tableContent, PeptideFragmentIonType.C_ION, aa + 1, column);
+                column++;
             }
 
             column++;
-
-            for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
-                if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.X_ION)) {
-                    addAreaChart(tableContent, PeptideFragmentIonType.X_ION, modCpt, peptide.getSequence().length() - aa, column);
-                    column++;
-                }
-                if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Y_ION)) {
-                    addAreaChart(tableContent, PeptideFragmentIonType.Y_ION, modCpt, peptide.getSequence().length() - aa, column);
-                    column++;
-                }
-                if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Z_ION)) {
-                    addAreaChart(tableContent, PeptideFragmentIonType.Z_ION, modCpt, peptide.getSequence().length() - aa, column);
-                    column++;
-                }
-            }
-        }
-        
-        // set the column renderers
-        for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
-
-            String modification = "";
-
-            if (modCpt > 0) {
-                if (modCpt == 1) {
-                    modification = " <" + ptm.getShortName() + ">";
-                } else {
-                    modification = " <" + modCpt + ptm.getShortName() + ">";
-                }
-            }
-
-            if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.A_ION)) {
-                try {
-                    getColumn("a" + modification).setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
-                } catch (IllegalArgumentException e) {
-                    // do nothing
-                }
-            }
-            if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.B_ION)) {
-                try {
-                    getColumn("b" + modification).setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
-                } catch (IllegalArgumentException e) {
-                    // do nothing
-                }
-            }
-            if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.C_ION)) {
-                try {
-                    getColumn("c" + modification).setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
-                } catch (IllegalArgumentException e) {
-                    // do nothing
-                }
-            }
-
             if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.X_ION)) {
-                try {
-                    getColumn("x" + modification).setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
-                } catch (IllegalArgumentException e) {
-                    // do nothing
-                }
+                addAreaChart(tableContent, PeptideFragmentIonType.X_ION, peptide.getSequence().length() - aa, column);
+                column++;
             }
             if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Y_ION)) {
-                try {
-                    getColumn("y" + modification).setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
-                } catch (IllegalArgumentException e) {
-                    // do nothing
-                }
+                addAreaChart(tableContent, PeptideFragmentIonType.Y_ION, peptide.getSequence().length() - aa, column);
+                column++;
             }
             if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Z_ION)) {
-                try {
-                    getColumn("z" + modification).setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
-                } catch (IllegalArgumentException e) {
-                    // do nothing
-                }
+                addAreaChart(tableContent, PeptideFragmentIonType.Z_ION, peptide.getSequence().length() - aa, column);
+                column++;
+            }
+        }
+
+        // set the column renderers
+
+        if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.A_ION)) {
+            try {
+                getColumn("a").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
+            } catch (IllegalArgumentException e) {
+                // do nothing
+            }
+        }
+        if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.B_ION)) {
+            try {
+                getColumn("b").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
+            } catch (IllegalArgumentException e) {
+                // do nothing
+            }
+        }
+        if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.C_ION)) {
+            try {
+                getColumn("c").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
+            } catch (IllegalArgumentException e) {
+                // do nothing
+            }
+        }
+
+        if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.X_ION)) {
+            try {
+                getColumn("x").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
+            } catch (IllegalArgumentException e) {
+                // do nothing
+            }
+        }
+        if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Y_ION)) {
+            try {
+                getColumn("y").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
+            } catch (IllegalArgumentException e) {
+                // do nothing
+            }
+        }
+        if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Z_ION)) {
+            try {
+                getColumn("z").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
+            } catch (IllegalArgumentException e) {
+                // do nothing
             }
         }
     }
@@ -439,70 +390,86 @@ public class PtmTable extends JTable {
      * 
      * @param tableContent
      * @param fragmentIonType
-     * @param modCpt
      * @param aa
      * @param column 
      */
-    private void addAreaChart(PtmtableContent tableContent, PeptideFragmentIonType fragmentIonType, int modCpt, int aa, int column) {
+    private void addAreaChart(PtmtableContent tableContent, PeptideFragmentIonType fragmentIonType, int aa, int column) {
 
-        // add the data points to display to an arraylist 
-        ArrayList<Double> data = new ArrayList<Double>();
-        
-        int[] histogram = tableContent.getHistogram(modCpt, fragmentIonType, aa, 50);
-        
-        data.add(0.0);
-        
-        for(int i=0; i<histogram.length; i++) {
-            data.add(new Double(histogram[i]));
-            
-            if (histogram[i] > maxAreaChartValue) {
-                maxAreaChartValue = histogram[i];
-            }
-        }
-        
-        data.add(0.0);
-        
-        // find area color
-        Color areaColor = Color.lightGray;
-        String tooltip = null;
-
-        switch (fragmentIonType) {
-            case A_ION:
-                areaColor = SpectrumPanel.determineFragmentIonColor("a");
-                tooltip = "<html>a<sub>" + aa + "</sub></html>";
-                break;
-            case B_ION:
-                areaColor = SpectrumPanel.determineFragmentIonColor("b");
-                tooltip = "<html>b<sub>" + aa + "</sub></html>";
-                break;
-            case C_ION:
-                areaColor = SpectrumPanel.determineFragmentIonColor("c");
-                tooltip = "<html>c<sub>" + aa + "</sub></html>";
-                break;
-            case X_ION:
-                areaColor = SpectrumPanel.determineFragmentIonColor("x");
-                tooltip = "<html>x<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub></html>";
-                break;
-            case Y_ION:
-                areaColor = SpectrumPanel.determineFragmentIonColor("y");
-                tooltip = "<html>y<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub></html>";
-                break;
-            case Z_ION:
-                areaColor = SpectrumPanel.determineFragmentIonColor("z");
-                tooltip = "<html>z<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub></html>";
-                break;
-        }
-
-        // create a JSparklineDataSeries  
-        JSparklinesDataSeries sparklineDataseries = new JSparklinesDataSeries(data, areaColor, tooltip);
-        
-        // add the data series to JSparklineDataset 
         ArrayList<JSparklinesDataSeries> sparkLineDataSeriesAll = new ArrayList<JSparklinesDataSeries>();
-        sparkLineDataSeriesAll.add(sparklineDataseries);
+        ArrayList<Double> data;
+        int[] histogram;
+        String modification = "";
+
+        for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
+            
+            if (modCpt > 0) {
+                if (modCpt == 1) {
+                    modification = " <" + ptm.getShortName() + ">";
+                } else {
+                    modification = " <" + modCpt + ptm.getShortName() + ">";
+                }
+            }
+
+            // add the data points to display to an arraylist 
+            data = new ArrayList<Double>();
+
+            histogram = tableContent.getHistogram(modCpt, fragmentIonType, aa, 50);
+
+            data.add(0.0);
+
+            for (int frequency : histogram) {
+                if (frequency > 0) {
+                    data.add(new Double(frequency));
+
+                    if (frequency > maxAreaChartValue) {
+                        maxAreaChartValue = frequency;
+                    }
+                }
+            }
+
+            data.add(0.0);
+
+            // find area color
+            Color areaColor = Color.lightGray;
+            String tooltip = null;
+
+            switch (fragmentIonType) {
+                case A_ION:
+                    areaColor = SpectrumPanel.determineFragmentIonColor("a");
+                    tooltip = "<html>a<sub>" + aa + "</sub>"  + modification + "</html>";
+                    break;
+                case B_ION:
+                    areaColor = SpectrumPanel.determineFragmentIonColor("b");
+                    tooltip = "<html>b<sub>" + aa + "</sub>"  + modification + "</html>";
+                    break;
+                case C_ION:
+                    areaColor = SpectrumPanel.determineFragmentIonColor("c");
+                    tooltip = "<html>c<sub>" + aa + "</sub>"  + modification + "</html>";
+                    break;
+                case X_ION:
+                    areaColor = SpectrumPanel.determineFragmentIonColor("x");
+                    tooltip = "<html>x<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub>"  + modification + "</html>";
+                    break;
+                case Y_ION:
+                    areaColor = SpectrumPanel.determineFragmentIonColor("y");
+                    tooltip = "<html>y<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub>"  + modification + "</html>";
+                    break;
+                case Z_ION:
+                    areaColor = SpectrumPanel.determineFragmentIonColor("z");
+                    tooltip = "<html>z<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub>"  + modification + "</html>";
+                    break;
+            }
+
+            // create a JSparklineDataSeries  
+            JSparklinesDataSeries sparklineDataseries = new JSparklinesDataSeries(data, areaColor, tooltip);
+
+            // add the data series to JSparklineDataset 
+            sparkLineDataSeriesAll.add(sparklineDataseries);
+        }
         JSparklinesDataset dataset = new JSparklinesDataset(sparkLineDataSeriesAll);
 
         // add the data to the table 
-        setValueAt(dataset, aa-1, column);
+        setValueAt(dataset, aa - 1, column);
     }
 
     /**
