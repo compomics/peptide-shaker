@@ -1,6 +1,6 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
+<Form version="1.8" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
       <AuxValues>
@@ -78,7 +78,7 @@
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="annotationLinksJPanel" pref="231" max="32767" attributes="1"/>
+                  <Component id="annotationLinksJPanel" max="32767" attributes="1"/>
                   <Component id="helpPanel" alignment="0" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
@@ -305,7 +305,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="webUniProtLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\u005c&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
             <Property name="toolTipText" type="java.lang.String" value="Open the UniProt web page"/>
           </Properties>
           <Events>
@@ -370,7 +370,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="webDasty3Label">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\u005c&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
             <Property name="toolTipText" type="java.lang.String" value="Open the Dasty3 web page"/>
           </Properties>
           <Events>
@@ -435,7 +435,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="webReactomeLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\u005c&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
             <Property name="toolTipText" type="java.lang.String" value="Open the Reactome web page"/>
           </Properties>
           <Events>
@@ -500,7 +500,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="webStringLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\u005c&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
             <Property name="toolTipText" type="java.lang.String" value="Open the STRING web page"/>
           </Properties>
           <Events>
@@ -565,7 +565,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="webDavidLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\u005c&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
             <Property name="toolTipText" type="java.lang.String" value="Open the DAVID web page"/>
           </Properties>
           <Events>
@@ -630,7 +630,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="webIntActLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\u005c&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
             <Property name="toolTipText" type="java.lang.String" value="Open the IntAct web page"/>
           </Properties>
           <Events>
@@ -695,7 +695,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="webQuickGOLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\u005c&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
             <Property name="toolTipText" type="java.lang.String" value="Open the QuickGO web page"/>
           </Properties>
           <Events>
@@ -760,7 +760,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="webInterProLabel">
           <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;"/>
+            <Property name="text" type="java.lang.String" value="&lt;html&gt; &lt;a href=\u005c&quot;dummy_link&quot;&gt;web&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
             <Property name="toolTipText" type="java.lang.String" value="Open the InterPro web page"/>
           </Properties>
           <Events>
@@ -795,7 +795,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="helpScrollPane" pref="182" max="32767" attributes="0"/>
+                  <Component id="helpScrollPane" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -845,7 +845,7 @@
     </Component>
     <Component class="javax.swing.JLabel" name="picrLinkJLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\&quot;dummy_link\&quot;&gt;PICR - Protein Identifier Cross-Reference Service&lt;/a&gt;&lt;/html&gt;"/>
+        <Property name="text" type="java.lang.String" value="&lt;html&gt;&lt;a href=\u005c&quot;dummy_link\u005c&quot;&gt;PICR - Protein Identifier Cross-Reference Service&lt;/a&gt;&lt;/html&gt;" containsInvalidXMLChars="true"/>
         <Property name="toolTipText" type="java.lang.String" value="&lt;html&gt;&#xa;Map protein identifiers across&lt;br&gt;&#xa;multiple source databases&#xa;&lt;/html&gt;"/>
       </Properties>
       <Events>

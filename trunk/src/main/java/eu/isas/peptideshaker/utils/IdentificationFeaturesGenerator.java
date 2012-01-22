@@ -805,12 +805,17 @@ public class IdentificationFeaturesGenerator {
             Collections.sort(scoreList);
             ArrayList<Integer> nPeptideList, nPsmList;
             ArrayList<String> tempList;
+            
             for (double currentScore : scoreList) {
+                
                 nPeptideList = new ArrayList<Integer>(orderMap.get(currentScore).keySet());
                 Collections.sort(nPeptideList);
+                
                 for (int currentNPeptides : nPeptideList) {
+                    
                     nPsmList = new ArrayList<Integer>(orderMap.get(currentScore).get(currentNPeptides).keySet());
                     Collections.sort(nPsmList);
+                    
                     for (int currentNPsms : nPsmList) {
                         tempList = orderMap.get(currentScore).get(currentNPeptides).get(currentNPsms);
                         Collections.sort(tempList);
@@ -821,6 +826,7 @@ public class IdentificationFeaturesGenerator {
                     }
                 }
             }
+            
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(true);
             }
