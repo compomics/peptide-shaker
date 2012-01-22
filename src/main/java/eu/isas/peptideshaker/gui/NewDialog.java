@@ -1214,7 +1214,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
         try {
             BufferedReader br = new BufferedReader(new FileReader(searchGUIFile));
-            String line = null;
+            String line;
             ArrayList<String> names = new ArrayList<String>();
             String missing = "";
             for (File file : spectrumFiles) {
