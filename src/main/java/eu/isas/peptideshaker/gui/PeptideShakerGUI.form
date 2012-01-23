@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.6" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
@@ -615,7 +615,7 @@
             <MenuItem class="javax.swing.JMenuItem" name="followUpAnalysisMenu">
               <Properties>
                 <Property name="mnemonic" type="int" value="70"/>
-                <Property name="text" type="java.lang.String" value="Follow-Up Analysis"/>
+                <Property name="text" type="java.lang.String" value="Follow Up Analysis"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
               <Events>
