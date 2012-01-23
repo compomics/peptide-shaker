@@ -3,6 +3,17 @@
 
 ----
 
+*Changes in PeptideShaker 0.14.3 (January 23. 2012):*
+ * NEW FEATURE: Added FASTA and CSV export options for the identified and unidentified proteins to the Follow Up export dialog.
+ * FEATURE IMPROVEMENT: Major overhaul of the export options: replaced most of the slow export to clipboard options with faster export to file options.
+ * FEATURE IMPROVEMENT: Minor code improvements to FileImporter, slightly reducing the memory required.
+ * FEATURE IMPROVEMENT: Big Mascot files are now indexed. Slower, but makes it possible to open bigger files.
+ * BUG FIX: Fixed a bug where the location of the Score column in the Peptide table in the Overview tab was incorrect.
+ * BUG FIX: Fixed a bug where the confidence column in the Peptide table was not hidden when hiding the sparklines.
+ * LIBRARY UPDATE: Updated utilities to version 3.3.26.
+
+----
+
 *Changes in PeptideShaker 0.14.2 (January 17. 2012):*
  * NEW FEATURE: The possible coverage is now shown in the protein sequence coverage panel in the Overview tab.
  * NEW FEATURE: Added precursor charge(s) to the peptide features export.
@@ -19,6 +30,8 @@
  * BUG FIX: Fixed a bug in the protein export where there was no separator between protein accession numbers in the Other proteinScoreColumn(s) column.
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.34.
  * LIBRARY UPDATE: Updated utilities to version 3.3.23.
+
+Download Count: 12
 
 ----
 
