@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.6" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <NonVisualComponents>
@@ -462,6 +462,9 @@
                           <SubComponents>
                             <Container class="javax.swing.JPanel" name="sequenceCoveragePanel">
                               <Properties>
+                                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                  <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                </Property>
                                 <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                                   <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
                                     <TitledBorder title="Protein Sequence Coverage"/>
@@ -481,8 +484,8 @@
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="sequencePtmTableScrollPane" alignment="1" pref="918" max="32767" attributes="0"/>
-                                              <Component id="sequenceCoverageTableScrollPane" alignment="0" pref="918" max="32767" attributes="0"/>
+                                              <Component id="sequenceCoverageTableScrollPane" pref="918" max="32767" attributes="0"/>
+                                              <Component id="sequencePtmTableScrollPane" alignment="0" pref="918" max="32767" attributes="0"/>
                                           </Group>
                                           <EmptySpace max="-2" attributes="0"/>
                                       </Group>
@@ -492,10 +495,10 @@
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="sequenceCoverageTableScrollPane" min="-2" pref="18" max="-2" attributes="0"/>
+                                          <Component id="sequenceCoverageTableScrollPane" pref="17" max="32767" attributes="0"/>
                                           <EmptySpace min="-2" pref="0" max="-2" attributes="0"/>
                                           <Component id="sequencePtmTableScrollPane" min="-2" pref="8" max="-2" attributes="0"/>
-                                          <EmptySpace max="32767" attributes="0"/>
+                                          <EmptySpace min="-2" max="-2" attributes="0"/>
                                       </Group>
                                   </Group>
                                 </DimensionLayout>
@@ -503,6 +506,9 @@
                               <SubComponents>
                                 <Container class="javax.swing.JScrollPane" name="sequenceCoverageTableScrollPane">
                                   <Properties>
+                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                    </Property>
                                     <Property name="opaque" type="boolean" value="false"/>
                                   </Properties>
                                   <AuxValues>
@@ -593,6 +599,9 @@
                                 </Container>
                                 <Container class="javax.swing.JScrollPane" name="sequencePtmTableScrollPane">
                                   <Properties>
+                                    <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                                    </Property>
                                     <Property name="opaque" type="boolean" value="false"/>
                                   </Properties>
                                   <AuxValues>

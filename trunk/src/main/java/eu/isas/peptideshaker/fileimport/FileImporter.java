@@ -93,7 +93,7 @@ public class FileImporter {
     /**
      * If a Mascot dat file is bigger than this size, an indexed parsing will be used
      */
-    public static final double mascotMaxSize = 200;
+    public static final double mascotMaxSize = 400;
 
     /**
      * Constructor for the importer
@@ -465,8 +465,7 @@ public class FileImporter {
 
                     IdfileReader fileReader;
                     int searchEngine = readerFactory.getSearchEngine(idFile);
-                    if (searchEngine == Advocate.MASCOT
-                            && idFile.length() > mascotMaxSize * 1048576) {
+                    if (searchEngine == Advocate.MASCOT && idFile.length() > mascotMaxSize * 1048576) {
                         fileReader = new MascotIdfileReader(idFile, MascotDatfileType.INDEX);
                     } else {
                         fileReader = readerFactory.getFileReader(idFile);

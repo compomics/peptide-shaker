@@ -1202,7 +1202,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         exportJMenu.add(identificationFeaturesMenu);
 
         followUpAnalysisMenu.setMnemonic('F');
-        followUpAnalysisMenu.setText("Follow-Up Analysis");
+        followUpAnalysisMenu.setText("Follow Up Analysis");
         followUpAnalysisMenu.setEnabled(false);
         followUpAnalysisMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

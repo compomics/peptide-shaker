@@ -35,22 +35,14 @@ import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.ComponentOrientation;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
@@ -74,7 +66,22 @@ import no.uib.jsparklines.renderers.JSparklinesIntegerColorTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesIntervalChartTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesTableCellRenderer;
 import no.uib.jsparklines.renderers.JSparklinesTwoValueBarChartTableCellRenderer;
+import no.uib.jsparklines.renderers.util.ReferenceArea;
+import no.uib.jsparklines.renderers.util.ReferenceLine;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.labels.CategoryToolTipGenerator;
+import org.jfree.chart.labels.IntervalCategoryToolTipGenerator;
+import org.jfree.chart.labels.StandardCategoryToolTipGenerator;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.IntervalMarker;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.ValueMarker;
+import org.jfree.chart.renderer.category.LayeredBarRenderer;
+import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.data.category.CategoryDataset;
+import org.jfree.data.category.DefaultCategoryDataset;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -796,9 +803,11 @@ public class OverviewPanel extends javax.swing.JPanel {
 
         sequenceCoverageJPanel.setOpaque(false);
 
+        sequenceCoveragePanel.setBackground(new java.awt.Color(255, 255, 255));
         sequenceCoveragePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Protein Sequence Coverage"));
         sequenceCoveragePanel.setOpaque(false);
 
+        sequenceCoverageTableScrollPane.setBackground(new java.awt.Color(255, 255, 255));
         sequenceCoverageTableScrollPane.setOpaque(false);
 
         coverageTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -835,6 +844,7 @@ public class OverviewPanel extends javax.swing.JPanel {
         });
         sequenceCoverageTableScrollPane.setViewportView(coverageTable);
 
+        sequencePtmTableScrollPane.setBackground(new java.awt.Color(255, 255, 255));
         sequencePtmTableScrollPane.setOpaque(false);
 
         ptmTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -876,18 +886,18 @@ public class OverviewPanel extends javax.swing.JPanel {
             .addGroup(sequenceCoveragePanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(sequenceCoveragePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sequencePtmTableScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 918, Short.MAX_VALUE)
-                    .addComponent(sequenceCoverageTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 918, Short.MAX_VALUE))
+                    .addComponent(sequenceCoverageTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 918, Short.MAX_VALUE)
+                    .addComponent(sequencePtmTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 918, Short.MAX_VALUE))
                 .addContainerGap())
         );
         sequenceCoveragePanelLayout.setVerticalGroup(
             sequenceCoveragePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sequenceCoveragePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(sequenceCoverageTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(sequenceCoverageTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 17, Short.MAX_VALUE)
                 .addGap(0, 0, 0)
                 .addComponent(sequencePtmTableScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 8, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         sequenceCoveragePanel.setBounds(0, 0, 950, 70);
@@ -3770,6 +3780,7 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
 
         ArrayList<Integer> selectedPeptideStart = new ArrayList<Integer>();
         ArrayList<Integer> selectedPeptideEnd = new ArrayList<Integer>();
+        HashMap<Integer, XYDataPoint> proteinTooltips = new HashMap<Integer, XYDataPoint>();
 
         try {
             currentProteinSequence = sequenceFactory.getProtein(proteinAccession).getSequence();
@@ -3870,14 +3881,17 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                     JSparklinesDataSeries sparklineDataseries;
 
                     if (covered) {
+                        proteinTooltips.put(sparkLineDataSeriesCoverage.size(), new XYDataPoint(i - sequenceCounter + 1, i + 1));
                         if (selectedPeptideEnd.contains(new Integer(i + 1))) {
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUserPreferences().getPeptideSelected(), null);
                         } else {
                             sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getSparklineColor(), null);
                         }
                     } else if (possibleToCoverCounter > 0) {
+                        proteinTooltips.put(sparkLineDataSeriesCoverage.size(), new XYDataPoint(i - sequenceCounter + 1, i + 1));
                         sparklineDataseries = new JSparklinesDataSeries(data, peptideShakerGUI.getUserPreferences().getSparklineColorNotFound(), null);
                     } else {
+                        proteinTooltips.put(sparkLineDataSeriesCoverage.size(), new XYDataPoint(i - sequenceCounter + 1, i + 1));
                         sparklineDataseries = new JSparklinesDataSeries(data, new Color(0, 0, 0, 0), null);
                     }
 
@@ -3887,6 +3901,10 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
                 JSparklinesDataset dataset = new JSparklinesDataset(sparkLineDataSeriesCoverage);
                 coverageTable.setValueAt(dataset, 0, 0);
 
+//                tempPanel.removeAll();
+//                tempPanel.add(getProteinCoveragePlot(new JSparklinesDataset(sparkLineDataSeriesCoverage), proteinTooltips));
+//                tempPanel.revalidate();
+//                tempPanel.repaint();
 
                 // get the ptms
                 ArrayList<JSparklinesDataSeries> sparkLineDataSeriesPtm = new ArrayList<JSparklinesDataSeries>();
@@ -5447,4 +5465,146 @@ private void coverageTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRS
     public double getMaxMW() {
         return maxMW;
     }
+
+//    private ChartPanel getProteinCoveragePlot(JSparklinesDataset sparklineDataset, HashMap<Integer, XYDataPoint> proteinTooltips) {
+//
+//        DefaultCategoryDataset barChartDataset = new DefaultCategoryDataset();
+//
+//        StackedBarRenderer renderer = new StackedBarRenderer();
+//        renderer.setShadowVisible(false);
+//        
+//        
+//        CategoryToolTipGenerator myTooltips = new MyProteinTooltips(proteinTooltips, peptideTable);
+//
+//
+//        for (int i = 0; i < sparklineDataset.getData().size(); i++) {
+//
+//            JSparklinesDataSeries sparklineDataSeries = sparklineDataset.getData().get(i);
+//
+//            for (int j = 0; j < sparklineDataSeries.getData().size(); j++) {
+//                barChartDataset.addValue(sparklineDataSeries.getData().get(j), "" + i, "" + j);
+//                renderer.setSeriesPaint(i, sparklineDataSeries.getSeriesColor());
+//                renderer.setSeriesToolTipGenerator(i, myTooltips);
+//            }
+//        }
+//        
+//        
+//
+//        JFreeChart chart = ChartFactory.createStackedBarChart(null, null, null, barChartDataset, PlotOrientation.HORIZONTAL, false, false, false);
+//
+//        // fine tune the chart properites
+//        CategoryPlot plot = chart.getCategoryPlot();
+//
+//        // remove space before/after the domain axis
+//        plot.getDomainAxis().setUpperMargin(0);
+//        plot.getDomainAxis().setLowerMargin(0);
+//
+//        // remove space before/after the range axis
+//        plot.getRangeAxis().setUpperMargin(0);
+//        plot.getRangeAxis().setLowerMargin(0);
+//
+//        renderer.setRenderAsPercentages(true);
+//        
+//        renderer.setBaseToolTipGenerator(new IntervalCategoryToolTipGenerator());
+//
+//
+//        // add the dataset
+//        plot.setDataset(barChartDataset);
+//
+//        // hide unwanted chart details
+//        plot.getRangeAxis().setVisible(false);
+//        plot.getDomainAxis().setVisible(false);
+//        plot.setRangeGridlinesVisible(false);
+//        plot.setDomainGridlinesVisible(false);
+//
+//
+//        // add a reference line in the middle of the dataset
+//        DefaultCategoryDataset referenceLineDataset = new DefaultCategoryDataset();
+//        referenceLineDataset.addValue(1.0, "A", "B");
+//        plot.setDataset(1, referenceLineDataset);
+//        LayeredBarRenderer referenceLineRenderer = new LayeredBarRenderer();
+//        referenceLineRenderer.setSeriesBarWidth(0, 0.03);
+//        referenceLineRenderer.setSeriesFillPaint(0, Color.BLACK);
+//        referenceLineRenderer.setSeriesPaint(0, Color.BLACK);
+//        plot.setRenderer(1, referenceLineRenderer);
+//
+//
+//        // set up the chart renderer
+//        plot.setRenderer(0, renderer);
+//
+//
+//
+//        // hide the outline
+//        chart.getPlot().setOutlineVisible(false);
+//
+//        // make sure the background is the same as the table row color
+//
+//        chart.getPlot().setBackgroundPaint(Color.WHITE);
+//        chart.setBackgroundPaint(Color.WHITE);
+//
+//
+//        // create the chart panel and add it to the table cell
+//        ChartPanel chartPanel = new ChartPanel(chart);
+//
+//
+//        chartPanel.setBackground(Color.WHITE);
+//
+//
+//        return chartPanel;
+//    }
+//    
+//    private class MyProteinTooltips implements CategoryToolTipGenerator {
+//
+//        private HashMap<Integer, XYDataPoint> proteinTooltips;
+//        private JTable peptideTable;
+//        
+//        public MyProteinTooltips (HashMap<Integer, XYDataPoint> proteinTooltips, JTable peptideTable) {
+//            this.proteinTooltips = proteinTooltips;
+//            this.peptideTable = peptideTable;
+//        }
+//        
+//        @Override
+//        public String generateToolTip(CategoryDataset cd, int index, int i1) {
+//            
+//            int blockNumber = index;
+//            
+//            int start = (int) proteinTooltips.get(blockNumber).getX();
+//            int end = (int) proteinTooltips.get(blockNumber).getY();
+//            
+//            return "range: " + start + " - " + end;
+//            
+//            String tooltipText = "<html>";
+//            
+//            
+//            
+//
+//            for (int i = 0; i < peptideTable.getRowCount(); i++) {
+//
+//                String peptideKey = peptideTableMap.get(getPeptideIndex(i));
+//                int peptideStart = (Integer) peptideTable.getValueAt(i, peptideTable.getColumn("Start").getModelIndex());
+//                int peptideEnd = peptideStart + peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey).getTheoreticPeptide().getSequence().length();
+//
+//                if (residueNumber >= peptideStart && residueNumber <= peptideEnd
+//                        && (Boolean) peptideTable.getValueAt(i, peptideTable.getColumnCount() - 1)) {
+//
+//                    String modifiedSequence = "";
+//
+//                    try {
+//                        modifiedSequence = peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(peptideKey, false);
+//                    } catch (Exception e) {
+//                        peptideShakerGUI.catchException(e);
+//                        e.printStackTrace();
+//                    }
+//
+//                    tooltipText += peptideStart + " - " + modifiedSequence + " - " + peptideEnd + "<br>";
+//                }
+//            }
+//
+//            if (!tooltipText.equalsIgnoreCase("<html>")) {
+//                return tooltipText + "</html>";
+//            } else {
+//                return null;
+//            }
+//        }
+//    }
 }
