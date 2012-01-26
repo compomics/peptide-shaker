@@ -102,7 +102,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         progenesisPanel = new javax.swing.JPanel();
         exportProgenesisButton = new javax.swing.JButton();
         jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
         unidentifiedProteinsPanel = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
         exportUnidentifiedSpectraAsFastaButton = new javax.swing.JButton();
@@ -225,12 +224,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
-                    .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
                     .addGroup(inclusionListPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
+                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(inclusionListPanelLayout.createSequentialGroup()
@@ -238,12 +238,9 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(inclusionListPanelLayout.createSequentialGroup()
                                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(inclusionListPanelLayout.createSequentialGroup()
-                                        .addComponent(isoformsCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, inclusionListPanelLayout.createSequentialGroup()
-                                        .addComponent(miscleavedCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(18, 18, 18)))
+                                    .addComponent(isoformsCheck, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(miscleavedCheck, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 169, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(18, 18, 18)
                                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(reactiveCheck)
                                     .addComponent(isoformsUnrelatedCheck))
@@ -288,7 +285,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(rtWindow, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel7)))
                     .addComponent(degeneratedCheck))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(inclusionListPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(idSelectionCmb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -314,10 +310,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
         jLabel8.setText("Export Spectrum IDs to Progenesis Tab Separated Phenyx Format:");
 
-        jLabel9.setFont(new java.awt.Font("Tahoma", 2, 11));
-        jLabel9.setForeground(new java.awt.Color(255, 0, 0));
-        jLabel9.setText("Under Development");
-
         javax.swing.GroupLayout progenesisPanelLayout = new javax.swing.GroupLayout(progenesisPanel);
         progenesisPanel.setLayout(progenesisPanelLayout);
         progenesisPanelLayout.setHorizontalGroup(
@@ -325,9 +317,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
             .addGroup(progenesisPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel8)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 69, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(exportProgenesisButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -337,8 +327,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(progenesisPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(exportProgenesisButton)
-                    .addComponent(jLabel9))
+                    .addComponent(exportProgenesisButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -1459,7 +1448,6 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JCheckBox miscleavedCheck;
     private javax.swing.JPanel progenesisPanel;
     private javax.swing.JCheckBox reactiveCheck;
