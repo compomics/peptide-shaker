@@ -342,21 +342,21 @@ public class PtmTable extends JTable {
 
         if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.A_ION)) {
             try {
-                getColumn("a").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
+                getColumn("a").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.lineChart, PlotOrientation.VERTICAL, maxAreaChartValue));
             } catch (IllegalArgumentException e) {
                 // do nothing
             }
         }
         if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.B_ION)) {
             try {
-                getColumn("b").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
+                getColumn("b").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.lineChart, PlotOrientation.VERTICAL, maxAreaChartValue));
             } catch (IllegalArgumentException e) {
                 // do nothing
             }
         }
         if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.C_ION)) {
             try {
-                getColumn("c").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
+                getColumn("c").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.lineChart, PlotOrientation.VERTICAL, maxAreaChartValue));
             } catch (IllegalArgumentException e) {
                 // do nothing
             }
@@ -364,21 +364,21 @@ public class PtmTable extends JTable {
 
         if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.X_ION)) {
             try {
-                getColumn("x").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
+                getColumn("x").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.lineChart, PlotOrientation.VERTICAL, maxAreaChartValue));
             } catch (IllegalArgumentException e) {
                 // do nothing
             }
         }
         if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Y_ION)) {
             try {
-                getColumn("y").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
+                getColumn("y").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.lineChart, PlotOrientation.VERTICAL, maxAreaChartValue));
             } catch (IllegalArgumentException e) {
                 // do nothing
             }
         }
         if (annotationPreferences.getIonTypes().contains(PeptideFragmentIonType.Z_ION)) {
             try {
-                getColumn("z").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.areaChart, PlotOrientation.VERTICAL, maxAreaChartValue));
+                getColumn("z").setCellRenderer(new JSparklinesTableCellRenderer(JSparklinesTableCellRenderer.PlotType.lineChart, PlotOrientation.VERTICAL, maxAreaChartValue));
             } catch (IllegalArgumentException e) {
                 // do nothing
             }
@@ -401,7 +401,7 @@ public class PtmTable extends JTable {
         String modification = "";
 
         for (int modCpt = 0; modCpt <= nPTM; modCpt++) {
-            
+
             if (modCpt > 0) {
                 if (modCpt == 1) {
                     modification = " <" + ptm.getShortName() + ">";
@@ -431,32 +431,44 @@ public class PtmTable extends JTable {
 
             // find area color
             Color areaColor = Color.lightGray;
+            double colorCoef;
+            if (nPTM == 0) {
+                colorCoef = 1;
+            } else {
+                colorCoef = 1.0 - ((1.0 * modCpt) / nPTM);
+            }
             String tooltip = null;
 
             switch (fragmentIonType) {
                 case A_ION:
                     areaColor = SpectrumPanel.determineFragmentIonColor("a");
-                    tooltip = "<html>a<sub>" + aa + "</sub>"  + modification + "</html>";
+                    areaColor = new Color((int) (colorCoef * areaColor.getRed()), (int) (colorCoef * areaColor.getGreen()), (int) (colorCoef * areaColor.getBlue()));
+                    tooltip = "<html>a<sub>" + aa + "</sub>" + modification + "</html>";
                     break;
                 case B_ION:
                     areaColor = SpectrumPanel.determineFragmentIonColor("b");
-                    tooltip = "<html>b<sub>" + aa + "</sub>"  + modification + "</html>";
+                    areaColor = new Color((int) (colorCoef * areaColor.getRed()), (int) (colorCoef * areaColor.getGreen()), (int) (colorCoef * areaColor.getBlue()));
+                    tooltip = "<html>b<sub>" + aa + "</sub>" + modification + "</html>";
                     break;
                 case C_ION:
                     areaColor = SpectrumPanel.determineFragmentIonColor("c");
-                    tooltip = "<html>c<sub>" + aa + "</sub>"  + modification + "</html>";
+                    areaColor = new Color((int) (colorCoef * areaColor.getRed()), (int) (colorCoef * areaColor.getGreen()), (int) (colorCoef * areaColor.getBlue()));
+                    tooltip = "<html>c<sub>" + aa + "</sub>" + modification + "</html>";
                     break;
                 case X_ION:
                     areaColor = SpectrumPanel.determineFragmentIonColor("x");
-                    tooltip = "<html>x<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub>"  + modification + "</html>";
+                    areaColor = new Color((int) (colorCoef * areaColor.getRed()), (int) (colorCoef * areaColor.getGreen()), (int) (colorCoef * areaColor.getBlue()));
+                    tooltip = "<html>x<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub>" + modification + "</html>";
                     break;
                 case Y_ION:
                     areaColor = SpectrumPanel.determineFragmentIonColor("y");
-                    tooltip = "<html>y<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub>"  + modification + "</html>";
+                    areaColor = new Color((int) (colorCoef * areaColor.getRed()), (int) (colorCoef * areaColor.getGreen()), (int) (colorCoef * areaColor.getBlue()));
+                    tooltip = "<html>y<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub>" + modification + "</html>";
                     break;
                 case Z_ION:
                     areaColor = SpectrumPanel.determineFragmentIonColor("z");
-                    tooltip = "<html>z<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub>"  + modification + "</html>";
+                    areaColor = new Color((int) (colorCoef * areaColor.getRed()), (int) (colorCoef * areaColor.getGreen()), (int) (colorCoef * areaColor.getBlue()));
+                    tooltip = "<html>z<sub>" + (peptide.getSequence().length() - aa + 1) + "</sub>" + modification + "</html>";
                     break;
             }
 

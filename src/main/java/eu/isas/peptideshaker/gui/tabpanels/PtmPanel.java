@@ -3301,9 +3301,13 @@ private void ptmJTableMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:ev
                 ArrayList<Double> scores = new ArrayList<Double>(scoreToPeptideMap.keySet());
                 Collections.sort(scores);
                 displayedPeptides = new ArrayList<String>();
+                
+                ArrayList<String> tempList;
 
                 for (double score : scores) {
-                    displayedPeptides.addAll(scoreToPeptideMap.get(score));
+                    tempList = scoreToPeptideMap.get(score);
+                    Collections.sort(tempList);
+                    displayedPeptides.addAll(tempList);
                 }
 
                 ((DefaultTableModel) peptidesTable.getModel()).fireTableDataChanged();
