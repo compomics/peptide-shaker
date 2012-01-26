@@ -1006,7 +1006,7 @@ public class FeaturesGenerator {
             psParameter = (PSParameter) identification.getMatchParameter(psmKey, psParameter);
             PeptideAssumption bestAssumption = spectrumMatch.getBestAssumption();
 
-            if (!bestAssumption.isDecoy()) {
+            if (!bestAssumption.isDecoy() && psParameter.isValidated()) {
 
                 for (int j = 0; j < bestAssumption.getPeptide().getParentProteins().size(); j++) {
 
