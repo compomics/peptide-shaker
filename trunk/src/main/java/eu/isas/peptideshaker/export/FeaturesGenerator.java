@@ -1028,28 +1028,26 @@ public class FeaturesGenerator {
 
                     for (int i = 0; i < bestAssumption.getPeptide().getSequence().length() + 1; i++) {
 
-                        for (String mod : mods) {
-                            if (modMap.get(mod).contains(new Integer(i))) {
-                                writer.write(mod); // @TODO: what about multiple ptms on the same residue??
+                        String allMods = "";
+                        
+                        for (int k=0;k<mods.size(); k++) {
+                            
+                            String tempMod = mods.get(k);
+                            
+                            if (modMap.get(tempMod).contains(new Integer(i))) {
+                                
+                                if (allMods.length() > 0) {
+                                   allMods += ", ";
+                                }
+                                
+                                allMods += tempMod;    
                             }
-                        }
-
-                        writer.write(":");
+                        } 
+                        
+                        writer.write(allMods + ":");
                     }
 
                     writer.write(SEPARATOR);
-
-
-//                    for (String mod : mods) {
-//
-//                        writer.write(mod + "(");
-//                        for (int aa : modMap.get(mod)) {
-//                            writer.write(", ");
-//                            writer.write(aa);
-//                        }
-//                        writer.write(")");
-//                    }
-//                    writer.write(SEPARATOR);
 
                     // score
                     writer.write(psParameter.getPsmConfidence() + SEPARATOR);
@@ -1058,7 +1056,8 @@ public class FeaturesGenerator {
                     writer.write(bestAssumption.getPeptide().getParentProteins().get(j) + SEPARATOR);
 
                     // description
-                    writer.write("" + SEPARATOR); // @TODO: how to get the description???
+                    String description = sequenceFactory.getHeader(bestAssumption.getPeptide().getParentProteins().get(j)).getDescription();
+                    writer.write(description + SEPARATOR);
 
                     // compound
                     writer.write(Spectrum.getSpectrumTitle(spectrumMatch.getKey()) + SEPARATOR);
