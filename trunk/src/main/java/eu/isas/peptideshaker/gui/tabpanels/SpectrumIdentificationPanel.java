@@ -2789,13 +2789,18 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
                     searchEngineAgreement = isBestPsmEqualForAllSearchEngines(spectrumMatch);
                 }
+                
+                int charge = 0;
+                if (!precursor.getPossibleCharges().isEmpty()) {
+                    charge = precursor.getPossibleCharges().get(0).value;
+                }
 
                 ((DefaultTableModel) spectrumTable.getModel()).addRow(new Object[]{
                             ++counter,
                             searchEngineAgreement,
                             Spectrum.getSpectrumTitle(spectrumKey),
                             precursor.getMz(),
-                            precursor.getPossibleCharges().get(0).value, // @TODO: this is just a temporary fix until we find a better way of displaying multiple charges...
+                            charge, // @TODO: this is just a temporary fix until we find a better way of displaying multiple charges...
                             retentionTime
                         });
 
