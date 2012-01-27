@@ -2741,7 +2741,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         dm.fireTableDataChanged();
 
         fileSelected = (String) fileNamesCmb.getSelectedItem();
-        double maxMz = Double.MIN_VALUE;
+        double maxMz = spectrumFactory.getMaxMz(fileSelected);
         int identifiedCounter = 0;
 
         progressDialog.setIndeterminate(false);
