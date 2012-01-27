@@ -2809,13 +2809,14 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
             fileNamesCmb.setSelectedItem(fileName);
         }
 
-        // @TODO: we might want something faster here!!
-        for (int i = 0; i < spectrumTable.getRowCount(); i++) {
-            if (((String) spectrumTable.getValueAt(i, spectrumTable.getColumn("Title").getModelIndex())).equals(spectrumTitle)) {
-                spectrumTable.setRowSelectionInterval(i, i);
-                spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(i, 0, false));
+        int line = 0;
+        for (String tempTitle : spectrumFactory.getSpectrumTitles(fileSelected)) {
+            if (tempTitle.equals(spectrumTitle)) {
+                spectrumTable.setRowSelectionInterval(line, line);
+                spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(line, 0, false));
                 break;
             }
+            line++;
         }
 
         spectrumSelectionChanged();
