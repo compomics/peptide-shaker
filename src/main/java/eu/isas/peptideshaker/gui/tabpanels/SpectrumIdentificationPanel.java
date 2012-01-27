@@ -2745,7 +2745,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         int identifiedCounter = 0;
 
         progressDialog.setIndeterminate(false);
-        progressDialog.setMax(spectrumFactory.getSpectrumTitles(fileSelected).size());
+        progressDialog.setMax(identification.getSpectrumIdentification().size());
         progressDialog.setValue(0);
 
         for (String spectrumKey : identification.getSpectrumIdentification()) {
