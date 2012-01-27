@@ -11,7 +11,7 @@ Which database are you using?<br><br>Large databases will increase the amount of
 <i>PeptideShaker</i> not finding your protein?<br><br>Verify that you are using the correct database and that its parsing is done correctly!
 Did you expect more peptides/proteins?<br><br>In the <i>Spectrum IDs</i> tab you can verify the performance of all search engines. You can also adjust validation settings in the <i>Validation</i> tab.<br><br><i>If you compare the results with other packages, remember that you should use same search, import and validation settings!</i>
 Using Mascot Results?<br><br>Make sure that the database used for the search is the same as the one provided to <i>PeptideShaker</i> and that the <i>decoy</i> option is <b><u>not</u></b> selected!
-Did you check the QC plots?<br><br>Quality Control plots are available in the <i>QC</i> tab. You can verify that everything went OK during the identification process.
+Did you check the QC plots?<br><br>Quality Control plots are available in the <i>QC Plots</i> tab. You can verify that everything went OK during the identification process.
 Need another QC metric/plot?<br><br>Propose it on our <a href="http://groups.google.com/group/peptide-shaker">mailing list</a>!
 Too many/too few peak annotations?<br><br>Change the minimum peak intensity considered by scrolling the mouse wheel.<br>Or increase/decrease the m/z tolerance by holding the control key while scrolling.<br><br>Controllers are available in the <i>View</i> menu under <i>Spectrum Sliders</i>.
 Many unidentified spectra?<br><br>You can export the spectra which do not present a validated identification using the <i>Follow-up Analysis</i> tool accessible from the <i>Export</i> menu.
