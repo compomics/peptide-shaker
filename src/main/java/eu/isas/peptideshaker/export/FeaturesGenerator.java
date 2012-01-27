@@ -857,7 +857,7 @@ public class FeaturesGenerator {
                                                         } else {
                                                             writer.write(", ");
                                                         }
-                                                        writer.write(aa);
+                                                        writer.write(aa + "");
                                                     }
                                                     writer.write(")");
                                                 }
