@@ -89,7 +89,7 @@ public class FileImporter {
     /**
      * db processing disabled only while testing
      */
-    private boolean testing = true;
+    private boolean testing = false;
     /**
      * If a Mascot dat file is bigger than this size, an indexed parsing will be used
      */
@@ -299,6 +299,7 @@ public class FileImporter {
         if (searchParameters.getModificationProfile().getPeptideShakerNames().contains(sePTM.toLowerCase())) {
             return ptmFactory.getPTM(sePTM).getName();
         } else {
+            
             possiblePTMs = new ArrayList<PTM>();
             String[] parsedName = sePTM.split("@");
             double seMass = new Double(parsedName[0]);
