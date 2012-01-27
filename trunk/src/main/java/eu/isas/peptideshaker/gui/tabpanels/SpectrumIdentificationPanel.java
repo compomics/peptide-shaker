@@ -162,6 +162,14 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      * The identification
      */
     private Identification identification;
+    /**
+     * The file currently selected
+     */
+    private String fileSelected = null;
+    /**
+     * The spectrum factory
+     */
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
 
     /**
      * Create a new SpectrumIdentificationPanel.
@@ -688,7 +696,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginesJPanel.setLayout(searchEnginesJPanelLayout);
         searchEnginesJPanelLayout.setHorizontalGroup(
             searchEnginesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(searchEnginesJLayeredPane)
+            .addComponent(searchEnginesJLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1331, Short.MAX_VALUE)
         );
         searchEnginesJPanelLayout.setVerticalGroup(
             searchEnginesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1061,7 +1069,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         psmsJPanel.setLayout(psmsJPanelLayout);
         psmsJPanelLayout.setHorizontalGroup(
             psmsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(psmsLayeredPane)
+            .addComponent(psmsLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1331, Short.MAX_VALUE)
         );
         psmsJPanelLayout.setVerticalGroup(
             psmsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1087,29 +1095,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
 
         spectrumTableJScrollPane.setOpaque(false);
 
-        spectrumTable.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                " ", "SE", "Title", "m/z", "Charge", "RT"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.String.class, java.lang.Double.class, java.lang.Integer.class, java.lang.Double.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        spectrumTable.setModel(new SpectrumTable());
         spectrumTable.setOpaque(false);
         spectrumTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         spectrumTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -2754,63 +2740,21 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         dm.getDataVector().removeAllElements();
         dm.fireTableDataChanged();
 
-        String fileSelected = (String) fileNamesCmb.getSelectedItem();
+        fileSelected = (String) fileNamesCmb.getSelectedItem();
         double maxMz = Double.MIN_VALUE;
-        int counter = 0;
-        int notIdentifiedCounter = 0;
+        int identifiedCounter = 0;
 
         progressDialog.setIndeterminate(false);
-        progressDialog.setMax(SpectrumFactory.getInstance().getSpectrumTitles(fileSelected).size());
+        progressDialog.setMax(spectrumFactory.getSpectrumTitles(fileSelected).size());
         progressDialog.setValue(0);
 
-        boolean retentionTimeValues = false;
-
-        for (String spectrumTitle : SpectrumFactory.getInstance().getSpectrumTitles(fileSelected)) {
-
-            progressDialog.incrementValue();
-
-            String spectrumKey = Spectrum.getSpectrumKey(fileSelected, spectrumTitle);
-            Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
-
-            if (precursor != null) {
-
-                double retentionTime = precursor.getRt();
-
-                if (!retentionTimeValues && retentionTime != -1) {
-                    retentionTimeValues = true;
-                }
-
-                int searchEngineAgreement;
-
-                if (!identification.matchExists(spectrumKey)) {
-                    searchEngineAgreement = NO_ID;
-                    notIdentifiedCounter++;
-                } else {
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                    searchEngineAgreement = isBestPsmEqualForAllSearchEngines(spectrumMatch);
-                }
-                
-                int charge = 0;
-                if (!precursor.getPossibleCharges().isEmpty()) {
-                    charge = precursor.getPossibleCharges().get(0).value;
-                }
-
-                ((DefaultTableModel) spectrumTable.getModel()).addRow(new Object[]{
-                            ++counter,
-                            searchEngineAgreement,
-                            Spectrum.getSpectrumTitle(spectrumKey),
-                            precursor.getMz(),
-                            charge, // @TODO: this is just a temporary fix until we find a better way of displaying multiple charges...
-                            retentionTime
-                        });
-
-                if (precursor.getMz() > maxMz) {
-                    maxMz = precursor.getMz();
-                }
+        for (String spectrumKey : identification.getSpectrumIdentification()) {
+            if (Spectrum.getSpectrumFile(spectrumKey).equals(fileSelected)) {
+                identifiedCounter++;
             }
         }
 
-        ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("Spectrum Selection (" + (spectrumTable.getRowCount() - notIdentifiedCounter) + "/" + spectrumTable.getRowCount() + ")");
+        ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("Spectrum Selection (" + (identifiedCounter) + "/" + spectrumFactory.getNSpectra(fileSelected) + ")");
         spectrumSelectionPanel.repaint();
 
         ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
@@ -3585,6 +3529,117 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
             return AGREEMENT;
         } else {
             return NO_ID;
+        }
+    }
+
+    /**
+     * Table model for the table listing all spectra
+     */
+    private class SpectrumTable extends DefaultTableModel {
+
+        @Override
+        public int getRowCount() {
+            if (fileSelected != null) {
+                return spectrumFactory.getNSpectra(fileSelected);
+            } else {
+                return 0;
+            }
+        }
+
+        @Override
+        public int getColumnCount() {
+            return 6;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            switch (column) {
+                case 0:
+                    return " ";
+                case 1:
+                    return "SE";
+                case 2:
+                    return "Title";
+                case 3:
+                    return "m/z";
+                case 4:
+                    return "Charge";
+                case 5:
+                    return "RT";
+                default:
+                    return "";
+            }
+        }
+
+        @Override
+        public Object getValueAt(int row, int column) {
+
+            try {
+                switch (column) {
+                    case 0:
+                        return row + 1;
+                    case 1:
+                        int searchEngineAgreement;
+                        String spectrumTitle = spectrumFactory.getSpectrumTitles(fileSelected).get(row);
+                        String spectrumKey = Spectrum.getSpectrumKey(fileSelected, spectrumTitle);
+                        if (!identification.matchExists(spectrumKey)) {
+                            searchEngineAgreement = NO_ID;
+                        } else {
+                            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                            searchEngineAgreement = isBestPsmEqualForAllSearchEngines(spectrumMatch);
+                        }
+                        return searchEngineAgreement;
+                    case 2:
+                        return spectrumFactory.getSpectrumTitles(fileSelected).get(row);
+                    case 3:
+                        spectrumTitle = spectrumFactory.getSpectrumTitles(fileSelected).get(row);
+                        spectrumKey = Spectrum.getSpectrumKey(fileSelected, spectrumTitle);
+                        Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+                        if (precursor != null) {
+                            return precursor.getMz();
+                        } else {
+                            return null;
+                        }
+                    case 4:
+                        spectrumTitle = spectrumFactory.getSpectrumTitles(fileSelected).get(row);
+                        spectrumKey = Spectrum.getSpectrumKey(fileSelected, spectrumTitle);
+                        precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+                        Integer charge = null;
+                        if (precursor != null && !precursor.getPossibleCharges().isEmpty()) {
+                            charge = precursor.getPossibleCharges().get(0).value;
+                        }
+                        return charge;
+                    case 5:
+                        spectrumTitle = spectrumFactory.getSpectrumTitles(fileSelected).get(row);
+                        spectrumKey = Spectrum.getSpectrumKey(fileSelected, spectrumTitle);
+                        precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+                        if (precursor != null) {
+                            return precursor.getRt();
+                        } else {
+                            return null;
+                        }
+                    default:
+                        return "";
+                }
+            } catch (Exception e) {
+                peptideShakerGUI.catchException(e);
+                return "";
+            }
+        }
+
+        @Override
+        public Class getColumnClass(int columnIndex) {
+            for (int i = 0; i < getRowCount(); i++) {
+                if (getValueAt(i, columnIndex) != null) {
+                    return getValueAt(i, columnIndex).getClass();
+                }
+            }
+            return (new Double(0.0)).getClass();
+        }
+
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return false;
         }
     }
 }
