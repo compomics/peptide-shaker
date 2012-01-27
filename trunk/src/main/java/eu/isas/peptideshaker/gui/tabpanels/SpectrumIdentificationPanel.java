@@ -2752,6 +2752,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
             if (Spectrum.getSpectrumFile(spectrumKey).equals(fileSelected)) {
                 identifiedCounter++;
             }
+            progressDialog.incrementValue();
         }
 
         ((TitledBorder) spectrumSelectionPanel.getBorder()).setTitle("Spectrum Selection (" + (identifiedCounter) + "/" + spectrumFactory.getNSpectra(fileSelected) + ")");
