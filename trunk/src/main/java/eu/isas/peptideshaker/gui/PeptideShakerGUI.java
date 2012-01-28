@@ -2927,10 +2927,26 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 fis.close();
                 in.close();
                 userPreferences = (UserPreferences) inObject;
+                checkVersionCompatibility();
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    /**
+     * Checks the version compatibility and makes the necessary adjustments
+     */
+    private void checkVersionCompatibility() {
+        // Resets the user preferences keeping the the link to other projects
+        UserPreferences tempPreferences = new UserPreferences();
+        File tempFile;
+        for (String recentProject : userPreferences.getRecentProjects()) {
+            tempFile = new File(recentProject);
+            tempPreferences.addRecentProject(tempFile);
+        }
+        tempPreferences.setShowSliders(userPreferences.showSliders());
+        userPreferences = tempPreferences;
     }
 
     /**

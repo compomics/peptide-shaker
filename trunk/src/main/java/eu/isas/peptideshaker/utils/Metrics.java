@@ -26,6 +26,22 @@ public class Metrics implements Serializable {
      * The chares found in all PSMs (only the best hit per spectrum).
      */
     private ArrayList<Integer> foundCharges = new ArrayList<Integer>();
+    /**
+     * The maximal amount of peptides in the proteins of the dataset
+     */
+    private Integer maxNPeptides = null;
+    /**
+     * The maximal amount of spectra in the proteins of the dataset
+     */
+    private Integer maxNSpectra = null;
+    /**
+     * The maximal spectrum counting in the proteins of the dataset
+     */
+    private Double maxSpectrumCounting = null;
+    /**
+     * The weight of the fattest protein in the dataset
+     */
+    private Double maxMW = null;
 
     /**
      * Constructor.
@@ -92,4 +108,71 @@ public class Metrics implements Serializable {
     public void setMaxPrecursorErrorPpm(double maxPrecursorErrorPpm) {
         this.maxPrecursorErrorPpm = maxPrecursorErrorPpm;
     }
+
+    /**
+     * Returns the molecular weight of the fattest protein in the dataset
+     * @return the molecular weight of the fattest protein in the dataset
+     */
+    public Double getMaxMW() {
+        return maxMW;
+    }
+
+    /**
+     * Sets the molecular weight of the fattest protein in the dataset
+     * @param maxMW the molecular weight of the fattest protein in the dataset
+     */
+    public void setMaxMW(Double maxMW) {
+        this.maxMW = maxMW;
+    }
+
+    /**
+     * Returns the maximal amount of peptides in the proteins of the dataset
+     * @return the maximal amount of peptides in the proteins of the dataset
+     */
+    public Integer getMaxNPeptides() {
+        return maxNPeptides;
+    }
+
+    /**
+     * Sets the maximal amount of peptides in the proteins of the dataset
+     * @param maxNPeptides the maximal amount of peptides in the proteins of the dataset
+     */
+    public void setMaxNPeptides(Integer maxNPeptides) {
+        this.maxNPeptides = maxNPeptides;
+    }
+
+    /**
+     * Returns the the maximal amount of psms in the proteins of the dataset
+     * @return the the maximal amount of psms in the proteins of the dataset
+     */
+    public Integer getMaxNSpectra() {
+        return maxNSpectra;
+    }
+
+    /**
+     * Sets the the maximal amount of psms in the proteins of the dataset
+     * @param maxNSpectra the the maximal amount of psms in the proteins of the dataset
+     */
+    public void setMaxNSpectra(Integer maxNSpectra) {
+        this.maxNSpectra = maxNSpectra;
+    }
+
+    /**
+     * Returns the maximal spectrum counting value of the proteins of the dataset
+     * @return the maximal spectrum counting value of the proteins of the dataset
+     */
+    public Double getMaxSpectrumCounting() {
+        return maxSpectrumCounting;
+    }
+
+    /**
+     * Sets the maximal spectrum counting value of the proteins of the dataset
+     * @param maxSpectrumCounting the maximal spectrum counting value of the proteins of the dataset
+     */
+    public void setMaxSpectrumCounting(Double maxSpectrumCounting) {
+        this.maxSpectrumCounting = maxSpectrumCounting;
+    }
+    
+    
+    
 }
