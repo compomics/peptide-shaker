@@ -2772,7 +2772,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
     }
 
     /**
-     * Updates the spectrum selected according to the last user's selection
+     * Updates the spectrum selected according to the last user's selection.
      */
     public void updateSelection() {
 
@@ -2808,6 +2808,8 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         if (!((String) fileNamesCmb.getSelectedItem()).equalsIgnoreCase(fileName)) {
             fileNamesCmb.setSelectedItem(fileName);
         }
+        
+        // @TODO: we need something faster here!!!
 
         int line = 0;
         for (String tempTitle : spectrumFactory.getSpectrumTitles(fileSelected)) {
