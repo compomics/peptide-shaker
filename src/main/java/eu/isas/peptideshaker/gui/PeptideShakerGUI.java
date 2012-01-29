@@ -2940,11 +2940,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private void checkVersionCompatibility() {
         // Resets the user preferences keeping the the link to other projects
         UserPreferences tempPreferences = new UserPreferences();
-        File tempFile;
-        for (String recentProject : userPreferences.getRecentProjects()) {
-            tempFile = new File(recentProject);
+        
+        // have to be added in reverse order
+        for (int i = userPreferences.getRecentProjects().size(); i > 0; i--) {
+            File tempFile = new File(userPreferences.getRecentProjects().get(i-1));
             tempPreferences.addRecentProject(tempFile);
         }
+
         tempPreferences.setShowSliders(userPreferences.showSliders());
         userPreferences = tempPreferences;
     }
@@ -5309,7 +5311,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             File newFile = new File(selectedFile);
             int outcome = JOptionPane.YES_OPTION;
 
-            if (newFile.exists()) {
+            if (!openDialog && newFile.exists()) {
                 outcome = JOptionPane.showConfirmDialog(progressDialog,
                         "Should " + selectedFile + " be overwritten?", "Selected File Already Exists",
                         JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
