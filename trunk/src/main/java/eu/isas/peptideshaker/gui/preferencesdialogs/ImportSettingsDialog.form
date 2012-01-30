@@ -56,9 +56,9 @@
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           <Component id="helpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="481" max="-2" attributes="0"/>
-                          <Component id="okButton" pref="95" max="32767" attributes="0"/>
+                          <Component id="okButton" pref="138" max="32767" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="cancelButton" pref="96" max="32767" attributes="1"/>
+                          <Component id="cancelButton" pref="139" max="32767" attributes="1"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -104,33 +104,36 @@
                       </Group>
                       <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="xtandemEvalueTxt" pref="154" max="32767" attributes="2"/>
+                              <Component id="omssaEvalueTxt" min="-2" pref="154" max="-2" attributes="2"/>
+                          </Group>
+                          <Component id="mascotEvalueTxt" alignment="0" min="-2" pref="154" max="-2" attributes="2"/>
+                      </Group>
+                      <EmptySpace min="38" pref="38" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="xtandemEvalueTxt" pref="154" max="32767" attributes="2"/>
-                                  <Component id="omssaEvalueTxt" min="-2" pref="154" max="-2" attributes="2"/>
-                              </Group>
-                              <EmptySpace min="38" pref="38" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="precDevTxt" alignment="0" pref="122" max="32767" attributes="2"/>
-                                  <Component id="nAAminTxt" alignment="0" pref="122" max="32767" attributes="2"/>
+                                  <Component id="precDevTxt" alignment="0" pref="165" max="32767" attributes="2"/>
+                                  <Component id="nAAminTxt" alignment="0" pref="165" max="32767" attributes="2"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Component id="unitCmb" pref="122" max="32767" attributes="2"/>
-                                  <Component id="nAAmaxTxt" alignment="1" pref="122" max="32767" attributes="2"/>
+                                  <Component id="unitCmb" pref="165" max="32767" attributes="2"/>
+                                  <Component id="nAAmaxTxt" alignment="1" pref="165" max="32767" attributes="2"/>
                               </Group>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
-                              <Component id="mascotEvalueTxt" min="-2" pref="154" max="-2" attributes="2"/>
-                              <EmptySpace min="-2" pref="411" max="-2" attributes="0"/>
+                              <Component id="ptmsCheck" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="292" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                   </Group>
@@ -169,6 +172,7 @@
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="mascotEvalueTxt" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="ptmsCheck" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -252,6 +256,12 @@
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="jTextField6"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="ptmsCheck">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Exclude unknown PTMs"/>
+                <Property name="opaque" type="boolean" value="false"/>
               </Properties>
             </Component>
           </SubComponents>

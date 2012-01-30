@@ -21,6 +21,7 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.scoring.PtmScoring;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -86,6 +87,10 @@ public class CsvExporter {
      * The identification
      */
     private Identification identification;
+    /**
+     * The identification features generator
+     */
+    private IdentificationFeaturesGenerator identificationFeaturesGenerator;
 
     /**
      * Creates a CsvExporter object.
@@ -95,11 +100,12 @@ public class CsvExporter {
      * @param replicateNumber the replicate number
      * @param enzyme the enzyme used 
      */
-    public CsvExporter(MsExperiment experiment, Sample sample, int replicateNumber, Enzyme enzyme) {
+    public CsvExporter(MsExperiment experiment, Sample sample, int replicateNumber, Enzyme enzyme, IdentificationFeaturesGenerator identificationFeaturesGenerator) {
         this.experiment = experiment;
         this.sample = sample;
         this.replicateNumber = replicateNumber;
         this.enzyme = enzyme;
+        this.identificationFeaturesGenerator = identificationFeaturesGenerator;
 
         proteinFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_proteins.txt";
         peptideFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_peptides.txt";
@@ -123,7 +129,7 @@ public class CsvExporter {
             Writer assumptionWriter = new BufferedWriter(new FileWriter(new File(folder, assumptionFile)));
 
             String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra"
-                    + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "nPossibilities" + SEPARATOR + "Protein length" + SEPARATOR + "p score"
+                    + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "p score"
                     + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + SEPARATOR + "Description" + "\n";
             proteinWriter.write(content);
 
@@ -237,8 +243,8 @@ public class CsvExporter {
         line += nSpectra + SEPARATOR;
         line += nValidatedPeptides + SEPARATOR + nValidatedPsms + SEPARATOR;
         try {
-            line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getNPossiblePeptides(enzyme) + SEPARATOR;
-            line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence().length() + SEPARATOR;
+            line += sequenceFactory.getProtein(proteinMatch.getMainMatch()).computeMolecularWeight() + SEPARATOR;
+            line += identificationFeaturesGenerator.getSpectrumCounting(proteinKey) + SEPARATOR;
         } catch (Exception e) {
             line += "protein not found " + SEPARATOR + SEPARATOR;
         }

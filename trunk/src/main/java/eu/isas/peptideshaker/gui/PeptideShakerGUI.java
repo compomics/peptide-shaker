@@ -5265,7 +5265,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      * Generic Format) *.mgf
      * @param aDialogTitle the title for the dialog
      * @param openDialog if true an open dialog is shown, false results in a
-     * close dialog
+     * save dialog
      * @return the file selected by the user, or null if no file was selected
      */
     public File getUserSelectedFile(String aFileEnding, String aFileFormatDescription, String aDialogTitle, boolean openDialog) {
