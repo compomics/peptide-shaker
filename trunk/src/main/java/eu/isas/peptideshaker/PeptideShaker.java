@@ -498,6 +498,7 @@ public class PeptideShaker {
         SpectrumMatch conflictingPSM;
         PeptideAssumption bestAssumption;
         int maxCount;
+        boolean needChange;
         for (String conflictKey : conflictingPSMs) {
             conflictingPSM = identification.getSpectrumMatch(conflictKey);
             maxCount = 0;
@@ -509,6 +510,7 @@ public class PeptideShaker {
                         maxCount = spectrumCounting.get(accession);
                     }
                 }
+                needChange = false;
                 for (PeptideAssumption peptideAssumption : conflictingPSM.getAllAssumptions(se).get(conflictingPSM.getFirstHit(se).getEValue())) {
                     if (!peptideAssumption.getPeptide().getSequence().equals(conflictingPSM.getFirstHit(se).getPeptide().getSequence())) {
                         if (idFilter.validateId(peptideAssumption, precursor.getMz())) {
@@ -516,12 +518,15 @@ public class PeptideShaker {
                                 if (spectrumCounting.get(accession) > maxCount) {
                                     bestAssumption = peptideAssumption;
                                     maxCount = spectrumCounting.get(accession);
+                                    needChange = true;
                                 }
                             }
-                            conflictingPSM.setFirstHit(se, bestAssumption);
-                            identification.setMatchChanged(conflictingPSM);
                         }
                     }
+                }
+                if (needChange) {
+                    conflictingPSM.setFirstHit(se, bestAssumption);
+                    identification.setMatchChanged(conflictingPSM);
                 }
             }
             waitingDialog.increaseSecondaryProgressValue();
