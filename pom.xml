@@ -162,7 +162,7 @@
                                         <include>LICENSE-2.0.txt</include>
                                     </includes>
                                     <excludes>
-                                       <exclude>conf/recently_opened_projects.txt</exclude>
+                                        <exclude>conf/recently_opened_projects.txt</exclude>
                                     </excludes>
                                 </resource>
                             </resources>
