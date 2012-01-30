@@ -3502,7 +3502,9 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
             proteinRow = getProteinRow(proteinKey);
         }
 
-        if (proteinTable.getSelectedRow() != proteinRow) {
+        if (proteinRow==-1) {
+                peptideShakerGUI.resetSelectedItems();
+        } else if (proteinTable.getSelectedRow() != proteinRow) {
             proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
             proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
             proteinTableMouseReleased(null);
