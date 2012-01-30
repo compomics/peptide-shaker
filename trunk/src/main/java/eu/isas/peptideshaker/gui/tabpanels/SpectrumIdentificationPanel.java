@@ -2767,8 +2767,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @return the key of the currently selected spectrum
      */
     public String getSelectedSpectrumKey() {
-        return Spectrum.getSpectrumKey((String) fileNamesCmb.getSelectedItem(),
-                (String) spectrumTable.getValueAt(spectrumTable.getSelectedRow(), spectrumTable.getColumn("Title").getModelIndex()));
+        return Spectrum.getSpectrumKey(fileSelected, spectrumFactory.getSpectrumTitles(fileSelected).get(spectrumTable.getSelectedRow()));
     }
 
     /**
