@@ -2808,18 +2808,10 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         if (!((String) fileNamesCmb.getSelectedItem()).equalsIgnoreCase(fileName)) {
             fileNamesCmb.setSelectedItem(fileName);
         }
-        
-        // @TODO: we need something faster here!!!
 
-        int line = 0;
-        for (String tempTitle : spectrumFactory.getSpectrumTitles(fileSelected)) {
-            if (tempTitle.equals(spectrumTitle)) {
-                spectrumTable.setRowSelectionInterval(line, line);
-                spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(line, 0, false));
-                break;
-            }
-            line++;
-        }
+        int line = spectrumFactory.getSpectrumTitles(fileSelected).indexOf(spectrumTitle);
+        spectrumTable.setRowSelectionInterval(line, line);
+        spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(line, 0, false));
 
         spectrumSelectionChanged();
 
