@@ -53,6 +53,7 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
         nAAminTxt.setText(idFilter.getMinPepLength() + "");
         nAAmaxTxt.setText(idFilter.getMaxPepLength() + "");
         precDevTxt.setText(idFilter.getMaxMassDeviation() + "");
+        ptmsCheck.setSelected(idFilter.removeUnknownPTMs());
 
         if (idFilter.isIsPpm()) {
             unitCmb.setSelectedIndex(0);
@@ -148,6 +149,7 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
         xtandemEvalueTxt = new javax.swing.JTextField();
         omssaEvalueTxt = new javax.swing.JTextField();
         mascotEvalueTxt = new javax.swing.JTextField();
+        ptmsCheck = new javax.swing.JCheckBox();
         cancelButton = new javax.swing.JButton();
         okButton = new javax.swing.JButton();
         helpJButton = new javax.swing.JButton();
@@ -193,6 +195,9 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
         mascotEvalueTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         mascotEvalueTxt.setText("jTextField6");
 
+        ptmsCheck.setText("Exclude unknown PTMs");
+        ptmsCheck.setOpaque(false);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -205,28 +210,30 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addComponent(xtandemEvalueTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
+                        .addComponent(omssaEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(mascotEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(38, 38, 38)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(xtandemEvalueTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 154, Short.MAX_VALUE)
-                            .addComponent(omssaEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(38, 38, 38)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel5)
                             .addComponent(jLabel6))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(precDevTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
-                            .addComponent(nAAminTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE))
+                            .addComponent(precDevTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                            .addComponent(nAAminTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(unitCmb, 0, 122, Short.MAX_VALUE)
-                            .addComponent(nAAmaxTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE))
+                            .addComponent(unitCmb, 0, 165, Short.MAX_VALUE)
+                            .addComponent(nAAmaxTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE))
                         .addContainerGap())
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(mascotEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(411, 411, 411))))
+                        .addComponent(ptmsCheck)
+                        .addGap(292, 292, 292))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -255,7 +262,8 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
-                            .addComponent(mascotEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addComponent(mascotEvalueTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ptmsCheck))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -305,9 +313,9 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
                         .addGap(20, 20, 20)
                         .addComponent(helpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(481, 481, 481)
-                        .addComponent(okButton, javax.swing.GroupLayout.DEFAULT_SIZE, 95, Short.MAX_VALUE)
+                        .addComponent(okButton, javax.swing.GroupLayout.DEFAULT_SIZE, 138, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)))
+                        .addComponent(cancelButton, javax.swing.GroupLayout.DEFAULT_SIZE, 139, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -361,7 +369,8 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
                         new Double(omssaEvalueTxt.getText()),
                         new Double(xtandemEvalueTxt.getText()),
                         new Double(precDevTxt.getText()),
-                        unitCmb.getSelectedIndex() == 0));
+                        unitCmb.getSelectedIndex() == 0,
+                        ptmsCheck.isSelected()));
                 
                 if (newDialog != null) {
                     newDialog.updateFilterSettingsField("User Edit");
@@ -419,6 +428,7 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
     private javax.swing.JButton okButton;
     private javax.swing.JTextField omssaEvalueTxt;
     private javax.swing.JTextField precDevTxt;
+    private javax.swing.JCheckBox ptmsCheck;
     private javax.swing.JComboBox unitCmb;
     private javax.swing.JTextField xtandemEvalueTxt;
     // End of variables declaration//GEN-END:variables

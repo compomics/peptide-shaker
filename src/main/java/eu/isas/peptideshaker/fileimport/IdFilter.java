@@ -1,8 +1,10 @@
 package eu.isas.peptideshaker.fileimport;
 
+import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
+import com.compomics.util.experiment.identification.matches.ModificationMatch;
 import eu.isas.peptideshaker.filtering.MatchFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -42,7 +44,11 @@ public class IdFilter implements Serializable {
      * Boolean indicating the unit of the allowed mass deviation (true: ppm, false: Da)
      */
     private boolean isPpm;
-    
+    /**
+     * Boolean indicating whether peptides presenting unknown PTMs should be ignored
+     */
+    private boolean unknownPtm;
+
     /**
      * Constructor with default settings
      */
@@ -54,8 +60,9 @@ public class IdFilter implements Serializable {
         xtandemMaxEvalue = 10;
         maxMassDeviation = 10;
         isPpm = true;
+        unknownPtm = true;
     }
-    
+
     /**
      * Constructor for an Identification filter
      *
@@ -66,8 +73,9 @@ public class IdFilter implements Serializable {
      * @param xtandemMaxEvalue  The maximal X!Tandem e-value allowed
      * @param maxMassDeviation  The maximal mass deviation allowed
      * @param isPpm             Boolean indicating the unit of the allowed mass deviation (true: ppm, false: Da)
+     * @param unknownPTM        Shall peptides presenting unknownPTMs be ignored
      */
-    public IdFilter(int minPepLength, int maxPepLength, double mascotMaxEvalue, double omssaMaxEvalue, double xtandemMaxEvalue, double maxMassDeviation, boolean isPpm) {
+    public IdFilter(int minPepLength, int maxPepLength, double mascotMaxEvalue, double omssaMaxEvalue, double xtandemMaxEvalue, double maxMassDeviation, boolean isPpm, boolean unknownPTM) {
         this.minPepLength = minPepLength;
         this.maxPepLength = maxPepLength;
         this.mascotMaxEvalue = mascotMaxEvalue;
@@ -75,8 +83,9 @@ public class IdFilter implements Serializable {
         this.xtandemMaxEvalue = xtandemMaxEvalue;
         this.maxMassDeviation = maxMassDeviation;
         this.isPpm = isPpm;
+        this.unknownPtm = unknownPTM;
     }
-    
+
     /**
      * Validates a peptide assumption
      * 
@@ -84,9 +93,6 @@ public class IdFilter implements Serializable {
      * @return a boolean indicating whether the given assumption passes the filter
      */
     public boolean validateId(PeptideAssumption assumption, double precursorMass) {
-        if (Math.abs(assumption.getDeltaMass(precursorMass, isPpm)) > maxMassDeviation && maxMassDeviation > 0) {
-            return false;
-        }
 
         int pepLength = assumption.getPeptide().getSequence().length();
 
@@ -102,23 +108,41 @@ public class IdFilter implements Serializable {
                 || searchEngine == Advocate.XTANDEM && eValue > xtandemMaxEvalue) {
             return false;
         }
-
-        boolean target = false;
-        boolean decoy = false;
-
-        for (String protein : assumption.getPeptide().getParentProteins()) {
-            if (SequenceFactory.isDecoy(protein)) {
-                decoy = true;
-            } else {
-                target = true;
+        if (assumption.getPeptide().getParentProteins().size() > 1) {
+            boolean target = false;
+            boolean decoy = false;
+            for (String protein : assumption.getPeptide().getParentProteins()) {
+                if (SequenceFactory.isDecoy(protein)) {
+                    decoy = true;
+                } else {
+                    target = true;
+                }
+            }
+            if (target && decoy) {
+                return false;
+            }
+        }
+        if (unknownPtm) {
+            for (ModificationMatch modMatch : assumption.getPeptide().getModificationMatches()) {
+                if (modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                    return false;
+                }
             }
         }
 
-        if (target && decoy) {
+        if (Math.abs(assumption.getDeltaMass(precursorMass, isPpm)) > maxMassDeviation && maxMassDeviation > 0) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Returns a boolean indicating whether unkown PTMs shall be removed
+     * @return a boolean indicating whether unkown PTMs shall be removed
+     */
+    public boolean removeUnknownPTMs() {
+        return unknownPtm;
     }
 
     /**

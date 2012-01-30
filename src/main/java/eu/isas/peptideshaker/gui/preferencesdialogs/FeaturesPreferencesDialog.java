@@ -1215,7 +1215,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                     CsvExporter exporter = new CsvExporter(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(),
-                            peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getSearchParameters().getEnzyme());
+                            peptideShakerGUI.getReplicateNumber(), peptideShakerGUI.getSearchParameters().getEnzyme(), peptideShakerGUI.getIdentificationFeaturesGenerator());
                     boolean exported = exporter.exportResults(progressDialog, fileChooser.getSelectedFile());
 
                     // change the peptide shaker icon back to the default version

@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.fileimport;
 
-import com.compomics.mascotdatfile.util.mascot.enumeration.MascotDatfileType;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.biology.Enzyme;
 import com.compomics.util.experiment.biology.PTM;
@@ -87,9 +86,9 @@ public class FileImporter {
      */
     private HashMap<String, ArrayList<String>> sequences = new HashMap<String, ArrayList<String>>();
     /**
-     * db processing disabled only while testing
+     * db processing disabled if no X!Tandem file is selected
      */
-    private boolean testing = false;
+    private boolean needPeptideMap = false;
     /**
      * If a Mascot dat file is bigger than this size, an indexed parsing will be used
      */
@@ -174,44 +173,47 @@ public class FileImporter {
             waitingDialog.resetSecondaryProgressBar();
             waitingDialog.setSecondaryProgressDialogIntermediate(true);
 
-            if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !testing) {
+            if (needPeptideMap) {
+                if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache()) {
+                    waitingDialog.appendReport("Creating peptide to protein map.");
 
-                waitingDialog.appendReport("Creating peptide to protein map.");
+                    Enzyme enzyme = searchParameters.getEnzyme();
+                    if (enzyme == null) {
+                        throw new NullPointerException("Enzyme not found");
+                    }
+                    int nMissedCleavages = searchParameters.getnMissedCleavages();
+                    int nMin = idFilter.getMinPepLength();
+                    int nMax = idFilter.getMaxPepLength();
+                    sequences = new HashMap<String, ArrayList<String>>();
 
-                Enzyme enzyme = searchParameters.getEnzyme();
-                if (enzyme == null) {
-                    throw new NullPointerException("Enzyme not found");
-                }
-                int nMissedCleavages = searchParameters.getnMissedCleavages();
-                int nMin = idFilter.getMinPepLength();
-                int nMax = idFilter.getMaxPepLength();
-                sequences = new HashMap<String, ArrayList<String>>();
+                    int numberOfSequences = sequenceFactory.getAccessions().size();
 
-                int numberOfSequences = sequenceFactory.getAccessions().size();
+                    waitingDialog.setSecondaryProgressDialogIntermediate(false);
+                    waitingDialog.setMaxSecondaryProgressValue(numberOfSequences);
 
-                waitingDialog.setSecondaryProgressDialogIntermediate(false);
-                waitingDialog.setMaxSecondaryProgressValue(numberOfSequences);
+                    for (String proteinKey : sequenceFactory.getAccessions()) {
 
-                for (String proteinKey : sequenceFactory.getAccessions()) {
+                        waitingDialog.increaseSecondaryProgressValue();
 
-                    waitingDialog.increaseSecondaryProgressValue();
+                        String sequence = sequenceFactory.getProtein(proteinKey).getSequence();
 
-                    String sequence = sequenceFactory.getProtein(proteinKey).getSequence();
-
-                    for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
-                        if (!sequences.containsKey(peptide)) {
-                            sequences.put(peptide, new ArrayList<String>());
-                        }
-                        if (!sequences.get(peptide).contains(proteinKey)) {
-                            sequences.get(peptide).add(proteinKey);
-                        }
-                        if (waitingDialog.isRunCanceled()) {
-                            return;
+                        for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
+                            if (!sequences.containsKey(peptide)) {
+                                sequences.put(peptide, new ArrayList<String>());
+                            }
+                            if (!sequences.get(peptide).contains(proteinKey)) {
+                                sequences.get(peptide).add(proteinKey);
+                            }
+                            if (waitingDialog.isRunCanceled()) {
+                                return;
+                            }
                         }
                     }
-                }
 
-                waitingDialog.setSecondaryProgressDialogIntermediate(true);
+                    waitingDialog.setSecondaryProgressDialogIntermediate(true);
+                } else {
+                    waitingDialog.appendReport("The database is too large to be parsed into peptides. Note that X!Tandem peptides might present protein inference issues.");
+                }
             }
 
             waitingDialog.appendReport("FASTA file import completed.");
@@ -253,7 +255,7 @@ public class FileImporter {
      */
     private ArrayList<String> getProteins(String peptideSequence, WaitingDialog waitingDialog) {
         ArrayList<String> result = sequences.get(peptideSequence);
-        boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !testing;
+        boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !needPeptideMap;
 
         if (result == null) {
             result = new ArrayList<String>();
@@ -299,10 +301,13 @@ public class FileImporter {
         if (searchParameters.getModificationProfile().getPeptideShakerNames().contains(sePTM.toLowerCase())) {
             return ptmFactory.getPTM(sePTM).getName();
         } else {
-            
+
             possiblePTMs = new ArrayList<PTM>();
             String[] parsedName = sePTM.split("@");
             double seMass = new Double(parsedName[0]);
+            if (seMass == -17.0265) {
+                int debug = 1;
+            }
             for (String ptmName : searchParameters.getModificationProfile().getPeptideShakerNames()) {
                 psPTM = ptmFactory.getPTM(ptmName);
                 if (Math.abs(psPTM.getMass() - seMass) < 0.01) {
@@ -449,9 +454,17 @@ public class FileImporter {
             int nTotal = 0;
             int nRetained = 0;
             ArrayList<String> mgfUsed = new ArrayList<String>();
-            boolean unknown = false;
+            boolean idReport, goodFirstHit, unknown = false;
+            Peptide peptide;
 
             Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+            for (File idFile : idFiles) {
+                int searchEngine = readerFactory.getSearchEngine(idFile);
+                if (searchEngine == Advocate.XTANDEM) {
+                    needPeptideMap = true;
+                    break;
+                }
+            }
             importSequences(waitingDialog, proteomicAnalysis, fastaFile, idFilter, searchParameters);
 
             try {
@@ -462,12 +475,11 @@ public class FileImporter {
 
                 for (File idFile : idFiles) {
 
-                    waitingDialog.appendReport("Reading file: " + idFile.getName());
 
                     IdfileReader fileReader;
                     int searchEngine = readerFactory.getSearchEngine(idFile);
                     if (searchEngine == Advocate.MASCOT && idFile.length() > mascotMaxSize * 1048576) {
-                        fileReader = new MascotIdfileReader(idFile, MascotDatfileType.INDEX);
+                        fileReader = new MascotIdfileReader(idFile, true);
                     } else {
                         fileReader = readerFactory.getFileReader(idFile);
                     }
@@ -479,6 +491,7 @@ public class FileImporter {
                     int progress = 0;
                     waitingDialog.setSecondaryProgressDialogIntermediate(false);
                     waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
+                    idReport = false;
 
                     while (matchIt.hasNext()) {
 
@@ -488,7 +501,7 @@ public class FileImporter {
                         PeptideAssumption firstHit = match.getFirstHit(searchEngine);
                         String spectrumKey = match.getKey();
                         String fileName = Spectrum.getSpectrumFile(spectrumKey);
-                        
+
                         if (!mgfUsed.contains(fileName)) {
                             importSpectra(waitingDialog, fileName, searchParameters);
                             waitingDialog.setSecondaryProgressDialogIntermediate(false);
@@ -496,47 +509,56 @@ public class FileImporter {
                             waitingDialog.increaseProgressValue();
                             mgfUsed.add(fileName);
                         }
+                        if (!idReport) {
+                            waitingDialog.appendReport("Reading file: " + idFile.getName());
+                            idReport = true;
+                        }
 
                         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey, false);
+                        goodFirstHit = false;
+                        for (PeptideAssumption assumption : match.getAllAssumptions(searchEngine).get(firstHit.getEValue())) {
+                            if (idFilter.validateId(assumption, precursor.getMz())) {
+                                goodFirstHit = true;
+                                break;
+                            }
+                        }
 
-                        if (!idFilter.validateId(firstHit, precursor.getMz())) {
+                        if (!goodFirstHit) {
                             matchIt.remove();
                         } else {
-
                             // use search engine independant PTMs
                             for (PeptideAssumption assumptions : match.getAllAssumptions()) {
-                                Peptide peptide = assumptions.getPeptide();
+                                peptide = assumptions.getPeptide();
                                 for (ModificationMatch seMod : peptide.getModificationMatches()) {
-                                    if (seMod.getTheoreticPtm().equals("unknown")) {
+                                    if (seMod.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                         if (!unknown) {
-                                            waitingDialog.appendReport("An unknown modification was encountered and will impair further processing."
+                                            waitingDialog.appendReport("An unknown modification was encountered and might impair further processing."
                                                     + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.");
                                             unknown = true;
                                         }
                                     }
                                     seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), peptide.getSequence(), searchParameters));
                                 }
+                                ArrayList<String> proteins = getProteins(peptide.getSequence(), waitingDialog);
+                                if (!proteins.isEmpty()) {
+                                    peptide.setParentProteins(proteins);
+                                }
                             }
 
-                            inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
-                            Peptide peptide = firstHit.getPeptide();
-                            ArrayList<String> proteins = getProteins(peptide.getSequence(), waitingDialog);
-                            
-                            if (!proteins.isEmpty()) {
-                                peptide.setParentProteins(proteins);
+                            if (idFilter.validateId(firstHit, precursor.getMz())) {
+                                inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
+                                identification.addSpectrumMatch(match);
+                                nRetained++;
                             }
-
-                            identification.addSpectrumMatch(match);
-                            nRetained++;
                         }
 
                         if (waitingDialog.isRunCanceled()) {
                             return 1;
                         }
-                        
+
                         waitingDialog.setSecondaryProgressValue(++progress);
                     }
-                    
+
                     waitingDialog.setSecondaryProgressDialogIntermediate(true);
                     waitingDialog.increaseProgressValue();
                 }
@@ -553,7 +575,7 @@ public class FileImporter {
                 waitingDialog.appendReport("Identification file(s) import completed. "
                         + nTotal + " identifications imported, " + nRetained + " identifications retained.");
                 waitingDialog.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
-                peptideShaker.processIdentifications(inputMap, waitingDialog, searchParameters, annotationPreferences);
+                peptideShaker.processIdentifications(inputMap, waitingDialog, searchParameters, annotationPreferences, idFilter);
 
             } catch (Exception e) {
                 waitingDialog.appendReport("An error occured while loading the identification files:");
