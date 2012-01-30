@@ -3,6 +3,23 @@
 
 ----
 
+*Changes in PeptideShaker 0.14.4 (January 30. 2012):*
+ * NEW FEATURE: It is now possible to zoom in the protein sequence coverage panel.The protein sequence coverage panel is now also a lot more accurate when the user is to select peptides in the sequence.
+ * FEATURE IMPROVEMENT: Three improvements to the Progenesis export: 1) multiple ptms on the same residue is now supported. 2) Protein descriptions are now included. 3) Only validated PSMs are included. 
+ * FEATURE IMPROVEMENT: The backend of the Spectrum IDs tab has been redesigned and it is now a lot faster for the bigger files.
+ * FEATURE IMPROVEMENT: Improved the import filter to consider multiple first hits.
+ * FEATURE IMPROVEMENT: Allowed the removal of unexpected modifications.
+ * FEATURE IMPROVEMENT: Improved the best hit selection method.
+ * BUG FIX: Fixed a bug occuring in the Spectrum IDs tab when a charge was missing.
+ * BUG FIX: Corrected a bug in the project csv export.
+ * BUG FIX: Fixed a bug in the checkVersionCompatibility for the user preferences where the recently loadedfiles were added in the wrong order. 
+ * BUG FIX: Fixed a bug in the getUserSelectedFile method where the user was asked if he/she wanted to overwrite the file when opening a file (and not just when saving).
+ * LIBRARY UPDATE: Removed the parser dependencies from the pom, these should be taken from the utilities pom instead.
+ * LIBRARY UPDATE: Added swingx 0.9.1 as a dependency, was only a transitive dependency before.
+ * LIBRARY UPDATE: Updated utilities to version 3.3.31
+
+----
+
 *Changes in PeptideShaker 0.14.3 (January 23. 2012):*
  * NEW FEATURE: Added FASTA and CSV export options for the identified and unidentified proteins to the Follow Up export dialog.
  * FEATURE IMPROVEMENT: Major overhaul of the export options: replaced most of the slow export to clipboard options with faster export to file options.
@@ -11,6 +28,8 @@
  * BUG FIX: Fixed a bug where the location of the Score column in the Peptide table in the Overview tab was incorrect.
  * BUG FIX: Fixed a bug where the confidence column in the Peptide table was not hidden when hiding the sparklines.
  * LIBRARY UPDATE: Updated utilities to version 3.3.26.
+
+Download Count: 22
 
 ----
 
