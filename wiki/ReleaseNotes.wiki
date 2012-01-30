@@ -13,7 +13,6 @@
  * FEATURE IMPROVEMENT: Fixed various issues in the Spectrum IDs tab related to having multiple mgf files in the same project.
  * BUG FIX: Fixed a bug occuring in the Spectrum ID tab if the charge was missing.
  * BUG FIX: Corrected a bug in the project csv export .
- * BUG FIX: Fixed a bug in the checkVersionCompatibility for the user preferences where the recently loaded files were added in the wrong order. 
  * BUG FIX: Fixed a bug in the getUserSelectedFile method where the user was asked if he/she wanted to overwrite the file when opening a file (and not just when saving).
  * LIBRARY UPDATE: Removed the parser dependencies from the pom, these should be taken from the utilities pom instead. 
  * LIBRARY UPDATE: Added swingx 0.9.1 as a dependency, was only a transitive dependency before. 
