@@ -506,7 +506,8 @@ public class PeptideShaker {
             for (int se : conflictingPSM.getAdvocates()) {
                 bestAssumption = conflictingPSM.getFirstHit(se);
                 for (String accession : bestAssumption.getPeptide().getParentProteins()) {
-                    if (spectrumCounting.get(accession) > maxCount) {
+                    if (spectrumCounting.get(accession) != null 
+                            && spectrumCounting.get(accession) > maxCount) {
                         maxCount = spectrumCounting.get(accession);
                     }
                 }
@@ -515,7 +516,8 @@ public class PeptideShaker {
                     if (!peptideAssumption.getPeptide().getSequence().equals(conflictingPSM.getFirstHit(se).getPeptide().getSequence())) {
                         if (idFilter.validateId(peptideAssumption, precursor.getMz())) {
                             for (String accession : peptideAssumption.getPeptide().getParentProteins()) {
-                                if (spectrumCounting.get(accession) > maxCount) {
+                                if (spectrumCounting.get(accession) != null 
+                            && spectrumCounting.get(accession) > maxCount) {
                                     bestAssumption = peptideAssumption;
                                     maxCount = spectrumCounting.get(accession);
                                     needChange = true;
