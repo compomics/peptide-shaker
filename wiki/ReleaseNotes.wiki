@@ -28,7 +28,7 @@
  * BUG FIX: Fixed a bug where the confidence column in the Peptide table was not hidden when hiding the sparklines.
  * LIBRARY UPDATE: Updated utilities to version 3.3.26.
 
-Download Count: 22
+Download Count: 23
 
 ----
 
@@ -77,7 +77,7 @@ Download Count: 11
  * LIBRARY UPDATE: Updated utilities to version 3.3.20.
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.33.
 
-Download Count: 3
+Download Count: 4
 
 ----
 
@@ -89,7 +89,7 @@ Download Count: 3
  * BUG FIX: Fixed a bug with the parsing of mgf files with spectrum titles containing `\`.
  * LIBRARY UPDATE: Updated utilities to version 3.3.17.
 
-Download Count: 27
+Download Count: 28
 
 ----
 
@@ -104,7 +104,7 @@ Download Count: 27
  * BUG FIX: Fixed a bug in the PTM tab where the tabbed pane moved to the PTM table tab when selecting a related peptide.
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.31.
 
-Download Count: 13
+Download Count: 15
 
 ----
 
@@ -121,7 +121,7 @@ Download Count: 13
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.30. 
  * LIBRARY UPDATE: Updated utilities to version 3.3.14.
 
-Download Count: 16
+Download Count: 17
 
 ----
 
@@ -140,7 +140,7 @@ Download Count: 16
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.28. 
  * LIBRARY UPDATE: Updated utilities to version 3.3.12.
 
-Download Count: 21
+Download Count: 22
 
 ----
 
@@ -204,7 +204,7 @@ Download Count: 77
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.27.
  * LIBRARY UPDATE: Updated utilities to version 3.3.3.
 
-Download Count: 8
+Download Count: 9
 
 ----
 
@@ -250,7 +250,7 @@ Download Count: 8
  * LIBRARY UPDATE: Updated utilities to version 3.3.2.
  * LIBRARY UPDATE: Updated jsparklines to version 0.5.26.
 
-Download Count: 7
+Download Count: 8
 
 ----
 
@@ -276,7 +276,7 @@ Download Count: 4
  * NEW FEATURE: Added hide options to all the contextual menus in the Overview tab.
  * LIBRARY UPDATE: Updated uniprotjapi to version 2011.10, fixing a problem with the UniProt connection.
 
-Download Count: 5
+Download Count: 6
 
 ----
 
@@ -316,7 +316,7 @@ Download Count: 5
  * LIBRARY UPDATE: Updated xtandem parser to version 1.4.6. 
  * LIBRARY UPDATE: Updated mascotdatfile to version 3.2.6.
 
-Download Count: 5
+Download Count: 6
 
 ----
 
@@ -327,7 +327,7 @@ Download Count: 5
  * BUG FIX: Fixed a bug in the dialog displayed when detecting an unknown protein, where the title and the message was interchanged.
  * BUG FIX: The files selection dialog (for multiple SearchGUI property files) is now located relative to its parent.
 
-Download Count: 121
+Download Count: 122
 
 ----
 
@@ -335,7 +335,7 @@ Download Count: 121
  * BUG FIX: Corrected a minor bug in the preferences dialog. 
  * LIBRARY UPDATE: Updated utilities to 3.1.30, for more compatible databases.
 
-Download Count: 10
+Download Count: 11
 
 ----
 
@@ -349,13 +349,13 @@ Download Count: 10
  * BUG FIX: Fixed various minor GUI issues related to using the backup look and feel, i.e., not using Nimbus.
  * LIBRARY UPDATE: Updated utilities to 3.1.29, fixing a bug in the XTandem parsing.
 
-Download Count: 1
+Download Count: 2
 
 ----
 
 *Changes in PeptideShaker 0.9 (July 11. 2011):*
  * The first public beta release of PeptideShaker.
 
-Download Count: 6
+Download Count: 7
 
 ----
