@@ -5224,11 +5224,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     newFolder.mkdir();
 
-                    identification.save(newFolder, progressDialog);
-
-                    progressDialog.setValue(99);
-                    progressDialog.setMax(100);
                     experimentIO.save(currentPSFile, experiment);
+                    identification.save(newFolder, progressDialog);
 
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
