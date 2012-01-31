@@ -77,7 +77,6 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
      */
     private boolean updateSelection = true;
 
-
     /**
      * Indexes for the three main data tables.
      */
@@ -1978,30 +1977,31 @@ private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//G
      */
 private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumJPanelMouseWheelMoved
 
-    // @TODO: figure out why the strange special cases are needed... if not included the slider gets stuck at the given values
+    // @TODO: figure out why the strange special cases are needed... 
+    //          if not included the slider gets stuck at given values depending on the current max value
 
     if (evt.isControlDown()) {
         if (evt.getWheelRotation() > 0) { // Down
             accuracySlider.setValue(accuracySlider.getValue() - 1);
         } else { // Up
-            if (accuracySlider.getValue() == 28) {
-                accuracySlider.setValue(accuracySlider.getValue() + 2);
-            } else if (accuracySlider.getValue() == 56) {
-                accuracySlider.setValue(accuracySlider.getValue() + 3);
-            } else {
-                accuracySlider.setValue(accuracySlider.getValue() + 1);
+            int oldValue = accuracySlider.getValue();
+            int newValue = accuracySlider.getValue() + 1;
+            accuracySlider.setValue(newValue);
+
+            while (oldValue == accuracySlider.getValue()) {
+                accuracySlider.setValue(newValue++);
             }
         }
     } else {
         if (evt.getWheelRotation() > 0) { // Down
             intensitySlider.setValue(intensitySlider.getValue() - 1);
         } else { // Up
-            if (intensitySlider.getValue() == 28) {
-                intensitySlider.setValue(intensitySlider.getValue() + 2);
-            } else if (intensitySlider.getValue() == 56) {
-                intensitySlider.setValue(intensitySlider.getValue() + 3);
-            } else {
-                intensitySlider.setValue(intensitySlider.getValue() + 1);
+            int oldValue = intensitySlider.getValue();
+            int newValue = intensitySlider.getValue() + 1;
+            intensitySlider.setValue(newValue);
+
+            while (oldValue == intensitySlider.getValue()) {
+                intensitySlider.setValue(newValue++);
             }
         }
     }
@@ -2572,7 +2572,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                     // return the peptide shaker icon to the standard version
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                    
+
                     fileSelectionChanged();
 
                 } catch (Exception e) {
@@ -2762,7 +2762,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
-                
+
                 // return the peptide shaker icon to the standard version
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
             }
@@ -2800,7 +2800,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
     private void newItemSelection() {
         peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION, getSelectedSpectrumKey());
     }
-    
+
     /**
      * Clears the currently selected psm.
      */
@@ -2820,11 +2820,11 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
         String spectrumTitle = Spectrum.getSpectrumTitle(spectrumKey);
 
         if (!((String) fileNamesCmb.getSelectedItem()).equalsIgnoreCase(fileName)) {
-            
+
             updateSelection = false;
             fileNamesCmb.setSelectedItem(fileName);
             updateSelection = true;
-            
+
             fileSelected = (String) fileNamesCmb.getSelectedItem();
         }
 
@@ -2871,7 +2871,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 String key = getSelectedSpectrumKey();
 
                 if (identification.matchExists(key)) {
-                    
+
                     SpectrumMatch spectrumMatch = identification.getSpectrumMatch(key);
                     PSParameter probabilities = new PSParameter();
                     probabilities = (PSParameter) identification.getMatchParameter(key, probabilities);
