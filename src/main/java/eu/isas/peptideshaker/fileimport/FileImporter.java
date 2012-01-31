@@ -506,7 +506,6 @@ public class FileImporter {
                             importSpectra(waitingDialog, fileName, searchParameters);
                             waitingDialog.setSecondaryProgressDialogIntermediate(false);
                             waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
-                            waitingDialog.increaseProgressValue();
                             mgfUsed.add(fileName);
                         }
                         if (!idReport) {
