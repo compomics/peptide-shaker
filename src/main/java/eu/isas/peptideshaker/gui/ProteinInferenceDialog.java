@@ -557,9 +557,7 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void groupClassJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_groupClassJComboBoxActionPerformed
-        PSParameter pSParameter = new PSParameter();
-        pSParameter = (PSParameter) identification.getMatchParameter(inspectedMatch.getKey(), pSParameter);
-        pSParameter.setGroupClass(groupClassJComboBox.getSelectedIndex());
+       
     }//GEN-LAST:event_groupClassJComboBoxActionPerformed
 
     /**

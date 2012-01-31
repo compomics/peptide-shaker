@@ -3740,7 +3740,7 @@ private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) 
 
                     if (currentSpectrum != null) {
 
-                        HashSet<Peak> peaks = currentSpectrum.getPeakList();
+                        Collection<Peak> peaks = currentSpectrum.getPeakList();
 
                         if (peaks == null || peaks.isEmpty()) {
                             // do nothing, peaks list not found
