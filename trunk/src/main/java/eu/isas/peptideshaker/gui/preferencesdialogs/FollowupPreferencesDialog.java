@@ -38,11 +38,11 @@ import javax.swing.filechooser.FileFilter;
 public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
     /**
-     * The main GUI
+     * The main GUI.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
@@ -495,117 +495,87 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Export the given spectra as an mgf file.
+     *
+     * @param evt
+     */
     private void exportMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMgfButtonActionPerformed
 
-        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        fileChooser.setDialogTitle("Select Destination File");
-        fileChooser.setMultiSelectionEnabled(false);
+        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".mgf", "(Mascot Generic File) *.mgf", "Select Destination File", false);
+        final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-        FileFilter filter = new FileFilter() {
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Exporting. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("SaveThread") {
 
             @Override
-            public boolean accept(File myFile) {
-                return myFile.isDirectory() || myFile.getName().endsWith(".mgf");
-            }
+            public void run() {
 
-            @Override
-            public String getDescription() {
-                return "(Mascot Generic File) *.mgf";
-            }
-        };
+                try {
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-        fileChooser.setFileFilter(filter);
+                    progressDialog.setIndeterminate(false);
+                    int total = 0;
+                    for (String mgfFile : spectrumFactory.getMgfFileNames()) {
+                        total += spectrumFactory.getSpectrumTitles(mgfFile).size();
+                    }
+                    progressDialog.setMax(total);
 
-        int returnVal = fileChooser.showSaveDialog(this);
+                    FileWriter f = new FileWriter(finalOutputFile);
+                    BufferedWriter b = new BufferedWriter(f);
 
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    for (String mgfFile : spectrumFactory.getMgfFileNames()) {
+                        for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
+                            String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
+                            if (!isValidated(spectrumKey)) {
+                                b.write(((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey)).asMgf());
+                            }
+                            progressDialog.incrementValue();
+                        }
+                    }
 
-            File outputFile = fileChooser.getSelectedFile();
-            int outcome = JOptionPane.YES_OPTION;
+                    b.close();
+                    f.close();
 
-            if (outputFile.exists()) {
-                outcome = JOptionPane.showConfirmDialog(this,
-                        "Should " + outputFile + " be overwritten?", "Selected File Already Exists",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            }
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
 
-            if (outcome == JOptionPane.YES_OPTION) {
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                if (!outputFile.getName().endsWith(".mgf")) {
-                    outputFile = new File(outputFile.getParent(), outputFile.getName() + ".mgf");
+                    JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + finalOutputFile + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                } catch (Exception e) {
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                 }
 
-                final File finalOutputFile = outputFile;
-
-                progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-                progressDialog.doNothingOnClose();
-
-                final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
-
-                new Thread(new Runnable() {
-
-                    public void run() {
-                        progressDialog.setIndeterminate(true);
-                        progressDialog.setTitle("Exporting. Please Wait...");
-                        progressDialog.setVisible(true);
-                    }
-                }, "ProgressDialog").start();
-
-                new Thread("SaveThread") {
-
-                    @Override
-                    public void run() {
-
-                        try {
-                            // change the peptide shaker icon to a "waiting version"
-                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
-
-                            progressDialog.setIndeterminate(false);
-                            int total = 0;
-                            for (String mgfFile : spectrumFactory.getMgfFileNames()) {
-                                total += spectrumFactory.getSpectrumTitles(mgfFile).size();
-                            }
-                            progressDialog.setMax(total);
-
-                            FileWriter f = new FileWriter(finalOutputFile);
-                            BufferedWriter b = new BufferedWriter(f);
-
-                            for (String mgfFile : spectrumFactory.getMgfFileNames()) {
-                                for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
-                                    String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
-                                    if (!isValidated(spectrumKey)) {
-                                        b.write(((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey)).asMgf());
-                                    }
-                                    progressDialog.incrementValue();
-                                }
-                            }
-
-                            b.close();
-                            f.close();
-
-                            progressDialog.setVisible(false);
-                            progressDialog.dispose();
-
-                            // change the peptide shaker icon back to the default version
-                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                            JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + finalOutputFile + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
-                        } catch (Exception e) {
-                            // change the peptide shaker icon back to the default version
-                            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                            e.printStackTrace();
-                            JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
-                        }
-
-                        if (progressDialog != null) {
-                            progressDialog.setVisible(false);
-                            progressDialog.dispose();
-                        }
-                    }
-                }.start();
+                if (progressDialog != null) {
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                }
             }
-        }
+        }.start();
     }//GEN-LAST:event_exportMgfButtonActionPerformed
+
+    /**
+     * Export the inclusion list to file.
+     *
+     * @param evt
+     */
     private void inclusionListButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_inclusionListButtonActionPerformed
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
@@ -629,7 +599,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
                 if (validateInput()) {
                     final JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-                    fileChooser.setDialogTitle("Select destination file");
+                    fileChooser.setDialogTitle("Select Destination File");
                     fileChooser.setMultiSelectionEnabled(false);
 
                     FileFilter filter = new FileFilter() {
@@ -694,42 +664,55 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                                 ArrayList<String> inspectedProteins;
+
                                 if (idSelectionCmb.getSelectedIndex() == 4) {
                                     inspectedProteins = peptideShakerGUI.getDisplayedProteins();
                                 } else {
                                     inspectedProteins = new ArrayList<String>(peptideShakerGUI.getIdentification().getProteinIdentification());
                                 }
+
                                 progressDialog.setIndeterminate(false);
                                 progressDialog.setMax(inspectedProteins.size());
                                 ArrayList<String> displayedPeptides = peptideShakerGUI.getDisplayedPeptides();
                                 FileWriter f = new FileWriter(outputFile);
                                 BufferedWriter b = new BufferedWriter(f);
                                 PSParameter psParameter = new PSParameter();
-                                ProteinMatch proteinMatch;
-                                PeptideMatch peptideMatch;
                                 int cpt = 0;
+
                                 for (String proteinKey : inspectedProteins) {
-                                    proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
+
+                                    ProteinMatch proteinMatch = peptideShakerGUI.getIdentification().getProteinMatch(proteinKey);
                                     psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
+
                                     if (idSelectionCmb.getSelectedIndex() == 0
                                             || idSelectionCmb.getSelectedIndex() == 1
                                             || idSelectionCmb.getSelectedIndex() == 3
                                             || idSelectionCmb.getSelectedIndex() == 2 && psParameter.isValidated()) {
+
                                         for (String peptideKey : proteinMatch.getPeptideMatches()) {
+
                                             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+
                                             if (idSelectionCmb.getSelectedIndex() == 0
                                                     || idSelectionCmb.getSelectedIndex() == 1 && psParameter.isValidated()
                                                     || idSelectionCmb.getSelectedIndex() == 2 && psParameter.isValidated()
                                                     || idSelectionCmb.getSelectedIndex() == 3 && displayedPeptides.contains(peptideKey)) {
-                                                peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+
+                                                PeptideMatch peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(peptideKey);
+
                                                 if (!shallExclude(proteinKey, peptideMatch.getTheoreticPeptide())) {
+
                                                     ArrayList<Double> retentionTimes = new ArrayList<Double>();
+
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                                                         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey);
                                                         retentionTimes.add(precursor.getRt());
                                                     }
+
                                                     for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
+
                                                         psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(spectrumKey, psParameter);
+
                                                         if (psParameter.isValidated()) {
                                                             b.write(getInclusionListLine(spectrumKey, retentionTimes));
                                                         }
@@ -738,9 +721,11 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                                             }
                                         }
                                     }
+
                                     cpt++;
                                     progressDialog.setValue(cpt);
                                 }
+
                                 b.close();
                                 f.close();
 
@@ -760,6 +745,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         }
                     }
                 }
+
                 if (progressDialog != null) {
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
@@ -777,107 +763,60 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
      */
     private void exportProgenesisButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProgenesisButtonActionPerformed
 
-        JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
-        fileChooser.setDialogTitle("Select Destination File");
-        fileChooser.setMultiSelectionEnabled(false);
+        final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
+        final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-        FileFilter filter = new FileFilter() {
+        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Exporting. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("ExoportThread") {
 
             @Override
-            public boolean accept(File myFile) {
-                return myFile.isDirectory() || myFile.getName().endsWith(".txt");
-            }
+            public void run() {
 
-            @Override
-            public String getDescription() {
-                return "(Tab Separated Text File) *.txt";
-            }
-        };
+                try {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Exporting. Please Wait...");
 
-        fileChooser.setFileFilter(filter);
+                    FileWriter f = new FileWriter(finalOutputFile);
+                    BufferedWriter b = new BufferedWriter(f);
 
-        int returnVal = fileChooser.showSaveDialog(this);
+                    FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
+                    outputGenerator.getPSMsProgenesisExport(progressDialog, null, b);
 
-        if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    b.close();
+                    f.close();
 
-            File outputFile = fileChooser.getSelectedFile();
-            int outcome = JOptionPane.YES_OPTION;
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
 
-            if (outputFile.exists()) {
-                outcome = JOptionPane.showConfirmDialog(this,
-                        "Should " + outputFile + " be overwritten?", "Selected File Already Exists",
-                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-            }
+                    JOptionPane.showMessageDialog(tempRef, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
 
-            if (outcome == JOptionPane.YES_OPTION) {
-
-                if (!outputFile.getName().endsWith(".txt")) {
-                    outputFile = new File(outputFile.getParent(), outputFile.getName() + ".txt");
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                    e.printStackTrace();
                 }
 
-                final File finalOutputFile = outputFile;
-
-                progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-                progressDialog.doNothingOnClose();
-
-                final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
-
-                new Thread(new Runnable() {
-
-                    public void run() {
-                        progressDialog.setIndeterminate(true);
-                        progressDialog.setTitle("Exporting. Please Wait...");
-                        progressDialog.setVisible(true);
-                    }
-                }, "ProgressDialog").start();
-
-                new Thread("ExoportThread") {
-
-                    @Override
-                    public void run() {
-
-                        try {
-                            progressDialog.setIndeterminate(true);
-                            progressDialog.setTitle("Exporting. Please Wait...");
-
-                            FileWriter f = new FileWriter(finalOutputFile);
-                            BufferedWriter b = new BufferedWriter(f);
-
-                            FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
-                            outputGenerator.getPSMsProgenesisExport(progressDialog, null, b);
-
-                            b.close();
-                            f.close();
-
-                            progressDialog.setVisible(false);
-                            progressDialog.dispose();
-
-                            JOptionPane.showMessageDialog(tempRef, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
-
-                        } catch (IOException e) {
-                            JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                            e.printStackTrace();
-                        } catch (Exception e) {
-                            JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                            e.printStackTrace();
-                        }
-
-                        if (progressDialog != null) {
-                            progressDialog.setVisible(false);
-                            progressDialog.dispose();
-                        }
-                    }
-                }.start();
+                if (progressDialog != null) {
+                    progressDialog.setVisible(false);
+                    progressDialog.dispose();
+                }
             }
-        }
-
+        }.start();
     }//GEN-LAST:event_exportProgenesisButtonActionPerformed
 
-    /**
-     * Export SRM transitinos. Not yet implemented
-     *
-     * @param evt
-     */
     /**
      * Export all the unidentified proteins to a FASTA file.
      *
@@ -1228,7 +1167,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
-                        JOptionPane.showMessageDialog(tempRef,"Identified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+                        JOptionPane.showMessageDialog(tempRef, "Identified proteins exported to " + selectedFile.getPath() + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
                     } catch (Exception e) {
                         // change the peptide shaker icon back to the default version
                         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
@@ -1347,13 +1286,13 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     }
 
     /**
-     * Validates the user's input
+     * Validates the user's input.
      *
      * @return a boolean indicating whether the input is valid.
      */
     private boolean validateInput() {
         try {
-            double test = new Double(rtWindow.getText().trim());
+            new Double(rtWindow.getText().trim());
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Please verify the input for the RT minimal window.", "Wrong input", JOptionPane.ERROR_MESSAGE);
             return false;
@@ -1363,7 +1302,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
 
     /**
      * Returns a line to be output in an inclusion list according to the user's
-     * input
+     * input.
      *
      * @param spectrumKey The key of the spectrum
      * @param retentionTimes The retention times found for this peptide
