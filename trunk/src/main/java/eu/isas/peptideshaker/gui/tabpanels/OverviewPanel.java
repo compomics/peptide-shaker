@@ -2043,87 +2043,88 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      *
      * @param evt
      */
-private void spectrumJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spectrumJTabbedPaneStateChanged
+    private void spectrumJTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spectrumJTabbedPaneStateChanged
 
-    if (peptideShakerGUI.getAnnotationMenuBar() != null) {
+        if (peptideShakerGUI.getAnnotationMenuBar() != null) {
 
-        int index = spectrumJTabbedPane.getSelectedIndex();
+            int index = spectrumJTabbedPane.getSelectedIndex();
 
-        if (index == 0) {
-            ionTableAnnotationMenuPanel.removeAll();
-            ionTableAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-            peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, false, true, false);
-        } else if (index == 1) {
-            bubbleAnnotationMenuPanel.removeAll();
-            bubbleAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-            peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, true, false, false);
-        } else if (index == 2) {
-            spectrumAnnotationMenuPanel.removeAll();
-            spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
-            peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false, false);
+            if (index == 0) {
+                ionTableAnnotationMenuPanel.removeAll();
+                ionTableAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+                peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, false, true, false);
+            } else if (index == 1) {
+                bubbleAnnotationMenuPanel.removeAll();
+                bubbleAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+                peptideShakerGUI.updateAnnotationMenuBarVisableOptions(false, true, false, false);
+            } else if (index == 2) {
+                spectrumAnnotationMenuPanel.removeAll();
+                spectrumAnnotationMenuPanel.add(peptideShakerGUI.getAnnotationMenuBar());
+                peptideShakerGUI.updateAnnotationMenuBarVisableOptions(true, false, false, false);
+            }
         }
-    }
-}//GEN-LAST:event_spectrumJTabbedPaneStateChanged
+    }//GEN-LAST:event_spectrumJTabbedPaneStateChanged
 
     /**
      * Updates the slider value when the user scrolls.
      *
      * @param evt
      */
-private void spectrumJTabbedPaneMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumJTabbedPaneMouseWheelMoved
+    private void spectrumJTabbedPaneMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_spectrumJTabbedPaneMouseWheelMoved
 
-    // @TODO: figure out why the strange special cases are needed... if not included the slider gets stuck at the given values
+        // @TODO: figure out why the strange special cases are needed... 
+        //          if not included the slider gets stuck at given values depending on the current max value
 
-    if (evt.isControlDown()) {
-        if (evt.getWheelRotation() > 0) { // Down
-            accuracySlider.setValue(accuracySlider.getValue() - 1);
-        } else { // Up
-            if (accuracySlider.getValue() == 28) {
-                accuracySlider.setValue(accuracySlider.getValue() + 2);
-            } else if (accuracySlider.getValue() == 56) {
-                accuracySlider.setValue(accuracySlider.getValue() + 3);
-            } else {
-                accuracySlider.setValue(accuracySlider.getValue() + 1);
+        if (evt.isControlDown()) {
+            if (evt.getWheelRotation() > 0) { // Down
+                accuracySlider.setValue(accuracySlider.getValue() - 1);
+            } else { // Up
+                int oldValue = accuracySlider.getValue();
+                int newValue = accuracySlider.getValue() + 1;
+                accuracySlider.setValue(newValue);
+
+                while (oldValue == accuracySlider.getValue()) {
+                    accuracySlider.setValue(newValue++);
+                }
+            }
+        } else {
+            if (evt.getWheelRotation() > 0) { // Down
+                intensitySlider.setValue(intensitySlider.getValue() - 1);
+            } else { // Up
+                int oldValue = intensitySlider.getValue();
+                int newValue = intensitySlider.getValue() + 1;
+                intensitySlider.setValue(newValue);
+
+                while (oldValue == intensitySlider.getValue()) {
+                    intensitySlider.setValue(newValue++);
+                }
             }
         }
-    } else {
-        if (evt.getWheelRotation() > 0) { // Down
-            intensitySlider.setValue(intensitySlider.getValue() - 1);
-        } else { // Up
-            if (intensitySlider.getValue() == 28) {
-                intensitySlider.setValue(intensitySlider.getValue() + 2);
-            } else if (intensitySlider.getValue() == 56) {
-                intensitySlider.setValue(intensitySlider.getValue() + 3);
-            } else {
-                intensitySlider.setValue(intensitySlider.getValue() + 1);
-            }
-        }
-    }
 
-    updateSpectrumSliderToolTip();
-}//GEN-LAST:event_spectrumJTabbedPaneMouseWheelMoved
+        updateSpectrumSliderToolTip();
+    }//GEN-LAST:event_spectrumJTabbedPaneMouseWheelMoved
 
     /**
      * Updates the intensity annotation limit.
      *
      * @param evt
      */
-private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
-    peptideShakerGUI.getAnnotationPreferences().setAnnotationLevel(intensitySlider.getValue() / 100.0);
-    peptideShakerGUI.updateSpectrumAnnotations();
-    peptideShakerGUI.setDataSaved(false);
-    intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
-    updateSpectrumSliderToolTip();
-}//GEN-LAST:event_intensitySliderStateChanged
+    private void intensitySliderStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_intensitySliderStateChanged
+        peptideShakerGUI.getAnnotationPreferences().setAnnotationLevel(intensitySlider.getValue() / 100.0);
+        peptideShakerGUI.updateSpectrumAnnotations();
+        peptideShakerGUI.setDataSaved(false);
+        intensitySlider.setToolTipText("Annotation Level: " + intensitySlider.getValue() + "%");
+        updateSpectrumSliderToolTip();
+    }//GEN-LAST:event_intensitySliderStateChanged
 
     /**
      * Updates the slider value when the user scrolls.
      *
      * @param evt
      */
-private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_intensitySliderMouseWheelMoved
-    spectrumJTabbedPaneMouseWheelMoved(evt);
-}//GEN-LAST:event_intensitySliderMouseWheelMoved
+    private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_intensitySliderMouseWheelMoved
+        spectrumJTabbedPaneMouseWheelMoved(evt);
+    }//GEN-LAST:event_intensitySliderMouseWheelMoved
 
     /**
      * See if we ought to show a tooltip with modification details for the
@@ -4956,8 +4957,8 @@ private void intensitySliderMouseWheelMoved(java.awt.event.MouseWheelEvent evt) 
             proteinRow = getProteinRow(proteinKey);
         }
 
-        if (proteinRow==-1) {
-                peptideShakerGUI.resetSelectedItems();
+        if (proteinRow == -1) {
+            peptideShakerGUI.resetSelectedItems();
         } else if (proteinTable.getSelectedRow() != proteinRow) {
             proteinTable.setRowSelectionInterval(proteinRow, proteinRow);
             proteinTable.scrollRectToVisible(proteinTable.getCellRect(proteinRow, 0, false));
