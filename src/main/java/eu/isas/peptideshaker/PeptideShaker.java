@@ -214,7 +214,7 @@ public class PeptideShaker {
             waitingDialog.setSecondaryProgressDialogIntermediate(false);
             identification.buildPeptidesAndProteins(waitingDialog.getSecondaryProgressBar());
             waitingDialog.setSecondaryProgressDialogIntermediate(true);
-            waitingDialog.appendReport("Generating Peptide map.");
+            waitingDialog.appendReport("Generating peptide map.");
             fillPeptideMaps();
             peptideMap.cure();
             waitingDialog.appendReport("Computing peptide probabilities.");

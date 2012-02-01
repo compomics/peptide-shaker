@@ -5,7 +5,6 @@ import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
-import eu.isas.peptideshaker.filtering.MatchFilter;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -87,9 +86,10 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Validates a peptide assumption
+     * Validates a peptide assumption.
      * 
      * @param assumption the considered peptide assumption
+     * @param precursorMass the precursor mass
      * @return a boolean indicating whether the given assumption passes the filter
      */
     public boolean validateId(PeptideAssumption assumption, double precursorMass) {
@@ -111,7 +111,8 @@ public class IdFilter implements Serializable {
         if (assumption.getPeptide().getParentProteins().size() > 1) {
             boolean target = false;
             boolean decoy = false;
-            for (String protein : assumption.getPeptide().getParentProteins()) {
+            ArrayList<String> parentProteins = assumption.getPeptide().getParentProteins();
+            for (String protein : parentProteins) {
                 if (SequenceFactory.isDecoy(protein)) {
                     decoy = true;
                 } else {
@@ -122,8 +123,9 @@ public class IdFilter implements Serializable {
                 return false;
             }
         }
-        if (unknownPtm) {
-            for (ModificationMatch modMatch : assumption.getPeptide().getModificationMatches()) {
+        if (unknownPtm) {   
+            ArrayList<ModificationMatch> modificationMatches = assumption.getPeptide().getModificationMatches();
+            for (ModificationMatch modMatch : modificationMatches) {
                 if (modMatch.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                     return false;
                 }

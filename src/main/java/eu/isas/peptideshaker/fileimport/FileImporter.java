@@ -40,13 +40,14 @@ import javax.swing.filechooser.FileFilter;
 /**
  * This class is responsible for the import of identifications
  *
- * @author  Marc Vaudel
- * @author  Harald Barsnes
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class FileImporter {
 
     /**
-     * The class which will load the information into the various maps and do the associated calculations
+     * The class which will load the information into the various maps and do
+     * the associated calculations
      */
     private PeptideShaker peptideShaker;
     /**
@@ -90,17 +91,19 @@ public class FileImporter {
      */
     private boolean needPeptideMap = false;
     /**
-     * If a Mascot dat file is bigger than this size, an indexed parsing will be used
+     * If a Mascot dat file is bigger than this size, an indexed parsing will be
+     * used
      */
     public static final double mascotMaxSize = 400;
 
     /**
      * Constructor for the importer
      *
-     * @param identificationShaker  the identification shaker which will load the data into the maps and do the preliminary calculations
-     * @param waitingDialog         A dialog to display feedback to the user
-     * @param proteomicAnalysis     The current proteomic analysis
-     * @param idFilter              The identification filter to use
+     * @param identificationShaker the identification shaker which will load the
+     * data into the maps and do the preliminary calculations
+     * @param waitingDialog A dialog to display feedback to the user
+     * @param proteomicAnalysis The current proteomic analysis
+     * @param idFilter The identification filter to use
      */
     public FileImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter) {
         this.peptideShaker = identificationShaker;
@@ -111,9 +114,10 @@ public class FileImporter {
 
     /**
      * Constructor for an import without filtering
-     * @param identificationShaker  the parent identification shaker
-     * @param waitingDialog         a dialog to give feedback to the user
-     * @param proteomicAnalysis     the current proteomic analysis
+     *
+     * @param identificationShaker the parent identification shaker
+     * @param waitingDialog a dialog to give feedback to the user
+     * @param proteomicAnalysis the current proteomic analysis
      */
     public FileImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis) {
         this.peptideShaker = identificationShaker;
@@ -124,11 +128,13 @@ public class FileImporter {
     /**
      * Imports the identification from files.
      *
-     * @param idFiles               the identification files to import the Ids from
-     * @param spectrumFiles         the files where the corresponding spectra can be imported
-     * @param fastaFile             the FASTA file to use
-     * @param searchParameters      the search parameters
-     * @param annotationPreferences the annotation preferences to use for PTM scoring
+     * @param idFiles the identification files to import the Ids from
+     * @param spectrumFiles the files where the corresponding spectra can be
+     * imported
+     * @param fastaFile the FASTA file to use
+     * @param searchParameters the search parameters
+     * @param annotationPreferences the annotation preferences to use for PTM
+     * scoring
      */
     public void importFiles(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) {
         IdProcessorFromFile idProcessor = new IdProcessorFromFile(idFiles, spectrumFiles, fastaFile, idFilter, searchParameters, annotationPreferences);
@@ -138,11 +144,11 @@ public class FileImporter {
     /**
      * Imports sequences from a fasta file
      *
-     * @param waitingDialog     Dialog displaying feedback to the user
+     * @param waitingDialog Dialog displaying feedback to the user
      * @param proteomicAnalysis The proteomic analysis to attach the database to
-     * @param fastaFile         FASTA file to process
-     * @param idFilter          the identification filter
-     * @param searchParameters  The search parameters
+     * @param fastaFile FASTA file to process
+     * @param idFilter the identification filter
+     * @param searchParameters The search parameters
      */
     public void importSequences(WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, File fastaFile, IdFilter idFilter, SearchParameters searchParameters) {
 
@@ -247,11 +253,12 @@ public class FileImporter {
     }
 
     /**
-     * Returns the list of proteins which contain in their sequence the given peptide sequence.
-     * 
-     * @param peptideSequence   the tested peptide sequence
-     * @param waitingDialog     the waiting dialog
-     * @return                  a list of corresponding proteins found in the database
+     * Returns the list of proteins which contain in their sequence the given
+     * peptide sequence.
+     *
+     * @param peptideSequence the tested peptide sequence
+     * @param waitingDialog the waiting dialog
+     * @return a list of corresponding proteins found in the database
      */
     private ArrayList<String> getProteins(String peptideSequence, WaitingDialog waitingDialog) {
         ArrayList<String> result = sequences.get(peptideSequence);
@@ -288,10 +295,11 @@ public class FileImporter {
 
     /**
      * Returns a search-engine independent PTM.
-     * @param sePTM             The search engine PTM
-     * @param modificationSite  The modified site according to the search engine
-     * @param sequence          The sequence of the peptide
-     * @param searchParameters  The search parameters used
+     *
+     * @param sePTM The search engine PTM
+     * @param modificationSite The modified site according to the search engine
+     * @param sequence The sequence of the peptide
+     * @param searchParameters The search parameters used
      * @return the best PTM candidate
      */
     private String getPTM(String sePTM, int modificationSite, String sequence, SearchParameters searchParameters) {
@@ -372,7 +380,8 @@ public class FileImporter {
     }
 
     /**
-     * Worker which loads identification from a file and processes them while giving feedback to the user.
+     * Worker which loads identification from a file and processes them while
+     * giving feedback to the user.
      */
     private class IdProcessorFromFile extends SwingWorker {
 
@@ -407,6 +416,7 @@ public class FileImporter {
 
         /**
          * Constructor of the worker
+         *
          * @param idFiles ArrayList containing the identification files
          */
         public IdProcessorFromFile(ArrayList<File> idFiles, ArrayList<File> spectrumFiles, File fastaFile, IdFilter idFilter, SearchParameters searchParameters, AnnotationPreferences annotationPreferences) {
@@ -476,22 +486,23 @@ public class FileImporter {
                 for (File idFile : idFiles) {
 
                     waitingDialog.appendReport("Reducing memory consumption.");
-                            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+                    waitingDialog.setSecondaryProgressDialogIntermediate(false);
                     identification.reduceMemoryConsumtion(waitingDialog.getSecondaryProgressBar());
-                            waitingDialog.setSecondaryProgressDialogIntermediate(true);
+                    waitingDialog.setSecondaryProgressDialogIntermediate(true);
                     waitingDialog.appendReport("Parsing " + idFile.getName() + ".");
                     IdfileReader fileReader;
+                    
                     int searchEngine = readerFactory.getSearchEngine(idFile);
+                    
                     if (searchEngine == Advocate.MASCOT && idFile.length() > mascotMaxSize * 1048576) {
                         fileReader = new MascotIdfileReader(idFile, true);
                     } else {
                         fileReader = readerFactory.getFileReader(idFile);
                     }
-                    
+
                     HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches();
-
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();
-
+                    
                     int numberOfMatches = tempSet.size();
                     int progress = 0;
                     waitingDialog.setSecondaryProgressDialogIntermediate(false);
@@ -519,9 +530,12 @@ public class FileImporter {
                         }
 
                         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey, false);
+                        double precursorMz = precursor.getMz();
                         goodFirstHit = false;
-                        for (PeptideAssumption assumption : match.getAllAssumptions(searchEngine).get(firstHit.getEValue())) {
-                            if (idFilter.validateId(assumption, precursor.getMz())) {
+                        ArrayList<PeptideAssumption> allAssumptions = match.getAllAssumptions(searchEngine).get(firstHit.getEValue());
+                        
+                        for (PeptideAssumption assumption : allAssumptions) {
+                            if (idFilter.validateId(assumption, precursorMz)) {
                                 goodFirstHit = true;
                                 break;
                             }
@@ -533,6 +547,7 @@ public class FileImporter {
                             // use search engine independant PTMs
                             for (PeptideAssumption assumptions : match.getAllAssumptions()) {
                                 peptide = assumptions.getPeptide();
+                                String sequence = peptide.getSequence();
                                 for (ModificationMatch seMod : peptide.getModificationMatches()) {
                                     if (seMod.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
                                         if (!unknown) {
@@ -541,15 +556,15 @@ public class FileImporter {
                                             unknown = true;
                                         }
                                     }
-                                    seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), peptide.getSequence(), searchParameters));
+                                    seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), sequence, searchParameters));
                                 }
-                                ArrayList<String> proteins = getProteins(peptide.getSequence(), waitingDialog);
+                                ArrayList<String> proteins = getProteins(sequence, waitingDialog);
                                 if (!proteins.isEmpty()) {
                                     peptide.setParentProteins(proteins);
                                 }
                             }
 
-                            if (idFilter.validateId(firstHit, precursor.getMz())) {
+                            if (idFilter.validateId(firstHit, precursorMz)) {
                                 inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
                                 identification.addSpectrumMatch(match);
                                 nRetained++;
@@ -604,8 +619,9 @@ public class FileImporter {
         }
 
         /**
-         * Verify that the spectra are imported and imports spectra from the desired spectrum file if necessary.
-         * 
+         * Verify that the spectra are imported and imports spectra from the
+         * desired spectrum file if necessary.
+         *
          * @param waitingDialog Dialog displaying feedback to the user
          * @param spectrumFiles The spectrum files
          */
