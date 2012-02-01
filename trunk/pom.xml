@@ -403,7 +403,7 @@
         <dependency>
             <groupId>uk.ac.ebi.uniprot.kraken</groupId>
             <artifactId>uniprotjapi</artifactId>
-            <version>2011.12</version>
+            <version>2012.01</version>
         </dependency>
         
     </dependencies>
