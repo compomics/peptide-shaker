@@ -5171,7 +5171,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
      *
      * @param startIndex the start index in the protein sequence
      * @param endIndex the end index in the protein sequence
-     * @return
+     * @return a list of the residue annotation
      */
     public ArrayList<ResidueAnnotation> getResidueAnnotations(int startIndex, int endIndex) {
 
