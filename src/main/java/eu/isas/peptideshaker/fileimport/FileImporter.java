@@ -476,7 +476,9 @@ public class FileImporter {
                 for (File idFile : idFiles) {
 
                     waitingDialog.appendReport("Reducing memory consumption.");
+                            waitingDialog.setSecondaryProgressDialogIntermediate(false);
                     identification.reduceMemoryConsumtion(waitingDialog.getSecondaryProgressBar());
+                            waitingDialog.setSecondaryProgressDialogIntermediate(true);
                     waitingDialog.appendReport("Parsing " + idFile.getName() + ".");
                     IdfileReader fileReader;
                     int searchEngine = readerFactory.getSearchEngine(idFile);
@@ -485,6 +487,7 @@ public class FileImporter {
                     } else {
                         fileReader = readerFactory.getFileReader(idFile);
                     }
+                    
                     HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches();
 
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();
