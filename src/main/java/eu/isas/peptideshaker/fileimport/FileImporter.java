@@ -255,7 +255,7 @@ public class FileImporter {
      */
     private ArrayList<String> getProteins(String peptideSequence, WaitingDialog waitingDialog) {
         ArrayList<String> result = sequences.get(peptideSequence);
-        boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && !needPeptideMap;
+        boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && needPeptideMap;
 
         if (result == null) {
             result = new ArrayList<String>();
@@ -475,7 +475,9 @@ public class FileImporter {
 
                 for (File idFile : idFiles) {
 
-
+                    waitingDialog.appendReport("Reducing memory consumption.");
+                    identification.reduceMemoryConsumtion(waitingDialog.getSecondaryProgressBar());
+                    waitingDialog.appendReport("Parsing " + idFile.getName() + ".");
                     IdfileReader fileReader;
                     int searchEngine = readerFactory.getSearchEngine(idFile);
                     if (searchEngine == Advocate.MASCOT && idFile.length() > mascotMaxSize * 1048576) {
@@ -509,7 +511,7 @@ public class FileImporter {
                             mgfUsed.add(fileName);
                         }
                         if (!idReport) {
-                            waitingDialog.appendReport("Reading file: " + idFile.getName());
+                            waitingDialog.appendReport("Importing PSMs from " + idFile.getName());
                             idReport = true;
                         }
 

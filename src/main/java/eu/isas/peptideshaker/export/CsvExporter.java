@@ -110,7 +110,7 @@ public class CsvExporter {
         proteinFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_proteins.txt";
         peptideFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_peptides.txt";
         psmFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_psms.txt";
-        assumptionFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_assumptions.txt";
+        //assumptionFile = "PeptideShaker " + experiment.getReference() + "_" + sample.getReference() + "_" + replicateNumber + "_assumptions.txt";
     }
 
     /**
@@ -126,7 +126,7 @@ public class CsvExporter {
             Writer proteinWriter = new BufferedWriter(new FileWriter(new File(folder, proteinFile)));
             Writer peptideWriter = new BufferedWriter(new FileWriter(new File(folder, peptideFile)));
             Writer spectrumWriter = new BufferedWriter(new FileWriter(new File(folder, psmFile)));
-            Writer assumptionWriter = new BufferedWriter(new FileWriter(new File(folder, assumptionFile)));
+           // Writer assumptionWriter = new BufferedWriter(new FileWriter(new File(folder, assumptionFile)));
 
             String content = "Protein" + SEPARATOR + "Equivalent proteins" + SEPARATOR + "Group class" + SEPARATOR + "n peptides" + SEPARATOR + "n spectra"
                     + SEPARATOR + "n peptides validated" + SEPARATOR + "n spectra validated" + SEPARATOR + "MW" + SEPARATOR + "NSAF" + SEPARATOR + "p score"
@@ -147,7 +147,7 @@ public class CsvExporter {
                     + "Charge" + SEPARATOR + "Spectrum" + SEPARATOR + "Spectrum File" + SEPARATOR + "Identification File(s)"
                     + SEPARATOR + "Theoretic Mass" + SEPARATOR + "Mass Error (ppm)" + SEPARATOR + "Mascot Score" + SEPARATOR + "Mascot E-Value" + SEPARATOR + "OMSSA E-Value"
                     + SEPARATOR + "X!Tandem E-Value" + SEPARATOR + "p score" + SEPARATOR + "p" + SEPARATOR + "Decoy" + SEPARATOR + "Validated" + "\n";
-            assumptionWriter.write(content);
+            //assumptionWriter.write(content);
 
             identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
 
@@ -178,7 +178,7 @@ public class CsvExporter {
             }
 
             for (String spectrumKey : identification.getSpectrumIdentification()) {
-                assumptionWriter.write(getAssumptionLines(spectrumKey));
+                //assumptionWriter.write(getAssumptionLines(spectrumKey));
                 progress++;
                 progressDialog.setValue(progress);
             }
@@ -186,7 +186,7 @@ public class CsvExporter {
             proteinWriter.close();
             peptideWriter.close();
             spectrumWriter.close();
-            assumptionWriter.close();
+            //assumptionWriter.close();
 
             return true;
         } catch (IOException e) {
@@ -476,48 +476,65 @@ public class CsvExporter {
         line += fileName + SEPARATOR;
         line += spectrumTitle + SEPARATOR;
 
+        ArrayList<String> fileNames = new ArrayList<String>();
         for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions()) {
             if (assumption.getPeptide().isSameAs(bestAssumption)) {
-                line += assumption.getFile() + " ";
+                if (!fileNames.contains(assumption.getFile())) {
+                    fileNames.add(assumption.getFile());
+                }
             }
+        }
+        Collections.sort(fileNames);
+        for (String name : fileNames) {
+            line += name + " ";
         }
 
         line += SEPARATOR;
         line += spectrumMatch.getBestAssumption().getPeptide().getMass() + SEPARATOR;
         line += Math.abs(spectrumMatch.getBestAssumption().getDeltaMass(precursor.getMz(), true)) + SEPARATOR;
-        PeptideAssumption assumption = spectrumMatch.getFirstHit(Advocate.MASCOT);
-
-        if (assumption != null) {
-            if (assumption.getPeptide().isSameAs(bestAssumption)) {
-                MascotScore score = (MascotScore) assumption.getUrParam(new MascotScore(0));
-                line += score.getScore() + "";
-            }
+        Double mascotEValue = null;
+        Double omssaEValue = null;
+        Double xtandemEValue = null;
+        double mascotScore = 0;
+        for (int se : spectrumMatch.getAdvocates()) {
+            for (double eValue : spectrumMatch.getAllAssumptions(se).keySet()) {
+                for (PeptideAssumption assumption : spectrumMatch.getAllAssumptions(se).get(eValue)) {
+                    if (assumption.getPeptide().isSameAs(bestAssumption)) {
+                        if (se == Advocate.MASCOT) {
+                            if (mascotEValue == null || mascotEValue > eValue) {
+                                mascotEValue = eValue;
+                                mascotScore = ((MascotScore) assumption.getUrParam(new MascotScore(0))).getScore();
+                            }
+                        } else if (se == Advocate.OMSSA) {
+                            if (omssaEValue == null || omssaEValue > eValue) {
+                                omssaEValue = eValue;
+                            }
+                        } else if (se == Advocate.XTANDEM) {
+                            if (xtandemEValue == null || xtandemEValue > eValue) {
+                                xtandemEValue = eValue;
+                            }
+                        }
+                    }
+                }
+            } 
+        }
+        
+        if (mascotEValue != null) {
+            line += mascotScore;
+        }
+        line += SEPARATOR;
+        if (mascotEValue != null) {
+            line += mascotEValue;
         }
 
         line += SEPARATOR;
-
-        if (assumption != null) {
-            if (assumption.getPeptide().isSameAs(bestAssumption)) {
-                line += assumption.getEValue() + "";
-            }
+        if (omssaEValue != null) {
+            line += omssaEValue;
         }
 
         line += SEPARATOR;
-        assumption = spectrumMatch.getFirstHit(Advocate.OMSSA);
-
-        if (assumption != null) {
-            if (assumption.getPeptide().isSameAs(bestAssumption)) {
-                line += assumption.getEValue() + "";
-            }
-        }
-
-        line += SEPARATOR;
-        assumption = spectrumMatch.getFirstHit(Advocate.XTANDEM);
-
-        if (assumption != null) {
-            if (assumption.getPeptide().isSameAs(bestAssumption)) {
-                line += assumption.getEValue() + "";
-            }
+        if (xtandemEValue != null) {
+            line += xtandemEValue;
         }
 
         line += SEPARATOR;
