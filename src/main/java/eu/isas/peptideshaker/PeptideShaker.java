@@ -197,10 +197,6 @@ public class PeptideShaker {
             waitingDialog.appendReport("Selecting best hit per spectrum.");
             setFirstHit(waitingDialog, idFilter);
             waitingDialog.increaseProgressValue();
-            waitingDialog.appendReport("Reducing memory consumption.");
-            waitingDialog.setSecondaryProgressDialogIntermediate(false);
-            identification.reduceMemoryConsumtion(waitingDialog.getSecondaryProgressBar());
-            waitingDialog.setSecondaryProgressDialogIntermediate(true);
             waitingDialog.appendReport("Generating PSM map.");
             fillPsmMap(inputMap, waitingDialog);
             psmMap.cure();
@@ -208,7 +204,7 @@ public class PeptideShaker {
             waitingDialog.appendReport("Computing PSM probabilities.");
             psmMap.estimateProbabilities(waitingDialog);
             waitingDialog.appendReport("Attaching PSM probabilities.");
-            attachSpectrumProbabilities();
+            attachSpectrumProbabilities(waitingDialog);
             waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Building peptides and proteins.");
             waitingDialog.setSecondaryProgressDialogIntermediate(false);
@@ -219,12 +215,14 @@ public class PeptideShaker {
             peptideMap.cure();
             waitingDialog.appendReport("Computing peptide probabilities.");
             peptideMap.estimateProbabilities(waitingDialog);
-            attachPeptideProbabilities();
+            waitingDialog.appendReport("Saving peptide probabilities.");
+            attachPeptideProbabilities(waitingDialog);
             waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Computing protein probabilities.");
             fillProteinMap(waitingDialog);
             proteinMap.estimateProbabilities(waitingDialog);
-            attachProteinProbabilities();
+            waitingDialog.appendReport("Saving protein probabilities.");
+            attachProteinProbabilities(waitingDialog);
             waitingDialog.increaseProgressValue();
         } catch (Exception e) {
             throw e;
@@ -244,7 +242,8 @@ public class PeptideShaker {
 
         waitingDialog.appendReport("Correcting protein probabilities.");
         proteinMap.estimateProbabilities(waitingDialog);
-        attachProteinProbabilities();
+        waitingDialog.appendReport("Saving protein probabilities.");
+        attachProteinProbabilities(waitingDialog);
         waitingDialog.increaseProgressValue();
 
         waitingDialog.appendReport("Validating identifications at 1% FDR.");
@@ -494,7 +493,7 @@ public class PeptideShaker {
                     precursor = spectrumFactory.getPrecursor(spectrumKey);
 
                     for (PeptideAssumption peptideAssumption : assumptions) {
-                        if (idFilter.validateId(peptideAssumption, precursor.getMz())) {
+                        if (idFilter.validateId(peptideAssumption, spectrumKey)) {
                             if (!peptideAssumption.getPeptide().getSequence().equals(spectrumMatch.getFirstHit(se).getPeptide().getSequence())) {
                                 conflict = true;
                             }
@@ -533,7 +532,7 @@ public class PeptideShaker {
                 needChange = false;
                 for (PeptideAssumption peptideAssumption : conflictingPSM.getAllAssumptions(se).get(conflictingPSM.getFirstHit(se).getEValue())) {
                     if (!peptideAssumption.getPeptide().getSequence().equals(conflictingPSM.getFirstHit(se).getPeptide().getSequence())) {
-                        if (idFilter.validateId(peptideAssumption, precursor.getMz())) {
+                        if (idFilter.validateId(peptideAssumption, conflictKey)) {
                             for (String accession : peptideAssumption.getPeptide().getParentProteins()) {
                                 if (spectrumCounting.get(accession) != null
                                         && spectrumCounting.get(accession) > maxCount) {
@@ -733,11 +732,29 @@ public class PeptideShaker {
      * matches.
      */
     private void attachSpectrumProbabilities() {
+        attachSpectrumProbabilities(null);
+    }
+
+    /**
+     * Attaches the spectrum posterior error probabilities to the spectrum
+     * matches.
+     */
+    private void attachSpectrumProbabilities(WaitingDialog waitingDialog) {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+            waitingDialog.setMaxSecondaryProgressValue(identification.getSpectrumIdentification().size());
+        }
         PSParameter psParameter = new PSParameter();
         for (String spectrumKey : identification.getSpectrumIdentification()) {
             psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
             psParameter.setPsmProbability(psmMap.getProbability(psParameter.getSecificMapKey(), psParameter.getPsmProbabilityScore()));
+            if (waitingDialog != null) {
+                waitingDialog.increaseSecondaryProgressValue();
+            }
+        }
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(true);
         }
     }
 
@@ -1185,12 +1202,29 @@ public class PeptideShaker {
      * Attaches the peptide posterior error probabilities to the peptide matches.
      */
     private void attachPeptideProbabilities() {
+        attachPeptideProbabilities(null);
+    }
+
+    /**
+     * Attaches the peptide posterior error probabilities to the peptide matches.
+     */
+    private void attachPeptideProbabilities(WaitingDialog waitingDialog) {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
 
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+            waitingDialog.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size());
+        }
         for (String peptideKey : identification.getPeptideIdentification()) {
             psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
             psParameter.setPeptideProbability(peptideMap.getProbability(psParameter.getSecificMapKey(), psParameter.getPeptideProbabilityScore()));
+            if (waitingDialog != null) {
+                waitingDialog.increaseSecondaryProgressValue();
+            }
+        }
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(true);
         }
     }
 
@@ -1239,13 +1273,30 @@ public class PeptideShaker {
      * Attaches the protein posterior error probability to the protein matches.
      */
     private void attachProteinProbabilities() {
+        attachProteinProbabilities(null);
+    }
+
+    /**
+     * Attaches the protein posterior error probability to the protein matches.
+     */
+    private void attachProteinProbabilities(WaitingDialog waitingDialog) {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+            waitingDialog.setMaxSecondaryProgressValue(identification.getProteinIdentification().size());
+        }
         PSParameter psParameter = new PSParameter();
         double proteinProbability;
         for (String proteinKey : identification.getProteinIdentification()) {
             psParameter = (PSParameter) identification.getMatchParameter(proteinKey, psParameter);
             proteinProbability = proteinMap.getProbability(psParameter.getProteinProbabilityScore());
             psParameter.setProteinProbability(proteinProbability);
+            if (waitingDialog != null) {
+                waitingDialog.increaseSecondaryProgressValue();
+            }
+        }
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(true);
         }
     }
 

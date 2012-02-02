@@ -5,8 +5,12 @@ import com.compomics.util.experiment.identification.Advocate;
 import com.compomics.util.experiment.identification.PeptideAssumption;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ModificationMatch;
+import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class achieves a pre-filtering of the identifications
@@ -47,6 +51,10 @@ public class IdFilter implements Serializable {
      * Boolean indicating whether peptides presenting unknown PTMs should be ignored
      */
     private boolean unknownPtm;
+    /**
+     * The spectrum factory
+     */
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(100);
 
     /**
      * Constructor with default settings
@@ -89,10 +97,10 @@ public class IdFilter implements Serializable {
      * Validates a peptide assumption.
      * 
      * @param assumption the considered peptide assumption
-     * @param precursorMass the precursor mass
+     * @param spectrumKey the key of the spectrum used to get the precursor (Note that the precursor should be accessible via the spectrum factory)
      * @return a boolean indicating whether the given assumption passes the filter
      */
-    public boolean validateId(PeptideAssumption assumption, double precursorMass) {
+    public boolean validateId(PeptideAssumption assumption, String spectrumKey) throws IOException, MzMLUnmarshallerException {
 
         int pepLength = assumption.getPeptide().getSequence().length();
 
@@ -117,7 +125,7 @@ public class IdFilter implements Serializable {
                     decoy = true;
                 } else {
                     target = true;
-                }
+        }
             }
             if (target && decoy) {
                 return false;
@@ -132,7 +140,8 @@ public class IdFilter implements Serializable {
             }
         }
 
-        if (Math.abs(assumption.getDeltaMass(precursorMass, isPpm)) > maxMassDeviation && maxMassDeviation > 0) {
+        Precursor precursor = spectrumFactory.getPrecursor(spectrumKey, false);
+        if (Math.abs(assumption.getDeltaMass(precursor.getMz(), isPpm)) > maxMassDeviation && maxMassDeviation > 0) {
             return false;
         }
 
