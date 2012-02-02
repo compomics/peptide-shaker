@@ -221,9 +221,12 @@ public class PtmScoring implements Serializable {
                 ptmLocation.clear();
             }
             siteConfidence = Math.max(siteConfidence, anotherScore.getPtmSiteConfidence());
-            for (int newLocation : anotherScore.getPtmLocation()) {
+            for (Integer newLocation : anotherScore.getPtmLocation()) {
                 if (!ptmLocation.contains(newLocation)) {
                     ptmLocation.add(newLocation);
+                }
+                if (secondaryLocations.contains(newLocation)) {
+                    secondaryLocations.remove(newLocation);
                 }
             }
         } else if (anotherScore.getPtmSiteConfidence() > siteConfidence) {
@@ -234,9 +237,12 @@ public class PtmScoring implements Serializable {
             }
             ptmLocation.clear();
             siteConfidence = anotherScore.getPtmSiteConfidence();
-            for (int newLocation : anotherScore.getPtmLocation()) {
+            for (Integer newLocation : anotherScore.getPtmLocation()) {
                 if (!ptmLocation.contains(newLocation)) {
                     ptmLocation.add(newLocation);
+                }
+                if (secondaryLocations.contains(newLocation)) {
+                    secondaryLocations.remove(newLocation);
                 }
             }
         } else {

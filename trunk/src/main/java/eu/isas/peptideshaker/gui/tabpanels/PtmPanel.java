@@ -4599,6 +4599,7 @@ public class PtmPanel extends javax.swing.JPanel {
      */
     private void updateModificationProfilesTable(ProgressDialogX progressDialog) {
 
+        if (spectrumTabbedPane.isEnabledAt(0)) {
         progressDialog.setTitle("Updating Modification Profile Table. Please Wait...");
         progressDialog.setIndeterminate(true);
 
@@ -4690,6 +4691,7 @@ public class PtmPanel extends javax.swing.JPanel {
 //                ((JSparklinesBarChartTableCellRenderer) psmModProfilesTable.getColumn(psmModProfilesTable.getColumnName(i)).getCellRenderer()).showAsHeatMap(ColorGradient.GreenWhiteBlue);
                 //psmModProfilesTable.getColumn(psmModProfilesTable.getColumnName(i)).setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 0d, 100d));
             }
+        }
         }
     }
 }
