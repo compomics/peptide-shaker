@@ -933,21 +933,39 @@ public class PeptideShaker {
         }
 
         if (variableModifications.size() > 0) {
+            boolean validated = false;
+            double bestConfidence = 0;
+            ArrayList<String> bestKeys = new ArrayList<String>();
             for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
                 psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
                 if (psParameter.isValidated()) {
-                    SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
-                    scorePTMs(spectrumMatch, searchParameters, annotationPreferences);
-                    for (String modification : variableModifications) {
-                        if (!peptideScores.containsPtm(modification)) {
-                            peptideScores.addPtmScoring(modification, new PtmScoring(modification));
-                        }
-                        psmScores = (PSPtmScores) spectrumMatch.getUrParam(peptideScores);
-                        if (psmScores != null) {
-                            PtmScoring spectrumScoring = psmScores.getPtmScoring(modification);
-                            if (spectrumScoring != null) {
-                                peptideScores.getPtmScoring(modification).addAll(spectrumScoring);
-                            }
+                    if (!validated) {
+                        validated = true;
+                        bestKeys.clear();
+                    }
+                    bestKeys.add(spectrumKey);
+                } else if (!validated) {
+                    if (psParameter.getPsmConfidence() > bestConfidence) {
+                        bestConfidence = psParameter.getPsmConfidence();
+                        bestKeys.clear();
+                        bestKeys.add(spectrumKey);
+                    } else if (psParameter.getPsmConfidence() == bestConfidence) {
+                        bestKeys.add(spectrumKey);
+                    }
+                }
+            }
+            for (String spectrumKey : bestKeys) {
+                SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+                scorePTMs(spectrumMatch, searchParameters, annotationPreferences);
+                for (String modification : variableModifications) {
+                    if (!peptideScores.containsPtm(modification)) {
+                        peptideScores.addPtmScoring(modification, new PtmScoring(modification));
+                    }
+                    psmScores = (PSPtmScores) spectrumMatch.getUrParam(peptideScores);
+                    if (psmScores != null) {
+                        PtmScoring spectrumScoring = psmScores.getPtmScoring(modification);
+                        if (spectrumScoring != null) {
+                            peptideScores.getPtmScoring(modification).addAll(spectrumScoring);
                         }
                     }
                 }
@@ -1017,7 +1035,6 @@ public class PeptideShaker {
                         confidence = PtmScoring.DOUBTFUL;
                     }
                 }
-
                 if (retainedKey != null) {
                     ptmScoring.setPtmSite(retainedKey, confidence);
                 } else {
