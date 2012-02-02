@@ -85,6 +85,7 @@ import java.net.UnknownHostException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -2258,9 +2259,9 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                 // select the output folder
                 File selectedFile = getUserSelectedFile(".zip", "(Compressed file format) *.zip", "Export As Zip...", false);
-         
+
                 if (selectedFile != null) {
-                    
+
                     final File zipFile = selectedFile;
 
 
@@ -2889,7 +2890,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     FileWriter w = new FileWriter(file);
                     BufferedWriter bw = new BufferedWriter(w);
-
+                    bw.write("\n\n" + new Date() + ": PeptideShaker version " + getVersion() + ".\n");
                     bw.close();
                     w.close();
                 }
@@ -2933,17 +2934,17 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Checks the version compatibility and makes the necessary adjustments
      */
     private void checkVersionCompatibility() {
         // Resets the user preferences keeping the the link to other projects
         UserPreferences tempPreferences = new UserPreferences();
-        
+
         // have to be added in reverse order
         for (int i = userPreferences.getRecentProjects().size(); i > 0; i--) {
-            File tempFile = new File(userPreferences.getRecentProjects().get(i-1));
+            File tempFile = new File(userPreferences.getRecentProjects().get(i - 1));
             tempPreferences.addRecentProject(tempFile);
         }
 
@@ -4720,7 +4721,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     ArrayList<Integer> replicates = new ArrayList(tempExperiment.getAnalysisSet(tempSample).getReplicateNumberList());
 
                     int tempReplicate;
-                    
+
                     if (replicates.size() == 1) {
                         tempReplicate = replicates.get(0);
                     } else {
