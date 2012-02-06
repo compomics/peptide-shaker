@@ -1897,7 +1897,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @see #updateAnnotationPreferences()
      */
 private void aIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonCheckBoxMenuItemActionPerformed
-    updateAnnotationPreferences();
+        updateAnnotationPreferences();
 }//GEN-LAST:event_aIonCheckBoxMenuItemActionPerformed
 
     /**
@@ -4516,38 +4516,50 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                         } else if (new File(dataFolder, fileName).exists()) {
                             SequenceFactory.getInstance().loadFastaFile(new File(dataFolder, fileName));
                             experimentSettings.getSearchParameters().setFastaFile(new File(dataFolder, fileName));
+                        } else {
+                            JOptionPane.showMessageDialog(peptideShakerGUI,
+                                    experimentSettings.getSearchParameters().getFastaFile() + " could not be found."
+                                    + "\n\nPlease select the FASTA file manually.",
+                                    "File Input Error", JOptionPane.ERROR_MESSAGE);
+                            File fastaFile = locateFastaFileManually();
+                            if (fastaFile != null) {
+                                searchParameters.setFastaFile(fastaFile);
+                                try {
+                                    progressDialog.setTitle("Importing FASTA File. Please Wait...");
+                                    SequenceFactory.getInstance().loadFastaFile(experimentSettings.getSearchParameters().getFastaFile(), progressDialog.getProgressBar());
+                                } catch (Exception e2) {
+                                    e2.printStackTrace();
+                                    JOptionPane.showMessageDialog(peptideShakerGUI,
+                                            "An error occured while reading:\n" + experimentSettings.getSearchParameters().getFastaFile() + "."
+                                            + "\n\nOpen cancelled.",
+                                            "File Input Error", JOptionPane.ERROR_MESSAGE);
+                                    clearData();
+                                    clearPreferences();
+
+                                    progressDialog.setVisible(false);
+                                    progressDialog.dispose();
+                                    // change the peptide shaker icon back to the default version
+                                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                    return;
+                                }
+                            } else {
+                                clearData();
+                                clearPreferences();
+
+                                progressDialog.setVisible(false);
+                                progressDialog.dispose();
+                                // change the peptide shaker icon back to the default version
+                                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                                return;
+                            }
                         }
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(peptideShakerGUI,
                                 "An error occured while reading:\n" + experimentSettings.getSearchParameters().getFastaFile() + "."
                                 + "\n\nPlease select the FASTA file manually.",
                                 "File Input Error", JOptionPane.ERROR_MESSAGE);
-
-                        JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
-                        fileChooser.setDialogTitle("Open FASTA File");
-
-                        FileFilter filter = new FileFilter() {
-
-                            @Override
-                            public boolean accept(File myFile) {
-                                return myFile.getName().toLowerCase().endsWith("fasta")
-                                        || myFile.getName().toLowerCase().endsWith("fast")
-                                        || myFile.getName().toLowerCase().endsWith("fas")
-                                        || myFile.isDirectory();
-                            }
-
-                            @Override
-                            public String getDescription() {
-                                return "Supported formats: FASTA format (.fasta)";
-                            }
-                        };
-
-                        fileChooser.setFileFilter(filter);
-                        int returnVal = fileChooser.showDialog(peptideShakerGUI, "Open");
-
-                        if (returnVal == JFileChooser.APPROVE_OPTION) {
-                            File fastaFile = fileChooser.getSelectedFile();
-                            setLastSelectedFolder(fastaFile.getAbsolutePath());
+                        File fastaFile = locateFastaFileManually();
+                        if (fastaFile != null) {
                             searchParameters.setFastaFile(fastaFile);
                             try {
                                 progressDialog.setTitle("Importing FASTA File. Please Wait...");
@@ -4563,19 +4575,16 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                                 progressDialog.setVisible(false);
                                 progressDialog.dispose();
-
                                 // change the peptide shaker icon back to the default version
                                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                                 return;
                             }
-
                         } else {
                             clearData();
                             clearPreferences();
 
                             progressDialog.setVisible(false);
                             progressDialog.dispose();
-
                             // change the peptide shaker icon back to the default version
                             peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
                             return;
@@ -4818,6 +4827,42 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 }
             }
         }.start();
+    }
+
+    /**
+     * Allows the user to locate the fasta file manually
+     * @return the selected fasta file or null if the operation was canceled
+     */
+    private File locateFastaFileManually() {
+        JFileChooser fileChooser = new JFileChooser(getLastSelectedFolder());
+        fileChooser.setDialogTitle("Open FASTA File");
+
+        FileFilter filter = new FileFilter() {
+
+            @Override
+            public boolean accept(File myFile) {
+                return myFile.getName().toLowerCase().endsWith("fasta")
+                        || myFile.getName().toLowerCase().endsWith("fast")
+                        || myFile.getName().toLowerCase().endsWith("fas")
+                        || myFile.isDirectory();
+            }
+
+            @Override
+            public String getDescription() {
+                return "Supported formats: FASTA format (.fasta)";
+            }
+        };
+
+        fileChooser.setFileFilter(filter);
+        int returnVal = fileChooser.showDialog(this, "Open");
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File fastaFile = fileChooser.getSelectedFile();
+            setLastSelectedFolder(fastaFile.getAbsolutePath());
+            return fastaFile;
+        } else {
+            return null;
+        }
     }
 
     @Override

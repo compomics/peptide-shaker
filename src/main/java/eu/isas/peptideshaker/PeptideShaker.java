@@ -203,13 +203,9 @@ public class PeptideShaker {
             waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Computing PSM probabilities.");
             psmMap.estimateProbabilities(waitingDialog);
-            waitingDialog.appendReport("Attaching PSM probabilities.");
-            attachSpectrumProbabilities(waitingDialog);
+            waitingDialog.appendReport("Saving probabilities and building peptides and proteins.");
+            attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingDialog);
             waitingDialog.increaseProgressValue();
-            waitingDialog.appendReport("Building peptides and proteins.");
-            waitingDialog.setSecondaryProgressDialogIntermediate(false);
-            identification.buildPeptidesAndProteins(waitingDialog.getSecondaryProgressBar());
-            waitingDialog.setSecondaryProgressDialogIntermediate(true);
             waitingDialog.appendReport("Generating peptide map.");
             fillPeptideMaps();
             peptideMap.cure();
@@ -732,14 +728,14 @@ public class PeptideShaker {
      * matches.
      */
     private void attachSpectrumProbabilities() {
-        attachSpectrumProbabilities(null);
+        attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(null);
     }
 
     /**
      * Attaches the spectrum posterior error probabilities to the spectrum
      * matches.
      */
-    private void attachSpectrumProbabilities(WaitingDialog waitingDialog) {
+    private void attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(WaitingDialog waitingDialog) {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         if (waitingDialog != null) {
             waitingDialog.setSecondaryProgressDialogIntermediate(false);
@@ -752,6 +748,7 @@ public class PeptideShaker {
             if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
             }
+            identification.buildPeptidesAndProteins(spectrumKey);
         }
         if (waitingDialog != null) {
             waitingDialog.setSecondaryProgressDialogIntermediate(true);
