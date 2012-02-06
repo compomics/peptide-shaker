@@ -75,7 +75,7 @@ public class ProteinTableModel extends DefaultTableModel {
 
     @Override
     public int getColumnCount() {
-        return 6;
+        return 13;
     }
 
     @Override
@@ -98,7 +98,7 @@ public class ProteinTableModel extends DefaultTableModel {
             case 7:
                 return "# Spectra";
             case 8:
-                return "MS2 Quant";
+                return "MS2 Quant.";
             case 9:
                 return "MW";
             case 10:

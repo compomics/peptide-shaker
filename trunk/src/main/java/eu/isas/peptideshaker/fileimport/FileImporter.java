@@ -500,6 +500,7 @@ public class FileImporter {
                     }
 
                     HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches();
+                    fileReader = null; // Hopefully frees some memory...
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();
 
                     int numberOfMatches = tempSet.size();
