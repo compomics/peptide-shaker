@@ -3438,7 +3438,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Sets the keys of the selected protein, peptide and PSM
+     * Sets the keys of the selected protein, peptide and PSM.
      *
      * @param proteinKey the key of the selected protein
      * @param peptideKey the key of the selected peptide
@@ -5157,7 +5157,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the charges found in the dataset
+     * Returns the charges found in the dataset.
      *
      * @return the charges found in the dataset
      */
@@ -5209,7 +5209,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Returns the default serialization directory for the currently loaded
+     * Returns the default serialization directory for the currently loaded.
      * cpsFile
      *
      * @return the default serialization directory for the currently loaded

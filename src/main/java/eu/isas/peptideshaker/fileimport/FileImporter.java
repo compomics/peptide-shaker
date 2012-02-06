@@ -15,7 +15,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.io.identifications.IdfileReader;
 import com.compomics.util.experiment.io.identifications.IdfileReaderFactory;
 import com.compomics.util.experiment.io.identifications.idfilereaders.MascotIdfileReader;
-import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.protein.Header.DatabaseType;
@@ -178,7 +177,7 @@ public class FileImporter {
 
             waitingDialog.resetSecondaryProgressBar();
             waitingDialog.setSecondaryProgressDialogIntermediate(true);
-
+ 
             if (needPeptideMap) {
                 if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache()) {
                     waitingDialog.appendReport("Creating peptide to protein map.");

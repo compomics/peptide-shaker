@@ -5139,6 +5139,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
+     * Returns the max number of peptides.
+     * 
      * @return the maxPeptides
      */
     public int getMaxPeptides() {
@@ -5146,6 +5148,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
+     * Returns the max number of spectra.
+     * 
      * @return the maxSpectra
      */
     public int getMaxSpectra() {
@@ -5153,6 +5157,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
+     * Returns the max spectrum counting value.
+     * 
      * @return the maxSpectrumCounting
      */
     public double getMaxSpectrumCounting() {
@@ -5160,6 +5166,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
+     * Return the max molecular weight.
+     * 
      * @return the maxMW
      */
     public double getMaxMW() {
