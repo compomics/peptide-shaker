@@ -873,7 +873,7 @@ public class IdentificationFeaturesGenerator {
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(false);
                 progressDialog.setTitle("Loading Protein Information. Please Wait...");
-                progressDialog.setMax(2 * peptideShakerGUI.getIdentification().getProteinIdentification().size());
+                progressDialog.setMax(peptideShakerGUI.getIdentification().getProteinIdentification().size());
                 progressDialog.setValue(0);
             }
             boolean needMaxValues = (peptideShakerGUI.getMetrics().getMaxNPeptides() == null)
@@ -969,6 +969,13 @@ public class IdentificationFeaturesGenerator {
             Collections.sort(scoreList);
             ArrayList<Integer> nPeptideList, nPsmList;
             ArrayList<String> tempList;
+            
+            if (progressDialog != null) {
+                progressDialog.setIndeterminate(false);
+                progressDialog.setTitle("Updating Protein Table. Please Wait...");
+                progressDialog.setMax(peptideShakerGUI.getIdentification().getProteinIdentification().size());
+                progressDialog.setValue(0);
+            }
 
             for (double currentScore : scoreList) {
 
