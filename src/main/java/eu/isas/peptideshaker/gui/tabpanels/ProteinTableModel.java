@@ -1,16 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.isas.peptideshaker.gui.tabpanels;
 
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
-import com.compomics.util.gui.dialogs.ProgressDialog;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
-import eu.isas.peptideshaker.export.FeaturesGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -19,9 +13,10 @@ import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.data.XYDataPoint;
 
 /**
- * Model for a the protein table
+ * Model for a the protein table.
  *
- * @author marc
+ * @author Marc Vaudel
+ * @author Harald Barsnes
  */
 public class ProteinTableModel extends DefaultTableModel {
 
@@ -30,26 +25,28 @@ public class ProteinTableModel extends DefaultTableModel {
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The main GUI class
+     * The main GUI class.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The identification of this project
+     * The identification of this project.
      */
     private Identification identification;
     /**
-     * The identification features generator
+     * The identification features generator.
      */
     private IdentificationFeaturesGenerator featuresGenerator;
     /**
-     * A list of ordered protein keys
+     * A list of ordered protein keys.
      */
     private ArrayList<String> proteinKeys = null;
 
     /**
-     * Constructor which sets a new table
+     * Constructor which sets a new table.
+     *
      * @param peptideShakerGUI instance of the main GUI class
-     * @param progressDialog   a progressdialog to display the progress to the user
+     * @param progressDialog a progressdialog to display the progress to the
+     * user
      */
     public ProteinTableModel(PeptideShakerGUI peptideShakerGUI, ProgressDialogX progressDialog) {
         this.peptideShakerGUI = peptideShakerGUI;
@@ -57,11 +54,23 @@ public class ProteinTableModel extends DefaultTableModel {
         featuresGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
         proteinKeys = featuresGenerator.getSortedProteinKeys(progressDialog);
     }
-    
+
     /**
-     * Constructor
+     * Constructor.
+     *
+     * @param peptideShakerGUI instance of the main GUI class
      */
-    public ProteinTableModel() {
+    public ProteinTableModel(PeptideShakerGUI peptideShakerGUI) {
+        this.peptideShakerGUI = peptideShakerGUI;
+    }
+
+    /**
+     * Returns the list of protein keys.
+     *
+     * @return the list of protein keys
+     */
+    public ArrayList<String> getProteinKeys() {
+        return proteinKeys;
     }
 
     @Override
@@ -75,7 +84,7 @@ public class ProteinTableModel extends DefaultTableModel {
 
     @Override
     public int getColumnCount() {
-        return 13;
+        return 12;
     }
 
     @Override
@@ -94,18 +103,20 @@ public class ProteinTableModel extends DefaultTableModel {
             case 5:
                 return "Coverage";
             case 6:
-                return "# Peptides";
+                return "#Peptides";
             case 7:
-                return "# Spectra";
+                return "#Spectra";
             case 8:
                 return "MS2 Quant.";
             case 9:
                 return "MW";
             case 10:
-                return "Score";
+                if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                    return "Score";
+                } else {
+                    return "Confidence";
+                }
             case 11:
-                return "Confidence";
-            case 12:
                 return "";
             default:
                 return "";
@@ -164,19 +175,21 @@ public class ProteinTableModel extends DefaultTableModel {
                     proteinMatch = identification.getProteinMatch(proteinKey);
                     Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                     if (currentProtein != null) {
-                        return currentProtein.computeMolecularWeight();
+                        return currentProtein.computeMolecularWeight() / 1000;
                     } else {
                         return null;
                     }
                 case 10:
-                    proteinKey = proteinKeys.get(row);
-                    pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
-                    return pSParameter.getProteinScore();
+                    if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                        proteinKey = proteinKeys.get(row);
+                        pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                        return pSParameter.getProteinScore();
+                    } else {
+                        proteinKey = proteinKeys.get(row);
+                        pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
+                        return pSParameter.getProteinConfidence();
+                    }
                 case 11:
-                    proteinKey = proteinKeys.get(row);
-                    pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
-                    return pSParameter.getProteinConfidence();
-                case 12:
                     proteinKey = proteinKeys.get(row);
                     pSParameter = (PSParameter) identification.getMatchParameter(proteinKey, new PSParameter());
                     return pSParameter.isValidated();
