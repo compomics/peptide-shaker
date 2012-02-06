@@ -3,6 +3,26 @@
 
 ----
 
+*Changes in PeptideShaker 0.14.5 (February 6. 2012):*
+ * FEATURE IMPROVEMENT: Improved the GUI of the 'Exclude Unknown PTMs' check box, and updated the corresponding help text
+ * FEATURE IMPROVEMENT: Reduced manually the memory consumption before parsing an identification file.
+ * FEATURE IMPROVEMENT: Added secondary progress when loading data.
+ * FEATURE IMPROVEMENT: Disabled the protein inference for omssa and Mascot PSMs.
+ * FEATURE IMPROVEMENT: Tried to avoid the fetching of precursors when loading PSMs.
+ * FEATURE IMPROVEMENT: Added date and version to the error log.
+ * FEATURE IMPROVEMENT: Improved the PTM processing.
+ * FEATURE IMPROVEMENT: Grouped the PSM saving with the peptide and protein generation.
+ * FEATURE IMPROVEMENT: Improved the NSAF index for shared peptides.
+ * FEATURE IMPROVEMENT: Improved the handling of missing FASTA file.
+ * BUG FIX: Corrected a bug in the protein inference dialog where the protein inference could not be changed.
+ * BUG FIX: Tried to fix the bug where the main progress bar in waiting dialog goes beyond 100%.
+ * BUG FIX: The fix that makes sure that the accuracy and intensity sliders do not get stuck, is now independent of the max value for the slider.
+ * BUG FIX: Corrected a bug in the peptide to protein mapping test.
+ * LIBRARY UPDATE: Updated the UniProt API to 2012.01.
+ * LIBRARY UPDATE: Updated utilities to version 3.3.35.
+
+----
+
 *Changes in PeptideShaker 0.14.4 (January 30. 2012):*
  * NEW FEATURE: It is now possible to zoom in the protein sequence coverage panel. The protein sequence coverage panel is now also a lot more accurate when the user is to select peptides in the sequence.
  * FEATURE IMPROVEMENT: The backend of the Spectrum IDs tab has been imporved and interaction with bigger projects in this tab is now lot faster.
@@ -18,7 +38,10 @@
  * LIBRARY UPDATE: Added swingx 0.9.1 as a dependency, was only a transitive dependency before. 
  * LIBRARY UPDATE: Updated utilities to version 3.3.30
 
+Download Count: 21
+
 ----
+
 *Changes in PeptideShaker 0.14.3 (January 23. 2012):*
  * NEW FEATURE: Added FASTA and CSV export options for the identified and unidentified proteins to the Follow Up export dialog.
  * FEATURE IMPROVEMENT: Major overhaul of the export options: replaced most of the slow export to clipboard options with faster export to file options.
