@@ -3672,7 +3672,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         }
 
         // hide/show the score columns
-        scoresJCheckBoxMenuItemActionPerformed(null);
+        //scoresJCheckBoxMenuItemActionPerformed(null);
     }
 
     /**

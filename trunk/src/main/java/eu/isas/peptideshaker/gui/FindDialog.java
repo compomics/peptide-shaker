@@ -426,9 +426,9 @@ public class FindDialog extends javax.swing.JDialog {
                 "Starred", null, null));
         proteinTable.getColumn("H").setCellRenderer(new NimbusCheckBoxRenderer());
 
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(peptideShakerGUI.getOverviewPanel().getMaxPeptides());
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getOverviewPanel().getMaxSpectra());
-        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).setMaxValue(peptideShakerGUI.getOverviewPanel().getMaxSpectrumCounting());
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Peptides").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNPeptides());
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNSpectra());
+        ((JSparklinesBarChartTableCellRenderer) proteinTable.getColumn("MS2 Quant.").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxSpectrumCounting());
 
         // set up the peptide inference color map
         HashMap<Integer, Color> peptideInferenceColorMap = new HashMap<Integer, Color>();
@@ -460,7 +460,7 @@ public class FindDialog extends javax.swing.JDialog {
                 "Starred", null, null));
         peptideTable.getColumn("H").setCellRenderer(new NimbusCheckBoxRenderer());
 
-        ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getOverviewPanel().getMaxSpectra());
+        ((JSparklinesBarChartTableCellRenderer) peptideTable.getColumn("#Spectra").getCellRenderer()).setMaxValue(peptideShakerGUI.getMetrics().getMaxNSpectra()); // @TODO: this is not the correct max value
 
 
         psmTable.getColumn("S").setCellRenderer(new TrueFalseIconRenderer(
@@ -1709,11 +1709,10 @@ public class FindDialog extends javax.swing.JDialog {
                 return new JTableHeader(columnModel) {
 
                     public String getToolTipText(MouseEvent e) {
-                        String tip = null;
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        tip = (String) proteinTableToolTips.get(realIndex);
+                        String tip = (String) proteinTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
@@ -1803,11 +1802,10 @@ public class FindDialog extends javax.swing.JDialog {
                 return new JTableHeader(columnModel) {
 
                     public String getToolTipText(MouseEvent e) {
-                        String tip = null;
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        tip = (String) peptideTableToolTips.get(realIndex);
+                        String tip = (String) peptideTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
@@ -1863,11 +1861,10 @@ public class FindDialog extends javax.swing.JDialog {
                 return new JTableHeader(columnModel) {
 
                     public String getToolTipText(MouseEvent e) {
-                        String tip = null;
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        tip = (String) psmTableToolTips.get(realIndex);
+                        String tip = (String) psmTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
@@ -1950,7 +1947,7 @@ public class FindDialog extends javax.swing.JDialog {
             proteinTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(proteinTablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(proteinScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 916, Short.MAX_VALUE)
+                .addComponent(proteinScrollPane)
                 .addContainerGap())
         );
         proteinTablePanelLayout.setVerticalGroup(
@@ -1995,7 +1992,7 @@ public class FindDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel10.setFont(new java.awt.Font("Tahoma", 2, 11));
+        jLabel10.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel10.setText("RegExp");
 
         proteinAccessionTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -2119,10 +2116,10 @@ public class FindDialog extends javax.swing.JDialog {
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(proteinFilterParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(proteinAccessionTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
-                    .addComponent(proteinPICmb, 0, 297, Short.MAX_VALUE)
-                    .addComponent(spectrumCountingTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
-                    .addComponent(proteinCoverageTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE))
+                    .addComponent(proteinAccessionTxt)
+                    .addComponent(proteinPICmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(spectrumCountingTxt)
+                    .addComponent(proteinCoverageTxt))
                 .addGap(18, 18, 18)
                 .addGroup(proteinFilterParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(proteinPiComparisonCmb, 0, 48, Short.MAX_VALUE)
@@ -2139,10 +2136,10 @@ public class FindDialog extends javax.swing.JDialog {
                     .addComponent(jLabel9))
                 .addGap(23, 23, 23)
                 .addGroup(proteinFilterParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(nPeptidesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
-                    .addComponent(proteinsNSpectraTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
-                    .addComponent(proteinScoreTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE)
-                    .addComponent(proteinConfidenceTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 297, Short.MAX_VALUE))
+                    .addComponent(nPeptidesTxt)
+                    .addComponent(proteinsNSpectraTxt)
+                    .addComponent(proteinScoreTxt)
+                    .addComponent(proteinConfidenceTxt, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(18, 18, 18)
                 .addGroup(proteinFilterParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(nPeptidesCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2267,7 +2264,7 @@ public class FindDialog extends javax.swing.JDialog {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, proteinsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(proteinSplitPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 948, Short.MAX_VALUE)
+                    .addComponent(proteinSplitPane, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(proteinTablePanel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(proteinFilterParamsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -2300,7 +2297,7 @@ public class FindDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel13.setFont(new java.awt.Font("Tahoma", 2, 11));
+        jLabel13.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel13.setText("RegExp");
 
         jLabel14.setText("PI Status:");
@@ -2382,7 +2379,7 @@ public class FindDialog extends javax.swing.JDialog {
             }
         });
 
-        jLabel20.setFont(new java.awt.Font("Tahoma", 2, 11));
+        jLabel20.setFont(new java.awt.Font("Tahoma", 2, 11)); // NOI18N
         jLabel20.setText("RegExp");
 
         peptidePiComparisonCmb.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "=", "!=" }));
@@ -2436,7 +2433,7 @@ public class FindDialog extends javax.swing.JDialog {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(modificationsScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 421, Short.MAX_VALUE)
+                .addComponent(modificationsScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -2466,12 +2463,12 @@ public class FindDialog extends javax.swing.JDialog {
                         .addComponent(jLabel16)
                         .addGap(18, 18, 18)))
                 .addGroup(peptideFilterParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(peptideConfidenceTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
-                    .addComponent(peptideScoreTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
-                    .addComponent(peptideNSpectraTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
-                    .addComponent(peptideProteinTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
-                    .addComponent(peptideSequenceTxt, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
-                    .addComponent(peptidePICmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, 273, Short.MAX_VALUE))
+                    .addComponent(peptideConfidenceTxt)
+                    .addComponent(peptideScoreTxt)
+                    .addComponent(peptideNSpectraTxt)
+                    .addComponent(peptideProteinTxt, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(peptideSequenceTxt, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(peptidePICmb, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(peptideFilterParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, peptideFilterParamsPanelLayout.createSequentialGroup()
@@ -2608,7 +2605,7 @@ public class FindDialog extends javax.swing.JDialog {
             peptideTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(peptideTablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(peptidesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 916, Short.MAX_VALUE)
+                .addComponent(peptidesScrollPane)
                 .addContainerGap())
         );
         peptideTablePanelLayout.setVerticalGroup(
@@ -2627,7 +2624,7 @@ public class FindDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(peptidesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(peptideFilterParamsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(peptidesSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 948, Short.MAX_VALUE)
+                    .addComponent(peptidesSplitPane)
                     .addComponent(peptideTablePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -2764,7 +2761,7 @@ public class FindDialog extends javax.swing.JDialog {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(filesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 79, Short.MAX_VALUE)
+                .addComponent(filesScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -2832,10 +2829,10 @@ public class FindDialog extends javax.swing.JDialog {
                         .addComponent(charge4CheckBox)
                         .addGap(18, 18, 18)
                         .addComponent(chargeOver4CheckBox))
-                    .addComponent(precursorRTTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
-                    .addComponent(precursorMzTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
-                    .addComponent(precursorErrorTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE)
-                    .addComponent(psmConfidenceTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 336, Short.MAX_VALUE))
+                    .addComponent(precursorRTTxt)
+                    .addComponent(precursorMzTxt)
+                    .addComponent(precursorErrorTxt)
+                    .addComponent(psmConfidenceTxt))
                 .addGap(18, 18, 18)
                 .addGroup(psmFilterParamsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(precursorMzCmb, javax.swing.GroupLayout.PREFERRED_SIZE, 48, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -2961,7 +2958,7 @@ public class FindDialog extends javax.swing.JDialog {
             psmTablePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(psmTablePanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(psmTableScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 916, Short.MAX_VALUE)
+                .addComponent(psmTableScrollPane)
                 .addContainerGap())
         );
         psmTablePanelLayout.setVerticalGroup(
@@ -2980,7 +2977,7 @@ public class FindDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(psmPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(psmTablePanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(psmSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 948, Short.MAX_VALUE)
+                    .addComponent(psmSplitPane)
                     .addComponent(psmFilterParamsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -3025,11 +3022,11 @@ public class FindDialog extends javax.swing.JDialog {
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, backgroundPanelLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(filterTypeJTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 973, Short.MAX_VALUE))
+                        .addComponent(filterTypeJTabbedPane))
                     .addGroup(backgroundPanelLayout.createSequentialGroup()
                         .addGap(20, 20, 20)
                         .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 820, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(saveButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(exitButton)))
@@ -3045,7 +3042,7 @@ public class FindDialog extends javax.swing.JDialog {
                 .addComponent(filterTypeJTabbedPane, javax.swing.GroupLayout.PREFERRED_SIZE, 673, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(backgroundPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                    .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(saveButton)
                     .addComponent(exitButton))
                 .addContainerGap())

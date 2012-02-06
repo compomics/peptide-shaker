@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <NonVisualComponents>
@@ -97,12 +97,12 @@
                   <Group type="103" groupAlignment="1" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <EmptySpace max="-2" attributes="0"/>
-                          <Component id="filterTypeJTabbedPane" pref="973" max="32767" attributes="0"/>
+                          <Component id="filterTypeJTabbedPane" max="32767" attributes="0"/>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                           <Component id="openDialogHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                          <EmptySpace pref="820" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="saveButton" linkSize="1" min="-2" max="-2" attributes="2"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="exitButton" linkSize="1" min="-2" max="-2" attributes="2"/>
@@ -119,7 +119,7 @@
                   <Component id="filterTypeJTabbedPane" min="-2" pref="673" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="openDialogHelpJButton" alignment="2" pref="23" max="32767" attributes="1"/>
+                      <Component id="openDialogHelpJButton" alignment="2" max="32767" attributes="1"/>
                       <Component id="saveButton" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="exitButton" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -172,7 +172,7 @@
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="proteinSplitPane" alignment="0" pref="948" max="32767" attributes="2"/>
+                              <Component id="proteinSplitPane" alignment="0" max="32767" attributes="2"/>
                               <Component id="proteinTablePanel" alignment="0" max="32767" attributes="2"/>
                               <Component id="proteinFilterParamsPanel" alignment="1" max="32767" attributes="2"/>
                           </Group>
@@ -210,7 +210,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="proteinScrollPane" pref="916" max="32767" attributes="1"/>
+                              <Component id="proteinScrollPane" max="32767" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -253,7 +253,7 @@
                             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="proteinTableMouseReleased"/>
                           </Events>
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="        new JTable() {&#xa;            protected JTableHeader createDefaultTableHeader() {&#xa;                return new JTableHeader(columnModel) {&#xa;&#xa;                    public String getToolTipText(MouseEvent e) {&#xa;                        String tip = null;&#xa;                        java.awt.Point p = e.getPoint();&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xa;                        tip = (String) proteinTableToolTips.get(realIndex);&#xa;                        return tip;&#xa;                    }&#xa;                };&#xa;            }&#xa;};"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="        new JTable() {&#xa;            protected JTableHeader createDefaultTableHeader() {&#xa;                return new JTableHeader(columnModel) {&#xa;&#xa;                    public String getToolTipText(MouseEvent e) {&#xa;                        java.awt.Point p = e.getPoint();&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xa;                        String tip = (String) proteinTableToolTips.get(realIndex);&#xa;                        return tip;&#xa;                    }&#xa;                };&#xa;            }&#xa;};"/>
                           </AuxValues>
                         </Component>
                       </SubComponents>
@@ -283,10 +283,10 @@
                               </Group>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="proteinAccessionTxt" alignment="0" pref="297" max="32767" attributes="2"/>
-                                  <Component id="proteinPICmb" alignment="0" pref="297" max="32767" attributes="2"/>
-                                  <Component id="spectrumCountingTxt" alignment="0" pref="297" max="32767" attributes="2"/>
-                                  <Component id="proteinCoverageTxt" alignment="0" pref="297" max="32767" attributes="2"/>
+                                  <Component id="proteinAccessionTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="proteinPICmb" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="spectrumCountingTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="proteinCoverageTxt" alignment="0" max="32767" attributes="2"/>
                               </Group>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -306,10 +306,10 @@
                               </Group>
                               <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="nPeptidesTxt" alignment="0" pref="297" max="32767" attributes="2"/>
-                                  <Component id="proteinsNSpectraTxt" alignment="0" pref="297" max="32767" attributes="2"/>
-                                  <Component id="proteinScoreTxt" alignment="0" pref="297" max="32767" attributes="2"/>
-                                  <Component id="proteinConfidenceTxt" alignment="1" pref="297" max="32767" attributes="2"/>
+                                  <Component id="nPeptidesTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="proteinsNSpectraTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="proteinScoreTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="proteinConfidenceTxt" alignment="1" max="32767" attributes="2"/>
                               </Group>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -769,7 +769,7 @@
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="peptideFilterParamsPanel" alignment="0" max="32767" attributes="3"/>
-                              <Component id="peptidesSplitPane" alignment="0" pref="948" max="32767" attributes="1"/>
+                              <Component id="peptidesSplitPane" alignment="0" max="32767" attributes="1"/>
                               <Component id="peptideTablePanel" alignment="0" max="32767" attributes="1"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -823,12 +823,12 @@
                                   </Group>
                               </Group>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="peptideConfidenceTxt" alignment="0" pref="273" max="32767" attributes="2"/>
-                                  <Component id="peptideScoreTxt" alignment="0" pref="273" max="32767" attributes="2"/>
-                                  <Component id="peptideNSpectraTxt" alignment="0" pref="273" max="32767" attributes="2"/>
-                                  <Component id="peptideProteinTxt" alignment="1" pref="273" max="32767" attributes="2"/>
-                                  <Component id="peptideSequenceTxt" alignment="1" pref="273" max="32767" attributes="2"/>
-                                  <Component id="peptidePICmb" alignment="1" min="0" pref="273" max="32767" attributes="2"/>
+                                  <Component id="peptideConfidenceTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="peptideScoreTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="peptideNSpectraTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="peptideProteinTxt" alignment="1" max="32767" attributes="2"/>
+                                  <Component id="peptideSequenceTxt" alignment="1" max="32767" attributes="2"/>
+                                  <Component id="peptidePICmb" alignment="1" min="0" max="32767" attributes="2"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -1090,7 +1090,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="modificationsScrollPane" pref="421" max="32767" attributes="0"/>
+                                  <Component id="modificationsScrollPane" pref="0" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1289,7 +1289,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="peptidesScrollPane" pref="916" max="32767" attributes="1"/>
+                              <Component id="peptidesScrollPane" max="32767" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1329,7 +1329,7 @@
                             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="peptideTableMouseReleased"/>
                           </Events>
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {&#xa;            protected JTableHeader createDefaultTableHeader() {&#xa;                return new JTableHeader(columnModel) {&#xa;&#xa;                    public String getToolTipText(MouseEvent e) {&#xa;                        String tip = null;&#xa;                        java.awt.Point p = e.getPoint();&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xa;                        tip = (String) peptideTableToolTips.get(realIndex);&#xa;                        return tip;&#xa;                    }&#xa;                };&#xa;            }&#xa;        };"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {&#xa;            protected JTableHeader createDefaultTableHeader() {&#xa;                return new JTableHeader(columnModel) {&#xa;&#xa;                    public String getToolTipText(MouseEvent e) {&#xa;                        java.awt.Point p = e.getPoint();&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xa;                        String tip = (String) peptideTableToolTips.get(realIndex);&#xa;                        return tip;&#xa;                    }&#xa;                };&#xa;            }&#xa;        };"/>
                           </AuxValues>
                         </Component>
                       </SubComponents>
@@ -1357,7 +1357,7 @@
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="psmTablePanel" alignment="1" max="32767" attributes="0"/>
-                              <Component id="psmSplitPane" alignment="0" pref="948" max="32767" attributes="0"/>
+                              <Component id="psmSplitPane" alignment="0" max="32767" attributes="0"/>
                               <Component id="psmFilterParamsPanel" alignment="0" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
@@ -1412,10 +1412,10 @@
                                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                                       <Component id="chargeOver4CheckBox" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="precursorRTTxt" alignment="0" pref="336" max="32767" attributes="2"/>
-                                  <Component id="precursorMzTxt" alignment="0" pref="336" max="32767" attributes="2"/>
-                                  <Component id="precursorErrorTxt" alignment="0" pref="336" max="32767" attributes="2"/>
-                                  <Component id="psmConfidenceTxt" alignment="0" pref="336" max="32767" attributes="2"/>
+                                  <Component id="precursorRTTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="precursorMzTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="precursorErrorTxt" alignment="0" max="32767" attributes="2"/>
+                                  <Component id="psmConfidenceTxt" alignment="0" max="32767" attributes="2"/>
                               </Group>
                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -1614,7 +1614,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="filesScrollPane" pref="79" max="32767" attributes="1"/>
+                                  <Component id="filesScrollPane" pref="0" max="32767" attributes="1"/>
                                   <EmptySpace max="-2" attributes="0"/>
                               </Group>
                           </Group>
@@ -1858,7 +1858,7 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="psmTableScrollPane" pref="916" max="32767" attributes="1"/>
+                              <Component id="psmTableScrollPane" max="32767" attributes="1"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -1898,7 +1898,7 @@
                             <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="psmTableMouseReleased"/>
                           </Events>
                           <AuxValues>
-                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {&#xa;            protected JTableHeader createDefaultTableHeader() {&#xa;                return new JTableHeader(columnModel) {&#xa;&#xa;                    public String getToolTipText(MouseEvent e) {&#xa;                        String tip = null;&#xa;                        java.awt.Point p = e.getPoint();&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xa;                        tip = (String) psmTableToolTips.get(realIndex);&#xa;                        return tip;&#xa;                    }&#xa;                };&#xa;            }&#xa;        };"/>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {&#xa;            protected JTableHeader createDefaultTableHeader() {&#xa;                return new JTableHeader(columnModel) {&#xa;&#xa;                    public String getToolTipText(MouseEvent e) {&#xa;                        java.awt.Point p = e.getPoint();&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xa;                        String tip = (String) psmTableToolTips.get(realIndex);&#xa;                        return tip;&#xa;                    }&#xa;                };&#xa;            }&#xa;        };"/>
                           </AuxValues>
                         </Component>
                       </SubComponents>

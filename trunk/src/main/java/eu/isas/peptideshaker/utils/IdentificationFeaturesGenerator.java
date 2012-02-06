@@ -267,7 +267,6 @@ public class IdentificationFeaturesGenerator {
                 if (pSParameter.isValidated()) {
                     tempSequence = sequence;
                     peptideSequence = Peptide.getSequence(peptideKey);
-                    peptideTempStart = 0;
                     while (tempSequence.lastIndexOf(peptideSequence) >= 0) {
                         peptideTempStart = tempSequence.lastIndexOf(peptideSequence) + 1;
                         peptideTempEnd = peptideTempStart + peptideSequence.length();
@@ -873,7 +872,7 @@ public class IdentificationFeaturesGenerator {
         if (proteinList == null) {
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(false);
-                progressDialog.setTitle("Loading protein information. Please Wait...");
+                progressDialog.setTitle("Loading Protein Information. Please Wait...");
                 progressDialog.setMax(2 * peptideShakerGUI.getIdentification().getProteinIdentification().size());
                 progressDialog.setValue(0);
             }
@@ -890,7 +889,7 @@ public class IdentificationFeaturesGenerator {
             ProteinMatch proteinMatch;
             double score;
             int nPeptides, nSpectra, maxPeptides = -1, maxSpectra = -1;
-            double spectrumCounting, maxSpectrumCounting = -1, mw, maxMW = -1;
+            double tempSpectrumCounting, maxSpectrumCounting = -1, mw, maxMW = -1;
             Protein currentProtein = null;
             nValidatedProteins = 0;
 
@@ -908,23 +907,29 @@ public class IdentificationFeaturesGenerator {
                     }
 
                     if (needMaxValues) {
-                        if (nPeptides > maxPeptides) {
-                            maxPeptides = nPeptides;
+ 
+                        if (-nPeptides > maxPeptides) {
+                            maxPeptides = -nPeptides;
                         }
-                        if (nSpectra > maxSpectra) {
-                            maxSpectra = nSpectra;
+                        
+                        if (-nSpectra > maxSpectra) {
+                            maxSpectra = -nSpectra;
                         }
-                        spectrumCounting = estimateSpectrumCounting(proteinKey);
-                        if (spectrumCounting > maxSpectrumCounting) {
-                            maxSpectrumCounting = spectrumCounting;
+                        
+                        tempSpectrumCounting = estimateSpectrumCounting(proteinKey);
+                        
+                        if (tempSpectrumCounting > maxSpectrumCounting) {
+                            maxSpectrumCounting = tempSpectrumCounting;
                         }
+                        
                         try {
                             currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
                         } catch (Exception e) {
                             peptideShakerGUI.catchException(e);
                         }
+                        
                         if (currentProtein != null) {
-                            mw = currentProtein.computeMolecularWeight();
+                            mw = currentProtein.computeMolecularWeight() / 1000;
                             if (mw > maxMW) {
                                 maxMW = mw;
                             }
