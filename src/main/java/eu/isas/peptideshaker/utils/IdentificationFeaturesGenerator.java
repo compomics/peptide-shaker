@@ -104,6 +104,10 @@ public class IdentificationFeaturesGenerator {
      * The psm list.
      */
     private ArrayList<String> psmList;
+    /**
+     * Amount of validated proteins
+     */
+    private int nValidatedProteins = 0;
 
     /**
      * Constructor
@@ -459,6 +463,15 @@ public class IdentificationFeaturesGenerator {
             e.printStackTrace();
             return 1;
         }
+    }
+    
+    /**
+     * Returns the amount of validated proteins.
+     * Note that this value is only available after getSortedProteinKeys has been called.
+     * @return the amount of validated proteins
+     */
+    public int getNValidatedProteins() {
+        return nValidatedProteins;
     }
 
     /**
@@ -860,7 +873,7 @@ public class IdentificationFeaturesGenerator {
         if (proteinList == null) {
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(false);
-                progressDialog.setTitle("Sorting Proteins. Please Wait...");
+                progressDialog.setTitle("Loading protein information. Please Wait...");
                 progressDialog.setMax(2 * peptideShakerGUI.getIdentification().getProteinIdentification().size());
                 progressDialog.setValue(0);
             }
@@ -879,6 +892,7 @@ public class IdentificationFeaturesGenerator {
             int nPeptides, nSpectra, maxPeptides = -1, maxSpectra = -1;
             double spectrumCounting, maxSpectrumCounting = -1, mw, maxMW = -1;
             Protein currentProtein = null;
+            nValidatedProteins = 0;
 
             for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
 
@@ -888,6 +902,10 @@ public class IdentificationFeaturesGenerator {
                     score = probabilities.getProteinProbabilityScore();
                     nPeptides = -proteinMatch.getPeptideMatches().size();
                     nSpectra = -peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
+                    
+                    if (probabilities.isValidated()) {
+                        nValidatedProteins++;
+                    }
 
                     if (needMaxValues) {
                         if (nPeptides > maxPeptides) {
