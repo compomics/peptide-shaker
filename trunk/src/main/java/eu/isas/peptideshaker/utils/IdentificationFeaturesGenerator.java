@@ -333,7 +333,7 @@ public class IdentificationFeaturesGenerator {
      */
     private double estimateSpectrumCounting(String proteinMatchKey) {
 
-        double result;
+        double ratio, result;
         Enzyme enyzme = peptideShakerGUI.getSearchParameters().getEnzyme();
         PSParameter pSParameter = new PSParameter();
         Identification identification = peptideShakerGUI.getIdentification();
@@ -350,13 +350,28 @@ public class IdentificationFeaturesGenerator {
                 }
 
                 result = 0;
-
+                PeptideMatch peptideMatch;
+                ArrayList<String> possibleProteinMatches;
                 for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                    PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
+                    peptideMatch = identification.getPeptideMatch(peptideKey);
+                    possibleProteinMatches = new ArrayList<String>();
+                    for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                        if (identification.getProteinMap().get(protein) != null) {
+                            for (String proteinKey : identification.getProteinMap().get(protein)) {
+                                if (!possibleProteinMatches.contains(proteinKey)) {
+                                    possibleProteinMatches.add(proteinKey);
+                                }
+                            }
+                        }
+                    }
+                    if (possibleProteinMatches.isEmpty()) {
+                        System.err.println("No protein found for the given peptide ("+ peptideKey + ") when estimating NSAF of " + currentProtein + ".");
+                    }
+                    ratio = 1.0 / possibleProteinMatches.size();
                     for (String spectrumMatchKey : peptideMatch.getSpectrumMatches()) {
                         pSParameter = (PSParameter) identification.getMatchParameter(spectrumMatchKey, pSParameter);
                         if (!peptideShakerGUI.getSpectrumCountingPreferences().isValidatedHits() || pSParameter.isValidated()) {
-                            result++;
+                            result += ratio;
                         }
                     }
                 }
@@ -463,13 +478,14 @@ public class IdentificationFeaturesGenerator {
             }
         }
         return cpt;
-    }/**
+    }
+
+    /**
      * Estimates the number of spectra for the given protein match.
      * 
      * @param proteinMatchKey the key of the given protein match
      * @return the number of spectra for the given protein match
      */
-
     public Integer getNSpectra(String proteinMatchKey) {
         Integer result = numberOfSpectra.get(proteinMatchKey);
 
