@@ -877,9 +877,13 @@ public class IdentificationFeaturesGenerator {
                 progressDialog.setValue(0);
             }
             boolean needMaxValues = (peptideShakerGUI.getMetrics().getMaxNPeptides() == null)
+                    || (peptideShakerGUI.getMetrics().getMaxNPeptides() <= 0)
                     || (peptideShakerGUI.getMetrics().getMaxNSpectra() == null)
+                    || (peptideShakerGUI.getMetrics().getMaxNSpectra() <= 0)
                     || (peptideShakerGUI.getMetrics().getMaxSpectrumCounting() == null)
-                    || (peptideShakerGUI.getMetrics().getMaxMW() == null);
+                    || (peptideShakerGUI.getMetrics().getMaxSpectrumCounting() <= 0)
+                    || (peptideShakerGUI.getMetrics().getMaxMW() == null)
+                    || (peptideShakerGUI.getMetrics().getMaxMW() <= 0);
 
             // sort the proteins according to the protein score, then number of peptides (inverted), then number of spectra (inverted).
             HashMap<Double, HashMap<Integer, HashMap<Integer, ArrayList<String>>>> orderMap =
@@ -888,8 +892,8 @@ public class IdentificationFeaturesGenerator {
             PSParameter probabilities = new PSParameter();
             ProteinMatch proteinMatch;
             double score;
-            int nPeptides, nSpectra, maxPeptides = -1, maxSpectra = -1;
-            double tempSpectrumCounting, maxSpectrumCounting = -1, mw, maxMW = -1;
+            int nPeptides, nSpectra, maxPeptides = 0, maxSpectra = 0;
+            double tempSpectrumCounting, maxSpectrumCounting = 0, mw, maxMW = 0;
             Protein currentProtein = null;
             nValidatedProteins = 0;
 
@@ -1003,6 +1007,14 @@ public class IdentificationFeaturesGenerator {
             }
         }
         return proteinList;
+    }
+    
+    /**
+     * Sets the sorted protein key list
+     * @param sortedProteinKeys the new sorted protein key list
+     */
+    public void setSortedProteinKeys(ArrayList<String> sortedProteinKeys) {
+        this.proteinList = sortedProteinKeys;
     }
 
     /**

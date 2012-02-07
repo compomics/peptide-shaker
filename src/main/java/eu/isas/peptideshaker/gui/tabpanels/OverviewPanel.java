@@ -181,8 +181,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         initComponents();
 
-        setTableProperties();
-
         // set main table properties
         proteinTable.getTableHeader().setReorderingAllowed(false);
         peptideTable.getTableHeader().setReorderingAllowed(false);
@@ -607,7 +605,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         proteinScrollPane.setOpaque(false);
 
-        proteinTable.setModel(new ProteinTableModel(peptideShakerGUI));
+        proteinTable.setModel(new ProteinTableModel());
         proteinTable.setOpaque(false);
         proteinTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         proteinTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -4176,11 +4174,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     // change the peptide shaker icon to a "waiting version"
                     peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-                    ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI, progressDialog);
-                    proteinKeys = proteinTableModel.getProteinKeys();
+                    peptideShakerGUI.getIdentificationFeaturesGenerator().setSortedProteinKeys(peptideShakerGUI.getMetrics().getProteinKeys());
+                    proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedProteinKeys(progressDialog);
+                    peptideShakerGUI.getMetrics().setProteinKeys(proteinKeys);
+                    ProteinTableModel proteinTableModel = new ProteinTableModel(peptideShakerGUI);
                     proteinTable.setModel(proteinTableModel);
-                    DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
-                    dm.fireTableDataChanged();
 
                     setTableProperties();
 
@@ -4230,6 +4228,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     } else {
                         psmTableToolTips.set(3, "Mass Error (Da)");
                     }
+                    DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
+                    dm.fireTableDataChanged();
 
                     // enable the contextual export options
                     exportProteinsJButton.setEnabled(true);
@@ -4940,11 +4940,11 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
         displayProteins = true;
         displayPeptidesAndPSMs = true;
 
-        DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
-        dm.getDataVector().removeAllElements();
-        dm.fireTableDataChanged();
+        ProteinTableModel proteinTableModel = (ProteinTableModel) proteinTable.getModel();
+        proteinTableModel.reset();
+        proteinTableModel.fireTableDataChanged();
 
-        dm = (DefaultTableModel) peptideTable.getModel();
+        DefaultTableModel dm = (DefaultTableModel) peptideTable.getModel();
         dm.getDataVector().removeAllElements();
         dm.fireTableDataChanged();
 

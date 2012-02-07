@@ -42,6 +42,10 @@ public class Metrics implements Serializable {
      * The weight of the fattest protein in the dataset
      */
     private Double maxMW = null;
+    /**
+     * The ordered list of protein keys
+     */
+    private ArrayList<String> proteinKeys;
 
     /**
      * Constructor.
@@ -172,7 +176,21 @@ public class Metrics implements Serializable {
     public void setMaxSpectrumCounting(Double maxSpectrumCounting) {
         this.maxSpectrumCounting = maxSpectrumCounting;
     }
-    
-    
+
+    /**
+     * Returns the list of ordered protein keys
+     * @return the list of ordered protein keys
+     */
+    public ArrayList<String> getProteinKeys() {
+        return proteinKeys;
+    }
+
+    /**
+     * Sets the list of ordered protein keys
+     * @param proteinKeys the list of ordered protein keys
+     */
+    public void setProteinKeys(ArrayList<String> proteinKeys) {
+        this.proteinKeys = proteinKeys;
+    }
     
 }

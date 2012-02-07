@@ -2890,10 +2890,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
                     FileWriter w = new FileWriter(file);
                     BufferedWriter bw = new BufferedWriter(w);
-                    bw.write("\n\n" + new Date() + ": PeptideShaker version " + getVersion() + ".\n");
                     bw.close();
                     w.close();
                 }
+                System.out.println(new Date() + ": PeptideShaker version " + getVersion() + ".");
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(
                         null, "An error occured when trying to create the PeptideShaker log file.",
