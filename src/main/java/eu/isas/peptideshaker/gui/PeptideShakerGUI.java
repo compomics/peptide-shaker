@@ -4498,6 +4498,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     setMetrics(experimentSettings.getMetrics());
 
                     PeptideShaker.setPeptideShakerPTMs(searchParameters);
+                    identificationFeaturesGenerator = new IdentificationFeaturesGenerator(peptideShakerGUI);
 
                     progressDialog.setTitle("Loading FASTA File. Please Wait...");
 
