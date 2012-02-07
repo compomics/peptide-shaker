@@ -45,8 +45,6 @@ public class ProteinTableModel extends DefaultTableModel {
      * Constructor which sets a new table.
      *
      * @param peptideShakerGUI instance of the main GUI class
-     * @param progressDialog a progressdialog to display the progress to the
-     * user
      */
     public ProteinTableModel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
@@ -64,9 +62,6 @@ public class ProteinTableModel extends DefaultTableModel {
     /**
      * Constructor which sets a new empty table.
      *
-     * @param peptideShakerGUI instance of the main GUI class
-     * @param progressDialog a progressdialog to display the progress to the
-     * user
      */
     public ProteinTableModel() {
     }

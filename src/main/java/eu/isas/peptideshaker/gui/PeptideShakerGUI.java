@@ -1743,7 +1743,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
             // update the basic protein annotation
             if (selectedIndex == ANNOTATION_TAB_INDEX) {
-                annotationPanel.updateBasicProteinAnnotation(selectedProteinKey);
+                annotationPanel.updateBasicProteinAnnotation(identification.getProteinMatch(selectedProteinKey).getMainMatch());
             }
 
             // move the spectrum annotation menu bar and set the intensity slider value
