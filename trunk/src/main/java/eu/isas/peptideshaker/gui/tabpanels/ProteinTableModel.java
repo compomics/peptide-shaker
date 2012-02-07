@@ -48,29 +48,27 @@ public class ProteinTableModel extends DefaultTableModel {
      * @param progressDialog a progressdialog to display the progress to the
      * user
      */
-    public ProteinTableModel(PeptideShakerGUI peptideShakerGUI, ProgressDialogX progressDialog) {
-        this.peptideShakerGUI = peptideShakerGUI;
-        identification = peptideShakerGUI.getIdentification();
-        featuresGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
-        proteinKeys = featuresGenerator.getSortedProteinKeys(progressDialog);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param peptideShakerGUI instance of the main GUI class
-     */
     public ProteinTableModel(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
+        identification = peptideShakerGUI.getIdentification();
+        if (identification != null) {
+            featuresGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
+            proteinKeys = featuresGenerator.getSortedProteinKeys(null);
+        }
+    }
+    
+    public void reset() {
+        proteinKeys = null;
     }
 
     /**
-     * Returns the list of protein keys.
+     * Constructor which sets a new empty table.
      *
-     * @return the list of protein keys
+     * @param peptideShakerGUI instance of the main GUI class
+     * @param progressDialog a progressdialog to display the progress to the
+     * user
      */
-    public ArrayList<String> getProteinKeys() {
-        return proteinKeys;
+    public ProteinTableModel() {
     }
 
     @Override
@@ -111,7 +109,7 @@ public class ProteinTableModel extends DefaultTableModel {
             case 9:
                 return "MW";
             case 10:
-                if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+                if (peptideShakerGUI != null && peptideShakerGUI.getDisplayPreferences().showScores()) {
                     return "Score";
                 } else {
                     return "Confidence";
