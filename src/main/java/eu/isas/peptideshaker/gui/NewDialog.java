@@ -173,7 +173,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
         sampleDetailsPanel = new javax.swing.JPanel();
         openButton = new javax.swing.JButton();
-        exitButton = new javax.swing.JButton();
         projectDetailsPanel = new javax.swing.JPanel();
         replicateNumberIdtxt = new javax.swing.JTextField();
         projectNameIdTxt = new javax.swing.JTextField();
@@ -205,24 +204,25 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         openDialogHelpJButton = new javax.swing.JButton();
         exampleFilesLabel = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setTitle("PeptideShaker - New Project");
         setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         sampleDetailsPanel.setBackground(new java.awt.Color(230, 230, 230));
 
-        openButton.setText("Create");
+        openButton.setBackground(new java.awt.Color(0, 153, 0));
+        openButton.setFont(openButton.getFont().deriveFont(openButton.getFont().getStyle() | java.awt.Font.BOLD));
+        openButton.setForeground(new java.awt.Color(255, 255, 255));
+        openButton.setText("Create!");
         openButton.setEnabled(false);
         openButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 openButtonActionPerformed(evt);
-            }
-        });
-
-        exitButton.setText("Exit");
-        exitButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exitButtonActionPerformed(evt);
             }
         });
 
@@ -520,18 +520,14 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                         .addComponent(helpLabel)
                         .addGap(18, 18, 18)
                         .addComponent(exampleFilesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 141, Short.MAX_VALUE)
-                        .addComponent(openButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(exitButton))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(20, 20, 20))
                     .addComponent(projectDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(inputFilesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(processingParametersPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
-
-        sampleDetailsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {exitButton, openButton});
-
         sampleDetailsPanelLayout.setVerticalGroup(
             sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(sampleDetailsPanelLayout.createSequentialGroup()
@@ -541,13 +537,12 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                 .addComponent(inputFilesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(processingParametersPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(openButton)
-                    .addComponent(exitButton)
                     .addGroup(sampleDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                         .addComponent(exampleFilesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                        .addComponent(openDialogHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(helpLabel)))
                 .addContainerGap())
         );
@@ -566,23 +561,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * Closes the dialog.
-     *
-     * @param evt
-     */
-    private void exitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitButtonActionPerformed
-
-        // @TODO: this does not work! have to create a new object and transfer all the values...
-
-        // reset the preferences as this can have been changed
-//        peptideShakerGUI.setSearchParameters(oldSearchParameters);
-//        peptideShakerGUI.setModificationProfileFile(oldProfileFile);
-//        peptideShakerGUI.setIdFilter(oldIdFilter);
-
-        this.setVisible(false);
-        this.dispose();
-}//GEN-LAST:event_exitButtonActionPerformed
 
     /**
      * Tries to process the identification files, closes the dialog and then
@@ -924,6 +902,25 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         BareBonesBrowserLaunch.openURL("http://code.google.com/p/peptide-shaker/downloads/detail?name=peptide-shaker_test_files.zip");
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_exampleFilesLabelMouseClicked
+
+    /**
+     * Closes the dialog.
+     *
+     * @param evt
+     */
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        
+        // @TODO: this does not work! have to create a new object and transfer all the values...
+
+        // reset the preferences as this can have been changed
+//        peptideShakerGUI.setSearchParameters(oldSearchParameters);
+//        peptideShakerGUI.setModificationProfileFile(oldProfileFile);
+//        peptideShakerGUI.setIdFilter(oldIdFilter);
+
+        this.setVisible(false);
+        this.dispose();
+    }//GEN-LAST:event_formWindowClosing
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
@@ -934,7 +931,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     private javax.swing.JButton editImportFilterButton;
     private javax.swing.JButton editSearchButton;
     private javax.swing.JLabel exampleFilesLabel;
-    private javax.swing.JButton exitButton;
     private javax.swing.JTextField fastaFileTxt;
     private javax.swing.JLabel helpLabel;
     private javax.swing.JTextField idFilesTxt;

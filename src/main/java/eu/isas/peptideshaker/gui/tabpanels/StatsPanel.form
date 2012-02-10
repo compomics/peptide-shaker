@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
@@ -170,11 +170,11 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" max="-2" attributes="0">
+              <Group type="102" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                       <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Group type="102" alignment="0" max="-2" attributes="0">
+                      <Group type="102" alignment="0" attributes="0">
                           <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -184,9 +184,9 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="nValidatedTxt" alignment="0" pref="93" max="32767" attributes="1"/>
-                              <Component id="nFPTxt" alignment="1" pref="93" max="32767" attributes="1"/>
-                              <Component id="nTPlTxt" alignment="1" pref="93" max="32767" attributes="1"/>
+                              <Component id="nValidatedTxt" alignment="0" max="32767" attributes="1"/>
+                              <Component id="nFPTxt" alignment="1" max="32767" attributes="1"/>
+                              <Component id="nTPlTxt" alignment="1" max="32767" attributes="1"/>
                               <Component id="nTotalTxt" min="-2" pref="93" max="-2" attributes="1"/>
                           </Group>
                           <EmptySpace min="-2" max="-2" attributes="0"/>
@@ -608,7 +608,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="optimizationTabbedPane" pref="1220" max="32767" attributes="2"/>
+                  <Component id="optimizationTabbedPane" max="32767" attributes="2"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -616,7 +616,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <Component id="optimizationTabbedPane" pref="516" max="32767" attributes="0"/>
+                  <Component id="optimizationTabbedPane" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -651,12 +651,12 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="estimatorsPlotSplitPane" alignment="0" pref="1215" max="32767" attributes="0"/>
+                      <Component id="estimatorsPlotSplitPane" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="estimatorsPlotSplitPane" alignment="0" pref="488" max="32767" attributes="0"/>
+                      <Component id="estimatorsPlotSplitPane" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -984,12 +984,12 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="leftPlotSplitPane" alignment="0" pref="1215" max="32767" attributes="0"/>
+                      <Component id="leftPlotSplitPane" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="leftPlotSplitPane" alignment="0" pref="488" max="32767" attributes="0"/>
+                      <Component id="leftPlotSplitPane" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -1489,47 +1489,50 @@
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                          <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Component id="thresholdInput" min="-2" pref="90" max="-2" attributes="3"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="thresholdTypeCmb" linkSize="20" pref="110" max="32767" attributes="1"/>
-                              <Component id="validateButton" linkSize="20" alignment="0" pref="110" max="32767" attributes="1"/>
-                          </Group>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="thresholdHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                      </Group>
                       <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                          <Component id="jLabel22" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="windowTxt" min="-2" pref="90" max="-2" attributes="1"/>
-                          <EmptySpace max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
+                          <EmptySpace min="10" pref="10" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="applyButton" linkSize="20" min="-2" pref="110" max="-2" attributes="1"/>
-                              <Component id="fdrCombo1" linkSize="20" alignment="0" pref="110" max="32767" attributes="3"/>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                  <Component id="thresholdInput" min="-2" pref="90" max="-2" attributes="3"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="thresholdTypeCmb" linkSize="20" max="32767" attributes="1"/>
+                                      <Component id="validateButton" linkSize="20" alignment="0" max="32767" attributes="1"/>
+                                  </Group>
+                                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                                  <Component id="thresholdHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="jLabel22" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="windowTxt" min="-2" pref="90" max="-2" attributes="1"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="applyButton" linkSize="20" min="-2" pref="110" max="-2" attributes="1"/>
+                                      <Component id="fdrCombo1" linkSize="20" alignment="0" max="32767" attributes="3"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="pepHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
+                              </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="pepHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="199" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" max="-2" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace min="-2" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="jLabel8" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="thresholdInput" alignment="2" pref="20" max="32767" attributes="1"/>
+                      <Component id="thresholdInput" alignment="2" max="32767" attributes="1"/>
                       <Component id="thresholdTypeCmb" alignment="2" max="32767" attributes="1"/>
                       <Component id="thresholdHelpJButton" alignment="2" max="32767" attributes="1"/>
                   </Group>
@@ -1580,6 +1583,12 @@
         </Component>
         <Component class="javax.swing.JButton" name="validateButton">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="0" green="99" red="0" type="rgb"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Validate"/>
             <Property name="toolTipText" type="java.lang.String" value="Reload the data with the current threshold setting"/>
             <Property name="enabled" type="boolean" value="false"/>
@@ -1616,6 +1625,12 @@
         </Component>
         <Component class="javax.swing.JButton" name="applyButton">
           <Properties>
+            <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="0" green="99" red="0" type="rgb"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="ff" green="ff" red="ff" type="rgb"/>
+            </Property>
             <Property name="text" type="java.lang.String" value="Apply"/>
             <Property name="toolTipText" type="java.lang.String" value="Reload the data with the current PEP window"/>
             <Property name="enabled" type="boolean" value="false"/>
