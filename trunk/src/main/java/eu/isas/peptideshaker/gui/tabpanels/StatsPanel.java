@@ -697,9 +697,9 @@ public class StatsPanel extends javax.swing.JPanel {
                             .addComponent(jLabel3))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(nValidatedTxt, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-                            .addComponent(nFPTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
-                            .addComponent(nTPlTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 93, Short.MAX_VALUE)
+                            .addComponent(nValidatedTxt, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(nFPTxt)
+                            .addComponent(nTPlTxt)
                             .addComponent(nTotalTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 93, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(idSummaryJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -995,11 +995,11 @@ public class StatsPanel extends javax.swing.JPanel {
         estimatorOptimizationTab.setLayout(estimatorOptimizationTabLayout);
         estimatorOptimizationTabLayout.setHorizontalGroup(
             estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1215, Short.MAX_VALUE)
+            .addComponent(estimatorsPlotSplitPane)
         );
         estimatorOptimizationTabLayout.setVerticalGroup(
             estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+            .addComponent(estimatorsPlotSplitPane)
         );
 
         optimizationTabbedPane.addTab("Estimators", estimatorOptimizationTab);
@@ -1332,11 +1332,11 @@ public class StatsPanel extends javax.swing.JPanel {
         thresholdOptimizationTab.setLayout(thresholdOptimizationTabLayout);
         thresholdOptimizationTabLayout.setHorizontalGroup(
             thresholdOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1215, Short.MAX_VALUE)
+            .addComponent(leftPlotSplitPane)
         );
         thresholdOptimizationTabLayout.setVerticalGroup(
             thresholdOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 488, Short.MAX_VALUE)
+            .addComponent(leftPlotSplitPane)
         );
 
         optimizationTabbedPane.addTab("Thresholds", thresholdOptimizationTab);
@@ -1349,13 +1349,13 @@ public class StatsPanel extends javax.swing.JPanel {
             optimizationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(optimizationJPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(optimizationTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1220, Short.MAX_VALUE)
+                .addComponent(optimizationTabbedPane)
                 .addContainerGap())
         );
         optimizationJPanelLayout.setVerticalGroup(
             optimizationJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, optimizationJPanelLayout.createSequentialGroup()
-                .addComponent(optimizationTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 516, Short.MAX_VALUE)
+                .addComponent(optimizationTabbedPane)
                 .addContainerGap())
         );
 
@@ -1378,6 +1378,8 @@ public class StatsPanel extends javax.swing.JPanel {
         jLabel4.setFont(jLabel4.getFont().deriveFont((jLabel4.getFont().getStyle() | java.awt.Font.ITALIC)));
         jLabel4.setText("Threshold Optimization");
 
+        validateButton.setBackground(new java.awt.Color(0, 153, 0));
+        validateButton.setForeground(new java.awt.Color(255, 255, 255));
         validateButton.setText("Validate");
         validateButton.setToolTipText("Reload the data with the current threshold setting");
         validateButton.setEnabled(false);
@@ -1406,6 +1408,8 @@ public class StatsPanel extends javax.swing.JPanel {
             }
         });
 
+        applyButton.setBackground(new java.awt.Color(0, 153, 0));
+        applyButton.setForeground(new java.awt.Color(255, 255, 255));
         applyButton.setText("Apply");
         applyButton.setToolTipText("Reload the data with the current PEP window");
         applyButton.setEnabled(false);
@@ -1477,30 +1481,31 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
-                    .addGroup(parametersJPanelLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jLabel8)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(thresholdInput, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(thresholdTypeCmb, 0, 110, Short.MAX_VALUE)
-                            .addComponent(validateButton, javax.swing.GroupLayout.DEFAULT_SIZE, 110, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(thresholdHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jLabel5)
                     .addGroup(parametersJPanelLayout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(jLabel22)
-                        .addGap(18, 18, 18)
-                        .addComponent(windowTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(applyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(fdrCombo1, 0, 110, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(pepHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(199, Short.MAX_VALUE))
+                            .addGroup(parametersJPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel8)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(thresholdInput, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(thresholdTypeCmb, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(validateButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(thresholdHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(parametersJPanelLayout.createSequentialGroup()
+                                .addComponent(jLabel22)
+                                .addGap(18, 18, 18)
+                                .addComponent(windowTxt, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(applyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(fdrCombo1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(pepHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         parametersJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {applyButton, fdrCombo1, thresholdTypeCmb, validateButton});
@@ -1513,7 +1518,7 @@ public class StatsPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(parametersJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
                     .addComponent(jLabel8)
-                    .addComponent(thresholdInput, javax.swing.GroupLayout.DEFAULT_SIZE, 20, Short.MAX_VALUE)
+                    .addComponent(thresholdInput)
                     .addComponent(thresholdTypeCmb)
                     .addComponent(thresholdHelpJButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

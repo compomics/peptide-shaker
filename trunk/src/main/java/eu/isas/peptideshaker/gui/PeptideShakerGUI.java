@@ -55,6 +55,7 @@ import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.preferences.UserPreferences;
+import eu.isas.peptideshaker.pride.gui.PrideExportDialog;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
 import eu.isas.peptideshaker.utils.StarHider;
@@ -89,14 +90,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import javax.swing.Box;
-import javax.swing.JFileChooser;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JTable;
-import javax.swing.SwingUtilities;
+import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableCellRenderer;
@@ -391,7 +385,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // update the look and feel after adding the panels
         UtilitiesGUIDefaults.setLookAndFeel();
-
+        
         new PeptideShakerGUI();
     }
 
@@ -426,7 +420,6 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         menuBar.add(Box.createHorizontalGlue());
 
         menuBar.add(jumpToPanel);
-        exportPrideXmlMenuItem.setVisible(false); // @TODO: remove when PRIDE export is implemented
 
         setUpPanels(true);
         repaintPanels();
@@ -2448,113 +2441,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         }
     }//GEN-LAST:event_exportProjectMenuItemActionPerformed
 
-    /**
-     * Export the current PeptideShaker project as a PRIDE XML file.
-     *
-     * @param evt
+     /**
+     * Open the PRIDE Export dialog.
+     * 
+     * @param evt 
      */
     private void exportPrideXmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideXmlMenuItemActionPerformed
-        //JOptionPane.showMessageDialog(this, "Not yet implemented.", "Not Implemented", JOptionPane.INFORMATION_MESSAGE);
-//        JFileChooser fileChooser = new JFileChooser(this.getLastSelectedFolder());
-//        fileChooser.setDialogTitle("Select Destination File");
-//        fileChooser.setMultiSelectionEnabled(false);
-//
-//        FileFilter filter = new FileFilter() {
-//
-//            @Override
-//            public boolean accept(File myFile) {
-//                return myFile.isDirectory() || myFile.getName().endsWith(".xml");
-//            }
-//
-//            @Override
-//            public String getDescription() {
-//                return "(PRIDE XML File) *.xml";
-//            }
-//        };
-//
-//        fileChooser.setFileFilter(filter);
-//
-//        int returnVal = fileChooser.showSaveDialog(this);
-//
-//        if (returnVal == JFileChooser.APPROVE_OPTION) {
-//
-//            File outputFile = fileChooser.getSelectedFile();
-//            int outcome = JOptionPane.YES_OPTION;
-//
-//            if (outputFile.exists()) {
-//                outcome = JOptionPane.showConfirmDialog(this,
-//                        "Should " + outputFile + " be overwritten?", "Selected File Already Exists",
-//                        JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-//            }
-//
-//            if (outcome == JOptionPane.YES_OPTION) {
-//
-//                if (!outputFile.getName().endsWith(".xml")) {
-//                    outputFile = new File(outputFile.getParent(), outputFile.getName() + ".xml");
-//                }
-//                
-//                final File finalOutputFile = outputFile;
-//
-//                progressDialog = new ProgressDialogX(this, this, true);
-//                progressDialog.doNothingOnClose();
-//
-//                final PeptideShakerGUI finalRef = this;
-//
-//                new Thread(new Runnable() {
-//
-//                    public void run() {
-//                        progressDialog.setIndeterminate(true);
-//                        progressDialog.setTitle("Exporting. Please Wait...");
-//                        progressDialog.setVisible(true);
-//                    }
-//                }, "ProgressDialog").start();
-//
-//                new Thread("ExportThread") {
-//
-//                    @Override
-//                    public void run() {
-//
-//                        try {
-//                            FileWriter w = new FileWriter(finalOutputFile);
-//                            BufferedWriter bw = new BufferedWriter(w);
-//
-//                            // get the experiment properties (title, description, label, projetc)
-//                            // get the contact information
-//                            // get the references
-//                            // get the sample properties
-//                            // get the protocol properties
-//                            // get the instrument details
-//                            // add experiment user params?
-//                            // add resubmission details
-//                            
-//                            // get the ids and link them to the spectra!!
-//                            // get the peptides
-//                            // get the proteins
-//                            // get the scores
-//                            // get the ptms
-//                            // spectra: select validated vs. all?? what about hidden??
-//                            
-//
-//                            SpectrumExporter.exportSpectra(finalRef, bw, progressDialog);
-//                            
-//                            bw.close();
-//                            w.close();
-//                            
-//                            JOptionPane.showMessageDialog(finalRef, "Project exported to " + finalOutputFile + ".", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                            JOptionPane.showMessageDialog(finalRef, "An error occured when exporting the project.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-//                        } catch (MzMLUnmarshallerException e) {
-//                            e.printStackTrace();
-//                            JOptionPane.showMessageDialog(finalRef, "An error occured when exporting the project.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-//                        }
-//                        
-//                        progressDialog.setVisible(false);
-//                        progressDialog.dispose();
-//                    }
-//                }.start();
-//            }
-//        }
+        new PrideExportDialog(this, true);
     }//GEN-LAST:event_exportPrideXmlMenuItemActionPerformed
 
     /**
