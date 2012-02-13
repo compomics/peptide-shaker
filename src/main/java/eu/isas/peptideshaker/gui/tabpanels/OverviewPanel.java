@@ -198,9 +198,58 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         // make the tabs in the spectrum tabbed pane go from right to left
         spectrumJTabbedPane.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+        
+        // set up the table header tooltips
+        setUpTableHeaderToolTips();
 
         updateSeparators();
         formComponentResized(null);
+    }
+    
+    /**
+     * Set up the table header tooltips
+     */
+    private void setUpTableHeaderToolTips() {
+        proteinTableToolTips = new ArrayList<String>();
+        proteinTableToolTips.add(null);
+        proteinTableToolTips.add("Starred");
+        proteinTableToolTips.add("Protein Inference Class");
+        proteinTableToolTips.add("Protein Accession Number");
+        proteinTableToolTips.add("Protein Description");
+        proteinTableToolTips.add("Protein Seqeunce Coverage (%) (Observed / Possible)");
+        proteinTableToolTips.add("Number of Peptides (Validated / Total)");
+        proteinTableToolTips.add("Number of Spectra (Validated / Total)");
+        proteinTableToolTips.add("MS2 Quantification");
+        proteinTableToolTips.add("Protein Molecular Weight (kDa)");
+
+        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
+            proteinTableToolTips.add("Protein Score");
+        } else {
+            proteinTableToolTips.add("Protein Confidence");
+        }
+
+        proteinTableToolTips.add("Validated");
+
+        peptideTableToolTips = new ArrayList<String>();
+        peptideTableToolTips.add(null);
+        peptideTableToolTips.add("Starred");
+        peptideTableToolTips.add("Protein Inference Class");
+        peptideTableToolTips.add("Peptide Sequence");
+        peptideTableToolTips.add("Peptide Start Index");
+        peptideTableToolTips.add("Number of Spectra (Validated / Non-Validated)");
+        //peptideTableToolTips.add("Peptide Score");
+        peptideTableToolTips.add("Peptide Confidence");
+        peptideTableToolTips.add("Validated");
+
+        psmTableToolTips = new ArrayList<String>();
+        psmTableToolTips.add(null);
+        psmTableToolTips.add("Starred");
+        psmTableToolTips.add("Search Engine Agreement");
+        psmTableToolTips.add("Peptide Sequence");
+        psmTableToolTips.add("Precursor Charge");
+        psmTableToolTips.add("Mass Error");
+        psmTableToolTips.add("Peptide-Spectrum Match Confidence");
+        psmTableToolTips.add("Validated");
     }
 
     /**
@@ -381,48 +430,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             // ignore error
         }
 
-
-        // set up the table header tooltips
-        proteinTableToolTips = new ArrayList<String>();
-        proteinTableToolTips.add(null);
-        proteinTableToolTips.add("Starred");
-        proteinTableToolTips.add("Protein Inference Class");
-        proteinTableToolTips.add("Protein Accession Number");
-        proteinTableToolTips.add("Protein Description");
-        proteinTableToolTips.add("Protein Seqeunce Coverage (%) (Observed / Possible)");
-        proteinTableToolTips.add("Number of Peptides (Validated / Total)");
-        proteinTableToolTips.add("Number of Spectra (Validated / Total)");
-        proteinTableToolTips.add("MS2 Quantification");
-        proteinTableToolTips.add("Protein Molecular Weight (kDa)");
-
-        if (peptideShakerGUI.getDisplayPreferences().showScores()) {
-            proteinTableToolTips.add("Protein Score");
-        } else {
-            proteinTableToolTips.add("Protein Confidence");
-        }
-
-        proteinTableToolTips.add("Validated");
-
-        peptideTableToolTips = new ArrayList<String>();
-        peptideTableToolTips.add(null);
-        peptideTableToolTips.add("Starred");
-        peptideTableToolTips.add("Protein Inference Class");
-        peptideTableToolTips.add("Peptide Sequence");
-        peptideTableToolTips.add("Peptide Start Index");
-        peptideTableToolTips.add("Number of Spectra (Validated / Non-Validated)");
-        //peptideTableToolTips.add("Peptide Score");
-        peptideTableToolTips.add("Peptide Confidence");
-        peptideTableToolTips.add("Validated");
-
-        psmTableToolTips = new ArrayList<String>();
-        psmTableToolTips.add(null);
-        psmTableToolTips.add("Starred");
-        psmTableToolTips.add("Search Engine Agreement");
-        psmTableToolTips.add("Peptide Sequence");
-        psmTableToolTips.add("Precursor Charge");
-        psmTableToolTips.add("Mass Error");
-        psmTableToolTips.add("Peptide-Spectrum Match Confidence");
-        psmTableToolTips.add("Validated");
 
         // invoke later to give time for components to update
         SwingUtilities.invokeLater(new Runnable() {
