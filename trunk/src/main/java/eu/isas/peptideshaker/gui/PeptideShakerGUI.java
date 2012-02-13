@@ -31,6 +31,7 @@ import eu.isas.peptideshaker.fileimport.IdFilter;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
+import eu.isas.peptideshaker.gui.preferencesdialogs.BugReport;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FeaturesPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.FollowupPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.ImportSettingsDialog;
@@ -609,6 +610,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         scoresJCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
         helpMenu = new javax.swing.JMenu();
         helpJMenuItem = new javax.swing.JMenuItem();
+        logReportMenu = new javax.swing.JMenuItem();
         aboutJMenuItem = new javax.swing.JMenuItem();
 
         annotationMenuBar.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -1331,6 +1333,14 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             }
         });
         helpMenu.add(helpJMenuItem);
+
+        logReportMenu.setText("Bug Report");
+        logReportMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                logReportMenuActionPerformed(evt);
+            }
+        });
+        helpMenu.add(logReportMenu);
 
         aboutJMenuItem.setMnemonic('A');
         aboutJMenuItem.setText("About");
@@ -2493,6 +2503,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         jumpToPanel.selectTextField();
     }//GEN-LAST:event_findJMenuItemActionPerformed
 
+    private void logReportMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logReportMenuActionPerformed
+        new BugReport(this);
+    }//GEN-LAST:event_logReportMenuActionPerformed
+
     /**
      * Loads the enzymes from the enzyme file into the enzyme factory
      */
@@ -2651,6 +2665,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private javax.swing.JPopupMenu.Separator jSeparator7;
     private javax.swing.JPopupMenu.Separator jSeparator8;
     private javax.swing.JPopupMenu.Separator jSeparator9;
+    private javax.swing.JMenuItem logReportMenu;
     private javax.swing.JMenu lossMenu;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JCheckBoxMenuItem moreThanTwoChargesCheckBoxMenuItem;

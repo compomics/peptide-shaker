@@ -5,6 +5,7 @@ import com.compomics.util.experiment.MsExperiment;
 import com.compomics.util.experiment.ProteomicAnalysis;
 import com.compomics.util.experiment.SampleAnalysisSet;
 import com.compomics.util.experiment.biology.EnzymeFactory;
+import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Sample;
 import com.compomics.util.experiment.io.ExperimentIO;
@@ -561,7 +562,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-
     /**
      * Tries to process the identification files, closes the dialog and then
      * opens the results in the main frame.
@@ -909,7 +909,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * @param evt
      */
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        
+
         // @TODO: this does not work! have to create a new object and transfer all the values...
 
         // reset the preferences as this can have been changed
@@ -920,7 +920,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_formWindowClosing
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
@@ -1024,15 +1023,17 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
 
         try {
             Properties props = IdentificationParametersReader.loadProperties(searchGUIFile);
-            ArrayList<String> variableMods = new ArrayList<String>();
+            ArrayList<String> searchedMods = new ArrayList<String>();
             String temp = props.getProperty(IdentificationParametersReader.VARIABLE_MODIFICATIONS);
-
             if (temp != null && !temp.trim().equals("")) {
-                variableMods = IdentificationParametersReader.parseModificationLine(temp);
+                searchedMods = IdentificationParametersReader.parseModificationLine(temp);
             }
-
+            temp = props.getProperty(IdentificationParametersReader.FIXED_MODIFICATIONS);
+            if (temp != null && !temp.trim().equals("")) {
+                searchedMods.addAll(IdentificationParametersReader.parseModificationLine(temp));
+            }
             ArrayList<String> missing = new ArrayList<String>();
-            for (String name : variableMods) {
+            for (String name : searchedMods) {
                 if (!ptmFactory.containsPTM(name)) {
                     missing.add(name);
                 } else {
@@ -1048,6 +1049,19 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                             }
                             searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
                             searchParameters.getModificationProfile().setColor(name, Color.lightGray);
+                        }
+                        ArrayList<String> conflicts = new ArrayList<String>();
+                        PTM oldPTM;
+                        for (String oldModification : searchParameters.getModificationProfile().getUtilitiesNames()) {
+                            oldPTM = ptmFactory.getPTM(oldModification);
+                            if (Math.abs(oldPTM.getMass() - ptmFactory.getPTM(name).getMass()) < 0.01) {
+                                if (!searchedMods.contains(oldModification)) {
+                                    conflicts.add(oldModification);
+                                }
+                            }
+                        }
+                        for (String conflict : conflicts) {
+                            searchParameters.getModificationProfile().remove(conflict);
                         }
                     }
                 }

@@ -46,6 +46,10 @@ public class Metrics implements Serializable {
      * The ordered list of protein keys
      */
     private ArrayList<String> proteinKeys;
+    /**
+     * Amount of validated proteins
+     */
+    private int nValidatedProteins = -1;
 
     /**
      * Constructor.
@@ -192,5 +196,20 @@ public class Metrics implements Serializable {
     public void setProteinKeys(ArrayList<String> proteinKeys) {
         this.proteinKeys = proteinKeys;
     }
-    
+
+    /**
+     * Returns the number of validated proteins
+     * @return the number of validated proteins
+     */
+    public int getnValidatedProteins() {
+        return nValidatedProteins;
+    }
+
+    /**
+     * Sets the number of validated proteins
+     * @param nValidatedProteins the number of validated proteins
+     */
+    public void setnValidatedProteins(int nValidatedProteins) {
+        this.nValidatedProteins = nValidatedProteins;
+    }
 }
