@@ -75,7 +75,10 @@ public class BugReport extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("PeptideShaker Bug Report");
 
-        logJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Log"));
+        backgroundPanel.setBackground(new java.awt.Color(230, 230, 230));
+
+        logJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("PeptideShaker Log"));
+        logJPanel.setOpaque(false);
 
         logTxt.setColumns(20);
         logTxt.setEditable(false);
@@ -98,7 +101,7 @@ public class BugReport extends javax.swing.JDialog {
             .addGroup(logJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(logJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(logJScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 601, Short.MAX_VALUE)
+                    .addComponent(logJScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, logJPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(clearJButton)))
@@ -115,11 +118,12 @@ public class BugReport extends javax.swing.JDialog {
         );
 
         infoJPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Info"));
+        infoJPanel.setOpaque(false);
 
         infoJEditorPane.setBorder(javax.swing.BorderFactory.createEmptyBorder(20, 20, 20, 20));
         infoJEditorPane.setContentType("text/html");
         infoJEditorPane.setEditable(false);
-        infoJEditorPane.setText("<html>\r\n  <head>\r\n\r\n  </head>\r\n  <body>\r\nIf you encounter any bugs while processing your data, please do on of the following:\n<br>\n<ol>\n  <li>Create an issue on the <a href=\"http://peptide-shaker.googlecode.com\">PeptideShaker web page</a>.</li>\n  <li>Send an e-mail to the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker mailing list</a>.</li>\n</ol>\nPlease attach any relevant information as well as the log message displayed below.\n  </body>\r\n</html>\r\n");
+        infoJEditorPane.setText("<html>\r\n  <head>\r\n\r\n  </head>\r\n  <body>\r\nIf you encounter any bugs while processing your data, please do one of the following:\n<br>\n<ul>\n  <li>Create an issue on the <a href=\"http://code.google.com/p/peptide-shaker/issues/list\">PeptideShaker web page</a>.</li>\n  <li>or Send an e-mail to the <a href=\"http://groups.google.com/group/peptide-shaker\">PeptideShaker mailing list</a>.</li>\n</ul>\nPlease include any relevant information as well as the log message displayed below.\n  </body>\r\n</html>\r\n");
         infoJEditorPane.addHyperlinkListener(new javax.swing.event.HyperlinkListener() {
             public void hyperlinkUpdate(javax.swing.event.HyperlinkEvent evt) {
                 infoJEditorPaneHyperlinkUpdate(evt);

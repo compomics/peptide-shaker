@@ -34,6 +34,11 @@
   </Layout>
   <SubComponents>
     <Container class="javax.swing.JPanel" name="backgroundPanel">
+      <Properties>
+        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+          <Color blue="e6" green="e6" red="e6" type="rgb"/>
+        </Property>
+      </Properties>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -65,9 +70,10 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder title="Log"/>
+                <TitledBorder title="PeptideShaker Log"/>
               </Border>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
 
           <Layout>
@@ -76,7 +82,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="logJScrollPane" alignment="1" pref="601" max="32767" attributes="0"/>
+                          <Component id="logJScrollPane" alignment="1" pref="691" max="32767" attributes="0"/>
                           <Group type="102" alignment="1" attributes="0">
                               <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                               <Component id="clearJButton" min="-2" max="-2" attributes="0"/>
@@ -134,6 +140,7 @@
                 <TitledBorder title="Info"/>
               </Border>
             </Property>
+            <Property name="opaque" type="boolean" value="false"/>
           </Properties>
 
           <Layout>
@@ -172,7 +179,7 @@
                     </Property>
                     <Property name="contentType" type="java.lang.String" value="text/html"/>
                     <Property name="editable" type="boolean" value="false"/>
-                    <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xd;&#xa;  &lt;head&gt;&#xd;&#xa;&#xd;&#xa;  &lt;/head&gt;&#xd;&#xa;  &lt;body&gt;&#xd;&#xa;If you encounter any bugs while processing your data, please do on of the following:&#xa;&lt;br&gt;&#xa;&lt;ol&gt;&#xa;  &lt;li&gt;Create an issue on the &lt;a href=&quot;http://peptide-shaker.googlecode.com&quot;&gt;PeptideShaker web page&lt;/a&gt;.&lt;/li&gt;&#xa;  &lt;li&gt;Send an e-mail to the &lt;a href=&quot;http://groups.google.com/group/peptide-shaker&quot;&gt;PeptideShaker mailing list&lt;/a&gt;.&lt;/li&gt;&#xa;&lt;/ol&gt;&#xa;Please attach any relevant information as well as the log message displayed below.&#xa;  &lt;/body&gt;&#xd;&#xa;&lt;/html&gt;&#xd;&#xa;"/>
+                    <Property name="text" type="java.lang.String" value="&lt;html&gt;&#xd;&#xa;  &lt;head&gt;&#xd;&#xa;&#xd;&#xa;  &lt;/head&gt;&#xd;&#xa;  &lt;body&gt;&#xd;&#xa;If you encounter any bugs while processing your data, please do one of the following:&#xa;&lt;br&gt;&#xa;&lt;ul&gt;&#xa;  &lt;li&gt;Create an issue on the &lt;a href=&quot;http://code.google.com/p/peptide-shaker/issues/list&quot;&gt;PeptideShaker web page&lt;/a&gt;.&lt;/li&gt;&#xa;  &lt;li&gt;or Send an e-mail to the &lt;a href=&quot;http://groups.google.com/group/peptide-shaker&quot;&gt;PeptideShaker mailing list&lt;/a&gt;.&lt;/li&gt;&#xa;&lt;/ul&gt;&#xa;Please include any relevant information as well as the log message displayed below.&#xa;  &lt;/body&gt;&#xd;&#xa;&lt;/html&gt;&#xd;&#xa;"/>
                   </Properties>
                   <Events>
                     <EventHandler event="hyperlinkUpdate" listener="javax.swing.event.HyperlinkListener" parameters="javax.swing.event.HyperlinkEvent" handler="infoJEditorPaneHyperlinkUpdate"/>
