@@ -1334,6 +1334,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
         });
         helpMenu.add(helpJMenuItem);
 
+        logReportMenu.setMnemonic('B');
         logReportMenu.setText("Bug Report");
         logReportMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -2503,6 +2504,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         jumpToPanel.selectTextField();
     }//GEN-LAST:event_findJMenuItemActionPerformed
 
+    /**
+     * Opens a new bug report dialog.
+     * 
+     * @param evt
+     */
     private void logReportMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logReportMenuActionPerformed
         new BugReport(this);
     }//GEN-LAST:event_logReportMenuActionPerformed
@@ -2801,7 +2807,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                     bw.close();
                     w.close();
                 }
-                System.out.println(new Date() + ": PeptideShaker version " + getVersion() + ".");
+                System.out.println("\n\n" + new Date() + ": PeptideShaker version " + getVersion() + ".\n");
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(
                         null, "An error occured when trying to create the PeptideShaker log file.",
