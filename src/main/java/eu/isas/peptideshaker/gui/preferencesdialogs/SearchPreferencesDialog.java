@@ -673,9 +673,34 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 }
                 searchParameters.getModificationProfile().setShortName(name, name.substring(0, index));
                 searchParameters.getModificationProfile().setColor(name, Color.lightGray);
+                ArrayList<String> conflicts = new ArrayList<String>();
+                PTM oldPTM;
+                for (String oldModification : searchParameters.getModificationProfile().getUtilitiesNames()) {
+                    oldPTM = ptmFactory.getPTM(oldModification);
+                    if (Math.abs(oldPTM.getMass() - ptmFactory.getPTM(name).getMass()) < 0.01) {
+                        conflicts.add(oldModification);
+                    }
+                }
+                if (!conflicts.isEmpty()) {
+                    String report = name + " might be difficult to distinguish from ";
+                    boolean first = true;
+                    int cpt = 0;
+                    for (String conflict : conflicts) {
+                        cpt++;
+                        if (first) {
+                            first = false;
+                        } else if (cpt == conflicts.size()) {
+                            report += " and ";
+                        } else {
+                            report += ", ";
+                        }
+                        report += conflict;
+                    }
+                    report += ".\nIt is avised to group them into the same modification family.";
+                    JOptionPane.showMessageDialog(this, report, "Modification Conflict", JOptionPane.WARNING_MESSAGE);
+                }
             }
             modificationList.add(name);
-            ((DefaultTableModel) availableModificationsTable.getModel()).removeRow(selectedRows[i]);
         }
 
         updateModificationLists();
