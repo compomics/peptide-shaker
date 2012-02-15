@@ -8,6 +8,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
@@ -251,21 +252,6 @@ public class FindDialog extends javax.swing.JDialog {
             filterPsms();
         }
 
-
-        // @TODO: the max precursor m/z ought to be stored in the same way as max charge etc
-
-        // find the max m/z-value
-        double maxMzValue = Double.MIN_VALUE;
-
-        for (int i = 0; i < psmTable.getRowCount(); i++) {
-            if (maxMzValue < (Double) psmTable.getValueAt(i, psmTable.getColumn("m/z").getModelIndex())) {
-                maxMzValue = (Double) psmTable.getValueAt(i, psmTable.getColumn("m/z").getModelIndex());
-            }
-        }
-
-        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMzValue);
-
-
         ((TitledBorder) proteinTablePanel.getBorder()).setTitle("Filtered Proteins (" + proteinTable.getRowCount() + ")");
         proteinTablePanel.revalidate();
         proteinTablePanel.repaint();
@@ -279,8 +265,8 @@ public class FindDialog extends javax.swing.JDialog {
         psmTablePanel.repaint();
 
         peptideTable.revalidate();
-        peptideTable.repaint();
-
+        peptideTable.repaint(); 
+        
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
@@ -469,25 +455,25 @@ public class FindDialog extends javax.swing.JDialog {
                 new ImageIcon(this.getClass().getResource("/icons/star_grey.png")),
                 "Starred", null, null));
         psmTable.getColumn("H").setCellRenderer(new NimbusCheckBoxRenderer());
-        psmTable.getColumn("m/z").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, peptideShakerGUI.getSparklineColor()));
-        psmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 10d, peptideShakerGUI.getSparklineColor()));
-        psmTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100d, 10d, peptideShakerGUI.getSparklineColor()));
+        psmTable.getColumn("m/z").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMaxMz(), peptideShakerGUI.getSparklineColor()));
+        psmTable.getColumn("Charge").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 
+                (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge(), peptideShakerGUI.getSparklineColor()));
+        psmTable.getColumn("RT").setCellRenderer(new JSparklinesIntervalChartTableCellRenderer(PlotOrientation.HORIZONTAL, SpectrumFactory.getInstance().getMinRT(),
+                        SpectrumFactory.getInstance().getMaxRT(), SpectrumFactory.getInstance().getMaxRT() / 50, peptideShakerGUI.getSparklineColor(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("m/z").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth());
         ((JSparklinesIntervalChartTableCellRenderer) psmTable.getColumn("RT").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
+        ((JSparklinesIntervalChartTableCellRenderer) psmTable.getColumn("RT").getCellRenderer()).showReferenceLine(true, 0.02, java.awt.Color.BLACK);
         psmTable.getColumn("Mass Error").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL,
                 peptideShakerGUI.getSearchParameters().getPrecursorAccuracy(), peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).showNumberAndChart(true, peptideShakerGUI.getLabelWidth() + 5);
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Mass Error").getCellRenderer()).setMaxValue(
                 peptideShakerGUI.getSearchParameters().getPrecursorAccuracy());
-        ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Charge").getCellRenderer()).setMaxValue(
-                (double) ((PSMaps) peptideShakerGUI.getIdentification().getUrParam(new PSMaps())).getPsmSpecificMap().getMaxCharge());
         psmTable.getColumn("Confidence").setCellRenderer(new JSparklinesBarChartTableCellRenderer(PlotOrientation.HORIZONTAL, 100.0, peptideShakerGUI.getSparklineColor()));
         ((JSparklinesBarChartTableCellRenderer) psmTable.getColumn("Confidence").getCellRenderer()).showNumberAndChart(
                 true, peptideShakerGUI.getLabelWidth() - 20, peptideShakerGUI.getScoreAndConfidenceDecimalFormat());
 
         spectrumFilesTable.getColumn(" ").setCellRenderer(new NimbusCheckBoxRenderer());
-
         modificationTable.getColumn(" ").setCellRenderer(new NimbusCheckBoxRenderer());
         modificationTable.getColumn("  ").setCellRenderer(new JSparklinesColorTableCellRenderer());
     }
@@ -675,7 +661,7 @@ public class FindDialog extends javax.swing.JDialog {
     public boolean validateInput() {
         if (!proteinCoverageTxt.getText().trim().equals("")) {
             try {
-                Double test = new Double(proteinCoverageTxt.getText().trim());
+                new Double(proteinCoverageTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for protein coverage.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -684,7 +670,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         if (!spectrumCountingTxt.getText().trim().equals("")) {
             try {
-                Double test = new Double(spectrumCountingTxt.getText().trim());
+                new Double(spectrumCountingTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for spectrum counting.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -693,7 +679,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         if (!nPeptidesTxt.getText().trim().equals("")) {
             try {
-                Integer test = new Integer(nPeptidesTxt.getText().trim());
+                new Integer(nPeptidesTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for number of peptides.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -702,7 +688,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         if (!proteinsNSpectraTxt.getText().trim().equals("")) {
             try {
-                Integer test = new Integer(proteinsNSpectraTxt.getText().trim());
+                new Integer(proteinsNSpectraTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for protein number of spectra.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -711,7 +697,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         if (!proteinScoreTxt.getText().trim().equals("")) {
             try {
-                Double test = new Double(proteinScoreTxt.getText().trim());
+                new Double(proteinScoreTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for protein score.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -720,7 +706,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         if (!proteinConfidenceTxt.getText().trim().equals("")) {
             try {
-                Double test = new Double(proteinConfidenceTxt.getText().trim());
+                new Double(proteinConfidenceTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for protein confidence.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -729,7 +715,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         if (!peptideNSpectraTxt.getText().trim().equals("")) {
             try {
-                Integer test = new Integer(peptideNSpectraTxt.getText().trim());
+                new Integer(peptideNSpectraTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for peptide number of spectra.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -738,7 +724,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         if (!peptideScoreTxt.getText().trim().equals("")) {
             try {
-                Double test = new Double(peptideScoreTxt.getText().trim());
+                new Double(peptideScoreTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for peptide score.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -747,7 +733,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         if (!peptideConfidenceTxt.getText().trim().equals("")) {
             try {
-                Double test = new Double(peptideConfidenceTxt.getText().trim());
+                new Double(peptideConfidenceTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for peptide confidence.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -756,7 +742,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         if (!precursorRTTxt.getText().trim().equals("")) {
             try {
-                Double test = new Double(precursorRTTxt.getText().trim());
+                new Double(precursorRTTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for precursor retention time.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -765,7 +751,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         if (!precursorMzTxt.getText().trim().equals("")) {
             try {
-                Double test = new Double(precursorMzTxt.getText().trim());
+                new Double(precursorMzTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for precursor m/z.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -774,7 +760,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         if (!precursorErrorTxt.getText().trim().equals("")) {
             try {
-                Double test = new Double(precursorErrorTxt.getText().trim());
+                new Double(precursorErrorTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for precursor error.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -783,7 +769,7 @@ public class FindDialog extends javax.swing.JDialog {
         }
         if (!psmConfidenceTxt.getText().trim().equals("")) {
             try {
-                Double test = new Double(psmConfidenceTxt.getText().trim());
+                new Double(psmConfidenceTxt.getText().trim());
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Please verify the input for PSM confidence.",
                         "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -1778,11 +1764,10 @@ public class FindDialog extends javax.swing.JDialog {
                 return new JTableHeader(columnModel) {
 
                     public String getToolTipText(MouseEvent e) {
-                        String tip = null;
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        tip = (String) ptmTableToolTips.get(realIndex);
+                        String tip = (String) ptmTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
