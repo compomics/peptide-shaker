@@ -89,6 +89,11 @@ public class PrideExportDialog extends javax.swing.JDialog {
     private void insertOptions(String optionsPath, String fileEnding, String selectText, String insertNewText, JComboBox optionComboBox) {
 
         File optionFolder = new File(peptideShakerGUI.getJarFilePath(), optionsPath);
+        
+        if (!optionFolder.exists()) {
+            optionFolder.mkdir();
+        }
+        
         File[] optionFiles = optionFolder.listFiles();
         Vector optionNames = new Vector();
 
