@@ -534,9 +534,15 @@ public class ProteinInferenceDialog extends javax.swing.JDialog {
      */
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
 
+        String selectedMatch = accessions.get(mainMatch);
         PSParameter psParameter = (PSParameter) identification.getMatchParameter(inspectedMatch.getKey(), new PSParameter());
-        if (!inspectedMatch.getMainMatch().equals(accessions.get(mainMatch))
+        if (!inspectedMatch.getMainMatch().equals(selectedMatch)
                 || groupClassJComboBox.getSelectedIndex() != psParameter.getGroupClass()) {
+            if (!inspectedMatch.getMainMatch().equals(selectedMatch)) {
+                inspectedMatch.setMainMatch(selectedMatch);
+                peptideShakerGUI.getIdentification().setMatchChanged(inspectedMatch);
+            }
+            psParameter.setGroupClass(groupClassJComboBox.getSelectedIndex());
             peptideShakerGUI.updateMainMatch(inspectedMatch.getMainMatch(), groupClassJComboBox.getSelectedIndex());
             peptideShakerGUI.setDataSaved(false);
         }

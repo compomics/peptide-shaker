@@ -18,6 +18,7 @@ import com.compomics.util.experiment.identification.IdentificationMethod;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.SpectrumAnnotator;
 import com.compomics.util.experiment.identification.matches.IonMatch;
+import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.io.ExperimentIO;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
@@ -3745,7 +3746,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     }
 
     /**
-     * Update the main match for the given row in the protein table.
+     * Update the protein match in the different tabs.
      *
      * @param mainMatch the protein match to use
      * @param proteinInferenceType the protein inference group type
@@ -3757,7 +3758,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         } catch (Exception e) {
             catchException(e);
         }
-        overviewPanel.updateMainMatch(mainMatch, proteinInferenceType);
+        overviewPanel.updateProteinTable();
         proteinStructurePanel.updateMainMatch(mainMatch, proteinInferenceType);
     }
 

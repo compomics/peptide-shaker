@@ -161,19 +161,21 @@ public class IdentificationFeaturesGenerator {
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
             String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
             boolean[] result = new boolean[sequence.length()];
-            int pepMax = peptideShakerGUI.getIdFilter().getMaxPepLength();
-            Enzyme enzyme = peptideShakerGUI.getSearchParameters().getEnzyme();
-            int cleavageAA = 0;
-            int lastCleavage = 0;
-            while (++cleavageAA < sequence.length() - 2) {
-                if (enzyme.getAminoAcidAfter().contains(sequence.charAt(cleavageAA + 1)) && !enzyme.getRestrictionBefore().contains(sequence.charAt(cleavageAA))
-                        || enzyme.getAminoAcidBefore().contains(sequence.charAt(cleavageAA)) && !enzyme.getRestrictionAfter().contains(sequence.charAt(cleavageAA + 1))) {
-                    if (cleavageAA - lastCleavage <= pepMax) {
-                        for (int i = lastCleavage + 1; i <= cleavageAA; i++) {
-                            result[i] = true;
+            if (peptideShakerGUI.getSearchParameters().enzymeCleaves()) {
+                int pepMax = peptideShakerGUI.getIdFilter().getMaxPepLength();
+                Enzyme enzyme = peptideShakerGUI.getSearchParameters().getEnzyme();
+                int cleavageAA = 0;
+                int lastCleavage = 0;
+                while (++cleavageAA < sequence.length() - 2) {
+                    if (enzyme.getAminoAcidAfter().contains(sequence.charAt(cleavageAA + 1)) && !enzyme.getRestrictionBefore().contains(sequence.charAt(cleavageAA))
+                            || enzyme.getAminoAcidBefore().contains(sequence.charAt(cleavageAA)) && !enzyme.getRestrictionAfter().contains(sequence.charAt(cleavageAA + 1))) {
+                        if (cleavageAA - lastCleavage <= pepMax) {
+                            for (int i = lastCleavage + 1; i <= cleavageAA; i++) {
+                                result[i] = true;
+                            }
                         }
+                        lastCleavage = cleavageAA;
                     }
-                    lastCleavage = cleavageAA;
                 }
             }
             result[sequence.length() - 1] = result[sequence.length() - 2];
@@ -340,10 +342,10 @@ public class IdentificationFeaturesGenerator {
         Enzyme enyzme = peptideShakerGUI.getSearchParameters().getEnzyme();
         PSParameter pSParameter = new PSParameter();
         Identification identification = peptideShakerGUI.getIdentification();
-        ProteinMatch proteinMatch = identification.getProteinMatch(proteinMatchKey);
+        ProteinMatch testMatch, proteinMatch = identification.getProteinMatch(proteinMatchKey);
         boolean debug = false;
-        Writer proteinWriter = null;
         try {
+            Writer proteinWriter = new BufferedWriter(new FileWriter(new File("actin.txt")));
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
             if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF) {
 
@@ -352,13 +354,14 @@ public class IdentificationFeaturesGenerator {
                 if (currentProtein == null) {
                     return 0.0;
                 }
-                if (proteinMatchKey.equals("P60709")) {
+                if (proteinMatchKey.equals("P60709")
+                        || proteinMatchKey.equals("P63261")
+                        || proteinMatchKey.equals("P62736 P63267 P68032 P68133")) {
                     debug = true;
                 }
 
                 if (debug) {
-                    proteinWriter = new BufferedWriter(new FileWriter(new File("P60709.txt")));
-                    proteinWriter.write("Peptide\tnProteins\tnValidated Spectra\tresult\tproteins\n");
+                    proteinWriter.write("Protein key\tPeptide\tnProteins\tnSpectra\tnValidated Spectra\tresult\tproteins\n");
                 }
                 result = 0;
                 PeptideMatch peptideMatch;
@@ -370,13 +373,16 @@ public class IdentificationFeaturesGenerator {
                         if (identification.getProteinMap().get(protein) != null) {
                             for (String proteinKey : identification.getProteinMap().get(protein)) {
                                 if (!possibleProteinMatches.contains(proteinKey)) {
-                                    possibleProteinMatches.add(proteinKey);
+                                    testMatch = identification.getProteinMatch(proteinKey);
+                                    if (testMatch.getPeptideMatches().contains(peptideKey)) {
+                                        possibleProteinMatches.add(proteinKey);
+                                    }
                                 }
                             }
                         }
                     }
                     if (debug) {
-                        proteinWriter.write(peptideKey + "\t" + possibleProteinMatches.size() + "\t" + peptideMatch.getSpectrumCount() + "\t");
+                        proteinWriter.write(proteinMatchKey + "\t" + peptideKey + "\t" + possibleProteinMatches.size() + "\t" + peptideMatch.getSpectrumCount() + "\t");
                     }
                     if (possibleProteinMatches.isEmpty()) {
                         System.err.println("No protein found for the given peptide (" + peptideKey + ") when estimating NSAF of " + currentProtein + ".");
@@ -402,8 +408,11 @@ public class IdentificationFeaturesGenerator {
                 if (debug) {
                     proteinWriter.close();
                 }
+                if (peptideShakerGUI.getSearchParameters().enzymeCleaves()) {
                 return result / currentProtein.getObservableLength(enyzme, peptideShakerGUI.getIdFilter().getMaxPepLength());
-
+                } else {
+                    return result / currentProtein.getLength();
+                }
             } else {
 
                 // emPAI

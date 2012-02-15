@@ -4276,6 +4276,15 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
     }
 
     /**
+     * updates the results in the protein table and reselect the desired protein.
+     */
+    public void updateProteinTable() {
+        DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
+        dm.fireTableDataChanged();
+        updateSelection();
+    }
+
+    /**
      * Update the sequence coverage map according to the selected protein (and
      * peptide).
      *
@@ -4510,26 +4519,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
             //peptidesPsmJSplitPane.setDividerSize(0);
             formComponentResized(null);
         }
-    }
-
-    /**
-     * Update the main match for the given row in the protein table.
-     *
-     * @param mainMatch the accession of the protein match to use
-     * @param proteinInferenceType the protein inference group type
-     */
-    public void updateMainMatch(String mainMatch, int proteinInferenceType) {
-
-        proteinTable.setValueAt(peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(mainMatch), proteinTable.getSelectedRow(), proteinTable.getColumn("Accession").getModelIndex());
-        proteinTable.setValueAt(proteinInferenceType, proteinTable.getSelectedRow(), proteinTable.getColumn("PI").getModelIndex());
-        String description = "unknown protein";
-        try {
-            description = sequenceFactory.getHeader(mainMatch).getDescription();
-        } catch (Exception e) {
-            peptideShakerGUI.catchException(e);
-        }
-        proteinTable.setValueAt(description, proteinTable.getSelectedRow(), proteinTable.getColumn("Description").getModelIndex());
-        updateSequenceCoverage(mainMatch);
     }
 
     /**
