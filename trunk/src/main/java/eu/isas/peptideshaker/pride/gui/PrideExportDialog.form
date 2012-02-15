@@ -1,6 +1,56 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.8" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+  <NonVisualComponents>
+    <Container class="javax.swing.JPopupMenu" name="referencesPopupJMenu">
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout">
+        <Property name="useNullLayout" type="boolean" value="true"/>
+      </Layout>
+      <SubComponents>
+        <MenuItem class="javax.swing.JMenuItem" name="refEditJMenuItem">
+          <Properties>
+            <Property name="mnemonic" type="int" value="69"/>
+            <Property name="text" type="java.lang.String" value="Edit"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refEditJMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <Component class="javax.swing.JSeparator" name="jSeparator5">
+        </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="refMoveUpJMenuItem">
+          <Properties>
+            <Property name="mnemonic" type="int" value="85"/>
+            <Property name="text" type="java.lang.String" value="Move Up"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refMoveUpJMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="refMoveDownJMenuItem">
+          <Properties>
+            <Property name="mnemonic" type="int" value="68"/>
+            <Property name="text" type="java.lang.String" value="Move Down"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refMoveDownJMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <Component class="javax.swing.JSeparator" name="jSeparator6">
+        </Component>
+        <MenuItem class="javax.swing.JMenuItem" name="refDeleteSelectedRowJMenuItem">
+          <Properties>
+            <Property name="mnemonic" type="int" value="76"/>
+            <Property name="text" type="java.lang.String" value="Delete"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refDeleteSelectedRowJMenuItemActionPerformed"/>
+          </Events>
+        </MenuItem>
+      </SubComponents>
+    </Container>
+  </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="2"/>
     <Property name="title" type="java.lang.String" value="PeptideShaker - PRIDE Export"/>
@@ -52,7 +102,7 @@
                           <Component id="openDialogHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Component id="helpLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="205" max="32767" attributes="0"/>
+                          <EmptySpace pref="231" max="32767" attributes="0"/>
                           <Component id="convertJButton" min="-2" pref="80" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       </Group>
@@ -102,63 +152,48 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jLabel1" min="-2" pref="75" max="-2" attributes="0"/>
                                   <Component id="jLabel3" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="jLabel4" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="jLabel10" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" attributes="0">
+                                  <Component id="descriptionJScrollPane" alignment="0" max="32767" attributes="0"/>
+                                  <Component id="projectJTextField" alignment="0" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="0" attributes="0">
                                       <Component id="titleJTextField" max="32767" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
                                       <Component id="jLabel2" min="-2" pref="39" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="labelJTextField" min="-2" pref="171" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="projectJTextField" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Component id="referencesJScrollPane" max="32767" attributes="1"/>
+                                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                      <Component id="addReferencesJButton" min="-2" pref="80" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
-                          <Group type="102" attributes="0">
-                              <Component id="jLabel4" min="-2" pref="75" max="-2" attributes="0"/>
+                          <Group type="102" alignment="1" attributes="0">
+                              <Group type="103" groupAlignment="0" attributes="0">
+                                  <Component id="jLabel8" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="jLabel5" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="jLabel6" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="jLabel7" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="descriptionJScrollPane" max="32767" attributes="0"/>
-                          </Group>
-                          <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="1" attributes="0">
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <Component id="jLabel10" min="-2" pref="75" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="referencesJTextField" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" attributes="0">
-                                      <Component id="jLabel8" min="-2" pref="75" max="-2" attributes="0"/>
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="instrumentJComboBox" max="32767" attributes="0"/>
-                                  </Group>
+                                  <Component id="instrumentJComboBox" max="32767" attributes="0"/>
+                                  <Component id="protocolJComboBox" max="32767" attributes="0"/>
+                                  <Component id="sampleJComboBox" max="32767" attributes="0"/>
+                                  <Component id="contactsJComboBox" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="editReferencesJButton" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
-                                  <Component id="newInstrumentJButton" alignment="0" min="-2" pref="80" max="-2" attributes="0"/>
+                                  <Component id="editContactJButton" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
+                                  <Component id="editSampleJButton" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
+                                  <Component id="editProtocolJButton" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
+                                  <Component id="editInstrumentJButton" alignment="1" min="-2" pref="80" max="-2" attributes="0"/>
                               </Group>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel5" min="-2" pref="75" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="contactsJComboBox" max="32767" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="newContactJButton" min="-2" pref="80" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel6" min="-2" pref="75" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="sampleJComboBox" max="32767" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="newSampleJButton" min="-2" pref="80" max="-2" attributes="0"/>
-                          </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="jLabel7" min="-2" pref="75" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="protocolJComboBox" max="32767" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="newProtocolJButton" min="-2" pref="80" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
@@ -180,45 +215,42 @@
                           <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="projectJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="descriptionJScrollPane" min="-2" pref="65" max="-2" attributes="0"/>
-                          <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                          </Group>
+                      <EmptySpace min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="jLabel4" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="descriptionJScrollPane" alignment="2" min="-2" pref="65" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="referencesJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="editReferencesJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="2" attributes="0">
+                          <Component id="jLabel10" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="referencesJScrollPane" alignment="2" min="-2" pref="76" max="-2" attributes="0"/>
+                          <Component id="addReferencesJButton" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="contactsJComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="newContactJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="contactsJComboBox" linkSize="1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="editContactJButton" linkSize="1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="sampleJComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="newSampleJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="sampleJComboBox" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="editSampleJButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="protocolJComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="newProtocolJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="protocolJComboBox" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="editProtocolJButton" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="instrumentJComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="newInstrumentJButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="instrumentJComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="editInstrumentJButton" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -226,28 +258,53 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel1">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Title:"/>
+                <Property name="text" type="java.lang.String" value="Title*"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="titleJTextField">
+              <Properties>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[2, 4, 2, 2]"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="titleJTextFieldKeyReleased"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel2">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Label:"/>
+                <Property name="text" type="java.lang.String" value="Label*"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="labelJTextField">
+              <Properties>
+                <Property name="toolTipText" type="java.lang.String" value="Allows experiments to be grouped or organized under projects"/>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[2, 4, 2, 2]"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="labelJTextFieldKeyReleased"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel3">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Project:"/>
+                <Property name="text" type="java.lang.String" value="Project*"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="projectJTextField">
+              <Properties>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[2, 4, 2, 2]"/>
+                </Property>
+              </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="projectJTextFieldKeyReleased"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel4">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Description:"/>
+                <Property name="text" type="java.lang.String" value="Description*"/>
               </Properties>
             </Component>
             <Container class="javax.swing.JScrollPane" name="descriptionJScrollPane">
@@ -260,33 +317,38 @@
                 <Component class="javax.swing.JTextArea" name="descriptionJTextArea">
                   <Properties>
                     <Property name="columns" type="int" value="10"/>
+                    <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="2"/>
+                    <Property name="toolTipText" type="java.lang.String" value="A general free-text description of the experiment"/>
+                    <Property name="wrapStyleWord" type="boolean" value="true"/>
                   </Properties>
+                  <Events>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="descriptionJTextAreaKeyReleased"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
             <Component class="javax.swing.JLabel" name="jLabel10">
               <Properties>
-                <Property name="text" type="java.lang.String" value="References:"/>
+                <Property name="text" type="java.lang.String" value="References"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JTextField" name="referencesJTextField">
+            <Component class="javax.swing.JButton" name="addReferencesJButton">
               <Properties>
-                <Property name="editable" type="boolean" value="false"/>
+                <Property name="text" type="java.lang.String" value="Add"/>
               </Properties>
-            </Component>
-            <Component class="javax.swing.JButton" name="editReferencesJButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Edit"/>
-              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addReferencesJButtonActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel5">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Contact:"/>
+                <Property name="text" type="java.lang.String" value="Contact*"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="contactsJComboBox">
               <Properties>
+                <Property name="maximumRowCount" type="int" value="20"/>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="4">
                     <StringItem index="0" value="--- Select ---"/>
@@ -296,19 +358,27 @@
                   </StringArray>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="contactsJComboBoxActionPerformed"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="newContactJButton">
+            <Component class="javax.swing.JButton" name="editContactJButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="New"/>
+                <Property name="text" type="java.lang.String" value="Edit"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editContactJButtonActionPerformed"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel6">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Sample:"/>
+                <Property name="text" type="java.lang.String" value="Sample*"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="sampleJComboBox">
               <Properties>
+                <Property name="maximumRowCount" type="int" value="20"/>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="4">
                     <StringItem index="0" value="--- Select ---"/>
@@ -318,19 +388,24 @@
                   </StringArray>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="sampleJComboBoxActionPerformed"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="newSampleJButton">
+            <Component class="javax.swing.JButton" name="editSampleJButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="New"/>
+                <Property name="text" type="java.lang.String" value="Edit"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Protocol:"/>
+                <Property name="text" type="java.lang.String" value="Protocol*"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="protocolJComboBox">
               <Properties>
+                <Property name="maximumRowCount" type="int" value="20"/>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="4">
                     <StringItem index="0" value="--- Select ---"/>
@@ -340,19 +415,24 @@
                   </StringArray>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="protocolJComboBoxActionPerformed"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="newProtocolJButton">
+            <Component class="javax.swing.JButton" name="editProtocolJButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="New"/>
+                <Property name="text" type="java.lang.String" value="Edit"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="jLabel8">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Instrument:"/>
+                <Property name="text" type="java.lang.String" value="Instrument*"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JComboBox" name="instrumentJComboBox">
               <Properties>
+                <Property name="maximumRowCount" type="int" value="20"/>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                   <StringArray count="4">
                     <StringItem index="0" value="--- Select ---"/>
@@ -362,12 +442,46 @@
                   </StringArray>
                 </Property>
               </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="instrumentJComboBoxActionPerformed"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="newInstrumentJButton">
+            <Component class="javax.swing.JButton" name="editInstrumentJButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="New"/>
+                <Property name="text" type="java.lang.String" value="Edit"/>
+                <Property name="enabled" type="boolean" value="false"/>
               </Properties>
             </Component>
+            <Container class="javax.swing.JScrollPane" name="referencesJScrollPane">
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+              <SubComponents>
+                <Component class="javax.swing.JTable" name="referencesJTable">
+                  <Properties>
+                    <Property name="font" type="java.awt.Font" editor="org.netbeans.modules.form.editors2.FontEditor">
+                      <FontInfo relative="true">
+                        <Font component="referencesJTable" property="font" relativeSize="true" size="0"/>
+                      </FontInfo>
+                    </Property>
+                    <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
+                      <Table columnCount="4" rowCount="0">
+                        <Column editable="false" title=" " type="java.lang.Integer"/>
+                        <Column editable="false" title="Reference" type="java.lang.String"/>
+                        <Column editable="false" title="PMID" type="java.lang.String"/>
+                        <Column editable="false" title="DOI" type="java.lang.String"/>
+                      </Table>
+                    </Property>
+                  </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="referencesJTableMouseClicked"/>
+                    <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="referencesJTableKeyReleased"/>
+                  </Events>
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {     &#xa;    protected JTableHeader createDefaultTableHeader() { &#xa;        return new JTableHeader(columnModel) {        &#xa;            public String getToolTipText(MouseEvent e) {                &#xa;                java.awt.Point p = e.getPoint();       &#xa;                int index = columnModel.getColumnIndexAtX(p.x);                 &#xa;                int realIndex = columnModel.getColumn(index).getModelIndex();                 &#xa;                String tip = (String) referenceTableColumnToolTips.get(realIndex);                 &#xa;                return tip;             &#xa;            }         &#xa;        };     &#xa;    } &#xa;};"/>
+                  </AuxValues>
+                </Component>
+              </SubComponents>
+            </Container>
           </SubComponents>
         </Container>
         <Component class="javax.swing.JButton" name="convertJButton">
@@ -412,7 +526,7 @@
                 <Font component="helpLabel" italic="true" property="font" relativeSize="true" size="0"/>
               </FontInfo>
             </Property>
-            <Property name="text" type="java.lang.String" value="Insert the required information and click Convert to convert the project to PRIDE XML."/>
+            <Property name="text" type="java.lang.String" value="Insert the required information (*) and click Convert to convert the project to PRIDE XML."/>
           </Properties>
         </Component>
         <Container class="javax.swing.JPanel" name="jPanel1">
@@ -456,12 +570,16 @@
           <SubComponents>
             <Component class="javax.swing.JLabel" name="jLabel9">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Folder:"/>
+                <Property name="text" type="java.lang.String" value="Folder*"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="outputFolderJTextField">
               <Properties>
                 <Property name="editable" type="boolean" value="false"/>
+                <Property name="toolTipText" type="java.lang.String" value="The folder where the PRIDE XML file will be saved"/>
+                <Property name="margin" type="java.awt.Insets" editor="org.netbeans.beaninfo.editors.InsetsEditor">
+                  <Insets value="[2, 4, 2, 2]"/>
+                </Property>
               </Properties>
             </Component>
             <Component class="javax.swing.JButton" name="browseOutputFolderJButton">

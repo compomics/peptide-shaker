@@ -1,0 +1,19 @@
+Name: Example Sample Set
+3
+Name: Example Sample Set
+#
+Accession: 9606
+CVLookup: NEWT
+Name: Homo sapiens (Human)
+Value: null
+
+Accession: BTO:0000763
+CVLookup: BTO
+Name: lung
+Value: null
+
+Accession: BTO:0000762
+CVLookup: BTO
+Name: lung cancer cell line
+Value: null
+
