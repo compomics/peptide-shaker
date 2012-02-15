@@ -4235,8 +4235,7 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     } else {
                         psmTableToolTips.set(3, "Mass Error (Da)");
                     }
-                    DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
-                    dm.fireTableDataChanged();
+                    
 
                     // enable the contextual export options
                     exportProteinsJButton.setEnabled(true);
@@ -4257,6 +4256,8 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
                     SwingUtilities.invokeLater(new Runnable() {
 
                         public void run() {
+                            DefaultTableModel dm = (DefaultTableModel) proteinTable.getModel();
+                            dm.fireTableDataChanged();
                             updateSelection();
                             proteinTable.requestFocus();
                         }
