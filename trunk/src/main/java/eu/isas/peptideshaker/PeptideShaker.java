@@ -203,19 +203,20 @@ public class PeptideShaker {
             waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Computing PSM probabilities.");
             psmMap.estimateProbabilities(waitingDialog);
-            waitingDialog.appendReport("Saving probabilities and building peptides and proteins.");
+            waitingDialog.appendReport("Saving probabilities, building peptides and proteins.");
             attachSpectrumProbabilitiesAndBuildPeptidesAndProteins(waitingDialog);
             waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Generating peptide map.");
-            fillPeptideMaps();
+            fillPeptideMaps(waitingDialog);
             peptideMap.cure();
             waitingDialog.appendReport("Computing peptide probabilities.");
             peptideMap.estimateProbabilities(waitingDialog);
             waitingDialog.appendReport("Saving peptide probabilities.");
             attachPeptideProbabilities(waitingDialog);
             waitingDialog.increaseProgressValue();
-            waitingDialog.appendReport("Computing protein probabilities.");
+            waitingDialog.appendReport("Generating protein map.");
             fillProteinMap(waitingDialog);
+            waitingDialog.appendReport("Computing protein probabilities.");
             proteinMap.estimateProbabilities(waitingDialog);
             waitingDialog.appendReport("Saving protein probabilities.");
             attachProteinProbabilities(waitingDialog);
@@ -378,7 +379,7 @@ public class PeptideShaker {
         peptideMap = new PeptideSpecificMap();
         proteinMap = new ProteinMap();
         attachSpectrumProbabilities();
-        fillPeptideMaps();
+        fillPeptideMaps(null);
         peptideMap.cure();
         peptideMap.estimateProbabilities(null);
         attachPeptideProbabilities();
@@ -1193,10 +1194,13 @@ public class PeptideShaker {
     /**
      * Fills the peptide specific map.
      */
-    private void fillPeptideMaps() throws Exception {
+    private void fillPeptideMaps(WaitingDialog waitingDialog) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
-
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+            waitingDialog.setMaxSecondaryProgressValue(identification.getPeptideIdentification().size());
+        }
         for (String peptideKey : identification.getPeptideIdentification()) {
             double probaScore = 1;
             PeptideMatch peptideMatch = identification.getPeptideMatch(peptideKey);
@@ -1209,6 +1213,12 @@ public class PeptideShaker {
             psParameter.setSecificMapKey(peptideMap.getKey(peptideMatch));
             identification.addMatchParameter(peptideKey, psParameter);
             peptideMap.addPoint(probaScore, peptideMatch);
+                        if (waitingDialog != null) {
+                waitingDialog.increaseSecondaryProgressValue();
+            }
+        }
+        if (waitingDialog != null) {
+            waitingDialog.setSecondaryProgressDialogIntermediate(true);
         }
     }
 

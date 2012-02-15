@@ -2830,11 +2830,11 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
         int line = spectrumFactory.getSpectrumTitles(fileSelected).indexOf(spectrumTitle);
 
-        spectrumTable.setRowSelectionInterval(line, line);
-        spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(line, 0, false));
-
-        spectrumSelectionChanged();
-
+        if (line > 0) {
+            spectrumTable.setRowSelectionInterval(line, line);
+            spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(line, 0, false));
+            spectrumSelectionChanged();
+        }
         // change the peptide shaker icon to a "waiting version"
         peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
     }

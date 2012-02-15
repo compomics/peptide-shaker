@@ -58,7 +58,7 @@
 	<enzyme>
 		<id> 7 </id>
 		<name> Pepsin A </name>
-		<aminoAcidBefore> </aminoAcidBefore>
+		<aminoAcidBefore> FL </aminoAcidBefore>
 		<restrictionBefore> </restrictionBefore>
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
@@ -154,7 +154,7 @@
 	<enzyme>
 		<id> 19 </id>
 		<name> Asp-N (DE) </name>
-		<aminoAcidBefore> </aminoAcidBefore>
+		<aminoAcidBefore> DE </aminoAcidBefore>
 		<restrictionBefore> </restrictionBefore>
 		<aminoAcidAfter> </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
@@ -162,10 +162,10 @@
 	<enzyme>
 		<id> 20 </id>
 		<name> Glu-C (DE) </name>
-		<aminoAcidBefore> </aminoAcidBefore>
+		<aminoAcidBefore> DE </aminoAcidBefore>
 		<restrictionBefore> </restrictionBefore>
 		<aminoAcidAfter> </aminoAcidAfter>
-		<restrictionAfter> </restrictionAfter>
+		<restrictionAfter> P </restrictionAfter>
 	</enzyme>
 	<enzyme>
 		<id> 21 </id>
@@ -180,7 +180,7 @@
 		<name> Thermolysin, no P rule </name>
 		<aminoAcidBefore> </aminoAcidBefore>
 		<restrictionBefore> </restrictionBefore>
-		<aminoAcidAfter> </aminoAcidAfter>
+		<aminoAcidAfter> LF </aminoAcidAfter>
 		<restrictionAfter> </restrictionAfter>
 	</enzyme>
 	<enzyme>
