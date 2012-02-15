@@ -1,0 +1,31 @@
+#instrument name
+Name: LCQ Duo
+
+#instrument source
+Accession: MS:1000073
+cvLookup: MS
+Name: Electrospray Ionization
+
+#instrument detector
+Accession: MS:1000111
+cvLookup: MS
+Name: Electron Multiplier Tube
+
+#analyzers
+1
+1
+Accession: MS:1000264
+CVLookup: MS
+Name: Ion Trap
+Value: null
+
+#processing methods
+1
+Accession: MS:1000035
+CVLookup: MS
+Name: Peak Processing
+Value: CentroidMassSpectrum
+
+#software
+Name: Xcalibur
+Version: 1.2 SP1

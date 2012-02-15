@@ -1,0 +1,46 @@
+#instrument name
+Name: QToF Global
+
+#instrument source
+Accession: MS:1000073
+cvLookup: MS
+Name: Electrospray Ionization
+
+#instrument detector
+Accession: MS:1000114
+cvLookup: MS
+Name: Microchannel Plate Detector
+
+#analyzers
+1
+2
+Accession: MS:1000081
+CVLookup: MS
+Name: Quadrupole
+Value: null
+
+Accession: MS:1000084
+CVLookup: MS
+Name: Time-of-flight
+Value: null
+
+#processing methods
+3
+Accession: MS:1000033
+CVLookup: MS
+Name: Deisotoping
+Value: true
+
+Accession: MS:1000034
+CVLookup: MS
+Name: Charge Deconvolution
+Value: true
+
+Accession: MS:1000035
+CVLookup: MS
+Name: Peak Picking
+Value: Centroid Mass Spectrum 
+
+#software
+Name: MassLynx
+Version: 4.0
