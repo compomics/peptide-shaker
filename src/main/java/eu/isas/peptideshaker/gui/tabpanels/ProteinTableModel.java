@@ -33,10 +33,6 @@ public class ProteinTableModel extends DefaultTableModel {
      */
     private Identification identification;
     /**
-     * The identification features generator.
-     */
-    private IdentificationFeaturesGenerator featuresGenerator;
-    /**
      * A list of ordered protein keys.
      */
     private ArrayList<String> proteinKeys = null;
@@ -50,8 +46,7 @@ public class ProteinTableModel extends DefaultTableModel {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
         if (identification != null) {
-            featuresGenerator = peptideShakerGUI.getIdentificationFeaturesGenerator();
-            proteinKeys = featuresGenerator.getSortedProteinKeys(null);
+            proteinKeys = peptideShakerGUI.getIdentificationFeaturesGenerator().getSortedProteinKeys(null);
         }
     }
     
@@ -134,7 +129,7 @@ public class ProteinTableModel extends DefaultTableModel {
                 case 3:
                     proteinKey = proteinKeys.get(row);
                     ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
-                    return featuresGenerator.addDatabaseLink(proteinMatch.getMainMatch());
+                    return peptideShakerGUI.getIdentificationFeaturesGenerator().addDatabaseLink(proteinMatch.getMainMatch());
                 case 4:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey);
@@ -147,22 +142,22 @@ public class ProteinTableModel extends DefaultTableModel {
                     return description;
                 case 5:
                     proteinKey = proteinKeys.get(row);
-                    double sequenceCoverage = 100 * featuresGenerator.getSequenceCoverage(proteinKey);
-                    double possibleCoverage = 100 * featuresGenerator.getObservableCoverage(proteinKey);
+                    double sequenceCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
+                    double possibleCoverage = 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getObservableCoverage(proteinKey);
                     return new XYDataPoint(sequenceCoverage, possibleCoverage - sequenceCoverage, true);
                 case 6:
                     proteinKey = proteinKeys.get(row);
-                    int nValidatedPeptides = featuresGenerator.getNValidatedPeptides(proteinKey);
+                    int nValidatedPeptides = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey);
                     proteinMatch = identification.getProteinMatch(proteinKey);
                     return new XYDataPoint(nValidatedPeptides, proteinMatch.getPeptideCount() - nValidatedPeptides, false);
                 case 7:
                     proteinKey = proteinKeys.get(row);
-                    int nValidatedSpectra = featuresGenerator.getNValidatedSpectra(proteinKey);
-                    int nSpectra = featuresGenerator.getNSpectra(proteinKey);
+                    int nValidatedSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey);
+                    int nSpectra = peptideShakerGUI.getIdentificationFeaturesGenerator().getNSpectra(proteinKey);
                     return new XYDataPoint(nValidatedSpectra, nSpectra - nValidatedSpectra, false);
                 case 8:
                     proteinKey = proteinKeys.get(row);
-                    return featuresGenerator.getSpectrumCounting(proteinKey);
+                    return peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey);
                 case 9:
                     proteinKey = proteinKeys.get(row);
                     proteinMatch = identification.getProteinMatch(proteinKey);

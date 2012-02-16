@@ -20,6 +20,7 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
@@ -43,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import javax.swing.JProgressBar;
 
 /**
  * This class will be responsible for the identification import and the
@@ -361,9 +363,10 @@ public class PeptideShaker {
             currentMap.getTargetDecoySeries().getFDRResults(currentResults);
         }
 
-        waitingDialog.setSecondaryProgressDialogIntermediate(true);
+        waitingDialog.setSecondaryProgressDialogIntermediate(false);
 
-        validateIdentifications();
+        validateIdentifications(waitingDialog.getSecondaryProgressBar());
+        waitingDialog.setSecondaryProgressDialogIntermediate(true);
     }
 
     /**
@@ -420,10 +423,16 @@ public class PeptideShaker {
     /**
      * This method will flag validated identifications.
      */
-    public void validateIdentifications() {
+    public void validateIdentifications(JProgressBar progressBar) {
 
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
         PSParameter psParameter = new PSParameter();
+
+        if (progressBar != null) {
+            progressBar.setMaximum(identification.getProteinIdentification().size()
+                    + identification.getPeptideIdentification().size()
+                    + identification.getSpectrumIdentification().size());
+        }
 
         double proteinThreshold = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getScoreLimit();
         for (String proteinKey : identification.getProteinIdentification()) {
@@ -432,6 +441,9 @@ public class PeptideShaker {
                 psParameter.setValidated(true);
             } else {
                 psParameter.setValidated(false);
+            }
+            if (progressBar != null) {
+                progressBar.setValue(progressBar.getValue()+1);
             }
         }
 
@@ -443,6 +455,9 @@ public class PeptideShaker {
             } else {
                 psParameter.setValidated(false);
             }
+            if (progressBar != null) {
+                progressBar.setValue(progressBar.getValue()+1);
+            }
         }
 
         for (String spectrumKey : identification.getSpectrumIdentification()) {
@@ -452,6 +467,9 @@ public class PeptideShaker {
                 psParameter.setValidated(true);
             } else {
                 psParameter.setValidated(false);
+            }
+            if (progressBar != null) {
+                progressBar.setValue(progressBar.getValue()+1);
             }
         }
     }
@@ -1213,7 +1231,7 @@ public class PeptideShaker {
             psParameter.setSecificMapKey(peptideMap.getKey(peptideMatch));
             identification.addMatchParameter(peptideKey, psParameter);
             peptideMap.addPoint(probaScore, peptideMatch);
-                        if (waitingDialog != null) {
+            if (waitingDialog != null) {
                 waitingDialog.increaseSecondaryProgressValue();
             }
         }

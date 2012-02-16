@@ -17,6 +17,7 @@ import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
+import java.awt.Toolkit;
 import javax.swing.RowFilter.ComparisonType;
 
 /**
@@ -59,6 +60,9 @@ public class StarHider {
 
             @Override
             public void run() {
+                    // change the peptide shaker icon to a "waiting version"
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+                    
                 Identification identification = peptideShakerGUI.getIdentification();
                 progressDialog.setIndeterminate(false);
                 progressDialog.setMax(identification.getProteinIdentification().size());
@@ -104,6 +108,9 @@ public class StarHider {
                 }
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
+
+                    // change the peptide shaker icon back to the default version
+                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
             }
         }.start();
 
