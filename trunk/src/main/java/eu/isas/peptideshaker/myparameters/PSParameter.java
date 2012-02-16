@@ -54,9 +54,8 @@ public class PSParameter implements UrParameter {
     private boolean hidden = false;
     /**
      * Boolean indicating whether this is a starred match
-     * @TODO would be nice to change that into a color
      */
-    private boolean starred = false;
+    private boolean starred = false; // @TODO would be nice to change this into a color
     /**
      * the key in the corresponding specific map
      */
