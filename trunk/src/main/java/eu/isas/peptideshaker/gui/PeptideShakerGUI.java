@@ -1713,6 +1713,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 if (updateNeeded.get(OVER_VIEW_TAB_INDEX)) {
                     overviewPanel.displayResults();
                 } else {
+                    overviewPanel.updateProteinTable(); //@TODO is this not done by default?
                     overviewPanel.updateSelection();
                 }
             } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
@@ -3487,38 +3488,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         loadEnzymes();
         resetPtmFactory();
         setDefaultPreferences();
-    }
-
-    /**
-     * Reloads the data.
-     *
-     * @param reloadValidationTab
-     */
-    public void reloadData(boolean reloadValidationTab) {
-
-        dataSaved = false;
-
-        // clear the selections
-        resetSelectedItems();
-
-        // set up the tabs/panels
-        setUpPanels(reloadValidationTab);
-
-        // repaint the panels
-        repaintPanels();
-
-        // display the results
-        displayResults();
-
-        // invoke later to give time for components to update
-        SwingUtilities.invokeLater(new Runnable() {
-
-            public void run() {
-                overviewPanel.updateSeparators();
-                overviewJPanel.revalidate();
-                overviewJPanel.repaint();
-            }
-        });
     }
 
     /**

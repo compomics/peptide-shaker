@@ -345,7 +345,6 @@ public class IdentificationFeaturesGenerator {
         ProteinMatch testMatch, proteinMatch = identification.getProteinMatch(proteinMatchKey);
         boolean debug = false;
         try {
-            Writer proteinWriter = new BufferedWriter(new FileWriter(new File("actin.txt")));
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
             if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF) {
 
@@ -353,15 +352,6 @@ public class IdentificationFeaturesGenerator {
 
                 if (currentProtein == null) {
                     return 0.0;
-                }
-                if (proteinMatchKey.equals("P60709")
-                        || proteinMatchKey.equals("P63261")
-                        || proteinMatchKey.equals("P62736 P63267 P68032 P68133")) {
-                    debug = true;
-                }
-
-                if (debug) {
-                    proteinWriter.write("Protein key\tPeptide\tnProteins\tnSpectra\tnValidated Spectra\tresult\tproteins\n");
                 }
                 result = 0;
                 PeptideMatch peptideMatch;
@@ -373,16 +363,17 @@ public class IdentificationFeaturesGenerator {
                         if (identification.getProteinMap().get(protein) != null) {
                             for (String proteinKey : identification.getProteinMap().get(protein)) {
                                 if (!possibleProteinMatches.contains(proteinKey)) {
-                                    testMatch = identification.getProteinMatch(proteinKey);
-                                    if (testMatch.getPeptideMatches().contains(peptideKey)) {
-                                        possibleProteinMatches.add(proteinKey);
+                                    try {
+                                        testMatch = identification.getProteinMatch(proteinKey);
+                                        if (testMatch.getPeptideMatches().contains(peptideKey)) {
+                                            possibleProteinMatches.add(proteinKey);
+                                        }
+                                    } catch (Exception e) {
+                                        // protein deleted due to protein inference issue and not deleted from the map in versions earlier than 0.14.6 -> ignore error
                                     }
                                 }
                             }
                         }
-                    }
-                    if (debug) {
-                        proteinWriter.write(proteinMatchKey + "\t" + peptideKey + "\t" + possibleProteinMatches.size() + "\t" + peptideMatch.getSpectrumCount() + "\t");
                     }
                     if (possibleProteinMatches.isEmpty()) {
                         System.err.println("No protein found for the given peptide (" + peptideKey + ") when estimating NSAF of " + currentProtein + ".");
@@ -396,20 +387,10 @@ public class IdentificationFeaturesGenerator {
                             cpt++;
                         }
                     }
-                    if (debug) {
-                        proteinWriter.write(cpt + "\t" + result + "\t");
-                        for (String protein : possibleProteinMatches) {
-                            proteinWriter.write(protein + " ");
-                        }
-                        proteinWriter.write("\n");
-                    }
                 }
 
-                if (debug) {
-                    proteinWriter.close();
-                }
                 if (peptideShakerGUI.getSearchParameters().enzymeCleaves()) {
-                return result / currentProtein.getObservableLength(enyzme, peptideShakerGUI.getIdFilter().getMaxPepLength());
+                    return result / currentProtein.getObservableLength(enyzme, peptideShakerGUI.getIdFilter().getMaxPepLength());
                 } else {
                     return result / currentProtein.getLength();
                 }

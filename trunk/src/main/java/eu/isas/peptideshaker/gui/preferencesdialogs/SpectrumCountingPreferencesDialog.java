@@ -219,8 +219,8 @@ public class SpectrumCountingPreferencesDialog extends javax.swing.JDialog {
         spectrumCountingPreferences.setValidatedHits(validatedCheck.isSelected());
         peptideShakerGUI.setSpectrumCountingPreferences(spectrumCountingPreferences);
         peptideShakerGUI.resetFeatureGenerator();
-        peptideShakerGUI.reloadData(true); // @TODO: maybe there is a simpler way to update this column?
-        peptideShakerGUI.initiateDisplay();
+        peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
+        peptideShakerGUI.updateTabbedPanes();
         peptideShakerGUI.setDataSaved(false);
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
