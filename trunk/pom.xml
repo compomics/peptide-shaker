@@ -406,6 +406,12 @@
             <version>2012.01</version>
         </dependency>
         
+        <dependency>
+            <groupId>no.uib</groupId>
+            <artifactId>ols-dialog</artifactId>
+            <version>3.3.2</version>
+        </dependency>
+        
     </dependencies>
 
 
