@@ -2565,6 +2565,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                                     proteinInferenceType,
                                     peptideShakerGUI.getIdentificationFeaturesGenerator().getColoredPeptideSequence(peptideKey, true),
                                     peptideStart,
+                                    false,
                                     probabilities.isValidated()
                                 });
 
