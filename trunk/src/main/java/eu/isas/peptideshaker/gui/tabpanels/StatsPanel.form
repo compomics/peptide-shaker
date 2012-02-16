@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JPanelFormInfo">
   <Properties>
@@ -44,10 +44,10 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="groupListJPanel" alignment="0" max="32767" attributes="1"/>
+              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                  <Component id="parametersJPanel" alignment="0" max="32767" attributes="1"/>
                   <Component id="idSummaryJPanel" alignment="0" max="32767" attributes="1"/>
-                  <Component id="parametersJPanel" alignment="0" min="0" max="32767" attributes="1"/>
+                  <Component id="groupListJPanel" max="32767" attributes="1"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="optimizationJPanel" max="32767" attributes="0"/>
@@ -81,7 +81,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="groupSelectionLayeredPane" pref="190" max="32767" attributes="0"/>
+                  <Component id="groupSelectionLayeredPane" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -171,118 +171,115 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" attributes="0">
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="316" max="32767" attributes="0"/>
-                          <Component id="nMaxHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
+                      <Group type="102" attributes="0">
                           <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel1" alignment="0" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel10" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel3" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel10" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="nValidatedTxt" alignment="0" max="32767" attributes="1"/>
-                              <Component id="nFPTxt" alignment="1" max="32767" attributes="1"/>
-                              <Component id="nTPlTxt" alignment="1" max="32767" attributes="1"/>
-                              <Component id="nTotalTxt" min="-2" pref="93" max="-2" attributes="1"/>
+                              <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                  <Component id="nValidatedTxt" alignment="0" min="-2" pref="93" max="-2" attributes="1"/>
+                                  <Component id="nTotalTxt" min="-2" pref="93" max="-2" attributes="1"/>
+                              </Group>
+                              <Component id="nFPTxt" min="-2" pref="93" max="-2" attributes="1"/>
+                              <Component id="nTPlTxt" min="-2" pref="93" max="-2" attributes="1"/>
                           </Group>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="falsePositivesHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="validatedHitsHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                              <Component id="truePositivesHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                               <Component id="totalTPHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="falsePositivesHelpJButton" alignment="0" min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="truePositivesHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace pref="27" max="32767" attributes="0"/>
+                          <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="jLabel23" alignment="0" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel20" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel13" min="-2" max="-2" attributes="0"/>
-                              <Component id="jLabel36" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel13" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jLabel36" alignment="0" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="nMaxTxt" pref="90" max="32767" attributes="3"/>
-                              <Component id="confidenceTxt" alignment="0" max="32767" attributes="3"/>
-                              <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                                  <Component id="fnrTxt" max="32767" attributes="3"/>
-                                  <Component id="fdrTxt" alignment="1" pref="90" max="32767" attributes="3"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Group type="102" attributes="0">
+                                  <Component id="fnrTxt" min="-2" pref="90" max="-2" attributes="3"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="fnrHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" attributes="0">
+                                  <Component id="fdrTxt" min="-2" pref="90" max="-2" attributes="3"/>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Component id="fdrHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" attributes="0">
+                                  <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                      <Component id="nMaxTxt" min="-2" pref="90" max="-2" attributes="3"/>
+                                      <Component id="confidenceTxt" alignment="0" min="-2" pref="90" max="-2" attributes="3"/>
+                                  </Group>
+                                  <EmptySpace max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="confidenceHelpJButton" alignment="0" min="-2" pref="23" max="-2" attributes="0"/>
+                                      <Component id="nMaxHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
+                                  </Group>
                               </Group>
                           </Group>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="fdrHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                              <Component id="fnrHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                              <Component id="confidenceHelpJButton" alignment="0" min="-2" pref="23" max="-2" attributes="0"/>
-                          </Group>
                       </Group>
-                      <Component id="jLabel7" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" attributes="0">
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="2" attributes="0">
-                              <Component id="nTotalTxt" alignment="2" min="-2" max="-2" attributes="1"/>
-                              <Component id="totalTPHelpJButton" alignment="2" min="-2" max="-2" attributes="1"/>
-                              <Component id="jLabel20" alignment="2" min="-2" max="-2" attributes="0"/>
-                              <Component id="nMaxTxt" alignment="2" min="-2" max="-2" attributes="1"/>
-                              <Component id="jLabel2" alignment="2" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Component id="nMaxHelpJButton" pref="89" max="32767" attributes="1"/>
-                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="jLabel2" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="nTotalTxt" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="totalTPHelpJButton" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="jLabel20" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="nMaxTxt" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="nMaxHelpJButton" alignment="2" min="-2" max="-2" attributes="1"/>
+                  </Group>
+                  <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
                       <Component id="jLabel1" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="nValidatedTxt" alignment="2" min="-2" max="-2" attributes="1"/>
-                      <Component id="validatedHitsHelpJButton" alignment="2" pref="31" max="32767" attributes="1"/>
+                      <Component id="nValidatedTxt" linkSize="21" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="validatedHitsHelpJButton" linkSize="21" alignment="2" min="-2" pref="17" max="-2" attributes="1"/>
                       <Component id="jLabel23" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="confidenceTxt" alignment="2" min="-2" max="-2" attributes="1"/>
-                      <Component id="confidenceHelpJButton" alignment="2" pref="31" max="32767" attributes="1"/>
+                      <Component id="confidenceTxt" linkSize="21" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="confidenceHelpJButton" linkSize="21" alignment="2" min="-2" pref="17" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="2" attributes="0">
-                      <Component id="nFPTxt" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="falsePositivesHelpJButton" alignment="2" pref="31" max="32767" attributes="1"/>
-                      <Component id="fdrTxt" alignment="2" min="-2" max="-2" attributes="0"/>
-                      <Component id="fdrHelpJButton" alignment="2" min="-2" pref="25" max="-2" attributes="1"/>
-                      <Component id="jLabel13" alignment="2" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel3" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="nFPTxt" linkSize="21" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="falsePositivesHelpJButton" linkSize="21" alignment="2" min="-2" pref="17" max="-2" attributes="1"/>
+                      <Component id="jLabel13" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="fdrTxt" linkSize="21" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="fdrHelpJButton" linkSize="21" alignment="2" min="-2" pref="15" max="-2" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="truePositivesHelpJButton" alignment="2" pref="32" max="32767" attributes="1"/>
-                      <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                          <Component id="nTPlTxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="fnrHelpJButton" alignment="0" min="0" pref="0" max="32767" attributes="1"/>
-                          <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                              <Component id="fnrTxt" alignment="3" max="32767" attributes="1"/>
-                              <Component id="jLabel36" alignment="3" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                      </Group>
+                  <Group type="103" groupAlignment="2" attributes="0">
+                      <Component id="jLabel10" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="nTPlTxt" linkSize="21" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="truePositivesHelpJButton" linkSize="21" alignment="2" min="-2" pref="20" max="-2" attributes="1"/>
+                      <Component id="jLabel36" alignment="2" min="-2" max="-2" attributes="0"/>
+                      <Component id="fnrTxt" linkSize="21" alignment="2" min="-2" max="-2" attributes="1"/>
+                      <Component id="fnrHelpJButton" linkSize="21" alignment="2" min="-2" pref="16" max="-2" attributes="1"/>
                   </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -615,7 +612,7 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="optimizationTabbedPane" pref="1316" max="32767" attributes="2"/>
+                  <Component id="optimizationTabbedPane" pref="0" max="32767" attributes="2"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -623,7 +620,7 @@
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="1" attributes="0">
-                  <Component id="optimizationTabbedPane" pref="496" max="32767" attributes="0"/>
+                  <Component id="optimizationTabbedPane" pref="516" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
@@ -658,12 +655,12 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="estimatorsPlotSplitPane" alignment="0" pref="1311" max="32767" attributes="0"/>
+                      <Component id="estimatorsPlotSplitPane" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="estimatorsPlotSplitPane" alignment="0" pref="468" max="32767" attributes="0"/>
+                      <Component id="estimatorsPlotSplitPane" alignment="0" pref="488" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -699,11 +696,11 @@
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="pepPlotLayeredPane" alignment="0" pref="643" max="32767" attributes="0"/>
+                                      <Component id="pepPlotLayeredPane" alignment="0" pref="503" max="32767" attributes="0"/>
                                       <Group type="102" alignment="1" attributes="0">
                                           <Component id="jLabel30" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="sensitivitySlider1" pref="502" max="32767" attributes="2"/>
+                                          <Component id="sensitivitySlider1" pref="362" max="32767" attributes="2"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="jLabel27" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -716,7 +713,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="pepPlotLayeredPane" pref="417" max="32767" attributes="0"/>
+                                  <Component id="pepPlotLayeredPane" pref="437" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="2" attributes="0">
                                       <Component id="jLabel30" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -844,11 +841,11 @@
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="1" attributes="0">
-                                      <Component id="fdrsPlotLayeredPane" alignment="0" pref="628" max="32767" attributes="0"/>
+                                      <Component id="fdrsPlotLayeredPane" alignment="0" pref="503" max="32767" attributes="0"/>
                                       <Group type="102" alignment="1" attributes="0">
                                           <Component id="jLabel34" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="sensitivitySlider2" pref="487" max="32767" attributes="2"/>
+                                          <Component id="sensitivitySlider2" pref="362" max="32767" attributes="2"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="jLabel35" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -861,7 +858,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="fdrsPlotLayeredPane" pref="417" max="32767" attributes="0"/>
+                                  <Component id="fdrsPlotLayeredPane" pref="437" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="2" attributes="0">
                                       <Component id="sensitivitySlider2" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -991,12 +988,12 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="leftPlotSplitPane" alignment="0" pref="1311" max="32767" attributes="0"/>
+                      <Component id="leftPlotSplitPane" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="leftPlotSplitPane" alignment="0" pref="468" max="32767" attributes="0"/>
+                      <Component id="leftPlotSplitPane" alignment="0" pref="488" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -1032,11 +1029,11 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
-                                      <Component id="confidencePlotLayeredPane" alignment="0" pref="551" max="32767" attributes="0"/>
+                                      <Component id="confidencePlotLayeredPane" alignment="0" pref="419" max="32767" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Component id="jLabel25" min="-2" max="-2" attributes="0"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                                          <Component id="confidenceSlider" pref="439" max="32767" attributes="2"/>
+                                          <Component id="confidenceSlider" pref="307" max="32767" attributes="2"/>
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="jLabel26" min="-2" max="-2" attributes="0"/>
                                       </Group>
@@ -1049,7 +1046,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="1" attributes="0">
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="confidencePlotLayeredPane" pref="417" max="32767" attributes="0"/>
+                                  <Component id="confidencePlotLayeredPane" pref="437" max="32767" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="2" attributes="0">
                                       <Component id="confidenceSlider" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -1197,11 +1194,11 @@
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" attributes="0">
-                                          <Component id="fdrPlotLayeredPane" alignment="0" pref="349" max="32767" attributes="0"/>
+                                          <Component id="fdrPlotLayeredPane" alignment="0" pref="283" max="32767" attributes="0"/>
                                           <Group type="102" alignment="1" attributes="0">
                                               <Component id="jLabel28" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
-                                              <Component id="fdrSlider1" pref="237" max="32767" attributes="0"/>
+                                              <Component id="fdrSlider1" pref="171" max="32767" attributes="0"/>
                                               <EmptySpace type="separate" max="-2" attributes="0"/>
                                               <Component id="jLabel29" min="-2" max="-2" attributes="0"/>
                                           </Group>
@@ -1214,7 +1211,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="fdrPlotLayeredPane" pref="417" max="32767" attributes="0"/>
+                                      <Component id="fdrPlotLayeredPane" pref="437" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="2" attributes="0">
                                           <Component id="fdrSlider1" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -1342,11 +1339,11 @@
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="1" attributes="0">
-                                          <Component id="benefitPlotLayeredPane" alignment="0" pref="351" max="32767" attributes="0"/>
+                                          <Component id="benefitPlotLayeredPane" alignment="0" pref="284" max="32767" attributes="0"/>
                                           <Group type="102" alignment="1" attributes="0">
                                               <Component id="jLabel32" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
-                                              <Component id="fdrSlider2" pref="239" max="32767" attributes="0"/>
+                                              <Component id="fdrSlider2" pref="172" max="32767" attributes="0"/>
                                               <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                                               <Component id="jLabel33" min="-2" max="-2" attributes="0"/>
                                           </Group>
@@ -1359,7 +1356,7 @@
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="benefitPlotLayeredPane" pref="417" max="32767" attributes="0"/>
+                                      <Component id="benefitPlotLayeredPane" pref="437" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="2" attributes="0">
                                           <Component id="jLabel32" alignment="2" min="-2" max="-2" attributes="0"/>
@@ -1508,11 +1505,13 @@
                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="thresholdInput" min="-2" pref="90" max="-2" attributes="3"/>
+                                          <Component id="thresholdInput" linkSize="20" min="-2" pref="90" max="-2" attributes="3"/>
                                           <EmptySpace max="-2" attributes="0"/>
-                                          <Component id="validateButton" linkSize="20" pref="110" max="32767" attributes="1"/>
+                                          <Component id="validateButton" linkSize="20" min="-2" pref="110" max="-2" attributes="1"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="thresholdHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="thresholdTypeCmb" linkSize="20" alignment="0" pref="110" max="32767" attributes="1"/>
+                                      <Component id="thresholdTypeCmb" linkSize="20" alignment="0" min="-2" pref="110" max="-2" attributes="1"/>
                                   </Group>
                               </Group>
                               <Group type="102" alignment="0" attributes="0">
@@ -1523,20 +1522,19 @@
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Group type="102" alignment="0" attributes="0">
-                                          <Component id="windowTxt" min="-2" pref="90" max="-2" attributes="1"/>
+                                          <Component id="windowTxt" linkSize="20" min="-2" pref="90" max="-2" attributes="1"/>
                                           <EmptySpace max="-2" attributes="0"/>
                                           <Component id="applyButton" linkSize="20" min="-2" pref="110" max="-2" attributes="1"/>
+                                          <EmptySpace max="-2" attributes="0"/>
+                                          <Component id="estimatorHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="fdrCombo1" linkSize="20" alignment="0" pref="110" max="32767" attributes="3"/>
+                                      <Component id="fdrCombo1" linkSize="20" alignment="0" min="-2" max="-2" attributes="3"/>
                                   </Group>
                               </Group>
                           </Group>
-                          <EmptySpace min="23" pref="23" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="364" max="32767" attributes="0"/>
-                  <Component id="thresholdHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -1544,20 +1542,20 @@
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="1" attributes="0">
-                      <Component id="thresholdHelpJButton" alignment="1" max="32767" attributes="1"/>
-                      <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="thresholdTypeCmb" alignment="3" pref="25" max="32767" attributes="1"/>
+                      <Component id="thresholdTypeCmb" alignment="3" max="32767" attributes="1"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="validateButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="thresholdInput" alignment="3" pref="25" max="32767" attributes="1"/>
-                      <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="thresholdHelpJButton" max="32767" attributes="1"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="validateButton" alignment="0" max="32767" attributes="0"/>
+                          <Component id="thresholdInput" alignment="3" max="32767" attributes="1"/>
+                          <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace min="-2" pref="11" max="-2" attributes="0"/>
                   <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
@@ -1571,8 +1569,9 @@
                       <Component id="applyButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="windowTxt" alignment="3" max="32767" attributes="1"/>
                       <Component id="jLabel22" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="estimatorHelpJButton" alignment="1" max="32767" attributes="1"/>
                   </Group>
-                  <EmptySpace min="-2" pref="34" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -1718,6 +1717,27 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Type:"/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JButton" name="estimatorHelpJButton">
+          <Properties>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help_no_frame_grey.png"/>
+            </Property>
+            <Property name="toolTipText" type="java.lang.String" value="Help"/>
+            <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
+              <Border info="null"/>
+            </Property>
+            <Property name="borderPainted" type="boolean" value="false"/>
+            <Property name="contentAreaFilled" type="boolean" value="false"/>
+            <Property name="rolloverIcon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/icons/help_no_frame.png"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="mouseEntered" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="estimatorHelpJButtonMouseEntered"/>
+            <EventHandler event="mouseExited" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="estimatorHelpJButtonMouseExited"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="estimatorHelpJButtonActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
