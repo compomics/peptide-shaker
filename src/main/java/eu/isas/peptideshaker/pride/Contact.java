@@ -4,7 +4,7 @@ import java.io.*;
 
 /**
  * An object for storing Contact details.
- * 
+ *
  * @author Harald Barsnes
  */
 public class Contact {
@@ -24,10 +24,10 @@ public class Contact {
 
     /**
      * Create a new Contact objetct.
-     * 
+     *
      * @param name
      * @param eMail
-     * @param institution 
+     * @param institution
      */
     public Contact(String name, String eMail, String institution) {
         this.name = name;
@@ -37,8 +37,8 @@ public class Contact {
 
     /**
      * Read a contact from file.
-     * 
-     * @param contactFile 
+     *
+     * @param contactFile
      */
     public Contact(File contactFile) {
         try {
@@ -60,6 +60,38 @@ public class Contact {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Save the contact to file.
+     * 
+     * @param contactFile
+     * @throws IOException 
+     */
+    public void saveAsFile(File contactFile) throws IOException {
+
+        String tempInstitution = institution.trim();
+        tempInstitution = tempInstitution.replaceAll("\n", ", ");
+        tempInstitution = tempInstitution.replaceAll(" , ", "");
+
+        while (tempInstitution.lastIndexOf(",,") != -1) {
+            tempInstitution = tempInstitution.replaceAll(",,", ",");
+        }
+
+        if (tempInstitution.endsWith(",")) {
+            tempInstitution = tempInstitution.substring(0, tempInstitution.length() - 1);
+        }
+
+
+        FileWriter r = new FileWriter(contactFile);
+        BufferedWriter bw = new BufferedWriter(r);
+
+        bw.write("Name: " + name + "\n");
+        bw.write("E-mail: " + eMail + "\n");
+        bw.write("Institution: " + tempInstitution + "\n");
+
+        bw.close();
+        r.close();
     }
 
     /**

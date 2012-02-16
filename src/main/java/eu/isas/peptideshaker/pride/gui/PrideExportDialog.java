@@ -5,6 +5,7 @@ import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.pride.Contact;
 import eu.isas.peptideshaker.pride.Reference;
+import eu.isas.peptideshaker.pride.Sample;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.*;
@@ -39,13 +40,13 @@ public class PrideExportDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, modal);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
-        
+
         referenceTableColumnToolTips = new Vector();
         referenceTableColumnToolTips.add(null);
         referenceTableColumnToolTips.add("The reference tag");
         referenceTableColumnToolTips.add("PubMed ID");
         referenceTableColumnToolTips.add("Digital Object Identifier");
-        
+
         referencesJScrollPane.getViewport().setOpaque(false);
         referencesJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         referencesJTable.getTableHeader().setReorderingAllowed(false);
@@ -79,21 +80,24 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
     /**
      * Insert the contact, sample, protocol and instrument options.
-     * 
-     * @param optionsPath the path to the option files, e.g., conf/pride/contacts
+     *
+     * @param optionsPath the path to the option files, e.g.,
+     * conf/pride/contacts
      * @param fileEnding the file ending, e.g., .con
-     * @param selectText the text to use for the select item, e.g., --- Select a Contact ---
-     * @param insertNewText the text to use for the new item, e.g., Create a New Contact...
+     * @param selectText the text to use for the select item, e.g., --- Select a
+     * Contact ---
+     * @param insertNewText the text to use for the new item, e.g., Create a New
+     * Contact...
      * @param optionComboBox the combo box to add the options to
      */
     private void insertOptions(String optionsPath, String fileEnding, String selectText, String insertNewText, JComboBox optionComboBox) {
 
         File optionFolder = new File(peptideShakerGUI.getJarFilePath(), optionsPath);
-        
+
         if (!optionFolder.exists()) {
             optionFolder.mkdir();
         }
-        
+
         File[] optionFiles = optionFolder.listFiles();
         Vector optionNames = new Vector();
 
@@ -311,6 +315,11 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
         editSampleJButton.setText("Edit");
         editSampleJButton.setEnabled(false);
+        editSampleJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editSampleJButtonActionPerformed(evt);
+            }
+        });
 
         jLabel7.setText("Protocol*");
 
@@ -637,17 +646,17 @@ public class PrideExportDialog extends javax.swing.JDialog {
             peptideShakerGUI.setLastSelectedFolder(path);
             outputFolderJTextField.setText(path);
         }
-        
+
         validateInput();
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_browseOutputFolderJButtonActionPerformed
 
     /**
-     * Enable/disable the edit contacts button and open the new contact dialog 
+     * Enable/disable the edit contacts button and open the new contact dialog
      * if the user selected to add a new contact.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void contactsJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contactsJComboBoxActionPerformed
         if (contactsJComboBox.getSelectedIndex() == 0) {
@@ -659,15 +668,15 @@ public class PrideExportDialog extends javax.swing.JDialog {
         } else {
             editContactJButton.setEnabled(true);
         }
-        
+
         validateInput();
     }//GEN-LAST:event_contactsJComboBoxActionPerformed
 
     /**
-     * Enable/disable the edit sample button and open the new sample dialog 
-     * if the user selected to add a new sample.
-     * 
-     * @param evt 
+     * Enable/disable the edit sample button and open the new sample dialog if
+     * the user selected to add a new sample.
+     *
+     * @param evt
      */
     private void sampleJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleJComboBoxActionPerformed
         if (sampleJComboBox.getSelectedIndex() == 0) {
@@ -675,19 +684,19 @@ public class PrideExportDialog extends javax.swing.JDialog {
         } else if (sampleJComboBox.getSelectedIndex() == sampleJComboBox.getItemCount() - 1) {
             editSampleJButton.setEnabled(false);
             sampleJComboBox.setSelectedIndex(0);
-            // open new sample dialog
+            new NewSampleDialog(this, true);
         } else {
             editSampleJButton.setEnabled(true);
         }
-        
+
         validateInput();
     }//GEN-LAST:event_sampleJComboBoxActionPerformed
 
     /**
-     * Enable/disable the edit protcol button and open the new protcol dialog 
-     * if the user selected to add a new protcol.
-     * 
-     * @param evt 
+     * Enable/disable the edit protcol button and open the new protcol dialog if
+     * the user selected to add a new protcol.
+     *
+     * @param evt
      */
     private void protocolJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_protocolJComboBoxActionPerformed
         if (protocolJComboBox.getSelectedIndex() == 0) {
@@ -699,15 +708,15 @@ public class PrideExportDialog extends javax.swing.JDialog {
         } else {
             editProtocolJButton.setEnabled(true);
         }
-        
+
         validateInput();
     }//GEN-LAST:event_protocolJComboBoxActionPerformed
 
     /**
-     * Enable/disable the edit instrument button and open the new instrument dialog 
-     * if the user selected to add a new instrument.
-     * 
-     * @param evt 
+     * Enable/disable the edit instrument button and open the new instrument
+     * dialog if the user selected to add a new instrument.
+     *
+     * @param evt
      */
     private void instrumentJComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_instrumentJComboBoxActionPerformed
         if (instrumentJComboBox.getSelectedIndex() == 0) {
@@ -719,33 +728,33 @@ public class PrideExportDialog extends javax.swing.JDialog {
         } else {
             editInstrumentJButton.setEnabled(true);
         }
-        
+
         validateInput();
     }//GEN-LAST:event_instrumentJComboBoxActionPerformed
 
     /**
-     * @see #validateInput() 
+     * @see #validateInput()
      */
     private void titleJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_titleJTextFieldKeyReleased
         validateInput();
     }//GEN-LAST:event_titleJTextFieldKeyReleased
 
     /**
-     * @see #validateInput() 
+     * @see #validateInput()
      */
     private void labelJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_labelJTextFieldKeyReleased
         validateInput();
     }//GEN-LAST:event_labelJTextFieldKeyReleased
 
     /**
-     * @see #validateInput() 
+     * @see #validateInput()
      */
     private void projectJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_projectJTextFieldKeyReleased
         validateInput();
     }//GEN-LAST:event_projectJTextFieldKeyReleased
 
     /**
-     * @see #validateInput() 
+     * @see #validateInput()
      */
     private void descriptionJTextAreaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_descriptionJTextAreaKeyReleased
         validateInput();
@@ -753,7 +762,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
     /**
      * Open a new NewReferenceDialog.
-     * 
+     *
      * @param evt
      */
     private void addReferencesJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addReferencesJButtonActionPerformed
@@ -762,17 +771,17 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
     /**
      * Opens a NewReferenceDialog or a popup menu when right clicking.
-     * 
+     *
      * @param evt
      */
     private void referencesJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_referencesJTableMouseClicked
 
         if (evt.getButton() == 1 && evt.getClickCount() == 2) {
-            
+
             new NewReferenceDialog(this, true, new Reference(
                     (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 1),
                     (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 2),
-                    (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 3)), 
+                    (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 3)),
                     referencesJTable.getSelectedRow());
 
         } else if (evt.getButton() == 3) {
@@ -811,7 +820,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
     /**
      * Deletes the selected reference.
-     * 
+     *
      * @param evt
      */
     private void referencesJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_referencesJTableKeyReleased
@@ -822,21 +831,21 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
     /**
      * Opens a NewReferenceDialog.
-     * 
+     *
      * @param evt
      */
     private void refEditJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refEditJMenuItemActionPerformed
         new NewReferenceDialog(this, true, new Reference(
-                    (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 1),
-                    (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 2),
-                    (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 3)), 
-                    referencesJTable.getSelectedRow());
+                (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 1),
+                (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 2),
+                (String) referencesJTable.getValueAt(referencesJTable.getSelectedRow(), 3)),
+                referencesJTable.getSelectedRow());
     }//GEN-LAST:event_refEditJMenuItemActionPerformed
 
     /**
      * Moves the selected reference up in the list.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void refMoveUpJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refMoveUpJMenuItemActionPerformed
         int selectedRow = referencesJTable.getSelectedRow();
@@ -859,8 +868,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
     /**
      * Moves the selected reference down in the list.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void refMoveDownJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refMoveDownJMenuItemActionPerformed
         int selectedRow = referencesJTable.getSelectedRow();
@@ -883,8 +892,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
     /**
      * Deletes the selected reference.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void refDeleteSelectedRowJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refDeleteSelectedRowJMenuItemActionPerformed
         if (referencesJTable.getSelectedRow() != -1) {
@@ -907,19 +916,33 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
     /**
      * Opens a NewContactDialog where the selected contact can be edited.
-     * 
-     * @param evt  
+     *
+     * @param evt
      */
     private void editContactJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editContactJButtonActionPerformed
-        
+
         // get the selected contact details
         String selectedContact = (String) contactsJComboBox.getSelectedItem();
         File contactsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/contacts");
         Contact tempContact = new Contact(new File(contactsFolder, selectedContact + ".con"));
-        
+
         new NewContactDialog(this, true, tempContact);
     }//GEN-LAST:event_editContactJButtonActionPerformed
 
+    /**
+     * Edit the selected sample.
+     * 
+     * @param evt 
+     */
+    private void editSampleJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSampleJButtonActionPerformed
+
+        // get the selected sample details
+        String selectedSample = (String) sampleJComboBox.getSelectedItem();
+        File samplesFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/samples");
+        Sample tempSample = new Sample(new File(samplesFolder, selectedSample + ".sam"));
+
+        new NewSampleDialog(this, true, tempSample);
+    }//GEN-LAST:event_editSampleJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addReferencesJButton;
     private javax.swing.JPanel backgroundJPanel;
@@ -965,20 +988,20 @@ public class PrideExportDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Validates that the required input has been inserted and enables or 
+     * Validates that the required input has been inserted and enables or
      * disables the Convert button.
      */
     private void validateInput() {
-        
+
         boolean inputValid = true;
-        
-        if (titleJTextField.getText().length() == 0 
+
+        if (titleJTextField.getText().length() == 0
                 || labelJTextField.getText().length() == 0
                 || projectJTextField.getText().length() == 0
                 || descriptionJTextArea.getText().length() == 0) {
             inputValid = false;
         }
-        
+
         if ((contactsJComboBox.getSelectedIndex() == 0 || contactsJComboBox.getSelectedIndex() == contactsJComboBox.getItemCount() - 1)
                 || (sampleJComboBox.getSelectedIndex() == 0 || sampleJComboBox.getSelectedIndex() == sampleJComboBox.getItemCount() - 1)
                 || (protocolJComboBox.getSelectedIndex() == 0 || protocolJComboBox.getSelectedIndex() == protocolJComboBox.getItemCount() - 1)
@@ -989,12 +1012,12 @@ public class PrideExportDialog extends javax.swing.JDialog {
         if (!new File(outputFolderJTextField.getText()).exists()) {
             inputValid = false;
         }
-        
+
         convertJButton.setEnabled(inputValid);
     }
-    
+
     /**
-     * Fixes the indices in the reference table so that they are in accending 
+     * Fixes the indices in the reference table so that they are in accending
      * order starting from one.
      */
     private void fixReferenceIndices() {
@@ -1002,77 +1025,95 @@ public class PrideExportDialog extends javax.swing.JDialog {
             ((DefaultTableModel) referencesJTable.getModel()).setValueAt(new Integer(row + 1), row, 0);
         }
     }
-    
+
     /**
      * Updates the reference at the given row.
-     * 
+     *
      * @param reference
-     * @param rowIndex 
+     * @param rowIndex
      */
     public void updateReference(Reference reference, int rowIndex) {
         referencesJTable.setValueAt(reference.getReference(), rowIndex, 1);
         referencesJTable.setValueAt(reference.getPmid(), rowIndex, 1);
         referencesJTable.setValueAt(reference.getDoi(), rowIndex, 1);
     }
-    
+
     /**
      * Adds a new reference.
-     * 
-     * @param reference 
+     *
+     * @param reference
      */
     public void addReference(Reference reference) {
         ((DefaultTableModel) referencesJTable.getModel()).addRow(new Object[]{
-            referencesJTable.getRowCount() + 1,
-            reference.getReference(),
-            reference.getPmid(),
-            reference.getDoi()
-        });
+                    referencesJTable.getRowCount() + 1,
+                    reference.getReference(),
+                    reference.getPmid(),
+                    reference.getDoi()
+                });
     }
     
     /**
-     * Sets the selected contact.
+     * Save the provided sample to file and then select it in the list.
      * 
-     * @param contact 
+     * @param sample 
+     */
+    public void setSample (Sample sample) {
+        
+        File samplesFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/samples");
+        File samplesFile = new File(samplesFolder, sample.getName() + ".sam");
+        
+        try {
+            sample.saveAsFile(samplesFile);
+
+            insertOptions("conf/pride/samples", ".sam", "--- Select a Sample ---", "   Create a New Sample...", sampleJComboBox);
+
+            int selectedSampleIndex = 0;
+
+            for (int i = 0; i < sampleJComboBox.getItemCount(); i++) {
+                if (((String) sampleJComboBox.getItemAt(i)).equalsIgnoreCase(sample.getName())) {
+                    selectedSampleIndex = i;
+                }
+            }
+
+            sampleJComboBox.setSelectedIndex(selectedSampleIndex);
+
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(
+                    this, "The file " + samplesFile.getAbsolutePath() + " could not be found.",
+                    "File Not Found", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(
+                    this, "An error occured when trying to save the file " + samplesFile.getAbsolutePath() + ".",
+                    "File Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Sets the selected contact.
+     *
+     * @param contact
      */
     public void setContact(Contact contact) {
-        
-        String tempInstitution = contact.getInstitution().trim();
-        tempInstitution = tempInstitution.replaceAll("\n", ", ");
-        tempInstitution = tempInstitution.replaceAll(" , ", "");
 
-        while (tempInstitution.lastIndexOf(",,") != -1) {
-            tempInstitution = tempInstitution.replaceAll(",,", ",");
-        }
-
-        if (tempInstitution.endsWith(",")) {
-            tempInstitution = tempInstitution.substring(0, tempInstitution.length() - 1);
-        }
-        
         File contactsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/contacts");
         File contactFile = new File(contactsFolder, contact.getName() + ".con");
-
+        
         try {
-            FileWriter r = new FileWriter(contactFile);
-            BufferedWriter bw = new BufferedWriter(r);
+            contact.saveAsFile(contactFile);
 
-            bw.write("Name: " + contact.getName() + "\n");
-            bw.write("E-mail: " + contact.getEMail() + "\n");
-            bw.write("Institution: " + tempInstitution + "\n");
-
-            bw.close();
-            r.close();
-            
             insertOptions("conf/pride/contacts", ".con", "--- Select a Contact ---", "   Create a New Contact...", contactsJComboBox);
-            
+
             int selectedContactIndex = 0;
-            
-            for (int i=0; i<contactsJComboBox.getItemCount(); i++) {
-                if (((String) contactsJComboBox.getItemAt(i)).equalsIgnoreCase(contact.getName()) ) {
+
+            for (int i = 0; i < contactsJComboBox.getItemCount(); i++) {
+                if (((String) contactsJComboBox.getItemAt(i)).equalsIgnoreCase(contact.getName())) {
                     selectedContactIndex = i;
                 }
             }
-            
-            contactsJComboBox.setSelectedIndex(selectedContactIndex);  
+
+            contactsJComboBox.setSelectedIndex(selectedContactIndex);
 
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(
@@ -1086,5 +1127,26 @@ public class PrideExportDialog extends javax.swing.JDialog {
             ex.printStackTrace();
         }
     }
-}
 
+    /**
+     * Tries to extract the ontology from the given cv term. For example
+     * BTO:0000763 returns BTO.
+     *
+     * @param cvTerm the cv term to extract the ontology from, e.g., BTO:0000763
+     * @return the extracted ontology
+     */
+    public static String getOntologyFromCvTerm(String cvTerm) {
+
+        String ontology;
+
+        if (cvTerm.lastIndexOf(":") != -1) {
+            ontology = cvTerm.substring(0, cvTerm.lastIndexOf(":"));
+        } else if (cvTerm.lastIndexOf("_") != -1) {
+            ontology = cvTerm.substring(0, cvTerm.lastIndexOf("_"));
+        } else {
+            ontology = "NEWT";
+        }
+
+        return ontology;
+    }
+}
