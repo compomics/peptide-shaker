@@ -4,14 +4,14 @@ import java.io.*;
 import java.util.ArrayList;
 
 /**
- * An object for storing Sample details.
+ * An object for storing Protocol details.
  *
  * @author Harald Barsnes
  */
-public class Sample {
+public class Protocol {
 
     /**
-     * The sample name.
+     * The protcol name.
      */
     private String name;
     /**
@@ -20,24 +20,24 @@ public class Sample {
     private ArrayList<CvTerm> cvTerms;
 
     /**
-     * Create a new Sample object.
+     * Create a new Protocol object.
      *
      * @param name
      * @param cvTerms
      */
-    public Sample(String name, ArrayList<CvTerm> cvTerms) {
+    public Protocol(String name, ArrayList<CvTerm> cvTerms) {
         this.name = name;
         this.cvTerms = cvTerms;
     }
 
     /**
-     * Read a Sample from file.
+     * Read a Protocol from file.
      *
-     * @param sampleFile
+     * @param protocolFile
      */
-    public Sample(File sampleFile) {
+    public Protocol(File protocolFile) {
         try {
-            FileReader r = new FileReader(sampleFile);
+            FileReader r = new FileReader(protocolFile);
             BufferedReader br = new BufferedReader(r);
 
             String tempLine = br.readLine();
@@ -77,7 +77,7 @@ public class Sample {
     }
 
     /**
-     * Save the Sample to file.
+     * Save the Protocol to file.
      * 
      * @param sampleFile
      * @throws IOException 

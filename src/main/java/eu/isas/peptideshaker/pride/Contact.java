@@ -23,7 +23,7 @@ public class Contact {
     private String institution;
 
     /**
-     * Create a new Contact objetct.
+     * Create a new Contact object.
      *
      * @param name
      * @param eMail
