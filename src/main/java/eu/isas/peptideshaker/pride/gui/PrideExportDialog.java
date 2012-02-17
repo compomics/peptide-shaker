@@ -4,6 +4,7 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.pride.Contact;
+import eu.isas.peptideshaker.pride.Instrument;
 import eu.isas.peptideshaker.pride.Protocol;
 import eu.isas.peptideshaker.pride.Reference;
 import eu.isas.peptideshaker.pride.Sample;
@@ -352,6 +353,11 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
         editInstrumentJButton.setText("Edit");
         editInstrumentJButton.setEnabled(false);
+        editInstrumentJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editInstrumentJButtonActionPerformed(evt);
+            }
+        });
 
         referencesJTable.setFont(referencesJTable.getFont());
         referencesJTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -730,7 +736,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
         } else if (instrumentJComboBox.getSelectedIndex() == instrumentJComboBox.getItemCount() - 1) {
             editInstrumentJButton.setEnabled(false);
             instrumentJComboBox.setSelectedIndex(0);
-            // open new instrument dialog
+            new NewInstrumentDialog(this, true);
         } else {
             editInstrumentJButton.setEnabled(true);
         }
@@ -964,6 +970,20 @@ public class PrideExportDialog extends javax.swing.JDialog {
         new NewProtocolDialog(this, true, tempProtocol);
     }//GEN-LAST:event_editProtocolJButtonActionPerformed
 
+    /**
+     * Edit the selected instrument.
+     * 
+     * @param evt 
+     */
+    private void editInstrumentJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editInstrumentJButtonActionPerformed
+        // get the selected instrument details
+        String selectedInstrument = (String) instrumentJComboBox.getSelectedItem();
+        File instrumentFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/instruments");
+        Instrument tempInstrument = new Instrument(new File(instrumentFolder, selectedInstrument + ".int"));
+
+        new NewInstrumentDialog(this, true, tempInstrument);
+    }//GEN-LAST:event_editInstrumentJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addReferencesJButton;
     private javax.swing.JPanel backgroundJPanel;
@@ -1106,6 +1126,44 @@ public class PrideExportDialog extends javax.swing.JDialog {
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(
                     this, "An error occured when trying to save the file " + protocolsFile.getAbsolutePath() + ".",
+                    "File Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     * Save the provided Instrument to file and then select it in the list.
+     * 
+     * @param instrument 
+     */
+    public void setInstrument (Instrument instrument) {
+        
+        File instrumentsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/instruments");
+        File instrumentsFile = new File(instrumentsFolder, instrument.getName() + ".int");
+        
+        try {
+            instrument.saveAsFile(instrumentsFile);
+
+            insertOptions("conf/pride/instruments", ".int", "--- Select an Instrument ---", "   Create a New Instrument...", instrumentJComboBox);
+
+            int selectedInstrumentIndex = 0;
+
+            for (int i = 0; i < instrumentJComboBox.getItemCount(); i++) {
+                if (((String) instrumentJComboBox.getItemAt(i)).equalsIgnoreCase(instrument.getName())) {
+                    selectedInstrumentIndex = i;
+                }
+            }
+
+            instrumentJComboBox.setSelectedIndex(selectedInstrumentIndex);
+
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(
+                    this, "The file " + instrumentsFile.getAbsolutePath() + " could not be found.",
+                    "File Not Found", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(
+                    this, "An error occured when trying to save the file " + instrumentsFile.getAbsolutePath() + ".",
                     "File Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }

@@ -15,7 +15,7 @@ import no.uib.olsdialog.OLSDialog;
 import no.uib.olsdialog.OLSInputable;
 
 /**
- * A dialog for adding annotating protcols.
+ * A dialog for annotating protcols.
  * 
  * @author Harald Barsnes
  */
@@ -94,6 +94,9 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
         protocolCvTermsJTable.getColumn(" ").setMinWidth(40);
         
         columnToolTips = new Vector();
+        columnToolTips.add(null);
+        columnToolTips.add(null);
+        columnToolTips.add(null);
         columnToolTips.add(null);
         columnToolTips.add(null);
     }
@@ -255,8 +258,8 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(protocolNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(protocolCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(protocolCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(sampleDetailsJButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -476,7 +479,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Fixes the indices so that they are in accending order starting from one
+     * Fixes the indices so that they are in accending order starting from one.
      */
     private void fixTableIndices() {
         for (int row = 0; row < ((DefaultTableModel) protocolCvTermsJTable.getModel()).getRowCount(); row++) {
@@ -485,7 +488,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
     }
 
     /**
-     * Enables the Next button if a valid protocol set is selected.
+     * Enables the OK button if a valid protocol set is selected.
      */
     private void validateInput() {
         if (protocolCvTermsJTable.getRowCount() > 0 && protocolNameJTextField.getText().length() > 0) {
@@ -497,7 +500,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
 
     @Override
     public void insertOLSResult(String field, String selectedValue, String accession, String ontologyShort, String ontologyLong, int modifiedRow, String mappedTerm, Map<String, String> metadata) {
-        addSampleDetails(selectedValue, accession, ontologyShort, modifiedRow);
+        addProtocolDetails(selectedValue, accession, ontologyShort, modifiedRow);
     }
 
     @Override
@@ -513,8 +516,8 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
      * @param ontology
      * @param modifiedRow the row to modify, use -1 if adding a new row
      */
-    public void addSampleDetails(String name, String accession, String ontology, int modifiedRow) {
-        addSampleDetails(name, accession, ontology, null, modifiedRow);
+    public void addProtocolDetails(String name, String accession, String ontology, int modifiedRow) {
+        addProtocolDetails(name, accession, ontology, null, modifiedRow);
     }
 
     /**
@@ -526,7 +529,7 @@ public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputab
      * @param value
      * @param modifiedRow the row to modify, use -1 if adding a new row
      */
-    public void addSampleDetails(String name, String accession, String ontology, String value, int modifiedRow) {
+    public void addProtocolDetails(String name, String accession, String ontology, String value, int modifiedRow) {
 
         if (modifiedRow == -1) {
 
