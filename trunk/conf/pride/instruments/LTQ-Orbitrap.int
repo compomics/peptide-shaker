@@ -1,31 +1,20 @@
-#instrument name
 Name: LTQ-Orbitrap
 
 #instrument source
 Accession: MS:1000073
 cvLookup: MS
 Name: Electrospray Ionization
+Value: null
 
 #instrument detector
 Accession: MS:1000111
 cvLookup: MS
 Name: Electron Multiplier Tube
+Value: null
 
 #analyzers
-1
 1
 Accession: MS:1000449
 CVLookup: MS
 Name: LTQ Orbitrap
 Value: null
-
-#processing methods
-1
-Accession: MS:1000033
-CVLookup: MS
-Name: Deisotoping
-Value: true
-
-#software
-Name: unknown
-Version: unknown

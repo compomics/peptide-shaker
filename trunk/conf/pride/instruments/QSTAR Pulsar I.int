@@ -1,31 +1,20 @@
-#instrument name
 Name: QSTAR Pulsar I
 
 #instrument source
 Accession: MS:1000075
 cvLookup: MS
 Name: Matrix-assisted Laser Desorption Ionization
+Value: null
 
 #instrument detector
 Accession: MS:1000108
 cvLookup: MS
 Name: Conversion Dynode Electron Multiplier
+Value: null
 
 #analyzers
-1
 1
 Accession: MS:1000084
 CVLookup: MS
 Name: Time-of-flight
 Value: null
-
-#processing methods
-1
-Accession: MS:1000033
-CVLookup: MS
-Name: Deisotoping
-Value: null
-
-#software
-Name: Protein Prospector
-Version: 1.0

@@ -15,7 +15,7 @@ import no.uib.olsdialog.OLSDialog;
 import no.uib.olsdialog.OLSInputable;
 
 /**
- * A dialog for adding annotating samples.
+ * A dialog for annotating samples.
  * 
  * @author Harald Barsnes
  */
@@ -98,6 +98,9 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         sampleCvTermsJTable.getColumn(" ").setMinWidth(40);
         
         columnToolTips = new Vector();
+        columnToolTips.add(null);
+        columnToolTips.add(null);
+        columnToolTips.add(null);
         columnToolTips.add(null);
         columnToolTips.add(null);
     }
@@ -503,7 +506,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
     }
 
     /**
-     * Enables the Next button if a valid sample set is selected.
+     * Enables the OK button if a valid sample set is selected.
      */
     private void validateInput() {
         if (sampleCvTermsJTable.getRowCount() > 0 && sampleNameJTextField.getText().length() > 0) {
