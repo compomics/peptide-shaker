@@ -4,6 +4,7 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.pride.Contact;
+import eu.isas.peptideshaker.pride.Protocol;
 import eu.isas.peptideshaker.pride.Reference;
 import eu.isas.peptideshaker.pride.Sample;
 import java.awt.event.KeyEvent;
@@ -333,6 +334,11 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
         editProtocolJButton.setText("Edit");
         editProtocolJButton.setEnabled(false);
+        editProtocolJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                editProtocolJButtonActionPerformed(evt);
+            }
+        });
 
         jLabel8.setText("Instrument*");
 
@@ -704,7 +710,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
         } else if (protocolJComboBox.getSelectedIndex() == protocolJComboBox.getItemCount() - 1) {
             editProtocolJButton.setEnabled(false);
             protocolJComboBox.setSelectedIndex(0);
-            // open new protcol dialog
+            new NewProtocolDialog(this, true);
         } else {
             editProtocolJButton.setEnabled(true);
         }
@@ -943,6 +949,21 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
         new NewSampleDialog(this, true, tempSample);
     }//GEN-LAST:event_editSampleJButtonActionPerformed
+
+    /**
+     * Edit the selected protocol.
+     * 
+     * @param evt 
+     */
+    private void editProtocolJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editProtocolJButtonActionPerformed
+        // get the selected protcol details
+        String selectedProtocol = (String) protocolJComboBox.getSelectedItem();
+        File protocolsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/protocols");
+        Protocol tempProtocol = new Protocol(new File(protocolsFolder, selectedProtocol + ".pro"));
+
+        new NewProtocolDialog(this, true, tempProtocol);
+    }//GEN-LAST:event_editProtocolJButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addReferencesJButton;
     private javax.swing.JPanel backgroundJPanel;
@@ -1050,6 +1071,44 @@ public class PrideExportDialog extends javax.swing.JDialog {
                     reference.getPmid(),
                     reference.getDoi()
                 });
+    }
+    
+    /**
+     * Save the provided protocol to file and then select it in the list.
+     * 
+     * @param protocol 
+     */
+    public void setProtocol (Protocol protocol) {
+        
+        File protocolsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/protocols");
+        File protocolsFile = new File(protocolsFolder, protocol.getName() + ".pro");
+        
+        try {
+            protocol.saveAsFile(protocolsFile);
+
+            insertOptions("conf/pride/protocols", ".pro", "--- Select a Protocol ---", "   Create a New Protocol...", protocolJComboBox);
+
+            int selectedProtocolIndex = 0;
+
+            for (int i = 0; i < protocolJComboBox.getItemCount(); i++) {
+                if (((String) protocolJComboBox.getItemAt(i)).equalsIgnoreCase(protocol.getName())) {
+                    selectedProtocolIndex = i;
+                }
+            }
+
+            protocolJComboBox.setSelectedIndex(selectedProtocolIndex);
+
+        } catch (FileNotFoundException ex) {
+            JOptionPane.showMessageDialog(
+                    this, "The file " + protocolsFile.getAbsolutePath() + " could not be found.",
+                    "File Not Found", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(
+                    this, "An error occured when trying to save the file " + protocolsFile.getAbsolutePath() + ".",
+                    "File Error", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        }
     }
     
     /**

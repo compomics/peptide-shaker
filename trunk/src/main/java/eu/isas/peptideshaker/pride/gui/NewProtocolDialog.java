@@ -1,7 +1,7 @@
 package eu.isas.peptideshaker.pride.gui;
 
 import eu.isas.peptideshaker.pride.CvTerm;
-import eu.isas.peptideshaker.pride.Sample;
+import eu.isas.peptideshaker.pride.Protocol;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -15,11 +15,11 @@ import no.uib.olsdialog.OLSDialog;
 import no.uib.olsdialog.OLSInputable;
 
 /**
- * A dialog for adding annotating samples.
+ * A dialog for adding annotating protcols.
  * 
  * @author Harald Barsnes
  */
-public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable {
+public class NewProtocolDialog extends javax.swing.JDialog implements OLSInputable {
 
     /**
      * The table column header tooltips.
@@ -29,23 +29,19 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      * The PRIDE Export Dialog.
      */
     private PrideExportDialog prideExportDialog;
-    /**
-     * The NEWT taxonony root.
-     */
-    private String newtRoot = "NEWT UniProt Taxonomy Database [NEWT] / Root node of taxonomy";
 
     /**
-     * Creates a new NewSampleDialog.
+     * Creates a new NewProtocolDialog.
      *
      * @param prideExportDialog
      * @param modal
      */
-    public NewSampleDialog(PrideExportDialog prideExportDialog, boolean modal) {
+    public NewProtocolDialog(PrideExportDialog prideExportDialog, boolean modal) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
 
         initComponents();
-        setTitle("New Sample");
+        setTitle("New Protocol");
         
         setUpTable();
 
@@ -55,28 +51,28 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
     }
 
     /**
-     * Creates a new NewSampleDialog.
+     * Creates a new NewProtocolDialog.
      *
      * @param prideExportDialog
      * @param modal
-     * @param sample  
+     * @param protcol  
      */
-    public NewSampleDialog(PrideExportDialog prideExportDialog, boolean modal, Sample sample) {
+    public NewProtocolDialog(PrideExportDialog prideExportDialog, boolean modal, Protocol protcol) {
         super(prideExportDialog, modal);
         this.prideExportDialog = prideExportDialog;
 
         initComponents();
-        setTitle("Edit Sample");
+        setTitle("Edit Protocol");
         
-        sampleNameJTextField.setText(sample.getName());
+        protocolNameJTextField.setText(protcol.getName());
         
-        for (int i=0; i<sample.getCvTerms().size(); i++) {
-            ((DefaultTableModel) sampleCvTermsJTable.getModel()).addRow(new Object[] {
+        for (int i=0; i<protcol.getCvTerms().size(); i++) {
+            ((DefaultTableModel) protocolCvTermsJTable.getModel()).addRow(new Object[] {
                 (i+1),
-                sample.getCvTerms().get(i).getOntology(),
-                sample.getCvTerms().get(i).getAccession(),
-                sample.getCvTerms().get(i).getName(),
-                sample.getCvTerms().get(i).getValue()
+                protcol.getCvTerms().get(i).getOntology(),
+                protcol.getCvTerms().get(i).getAccession(),
+                protcol.getCvTerms().get(i).getName(),
+                protcol.getCvTerms().get(i).getValue()
             });
         }
         
@@ -91,11 +87,11 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      * Set up the table properties.
      */
     private void setUpTable() {
-        sampleCvScrollPane.getViewport().setOpaque(false);
-        sampleCvTermsJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        sampleCvTermsJTable.getTableHeader().setReorderingAllowed(false);
-        sampleCvTermsJTable.getColumn(" ").setMaxWidth(40);
-        sampleCvTermsJTable.getColumn(" ").setMinWidth(40);
+        protocolCvScrollPane.getViewport().setOpaque(false);
+        protocolCvTermsJTable.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        protocolCvTermsJTable.getTableHeader().setReorderingAllowed(false);
+        protocolCvTermsJTable.getColumn(" ").setMaxWidth(40);
+        protocolCvTermsJTable.getColumn(" ").setMinWidth(40);
         
         columnToolTips = new Vector();
         columnToolTips.add(null);
@@ -119,9 +115,8 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         jSeparator4 = new javax.swing.JSeparator();
         deleteSelectedRowJMenuItem = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        sampleCvScrollPane = new javax.swing.JScrollPane();
-        sampleCvTermsJTable = new JTable() {
+        protocolCvScrollPane = new javax.swing.JScrollPane();
+        protocolCvTermsJTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
                     public String getToolTipText(MouseEvent e) {
@@ -136,7 +131,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         };
         sampleDetailsJButton = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        sampleNameJTextField = new javax.swing.JTextField();
+        protocolNameJTextField = new javax.swing.JTextField();
         okButton = new javax.swing.JButton();
 
         editJMenuItem.setMnemonic('E');
@@ -177,15 +172,12 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         popupJMenu.add(deleteSelectedRowJMenuItem);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("New Sample");
+        setTitle("New Protocol");
 
-        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Sample Details"));
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Protocol Details"));
 
-        jLabel2.setFont(jLabel2.getFont().deriveFont((jLabel2.getFont().getStyle() | java.awt.Font.ITALIC), jLabel2.getFont().getSize()-2));
-        jLabel2.setText("Preferred Ontologies: NEWT (species), BTO (tissue), CL (cell type), GO (gene ontology) and DOID (disease state)");
-
-        sampleCvTermsJTable.setFont(sampleCvTermsJTable.getFont());
-        sampleCvTermsJTable.setModel(new javax.swing.table.DefaultTableModel(
+        protocolCvTermsJTable.setFont(protocolCvTermsJTable.getFont());
+        protocolCvTermsJTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -208,20 +200,20 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
                 return canEdit [columnIndex];
             }
         });
-        sampleCvTermsJTable.addMouseListener(new java.awt.event.MouseAdapter() {
+        protocolCvTermsJTable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                sampleCvTermsJTableMouseClicked(evt);
+                protocolCvTermsJTableMouseClicked(evt);
             }
         });
-        sampleCvTermsJTable.addKeyListener(new java.awt.event.KeyAdapter() {
+        protocolCvTermsJTable.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                sampleCvTermsJTableKeyReleased(evt);
+                protocolCvTermsJTableKeyReleased(evt);
             }
         });
-        sampleCvScrollPane.setViewportView(sampleCvTermsJTable);
+        protocolCvScrollPane.setViewportView(protocolCvTermsJTable);
 
         sampleDetailsJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/ols_transparent.GIF"))); // NOI18N
-        sampleDetailsJButton.setText("Add Sample Term");
+        sampleDetailsJButton.setText("Add Protcol Step");
         sampleDetailsJButton.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         sampleDetailsJButton.setPreferredSize(new java.awt.Dimension(159, 23));
         sampleDetailsJButton.addActionListener(new java.awt.event.ActionListener() {
@@ -232,10 +224,10 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
 
         jLabel1.setText("Name:");
 
-        sampleNameJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
-        sampleNameJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+        protocolNameJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
+        protocolNameJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                sampleNameJTextFieldKeyReleased(evt);
+                protocolNameJTextFieldKeyReleased(evt);
             }
         });
 
@@ -246,17 +238,14 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(sampleCvScrollPane)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 118, Short.MAX_VALUE))
+                    .addComponent(protocolCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 591, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(sampleNameJTextField))
+                        .addComponent(protocolNameJTextField))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(sampleDetailsJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 184, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(sampleDetailsJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -265,11 +254,9 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(sampleNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sampleCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+                    .addComponent(protocolNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(protocolCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(sampleDetailsJButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -314,18 +301,18 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      * 
      * @param evt 
      */
-    private void sampleCvTermsJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sampleCvTermsJTableMouseClicked
+    private void protocolCvTermsJTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_protocolCvTermsJTableMouseClicked
         if (evt.getButton() == 3) {
 
-            int row = sampleCvTermsJTable.rowAtPoint(evt.getPoint());
-            int column = sampleCvTermsJTable.columnAtPoint(evt.getPoint());
+            int row = protocolCvTermsJTable.rowAtPoint(evt.getPoint());
+            int column = protocolCvTermsJTable.columnAtPoint(evt.getPoint());
 
-            sampleCvTermsJTable.changeSelection(row, column, false, false);
+            protocolCvTermsJTable.changeSelection(row, column, false, false);
 
             this.moveUpJMenuItem.setEnabled(true);
             this.moveDownJMenuItem.setEnabled(true);
 
-            if (row == sampleCvTermsJTable.getRowCount() - 1) {
+            if (row == protocolCvTermsJTable.getRowCount() - 1) {
                 this.moveDownJMenuItem.setEnabled(false);
             }
 
@@ -337,18 +324,18 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         } else if (evt.getButton() == 1 && evt.getClickCount() == 2) {
             editJMenuItemActionPerformed(null);
         }
-    }//GEN-LAST:event_sampleCvTermsJTableMouseClicked
+    }//GEN-LAST:event_protocolCvTermsJTableMouseClicked
 
     /**
      * Delete the selected row.
      * 
      * @param evt 
      */
-    private void sampleCvTermsJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sampleCvTermsJTableKeyReleased
+    private void protocolCvTermsJTableKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_protocolCvTermsJTableKeyReleased
         if (evt.getKeyCode() == KeyEvent.VK_DELETE) {
             deleteSelectedRowJMenuItemActionPerformed(null);
         }
-    }//GEN-LAST:event_sampleCvTermsJTableKeyReleased
+    }//GEN-LAST:event_protocolCvTermsJTableKeyReleased
 
     /**
      * Open the OLS Dialog.
@@ -357,7 +344,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      */
     private void sampleDetailsJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sampleDetailsJButtonActionPerformed
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        new OLSDialog(prideExportDialog, this, true, "singleSample", newtRoot, null);
+        new OLSDialog(prideExportDialog, this, true, "singleProtcol", "PRIDE", null);
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_sampleDetailsJButtonActionPerformed
 
@@ -367,18 +354,14 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      * @param evt 
      */
     private void editJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editJMenuItemActionPerformed
-        int selectedRow = sampleCvTermsJTable.getSelectedRow();
+        int selectedRow = protocolCvTermsJTable.getSelectedRow();
 
-        String searchTerm = (String) sampleCvTermsJTable.getValueAt(selectedRow, 3);
-        String ontology = (String) sampleCvTermsJTable.getValueAt(selectedRow, 1);
+        String searchTerm = (String) protocolCvTermsJTable.getValueAt(selectedRow, 3);
+        String ontology = (String) protocolCvTermsJTable.getValueAt(selectedRow, 1);
         ontology = PrideExportDialog.getOntologyFromCvTerm(ontology);
 
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-        if (newtRoot.indexOf(ontology) != -1) {
-            ontology = newtRoot;
-        }
-
-        new OLSDialog(prideExportDialog, this, true, "singleSample", ontology, selectedRow, searchTerm);
+        new OLSDialog(prideExportDialog, this, true, "singleProtocol", ontology, selectedRow, searchTerm);
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
     }//GEN-LAST:event_editJMenuItemActionPerformed
 
@@ -388,19 +371,19 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      * @param evt 
      */
     private void moveUpJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveUpJMenuItemActionPerformed
-        int selectedRow = sampleCvTermsJTable.getSelectedRow();
-        int selectedColumn = sampleCvTermsJTable.getSelectedColumn();
+        int selectedRow = protocolCvTermsJTable.getSelectedRow();
+        int selectedColumn = protocolCvTermsJTable.getSelectedColumn();
 
         Object[] tempRow = new Object[]{
-            sampleCvTermsJTable.getValueAt(selectedRow - 1, 0),
-            sampleCvTermsJTable.getValueAt(selectedRow - 1, 1),
-            sampleCvTermsJTable.getValueAt(selectedRow - 1, 2)
+            protocolCvTermsJTable.getValueAt(selectedRow - 1, 0),
+            protocolCvTermsJTable.getValueAt(selectedRow - 1, 1),
+            protocolCvTermsJTable.getValueAt(selectedRow - 1, 2)
         };
 
-        ((DefaultTableModel) sampleCvTermsJTable.getModel()).removeRow(selectedRow - 1);
-        ((DefaultTableModel) sampleCvTermsJTable.getModel()).insertRow(selectedRow, tempRow);
+        ((DefaultTableModel) protocolCvTermsJTable.getModel()).removeRow(selectedRow - 1);
+        ((DefaultTableModel) protocolCvTermsJTable.getModel()).insertRow(selectedRow, tempRow);
 
-        sampleCvTermsJTable.changeSelection(selectedRow - 1, selectedColumn, false, false);
+        protocolCvTermsJTable.changeSelection(selectedRow - 1, selectedColumn, false, false);
 
         fixTableIndices();
     }//GEN-LAST:event_moveUpJMenuItemActionPerformed
@@ -411,19 +394,19 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      * @param evt 
      */
     private void moveDownJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_moveDownJMenuItemActionPerformed
-        int selectedRow = sampleCvTermsJTable.getSelectedRow();
-        int selectedColumn = sampleCvTermsJTable.getSelectedColumn();
+        int selectedRow = protocolCvTermsJTable.getSelectedRow();
+        int selectedColumn = protocolCvTermsJTable.getSelectedColumn();
 
         Object[] tempRow = new Object[]{
-            sampleCvTermsJTable.getValueAt(selectedRow + 1, 0),
-            sampleCvTermsJTable.getValueAt(selectedRow + 1, 1),
-            sampleCvTermsJTable.getValueAt(selectedRow + 1, 2)
+            protocolCvTermsJTable.getValueAt(selectedRow + 1, 0),
+            protocolCvTermsJTable.getValueAt(selectedRow + 1, 1),
+            protocolCvTermsJTable.getValueAt(selectedRow + 1, 2)
         };
 
-        ((DefaultTableModel) sampleCvTermsJTable.getModel()).removeRow(selectedRow + 1);
-        ((DefaultTableModel) sampleCvTermsJTable.getModel()).insertRow(selectedRow, tempRow);
+        ((DefaultTableModel) protocolCvTermsJTable.getModel()).removeRow(selectedRow + 1);
+        ((DefaultTableModel) protocolCvTermsJTable.getModel()).insertRow(selectedRow, tempRow);
 
-        sampleCvTermsJTable.changeSelection(selectedRow + 1, selectedColumn, false, false);
+        protocolCvTermsJTable.changeSelection(selectedRow + 1, selectedColumn, false, false);
 
         fixTableIndices();
     }//GEN-LAST:event_moveDownJMenuItemActionPerformed
@@ -435,18 +418,18 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      */
     private void deleteSelectedRowJMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteSelectedRowJMenuItemActionPerformed
 
-        int selectedRow = sampleCvTermsJTable.getSelectedRow();
+        int selectedRow = protocolCvTermsJTable.getSelectedRow();
 
         if (selectedRow != -1) {
 
-            ((DefaultTableModel) sampleCvTermsJTable.getModel()).removeRow(selectedRow);
+            ((DefaultTableModel) protocolCvTermsJTable.getModel()).removeRow(selectedRow);
             fixTableIndices();
             validateInput();
         }
     }//GEN-LAST:event_deleteSelectedRowJMenuItemActionPerformed
 
     /**
-     * Add the sample to the export dialog and close.
+     * Add the protocol to the export dialog and close.
      * 
      * @param evt 
      */
@@ -454,15 +437,15 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         
         ArrayList<CvTerm> cvTerms = new ArrayList<CvTerm>();
         
-        for (int i=0; i<sampleCvTermsJTable.getRowCount(); i++) {
+        for (int i=0; i<protocolCvTermsJTable.getRowCount(); i++) {
             cvTerms.add(new CvTerm(
-                    (String) sampleCvTermsJTable.getValueAt(i, 1), 
-                    (String) sampleCvTermsJTable.getValueAt(i, 2), 
-                    (String) sampleCvTermsJTable.getValueAt(i, 3), 
-                    (String) sampleCvTermsJTable.getValueAt(i, 4)));
+                    (String) protocolCvTermsJTable.getValueAt(i, 1), 
+                    (String) protocolCvTermsJTable.getValueAt(i, 2), 
+                    (String) protocolCvTermsJTable.getValueAt(i, 3), 
+                    (String) protocolCvTermsJTable.getValueAt(i, 4)));
         }
         
-        prideExportDialog.setSample(new Sample(sampleNameJTextField.getText(), cvTerms));
+        prideExportDialog.setProtocol(new Protocol(protocolNameJTextField.getText(), cvTerms));
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
@@ -471,15 +454,14 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
      * 
      * @param evt 
      */
-    private void sampleNameJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sampleNameJTextFieldKeyReleased
+    private void protocolNameJTextFieldKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_protocolNameJTextFieldKeyReleased
         validateInput();
-    }//GEN-LAST:event_sampleNameJTextFieldKeyReleased
+    }//GEN-LAST:event_protocolNameJTextFieldKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem deleteSelectedRowJMenuItem;
     private javax.swing.JMenuItem editJMenuItem;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
@@ -487,26 +469,26 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
     private javax.swing.JMenuItem moveUpJMenuItem;
     private javax.swing.JButton okButton;
     private javax.swing.JPopupMenu popupJMenu;
-    private javax.swing.JScrollPane sampleCvScrollPane;
-    private javax.swing.JTable sampleCvTermsJTable;
+    private javax.swing.JScrollPane protocolCvScrollPane;
+    private javax.swing.JTable protocolCvTermsJTable;
+    private javax.swing.JTextField protocolNameJTextField;
     private javax.swing.JButton sampleDetailsJButton;
-    private javax.swing.JTextField sampleNameJTextField;
     // End of variables declaration//GEN-END:variables
 
     /**
      * Fixes the indices so that they are in accending order starting from one
      */
     private void fixTableIndices() {
-        for (int row = 0; row < ((DefaultTableModel) sampleCvTermsJTable.getModel()).getRowCount(); row++) {
-            ((DefaultTableModel) sampleCvTermsJTable.getModel()).setValueAt(new Integer(row + 1), row, 0);
+        for (int row = 0; row < ((DefaultTableModel) protocolCvTermsJTable.getModel()).getRowCount(); row++) {
+            ((DefaultTableModel) protocolCvTermsJTable.getModel()).setValueAt(new Integer(row + 1), row, 0);
         }
     }
 
     /**
-     * Enables the Next button if a valid sample set is selected.
+     * Enables the Next button if a valid protocol set is selected.
      */
     private void validateInput() {
-        if (sampleCvTermsJTable.getRowCount() > 0 && sampleNameJTextField.getText().length() > 0) {
+        if (protocolCvTermsJTable.getRowCount() > 0 && protocolNameJTextField.getText().length() > 0) {
             okButton.setEnabled(true);
         } else {
             okButton.setEnabled(false);
@@ -524,7 +506,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
     }
 
     /**
-     * Add a sample cv term to the table.
+     * Add a protocol cv term to the table.
      *
      * @param name
      * @param accession
@@ -536,7 +518,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
     }
 
     /**
-     * Add a sample cv term to the table.
+     * Add a protocol cv term to the table.
      *
      * @param name
      * @param accession
@@ -548,19 +530,19 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
 
         if (modifiedRow == -1) {
 
-            ((DefaultTableModel) this.sampleCvTermsJTable.getModel()).addRow(
+            ((DefaultTableModel) this.protocolCvTermsJTable.getModel()).addRow(
                     new Object[]{
-                        new Integer(sampleCvTermsJTable.getRowCount() + 1),
+                        new Integer(protocolCvTermsJTable.getRowCount() + 1),
                         ontology,
                         accession,
                         name,
                         value
                     });
         } else {
-            sampleCvTermsJTable.setValueAt(ontology, modifiedRow, 1);
-            sampleCvTermsJTable.setValueAt(accession, modifiedRow, 2);
-            sampleCvTermsJTable.setValueAt(name, modifiedRow, 3);
-            sampleCvTermsJTable.setValueAt(null, modifiedRow, 4);
+            protocolCvTermsJTable.setValueAt(ontology, modifiedRow, 1);
+            protocolCvTermsJTable.setValueAt(accession, modifiedRow, 2);
+            protocolCvTermsJTable.setValueAt(name, modifiedRow, 3);
+            protocolCvTermsJTable.setValueAt(null, modifiedRow, 4);
         }
 
         validateInput();
