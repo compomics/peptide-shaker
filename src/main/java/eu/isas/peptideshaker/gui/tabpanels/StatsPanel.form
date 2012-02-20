@@ -1715,7 +1715,7 @@
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel11">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Type:"/>
+            <Property name="text" type="java.lang.String" value="FDR Type:"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JButton" name="estimatorHelpJButton">

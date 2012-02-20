@@ -218,10 +218,6 @@ public class PeptideShaker {
             waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Generating protein map.");
             fillProteinMap(waitingDialog);
-            waitingDialog.appendReport("Computing protein probabilities.");
-            proteinMap.estimateProbabilities(waitingDialog);
-            waitingDialog.appendReport("Saving protein probabilities.");
-            attachProteinProbabilities(waitingDialog);
             waitingDialog.increaseProgressValue();
         } catch (Exception e) {
             throw e;
@@ -435,9 +431,10 @@ public class PeptideShaker {
         }
 
         double proteinThreshold = proteinMap.getTargetDecoyMap().getTargetDecoyResults().getScoreLimit();
+        boolean noValidated = proteinMap.getTargetDecoyMap().getTargetDecoyResults().noValidated();
         for (String proteinKey : identification.getProteinIdentification()) {
             psParameter = (PSParameter) identification.getMatchParameter(proteinKey, psParameter);
-            if (psParameter.getProteinProbabilityScore() <= proteinThreshold) {
+            if (!noValidated && psParameter.getProteinProbabilityScore() <= proteinThreshold) {
                 psParameter.setValidated(true);
             } else {
                 psParameter.setValidated(false);
@@ -450,7 +447,8 @@ public class PeptideShaker {
         for (String peptideKey : identification.getPeptideIdentification()) {
             psParameter = (PSParameter) identification.getMatchParameter(peptideKey, psParameter);
             double peptideThreshold = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().getScoreLimit();
-            if (psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
+            noValidated = peptideMap.getTargetDecoyMap(peptideMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().noValidated();
+            if (!noValidated && psParameter.getPeptideProbabilityScore() <= peptideThreshold) {
                 psParameter.setValidated(true);
             } else {
                 psParameter.setValidated(false);
@@ -463,7 +461,8 @@ public class PeptideShaker {
         for (String spectrumKey : identification.getSpectrumIdentification()) {
             psParameter = (PSParameter) identification.getMatchParameter(spectrumKey, psParameter);
             double psmThreshold = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().getScoreLimit();
-            if (psParameter.getPsmProbabilityScore() <= psmThreshold) {
+            noValidated = psmMap.getTargetDecoyMap(psmMap.getCorrectedKey(psParameter.getSecificMapKey())).getTargetDecoyResults().noValidated();
+            if (!noValidated && psParameter.getPsmProbabilityScore() <= psmThreshold) {
                 psParameter.setValidated(true);
             } else {
                 psParameter.setValidated(false);

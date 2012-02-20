@@ -114,6 +114,7 @@ public class TargetDecoySeries {
             probaFDR[i] = 100 * probaFPTemp / nTemp;
             probaFNR[i] = probaFnrTemp;
             probaBenefit[i] = 100 - probaFnrTemp;
+            decoy[i] = currentPoint.nTarget == 0;
         }
     }
 
@@ -127,7 +128,24 @@ public class TargetDecoySeries {
         Double threshold = targetDecoyResults.getFdrLimit();
 
         if (targetDecoyResults.isClassicalEstimators()) {
-            for (int i = scores.length - 1; i >= 0; i--) {
+            for (int i = 0; i < scores.length; i++) {
+                if (!decoy[i]) {
+                    if (classicalFDR[i] > threshold) {
+                        targetDecoyResults.setNoValidated(true);
+                        targetDecoyResults.setFdrLimit(0);
+                        targetDecoyResults.setnFP(0);
+                        targetDecoyResults.setConfidenceLimit(0);
+                        targetDecoyResults.setn(0);
+                        targetDecoyResults.setFnrLimit(probaFNR[0]);
+                        targetDecoyResults.setnTPTotal(probaNTotal);
+                        targetDecoyResults.setScoreLimit(scores[0]);
+                        return;
+                    }
+                    break;
+                }
+            }
+            targetDecoyResults.setNoValidated(false);
+            for (int i = scores.length - 2; i >= 0; i--) {
                 if (classicalFDR[i] <= threshold && !decoy[i]) {
                     targetDecoyResults.setConfidenceLimit(confidence[i]);
                     targetDecoyResults.setFdrLimit(classicalFDR[i]);
@@ -140,20 +158,34 @@ public class TargetDecoySeries {
                 }
             }
         } else {
-            for (int i = 1; i < scores.length; i++) {
-                if (probaFDR[i] > threshold) {
-                    for (int k = 1; k < i; k++) {
-                        if (!decoy[i - k]) {
-                            targetDecoyResults.setConfidenceLimit(confidence[i - k]);
-                            targetDecoyResults.setFdrLimit(probaFDR[i - k]);
-                            targetDecoyResults.setFnrLimit(probaFNR[i - k]);
-                            targetDecoyResults.setn(n[i - k]);
-                            targetDecoyResults.setnFP(probaFP[i - k]);
-                            targetDecoyResults.setnTPTotal(probaNTotal);
-                            targetDecoyResults.setScoreLimit(scores[i - k]);
-                            return;
-                        }
+            for (int i = 0; i < scores.length; i++) {
+                if (!decoy[i]) {
+                    if (probaFDR[i] > threshold) {
+                        targetDecoyResults.setNoValidated(true);
+                        targetDecoyResults.setFdrLimit(0);
+                        targetDecoyResults.setnFP(0);
+                        targetDecoyResults.setConfidenceLimit(0);
+                        targetDecoyResults.setn(0);
+                        targetDecoyResults.setFnrLimit(probaNTotal);
+                        targetDecoyResults.setnTPTotal(probaNTotal);
+                        targetDecoyResults.setScoreLimit(scores[0]);
+                        return;
+                    } else {
+                        targetDecoyResults.setNoValidated(false);
+                        break;
                     }
+                }
+            }
+            for (int i = scores.length - 2; i >= 0; i--) {
+                if (probaFDR[i] <= threshold && !decoy[i]) {
+                    targetDecoyResults.setConfidenceLimit(confidence[i]);
+                    targetDecoyResults.setFdrLimit(probaFDR[i]);
+                    targetDecoyResults.setn(n[i]);
+                    targetDecoyResults.setnFP(probaFP[i]);
+                    targetDecoyResults.setFnrLimit(probaFNR[i]);
+                    targetDecoyResults.setnTPTotal(probaNTotal);
+                    targetDecoyResults.setScoreLimit(scores[i]);
+                    return;
                 }
             }
         }
@@ -168,37 +200,41 @@ public class TargetDecoySeries {
 
         double threshold = targetDecoyResults.getConfidenceLimit();
 
-        if (targetDecoyResults.isClassicalEstimators()) {
-            for (int i = 1; i < scores.length; i++) {
+        for (int i = 0; i < scores.length; i++) {
+            if (!decoy[i]) {
                 if (confidence[i] < threshold) {
-                    for (int k = 1; k < i; k++) {
-                        if (!decoy[i - k]) {
-                            targetDecoyResults.setConfidenceLimit(confidence[i - k]);
-                            targetDecoyResults.setFdrLimit(classicalFDR[i - k]);
-                            targetDecoyResults.setn(n[i - k]);
-                            targetDecoyResults.setnFP(classicalFP[i - k]);
-                            targetDecoyResults.setnTPTotal(probaNTotal);
-                            targetDecoyResults.setFnrLimit(probaFNR[i - k]);
-                            targetDecoyResults.setScoreLimit(scores[i - k]);
-                            return;
-                        }
-                    }
+                    targetDecoyResults.setNoValidated(true);
+                    targetDecoyResults.setFdrLimit(0);
+                    targetDecoyResults.setnFP(0);
+                    targetDecoyResults.setConfidenceLimit(confidence[0]);
+                    targetDecoyResults.setn(0);
+                    targetDecoyResults.setnTPTotal(probaNTotal);
+                    targetDecoyResults.setFnrLimit(probaNTotal);
+                    targetDecoyResults.setScoreLimit(scores[0]);
+                    return;
+                } else {
+                    targetDecoyResults.setNoValidated(false);
+                    break;
                 }
             }
-        } else {
-            for (int i = 1; i < scores.length; i++) {
-                if (confidence[i] < threshold) {
-                    for (int k = 1; k < i; k++) {
-                        if (!decoy[i - k]) {
-                            targetDecoyResults.setConfidenceLimit(confidence[i - k]);
-                            targetDecoyResults.setFdrLimit(probaFDR[i - k]);
-                            targetDecoyResults.setFnrLimit(probaFNR[i - k]);
-                            targetDecoyResults.setn(n[i - k]);
-                            targetDecoyResults.setnFP(probaFP[i - k]);
-                            targetDecoyResults.setnTPTotal(probaNTotal);
-                            targetDecoyResults.setScoreLimit(scores[i - k]);
-                            return;
+        }
+        for (int i = 0; i < scores.length - 1; i++) {
+            if (confidence[i] < threshold) {
+                for (int k = i - 1; k >= 0; k--) {
+                    if (!decoy[k]) {
+                        if (targetDecoyResults.isClassicalEstimators()) {
+                            targetDecoyResults.setFdrLimit(classicalFDR[k]);
+                            targetDecoyResults.setnFP(classicalFP[k]);
+                        } else {
+                            targetDecoyResults.setFdrLimit(probaFDR[k]);
+                            targetDecoyResults.setnFP(probaFP[k]);
                         }
+                        targetDecoyResults.setConfidenceLimit(confidence[k]);
+                        targetDecoyResults.setFnrLimit(probaFNR[k]);
+                        targetDecoyResults.setn(n[k]);
+                        targetDecoyResults.setnTPTotal(probaNTotal);
+                        targetDecoyResults.setScoreLimit(scores[k]);
+                        return;
                     }
                 }
             }
@@ -214,37 +250,25 @@ public class TargetDecoySeries {
 
         double threshold = targetDecoyResults.getFnrLimit();
 
-        if (targetDecoyResults.isClassicalEstimators()) {
-            for (int i = scores.length - 2; i >= 0; i--) {
-                if (probaFNR[i] > threshold) {
-                    for (int k = 1; k < i; k++) {
-                        if (!decoy[i + k]) {
-                            targetDecoyResults.setConfidenceLimit(confidence[i + k]);
-                            targetDecoyResults.setFdrLimit(classicalFDR[i + k]);
-                            targetDecoyResults.setn(n[i + k]);
-                            targetDecoyResults.setnFP(classicalFP[i + k]);
-                            targetDecoyResults.setFnrLimit(probaFNR[i + k]);
-                            targetDecoyResults.setnTPTotal(probaNTotal);
-                            targetDecoyResults.setScoreLimit(scores[i - k]);
-                            return;
+                    targetDecoyResults.setNoValidated(false);
+
+        for (int i = scores.length - 1; i >= 0; i--) {
+            if (probaFNR[i] > threshold || i == 0) {
+                for (int k = i; k < scores.length; k++) {
+                    if (!decoy[k]) {
+                        targetDecoyResults.setConfidenceLimit(confidence[k]);
+                        if (targetDecoyResults.isClassicalEstimators()) {
+                            targetDecoyResults.setFdrLimit(classicalFDR[k]);
+                            targetDecoyResults.setnFP(classicalFP[k]);
+                        } else {
+                            targetDecoyResults.setFdrLimit(probaFDR[k]);
+                            targetDecoyResults.setnFP(probaFP[k]);
                         }
-                    }
-                }
-            }
-        } else {
-            for (int i = scores.length - 2; i >= 0; i--) {
-                if (probaFNR[i] > threshold) {
-                    for (int k = 1; k < i; k++) {
-                        if (!decoy[i + k]) {
-                            targetDecoyResults.setConfidenceLimit(confidence[i + k]);
-                            targetDecoyResults.setFdrLimit(probaFDR[i + k]);
-                            targetDecoyResults.setFnrLimit(probaFNR[i + k]);
-                            targetDecoyResults.setn(n[i + k]);
-                            targetDecoyResults.setnFP(probaFP[i + k]);
-                            targetDecoyResults.setnTPTotal(probaNTotal);
-                            targetDecoyResults.setScoreLimit(scores[i - k]);
-                            return;
-                        }
+                        targetDecoyResults.setn(n[k]);
+                        targetDecoyResults.setFnrLimit(probaFNR[k]);
+                        targetDecoyResults.setnTPTotal(probaNTotal);
+                        targetDecoyResults.setScoreLimit(scores[k]);
+                        return;
                     }
                 }
             }

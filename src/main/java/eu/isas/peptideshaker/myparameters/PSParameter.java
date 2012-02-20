@@ -142,12 +142,7 @@ public class PSParameter implements UrParameter {
      * @return the peptide confidence
      */
     public double getPeptideConfidence() {
-        double confidence;
-        if (peptideProbability < Math.pow(10, -100)) {
-            confidence = 100;
-        } else {
-            confidence = -10 * Math.log10(peptideProbability);
-        }
+        double confidence = 100.0*(1-peptideProbability);
         if (confidence <= 0) {
             confidence = 0;
         }
@@ -214,12 +209,7 @@ public class PSParameter implements UrParameter {
      * @return the protein confidence
      */
     public double getProteinConfidence() {
-        double confidence;
-        if (proteinProbability < Math.pow(10, -100)) {
-            confidence = 100;
-        } else {
-            confidence = -10 * Math.log10(proteinProbability);
-        }
+        double confidence = 100.0*(1-proteinProbability);
         if (confidence <= 0) {
             confidence = 0;
         }
@@ -254,17 +244,12 @@ public class PSParameter implements UrParameter {
     }
 
     /**
-     * Returns the protein confidence.
+     * Returns the search engine confidence.
      * 
-     * @return the protein confidence
+     * @return the search engine confidence
      */
     public double getSearchEngineConfidence() {
-        double confidence;
-        if (searchEngineProbability < Math.pow(10, -100)) {
-            confidence = 100;
-        } else {
-            confidence = -10 * Math.log10(searchEngineProbability);
-        }
+        double confidence = 100.0*(1-searchEngineProbability);
         if (confidence <= 0) {
             confidence = 0;
         }
@@ -331,12 +316,7 @@ public class PSParameter implements UrParameter {
      * @return the PSM confidence
      */
     public double getPsmConfidence() {
-        double confidence;
-        if (psmProbability < Math.pow(10, -100)) {
-            confidence = 100;
-        } else {
-            confidence = -10 * Math.log10(psmProbability);
-        }
+        double confidence = 100.0*(1-psmProbability);
         if (confidence <= 0) {
             confidence = 0;
         }
