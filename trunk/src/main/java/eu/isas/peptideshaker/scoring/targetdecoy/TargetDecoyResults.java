@@ -49,6 +49,10 @@ public class TargetDecoyResults implements Serializable {
      * The corresponding score limit
      */
     private double scoreLimit;
+    /**
+     * A boolean indicating that everything was validated
+     */
+    private Boolean noValidated = false;
 
     /**
      * Constructor
@@ -206,5 +210,20 @@ public class TargetDecoyResults implements Serializable {
      */
     public void setScoreLimit(double scoreLimit) {
         this.scoreLimit = scoreLimit;
+    }
+    
+    /**
+     * Returns a boolean indicating that everything was validated
+     */
+    public boolean noValidated() {
+        return (noValidated != null) && noValidated;
+    }
+    
+    /**
+     * Sets whether everything was validated
+     * @param validateAll a boolean indicating whether everything should be validated
+     */
+    public void setNoValidated(boolean validateAll) {
+        this.noValidated = validateAll;
     }
 }

@@ -1002,7 +1002,7 @@ public class StatsPanel extends javax.swing.JPanel {
         estimatorOptimizationTab.setLayout(estimatorOptimizationTabLayout);
         estimatorOptimizationTabLayout.setHorizontalGroup(
             estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(estimatorsPlotSplitPane)
+            .addComponent(estimatorsPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1407, Short.MAX_VALUE)
         );
         estimatorOptimizationTabLayout.setVerticalGroup(
             estimatorOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1339,7 +1339,7 @@ public class StatsPanel extends javax.swing.JPanel {
         thresholdOptimizationTab.setLayout(thresholdOptimizationTabLayout);
         thresholdOptimizationTabLayout.setHorizontalGroup(
             thresholdOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(leftPlotSplitPane)
+            .addComponent(leftPlotSplitPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1407, Short.MAX_VALUE)
         );
         thresholdOptimizationTabLayout.setVerticalGroup(
             thresholdOptimizationTabLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1462,7 +1462,7 @@ public class StatsPanel extends javax.swing.JPanel {
 
         jLabel9.setText("Type:");
 
-        jLabel11.setText("Type:");
+        jLabel11.setText("FDR Type:");
 
         estimatorHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help_no_frame_grey.png"))); // NOI18N
         estimatorHelpJButton.setToolTipText("Help");
@@ -1924,11 +1924,14 @@ public class StatsPanel extends javax.swing.JPanel {
             pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
             PeptideShaker miniShaker = new PeptideShaker(peptideShakerGUI.getExperiment(), peptideShakerGUI.getSample(), peptideShakerGUI.getReplicateNumber(), pSMaps);
             miniShaker.validateIdentifications(null);
-            peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
-            peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
             this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
             // update the other tabs
+            peptideShakerGUI.getMetrics().setnValidatedProteins(-1);
+            peptideShakerGUI.setUpdated(PeptideShakerGUI.OVER_VIEW_TAB_INDEX, false);
+            peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
+            peptideShakerGUI.setUpdated(PeptideShakerGUI.MODIFICATIONS_TAB_INDEX, false);
+            peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
             dataValidated = true;
             validateButton.setEnabled(false);
         }

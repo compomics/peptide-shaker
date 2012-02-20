@@ -1713,22 +1713,25 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                 if (updateNeeded.get(OVER_VIEW_TAB_INDEX)) {
                     overviewPanel.displayResults();
                 } else {
-                    overviewPanel.updateProteinTable(); //@TODO is this not done by default?
                     overviewPanel.updateSelection();
                 }
             } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
                 if (updateNeeded.get(STRUCTURES_TAB_INDEX)) {
+                    //@TODO: here the panel is actually emptied and reloaded. The displayResults() method should ideally load results when nothing is displayed and simply update the results otherwise.
+            resetPanel(STRUCTURES_TAB_INDEX);
                     proteinStructurePanel.displayResults();
                 } else {
                     proteinStructurePanel.updateSelection();
                 }
             } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX
                     && updateNeeded.get(GO_ANALYSIS_TAB_INDEX)) {
+            resetPanel(GO_ANALYSIS_TAB_INDEX);
                 goPanel.displayResults();
                 // @TODO: set species from cps file? 
                 // @TODO: reload GO enrichment tab if hidden selection is changed!
             } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
                 if (updateNeeded.get(SPECTRUM_ID_TAB_INDEX)) {
+            resetPanel(SPECTRUM_ID_TAB_INDEX);
                     spectrumIdentificationPanel.displayResults();
                 } else {
                     spectrumIdentificationPanel.updateSelection();
@@ -4984,9 +4987,6 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public void setUpdated(int tabIndex, boolean updated) {
         updateNeeded.put(tabIndex, !updated);
-        if (!updated) {
-            resetPanel(tabIndex);
-        }
     }
 
     /**
