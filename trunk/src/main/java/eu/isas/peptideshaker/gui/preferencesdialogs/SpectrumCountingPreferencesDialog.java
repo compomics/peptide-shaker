@@ -220,7 +220,7 @@ public class SpectrumCountingPreferencesDialog extends javax.swing.JDialog {
         peptideShakerGUI.setUpdated(PeptideShakerGUI.STRUCTURES_TAB_INDEX, false);
         peptideShakerGUI.setUpdated(PeptideShakerGUI.QC_PLOTS_TAB_INDEX, false);
         peptideShakerGUI.updateTabbedPanes();
-        peptideShakerGUI.setDataSaved(false);
+        peptideShakerGUI.setDataSaved(false);   
         dispose();
     }//GEN-LAST:event_okButtonActionPerformed
 
