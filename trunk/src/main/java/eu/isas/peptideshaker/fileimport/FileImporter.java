@@ -496,16 +496,16 @@ public class FileImporter {
                     if (searchEngine == Advocate.MASCOT && idFile.length() > mascotMaxSize * 1048576) {
                         fileReader = new MascotIdfileReader(idFile, true);
                     } else {
-                        fileReader = readerFactory.getFileReader(idFile);
+                        fileReader = readerFactory.getFileReader(idFile, null);
                     }
 
-                    HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches();
-                    fileReader = null; // Hopefully frees some memory...
+                        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+                    HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches(waitingDialog.getSecondaryProgressBar());
+                    fileReader.close();
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();
 
                     int numberOfMatches = tempSet.size();
                     int progress = 0;
-                    waitingDialog.setSecondaryProgressDialogIntermediate(false);
                     waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
                     idReport = false;
 
