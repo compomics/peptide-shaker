@@ -369,7 +369,7 @@ public class IdentificationFeaturesGenerator {
                                         }
                                     } catch (Exception e) {
                                         // protein deleted due to protein inference issue and not deleted from the map in versions earlier than 0.14.6
-                                        System.out.println("Non-existing protein key in protein map:" + proteinKey);
+                                        // System.out.println("Non-existing protein key in protein map:" + proteinKey);
                                     }
                                 }
                             }
