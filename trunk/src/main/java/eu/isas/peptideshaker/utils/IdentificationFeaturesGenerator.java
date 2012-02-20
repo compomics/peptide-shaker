@@ -19,6 +19,7 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
+import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -369,7 +370,7 @@ public class IdentificationFeaturesGenerator {
                                         }
                                     } catch (Exception e) {
                                         // protein deleted due to protein inference issue and not deleted from the map in versions earlier than 0.14.6
-                                        // System.out.println("Non-existing protein key in protein map:" + proteinKey);
+                                         System.out.println("Non-existing protein key in protein map:" + proteinKey);
                                     }
                                 }
                             }
@@ -496,9 +497,11 @@ public class IdentificationFeaturesGenerator {
         PSParameter probabilities = new PSParameter();
         int cpt = 0;
         for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+            if (!ProteinMatch.isDecoy(proteinKey)) {
             probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
             if (probabilities.isValidated()) {
                 cpt++;
+            }
             }
         }
         peptideShakerGUI.getMetrics().setnValidatedProteins(cpt);
@@ -901,6 +904,9 @@ public class IdentificationFeaturesGenerator {
      */
     public ArrayList<String> getSortedProteinKeys(ProgressDialogX progressDialog) {
         if (proteinList == null) {
+
+        // change the peptide shaker icon to a "waiting version"
+        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(false);
                 progressDialog.setTitle("Loading Protein Information. Please Wait...");
@@ -1038,6 +1044,9 @@ public class IdentificationFeaturesGenerator {
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(true);
             }
+
+                // change the peptide shaker icon back to the default version
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         }
         return proteinList;
     }
