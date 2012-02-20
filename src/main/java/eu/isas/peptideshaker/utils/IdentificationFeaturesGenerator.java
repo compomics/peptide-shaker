@@ -343,7 +343,6 @@ public class IdentificationFeaturesGenerator {
         PSParameter pSParameter = new PSParameter();
         Identification identification = peptideShakerGUI.getIdentification();
         ProteinMatch testMatch, proteinMatch = identification.getProteinMatch(proteinMatchKey);
-        boolean debug = false;
         try {
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
             if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF) {

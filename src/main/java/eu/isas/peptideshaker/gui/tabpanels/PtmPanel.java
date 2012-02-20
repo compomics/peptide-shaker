@@ -2905,7 +2905,7 @@ public class PtmPanel extends javax.swing.JPanel {
                 ArrayList<String> proteins = identification.getPeptideMatch(peptideKey).getTheoreticPeptide().getParentProteins();
                 for (String protein : proteins) {
                     for (String proteinMatchKey : identification.getProteinMap().get(protein)) {
-                        if (!result.contains(proteinMatchKey)) {
+                        if (!result.contains(proteinMatchKey) && identification.matchExists(proteinMatchKey)) {
                             result.add(proteinMatchKey);
                         }
                     }

@@ -1222,7 +1222,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     for (String protein : spectrumMatch.getBestAssumption().getPeptide().getParentProteins()) {
                         for (String proteinMatch : peptideShakerGUI.getIdentification().getProteinMap().get(protein)) {
                             psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinMatch, psParameter);
-                            if (psParameter.isValidated()) {
+                            if (psParameter != null && psParameter.isValidated()) {
                                 return true;
                             }
                         }
