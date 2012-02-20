@@ -1366,6 +1366,10 @@ public class PeptideShaker {
 
         for (String proteinSharedKey : identification.getProteinIdentification()) {
 
+            if (proteinSharedKey.equals("O15068 O60229 O75962 P10911 Q86VW2")
+                    || proteinSharedKey.equals("A6QL64 Q5JPF3 Q8N2N9")) {
+                int debug = 1;
+            }
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
                 psParameter = (PSParameter) identification.getMatchParameter(proteinSharedKey, psParameter);
                 sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();
