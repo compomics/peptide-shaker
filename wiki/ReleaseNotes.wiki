@@ -3,6 +3,29 @@
 
 ----
 
+*Changes in PeptideShaker 0.14.6 (February 20. 2012):*
+ * NEW FEATURE: Added a bug report dialog so that the user does not need to open the file every time.
+ * FEATURE IMPROVEMENT: The loading of the files is slightly faster.
+ * FEATURE IMPROVEMENT: Improved the way the retention time is displayed in the FindDialog.
+ * FEATURE IMPROVEMENT: Made the interaction with big datasets in the Overview tab a lot faster.
+ * FEATURE IMPROVEMENT: Removed the cancel button in the New Project dialog and increased the size of the Create button.
+ * FEATURE IMPROVEMENT: Made the Create project button and the Validate and Apply buttons in the Validation tab green when they can be clicked.
+ * FEATURE IMPROVEMENT: Minor GUI updates to the Validation tab.
+ * FEATURE IMPROVEMENT: Improved the way ptms are handled.
+ * FEATURE IMPROVEMENT: Improved the handling of strange spectrum titles.
+ * FEATURE IMPROVEMENT: Improved the handling of unspecified cleavage site.
+ * FEATURE IMPROVEMENT: Improved the way the max m/z value is set in the FindDialog.
+ * FEATURE IMPROVEMENT: Improved the way the retention time is displayed in the FindDialog.
+ * BUG FIX: The updates in the stats panel are now shown in the other tabs and the tool no longer crashed when executing the changes.
+ * BUG FIX: Corrected a bug in the spectrum counting method resulting in proteins not found for old projects.
+ * BUG FIX: Made the protein inference dialog interacting with the data again.
+ * BUG FIX: Fixed a bug in the 3D Structure tab where the validation status for the peptides was not included.
+ * BUG FIX: Corrected a minor bug occurring when opening a file.
+ * LIBRARY UPDATE: Updated utilities to version 3.3.39, improving the support for home made FASTA files.
+ * LIBRARY UPDATE: Added ols-dialog version 3.3.2 as a dependency.
+
+----
+
 *Changes in PeptideShaker 0.14.5 (February 6. 2012):*
  * FEATURE IMPROVEMENT: Improved the GUI of the 'Exclude Unknown PTMs' check box, and updated the corresponding help text
  * FEATURE IMPROVEMENT: Reduced manually the memory consumption before parsing an identification file.
@@ -20,6 +43,8 @@
  * BUG FIX: Corrected a bug in the peptide to protein mapping test.
  * LIBRARY UPDATE: Updated the UniProt API to 2012.01.
  * LIBRARY UPDATE: Updated utilities to version 3.3.35.
+
+Download Count: 44
 
 ----
 
