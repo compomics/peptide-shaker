@@ -16,7 +16,7 @@
  * FEATURE IMPROVEMENT: Improved the handling of unspecified cleavage site.
  * FEATURE IMPROVEMENT: Improved the way the max m/z value is set in the FindDialog.
  * FEATURE IMPROVEMENT: Improved the way the retention time is displayed in the FindDialog.
- * BUG FIX: The updates in the stats panel are now shown in the other tabs and the tool no longer crashed when executing the changes.
+ * BUG FIX: The updates in the stats panel are now shown in the other tabs and the tool no longer crashes when executing the changes.
  * BUG FIX: Corrected a bug in the spectrum counting method resulting in proteins not found for old projects.
  * BUG FIX: Made the protein inference dialog interacting with the data again.
  * BUG FIX: Fixed a bug in the 3D Structure tab where the validation status for the peptides was not included.
