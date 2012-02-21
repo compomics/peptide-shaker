@@ -20,7 +20,6 @@ import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
-import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
 import eu.isas.peptideshaker.scoring.ProteinMap;
@@ -418,6 +417,8 @@ public class PeptideShaker {
 
     /**
      * This method will flag validated identifications.
+     * 
+     * @param progressBar 
      */
     public void validateIdentifications(JProgressBar progressBar) {
 

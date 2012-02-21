@@ -20,11 +20,7 @@ import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.awt.Toolkit;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,55 +34,57 @@ import java.util.HashMap;
 public class IdentificationFeaturesGenerator {
 
     /**
-     * Instance of the main GUI class
+     * Instance of the main GUI class.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * The number of values kept in memory for small objects
+     * The number of values kept in memory for small objects.
      */
     private final int smallObjectsCacheSize = 1000;
     /**
-     * The number of values kept in memory for big objects
+     * The number of values kept in memory for big objects.
      */
     private final int bigObjectsCacheSize = 3;
     /**
-     * The cached protein matches for small objects
+     * The cached protein matches for small objects.
      */
     private ArrayList<String> smallObjectsCache = new ArrayList<String>();
     /**
-     * The cached protein matches for big objects
+     * The cached protein matches for big objects.
      */
     private ArrayList<String> bigObjectsCache = new ArrayList<String>();
     /**
-     * The sequence factory
+     * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The sequence coverage of the main match of the loaded protein match
+     * The sequence coverage of the main match of the loaded protein match.
      */
     private HashMap<String, Double> sequenceCoverage = new HashMap<String, Double>();
     /**
-     * The possible sequence coverage of the main match of the loaded protein match
+     * The possible sequence coverage of the main match of the loaded protein.
+     * match
      */
     private HashMap<String, Double> possibleCoverage = new HashMap<String, Double>();
     /**
-     * The spectrum counting metric of the loaded protein match
+     * The spectrum counting metric of the loaded protein match.
      */
     private HashMap<String, Double> spectrumCounting = new HashMap<String, Double>();
     /**
-     * The number of spectra
+     * The number of spectra.
      */
     private HashMap<String, Integer> numberOfSpectra = new HashMap<String, Integer>();
     /**
-     * The number of validated spectra
+     * The number of validated spectra.
      */
     private HashMap<String, Integer> numberOfValidatedSpectra = new HashMap<String, Integer>();
     /**
-     * The compomics PTM factory
+     * The compomics PTM factory.
      */
     private PTMFactory ptmFactory = PTMFactory.getInstance();
     /**
-     * a map containing the list of coverable amino acids for each protein in the big object cache
+     * A map containing the list of coverable amino acids for each protein in
+     * the big object cache.
      */
     private HashMap<String, boolean[]> coverableAA = new HashMap<String, boolean[]>();
     /**
@@ -111,7 +109,8 @@ public class IdentificationFeaturesGenerator {
     private ArrayList<String> psmList;
 
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param peptideShakerGUI instance of the main GUI class
      */
     public IdentificationFeaturesGenerator(PeptideShakerGUI peptideShakerGUI) {
@@ -119,10 +118,12 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns an array of boolean indicating whether the amino acids of given peptides can generate peptides.
-     * 
+     * Returns an array of boolean indicating whether the amino acids of given
+     * peptides can generate peptides.
+     *
      * @param proteinMatchKey the key of the protein of interest
-     * @return an array of boolean indicating whether the amino acids of given peptides can generate peptides
+     * @return an array of boolean indicating whether the amino acids of given
+     * peptides can generate peptides
      */
     public boolean[] getCoverableAA(String proteinMatchKey) {
         boolean[] result = coverableAA.get(proteinMatchKey);
@@ -151,10 +152,12 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns an array of boolean indicating whether the amino acids of given peptides can generate peptides.
-     * 
+     * Returns an array of boolean indicating whether the amino acids of given
+     * peptides can generate peptides.
+     *
      * @param proteinMatchKey the key of the protein of interest
-     * @return an array of boolean indicating whether the amino acids of given peptides can generate peptides
+     * @return an array of boolean indicating whether the amino acids of given
+     * peptides can generate peptides
      */
     private boolean[] estimateCoverableAA(String proteinMatchKey) {
         try {
@@ -188,7 +191,8 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the sequence coverage of the protein of interest
+     * Returns the sequence coverage of the protein of interest.
+     *
      * @param proteinMatchKey the key of the protein of interest
      * @return the sequence coverage
      */
@@ -225,7 +229,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Removes a key from the cache.
-     * 
+     *
      * @param key the key to remove
      */
     public void removeFromSmallCache(String key) {
@@ -239,7 +243,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Removes a key from the cache.
-     * 
+     *
      * @param key the key to remove
      */
     public void removeFromBigCache(String key) {
@@ -249,8 +253,8 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Estimates the sequence coverage for the given protein match.
-     * 
-     * @param proteinMatchKey   the key of the protein match
+     *
+     * @param proteinMatchKey the key of the protein match
      * @return the sequence coverage
      */
     private double estimateSequenceCoverage(String proteinMatchKey) {
@@ -296,7 +300,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns the spectrum counting metric of the protein match of interest.
-     * 
+     *
      * @param proteinMatchKey the key of the protein match of interest
      * @return the corresponding spectrum counting metric
      */
@@ -333,8 +337,8 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns the spectrum counting score based on the user's settings.
-     * 
-     * @param proteinMatch  the inspected protein match
+     *
+     * @param proteinMatch the inspected protein match
      * @return the spectrum counting score
      */
     private double estimateSpectrumCounting(String proteinMatchKey) {
@@ -370,7 +374,7 @@ public class IdentificationFeaturesGenerator {
                                         }
                                     } catch (Exception e) {
                                         // protein deleted due to protein inference issue and not deleted from the map in versions earlier than 0.14.6
-                                         System.out.println("Non-existing protein key in protein map:" + proteinKey);
+                                        System.out.println("Non-existing protein key in protein map:" + proteinKey);
                                     }
                                 }
                             }
@@ -422,10 +426,12 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the best protein coverage possible according to the given cleavage settings.
-     * 
+     * Returns the best protein coverage possible according to the given
+     * cleavage settings.
+     *
      * @param proteinMatchKey the key of the protein match of interest
-     * @return the best protein coverage possible according to the given cleavage settings
+     * @return the best protein coverage possible according to the given
+     * cleavage settings
      */
     public Double getObservableCoverage(String proteinMatchKey) {
 
@@ -459,10 +465,12 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the best protein coverage possible according to the given cleavage settings.
-     * 
+     * Returns the best protein coverage possible according to the given
+     * cleavage settings.
+     *
      * @param proteinMatchKey the key of the protein match of interest
-     * @return the best protein coverage possible according to the given cleavage settings
+     * @return the best protein coverage possible according to the given
+     * cleavage settings
      */
     private double estimateObservableCoverage(String proteinMatchKey) {
         try {
@@ -479,8 +487,9 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the amount of validated proteins.
-     * Note that this value is only available after getSortedProteinKeys has been called.
+     * Returns the amount of validated proteins. Note that this value is only
+     * available after getSortedProteinKeys has been called.
+     *
      * @return the amount of validated proteins
      */
     public int getNValidatedProteins() {
@@ -498,17 +507,18 @@ public class IdentificationFeaturesGenerator {
         int cpt = 0;
         for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
             if (!ProteinMatch.isDecoy(proteinKey)) {
-            probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
-            if (probabilities.isValidated()) {
-                cpt++;
-            }
+                probabilities = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, probabilities);
+                if (probabilities.isValidated()) {
+                    cpt++;
+                }
             }
         }
         peptideShakerGUI.getMetrics().setnValidatedProteins(cpt);
     }
 
     /**
-     * Returns the number of validated peptides for a given protein match
+     * Returns the number of validated peptides for a given protein match.
+     *
      * @param proteinMatchKey the key of the protein match
      * @return the number of validated peptides
      */
@@ -528,7 +538,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Estimates the number of spectra for the given protein match.
-     * 
+     *
      * @param proteinMatchKey the key of the given protein match
      * @return the number of spectra for the given protein match
      */
@@ -563,8 +573,9 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the number of spectra where this protein was found independantly from the validation process.
-     * 
+     * Returns the number of spectra where this protein was found independantly
+     * from the validation process.
+     *
      * @param proteinMatch the protein match of interest
      * @return the number of spectra where this protein was found
      */
@@ -588,7 +599,8 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the number of validated spectra for a given protein match
+     * Returns the number of validated spectra for a given protein match.
+     *
      * @param proteinMatchKey the key of the protein match
      * @return the number of validated peptides
      */
@@ -623,7 +635,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns the number of validated spectra for a given protein match.
-     * 
+     *
      * @param proteinMatch the protein match of interest
      * @return the number of spectra where this protein was found
      */
@@ -652,7 +664,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns the protein sequence annotated with modifications.
-     * 
+     *
      * @param proteinKey the key of the protein match
      * @return the protein sequence annotated with modifications
      */
@@ -691,13 +703,12 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Transforms the protein accession number into an HTML link to the 
-     * corresponding database. Note that this is a complete HTML with 
-     * HTML and a href tags, where the main use is to include it in the 
-     * protein tables.
-     * 
-     * @param proteinAccession   the protein to get the database link for
-     * @return                   the transformed accession number
+     * Transforms the protein accession number into an HTML link to the
+     * corresponding database. Note that this is a complete HTML with HTML and a
+     * href tags, where the main use is to include it in the protein tables.
+     *
+     * @param proteinAccession the protein to get the database link for
+     * @return the transformed accession number
      */
     public String addDatabaseLink(String proteinAccession) {
 
@@ -735,13 +746,12 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Transforms the protein accesion number into an HTML link to the 
-     * corresponding database. Note that this is a complete HTML with 
-     * HTML and a href tags, where the main use is to include it in the 
-     * protein tables.
-     * 
-     * @param proteins  the list of proteins to get the database links for
-     * @return          the transformed accession number
+     * Transforms the protein accesion number into an HTML link to the
+     * corresponding database. Note that this is a complete HTML with HTML and a
+     * href tags, where the main use is to include it in the protein tables.
+     *
+     * @param proteins the list of proteins to get the database links for
+     * @return the transformed accession number
      */
     public String addDatabaseLinks(ArrayList<String> proteins) {
 
@@ -794,43 +804,43 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the protein accession number as a web link to the given 
-     * protein at http://srs.ebi.ac.uk.
-     * 
-     * @param proteinAccession  the protein accession number
-     * @param database          the protein database
-     * @return                  the protein accession web link
+     * Returns the protein accession number as a web link to the given protein
+     * at http://srs.ebi.ac.uk.
+     *
+     * @param proteinAccession the protein accession number
+     * @param database the protein database
+     * @return the protein accession web link
      */
     public String getSrsAccessionLink(String proteinAccession, String database) {
         return "http://srs.ebi.ac.uk/srsbin/cgi-bin/wgetz?-e+%5b" + database + "-AccNumber:" + proteinAccession + "%5d";
     }
 
     /**
-     * Returns the protein accession number as a web link to the given 
-     * protein at http://www.uniprot.org/uniprot.
-     * 
-     * @param proteinAccession  the protein accession number
-     * @return                  the protein accession web link
+     * Returns the protein accession number as a web link to the given protein
+     * at http://www.uniprot.org/uniprot.
+     *
+     * @param proteinAccession the protein accession number
+     * @return the protein accession web link
      */
     public String getUniProtAccessionLink(String proteinAccession) {
         return "http://www.uniprot.org/uniprot/" + proteinAccession;
     }
 
     /**
-     * Returns the protein accession number as a web link to the given 
-     * protein at http://www.ncbi.nlm.nih.gov/protein.
-     * 
-     * @param proteinAccession  the protein accession number
-     * @return                  the protein accession web link
+     * Returns the protein accession number as a web link to the given protein
+     * at http://www.ncbi.nlm.nih.gov/protein.
+     *
+     * @param proteinAccession the protein accession number
+     * @return the protein accession web link
      */
     public String getNcbiAccessionLink(String proteinAccession) {
         return "http://www.ncbi.nlm.nih.gov/protein/" + proteinAccession;
     }
 
     /**
-     * Returns a String with the HTML tooltip for the peptide indicating the 
+     * Returns a String with the HTML tooltip for the peptide indicating the
      * modification details.
-     * 
+     *
      * @param peptide
      * @return a String with the HTML tooltip for the peptide
      */
@@ -872,8 +882,9 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the peptide with modification sites colored on the sequence. Shall be used for peptides, not PSMs.
-     * 
+     * Returns the peptide with modification sites colored on the sequence.
+     * Shall be used for peptides, not PSMs.
+     *
      * @param peptideKey the peptide key
      * @param includeHtmlStartEndTag if true, html start and end tags are added
      * @return the colored peptide sequence
@@ -898,15 +909,15 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns the sorted list of protein keys.
-     * 
+     *
      * @param progressDialog the progress dialog, can be null
      * @return the sorted list of protein keys
      */
     public ArrayList<String> getSortedProteinKeys(ProgressDialogX progressDialog) {
         if (proteinList == null) {
 
-        // change the peptide shaker icon to a "waiting version"
-        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+            // change the peptide shaker icon to a "waiting version"
+            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
             if (progressDialog != null) {
                 progressDialog.setIndeterminate(false);
                 progressDialog.setTitle("Loading Protein Information. Please Wait...");
@@ -1045,14 +1056,15 @@ public class IdentificationFeaturesGenerator {
                 progressDialog.setIndeterminate(true);
             }
 
-                // change the peptide shaker icon back to the default version
-                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+            // change the peptide shaker icon back to the default version
+            peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
         }
         return proteinList;
     }
 
     /**
-     * Sets the sorted protein key list
+     * Sets the sorted protein key list.
+     *
      * @param sortedProteinKeys the new sorted protein key list
      */
     public void setSortedProteinKeys(ArrayList<String> sortedProteinKeys) {
@@ -1061,7 +1073,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns a sorted list of peptide keys from the protein of interest.
-     * 
+     *
      * @param proteinKey the key of the protein of interest
      * @return a sorted list of the corresponding peptide keys
      */
@@ -1109,7 +1121,7 @@ public class IdentificationFeaturesGenerator {
 
     /**
      * Returns the ordered list of spectrum keys for a given peptide.
-     * 
+     *
      * @param peptideKey the key of the peptide of interest
      * @return the ordered list of spectrum keys
      */

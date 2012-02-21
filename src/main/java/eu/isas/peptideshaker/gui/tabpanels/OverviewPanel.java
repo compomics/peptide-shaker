@@ -4162,7 +4162,6 @@ public class OverviewPanel extends javax.swing.JPanel implements ProteinSequence
 
         progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
         progressDialog.doNothingOnClose();
-
         progressDialog.setTitle("Loading Overview. Please Wait...");
 
         new Thread(new Runnable() {
