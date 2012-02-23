@@ -460,8 +460,10 @@ public class FileImporter {
         @Override
         protected Object doInBackground() throws Exception {
 
-            int nTotal = 0;
-            int nRetained = 0;
+            long nRetained = 0;
+            long nSpectra = 0;
+            long nPSMs = 0;
+            long nSecondary = 0;
             ArrayList<String> mgfUsed = new ArrayList<String>();
             boolean idReport, goodFirstHit, unknown = false;
             Peptide peptide;
@@ -512,7 +514,8 @@ public class FileImporter {
                     while (matchIt.hasNext()) {
 
                         SpectrumMatch match = matchIt.next();
-                        nTotal++;
+                        nPSMs++;
+                        nSecondary += match.getAllAssumptions().size()-1;
 
                         PeptideAssumption firstHit = match.getFirstHit(searchEngine);
                         String spectrumKey = match.getKey();
@@ -523,6 +526,7 @@ public class FileImporter {
                             waitingDialog.setSecondaryProgressDialogIntermediate(false);
                             waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
                             mgfUsed.add(fileName);
+                            nSpectra += spectrumFactory.getNSpectra(fileName);
                         }
                         if (!idReport) {
                             waitingDialog.appendReport("Importing PSMs from " + idFile.getName());
@@ -591,8 +595,8 @@ public class FileImporter {
                     return 1;
                 }
 
-                waitingDialog.appendReport("Identification file(s) import completed. "
-                        + nTotal + " identifications imported, " + nRetained + " identifications retained.");
+                waitingDialog.appendReport("Files import completed. "
+                        + nPSMs + " first hits imported (" + nSecondary + " secondary) from " + nSpectra + " spectra. " + nRetained + " first hits passed the initial filtering.");
                 waitingDialog.increaseSecondaryProgressValue(spectrumFiles.size() - mgfUsed.size());
                 peptideShaker.processIdentifications(inputMap, waitingDialog, searchParameters, annotationPreferences, idFilter);
 
