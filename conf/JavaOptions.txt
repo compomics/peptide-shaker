@@ -3,8 +3,14 @@
 #  Parameters to the Java virtual machine.                                     #
 #                                                                              #
 #  To increase the upper memory limit increase the number on the second line   #
-#  below. Your upper limit is the RAM memory available in your computers. Set  #
-#  it to around three times the size of the spectrum file you want to convert. #
+#  below. Your upper limit is the RAM memory available in your computers.      #
+#  If no value is set (-Xmx****M), the setting of a previous version           #
+#  or default value of 4000MB if none is found.                                #
+#                                                                              #
+#  To set the upper memory limit replace the stars on the second line below    #
+#  with the desired value in MB. Note that other units are not supported       #
+#  If the value set is not supported by your system (32 bits only),            #
+#  PeptideShaker will try to reduce it automatically                           #
 #                                                                              #
 #  For example, if you computer has 2GB of RAM memory, you can change the      #
 #  second line to a maximum value of:                                          #
@@ -12,4 +18,4 @@
 #                                                                              #
 ################################################################################
 -Xms128M 
--Xmx1500M
+-Xmx****M

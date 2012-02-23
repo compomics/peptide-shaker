@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker;
 
 import com.compomics.util.gui.UtilitiesGUIDefaults;
+import eu.isas.peptideshaker.preferences.UserPreferences;
 import eu.isas.peptideshaker.utils.Properties;
 import java.io.*;
 import javax.swing.JOptionPane;
@@ -18,6 +19,10 @@ public class PeptideShakerWrapper {
      */
     private boolean debug = false;
     /**
+     * Writes the debug output in a debug.txt file
+     */
+    private BufferedWriter bw = null;
+    /**
      * The name of the jar file. Must be equal to the name
      * given in the pom file.
      */
@@ -28,6 +33,14 @@ public class PeptideShakerWrapper {
      * to false.
      */
     private boolean firstTry = true;
+    /**
+     * user preferences file
+     */
+    private final String USER_PREFERENCES_FILE = System.getProperty("user.home") + "/.peptideshaker/userpreferences.cpf";
+    /**
+     * the user preferences
+     */
+    private UserPreferences userPreferences;
 
     /**
      * Starts the launcher by calling the launch method. Use this as the
@@ -41,7 +54,20 @@ public class PeptideShakerWrapper {
         UtilitiesGUIDefaults.setLookAndFeel();
 
         try {
+            loadUserPreferences();
+            if (debug) {
+                String path = this.getClass().getResource("PeptideShakerWrapper.class").getPath();
+                path = path.substring(5, path.indexOf(jarFileName));
+                path = path.replace("%20", " ");
+                File debugOutput = new File(path + "conf/debug.txt");
+                bw = new BufferedWriter(new FileWriter(debugOutput));
+                bw.write("Memory settings read from the user preferences: " + userPreferences.getMemoryPreference() + "\n");
+            }
             launch();
+            if (debug) {
+                bw.flush();
+                bw.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -66,7 +92,7 @@ public class PeptideShakerWrapper {
         File nonStandardJavaHome = new File(path + "conf/JavaHome.txt");
 
         // read any java option settings
-        if (javaOptions.exists() && firstTry) {
+        if (javaOptions.exists()) {
 
             try {
                 FileReader f = new FileReader(javaOptions);
@@ -75,7 +101,31 @@ public class PeptideShakerWrapper {
                 currentOption = b.readLine();
 
                 while (currentOption != null) {
-                    if (!currentOption.startsWith("#")) {
+                    if (currentOption.startsWith("-Xmx")) {
+                        if (firstTry) {
+                            currentOption = currentOption.substring(4, currentOption.length() - 1);
+                            boolean input = false;
+                            for (char c : currentOption.toCharArray()) {
+                                if (c != '*') {
+                                    input = true;
+                                    break;
+                                }
+                            }
+                            if (input) {
+                                try {
+                                    userPreferences.setMemoryPreference(new Integer(currentOption));
+                                    saveNewSettings();
+                                    if (debug) {
+                                        bw.write("New memory setting saved: " + userPreferences.getMemoryPreference() + "\n");
+                                    }
+                                } catch (Exception e) {
+                                    javax.swing.JOptionPane.showMessageDialog(null,
+                                            "PeptideShaker could not parse the memory setting:" + currentOption + ". The value was reset to" + userPreferences.getMemoryPreference() + ".",
+                                            "PeptideShaker - Startup Failed", JOptionPane.WARNING_MESSAGE);
+                                }
+                            }
+                        }
+                    } else if (!currentOption.startsWith("#")) {
                         options += currentOption + " ";
                     }
                     currentOption = b.readLine();
@@ -83,6 +133,8 @@ public class PeptideShakerWrapper {
 
                 b.close();
                 f.close();
+
+                options += "-Xmx" + userPreferences.getMemoryPreference() + "M";
 
             } catch (FileNotFoundException ex) {
                 ex.printStackTrace();
@@ -108,8 +160,8 @@ public class PeptideShakerWrapper {
 
                 String tempLocation = b.readLine();
 
-                if (new File(tempLocation).exists() &&
-                        (new File(tempLocation, "java.exe").exists() || new File(tempLocation, "java").exists())) {
+                if (new File(tempLocation).exists()
+                        && (new File(tempLocation, "java.exe").exists() || new File(tempLocation, "java").exists())) {
                     javaHome = tempLocation;
                     usingStandardJavaHome = false;
                 } else {
@@ -146,7 +198,7 @@ public class PeptideShakerWrapper {
         }
 
         if (debug) {
-            JOptionPane.showMessageDialog(null, "original java.home: " + javaHome);
+            bw.write("original java.home: " + javaHome + "\n");
         }
 
         // try to force the use of 64 bit Java if available
@@ -158,7 +210,7 @@ public class PeptideShakerWrapper {
             String tempJavaHome = javaHome.replaceAll(" \\(x86\\)", "");
 
             if (debug) {
-                JOptionPane.showMessageDialog(null, "temp java.home: " + tempJavaHome);
+                bw.write("temp java.home: " + tempJavaHome + "\n");
             }
 
             if (new File(tempJavaHome).exists()) {
@@ -167,7 +219,7 @@ public class PeptideShakerWrapper {
         }
 
         if (debug) {
-            JOptionPane.showMessageDialog(null, "new java.home: " + javaHome);
+            bw.write("new java.home: " + javaHome + "\n");
         }
 
         // create the complete command line
@@ -177,6 +229,7 @@ public class PeptideShakerWrapper {
 
         if (debug) {
             System.out.println(cmdLine);
+            bw.write("Command line: " + cmdLine + "\n\n");
         }
 
         // try to run the command line
@@ -192,6 +245,7 @@ public class PeptideShakerWrapper {
 
             if (debug) {
                 System.out.println("<ERROR>");
+                bw.write("Error stream:\n");
             }
 
             line = br.readLine();
@@ -202,15 +256,12 @@ public class PeptideShakerWrapper {
 
                 if (debug) {
                     System.out.println(line);
+                    bw.write(line + "\n");
                 }
 
                 temp += line + "\n";
                 line = br.readLine();
                 error = true;
-            }
-
-            if (debug) {
-                System.out.println("</ERROR>");
             }
 
             temp += "\nThe command line executed:\n";
@@ -220,40 +271,154 @@ public class PeptideShakerWrapper {
 
             if (debug) {
                 System.out.println("Process exitValue: " + exitVal);
+                bw.write("Process exitValue: " + exitVal + "\n");
             }
 
             // an error occured
             if (error) {
 
-                //if first try, relaunch with minimum memory settings
-                if (firstTry) {
-                    firstTry = false;
+                firstTry = false;
+                //if needed, try relaunching with reduced memory settings
+                if (temp.contains("Could not create the Java virtual machine")) {
+                    if (userPreferences.getMemoryPreference() > 3 * 1024) {
+                        userPreferences.setMemoryPreference(userPreferences.getMemoryPreference() - 1024);
+                        saveNewSettings();
+                        launch();
+                    } else if (userPreferences.getMemoryPreference() > 1024) {
+                        userPreferences.setMemoryPreference(userPreferences.getMemoryPreference() - 512);
+                        saveNewSettings();
+                        launch();
+                    } else {
+                        if (debug) {
+                            bw.write("Memory Limit:" + userPreferences.getMemoryPreference() + "\n");
+                            bw.write(temp + "\n");
+                        }
+                        File logFile = new File("conf", "PeptideShaker.log");
+                        FileWriter f = new FileWriter(logFile, true);
+                        f.write("\n\n" + temp + "\n\n");
+                        f.close();
+                        javax.swing.JOptionPane.showMessageDialog(null,
+                                "Failed to create the Java virtual machine.\n\n"
+                                + "Inspect the log file for details: conf/PeptideShaker.log.\n\n"
+                                + "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
+                                "PeptideShaker - Startup Failed", JOptionPane.ERROR_MESSAGE);
 
-                    javax.swing.JOptionPane.showMessageDialog(null,
-                            "Failed to start PeptideShaker.\n\n"
-                            + "Will try to restart with reduced memory requirements.\n\n"
-                            + "See Troubleshooting at http://peptide-shaker.googlecode.com for details.",
-                            "PeptideShaker - Startup Failed", JOptionPane.WARNING_MESSAGE);
-
-                    launch();
+                        if (debug) {
+                            bw.flush();
+                            bw.close();
+                        }
+                        System.exit(0);
+                    }
                 } else {
-                    File logFile = new File("conf", "PeptideShaker.log");
-                    FileWriter f = new FileWriter(logFile, true);
-                    f.write("\n\n" + temp + "\n\n");
-                    f.close();
-
+                    bw.write(temp + "\n");
                     javax.swing.JOptionPane.showMessageDialog(null,
-                            "Failed to start PeptideShaker.\n\n"
+                            "An error occurred when starting PeptideShaker.\n\n"
                             + "Inspect the log file for details: conf/PeptideShaker.log.\n\n"
                             + "Then go to Troubleshooting at http://peptide-shaker.googlecode.com.",
-                            "PeptideShaker - Startup Failed", JOptionPane.ERROR_MESSAGE);
+                            "PeptideShaker - Startup Error", JOptionPane.ERROR_MESSAGE);
 
+                    if (debug) {
+                        bw.flush();
+                        bw.close();
+                    }
                     System.exit(0);
                 }
             }
         } catch (Throwable t) {
             t.printStackTrace();
             System.exit(0);
+        }
+
+    }
+
+    /**
+     * Loads the user preferences.
+     */
+    private void loadUserPreferences() {
+        try {
+            File file = new File(USER_PREFERENCES_FILE);
+            if (!file.exists()) {
+                userPreferences = new UserPreferences();
+                saveUserPreferences();
+            } else {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream in = new ObjectInputStream(fis);
+                Object inObject = in.readObject();
+                fis.close();
+                in.close();
+                userPreferences = (UserPreferences) inObject;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Saves the new memory settings
+     */
+    private void saveNewSettings() {
+        saveUserPreferences();
+        saveJavaOptions();
+    }
+
+    /**
+     * Saves the user preferences.
+     */
+    private void saveUserPreferences() {
+        try {
+            File file = new File(USER_PREFERENCES_FILE);
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdir();
+            }
+            FileOutputStream fos = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(userPreferences);
+            oos.close();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Creates a new javaOptions text file with the new settings
+     */
+    private void saveJavaOptions() {
+
+        String path = this.getClass().getResource("PeptideShakerWrapper.class").getPath();
+        String currentLine, lines = "";
+        path = path.substring(5, path.indexOf(jarFileName));
+        path = path.replace("%20", " ");
+
+        File javaOptions = new File(path + "conf/JavaOptions.txt");
+        // read any java option settings
+        if (javaOptions.exists()) {
+
+            try {
+                FileReader f = new FileReader(javaOptions);
+                BufferedReader b = new BufferedReader(f);
+
+                while ((currentLine = b.readLine()) != null) {
+                    if (!currentLine.startsWith("-Xmx")) {
+                        lines += currentLine + "\n";
+                    }
+                }
+                b.close();
+                f.close();
+
+                FileWriter fw = new FileWriter(javaOptions);
+                BufferedWriter bw = new BufferedWriter(fw);
+                bw.write(lines);
+                bw.write("-Xmx" + userPreferences.getMemoryPreference() + "M\n");
+
+                bw.close();
+                fw.close();
+
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 

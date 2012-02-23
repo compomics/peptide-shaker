@@ -44,6 +44,10 @@ public class UserPreferences implements Serializable {
      * Show/hide sliders
      */
     private boolean showSliders = false;
+    /**
+     * The memory to use by PeptideShaker
+     */
+    private int memoryPreference = 4*1024;
 
     /**
      * Constructor
@@ -179,5 +183,25 @@ public class UserPreferences implements Serializable {
      */
     public void addRecentProject(File recentProject) {
         addRecentProject(recentProject.getAbsolutePath());
+    }
+
+    /**
+     * Returns the preferred upper memory limit
+     * @return the preferred upper memory limit
+     */
+    public int getMemoryPreference() {
+        if (memoryPreference == 0) {
+            // needed for backward compatibility
+            memoryPreference = 4*1024;
+        }
+        return memoryPreference;
+    }
+
+    /**
+     * Sets the preferred upper memory limit
+     * @param memoryPreference the preferred upper memory limit
+     */
+    public void setMemoryPreference(int memoryPreference) {
+        this.memoryPreference = memoryPreference;
     }
 }
