@@ -501,7 +501,7 @@ public class FileImporter {
                         fileReader = readerFactory.getFileReader(idFile, null);
                     }
 
-                        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+                    waitingDialog.setSecondaryProgressDialogIntermediate(false);
                     HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches(waitingDialog.getSecondaryProgressBar());
                     fileReader.close();
                     Iterator<SpectrumMatch> matchIt = tempSet.iterator();
