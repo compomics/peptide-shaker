@@ -229,10 +229,21 @@ public class NewReferenceDialog extends javax.swing.JDialog {
      */
     private void okJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okJButtonActionPerformed
         
+        String tempPmid = null;
+        String tempDoi = null;
+        
+        if (pmidIDJTextField.getText().length() > 0) {
+            tempPmid = pmidIDJTextField.getText();
+        }
+        
+        if (doiJTextField.getText().length() > 0) {
+            tempDoi = doiJTextField.getText();
+        }
+        
         if (rowIndex != -1) {
-            prideExportDialog.updateReference(new Reference(referenceJTextArea.getText(), pmidIDJTextField.getText(), doiJTextField.getText()), rowIndex);
+            prideExportDialog.updateReference(new Reference(referenceJTextArea.getText(), tempPmid, tempDoi), rowIndex);
         } else {
-            prideExportDialog.addReference(new Reference(referenceJTextArea.getText(), pmidIDJTextField.getText(), doiJTextField.getText()));
+            prideExportDialog.addReference(new Reference(referenceJTextArea.getText(), tempPmid, tempDoi));
         }
         
         dispose();  
@@ -250,7 +261,10 @@ public class NewReferenceDialog extends javax.swing.JDialog {
     private javax.swing.JTextArea referenceJTextArea;
     // End of variables declaration//GEN-END:variables
 
-    public void validateInput() {
+    /**
+     * Validate the input and enable/disable the OK button.
+     */
+    private void validateInput() {
         okJButton.setEnabled(referenceJTextArea.getText().length() > 0);
     }
 }

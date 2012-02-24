@@ -1,16 +1,15 @@
 package eu.isas.peptideshaker.pride.gui;
 
+import com.compomics.util.gui.dialogs.ProgressDialogParent;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
-import eu.isas.peptideshaker.pride.Contact;
-import eu.isas.peptideshaker.pride.Instrument;
-import eu.isas.peptideshaker.pride.Protocol;
-import eu.isas.peptideshaker.pride.Reference;
-import eu.isas.peptideshaker.pride.Sample;
+import eu.isas.peptideshaker.pride.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Vector;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -21,8 +20,12 @@ import javax.swing.table.JTableHeader;
  *
  * @author Harald Barsnes
  */
-public class PrideExportDialog extends javax.swing.JDialog {
+public class PrideExportDialog extends javax.swing.JDialog implements ProgressDialogParent {
 
+    /**
+     * A simple progress dialog.
+     */
+    private static ProgressDialogX progressDialog;
     /**
      * The PeptideShakerGUI main class.
      */
@@ -500,6 +503,11 @@ public class PrideExportDialog extends javax.swing.JDialog {
         convertJButton.setForeground(new java.awt.Color(255, 255, 255));
         convertJButton.setText("Convert!");
         convertJButton.setEnabled(false);
+        convertJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                convertJButtonActionPerformed(evt);
+            }
+        });
 
         openDialogHelpJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/help.GIF"))); // NOI18N
         openDialogHelpJButton.setToolTipText("Help");
@@ -654,6 +662,9 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
         int returnVal = chooser.showOpenDialog(this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
+
+            // @TOOD: check if file exists!!!
+
             String path = (chooser.getSelectedFile().getAbsoluteFile().getPath());
             peptideShakerGUI.setLastSelectedFolder(path);
             outputFolderJTextField.setText(path);
@@ -943,8 +954,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
     /**
      * Edit the selected sample.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void editSampleJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editSampleJButtonActionPerformed
 
@@ -958,8 +969,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
     /**
      * Edit the selected protocol.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void editProtocolJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editProtocolJButtonActionPerformed
         // get the selected protcol details
@@ -972,8 +983,8 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
     /**
      * Edit the selected instrument.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void editInstrumentJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editInstrumentJButtonActionPerformed
         // get the selected instrument details
@@ -984,6 +995,73 @@ public class PrideExportDialog extends javax.swing.JDialog {
         new NewInstrumentDialog(this, true, tempInstrument);
     }//GEN-LAST:event_editInstrumentJButtonActionPerformed
 
+    /**
+     * Convert the project to a PRIDE XML file.
+     * 
+     * @param evt 
+     */
+    private void convertJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convertJButtonActionPerformed
+
+        final PrideExportDialog prideExportDialog = this; // needed due to threading issues
+        progressDialog = new ProgressDialogX(this, this, true);
+        progressDialog.setIndeterminate(true);
+        progressDialog.doNothingOnClose();
+
+        new Thread(new Runnable() {
+
+            public void run() {
+                progressDialog.setIndeterminate(true);
+                progressDialog.setTitle("Exporting PRIDE XML. Please Wait...");
+                progressDialog.setVisible(true);
+            }
+        }, "ProgressDialog").start();
+
+        new Thread("ExportThread") {
+
+            @Override
+            public void run() {
+
+                // get the references, if any
+                ArrayList<Reference> references = new ArrayList<Reference>();
+
+                for (int row = 0; row < ((DefaultTableModel) referencesJTable.getModel()).getRowCount(); row++) {
+                    references.add(new Reference(
+                            (String) referencesJTable.getValueAt(row, 1),
+                            (String) referencesJTable.getValueAt(row, 2),
+                            (String) referencesJTable.getValueAt(row, 3)));
+                }
+
+                // get the selected contact details
+                String selectedContact = (String) contactsJComboBox.getSelectedItem();
+                File contactsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/contacts");
+                Contact contact = new Contact(new File(contactsFolder, selectedContact + ".con"));
+
+                // get the selected sample details
+                String selectedSample = (String) sampleJComboBox.getSelectedItem();
+                File samplesFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/samples");
+                Sample sample = new Sample(new File(samplesFolder, selectedSample + ".sam"));
+
+                // get the selected protcol details
+                String selectedProtocol = (String) protocolJComboBox.getSelectedItem();
+                File protocolsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/protocols");
+                Protocol protocol = new Protocol(new File(protocolsFolder, selectedProtocol + ".pro"));
+
+                // get the selected instrument details
+                String selectedInstrument = (String) instrumentJComboBox.getSelectedItem();
+                File instrumentFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/instruments");
+                Instrument instrument = new Instrument(new File(instrumentFolder, selectedInstrument + ".int"));
+
+                PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI, titleJTextField.getText(), labelJTextField.getText(), descriptionJTextArea.getText(), projectJTextField.getText(),
+                        references, contact, sample, protocol, instrument, new File(outputFolderJTextField.getText()));
+
+                prideExport.createPrideXmlFile(progressDialog);
+                progressDialog.dispose();
+
+                // @TODO: improve info message below!!
+                JOptionPane.showMessageDialog(prideExportDialog, "PRIDE XML file created.", "PRIDE XML File Created", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }.start();
+    }//GEN-LAST:event_convertJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addReferencesJButton;
     private javax.swing.JPanel backgroundJPanel;
@@ -1092,17 +1170,17 @@ public class PrideExportDialog extends javax.swing.JDialog {
                     reference.getDoi()
                 });
     }
-    
+
     /**
      * Save the provided protocol to file and then select it in the list.
-     * 
-     * @param protocol 
+     *
+     * @param protocol
      */
-    public void setProtocol (Protocol protocol) {
-        
+    public void setProtocol(Protocol protocol) {
+
         File protocolsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/protocols");
         File protocolsFile = new File(protocolsFolder, protocol.getName() + ".pro");
-        
+
         try {
             protocol.saveAsFile(protocolsFile);
 
@@ -1130,17 +1208,17 @@ public class PrideExportDialog extends javax.swing.JDialog {
             ex.printStackTrace();
         }
     }
-    
+
     /**
      * Save the provided Instrument to file and then select it in the list.
-     * 
-     * @param instrument 
+     *
+     * @param instrument
      */
-    public void setInstrument (Instrument instrument) {
-        
+    public void setInstrument(Instrument instrument) {
+
         File instrumentsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/instruments");
         File instrumentsFile = new File(instrumentsFolder, instrument.getName() + ".int");
-        
+
         try {
             instrument.saveAsFile(instrumentsFile);
 
@@ -1168,17 +1246,17 @@ public class PrideExportDialog extends javax.swing.JDialog {
             ex.printStackTrace();
         }
     }
-    
+
     /**
      * Save the provided sample to file and then select it in the list.
-     * 
-     * @param sample 
+     *
+     * @param sample
      */
-    public void setSample (Sample sample) {
-        
+    public void setSample(Sample sample) {
+
         File samplesFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/samples");
         File samplesFile = new File(samplesFolder, sample.getName() + ".sam");
-        
+
         try {
             sample.saveAsFile(samplesFile);
 
@@ -1216,7 +1294,7 @@ public class PrideExportDialog extends javax.swing.JDialog {
 
         File contactsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/contacts");
         File contactFile = new File(contactsFolder, contact.getName() + ".con");
-        
+
         try {
             contact.saveAsFile(contactFile);
 
@@ -1265,5 +1343,10 @@ public class PrideExportDialog extends javax.swing.JDialog {
         }
 
         return ontology;
+    }
+
+    @Override
+    public void cancelProgress() {
+        // do nothing
     }
 }
