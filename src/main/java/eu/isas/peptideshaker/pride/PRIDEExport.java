@@ -1,5 +1,6 @@
 package eu.isas.peptideshaker.pride;
 
+import com.compomics.util.experiment.biology.NeutralLoss;
 import com.compomics.util.experiment.biology.PTM;
 import com.compomics.util.experiment.biology.PTMFactory;
 import com.compomics.util.experiment.biology.Peptide;
@@ -242,36 +243,216 @@ public class PRIDEExport {
 
     private void writeFragmentIon(BufferedWriter br, IonMatch ionMatch) throws IOException {
 
-        // @TODO: find a better way of converting IonMatch to PRIDE CV Term??
         PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
+        boolean standardFragmentIonAdded = false;
+        String ionNameLine = "";
 
-        if (fragmentIon.getType() == PeptideFragmentIonType.B_ION && fragmentIon.getNeutralLosses().isEmpty()) {
+        // @TODO: to add neutral losses with more than one loss we need to create new CV terms!!
+        // @TODO: to add phospho neutral losses we need to create new CV terms!!
 
+        if (fragmentIon.getType() == PeptideFragmentIonType.A_ION) {
+            if (fragmentIon.getNeutralLosses().isEmpty()) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000233\" name=\"a ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.H2O)) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000234\" name=\"a ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.NH3)) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000235\" name=\"a ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            }
+        } else if (fragmentIon.getType() == PeptideFragmentIonType.B_ION) {
+            if (fragmentIon.getNeutralLosses().isEmpty()) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000194\" name=\"b ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.H2O)) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000196\" name=\"b ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.NH3)) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000195\" name=\"b ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            }
+        } else if (fragmentIon.getType() == PeptideFragmentIonType.C_ION) {
+            if (fragmentIon.getNeutralLosses().isEmpty()) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000236\" name=\"c ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.H2O)) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000237\" name=\"c ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.NH3)) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000238\" name=\"c ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            }
+        } else if (fragmentIon.getType() == PeptideFragmentIonType.X_ION) {
+            if (fragmentIon.getNeutralLosses().isEmpty()) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000227\" name=\"x ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.H2O)) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000228\" name=\"x ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.NH3)) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000229\" name=\"x ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            }
+        } else if (fragmentIon.getType() == PeptideFragmentIonType.Y_ION) {
+            if (fragmentIon.getNeutralLosses().isEmpty()) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000193\" name=\"y ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.H2O)) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000197\" name=\"y ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.NH3)) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000198\" name=\"y ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            }
+        } else if (fragmentIon.getType() == PeptideFragmentIonType.Z_ION) {
+            if (fragmentIon.getNeutralLosses().isEmpty()) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000230\" name=\"z ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.H2O)) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000231\" name=\"z ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0).isSameAs(NeutralLoss.NH3)) {
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000232\" name=\"z ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+                standardFragmentIonAdded = true;
+            }
+        } else if (fragmentIon.getType() == PeptideFragmentIonType.IMMONIUM) {
+            writeImmoniumIon(br, ionMatch); // @TODO: the immonium type seems to be ignored by PRIDE Inspector!! and just listed as "immonium"...
+        } else if (fragmentIon.getType() == PeptideFragmentIonType.PRECURSOR_ION) {
+            writePrecursorIon(br, ionMatch);
+        }
+
+        if (standardFragmentIonAdded) {
             br.write(getCurrentTabSpace() + "<FragmentIon>\n");
             tabCounter++;
-
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000194\" name=\"b ion\" value=\"" + fragmentIon.getNumber() + "\" />\n");
+            br.write(ionNameLine);
             br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000188\" name=\"product ion m/z\" value=\"" + ionMatch.peak.mz + "\" />\n");
             br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000189\" name=\"product ion intensity\" value=\"" + ionMatch.peak.intensity + "\" />\n");
             br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000190\" name=\"product ion mass error\" value=\"" + ionMatch.getAbsoluteError() + "\" />\n");
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000204\" name=\"product ion charge\" value=\"" + ionMatch.charge + "\" />\n");
-
-            tabCounter--;
-            br.write(getCurrentTabSpace() + "</FragmentIon>\n");
-        } else if (fragmentIon.getType() == PeptideFragmentIonType.Y_ION && fragmentIon.getNeutralLosses().isEmpty()) {
-
-            br.write(getCurrentTabSpace() + "<FragmentIon>\n");
-            tabCounter++;
-
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000193\" name=\"y ion\" value=\"" + fragmentIon.getNumber() + "\" />\n");
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000188\" name=\"product ion m/z\" value=\"" + ionMatch.peak.mz + "\" />\n");
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000189\" name=\"product ion intensity\" value=\"" + ionMatch.peak.intensity + "\" />\n");
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000190\" name=\"product ion mass error\" value=\"" + ionMatch.getAbsoluteError() + "\" />\n");
-            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000204\" name=\"product ion charge\" value=\"" + ionMatch.charge + "\" />\n");
-
+            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000204\" name=\"product ion charge\" value=\"" + ionMatch.charge.value + "\" />\n"); // @TODO: assumes charge > 0!
             tabCounter--;
             br.write(getCurrentTabSpace() + "</FragmentIon>\n");
         }
+    }
+
+    private void writePrecursorIon(BufferedWriter br, IonMatch ionMatch) throws IOException {
+        
+        PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
+        
+        String ionNameLine = "";
+        
+        boolean precursorAdded = false;
+
+        if (fragmentIon.getNeutralLosses().isEmpty()) {
+            ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000263\" name=\"precursor ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+            precursorAdded = true;
+        } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0) == NeutralLoss.H2O) {
+            ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000262\" name=\"precursor ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+            precursorAdded = true;
+        } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0) == NeutralLoss.NH3) {
+            ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000261\" name=\"precursor ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+            precursorAdded = true;
+        }
+
+        if (precursorAdded) {
+            
+            // @TODO: the required precursor CV terms are missing... using product ion cv terms instead!!
+            
+            br.write(getCurrentTabSpace() + "<FragmentIon>\n");
+            tabCounter++;
+            br.write(ionNameLine);
+            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000188\" name=\"product ion m/z\" value=\"" + ionMatch.peak.mz + "\" />\n"); // @TODO: precursor cv term does not exist!!
+            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000189\" name=\"product ion intensity\" value=\"" + ionMatch.peak.intensity + "\" />\n"); // @TODO: precursor cv term does not exist!!
+            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000190\" name=\"product ion mass error\" value=\"" + ionMatch.getAbsoluteError() + "\" />\n"); // @TODO: precursor cv term does not exist!!
+            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000204\" name=\"product ion charge\" value=\"" + ionMatch.charge + "\" />\n"); // @TODO: precursor cv term does not exist!!
+            tabCounter--;
+            br.write(getCurrentTabSpace() + "</FragmentIon>\n");
+        }
+    }
+
+    private void writeImmoniumIon(BufferedWriter br, IonMatch ionMatch) throws IOException {
+
+        PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
+
+        // retrieve iX and convert to X
+        char residue = fragmentIon.getIonType().charAt(1);
+
+        String ionNameLine = "";
+
+        switch (residue) {
+            case 'A':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000240\" name=\"immonium A\" />\n";
+                break;
+            case 'C':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000241\" name=\"immonium C\" />\n";
+                break;
+            case 'D':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000242\" name=\"immonium D\" />\n";
+                break;
+            case 'E':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000243\" name=\"immonium E\" />\n";
+                break;
+            case 'F':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000244\" name=\"immonium F\" />\n";
+                break;
+            case 'G':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000245\" name=\"immonium G\" />\n";
+                break;
+            case 'H':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000246\" name=\"immonium H\" />\n";
+                break;
+            case 'I':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000247\" name=\"immonium I\" />\n";
+                break;
+            case 'K':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000248\" name=\"immonium K\" />\n";
+                break;
+            case 'L':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000249\" name=\"immonium L\" />\n";
+                break;
+            case 'M':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000250\" name=\"immonium M\" />\n";
+                break;
+            case 'N':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000251\" name=\"immonium N\" />\n";
+                break;
+            case 'P':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000252\" name=\"immonium P\" />\n";
+                break;
+            case 'Q':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000253\" name=\"immonium Q\" />\n";
+                break;
+            case 'R':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000254\" name=\"immonium R\" />\n";
+                break;
+            case 'S':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000255\" name=\"immonium S\" />\n";
+                break;
+            case 'T':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000256\" name=\"immonium T\" />\n";
+                break;
+            case 'V':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000257\" name=\"immonium V\" />\n";
+                break;
+            case 'W':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000258\" name=\"immonium W\" />\n";
+                break;
+            case 'Y':
+                ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000259\" name=\"immonium Y\" />\n";
+                break;
+        }
+        
+        // @TODO: the immonium type seems to be ignored by PRIDE Inspector!! and just listed as "immonium"...
+
+        br.write(getCurrentTabSpace() + "<FragmentIon>\n");
+        tabCounter++;
+        br.write(ionNameLine);
+        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000188\" name=\"product ion m/z\" value=\"" + ionMatch.peak.mz + "\" />\n");
+        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000189\" name=\"product ion intensity\" value=\"" + ionMatch.peak.intensity + "\" />\n");
+        br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000190\" name=\"product ion mass error\" value=\"" + ionMatch.getAbsoluteError() + "\" />\n");
+        //br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000204\" name=\"product ion charge\" value=\"" + ionMatch.charge.value + "\" />\n"); // @TODO: assumes charge > 0!
+        tabCounter--;
+        br.write(getCurrentTabSpace() + "</FragmentIon>\n");
     }
 
     private void writePtms(BufferedWriter br, Peptide peptide, PTMFactory pTMFactory) throws IOException {
