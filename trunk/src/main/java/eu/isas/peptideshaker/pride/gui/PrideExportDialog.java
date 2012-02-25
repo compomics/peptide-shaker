@@ -6,6 +6,7 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.pride.*;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.*;
@@ -1020,6 +1021,9 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
             @Override
             public void run() {
+                
+                // change the peptide shaker icon to a "waiting version"
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
                 // get the references, if any
                 ArrayList<Reference> references = new ArrayList<Reference>();
@@ -1056,6 +1060,9 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
                 prideExport.createPrideXmlFile(progressDialog);
                 progressDialog.dispose();
+                
+                // return the peptide shaker icon to the standard version
+                peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
                 // @TODO: improve info message below!!
                 JOptionPane.showMessageDialog(prideExportDialog, "PRIDE XML file created.", "PRIDE XML File Created", JOptionPane.INFORMATION_MESSAGE);
