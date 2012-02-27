@@ -20,7 +20,7 @@ import com.compomics.util.gui.spectrum.SpectrumPanel;
 import com.googlecode.charts4j.Color;
 import com.googlecode.charts4j.GCharts;
 import com.googlecode.charts4j.VennDiagram;
-import eu.isas.peptideshaker.export.FeaturesGenerator;
+import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -700,7 +700,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         searchEnginesJPanel.setLayout(searchEnginesJPanelLayout);
         searchEnginesJPanelLayout.setHorizontalGroup(
             searchEnginesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(searchEnginesJLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1331, Short.MAX_VALUE)
+            .addComponent(searchEnginesJLayeredPane)
         );
         searchEnginesJPanelLayout.setVerticalGroup(
             searchEnginesJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1073,7 +1073,7 @@ public class SpectrumIdentificationPanel extends javax.swing.JPanel {
         psmsJPanel.setLayout(psmsJPanelLayout);
         psmsJPanelLayout.setHorizontalGroup(
             psmsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(psmsLayeredPane, javax.swing.GroupLayout.DEFAULT_SIZE, 1331, Short.MAX_VALUE)
+            .addComponent(psmsLayeredPane)
         );
         psmsJPanelLayout.setVerticalGroup(
             psmsJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -2759,6 +2759,8 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                 ((JSparklinesBarChartTableCellRenderer) spectrumTable.getColumn("m/z").getCellRenderer()).setMaxValue(maxMz);
 
                 updateSelection();
+                
+                peptideShakerGUI.mgfFileSelectionChanged(fileSelected);
 
                 progressDialog.setVisible(false);
                 progressDialog.dispose();
@@ -2775,7 +2777,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
      * @return the key of the currently selected spectrum
      */
     public String getSelectedSpectrumKey() {
-        return Spectrum.getSpectrumKey(fileSelected, spectrumFactory.getSpectrumTitles(fileSelected).get(spectrumTable.getSelectedRow()));
+        return Spectrum.getSpectrumKey(fileSelected, spectrumFactory.getSpectrumTitles(fileSelected).get(spectrumTable.convertRowIndexToModel(spectrumTable.getSelectedRow())));
     }
 
     /**
@@ -2830,7 +2832,7 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
 
         int line = spectrumFactory.getSpectrumTitles(fileSelected).indexOf(spectrumTitle);
 
-        if (line > 0) {
+        if (line >= 0) {
             spectrumTable.setRowSelectionInterval(line, line);
             spectrumTable.scrollRectToVisible(spectrumTable.getCellRect(line, 0, false));
             spectrumSelectionChanged();
@@ -3334,8 +3336,8 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                                         writer.write("\t");
 
                                         writer.write(spectrumMatch.getBestAssumption().getPeptide().getModifiedSequenceAsString(true) + "\t");
-                                        writer.write(FeaturesGenerator.getPeptideModificationsAsString(spectrumMatch.getBestAssumption().getPeptide()) + "\t");
-                                        writer.write(FeaturesGenerator.getPeptideModificationLocations(spectrumMatch.getBestAssumption().getPeptide(),
+                                        writer.write(OutputGenerator.getPeptideModificationsAsString(spectrumMatch.getBestAssumption().getPeptide()) + "\t");
+                                        writer.write(OutputGenerator.getPeptideModificationLocations(spectrumMatch.getBestAssumption().getPeptide(),
                                                 identification.getPeptideMatch(spectrumMatch.getBestAssumption().getPeptide().getKey())) + "\t");
                                         writer.write(probabilities.getPsmScore() + "\t");
                                         writer.write(probabilities.getPsmConfidence() + "\t");
@@ -3417,8 +3419,8 @@ private void spectrumJPanelMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
                     result += "\t";
 
                     result += currentAssumption.getPeptide().getModifiedSequenceAsString(true) + "\t";
-                    result += FeaturesGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide()) + "\t";
-                    result += FeaturesGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),
+                    result += OutputGenerator.getPeptideModificationsAsString(currentAssumption.getPeptide()) + "\t";
+                    result += OutputGenerator.getPeptideModificationLocations(currentAssumption.getPeptide(),
                             identification.getPeptideMatch(currentAssumption.getPeptide().getKey())) + "\t";
 
                     result += currentAssumption.getEValue() + "\t";

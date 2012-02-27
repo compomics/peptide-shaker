@@ -6,7 +6,7 @@ import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.protein.Header.DatabaseType;
-import eu.isas.peptideshaker.export.FeaturesGenerator;
+import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -1030,7 +1030,7 @@ public class AnnotationPanel extends javax.swing.JPanel implements ProgressDialo
 
                 if (peptideShakerGUI.getIdentification() != null) {
 
-                    FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
+                    OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
 
                     try {
                         outputGenerator.getProteinsOutput(null, false, true, true, false,

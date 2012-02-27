@@ -16,7 +16,7 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.pdbfinder.FindPdbForUniprotAccessions;
 import com.compomics.util.pdbfinder.pdb.PdbBlock;
 import com.compomics.util.pdbfinder.pdb.PdbParameter;
-import eu.isas.peptideshaker.export.FeaturesGenerator;
+import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
@@ -3414,7 +3414,7 @@ public class ProteinStructurePanel extends javax.swing.JPanel implements Progres
                 || tableIndex == TableIndex.PDB_CHAINS) {
 
             try {
-                FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
+                OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
 
                 if (tableIndex == TableIndex.PROTEIN_TABLE) {
                     ArrayList<String> selectedProteins = getDisplayedProteins();

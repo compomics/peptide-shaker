@@ -4,31 +4,54 @@ import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
+import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * A Jump To panel for use in the menu bar in the main frame.
- * 
+ *
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
 public class JumpToPanel extends javax.swing.JPanel {
 
     /**
+     * enum of the types of data to jump to
+     */
+    public enum JumpType {
+
+        proteinAndPeptides, spectrum
+    }
+    /**
+     * the type of data to jump to in that panel
+     */
+    private JumpType jumpType = JumpType.proteinAndPeptides;
+    /**
      * Instance of the main GUI class
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * Items matching the criterion
+     * Items matching the criterion for each type
      */
-    private ArrayList<String> possibilities = new ArrayList<String>();
+    private HashMap<JumpType, ArrayList<String>> possibilities = new HashMap<JumpType, ArrayList<String>>();
     /**
      * currently selected item
      */
-    private int currentSelection = 0;
+    private HashMap<JumpType, Integer> currentSelection = new HashMap<JumpType, Integer>();
+    /**
+     * the text to display by default
+     */
+    private HashMap<JumpType, String> lastInput = new HashMap<JumpType, String>();
+    /**
+     * the text to display by default
+     */
+    private HashMap<JumpType, String> lastLabel = new HashMap<JumpType, String>();
     /**
      * Instance of the sequence factory
      */
@@ -36,23 +59,33 @@ public class JumpToPanel extends javax.swing.JPanel {
     /**
      * the text to display by default
      */
-    private final String welcomeText = "(peptide or protein)";
+    private HashMap<JumpType, String> welcomeText;
+    /**
+     * The spectrum factory
+     */
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
+    /**
+     * The spectrum file inspected when jumping to spectra
+     */
+    private String spectrumfile;
 
     /**
      * Type of item selected
      */
     private enum Type {
+
         PROTEIN,
-        PEPTIDE
+        PEPTIDE,
+        SPECTRUM
     }
     /**
      * Type of each possible item
      */
-    private ArrayList<Type> types = new ArrayList<Type>();
+    private HashMap<JumpType, ArrayList<Type>> types = new HashMap<JumpType, ArrayList<Type>>();
 
-    /** 
+    /**
      * Creates a new JumpToPanel
-     * 
+     *
      * @param peptideShakerGUI the parent
      */
     public JumpToPanel(PeptideShakerGUI peptideShakerGUI) {
@@ -60,20 +93,13 @@ public class JumpToPanel extends javax.swing.JPanel {
 
         this.peptideShakerGUI = peptideShakerGUI;
 
-        if (!peptideShakerGUI.getSelectedProteinKey().equals(PeptideShakerGUI.NO_SELECTION)) {
-            inputTxt.setText(peptideShakerGUI.getSelectedProteinKey());
-            possibilities.add(peptideShakerGUI.getSelectedProteinKey());
-            types.add(Type.PROTEIN);
-        } else if (!peptideShakerGUI.getSelectedPeptideKey().equals(PeptideShakerGUI.NO_SELECTION)) {
-            inputTxt.setText(Peptide.getSequence(peptideShakerGUI.getSelectedPeptideKey()));
-            possibilities.add(peptideShakerGUI.getSelectedPeptideKey());
-            types.add(Type.PEPTIDE);
-        } else {
-            inputTxt.setText(welcomeText);
-            indexLabel.setText("");
-            previousButton.setEnabled(false);
-            nextButton.setEnabled(false);
-        }
+        welcomeText = new HashMap<JumpType, String>();
+        welcomeText.put(JumpType.proteinAndPeptides, "(protein or peptide)");
+        welcomeText.put(JumpType.spectrum, "(Title, m/z or RT)");
+        inputTxt.setText(welcomeText.get(jumpType));
+        indexLabel.setText("");
+        previousButton.setEnabled(false);
+        nextButton.setEnabled(false);
     }
 
     /**
@@ -86,8 +112,8 @@ public class JumpToPanel extends javax.swing.JPanel {
 
     /**
      * Set the color for the hits.
-     * 
-     * @param color 
+     *
+     * @param color
      */
     public void setColor(Color color) {
         indexLabel.setForeground(color);
@@ -97,29 +123,34 @@ public class JumpToPanel extends javax.swing.JPanel {
      * Updates the item selection in the selected tab
      */
     public void updateSelectionInTab() {
- 
+
         indexLabel.setForeground(Color.BLACK);
 
-        if (types.get(currentSelection) == Type.PROTEIN) {
-            peptideShakerGUI.setSelectedItems(possibilities.get(currentSelection), PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
+        if (types.get(jumpType).get(currentSelection.get(jumpType)) == Type.PROTEIN) {
+            peptideShakerGUI.setSelectedItems(possibilities.get(jumpType).get(currentSelection.get(jumpType)), PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
             peptideShakerGUI.updateSelectionInCurrentTab();
-        } else {
-            peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, possibilities.get(currentSelection), PeptideShakerGUI.NO_SELECTION);
+        } else if (types.get(jumpType).get(currentSelection.get(jumpType)) == Type.PROTEIN) {
+            peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, possibilities.get(jumpType).get(currentSelection.get(jumpType)), PeptideShakerGUI.NO_SELECTION);
             if (peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.MODIFICATIONS_TAB_INDEX
-                    && !peptideShakerGUI.getDisplayedPeptides().contains(possibilities.get(currentSelection))) {
+                    && !peptideShakerGUI.getDisplayedPeptides().contains(possibilities.get(jumpType).get(currentSelection.get(jumpType)))) {
                 // warn the user that the current selection is not in the tab
                 indexLabel.setForeground(Color.RED);
             } else {
                 peptideShakerGUI.updateSelectionInCurrentTab();
             }
+        } else {
+            peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION, possibilities.get(jumpType).get(currentSelection.get(jumpType)));
+            peptideShakerGUI.updateSelectionInCurrentTab();
         }
-        indexLabel.setText("(" + (currentSelection + 1) + " of " + possibilities.size() + ")");
+        String label = "(" + (currentSelection.get(jumpType) + 1) + " of " + possibilities.get(jumpType).size() + ")";
+        indexLabel.setText(label);
+        lastLabel.put(jumpType, label);
     }
 
-    /** This method is called from within the constructor to
-     * initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is
-     * always regenerated by the Form Editor.
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -230,14 +261,14 @@ public class JumpToPanel extends javax.swing.JPanel {
 
     /**
      * Update the jump to filter.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void inputTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputTxtKeyReleased
 
         if (peptideShakerGUI.getIdentification() != null) {
 
-            if (!inputTxt.getText().equalsIgnoreCase(welcomeText)) {
+            if (!inputTxt.getText().equalsIgnoreCase(welcomeText.get(jumpType))) {
                 inputTxt.setForeground(Color.black);
             } else {
                 inputTxt.setForeground(new Color(204, 204, 204));
@@ -248,70 +279,103 @@ public class JumpToPanel extends javax.swing.JPanel {
             } else if (evt.getKeyCode() == KeyEvent.VK_RIGHT & nextButton.isEnabled()) {
                 nextButtonActionPerformed(null);
             } else {
-                possibilities = new ArrayList<String>();
-                types = new ArrayList<Type>();
-                currentSelection = 0;
-                String input = inputTxt.getText().trim().toLowerCase();
+                if (!possibilities.containsKey(jumpType)) {
+                    possibilities.put(jumpType, new ArrayList<String>());
+                    types.put(jumpType, new ArrayList<Type>());
+                } else {
+                    possibilities.get(jumpType).clear();
+                    types.get(jumpType).clear();
+                }
+                currentSelection.put(jumpType, 0);
+                String doubleString, input = inputTxt.getText().trim().toLowerCase();
+                lastInput.put(jumpType, input);
 
                 if (!input.equals("")) {
 
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
-                    PSParameter psParameter = new PSParameter();
 
-                    for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-                        if (!ProteinMatch.isDecoy(proteinKey)) {
-                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
-                            if (!psParameter.isHidden()) {
-                                if (proteinKey.toLowerCase().contains(input)) {
-                                    possibilities.add(proteinKey);
-                                    types.add(Type.PROTEIN);
-                                } else {
-                                    try {
-                                        for (String accession : ProteinMatch.getAccessions(proteinKey)) {
-                                            if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(input)) {
-                                                possibilities.add(proteinKey);
-                                                types.add(Type.PROTEIN);
+                    if (jumpType == JumpType.proteinAndPeptides) {
+                        PSParameter psParameter = new PSParameter();
+
+                        for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                            if (!ProteinMatch.isDecoy(proteinKey)) {
+                                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
+                                if (!psParameter.isHidden()) {
+                                    if (proteinKey.toLowerCase().contains(input)) {
+                                        possibilities.get(jumpType).add(proteinKey);
+                                        types.get(jumpType).add(Type.PROTEIN);
+                                    } else {
+                                        try {
+                                            for (String accession : ProteinMatch.getAccessions(proteinKey)) {
+                                                if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(input)) {
+                                                    possibilities.get(jumpType).add(proteinKey);
+                                                    types.get(jumpType).add(Type.PROTEIN);
+                                                    break;
+                                                }
                                             }
+                                        } catch (Exception e) {
+                                            // cannot get description, ignore
                                         }
-                                    } catch (Exception e) {
-                                        // cannot get description, ignore
+                                    }
+                                }
+                            }
+                        }
+
+                        ArrayList<String> secondaryCandidates = new ArrayList<String>();
+                        PeptideMatch peptideMatch;
+
+                        for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
+                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                            if (!psParameter.isHidden()) {
+                                if (peptideKey.toLowerCase().startsWith(input)) {
+                                    possibilities.get(jumpType).add(peptideKey);
+                                    types.get(jumpType).add(Type.PEPTIDE);
+                                } else if (peptideKey.toLowerCase().contains(input)) {
+                                    secondaryCandidates.add(peptideKey);
+                                }
+                            }
+                        }
+
+                        for (String secondaryCandidate : secondaryCandidates) {
+
+                            peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(secondaryCandidate);
+
+                            for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                                if (!ProteinMatch.isDecoy(protein)) {
+                                    possibilities.get(jumpType).add(secondaryCandidate);
+                                    types.get(jumpType).add(Type.PEPTIDE);
+                                    break;
+                                }
+                            }
+                        }
+
+                    } else {
+                        String spectrumKey;
+                        for (String spectrumTitle : spectrumFactory.getSpectrumTitles(spectrumfile)) {
+                            spectrumKey = Spectrum.getSpectrumKey(spectrumfile, spectrumTitle);
+                            if (spectrumKey.contains(input)) {
+                                possibilities.get(jumpType).add(spectrumKey);
+                                types.get(jumpType).add(Type.SPECTRUM);
+                            } else {
+                                Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+                                doubleString = precursor.getMz() + "";
+                                if (doubleString.startsWith(input)) {
+                                    possibilities.get(jumpType).add(spectrumKey);
+                                    types.get(jumpType).add(Type.SPECTRUM);
+                                } else {
+                                    doubleString = precursor.getRt() + "";
+                                    if (doubleString.startsWith(input)) {
+                                        possibilities.get(jumpType).add(spectrumKey);
+                                        types.get(jumpType).add(Type.SPECTRUM);
                                     }
                                 }
                             }
                         }
                     }
 
-                    ArrayList<String> secondaryCandidates = new ArrayList<String>();
-                    PeptideMatch peptideMatch;
+                    if (possibilities.get(jumpType).size() > 0) {
 
-                    for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
-                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
-                        if (!psParameter.isHidden()) {
-                            if (peptideKey.toLowerCase().startsWith(input)) {
-                                possibilities.add(peptideKey);
-                                types.add(Type.PEPTIDE);
-                            } else if (peptideKey.toLowerCase().contains(input)) {
-                                secondaryCandidates.add(peptideKey);
-                            }
-                        }
-                    }
-
-                    for (String secondaryCandidate : secondaryCandidates) {
-
-                        peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(secondaryCandidate);
-
-                        for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
-                            if (!ProteinMatch.isDecoy(protein)) {
-                                possibilities.add(secondaryCandidate);
-                                types.add(Type.PEPTIDE);
-                                break;
-                            }
-                        }
-                    }
-
-                    if (possibilities.size() > 0) {
-
-                        if (possibilities.size() > 1) {
+                        if (possibilities.get(jumpType).size() > 1) {
                             previousButton.setEnabled(true);
                             nextButton.setEnabled(true);
                         } else { // possibilities.size() == 1
@@ -324,70 +388,75 @@ public class JumpToPanel extends javax.swing.JPanel {
                         previousButton.setEnabled(false);
                         nextButton.setEnabled(false);
 
-                        if (!inputTxt.getText().equalsIgnoreCase(welcomeText)) {
+                        if (!input.equalsIgnoreCase(welcomeText.get(jumpType))) {
                             indexLabel.setText("(no matches)");
                         } else {
                             indexLabel.setText("");
                         }
                     }
-
                     this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+
                 } else {
                     indexLabel.setText("");
                     previousButton.setEnabled(false);
                     nextButton.setEnabled(false);
+                    inputTxt.setText(welcomeText.get(jumpType));
+                    inputTxt.selectAll();
                 }
             }
+                        lastLabel.put(jumpType, indexLabel.getText());
         }
     }//GEN-LAST:event_inputTxtKeyReleased
 
     /**
      * Display the previous match in the list.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void previousButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_previousButtonActionPerformed
-        if (currentSelection == 0) {
-            currentSelection = possibilities.size() - 1;
+        if (currentSelection.get(jumpType) == 0) {
+            currentSelection.put(jumpType, possibilities.get(jumpType).size() - 1);
         } else {
-            currentSelection--;
+            currentSelection.put(jumpType, currentSelection.get(jumpType) - 1);
         }
         updateSelectionInTab();
     }//GEN-LAST:event_previousButtonActionPerformed
 
     /**
      * Display the next match in the list.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void nextButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nextButtonActionPerformed
-        if (currentSelection == possibilities.size() - 1) {
-            currentSelection = 0;
+        if (currentSelection.get(jumpType) == possibilities.get(jumpType).size() - 1) {
+            currentSelection.put(jumpType, 0);
         } else {
-            currentSelection++;
+            currentSelection.put(jumpType, currentSelection.get(jumpType) + 1);
         }
         updateSelectionInTab();
     }//GEN-LAST:event_nextButtonActionPerformed
 
     private void inputTxtMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inputTxtMouseReleased
-        if (inputTxt.getText().equals(welcomeText)) {
+        if (inputTxt.getText().equals(welcomeText.get(jumpType))) {
             inputTxt.selectAll();
         }
     }//GEN-LAST:event_inputTxtMouseReleased
 
     /**
      * Change the icon to a hand icon.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void previousButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_previousButtonMouseEntered
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        if (previousButton.isEnabled()) {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        }
     }//GEN-LAST:event_previousButtonMouseEntered
 
     /**
      * Change the icon back to the default icon.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void previousButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_previousButtonMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -395,8 +464,8 @@ public class JumpToPanel extends javax.swing.JPanel {
 
     /**
      * Change the icon back to the default icon.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void nextButtonMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextButtonMouseExited
         this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -404,11 +473,13 @@ public class JumpToPanel extends javax.swing.JPanel {
 
     /**
      * Change the icon to a hand icon.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void nextButtonMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_nextButtonMouseEntered
-        this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        if (nextButton.isEnabled()) {
+            this.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        }
     }//GEN-LAST:event_nextButtonMouseEntered
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel findJLabel;
@@ -420,8 +491,8 @@ public class JumpToPanel extends javax.swing.JPanel {
 
     /**
      * Override to set the input text field enabled or not.
-     * 
-     * @param enabled 
+     *
+     * @param enabled
      */
     public void setEnabled(boolean enabled) {
 
@@ -435,5 +506,30 @@ public class JumpToPanel extends javax.swing.JPanel {
             previousButton.setEnabled(false);
             nextButton.setEnabled(false);
         }
+    }
+
+    /**
+     * Changes the type of jumpToPanel
+     *
+     * @param jumpType the new type of jump to panel
+     */
+    public void setType(JumpType jumpType) {
+        this.jumpType = jumpType;
+        if (lastInput.get(jumpType) != null && !lastInput.get(jumpType).equals("")) {
+            inputTxt.setText(lastInput.get(jumpType));
+            indexLabel.setText(lastLabel.get(jumpType));
+        } else {
+            inputTxt.setText(welcomeText.get(jumpType));
+            indexLabel.setText("");
+        }
+    }
+
+    /**
+     * Sets the spectrum file inspected
+     *
+     * @param spectrumFile the name of the spectrum file inspected
+     */
+    public void setSpectrumFile(String spectrumFile) {
+        this.spectrumfile = spectrumFile;
     }
 }

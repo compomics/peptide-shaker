@@ -52,7 +52,7 @@ public class ImportSettingsDialog extends javax.swing.JDialog {
         mascotEvalueTxt.setText(idFilter.getMascotMaxEvalue() + "");
         nAAminTxt.setText(idFilter.getMinPepLength() + "");
         nAAmaxTxt.setText(idFilter.getMaxPepLength() + "");
-        precDevTxt.setText(idFilter.getMaxMassDeviation() + "");
+        precDevTxt.setText(idFilter.getMaxMzDeviation() + "");
         ptmsCheck.setSelected(idFilter.removeUnknownPTMs());
 
         if (idFilter.isIsPpm()) {

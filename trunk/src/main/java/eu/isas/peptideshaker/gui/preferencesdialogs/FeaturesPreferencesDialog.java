@@ -2,7 +2,7 @@ package eu.isas.peptideshaker.gui.preferencesdialogs;
 
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.export.CsvExporter;
-import eu.isas.peptideshaker.export.FeaturesGenerator;
+import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.awt.Toolkit;
@@ -27,7 +27,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     /**
      * The output generator will generate the output based on the user's choice
      */
-    private FeaturesGenerator outputGenerator;
+    private OutputGenerator outputGenerator;
     /**
      * A simple progress dialog.
      */
@@ -46,7 +46,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         super(peptideShakerGUI, true);
         this.peptideShakerGUI = peptideShakerGUI;
         initComponents();
-        this.outputGenerator = new FeaturesGenerator(peptideShakerGUI);
+        this.outputGenerator = new OutputGenerator(peptideShakerGUI);
         this.pack();
         this.setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
