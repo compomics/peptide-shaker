@@ -380,7 +380,7 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addButtonActionPerformed
         int row = fileTable.getSelectedRow();
         if (row == -1) {
-            for (int i = 0 ; i < fileTable.getRowCount() ; i++) {
+            for (int i = 0; i < fileTable.getRowCount(); i++) {
                 if (!newFiles.containsKey(missingFiles.get(idFiles.get(i)))) {
                     row = i;
                     break;
@@ -397,10 +397,12 @@ public class MgfFilesNotFoundDialog extends javax.swing.JDialog {
 
     private void removeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeButtonActionPerformed
         int row = fileTable.getSelectedRow();
-        newFiles.remove(missingFiles.get(idFiles.get(row)));
-        DefaultTableModel dm = (DefaultTableModel) fileTable.getModel();
-        dm.fireTableDataChanged();
-        updateFileList();
+        if (row >= 0) {
+            newFiles.remove(missingFiles.get(idFiles.get(row)));
+            DefaultTableModel dm = (DefaultTableModel) fileTable.getModel();
+            dm.fireTableDataChanged();
+            updateFileList();
+        }
     }//GEN-LAST:event_removeButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addButton;
