@@ -18,7 +18,9 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.awt.Toolkit;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -35,7 +37,7 @@ import javax.swing.JOptionPane;
  * @author Marc Vaudel
  * @author Harald Barsnes
  */
-public class FeaturesGenerator {
+public class OutputGenerator {
 
     /**
      * The main gui
@@ -71,7 +73,7 @@ public class FeaturesGenerator {
      *
      * @param peptideShakerGUI
      */
-    public FeaturesGenerator(PeptideShakerGUI peptideShakerGUI) {
+    public OutputGenerator(PeptideShakerGUI peptideShakerGUI) {
         this.peptideShakerGUI = peptideShakerGUI;
         identification = peptideShakerGUI.getIdentification();
     }
@@ -80,24 +82,24 @@ public class FeaturesGenerator {
      * Sends the desired protein output (based on the elements needed as
      * provided in arguments) to a user chosen file.
      *
-     * @param aProteinKeys
-     * @param aIndexes
-     * @param aOnlyValidated
-     * @param aAccession
-     * @param aPiDetails
-     * @param aDescription
-     * @param aNPeptides
-     * @param aEmPAI
-     * @param aSequenceCoverage
-     * @param aModifiedSequence
-     * @param aNSpectra
-     * @param aNsaf
-     * @param aScore
-     * @param aConfidence
-     * @param aIncludeHeader
-     * @param aOnlyStarred
-     * @param aIncludeHidden
-     * @throws IOException
+     * @param aProteinKeys The list of protein keys to output. If null, the identification list will be used
+     * @param aIndexes boolean indicating whether the first column shall be used for line number
+     * @param aOnlyValidated boolean indicating whether only validated hits shall be returned
+     * @param aAccession boolean indicating whether the accessions shall be output. Well, should always be the case but why not...
+     * @param aPiDetails boolean indicating whether protein inference details shall be output
+     * @param aDescription boolean indicating whether protein description of the main match shall be output
+     * @param aNPeptides boolean indicating whether the number of validated peptides shall be output
+     * @param aEmPAI boolean indicating whether the emPAI index shall be output
+     * @param aSequenceCoverage boolean indicating whether the sequence coverage shall be output
+     * @param aModifiedSequence boolean indicating whether the modified sequence of the protein shall be output
+     * @param aNSpectra boolean indicating whether the number of validated spectra shall be output
+     * @param aNsaf boolean indicating whether the NSAF index shall be output
+     * @param aScore boolean indicating whether the protein match score shall be output
+     * @param aConfidence boolean indicating whether the confidence shall be output
+     * @param aIncludeHeader boolean indicating whether the header shall be output
+     * @param aOnlyStarred boolean indicatign whether only starred proteins shall be output
+     * @param aIncludeHidden boolean indicating whether hidden hits shall be output
+     * @throws IOException exception thrown whenever an error occurred while writing the results
      */
     public void getProteinsOutput(ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aAccession, boolean aPiDetails,
             boolean aDescription, boolean aNPeptides, boolean aEmPAI, boolean aSequenceCoverage, boolean aModifiedSequence, boolean aNSpectra, boolean aNsaf,
@@ -158,6 +160,14 @@ public class FeaturesGenerator {
                 public void run() {
 
                     try {
+                        
+                        boolean needsDecoyColumn = false;
+                        for (String proteinKey : proteinKeys) {
+                            if (SequenceFactory.isDecoy(proteinKey)) {
+                                needsDecoyColumn = true;
+                                break;
+                            }
+                        }
 
                         if (includeHeader) {
                             if (indexes) {
@@ -199,16 +209,20 @@ public class FeaturesGenerator {
                             }
                             if (!onlyValidated) {
                                 writer.write("Validated" + SEPARATOR);
-                                writer.write("Decoy" + SEPARATOR);
                             }
                             if (includeHidden) {
                                 writer.write("Hidden" + SEPARATOR);
+                            }
+                            if (!onlyStarred) {
+                                writer.write("Starred" + SEPARATOR);
+                            }
+                            if (needsDecoyColumn) {
+                                writer.write("Decoy");
                             }
                             writer.write("\n");
                         }
 
                         PSParameter proteinPSParameter = new PSParameter();
-                        PSParameter secondaryPSParameter = new PSParameter();
                         int cpt, progress = 0, proteinCounter = 0;
                         ProteinMatch proteinMatch;
 
@@ -247,83 +261,65 @@ public class FeaturesGenerator {
                                                 try {
                                                     writer.write(sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription() + SEPARATOR);
                                                 } catch (Exception e) {
-                                                    writer.write("Protein not found" + SEPARATOR);
+                                                    if (nPeptides) {
+                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                                                    }
                                                 }
                                             }
                                             if (sequenceCoverage) {
                                                 try {
                                                     writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey) * 100 + SEPARATOR);
                                                 } catch (Exception e) {
-                                                    writer.write("Protein not found" + SEPARATOR);
+                                                    if (nPeptides) {
+                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                                                    }
                                                 }
                                             }
                                             if (modifiedSequence) {
-                                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getModifiedSequence(proteinKey) + SEPARATOR);
-                                            }
-
-                                            double emPAIScore = 0.0;
-                                            double nsafScore = 0.0;
-
-                                            if (nPeptides || emPAI) {
                                                 try {
-                                                    Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                                                    cpt = 0;
-                                                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                                                        secondaryPSParameter = (PSParameter) identification.getMatchParameter(peptideKey, secondaryPSParameter);
-                                                        if (secondaryPSParameter.isValidated()) {
-                                                            cpt++;
-                                                        }
-                                                    }
-                                                    if (nPeptides) {
-                                                        writer.write(cpt + SEPARATOR);
-                                                    }
-                                                    if (emPAI) {
-                                                        double pai = cpt;
-                                                        pai = pai / mainMatch.getNPossiblePeptides(peptideShakerGUI.getSearchParameters().getEnzyme());
-                                                        double empai = Math.pow(10, pai) - 1;
-                                                        emPAIScore = empai;
-                                                    }
+                                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getModifiedSequence(proteinKey) + SEPARATOR);
                                                 } catch (Exception e) {
                                                     if (nPeptides) {
-                                                        writer.write("Protein not found" + SEPARATOR);
-                                                        emPAIScore = -1;
+                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                     }
                                                 }
                                             }
-                                            if (nSpectra || nsaf) {
+
+                                            if (nPeptides) {
                                                 try {
-                                                    Protein mainMatch = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-                                                    cpt = 0;
-                                                    PeptideMatch peptideMatch;
-                                                    for (String peptideKey : proteinMatch.getPeptideMatches()) {
-                                                        peptideMatch = identification.getPeptideMatch(peptideKey);
-                                                        for (String spectrumKey : peptideMatch.getSpectrumMatches()) {
-                                                            secondaryPSParameter = (PSParameter) identification.getMatchParameter(spectrumKey, secondaryPSParameter);
-                                                            if (secondaryPSParameter.isValidated()) {
-                                                                cpt++;
-                                                            }
-                                                        }
-                                                    }
-                                                    if (nSpectra) {
-                                                        writer.write(cpt + SEPARATOR);
-                                                    }
-                                                    if (nsaf) {
-                                                        double index = cpt;
-                                                        index = index / mainMatch.getSequence().length();  // @TODO: should be "normalized by the sum of all the protein abundances in the set"!?
-                                                        nsafScore = index;
-                                                    }
+                                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedPeptides(proteinKey) + SEPARATOR);
                                                 } catch (Exception e) {
-                                                    if (nSpectra) {
-                                                        writer.write("Protein not found" + SEPARATOR);
-                                                        nsafScore = -1;
+                                                    if (nPeptides) {
+                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
                                                     }
                                                 }
                                             }
                                             if (emPAI) {
-                                                writer.write(emPAIScore + SEPARATOR);
+                                                try {
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey, SpectrumCountingPreferences.SpectralCountingMethod.EMPAI) + SEPARATOR);
+                                                } catch (Exception e) {
+                                                    if (nPeptides) {
+                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                                                    }
+                                                }
+                                            }
+                                            if (nSpectra) {
+                                                try {
+                                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getNValidatedSpectra(proteinKey) + SEPARATOR);
+                                                } catch (Exception e) {
+                                                    if (nPeptides) {
+                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                                                    }
+                                                }
                                             }
                                             if (nsaf) {
-                                                writer.write(nsafScore + SEPARATOR);
+                                                try {
+                                                    writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSpectrumCounting(proteinKey, SpectrumCountingPreferences.SpectralCountingMethod.NSAF) + SEPARATOR);
+                                                } catch (Exception e) {
+                                                    if (nPeptides) {
+                                                        writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
+                                                    }
+                                                }
                                             }
 
                                             if (score) {
@@ -346,6 +342,16 @@ public class FeaturesGenerator {
                                             }
                                             if (includeHidden) {
                                                 writer.write(proteinPSParameter.isHidden() + SEPARATOR);
+                                            }
+                                            if (!onlyStarred) {
+                                                writer.write(proteinPSParameter.isStarred() + SEPARATOR);
+                                            }
+                                            if (needsDecoyColumn) {
+                                                if (proteinMatch.isDecoy()) {
+                                                    writer.write(1 + "");
+                                                } else {
+                                                    writer.write(0 + "");
+                                                }
                                             }
                                             writer.write("\n");
                                         }

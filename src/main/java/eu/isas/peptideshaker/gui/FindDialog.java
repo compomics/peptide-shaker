@@ -838,7 +838,7 @@ public class FindDialog extends javax.swing.JDialog {
                     List<RowFilter<Object, Object>> accessionFilters = new ArrayList<RowFilter<Object, Object>>();
                     accessionFilters.add(RowFilter.regexFilter(text, proteinTable.getColumn("Accession").getModelIndex()));
                     accessionFilters.add(RowFilter.regexFilter(text, proteinTable.getColumn("Isoforms").getModelIndex()));
-                    accessionFilters.add(RowFilter.regexFilter(text, proteinTable.getColumn("Description").getModelIndex()));
+                    accessionFilters.add(RowFilter.regexFilter(text.toLowerCase(), proteinTable.getColumn("Description").getModelIndex()));
                     filters.add(RowFilter.orFilter(accessionFilters));
                 } catch (PatternSyntaxException pse) {
                     JOptionPane.showMessageDialog(this, "Incorrect regex pattern for protein accession/description.", "Filter Error", JOptionPane.ERROR_MESSAGE);
@@ -1032,7 +1032,7 @@ public class FindDialog extends javax.swing.JDialog {
                         return otherAccessions;
                     case 6:
                         proteinMatch = identification.getProteinMatch(proteinKey);
-                        return sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription();
+                        return sequenceFactory.getHeader(proteinMatch.getMainMatch()).getDescription().toLowerCase();
                     case 7:
                         return 100 * peptideShakerGUI.getIdentificationFeaturesGenerator().getSequenceCoverage(proteinKey);
                     case 8:

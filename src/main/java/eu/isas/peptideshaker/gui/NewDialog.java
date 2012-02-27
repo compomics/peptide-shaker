@@ -983,12 +983,6 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             return false;
         }
 
-        if (spectrumFiles.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please verify the input for spectrum file(s).",
-                    "Input Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-
         return true;
     }
 
@@ -1119,7 +1113,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             if (temp != null) {
                 try {
                     searchParameters.setPrecursorAccuracy(new Double(temp.trim()));
-                    peptideShakerGUI.getIdFilter().setMaxMassDeviation(new Double(temp.trim()));
+                    peptideShakerGUI.getIdFilter().setMaxMzDeviation(new Double(temp.trim()));
                 } catch (Exception e) {
                 }
             }

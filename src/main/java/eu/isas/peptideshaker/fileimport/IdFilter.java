@@ -40,11 +40,11 @@ public class IdFilter implements Serializable {
      */
     private double xtandemMaxEvalue;
     /**
-     * The maximal mass deviation allowed
+     * The maximal m/z deviation allowed
      */
     private double maxMassDeviation;
     /**
-     * Boolean indicating the unit of the allowed mass deviation (true: ppm, false: Da)
+     * Boolean indicating the unit of the allowed m/z deviation (true: ppm, false: Da)
      */
     private boolean isPpm;
     /**
@@ -78,17 +78,17 @@ public class IdFilter implements Serializable {
      * @param mascotMaxEvalue   The maximal Mascot e-value allowed
      * @param omssaMaxEvalue    The maximal OMSSA e-value allowed
      * @param xtandemMaxEvalue  The maximal X!Tandem e-value allowed
-     * @param maxMassDeviation  The maximal mass deviation allowed
-     * @param isPpm             Boolean indicating the unit of the allowed mass deviation (true: ppm, false: Da)
+     * @param maxMassDeviation  The maximal m/z deviation allowed
+     * @param isPpm             Boolean indicating the unit of the allowed m/z deviation (true: ppm, false: Da)
      * @param unknownPTM        Shall peptides presenting unknownPTMs be ignored
      */
-    public IdFilter(int minPepLength, int maxPepLength, double mascotMaxEvalue, double omssaMaxEvalue, double xtandemMaxEvalue, double maxMassDeviation, boolean isPpm, boolean unknownPTM) {
+    public IdFilter(int minPepLength, int maxPepLength, double mascotMaxEvalue, double omssaMaxEvalue, double xtandemMaxEvalue, double maxMzDeviation, boolean isPpm, boolean unknownPTM) {
         this.minPepLength = minPepLength;
         this.maxPepLength = maxPepLength;
         this.mascotMaxEvalue = mascotMaxEvalue;
         this.omssaMaxEvalue = omssaMaxEvalue;
         this.xtandemMaxEvalue = xtandemMaxEvalue;
-        this.maxMassDeviation = maxMassDeviation;
+        this.maxMassDeviation = maxMzDeviation;
         this.isPpm = isPpm;
         this.unknownPtm = unknownPTM;
     }
@@ -141,7 +141,7 @@ public class IdFilter implements Serializable {
         }
 
         Precursor precursor = spectrumFactory.getPrecursor(spectrumKey, false);
-        if (Math.abs(assumption.getDeltaMass(precursor.getMz(), isPpm)) > maxMassDeviation && maxMassDeviation > 0) {
+        if (Math.abs(assumption.getDeltaMass(precursor.getMz(), isPpm)) > maxMassDeviation*assumption.getIdentificationCharge().value && maxMassDeviation > 0) {
             return false;
         }
 
@@ -189,19 +189,19 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Returns the maximal mass deviation allowed
+     * Returns the maximal m/z deviation allowed
      * @return the maximal mass deviation allowed 
      */
-    public double getMaxMassDeviation() {
+    public double getMaxMzDeviation() {
         return maxMassDeviation;
     }
 
     /**
-     * Sets  the maximal mass deviation allowed
-     * @param maxMassDeviation  the maximal mass deviation allowed
+     * Sets  the maximal m/z deviation allowed
+     * @param maxMzDeviation  the maximal mass deviation allowed
      */
-    public void setMaxMassDeviation(double maxMassDeviation) {
-        this.maxMassDeviation = maxMassDeviation;
+    public void setMaxMzDeviation(double maxMzDeviation) {
+        this.maxMassDeviation = maxMzDeviation;
     }
 
     /**

@@ -12,7 +12,7 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
-import eu.isas.peptideshaker.export.FeaturesGenerator;
+import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.SearchParameters;
@@ -790,7 +790,7 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
                     FileWriter f = new FileWriter(finalOutputFile);
                     BufferedWriter b = new BufferedWriter(f);
 
-                    FeaturesGenerator outputGenerator = new FeaturesGenerator(peptideShakerGUI);
+                    OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
                     outputGenerator.getPSMsProgenesisExport(progressDialog, null, b);
 
                     b.close();

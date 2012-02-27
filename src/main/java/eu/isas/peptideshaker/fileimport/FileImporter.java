@@ -35,6 +35,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
+import org.xml.sax.SAXException;
+import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
  * This class is responsible for the import of identifications
@@ -76,7 +78,7 @@ public class FileImporter {
     /**
      * The spectrum factory
      */
-    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(100);
+    private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(50);
     /**
      * The sequence factory
      */
@@ -177,7 +179,7 @@ public class FileImporter {
 
             waitingDialog.resetSecondaryProgressBar();
             waitingDialog.setSecondaryProgressDialogIntermediate(true);
- 
+
             if (needPeptideMap) {
                 if (2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache()) {
                     waitingDialog.appendReport("Creating peptide to protein map.");
@@ -312,9 +314,6 @@ public class FileImporter {
             possiblePTMs = new ArrayList<PTM>();
             String[] parsedName = sePTM.split("@");
             double seMass = new Double(parsedName[0]);
-            if (seMass == -17.0265) {
-                int debug = 1;
-            }
             for (String ptmName : searchParameters.getModificationProfile().getPeptideShakerNames()) {
                 psPTM = ptmFactory.getPTM(ptmName);
                 if (Math.abs(psPTM.getMass() - seMass) < 0.01) {
@@ -412,6 +411,34 @@ public class FileImporter {
          * The annotation preferences to use for PTM scoring
          */
         private AnnotationPreferences annotationPreferences;
+        /**
+         * The number of retained first hits
+         */
+        private long nRetained = 0;
+        /**
+         * The number of spectra
+         */
+        private long nSpectra = 0;
+        /**
+         * The number of first hits
+         */
+        private long nPSMs = 0;
+        /**
+         * The number of secondary hits
+         */
+        private long nSecondary = 0;
+        /**
+         * List of the mgf files used
+         */
+        private ArrayList<String> mgfUsed = new ArrayList<String>();
+        /**
+         * Map of the missing mgf files indexed by identification file
+         */
+        private HashMap<File, String> missingMgfFiles = new HashMap<File, String>();
+        /**
+         * The input map
+         */
+        private InputMap inputMap = new InputMap();
 
         /**
          * Constructor of the worker
@@ -460,15 +487,6 @@ public class FileImporter {
         @Override
         protected Object doInBackground() throws Exception {
 
-            long nRetained = 0;
-            long nSpectra = 0;
-            long nPSMs = 0;
-            long nSecondary = 0;
-            ArrayList<String> mgfUsed = new ArrayList<String>();
-            boolean idReport, goodFirstHit, unknown = false;
-            Peptide peptide;
-
-            Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
             for (File idFile : idFiles) {
                 int searchEngine = readerFactory.getSearchEngine(idFile);
                 if (searchEngine == Advocate.XTANDEM) {
@@ -482,108 +500,24 @@ public class FileImporter {
 
                 PeptideShaker.setPeptideShakerPTMs(searchParameters);
                 waitingDialog.appendReport("Reading identification files.");
-                InputMap inputMap = new InputMap();
 
                 for (File idFile : idFiles) {
+                    importPsms(idFile);
+                }
 
-                    waitingDialog.appendReport("Reducing memory consumption.");
-                    waitingDialog.setSecondaryProgressDialogIntermediate(false);
-                    identification.reduceMemoryConsumtion(waitingDialog.getSecondaryProgressBar());
-                    waitingDialog.setSecondaryProgressDialogIntermediate(true);
-                    waitingDialog.appendReport("Parsing " + idFile.getName() + ".");
-                    IdfileReader fileReader;
-
-                    int searchEngine = readerFactory.getSearchEngine(idFile);
-
-                    if (searchEngine == Advocate.MASCOT && idFile.length() > mascotMaxSize * 1048576) {
-                        fileReader = new MascotIdfileReader(idFile, true);
-                    } else {
-                        fileReader = readerFactory.getFileReader(idFile, null);
+                while (!missingMgfFiles.isEmpty()) {
+                    new MgfFilesNotFoundDialog(waitingDialog, missingMgfFiles);
+                    waitingDialog.appendReport("Processing files with the new input.");
+                    ArrayList<File> filesToProcess = new ArrayList<File>(missingMgfFiles.keySet());
+                    File newFile;
+                    for (String mgfName : missingMgfFiles.values()) {
+                        newFile = spectrumFactory.getSpectrumFileFromIdName(mgfName);
+                        spectrumFiles.put(newFile.getName(), newFile);
                     }
-
-                    waitingDialog.setSecondaryProgressDialogIntermediate(false);
-                    HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches(waitingDialog.getSecondaryProgressBar());
-                    fileReader.close();
-                    Iterator<SpectrumMatch> matchIt = tempSet.iterator();
-
-                    int numberOfMatches = tempSet.size();
-                    int progress = 0;
-                    waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
-                    idReport = false;
-
-                    while (matchIt.hasNext()) {
-
-                        SpectrumMatch match = matchIt.next();
-                        nPSMs++;
-                        nSecondary += match.getAllAssumptions().size()-1;
-
-                        PeptideAssumption firstHit = match.getFirstHit(searchEngine);
-                        String spectrumKey = match.getKey();
-                        String fileName = Spectrum.getSpectrumFile(spectrumKey);
-
-                        if (!mgfUsed.contains(fileName)) {
-                            importSpectra(waitingDialog, fileName, searchParameters);
-                            waitingDialog.setSecondaryProgressDialogIntermediate(false);
-                            waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
-                            mgfUsed.add(fileName);
-                            nSpectra += spectrumFactory.getNSpectra(fileName);
-                        }
-                        if (!idReport) {
-                            waitingDialog.appendReport("Importing PSMs from " + idFile.getName());
-                            idReport = true;
-                        }
-
-                        goodFirstHit = false;
-                        ArrayList<PeptideAssumption> allAssumptions = match.getAllAssumptions(searchEngine).get(firstHit.getEValue());
-
-                        for (PeptideAssumption assumption : allAssumptions) {
-                            if (idFilter.validateId(assumption, spectrumKey)) {
-                                goodFirstHit = true;
-                                break;
-                            }
-                        }
-
-                        if (!goodFirstHit) {
-                            matchIt.remove();
-                        } else {
-                            // use search engine independant PTMs
-                            for (PeptideAssumption assumptions : match.getAllAssumptions()) {
-                                peptide = assumptions.getPeptide();
-                                String sequence = peptide.getSequence();
-                                for (ModificationMatch seMod : peptide.getModificationMatches()) {
-                                    if (seMod.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
-                                        if (!unknown) {
-                                            waitingDialog.appendReport("An unknown modification was encountered and might impair further processing."
-                                                    + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.");
-                                            unknown = true;
-                                        }
-                                    }
-                                    seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), sequence, searchParameters));
-                                }
-                                if (searchEngine == Advocate.XTANDEM) {
-                                    ArrayList<String> proteins = getProteins(sequence, waitingDialog);
-                                    if (!proteins.isEmpty()) {
-                                        peptide.setParentProteins(proteins);
-                                    }
-                                }
-                            }
-
-                            if (idFilter.validateId(firstHit, spectrumKey)) {
-                                inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
-                                identification.addSpectrumMatch(match);
-                                nRetained++;
-                            }
-                        }
-
-                        if (waitingDialog.isRunCanceled()) {
-                            return 1;
-                        }
-
-                        waitingDialog.setSecondaryProgressValue(++progress);
+                    missingMgfFiles.clear();
+                    for (File idFile : filesToProcess) {
+                        importPsms(idFile);
                     }
-
-                    waitingDialog.setSecondaryProgressDialogIntermediate(true);
-                    waitingDialog.increaseProgressValue();
                 }
 
                 // clear the sequence to protein map as it is no longer needed
@@ -591,7 +525,7 @@ public class FileImporter {
 
                 if (nRetained == 0) {
                     waitingDialog.appendReport("No identifications retained.");
-                    waitingDialog.setRunFinished();
+                    waitingDialog.setRunCanceled();
                     return 1;
                 }
 
@@ -623,67 +557,144 @@ public class FileImporter {
         }
 
         /**
+         * Imports the psms from an identification file
+         *
+         * @param idFile the identification file
+         * @throws FileNotFoundException exception thrown whenever a file was
+         * not found
+         * @throws IOException exception thrown whenever an error occurred while
+         * reading or writing a file
+         * @throws SAXException exception thrown whenever an error occurred
+         * while parsing an xml file
+         * @throws MzMLUnmarshallerException exception thrown whenever an error
+         * occurred while reading an mzML file
+         */
+        public void importPsms(File idFile) throws FileNotFoundException, IOException, SAXException, MzMLUnmarshallerException {
+
+            boolean idReport, goodFirstHit, unknown = false;
+            Peptide peptide;
+            Identification identification = proteomicAnalysis.getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
+            waitingDialog.appendReport("Reducing memory consumption.");
+            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+            identification.reduceMemoryConsumtion(waitingDialog.getSecondaryProgressBar());
+            waitingDialog.setSecondaryProgressDialogIntermediate(true);
+            waitingDialog.appendReport("Parsing " + idFile.getName() + ".");
+            IdfileReader fileReader;
+
+            int searchEngine = readerFactory.getSearchEngine(idFile);
+
+            if (searchEngine == Advocate.MASCOT && idFile.length() > mascotMaxSize * 1048576) {
+                fileReader = new MascotIdfileReader(idFile, true);
+            } else {
+                fileReader = readerFactory.getFileReader(idFile, null);
+            }
+
+            waitingDialog.setSecondaryProgressDialogIntermediate(false);
+            HashSet<SpectrumMatch> tempSet = fileReader.getAllSpectrumMatches(waitingDialog.getSecondaryProgressBar());
+            fileReader.close();
+            Iterator<SpectrumMatch> matchIt = tempSet.iterator();
+
+            int numberOfMatches = tempSet.size();
+            int progress = 0;
+            waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
+            idReport = false;
+
+            while (matchIt.hasNext()) {
+
+                SpectrumMatch match = matchIt.next();
+                nPSMs++;
+                nSecondary += match.getAllAssumptions().size() - 1;
+
+                PeptideAssumption firstHit = match.getFirstHit(searchEngine);
+                String spectrumKey = match.getKey();
+                String fileName = Spectrum.getSpectrumFile(spectrumKey);
+                if (spectrumFactory.getSpectrumFileFromIdName(fileName) != null) {
+                    fileName = spectrumFactory.getSpectrumFileFromIdName(fileName).getName();
+                    match.setKey(Spectrum.getSpectrumKey(fileName, Spectrum.getSpectrumTitle(spectrumKey)));
+                    spectrumKey = match.getKey();
+                }
+
+                if (!mgfUsed.contains(fileName)) {
+                    if (spectrumFiles.containsKey(fileName)) {
+                        importSpectra(fileName, searchParameters);
+                        waitingDialog.setSecondaryProgressDialogIntermediate(false);
+                        waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
+                        mgfUsed.add(fileName);
+                        nSpectra += spectrumFactory.getNSpectra(fileName);
+                    } else {
+                        missingMgfFiles.put(idFile, fileName);
+                        waitingDialog.appendReport(fileName + " not found.");
+                        break;
+                    }
+                }
+                if (!idReport) {
+                    waitingDialog.appendReport("Importing PSMs from " + idFile.getName());
+                    idReport = true;
+                }
+
+                goodFirstHit = false;
+                ArrayList<PeptideAssumption> allAssumptions = match.getAllAssumptions(searchEngine).get(firstHit.getEValue());
+
+                for (PeptideAssumption assumption : allAssumptions) {
+                    if (idFilter.validateId(assumption, spectrumKey)) {
+                        goodFirstHit = true;
+                        break;
+                    }
+                }
+
+                if (!goodFirstHit) {
+                    matchIt.remove();
+                } else {
+                    // use search engine independant PTMs
+                    for (PeptideAssumption assumptions : match.getAllAssumptions()) {
+                        peptide = assumptions.getPeptide();
+                        String sequence = peptide.getSequence();
+                        for (ModificationMatch seMod : peptide.getModificationMatches()) {
+                            if (seMod.getTheoreticPtm().equals(PTMFactory.unknownPTM.getName())) {
+                                if (!unknown) {
+                                    waitingDialog.appendReport("An unknown modification was encountered and might impair further processing."
+                                            + "\nPlease make sure that all modifications are loaded in the search parameters and reload the data.");
+                                    unknown = true;
+                                }
+                            }
+                            seMod.setTheoreticPtm(getPTM(seMod.getTheoreticPtm(), seMod.getModificationSite(), sequence, searchParameters));
+                        }
+                        if (searchEngine == Advocate.XTANDEM) {
+                            ArrayList<String> proteins = getProteins(sequence, waitingDialog);
+                            if (!proteins.isEmpty()) {
+                                peptide.setParentProteins(proteins);
+                            }
+                        }
+                    }
+
+                    if (idFilter.validateId(firstHit, spectrumKey)) {
+                        inputMap.addEntry(searchEngine, firstHit.getEValue(), firstHit.isDecoy());
+                        identification.addSpectrumMatch(match);
+                        nRetained++;
+                    }
+                }
+
+                if (waitingDialog.isRunCanceled()) {
+                    return;
+                }
+
+                waitingDialog.setSecondaryProgressValue(++progress);
+            }
+
+            waitingDialog.setSecondaryProgressDialogIntermediate(true);
+            waitingDialog.increaseProgressValue();
+        }
+
+        /**
          * Verify that the spectra are imported and imports spectra from the
          * desired spectrum file if necessary.
          *
          * @param waitingDialog Dialog displaying feedback to the user
          * @param spectrumFiles The spectrum files
          */
-        public void importSpectra(WaitingDialog waitingDialog, String targetFileName, SearchParameters searchParameters) {
+        public void importSpectra(String targetFileName, SearchParameters searchParameters) {
 
             File spectrumFile = spectrumFiles.get(targetFileName);
-
-            if (spectrumFile == null) {
-
-                JOptionPane.showMessageDialog(null,
-                        "Could not find " + targetFileName + ".\n"
-                        + "Please select the spectrum file or the folder containing it manually.",
-                        "File Input Error", JOptionPane.ERROR_MESSAGE);
-
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setDialogTitle("Open Spectrum File");
-
-                FileFilter filter = new FileFilter() {
-
-                    @Override
-                    public boolean accept(File myFile) {
-                        return myFile.getName().toLowerCase().endsWith("mgf")
-                                || myFile.isDirectory();
-                    }
-
-                    @Override
-                    public String getDescription() {
-                        return "Supported formats: Mascot Generic Format (.mgf)";
-                    }
-                };
-
-                fileChooser.setFileFilter(filter);
-                int returnVal = fileChooser.showDialog(null, "Open");
-
-                if (returnVal == JFileChooser.APPROVE_OPTION) {
-                    File mgfFolder = fileChooser.getSelectedFile();
-                    if (!mgfFolder.isDirectory()) {
-                        mgfFolder = mgfFolder.getParentFile();
-                    }
-                    boolean found = false;
-                    for (File file : mgfFolder.listFiles()) {
-                        if (file.getName().equals(targetFileName)) {
-                            spectrumFile = file;
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found) {
-                        JOptionPane.showMessageDialog(null,
-                                targetFileName + " was not found in the given folder. Input will be cancelled",
-                                "File Input Error", JOptionPane.ERROR_MESSAGE);
-
-                        waitingDialog.setRunCanceled();
-
-                        return;
-                    }
-                }
-            }
 
             try {
                 waitingDialog.appendReport("Importing " + targetFileName);

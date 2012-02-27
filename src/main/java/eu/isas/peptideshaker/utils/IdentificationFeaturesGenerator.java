@@ -17,6 +17,7 @@ import com.compomics.util.protein.Header.DatabaseType;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.myparameters.PSPtmScores;
+import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -299,40 +300,56 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the spectrum counting metric of the protein match of interest.
+     * Returns the spectrum counting metric of the protein match of interest
+     * using the preference settings.
      *
      * @param proteinMatchKey the key of the protein match of interest
      * @return the corresponding spectrum counting metric
      */
     public Double getSpectrumCounting(String proteinMatchKey) {
+        return getSpectrumCounting(proteinMatchKey, peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod());
+    }
 
-        Double result = spectrumCounting.get(proteinMatchKey);
+    /**
+     * Returns the spectrum counting metric of the protein match of interest for the given method.
+     *
+     * @param proteinMatchKey the key of the protein match of interest
+     * @param method the method to use
+     * @return the corresponding spectrum counting metric
+     */
+    public Double getSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method) {
 
-        if (result == null) {
-            if (smallObjectsCache.size() >= smallObjectsCacheSize) {
-                int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
-                ArrayList<String> toRemove = new ArrayList<String>();
+        if (method == peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod()) {
+            Double result = spectrumCounting.get(proteinMatchKey);
 
-                for (String tempKey : smallObjectsCache) {
-                    if (spectrumCounting.containsKey(tempKey)) {
-                        toRemove.add(tempKey);
-                        if (toRemove.size() == nRemove) {
-                            break;
+            if (result == null) {
+                if (smallObjectsCache.size() >= smallObjectsCacheSize) {
+                    int nRemove = smallObjectsCache.size() - smallObjectsCacheSize + 1;
+                    ArrayList<String> toRemove = new ArrayList<String>();
+
+                    for (String tempKey : smallObjectsCache) {
+                        if (spectrumCounting.containsKey(tempKey)) {
+                            toRemove.add(tempKey);
+                            if (toRemove.size() == nRemove) {
+                                break;
+                            }
                         }
+                    }
+
+                    for (String tempKey : toRemove) {
+                        removeFromSmallCache(tempKey);
                     }
                 }
 
-                for (String tempKey : toRemove) {
-                    removeFromSmallCache(tempKey);
-                }
+                result = estimateSpectrumCounting(proteinMatchKey);
+                spectrumCounting.put(proteinMatchKey, result);
+                smallObjectsCache.remove(proteinMatchKey);
+                smallObjectsCache.add(proteinMatchKey);
             }
-
-            result = estimateSpectrumCounting(proteinMatchKey);
-            spectrumCounting.put(proteinMatchKey, result);
-            smallObjectsCache.remove(proteinMatchKey);
-            smallObjectsCache.add(proteinMatchKey);
+            return result;
+        } else {
+            return estimateSpectrumCounting(proteinMatchKey, method);
         }
-        return result;
     }
 
     /**
@@ -342,6 +359,17 @@ public class IdentificationFeaturesGenerator {
      * @return the spectrum counting score
      */
     private double estimateSpectrumCounting(String proteinMatchKey) {
+        return estimateSpectrumCounting(proteinMatchKey, peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod());
+    }
+
+    /**
+     * Returns the spectrum counting score for the given method.
+     *
+     * @param proteinMatch the inspected protein match
+     * @param method the method to use
+     * @return the spectrum counting score
+     */
+    private double estimateSpectrumCounting(String proteinMatchKey, SpectrumCountingPreferences.SpectralCountingMethod method) {
 
         double ratio, result;
         Enzyme enyzme = peptideShakerGUI.getSearchParameters().getEnzyme();
@@ -350,7 +378,7 @@ public class IdentificationFeaturesGenerator {
         ProteinMatch testMatch, proteinMatch = identification.getProteinMatch(proteinMatchKey);
         try {
             Protein currentProtein = sequenceFactory.getProtein(proteinMatch.getMainMatch());
-            if (peptideShakerGUI.getSpectrumCountingPreferences().getSelectedMethod() == SpectralCountingMethod.NSAF) {
+            if (method == SpectralCountingMethod.NSAF) {
 
                 // NSAF
 

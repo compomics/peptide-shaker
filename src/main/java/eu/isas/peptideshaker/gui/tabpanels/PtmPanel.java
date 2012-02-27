@@ -21,7 +21,7 @@ import eu.isas.peptideshaker.myparameters.PSPtmScores;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.scoring.PtmScoring;
 import com.compomics.util.gui.protein.ModificationProfile;
-import eu.isas.peptideshaker.export.FeaturesGenerator;
+import eu.isas.peptideshaker.export.OutputGenerator;
 import eu.isas.peptideshaker.gui.ExportGraphicsDialog;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.ProteinInferencePeptideLevelDialog;
@@ -4483,8 +4483,8 @@ public class PtmPanel extends javax.swing.JPanel {
             results += proteinInferenceTooltipMap.get(probabilities.getGroupClass()) + "\t";
 
             results += identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide().getModifiedSequenceAsString(true) + "\t";
-            results += FeaturesGenerator.getPeptideModificationsAsString(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide()) + "\t";
-            results += FeaturesGenerator.getPeptideModificationLocations(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide(),
+            results += OutputGenerator.getPeptideModificationsAsString(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide()) + "\t";
+            results += OutputGenerator.getPeptideModificationLocations(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide(),
                     identification.getPeptideMatch(identification.getPeptideMatch(peptides.get(i)).getTheoreticPeptide().getKey())) + "\t";
 
             probabilities = new PSParameter();
@@ -4528,8 +4528,8 @@ public class PtmPanel extends javax.swing.JPanel {
 
                 String spectrumKey = identification.getPeptideMatch(getSelectedPeptide(!modifiedPeptides)).getSpectrumMatches().get(i);
                 results += identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getModifiedSequenceAsString(true) + "\t";
-                results += FeaturesGenerator.getPeptideModificationsAsString(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide()) + "\t";
-                results += FeaturesGenerator.getPeptideModificationLocations(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide(),
+                results += OutputGenerator.getPeptideModificationsAsString(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide()) + "\t";
+                results += OutputGenerator.getPeptideModificationLocations(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide(),
                         identification.getPeptideMatch(identification.getSpectrumMatch(spectrumKey).getBestAssumption().getPeptide().getKey())) + "\t";
 
                 results += identification.getSpectrumMatch(spectrumKey).getBestAssumption().getIdentificationCharge().value + "\t";

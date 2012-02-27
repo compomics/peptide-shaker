@@ -1781,6 +1781,10 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
                     || selectedIndex == MODIFICATIONS_TAB_INDEX
                     || selectedIndex == STRUCTURES_TAB_INDEX) {
                 jumpToPanel.setEnabled(true);
+                jumpToPanel.setType(JumpToPanel.JumpType.proteinAndPeptides);
+            } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
+                jumpToPanel.setEnabled(true);
+                jumpToPanel.setType(JumpToPanel.JumpType.spectrum);
             } else {
                 jumpToPanel.setEnabled(false);
             }
@@ -5004,12 +5008,13 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         ProteinFilter proteinFilter = new ProteinFilter(enzyme.getName());
         proteinFilter.setIdentifierRegex(enzyme.getName());
         proteinFilter.setDescription("Hides " + enzyme.getName() + " related proteins.");
+        proteinFilter.setActive(false);
         filterPreferences.addHidingFilter(proteinFilter);
-        PeptideFilter peptideFilter = new PeptideFilter(enzyme.getName(), getFoundModifications());
-        peptideFilter.setProtein(enzyme.getName());
-        proteinFilter.setDescription("Hides " + enzyme.getName() + " related peptides.");
-        filterPreferences.addHidingFilter(peptideFilter);
-        starHider.starHide();
+        proteinFilter = new ProteinFilter("Keratin");
+        proteinFilter.setIdentifierRegex("keratin");
+        proteinFilter.setDescription("Hides keratin.");
+        proteinFilter.setActive(false);
+        filterPreferences.addHidingFilter(proteinFilter);
     }
 
     /**
@@ -5090,6 +5095,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
      */
     public void setMetrics(Metrics metrics) {
         this.metrics = metrics;
+    }
+    
+    /**
+     * Sets the new mgf file selected
+     * @param mgfFile the name of the new mgf file
+     */
+    public void mgfFileSelectionChanged(String mgfFile) {
+        jumpToPanel.setSpectrumFile(mgfFile);
+        //@TODO: in the future we need to store this information like the selected protein/peptide/psm for selection in new tabs
     }
 
     /**

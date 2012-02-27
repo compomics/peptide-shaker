@@ -1,11 +1,13 @@
-package eu.isas.peptideshaker.gui.tabpanels;
+package eu.isas.peptideshaker.gui.tablemodels;
 
 import com.compomics.util.experiment.biology.Protein;
 import com.compomics.util.experiment.identification.Identification;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
+import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.myparameters.PSParameter;
+import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 import no.uib.jsparklines.data.XYDataPoint;

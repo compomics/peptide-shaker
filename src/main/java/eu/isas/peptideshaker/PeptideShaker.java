@@ -19,6 +19,7 @@ import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
 import com.compomics.util.experiment.massspectrometry.Precursor;
+import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
@@ -158,7 +159,7 @@ public class PeptideShaker {
     public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails) {
 
-        waitingDialog.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")\n");
+        waitingDialog.appendReport("Import process for " + experiment.getReference() + " (Sample " + sample.getReference() + ", Replicate " + replicateNumber + ")\n");
         
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification());
@@ -494,10 +495,9 @@ public class PeptideShaker {
         ArrayList<String> conflictingPSMs = new ArrayList<String>();
         HashMap<String, Integer> spectrumCounting = new HashMap<String, Integer>();
         ArrayList<PeptideAssumption> assumptions;
-        Precursor precursor;
 
         for (String spectrumKey : identification.getSpectrumIdentification()) {
-
+            
             SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
             boolean conflict = false;
 
@@ -506,8 +506,6 @@ public class PeptideShaker {
                 assumptions = spectrumMatch.getAllAssumptions(se).get(spectrumMatch.getFirstHit(se).getEValue());
 
                 if (assumptions.size() > 1) {
-
-                    precursor = spectrumFactory.getPrecursor(spectrumKey);
 
                     for (PeptideAssumption peptideAssumption : assumptions) {
                         if (idFilter.validateId(peptideAssumption, spectrumKey)) {
@@ -535,9 +533,14 @@ public class PeptideShaker {
         int maxCount;
         boolean needChange;
         for (String conflictKey : conflictingPSMs) {
+            
+            if (Spectrum.getSpectrumTitle(conflictKey).equals("363.535278320313_1064.1741")
+                    || Spectrum.getSpectrumTitle(conflictKey).equals("456.796264648438_2843.53909999998")
+                    || Spectrum.getSpectrumTitle(conflictKey).equals("456.796264648438_2843.53909999998")) {
+                int debug = 1;
+            }
             conflictingPSM = identification.getSpectrumMatch(conflictKey);
             maxCount = 0;
-            precursor = spectrumFactory.getPrecursor(conflictKey);
             for (int se : conflictingPSM.getAdvocates()) {
                 bestAssumption = conflictingPSM.getFirstHit(se);
                 for (String accession : bestAssumption.getPeptide().getParentProteins()) {
@@ -1369,10 +1372,6 @@ public class PeptideShaker {
 
         for (String proteinSharedKey : identification.getProteinIdentification()) {
 
-            if (proteinSharedKey.equals("O15068 O60229 O75962 P10911 Q86VW2")
-                    || proteinSharedKey.equals("A6QL64 Q5JPF3 Q8N2N9")) {
-                int debug = 1;
-            }
             if (ProteinMatch.getNProteins(proteinSharedKey) > 1) {
                 psParameter = (PSParameter) identification.getMatchParameter(proteinSharedKey, psParameter);
                 sharedProteinProbabilityScore = psParameter.getProteinProbabilityScore();

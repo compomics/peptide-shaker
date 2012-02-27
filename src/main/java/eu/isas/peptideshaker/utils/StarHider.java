@@ -19,6 +19,7 @@ import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.FilterPreferences;
 import java.awt.Toolkit;
 import javax.swing.RowFilter.ComparisonType;
+import org.apache.xerces.impl.xpath.regex.RegularExpression;
 
 /**
  * This class provides information whether a hit should be hidden or starred.
@@ -621,11 +622,12 @@ public class StarHider {
             }
             
             if (proteinFilter.getIdentifierRegex() != null) {
-                if (match.split(proteinFilter.getIdentifierRegex()).length == 1) {
+                String test = "test_" + match + "_test";
+                if (test.split(proteinFilter.getIdentifierRegex()).length == 1) {
                     boolean found = false;
                     for (String accession : ProteinMatch.getAccessions(match)) {
-                        String test = "test" + sequenceFactory.getHeader(accession).getDescription() + "test";
-                        if (test.split(proteinFilter.getIdentifierRegex()).length > 1) {
+                        test = "test_" + sequenceFactory.getHeader(accession).getDescription().toLowerCase() + "_test";
+                        if (test.split(proteinFilter.getIdentifierRegex().toLowerCase()).length > 1) {
                             found = true;
                             break;
                         }
