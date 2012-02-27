@@ -1,6 +1,5 @@
 package eu.isas.peptideshaker.gui;
 
-import com.compomics.util.experiment.biology.Peptide;
 import com.compomics.util.experiment.identification.SequenceFactory;
 import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
@@ -22,22 +21,22 @@ import java.util.HashMap;
 public class JumpToPanel extends javax.swing.JPanel {
 
     /**
-     * enum of the types of data to jump to
+     * Enum of the types of data to jump to.
      */
     public enum JumpType {
 
         proteinAndPeptides, spectrum
     }
     /**
-     * the type of data to jump to in that panel
+     * the type of data to jump to in that panel.
      */
     private JumpType jumpType = JumpType.proteinAndPeptides;
     /**
-     * Instance of the main GUI class
+     * Instance of the main GUI class.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
-     * Items matching the criterion for each type
+     * Items matching the criterion for each type.
      */
     private HashMap<JumpType, ArrayList<String>> possibilities = new HashMap<JumpType, ArrayList<String>>();
     /**
@@ -45,19 +44,19 @@ public class JumpToPanel extends javax.swing.JPanel {
      */
     private HashMap<JumpType, Integer> currentSelection = new HashMap<JumpType, Integer>();
     /**
-     * the text to display by default
+     * the text to display by default.
      */
     private HashMap<JumpType, String> lastInput = new HashMap<JumpType, String>();
     /**
-     * the text to display by default
+     * the text to display by default.
      */
     private HashMap<JumpType, String> lastLabel = new HashMap<JumpType, String>();
     /**
-     * Instance of the sequence factory
+     * Instance of the sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * the text to display by default
+     * the text to display by default.
      */
     private HashMap<JumpType, String> welcomeText;
     /**
@@ -65,9 +64,18 @@ public class JumpToPanel extends javax.swing.JPanel {
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
-     * The spectrum file inspected when jumping to spectra
+     * The spectrum file inspected when jumping to spectra.
      */
     private String spectrumfile;
+    /**
+     * Counts the number of times the users has pressed a key on the keyboard in
+     * the search field.
+     */
+    private int keyPressedCounter = 0;
+    /**
+     * The time to wait between keys typed before updating the search.
+     */
+    private int waitingTime = 1000;
 
     /**
      * Type of item selected
@@ -79,7 +87,7 @@ public class JumpToPanel extends javax.swing.JPanel {
         SPECTRUM
     }
     /**
-     * Type of each possible item
+     * Type of each possible item.
      */
     private HashMap<JumpType, ArrayList<Type>> types = new HashMap<JumpType, ArrayList<Type>>();
 
@@ -95,7 +103,7 @@ public class JumpToPanel extends javax.swing.JPanel {
 
         welcomeText = new HashMap<JumpType, String>();
         welcomeText.put(JumpType.proteinAndPeptides, "(protein or peptide)");
-        welcomeText.put(JumpType.spectrum, "(Title, m/z or RT)");
+        welcomeText.put(JumpType.spectrum, "(title, m/z or RT)");
         inputTxt.setText(welcomeText.get(jumpType));
         indexLabel.setText("");
         previousButton.setEnabled(false);
@@ -120,7 +128,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Updates the item selection in the selected tab
+     * Updates the item selection in the selected tab.
      */
     public void updateSelectionInTab() {
 
@@ -129,7 +137,7 @@ public class JumpToPanel extends javax.swing.JPanel {
         if (types.get(jumpType).get(currentSelection.get(jumpType)) == Type.PROTEIN) {
             peptideShakerGUI.setSelectedItems(possibilities.get(jumpType).get(currentSelection.get(jumpType)), PeptideShakerGUI.NO_SELECTION, PeptideShakerGUI.NO_SELECTION);
             peptideShakerGUI.updateSelectionInCurrentTab();
-        } else if (types.get(jumpType).get(currentSelection.get(jumpType)) == Type.PROTEIN) {
+        } else if (types.get(jumpType).get(currentSelection.get(jumpType)) == Type.PEPTIDE) {
             peptideShakerGUI.setSelectedItems(PeptideShakerGUI.NO_SELECTION, possibilities.get(jumpType).get(currentSelection.get(jumpType)), PeptideShakerGUI.NO_SELECTION);
             if (peptideShakerGUI.getSelectedTab() == PeptideShakerGUI.MODIFICATIONS_TAB_INDEX
                     && !peptideShakerGUI.getDisplayedPeptides().contains(possibilities.get(jumpType).get(currentSelection.get(jumpType)))) {
@@ -266,146 +274,171 @@ public class JumpToPanel extends javax.swing.JPanel {
      */
     private void inputTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_inputTxtKeyReleased
 
-        if (peptideShakerGUI.getIdentification() != null) {
+        final KeyEvent event = evt;
+        keyPressedCounter++;
 
-            if (!inputTxt.getText().equalsIgnoreCase(welcomeText.get(jumpType))) {
-                inputTxt.setForeground(Color.black);
-            } else {
-                inputTxt.setForeground(new Color(204, 204, 204));
-            }
+        new Thread("FindThread") {
 
-            if (evt.getKeyCode() == KeyEvent.VK_LEFT && previousButton.isEnabled()) {
-                previousButtonActionPerformed(null);
-            } else if (evt.getKeyCode() == KeyEvent.VK_RIGHT & nextButton.isEnabled()) {
-                nextButtonActionPerformed(null);
-            } else {
-                if (!possibilities.containsKey(jumpType)) {
-                    possibilities.put(jumpType, new ArrayList<String>());
-                    types.put(jumpType, new ArrayList<Type>());
-                } else {
-                    possibilities.get(jumpType).clear();
-                    types.get(jumpType).clear();
+            @Override
+            public void run() {
+
+                long temp = System.currentTimeMillis();
+
+                // wait until the given time as past
+                while (System.currentTimeMillis() < temp + waitingTime) {
+                    // wait. do nothing...
                 }
-                currentSelection.put(jumpType, 0);
-                String doubleString, input = inputTxt.getText().trim().toLowerCase();
-                lastInput.put(jumpType, input);
 
-                if (!input.equals("")) {
+                // see of the gui is to be updated or not
+                if (peptideShakerGUI.getIdentification() != null && keyPressedCounter == 1) {
 
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+                    if (!inputTxt.getText().equalsIgnoreCase(welcomeText.get(jumpType))) {
+                        inputTxt.setForeground(Color.black);
+                    } else {
+                        inputTxt.setForeground(new Color(204, 204, 204));
+                    }
 
-                    if (jumpType == JumpType.proteinAndPeptides) {
-                        PSParameter psParameter = new PSParameter();
+                    if (event.getKeyCode() == KeyEvent.VK_UP && previousButton.isEnabled()) {
+                        previousButtonActionPerformed(null);
+                    } else if (event.getKeyCode() == KeyEvent.VK_DOWN & nextButton.isEnabled()) {
+                        nextButtonActionPerformed(null);
+                    } else {
+                        if (!possibilities.containsKey(jumpType)) {
+                            possibilities.put(jumpType, new ArrayList<String>());
+                            types.put(jumpType, new ArrayList<Type>());
+                        } else {
+                            possibilities.get(jumpType).clear();
+                            types.get(jumpType).clear();
+                        }
+                        currentSelection.put(jumpType, 0);
+                        String doubleString, input = inputTxt.getText().trim().toLowerCase();
+                        lastInput.put(jumpType, input);
 
-                        for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
-                            if (!ProteinMatch.isDecoy(proteinKey)) {
-                                psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
-                                if (!psParameter.isHidden()) {
-                                    if (proteinKey.toLowerCase().contains(input)) {
-                                        possibilities.get(jumpType).add(proteinKey);
-                                        types.get(jumpType).add(Type.PROTEIN);
-                                    } else {
-                                        try {
-                                            for (String accession : ProteinMatch.getAccessions(proteinKey)) {
-                                                if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(input)) {
-                                                    possibilities.get(jumpType).add(proteinKey);
-                                                    types.get(jumpType).add(Type.PROTEIN);
-                                                    break;
+                        if (!input.equals("")) {
+
+                            peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.WAIT_CURSOR));
+
+                            if (jumpType == JumpType.proteinAndPeptides) {
+                                PSParameter psParameter = new PSParameter();
+
+                                for (String proteinKey : peptideShakerGUI.getIdentification().getProteinIdentification()) {
+                                    if (!ProteinMatch.isDecoy(proteinKey)) {
+                                        psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(proteinKey, psParameter);
+                                        if (!psParameter.isHidden()) {
+                                            if (proteinKey.toLowerCase().contains(input)) {
+                                                possibilities.get(jumpType).add(proteinKey);
+                                                types.get(jumpType).add(Type.PROTEIN);
+                                            } else {
+                                                try {
+                                                    for (String accession : ProteinMatch.getAccessions(proteinKey)) {
+                                                        if (sequenceFactory.getHeader(accession).getDescription().toLowerCase().contains(input)) {
+                                                            possibilities.get(jumpType).add(proteinKey);
+                                                            types.get(jumpType).add(Type.PROTEIN);
+                                                            break;
+                                                        }
+                                                    }
+                                                } catch (Exception e) {
+                                                    // cannot get description, ignore
                                                 }
                                             }
-                                        } catch (Exception e) {
-                                            // cannot get description, ignore
+                                        }
+                                    }
+                                }
+
+                                ArrayList<String> secondaryCandidates = new ArrayList<String>();
+                                PeptideMatch peptideMatch;
+
+                                for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
+                                    psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
+                                    if (!psParameter.isHidden()) {
+                                        if (peptideKey.toLowerCase().startsWith(input)) {
+                                            possibilities.get(jumpType).add(peptideKey);
+                                            types.get(jumpType).add(Type.PEPTIDE);
+                                        } else if (peptideKey.toLowerCase().contains(input)) {
+                                            secondaryCandidates.add(peptideKey);
+                                        }
+                                    }
+                                }
+
+                                for (String secondaryCandidate : secondaryCandidates) {
+
+                                    peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(secondaryCandidate);
+
+                                    for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
+                                        if (!ProteinMatch.isDecoy(protein)) {
+                                            possibilities.get(jumpType).add(secondaryCandidate);
+                                            types.get(jumpType).add(Type.PEPTIDE);
+                                            break;
+                                        }
+                                    }
+                                }
+                            } else {
+                                String spectrumKey;
+                                for (String spectrumTitle : spectrumFactory.getSpectrumTitles(spectrumfile)) {
+                                    spectrumKey = Spectrum.getSpectrumKey(spectrumfile, spectrumTitle);
+                                    if (spectrumKey.contains(input)) {
+                                        possibilities.get(jumpType).add(spectrumKey);
+                                        types.get(jumpType).add(Type.SPECTRUM);
+                                    } else {
+                                        Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
+                                        doubleString = precursor.getMz() + "";
+                                        if (doubleString.startsWith(input)) {
+                                            possibilities.get(jumpType).add(spectrumKey);
+                                            types.get(jumpType).add(Type.SPECTRUM);
+                                        } else {
+                                            doubleString = precursor.getRt() + "";
+                                            if (doubleString.startsWith(input)) {
+                                                possibilities.get(jumpType).add(spectrumKey);
+                                                types.get(jumpType).add(Type.SPECTRUM);
+                                            }
                                         }
                                     }
                                 }
                             }
-                        }
 
-                        ArrayList<String> secondaryCandidates = new ArrayList<String>();
-                        PeptideMatch peptideMatch;
+                            if (possibilities.get(jumpType).size() > 0) {
 
-                        for (String peptideKey : peptideShakerGUI.getIdentification().getPeptideIdentification()) {
-                            psParameter = (PSParameter) peptideShakerGUI.getIdentification().getMatchParameter(peptideKey, psParameter);
-                            if (!psParameter.isHidden()) {
-                                if (peptideKey.toLowerCase().startsWith(input)) {
-                                    possibilities.get(jumpType).add(peptideKey);
-                                    types.get(jumpType).add(Type.PEPTIDE);
-                                } else if (peptideKey.toLowerCase().contains(input)) {
-                                    secondaryCandidates.add(peptideKey);
+                                if (possibilities.get(jumpType).size() > 1) {
+                                    previousButton.setEnabled(true);
+                                    nextButton.setEnabled(true);
+                                } else { // possibilities.size() == 1
+                                    previousButton.setEnabled(false);
+                                    nextButton.setEnabled(false);
                                 }
-                            }
-                        }
 
-                        for (String secondaryCandidate : secondaryCandidates) {
-
-                            peptideMatch = peptideShakerGUI.getIdentification().getPeptideMatch(secondaryCandidate);
-
-                            for (String protein : peptideMatch.getTheoreticPeptide().getParentProteins()) {
-                                if (!ProteinMatch.isDecoy(protein)) {
-                                    possibilities.get(jumpType).add(secondaryCandidate);
-                                    types.get(jumpType).add(Type.PEPTIDE);
-                                    break;
-                                }
-                            }
-                        }
-
-                    } else {
-                        String spectrumKey;
-                        for (String spectrumTitle : spectrumFactory.getSpectrumTitles(spectrumfile)) {
-                            spectrumKey = Spectrum.getSpectrumKey(spectrumfile, spectrumTitle);
-                            if (spectrumKey.contains(input)) {
-                                possibilities.get(jumpType).add(spectrumKey);
-                                types.get(jumpType).add(Type.SPECTRUM);
+                                updateSelectionInTab();
                             } else {
-                                Precursor precursor = peptideShakerGUI.getPrecursor(spectrumKey, false);
-                                doubleString = precursor.getMz() + "";
-                                if (doubleString.startsWith(input)) {
-                                    possibilities.get(jumpType).add(spectrumKey);
-                                    types.get(jumpType).add(Type.SPECTRUM);
+                                previousButton.setEnabled(false);
+                                nextButton.setEnabled(false);
+
+                                if (!input.equalsIgnoreCase(welcomeText.get(jumpType))) {
+                                    indexLabel.setText("(no matches)");
                                 } else {
-                                    doubleString = precursor.getRt() + "";
-                                    if (doubleString.startsWith(input)) {
-                                        possibilities.get(jumpType).add(spectrumKey);
-                                        types.get(jumpType).add(Type.SPECTRUM);
-                                    }
+                                    indexLabel.setText("");
                                 }
                             }
-                        }
-                    }
+                            
+                            peptideShakerGUI.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-                    if (possibilities.get(jumpType).size() > 0) {
-
-                        if (possibilities.get(jumpType).size() > 1) {
-                            previousButton.setEnabled(true);
-                            nextButton.setEnabled(true);
-                        } else { // possibilities.size() == 1
-                            previousButton.setEnabled(false);
-                            nextButton.setEnabled(false);
-                        }
-
-                        updateSelectionInTab();
-                    } else {
-                        previousButton.setEnabled(false);
-                        nextButton.setEnabled(false);
-
-                        if (!input.equalsIgnoreCase(welcomeText.get(jumpType))) {
-                            indexLabel.setText("(no matches)");
                         } else {
                             indexLabel.setText("");
+                            previousButton.setEnabled(false);
+                            nextButton.setEnabled(false);
+                            inputTxt.setText(welcomeText.get(jumpType));
+                            inputTxt.selectAll();
                         }
                     }
-                    this.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
+                    lastLabel.put(jumpType, indexLabel.getText());
+
+                    // gui updated, reset the counter
+                    keyPressedCounter = 0;
                 } else {
-                    indexLabel.setText("");
-                    previousButton.setEnabled(false);
-                    nextButton.setEnabled(false);
-                    inputTxt.setText(welcomeText.get(jumpType));
-                    inputTxt.selectAll();
+                    // gui not updated, decrease the counter
+                    keyPressedCounter--;
                 }
             }
-                        lastLabel.put(jumpType, indexLabel.getText());
-        }
+        }.start();
     }//GEN-LAST:event_inputTxtKeyReleased
 
     /**
@@ -436,6 +469,11 @@ public class JumpToPanel extends javax.swing.JPanel {
         updateSelectionInTab();
     }//GEN-LAST:event_nextButtonActionPerformed
 
+    /**
+     * Select all text in the search field.
+     * 
+     * @param evt 
+     */
     private void inputTxtMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_inputTxtMouseReleased
         if (inputTxt.getText().equals(welcomeText.get(jumpType))) {
             inputTxt.selectAll();
@@ -509,7 +547,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Changes the type of jumpToPanel
+     * Changes the type of jumpToPanel.
      *
      * @param jumpType the new type of jump to panel
      */
@@ -525,7 +563,7 @@ public class JumpToPanel extends javax.swing.JPanel {
     }
 
     /**
-     * Sets the spectrum file inspected
+     * Sets the spectrum file inspected.
      *
      * @param spectrumFile the name of the spectrum file inspected
      */
