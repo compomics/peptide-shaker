@@ -325,11 +325,6 @@ public class OutputGenerator {
                                                 } else {
                                                     writer.write(0 + SEPARATOR);
                                                 }
-                                                if (proteinMatch.isDecoy()) {
-                                                    writer.write(1 + SEPARATOR);
-                                                } else {
-                                                    writer.write(0 + SEPARATOR);
-                                                }
                                             }
                                             if (includeHidden) {
                                                 writer.write(proteinPSParameter.isHidden() + SEPARATOR);
