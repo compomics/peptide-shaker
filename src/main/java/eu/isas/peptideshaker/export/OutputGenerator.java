@@ -102,7 +102,7 @@ public class OutputGenerator {
      * @throws IOException exception thrown whenever an error occurred while writing the results
      */
     public void getProteinsOutput(ArrayList<String> aProteinKeys, boolean aIndexes, boolean aOnlyValidated, boolean aAccession, boolean aPiDetails,
-            boolean aDescription, boolean aNPeptides, boolean aEmPAI, boolean aSequenceCoverage, boolean aModifiedSequence, boolean aNSpectra, boolean aNsaf,
+            boolean aDescription, boolean aNPeptides, boolean aEmPAI, boolean aSequenceCoverage, boolean aPtmSummary, boolean aNSpectra, boolean aNsaf,
             boolean aScore, boolean aConfidence, boolean aIncludeHeader, boolean aOnlyStarred, boolean aIncludeHidden) throws IOException {
 
         // create final versions of all variables use inside the export thread
@@ -115,7 +115,7 @@ public class OutputGenerator {
         final boolean nPeptides = aNPeptides;
         final boolean emPAI = aEmPAI;
         final boolean sequenceCoverage = aSequenceCoverage;
-        final boolean modifiedSequence = aModifiedSequence;
+        final boolean ptmSummary = aPtmSummary;
         final boolean nSpectra = aNSpectra;
         final boolean nsaf = aNsaf;
         final boolean score = aScore;
@@ -160,14 +160,6 @@ public class OutputGenerator {
                 public void run() {
 
                     try {
-                        
-                        boolean needsDecoyColumn = false;
-                        for (String proteinKey : proteinKeys) {
-                            if (SequenceFactory.isDecoy(proteinKey)) {
-                                needsDecoyColumn = true;
-                                break;
-                            }
-                        }
 
                         if (includeHeader) {
                             if (indexes) {
@@ -186,8 +178,9 @@ public class OutputGenerator {
                             if (sequenceCoverage) {
                                 writer.write("Sequence Coverage (%)" + SEPARATOR);
                             }
-                            if (modifiedSequence) {
-                                writer.write("Modified Sequence" + SEPARATOR);
+                            if (ptmSummary) {
+                                writer.write("Confident Modification sites" + SEPARATOR);
+                                writer.write("Other Modification sites" + SEPARATOR);
                             }
                             if (nPeptides) {
                                 writer.write("#Validated Peptides" + SEPARATOR);
@@ -215,9 +208,6 @@ public class OutputGenerator {
                             }
                             if (!onlyStarred) {
                                 writer.write("Starred" + SEPARATOR);
-                            }
-                            if (needsDecoyColumn) {
-                                writer.write("Decoy");
                             }
                             writer.write("\n");
                         }
@@ -275,9 +265,10 @@ public class OutputGenerator {
                                                     }
                                                 }
                                             }
-                                            if (modifiedSequence) {
+                                            if (ptmSummary) {
                                                 try {
-                                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getModifiedSequence(proteinKey) + SEPARATOR);
+                                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getPrimaryPTMSummary(proteinKey) + SEPARATOR);
+                                                writer.write(peptideShakerGUI.getIdentificationFeaturesGenerator().getSecondaryPTMSummary(proteinKey) + SEPARATOR);
                                                 } catch (Exception e) {
                                                     if (nPeptides) {
                                                         writer.write("error: " + e.getLocalizedMessage() + SEPARATOR);
@@ -344,14 +335,7 @@ public class OutputGenerator {
                                                 writer.write(proteinPSParameter.isHidden() + SEPARATOR);
                                             }
                                             if (!onlyStarred) {
-                                                writer.write(proteinPSParameter.isStarred() + SEPARATOR);
-                                            }
-                                            if (needsDecoyColumn) {
-                                                if (proteinMatch.isDecoy()) {
-                                                    writer.write(1 + "");
-                                                } else {
-                                                    writer.write(0 + "");
-                                                }
+                                                writer.write(proteinPSParameter.isStarred() + "");
                                             }
                                             writer.write("\n");
                                         }

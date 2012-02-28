@@ -79,7 +79,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinSelectAll = new javax.swing.JButton();
         proteinUnselectAll = new javax.swing.JButton();
         proteinSequenceCoverage = new javax.swing.JCheckBox();
-        modifiedSequence = new javax.swing.JCheckBox();
+        ptmSummary = new javax.swing.JCheckBox();
         proteinValidated = new javax.swing.JCheckBox();
         proteinStarred = new javax.swing.JCheckBox();
         proteinHidden = new javax.swing.JCheckBox();
@@ -215,9 +215,9 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinSequenceCoverage.setIconTextGap(10);
         proteinSequenceCoverage.setOpaque(false);
 
-        modifiedSequence.setText("Modified sequence");
-        modifiedSequence.setIconTextGap(10);
-        modifiedSequence.setOpaque(false);
+        ptmSummary.setText("PTM summary");
+        ptmSummary.setIconTextGap(10);
+        ptmSummary.setOpaque(false);
 
         proteinValidated.setSelected(true);
         proteinValidated.setText("Request Validated");
@@ -269,7 +269,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                                         .addGap(18, 18, 18)
                                         .addComponent(proteinNSpectra, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(proteinsPanelLayout.createSequentialGroup()
-                                        .addComponent(modifiedSequence, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(ptmSummary, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(proteinEmpai, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addGap(18, 18, 18)
@@ -284,7 +284,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {modifiedSequence, proteinAccession, proteinConfidence, proteinDescription, proteinEmpai, proteinHidden, proteinNPeptides, proteinNSpectra, proteinNsaf, proteinPI, proteinScore, proteinSequenceCoverage, proteinStarred, proteinValidated});
+        proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {proteinAccession, proteinConfidence, proteinDescription, proteinEmpai, proteinHidden, proteinNPeptides, proteinNSpectra, proteinNsaf, proteinPI, proteinScore, proteinSequenceCoverage, proteinStarred, proteinValidated, ptmSummary});
 
         proteinsPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {proteinExportAll, proteinSelectAll, proteinUnselectAll});
 
@@ -304,7 +304,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
                             .addComponent(proteinPI)
                             .addComponent(proteinConfidence)
                             .addComponent(proteinEmpai)
-                            .addComponent(modifiedSequence))
+                            .addComponent(ptmSummary))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(proteinsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(proteinDescription)
@@ -922,7 +922,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
 
         try {
             outputGenerator.getProteinsOutput(null, false, proteinValidated.isSelected(), proteinAccession.isSelected(), proteinPI.isSelected(),
-                    proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), modifiedSequence.isSelected(),
+                    proteinDescription.isSelected(), proteinNPeptides.isSelected(), proteinEmpai.isSelected(), proteinSequenceCoverage.isSelected(), ptmSummary.isSelected(),
                     proteinNSpectra.isSelected(), proteinNsaf.isSelected(), proteinScore.isSelected(), proteinConfidence.isSelected(), true, proteinStarred.isSelected(), proteinHidden.isSelected());
         } catch (IOException e) {
             // change the peptide shaker icon back to the default version
@@ -944,7 +944,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinNPeptides.setSelected(true);
         proteinEmpai.setSelected(true);
         proteinNSpectra.setSelected(true);
-        modifiedSequence.setSelected(true);
+        ptmSummary.setSelected(true);
         proteinNsaf.setSelected(true);
         proteinScore.setSelected(true);
         proteinConfidence.setSelected(true);
@@ -968,7 +968,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
         proteinScore.setSelected(false);
         proteinConfidence.setSelected(false);
         proteinSequenceCoverage.setSelected(false);
-        modifiedSequence.setSelected(false);
+        ptmSummary.setSelected(false);
         proteinValidated.setSelected(false);
         proteinStarred.setSelected(false);
         proteinHidden.setSelected(false);
@@ -1303,7 +1303,6 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
-    private javax.swing.JCheckBox modifiedSequence;
     private javax.swing.JCheckBox peptideAccession;
     private javax.swing.JCheckBox peptideConfidence;
     private javax.swing.JButton peptideExportAll;
@@ -1355,6 +1354,7 @@ public class FeaturesPreferencesDialog extends javax.swing.JDialog {
     private javax.swing.JCheckBox psmTitle;
     private javax.swing.JButton psmUnselectAll;
     private javax.swing.JCheckBox psmValidated;
+    private javax.swing.JCheckBox ptmSummary;
     private javax.swing.JPanel searchEnginePanel;
     private javax.swing.JTabbedPane tabbedPane;
     // End of variables declaration//GEN-END:variables
