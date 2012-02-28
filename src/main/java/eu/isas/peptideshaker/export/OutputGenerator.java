@@ -167,10 +167,10 @@ public class OutputGenerator {
                             }
                             if (accession) {
                                 writer.write("Accession" + SEPARATOR);
+                                writer.write("Other Protein(s)" + SEPARATOR);
                             }
                             if (piDetails) {
                                 writer.write("Protein Inference Class" + SEPARATOR);
-                                writer.write("Other Protein(s)" + SEPARATOR);
                             }
                             if (description) {
                                 writer.write("Description" + SEPARATOR);
@@ -231,9 +231,6 @@ public class OutputGenerator {
                                             proteinMatch = identification.getProteinMatch(proteinKey);
                                             if (accession) {
                                                 writer.write(proteinMatch.getMainMatch() + SEPARATOR);
-                                            }
-                                            if (piDetails) {
-                                                writer.write(proteinPSParameter.getGroupName() + SEPARATOR);
                                                 boolean first = true;
                                                 for (String otherProtein : proteinMatch.getTheoreticProteinsAccessions()) {
                                                     if (!otherProtein.equals(proteinMatch.getMainMatch())) {
@@ -246,6 +243,9 @@ public class OutputGenerator {
                                                     }
                                                 }
                                                 writer.write(SEPARATOR);
+                                            }
+                                            if (piDetails) {
+                                                writer.write(proteinPSParameter.getGroupName() + SEPARATOR);
                                             }
                                             if (description) {
                                                 try {
