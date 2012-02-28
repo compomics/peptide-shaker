@@ -3,6 +3,18 @@
 
 ----
 
+*Changes in PeptideShaker 0.14.7 (February 28. 2012):*
+ * FEATURE IMPROVEMENT: Added progress bars when importing the PSMs in the id file readers.
+ * FEATURE IMPROVEMENT: Improved the way missing or wrong mgf files are handled.
+ * FEATURE IMPROVEMENT: Some of the metrics are calculated earlier to improve import speed.
+ * FEATURE IMPROVEMENT: Improved the PTM output for proteins.
+ * FEATURE IMPROVEMENT: Find feature: Added a delay such that the search is not carried out until the user stops typing.
+ * FEATURE IMPROVEMENT: Find feature: made the protein filtering non case sensitive on the description.
+ * FEATURE IMPROVEMENT: Find feature: made it possible to jump to spectra in the Spectrum ID tab.
+ * LIBRARY UPDATE: Updated utilities to version 3.3.42, fixing an issue with unknown protein expect values in X!Tandem files.
+
+----
+
 *Changes in PeptideShaker 0.14.6 (February 20. 2012):*
  * NEW FEATURE: Added a bug report dialog so that the user does not need to open the file every time.
  * FEATURE IMPROVEMENT: The loading of the files is slightly faster.
@@ -23,6 +35,8 @@
  * BUG FIX: Corrected a minor bug occurring when opening a file.
  * LIBRARY UPDATE: Updated utilities to version 3.3.39, improving the support for home made FASTA files.
  * LIBRARY UPDATE: Added ols-dialog version 3.3.2 as a dependency.
+
+Download Count: 20
 
 ----
 
