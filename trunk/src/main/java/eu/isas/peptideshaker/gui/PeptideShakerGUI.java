@@ -2570,7 +2570,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             identificationFeaturesMenu.setEnabled(true);
             followUpAnalysisMenu.setEnabled(true);
             exportProjectMenuItem.setEnabled(true);
-            exportPrideXmlMenuItem.setEnabled(true);
+            //exportPrideXmlMenuItem.setEnabled(true);
             projectPropertiesMenuItem.setEnabled(true);
             spectrumCountingMenuItem.setEnabled(true);
             findJMenuItem.setEnabled(true);
