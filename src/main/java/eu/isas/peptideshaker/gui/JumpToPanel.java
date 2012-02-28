@@ -288,7 +288,7 @@ public class JumpToPanel extends javax.swing.JPanel {
                     
                 }
                 
-                // see of the gui is to be updated or not
+                // see if the gui is to be updated or not
                 if (peptideShakerGUI.getIdentification() != null && keyPressedCounter == 1) {
 
                     if (!inputTxt.getText().equalsIgnoreCase(welcomeText.get(jumpType))) {
