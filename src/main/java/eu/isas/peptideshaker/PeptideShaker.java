@@ -167,7 +167,7 @@ public class PeptideShaker {
         identification.setInMemory(false);
         identification.setAutomatedMemoryManagement(true);
         identification.setSerializationDirectory(SERIALIZATION_DIRECTORY);
-        fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter);
+        fileImporter = new FileImporter(this, waitingDialog, analysis, idFilter, metrics);
         fileImporter.importFiles(idFiles, spectrumFiles, fastaFile, searchParameters, annotationPreferences);
     }
 
@@ -534,11 +534,6 @@ public class PeptideShaker {
         boolean needChange;
         for (String conflictKey : conflictingPSMs) {
             
-            if (Spectrum.getSpectrumTitle(conflictKey).equals("363.535278320313_1064.1741")
-                    || Spectrum.getSpectrumTitle(conflictKey).equals("456.796264648438_2843.53909999998")
-                    || Spectrum.getSpectrumTitle(conflictKey).equals("456.796264648438_2843.53909999998")) {
-                int debug = 1;
-            }
             conflictingPSM = identification.getSpectrumMatch(conflictKey);
             maxCount = 0;
             for (int se : conflictingPSM.getAdvocates()) {
@@ -592,9 +587,6 @@ public class PeptideShaker {
         PSParameter psParameter;
         PeptideAssumption peptideAssumption, bestAssumption;
         SpectrumMatch spectrumMatch;
-        ArrayList<Integer> charges = new ArrayList<Integer>();
-        int currentCharge;
-        double precursorMz, error, maxErrorPpm = 0, maxErrorDa = 0;
 
         if (inputMap.isMultipleSearchEngines()) {
             for (String spectrumKey : identification.getSpectrumIdentification()) {
@@ -631,24 +623,6 @@ public class PeptideShaker {
                 identification.setMatchChanged(spectrumMatch);
                 psmMap.addPoint(pScore, spectrumMatch);
                 waitingDialog.increaseSecondaryProgressValue();
-                currentCharge = bestAssumption.getIdentificationCharge().value;
-
-                if (!charges.contains(currentCharge)) {
-                    charges.add(currentCharge);
-                }
-
-                precursorMz = spectrumFactory.getPrecursor(spectrumKey, false).getMz();
-                error = bestAssumption.getDeltaMass(precursorMz, true);
-
-                if (error > maxErrorPpm) {
-                    maxErrorPpm = error;
-                }
-
-                error = bestAssumption.getDeltaMass(precursorMz, false);
-
-                if (error > maxErrorDa) {
-                    maxErrorDa = error;
-                }
             }
         } else {
             double eValue;
@@ -670,30 +644,9 @@ public class PeptideShaker {
                 psParameter.setSecificMapKey(psmMap.getKey(spectrumMatch) + "");
                 identification.addMatchParameter(spectrumKey, psParameter);
                 waitingDialog.increaseSecondaryProgressValue();
-                currentCharge = spectrumMatch.getBestAssumption().getIdentificationCharge().value;
-
-                if (!charges.contains(currentCharge)) {
-                    charges.add(currentCharge);
-                }
-
-                precursorMz = spectrumFactory.getPrecursor(spectrumKey, false).getMz();
-                error = spectrumMatch.getBestAssumption().getDeltaMass(precursorMz, true);
-
-                if (error > maxErrorPpm) {
-                    maxErrorPpm = error;
-                }
-
-                error = spectrumMatch.getBestAssumption().getDeltaMass(precursorMz, false);
-
-                if (error > maxErrorDa) {
-                    maxErrorDa = error;
-                }
             }
         }
 
-        metrics.setFoundCharges(charges);
-        metrics.setMaxPrecursorErrorDa(maxErrorDa);
-        metrics.setMaxPrecursorErrorPpm(maxErrorPpm);
         waitingDialog.setSecondaryProgressDialogIntermediate(true);
     }
 

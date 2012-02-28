@@ -280,15 +280,14 @@ public class JumpToPanel extends javax.swing.JPanel {
         new Thread("FindThread") {
 
             @Override
-            public void run() {
+            public synchronized void run() {
 
-                long temp = System.currentTimeMillis();
-
-                // wait until the given time as past
-                while (System.currentTimeMillis() < temp + waitingTime) {
-                    // wait. do nothing...
+                try {
+                wait(waitingTime);
+                } catch (InterruptedException e) {
+                    
                 }
-
+                
                 // see of the gui is to be updated or not
                 if (peptideShakerGUI.getIdentification() != null && keyPressedCounter == 1) {
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 /**
  * This class contains metrics from the dataset for later use.
+ * @TODO for the next release without backward compatibility we could rename it into something more descriptive like DatasetMetrics
  *
  * @author Marc Vaudel
  */
@@ -71,14 +72,24 @@ public class Metrics implements Serializable {
         }
         return foundCharges;
     }
-
+    
     /**
-     * Set the list of charges found.
-     * 
-     * @param foundCharges the charges to set
+     * Clears the found charges
      */
-    public void setFoundCharges(ArrayList<Integer> foundCharges) {
-        this.foundCharges = foundCharges;
+    public void clearFoundCharges() {
+        foundCharges.clear();
+    }
+    
+    /**
+     * Adds a new charge to the list of found charges
+     * @param foundCharges the new charge to add
+     */
+    public void addFoundCharges(ArrayList<Integer> foundCharges) {
+        for (int newCharge : foundCharges) {
+            if (!this.foundCharges.contains(newCharge)) {
+                this.foundCharges.add(newCharge);
+            }
+        }
     }
 
     /**

@@ -23,6 +23,7 @@ import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.gui.WaitingDialog;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
 import eu.isas.peptideshaker.preferences.SearchParameters;
+import eu.isas.peptideshaker.utils.Metrics;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -96,6 +97,10 @@ public class FileImporter {
      * used
      */
     public static final double mascotMaxSize = 400;
+    /**
+     * Metrics of the dataset picked-up while loading the data
+     */
+    private Metrics metrics;
 
     /**
      * Constructor for the importer
@@ -105,12 +110,14 @@ public class FileImporter {
      * @param waitingDialog A dialog to display feedback to the user
      * @param proteomicAnalysis The current proteomic analysis
      * @param idFilter The identification filter to use
+     * @param metrics metrics of the dataset to be saved for the GUI
      */
-    public FileImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter) {
+    public FileImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, IdFilter idFilter, Metrics metrics) {
         this.peptideShaker = identificationShaker;
         this.waitingDialog = waitingDialog;
         this.proteomicAnalysis = proteomicAnalysis;
         this.idFilter = idFilter;
+        this.metrics = metrics;
     }
 
     /**
@@ -119,11 +126,13 @@ public class FileImporter {
      * @param identificationShaker the parent identification shaker
      * @param waitingDialog a dialog to give feedback to the user
      * @param proteomicAnalysis the current proteomic analysis
+     * @param metrics metrics of the dataset to be saved for the GUI
      */
-    public FileImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis) {
+    public FileImporter(PeptideShaker identificationShaker, WaitingDialog waitingDialog, ProteomicAnalysis proteomicAnalysis, Metrics metrics) {
         this.peptideShaker = identificationShaker;
         this.waitingDialog = waitingDialog;
         this.proteomicAnalysis = proteomicAnalysis;
+        this.metrics = metrics;
     }
 
     /**
@@ -598,6 +607,9 @@ public class FileImporter {
             int progress = 0;
             waitingDialog.setMaxSecondaryProgressValue(numberOfMatches);
             idReport = false;
+            ArrayList<Integer> charges = new ArrayList<Integer>();
+            int currentCharge;
+            double precursorMz, error, maxErrorPpm = 0, maxErrorDa = 0;
 
             while (matchIt.hasNext()) {
 
@@ -635,10 +647,27 @@ public class FileImporter {
                 goodFirstHit = false;
                 ArrayList<PeptideAssumption> allAssumptions = match.getAllAssumptions(searchEngine).get(firstHit.getEValue());
 
+
                 for (PeptideAssumption assumption : allAssumptions) {
                     if (idFilter.validateId(assumption, spectrumKey)) {
+                        precursorMz = spectrumFactory.getPrecursor(spectrumKey).getMz();
                         goodFirstHit = true;
-                        break;
+                        error = assumption.getDeltaMass(precursorMz, true);
+
+                        if (error > maxErrorPpm) {
+                            maxErrorPpm = error;
+                        }
+
+                        error = assumption.getDeltaMass(precursorMz, false);
+
+                        if (error > maxErrorDa) {
+                            maxErrorDa = error;
+                        }
+                        currentCharge = assumption.getIdentificationCharge().value;
+
+                        if (!charges.contains(currentCharge)) {
+                            charges.add(currentCharge);
+                        }
                     }
                 }
 
@@ -679,6 +708,13 @@ public class FileImporter {
                 }
 
                 waitingDialog.setSecondaryProgressValue(++progress);
+            }
+            metrics.addFoundCharges(charges);
+            if (maxErrorDa > metrics.getMaxPrecursorErrorDa()) {
+                metrics.setMaxPrecursorErrorDa(maxErrorDa);
+            }
+            if (maxErrorPpm > metrics.getMaxPrecursorErrorPpm()) {
+                metrics.setMaxPrecursorErrorPpm(maxErrorPpm);
             }
 
             waitingDialog.setSecondaryProgressDialogIntermediate(true);
