@@ -226,7 +226,6 @@ public class NewContactDialog extends javax.swing.JDialog {
      * OK button.
      */
     public void validateInput() {
-        
         if (nameJTextField.getText().length() > 0 
                 && eMailJTextField.getText().length() > 0
                 && institutionJTextArea.getText().length() > 0) {

@@ -553,7 +553,7 @@ public class PRIDEExport {
         tabCounter++;
         br.write(getCurrentTabSpace() + "<spectrumInstrument mzRangeStop=\"" + spectrum.getMaxMz()
                 + " \" mzRangeStart=\"" + spectrum.getMinMz()
-                + "\" msLevel=\"2\" />\n"); // @TODO: note that ms level is hardcoded to 2
+                + "\" msLevel=\"" + spectrum.getLevel() +"\" />\n");
         tabCounter--;
         br.write(getCurrentTabSpace() + "</spectrumSettings>\n");
 

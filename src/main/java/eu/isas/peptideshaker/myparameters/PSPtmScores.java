@@ -94,8 +94,8 @@ public class PSPtmScores implements UrParameter {
      * @param modificationSite  the modification site
      */
     public void addSecondaryModificationSite(String modification, int modificationSite) {
-        if (mainModificationSites.containsKey(modificationSite)
-                && !mainModificationSites.get(modificationSite).contains(modification)) {
+        if (!mainModificationSites.containsKey(modificationSite)
+                || !mainModificationSites.get(modificationSite).contains(modification)) {
             if (!secondaryModificationSites.containsKey(modificationSite)) {
                 secondaryModificationSites.put(modificationSite, new ArrayList<String>());
             }
