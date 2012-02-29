@@ -298,7 +298,7 @@
         <dependency>
             <groupId>com.compomics</groupId>
             <artifactId>utilities</artifactId>
-            <version>3.3.44</version>
+            <version>3.3.45</version>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-math</artifactId>
@@ -403,7 +403,7 @@
         <dependency>
             <groupId>uk.ac.ebi.uniprot.kraken</groupId>
             <artifactId>uniprotjapi</artifactId>
-            <version>2012.01</version>
+            <version>2012.02</version>
         </dependency>
         
         <dependency>
