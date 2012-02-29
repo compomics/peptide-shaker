@@ -18,8 +18,6 @@ import com.compomics.util.experiment.identification.matches.PeptideMatch;
 import com.compomics.util.experiment.identification.matches.ProteinMatch;
 import com.compomics.util.experiment.identification.matches.SpectrumMatch;
 import com.compomics.util.experiment.massspectrometry.MSnSpectrum;
-import com.compomics.util.experiment.massspectrometry.Precursor;
-import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import eu.isas.peptideshaker.scoring.InputMap;
 import eu.isas.peptideshaker.scoring.PeptideSpecificMap;
@@ -159,7 +157,7 @@ public class PeptideShaker {
     public void importFiles(WaitingDialog waitingDialog, IdFilter idFilter, ArrayList<File> idFiles, ArrayList<File> spectrumFiles,
             File fastaFile, SearchParameters searchParameters, AnnotationPreferences annotationPreferences, ProjectDetails projectDetails) {
 
-        waitingDialog.appendReport("Import process for " + experiment.getReference() + " (Sample " + sample.getReference() + ", Replicate " + replicateNumber + ")\n");
+        waitingDialog.appendReport("Import process for " + experiment.getReference() + " (Sample: " + sample.getReference() + ", Replicate: " + replicateNumber + ")\n");
         
         ProteomicAnalysis analysis = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber);
         analysis.addIdentificationResults(IdentificationMethod.MS2_IDENTIFICATION, new Ms2Identification());
@@ -659,7 +657,6 @@ public class PeptideShaker {
      */
     private void attachAssumptionsProbabilities(InputMap inputMap, WaitingDialog waitingDialog) throws Exception {
         Identification identification = experiment.getAnalysisSet(sample).getProteomicAnalysis(replicateNumber).getIdentification(IdentificationMethod.MS2_IDENTIFICATION);
-        SpectrumMatch spectrumMatch;
 
         int max = identification.getSpectrumIdentification().size();
         waitingDialog.setSecondaryProgressDialogIntermediate(false);
@@ -669,7 +666,8 @@ public class PeptideShaker {
 
             waitingDialog.increaseSecondaryProgressValue();
 
-            spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+            SpectrumMatch spectrumMatch = identification.getSpectrumMatch(spectrumKey);
+            
             for (int searchEngine : spectrumMatch.getAdvocates()) {
 
                 ArrayList<Double> eValues = new ArrayList<Double>(spectrumMatch.getAllAssumptions(searchEngine).keySet());
@@ -694,6 +692,7 @@ public class PeptideShaker {
                     }
                 }
             }
+            
             identification.setMatchChanged(spectrumMatch);
         }
 

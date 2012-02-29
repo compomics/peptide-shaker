@@ -239,7 +239,6 @@ public class PeptideShakerWrapper {
             InputStream stderr = p.getErrorStream();
             InputStreamReader isr = new InputStreamReader(stderr);
             BufferedReader br = new BufferedReader(isr);
-            String line = null;
 
             temp += "<ERROR>\n\n";
 
@@ -248,7 +247,7 @@ public class PeptideShakerWrapper {
                 bw.write("Error stream:\n");
             }
 
-            line = br.readLine();
+            String line = br.readLine();
 
             boolean error = false;
 
@@ -342,9 +341,11 @@ public class PeptideShakerWrapper {
                 saveUserPreferences();
             } else {
                 FileInputStream fis = new FileInputStream(file);
-                ObjectInputStream in = new ObjectInputStream(fis);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                ObjectInputStream in = new ObjectInputStream(bis);
                 Object inObject = in.readObject();
                 fis.close();
+                bis.close();
                 in.close();
                 userPreferences = (UserPreferences) inObject;
             }
@@ -371,9 +372,11 @@ public class PeptideShakerWrapper {
                 file.getParentFile().mkdir();
             }
             FileOutputStream fos = new FileOutputStream(file);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
             oos.writeObject(userPreferences);
             oos.close();
+            bos.close();
             fos.close();
         } catch (Exception e) {
             e.printStackTrace();

@@ -13,13 +13,7 @@ import eu.isas.peptideshaker.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -171,11 +165,10 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             protected JTableHeader createDefaultTableHeader() {
                 return new JTableHeader(columnModel) {
                     public String getToolTipText(MouseEvent e) {
-                        String tip = null;
                         java.awt.Point p = e.getPoint();
                         int index = columnModel.getColumnIndexAtX(p.x);
                         int realIndex = columnModel.getColumn(index).getModelIndex();
-                        tip = (String) expectedVariableModsTableToolTips.get(realIndex);
+                        String tip = (String) expectedVariableModsTableToolTips.get(realIndex);
                         return tip;
                     }
                 };
@@ -437,7 +430,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     .addGroup(jPanel6Layout.createSequentialGroup()
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                                .addComponent(profileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 156, Short.MAX_VALUE)
+                                .addComponent(profileTxt)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(loadProfileBtn)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -447,7 +440,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                                 .addGap(63, 63, 63))
                             .addComponent(clearProfileBtn, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(jPanel6Layout.createSequentialGroup()
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                                 .addGap(2, 2, 2)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -456,7 +449,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButton1))
                 .addContainerGap())
@@ -514,7 +507,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(fileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 753, Short.MAX_VALUE)
+                .addComponent(fileTxt)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(loadButton, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -572,7 +565,7 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                         .addComponent(helpLineLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(searchPreferencesHelpJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 400, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(okButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(cancelButton)))
@@ -892,9 +885,12 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
                     try {
 
                         FileOutputStream fos = new FileOutputStream(newFile);
-                        ObjectOutputStream oos = new ObjectOutputStream(fos);
+                        BufferedOutputStream bos = new BufferedOutputStream(fos);
+                        ObjectOutputStream oos = new ObjectOutputStream(bos);
                         oos.writeObject(searchParameters.getModificationProfile());
                         oos.close();
+                        bos.close();
+                        fos.close();
                         profileFile = newFile;
                         profileTxt.setText(newFile.getName().substring(0, newFile.getName().lastIndexOf(".")));
                         progressDialog.setVisible(false);
@@ -940,9 +936,12 @@ public class SearchPreferencesDialog extends javax.swing.JDialog {
             public void run() {
                 try {
                     FileOutputStream fos = new FileOutputStream(profileFile);
-                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+                    BufferedOutputStream bos = new BufferedOutputStream(fos);
+                    ObjectOutputStream oos = new ObjectOutputStream(bos);
                     oos.writeObject(searchParameters.getModificationProfile());
                     oos.close();
+                    bos.close();
+                    fos.close();
                     progressDialog.setVisible(false);
                     progressDialog.dispose();
                 } catch (Exception e) {
@@ -1349,9 +1348,12 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
     private void loadModificationProfile(File aFile) {
         try {
             FileInputStream fis = new FileInputStream(aFile);
-            ObjectInputStream in = new ObjectInputStream(fis);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            ObjectInputStream in = new ObjectInputStream(bis);
             ModificationProfile modificationProfile = (ModificationProfile) in.readObject();
-            in.close();
+            fis.close();
+            bis.close();
+            in.close();      
 
             searchParameters.setModificationProfile(modificationProfile);
 
@@ -1397,10 +1399,9 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
 
         ArrayList<String> allModificationsList = new ArrayList<String>(ptms.keySet());
         ArrayList<String> allModifications = new ArrayList<String>();
-        boolean found = false;
 
         for (String name : allModificationsList) {
-            found = false;
+            boolean found = false;
 
             for (String modification : modificationList) {
                 if (modification.equals(name)) {

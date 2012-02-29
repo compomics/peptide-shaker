@@ -465,7 +465,7 @@ public class PRIDEExport {
             ModificationMatch modMatch = peptide.getModificationMatches().get(i);
             PTM ptm = pTMFactory.getPTM(modMatch.getTheoreticPtm());
 
-            br.write(getCurrentTabSpace() + "<ModLocation>" + modMatch.getModificationSite() + "</ModLocation>\n"); // @TODO: check location! should be -1?
+            br.write(getCurrentTabSpace() + "<ModLocation>" + modMatch.getModificationSite() + "</ModLocation>\n");
             br.write(getCurrentTabSpace() + "<ModAccession>" + "unknown" + "</ModAccession>\n"); // @TODO: add PSI-MOD term!! example: MOD:00394
             br.write(getCurrentTabSpace() + "<ModDatabase>" + "MOD" + "</ModDatabase>\n");
             br.write(getCurrentTabSpace() + "<ModMonoDelta>" + ptm.getMass() + "</ModMonoDelta>\n");

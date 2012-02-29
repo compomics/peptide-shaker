@@ -1,4 +1,4 @@
-<?xml version="1.1" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
@@ -63,7 +63,7 @@
                           <Component id="helpLineLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="searchPreferencesHelpJButton" min="-2" pref="23" max="-2" attributes="0"/>
-                          <EmptySpace pref="400" max="32767" attributes="0"/>
+                          <EmptySpace max="32767" attributes="0"/>
                           <Component id="okButton" linkSize="1" min="-2" max="-2" attributes="0"/>
                           <EmptySpace max="-2" attributes="0"/>
                           <Component id="cancelButton" linkSize="1" min="-2" max="-2" attributes="0"/>
@@ -124,7 +124,7 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" max="-2" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
@@ -313,7 +313,7 @@
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Group type="102" alignment="1" attributes="1">
-                                      <Component id="profileTxt" pref="156" max="32767" attributes="0"/>
+                                      <Component id="profileTxt" max="32767" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="loadProfileBtn" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
@@ -324,7 +324,7 @@
                                   </Group>
                                   <Component id="clearProfileBtn" alignment="1" min="-2" max="-2" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
-                                      <Component id="jScrollPane1" pref="418" max="32767" attributes="2"/>
+                                      <Component id="jScrollPane1" pref="0" max="32767" attributes="2"/>
                                       <EmptySpace min="2" pref="2" max="2" attributes="0"/>
                                   </Group>
                               </Group>
@@ -338,7 +338,7 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jScrollPane3" alignment="0" pref="418" max="32767" attributes="2"/>
+                          <Component id="jScrollPane3" alignment="0" pref="0" max="32767" attributes="2"/>
                           <Component id="jLabel6" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Component id="jButton1" alignment="1" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -376,7 +376,7 @@
                                       <Component id="clearProfileBtn" alignment="3" max="32767" attributes="1"/>
                                       <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="profileTxt" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="profileTxt" min="-2" max="-2" attributes="0"/>
                               </Group>
                           </Group>
                       </Group>
@@ -429,7 +429,7 @@
                     <EventHandler event="mouseMoved" listener="java.awt.event.MouseMotionListener" parameters="java.awt.event.MouseEvent" handler="expectedModificationsTableMouseMoved"/>
                   </Events>
                   <AuxValues>
-                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {&#xa;            protected JTableHeader createDefaultTableHeader() {&#xa;                return new JTableHeader(columnModel) {&#xa;                    public String getToolTipText(MouseEvent e) {&#xa;                        String tip = null;&#xa;                        java.awt.Point p = e.getPoint();&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xa;                        tip = (String) expectedVariableModsTableToolTips.get(realIndex);&#xa;                        return tip;&#xa;                    }&#xa;                };&#xa;            }&#xa;        };"/>
+                    <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new JTable() {&#xa;            protected JTableHeader createDefaultTableHeader() {&#xa;                return new JTableHeader(columnModel) {&#xa;                    public String getToolTipText(MouseEvent e) {&#xa;                        java.awt.Point p = e.getPoint();&#xa;                        int index = columnModel.getColumnIndexAtX(p.x);&#xa;                        int realIndex = columnModel.getColumn(index).getModelIndex();&#xa;                        String tip = (String) expectedVariableModsTableToolTips.get(realIndex);&#xa;                        return tip;&#xa;                    }&#xa;                };&#xa;            }&#xa;        };"/>
                   </AuxValues>
                 </Component>
               </SubComponents>
@@ -548,7 +548,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="fileTxt" pref="753" max="32767" attributes="0"/>
+                      <Component id="fileTxt" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="loadButton" min="-2" pref="64" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
