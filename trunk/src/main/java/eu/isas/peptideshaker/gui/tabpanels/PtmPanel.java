@@ -3853,6 +3853,9 @@ public class PtmPanel extends javax.swing.JPanel {
         @Override
         public Object getValueAt(int row, int column) {
             try {
+                if (row >= displayedPeptides.size()) {
+                    return "";
+                }
                 PSParameter probabilities;
                 switch (column) {
                     case 0:

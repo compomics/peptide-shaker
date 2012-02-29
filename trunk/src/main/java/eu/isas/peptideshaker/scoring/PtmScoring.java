@@ -67,7 +67,7 @@ public class PtmScoring implements Serializable {
 
     /**
      * Constructor.
-     * 
+     *
      * @param ptmName the name of the PTM of interest
      */
     public PtmScoring(String ptmName) {
@@ -76,8 +76,8 @@ public class PtmScoring implements Serializable {
 
     /**
      * Returns the name of the inspected protein.
-     * 
-     * @return the name of the inspected protein 
+     *
+     * @return the name of the inspected protein
      */
     public String getName() {
         return ptmName;
@@ -85,9 +85,9 @@ public class PtmScoring implements Serializable {
 
     /**
      * Adds a delta score for the given locations combination.
-     * 
-     * @param locations     the combination of locations
-     * @param deltaScore    The corresponding delta score
+     *
+     * @param locations the combination of locations
+     * @param deltaScore The corresponding delta score
      */
     public void addDeltaScore(ArrayList<Integer> locations, double deltaScore) {
         String locationsKey = getKey(locations);
@@ -96,9 +96,9 @@ public class PtmScoring implements Serializable {
 
     /**
      * Adds an A-score for the given locations combination.
-     * 
-     * @param locations     the combination of locations
-     * @param aScore    The corresponding A-score
+     *
+     * @param locations the combination of locations
+     * @param aScore The corresponding A-score
      */
     public void addAScore(ArrayList<Integer> locations, double aScore) {
         String locationsKey = getKey(locations);
@@ -107,9 +107,9 @@ public class PtmScoring implements Serializable {
 
     /**
      * Adds a delta score for the given locations combination given as a key.
-     * 
-     * @param locationsKey     the combination of locations
-     * @param deltaScore    The corresponding delta score
+     *
+     * @param locationsKey the combination of locations
+     * @param deltaScore The corresponding delta score
      */
     public void addDeltaScore(String locationsKey, double deltaScore) {
         if (!deltaScores.containsKey(locationsKey)
@@ -120,9 +120,9 @@ public class PtmScoring implements Serializable {
 
     /**
      * Adds an A score for the given locations combination given as a key.
-     * 
-     * @param locationsKey     the combination of locations
-     * @param aScore    The corresponding A-score
+     *
+     * @param locationsKey the combination of locations
+     * @param aScore The corresponding A-score
      */
     public void addAScore(String locationsKey, double aScore) {
         if (!aScores.containsKey(locationsKey)
@@ -133,7 +133,7 @@ public class PtmScoring implements Serializable {
 
     /**
      * Returns the implemented locations possibilities for delta scores.
-     * 
+     *
      * @return the implemented locations possibilities for delta scores
      */
     public ArrayList<String> getDeltaScorelocations() {
@@ -142,7 +142,7 @@ public class PtmScoring implements Serializable {
 
     /**
      * Returns the best scoring modification profile based on the delta score.
-     * 
+     *
      * @return the best scoring modification profile based on the delta score
      */
     public String getBestDeltaScoreLocations() {
@@ -157,7 +157,7 @@ public class PtmScoring implements Serializable {
 
     /**
      * Returns the best scoring modification profile based on the delta score.
-     * 
+     *
      * @return the best scoring modification profile based on the delta score
      */
     public String getBestAScoreLocations() {
@@ -172,7 +172,7 @@ public class PtmScoring implements Serializable {
 
     /**
      * Returns the implemented locations for the A-score.
-     * 
+     *
      * @return the implemented locations for the A-score
      */
     public ArrayList<String> getAScorePostions() {
@@ -180,20 +180,22 @@ public class PtmScoring implements Serializable {
     }
 
     /**
-     * Returns the delta score for the specified locations possibility given as a key.
-     * 
+     * Returns the delta score for the specified locations possibility given as
+     * a key.
+     *
      * @param locationsKey the locations possibility given as a key
-     * @return the delta score 
+     * @return the delta score
      */
     public double getDeltaScore(String locationsKey) {
         return deltaScores.get(locationsKey);
     }
 
     /**
-     * Returns the A-score for the specified locations possibility given as a key.
-     * 
+     * Returns the A-score for the specified locations possibility given as a
+     * key.
+     *
      * @param locationsKey the locations possibility given as a key
-     * @return the A-score 
+     * @return the A-score
      */
     public double getAScore(String locationsKey) {
         return aScores.get(locationsKey);
@@ -201,7 +203,7 @@ public class PtmScoring implements Serializable {
 
     /**
      * Adds all scorings from another score.
-     * 
+     *
      * @param anotherScore another score
      */
     public void addAll(PtmScoring anotherScore) {
@@ -211,44 +213,20 @@ public class PtmScoring implements Serializable {
         for (String positions : anotherScore.getAScorePostions()) {
             addAScore(positions, anotherScore.getAScore(positions));
         }
-        if (anotherScore.getPtmSiteConfidence() >= CONFIDENT) {
-            if (siteConfidence < CONFIDENT) {
-                for (int location : ptmLocation) {
-                    if (!secondaryLocations.contains(location)) {
-                        secondaryLocations.add(location);
-                    }
-                }
-                ptmLocation.clear();
-            }
-            siteConfidence = Math.max(siteConfidence, anotherScore.getPtmSiteConfidence());
-            for (Integer newLocation : anotherScore.getPtmLocation()) {
-                if (!ptmLocation.contains(newLocation)) {
-                    ptmLocation.add(newLocation);
-                }
-                if (secondaryLocations.contains(newLocation)) {
-                    secondaryLocations.remove(newLocation);
-                }
-            }
-        } else if (anotherScore.getPtmSiteConfidence() > siteConfidence) {
-            for (int location : ptmLocation) {
-                if (!secondaryLocations.contains(location)) {
-                    secondaryLocations.add(location);
-                }
-            }
-            ptmLocation.clear();
-            siteConfidence = anotherScore.getPtmSiteConfidence();
-            for (Integer newLocation : anotherScore.getPtmLocation()) {
-                if (!ptmLocation.contains(newLocation)) {
-                    ptmLocation.add(newLocation);
-                }
-                if (secondaryLocations.contains(newLocation)) {
-                    secondaryLocations.remove(newLocation);
+        siteConfidence = Math.max(siteConfidence, anotherScore.getPtmSiteConfidence());
+        if (anotherScore.getPtmSiteConfidence() < CONFIDENT) {
+            for (int newLocation : anotherScore.getPtmLocation()) {
+                if (!secondaryLocations.contains(newLocation) && !ptmLocation.contains(newLocation)) {
+                    secondaryLocations.add(newLocation);
                 }
             }
         } else {
-            for (int newLocation : anotherScore.getPtmLocation()) {
-                if (!secondaryLocations.contains(newLocation)) {
-                    secondaryLocations.add(newLocation);
+            for (Integer newLocation : anotherScore.getPtmLocation()) {
+                if (!ptmLocation.contains(newLocation)) {
+                    ptmLocation.add(newLocation);
+                }
+                if (secondaryLocations.contains(newLocation)) {
+                    secondaryLocations.remove(newLocation);
                 }
             }
         }
@@ -256,9 +234,10 @@ public class PtmScoring implements Serializable {
 
     /**
      * Returns the modification locations from a key.
-     * 
+     *
      * @param locationsKey the modification locations key
-     * @return the modification locations as an ArrayList containing all possible locations
+     * @return the modification locations as an ArrayList containing all
+     * possible locations
      */
     public static ArrayList<Integer> getLocations(String locationsKey) {
         ArrayList<Integer> result = new ArrayList<Integer>();
@@ -281,7 +260,7 @@ public class PtmScoring implements Serializable {
 
     /**
      * Returns the key corresponding to modification possible locations.
-     * 
+     *
      * @param locations the possible modification locations in the sequence
      * @return the corresponding key
      */
@@ -296,9 +275,10 @@ public class PtmScoring implements Serializable {
 
     /**
      * Sets the PTM site assignment results.
-     * 
-     * @param location          the location of the PTM
-     * @param ptmSiteConfidence the location confidence as indexed by the static fields
+     *
+     * @param location the location of the PTM
+     * @param ptmSiteConfidence the location confidence as indexed by the static
+     * fields
      */
     public void setPtmSite(String location, int ptmSiteConfidence) {
         this.siteConfidence = ptmSiteConfidence;
@@ -307,7 +287,7 @@ public class PtmScoring implements Serializable {
 
     /**
      * Returns the PTM locations.
-     * 
+     *
      * @return the PTM location
      */
     public ArrayList<Integer> getPtmLocation() {
@@ -316,15 +296,16 @@ public class PtmScoring implements Serializable {
 
     /**
      * Returns the secondary PTM locations.
-     * 
+     *
      * @return the PTM location
      */
     public ArrayList<Integer> getSecondaryPtmLocations() {
         return secondaryLocations;
     }
-    
+
     /**
      * Adds a ptm location
+     *
      * @param newLocation the new location
      */
     public void addPtmLocation(int newLocation) {
@@ -332,9 +313,10 @@ public class PtmScoring implements Serializable {
             ptmLocation.add(newLocation);
         }
     }
-    
+
     /**
      * Adds a ptm secondary location
+     *
      * @param newLocation the ptm secondary location
      */
     public void addPtmSecondaryLocation(int newLocation) {
@@ -342,27 +324,28 @@ public class PtmScoring implements Serializable {
             secondaryLocations.add(newLocation);
         }
     }
-    
+
     /**
      * Removes a ptm location
+     *
      * @param location the location to remove
      */
     public void removePtmLocation(Integer location) {
         ptmLocation.remove(location);
     }
-    
+
     /**
      * Removes a secondary location
+     *
      * @param location the location to remove
      */
     public void removePtmSecondaryLocation(Integer location) {
         secondaryLocations.remove(location);
     }
 
-
     /**
      * Returns the PTM location confidence as indexed by the satic fields.
-     * 
+     *
      * @return the PTM location confidence
      */
     public int getPtmSiteConfidence() {
@@ -371,6 +354,7 @@ public class PtmScoring implements Serializable {
 
     /**
      * Convenience method returning all confidence levels as string
+     *
      * @return an array with all confidence levels as string
      */
     public static String[] getPossibleConfidenceLevels() {
@@ -385,6 +369,7 @@ public class PtmScoring implements Serializable {
 
     /**
      * Convenience method returning the given confidence level as a string
+     *
      * @param index the confidence level
      * @return the corresponding string
      */
@@ -404,5 +389,4 @@ public class PtmScoring implements Serializable {
                 return "";
         }
     }
-    
 }

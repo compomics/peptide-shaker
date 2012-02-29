@@ -311,7 +311,8 @@ public class IdentificationFeaturesGenerator {
     }
 
     /**
-     * Returns the spectrum counting metric of the protein match of interest for the given method.
+     * Returns the spectrum counting metric of the protein match of interest for
+     * the given method.
      *
      * @param proteinMatchKey the key of the protein match of interest
      * @param method the method to use
@@ -689,11 +690,11 @@ public class IdentificationFeaturesGenerator {
 
         return result;
     }
-    
+
     /**
      * Returns a summary of the PTMs present on the sequence confidently assigned to an amino acid.
      * Example: SEQVEM<mox>CE gives Oxidation of M (M6)
-     * 
+     *
      * @param proteinKey the key of the protein match of interest
      * @return a PTM summary for the given protein
      */
@@ -704,23 +705,25 @@ public class IdentificationFeaturesGenerator {
             String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
             PSPtmScores psPtmScores = new PSPtmScores();
             psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
-            HashMap<String, ArrayList<String>> locations = new HashMap<String, ArrayList<String>>(); 
+            HashMap<String, ArrayList<String>> locations = new HashMap<String, ArrayList<String>>();
             String report;
+            int index;
 
             for (int aa = 0; aa < sequence.length(); aa++) {
                 if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
+                index = aa+1;
                     for (String ptm : psPtmScores.getMainModificationsAt(aa)) {
                         if (!locations.containsKey(ptm)) {
                             locations.put(ptm, new ArrayList<String>());
                         }
-                        report = sequence.charAt(aa) + "" + aa+1;
+                        report = sequence.charAt(aa) + "" + index;
                         if (!locations.get(ptm).contains(report)) {
                             locations.get(ptm).add(report);
                         }
                     }
                 }
             }
-            
+
             String result = "";
             boolean firstSite, firstPtm = true;
             ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
@@ -728,10 +731,9 @@ public class IdentificationFeaturesGenerator {
             for (String ptm : ptms) {
                 if (firstPtm) {
                     firstPtm = false;
-                } else  {
+                } else {
                     result += "; ";
                 }
-                result += ptm + " (";
                 firstSite = true;
                 for (String site : locations.get(ptm)) {
                     if (!firstSite) {
@@ -741,20 +743,22 @@ public class IdentificationFeaturesGenerator {
                     }
                     result += site;
                 }
-                result += ")";
             }
 
             return result;
         } catch (IOException e) {
             peptideShakerGUI.catchException(e);
             return "IO exception";
+        } catch (Exception e) {
+            return e.getLocalizedMessage();
         }
     }
-    
+
     /**
-     * Returns a summary of the PTMs present on the sequence not confidently assigned to an amino acid.
-     * Example: SEQVEM<mox>CE gives Oxidation of M (M6)
-     * 
+     * Returns a summary of the PTMs present on the sequence not confidently
+     * assigned to an amino acid. Example: SEQVEM<mox>CE gives Oxidation of M
+     * (M6)
+     *
      * @param proteinKey the key of the protein match of interest
      * @return a PTM summary for the given protein
      */
@@ -765,23 +769,25 @@ public class IdentificationFeaturesGenerator {
             String sequence = sequenceFactory.getProtein(proteinMatch.getMainMatch()).getSequence();
             PSPtmScores psPtmScores = new PSPtmScores();
             psPtmScores = (PSPtmScores) proteinMatch.getUrParam(psPtmScores);
-            HashMap<String, ArrayList<String>> locations = new HashMap<String, ArrayList<String>>(); 
+            HashMap<String, ArrayList<String>> locations = new HashMap<String, ArrayList<String>>();
             String report;
+            int index;
 
             for (int aa = 0; aa < sequence.length(); aa++) {
                 if (!psPtmScores.getSecondaryModificationsAt(aa).isEmpty()) {
-                    for (String ptm : psPtmScores.getMainModificationsAt(aa)) {
+                    index = aa+1;
+                    for (String ptm : psPtmScores.getSecondaryModificationsAt(aa)) {
                         if (!locations.containsKey(ptm)) {
                             locations.put(ptm, new ArrayList<String>());
                         }
-                        report = sequence.charAt(aa) + "" + aa+1;
+                        report = sequence.charAt(aa) + "" + index;
                         if (!locations.get(ptm).contains(report)) {
                             locations.get(ptm).add(report);
                         }
                     }
                 }
             }
-            
+
             String result = "";
             boolean firstSite, firstPtm = true;
             ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
@@ -789,10 +795,9 @@ public class IdentificationFeaturesGenerator {
             for (String ptm : ptms) {
                 if (firstPtm) {
                     firstPtm = false;
-                } else  {
+                } else {
                     result += "; ";
                 }
-                result += ptm + " (";
                 firstSite = true;
                 for (String site : locations.get(ptm)) {
                     if (!firstSite) {
@@ -802,13 +807,14 @@ public class IdentificationFeaturesGenerator {
                     }
                     result += site;
                 }
-                result += ")";
             }
 
             return result;
         } catch (IOException e) {
             peptideShakerGUI.catchException(e);
             return "IO exception";
+        } catch (Exception e) {
+            return e.getLocalizedMessage();
         }
     }
 
