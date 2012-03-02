@@ -28,7 +28,6 @@ import com.compomics.util.gui.dialogs.ProgressDialogParent;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.PeptideShaker;
 import eu.isas.peptideshaker.fileimport.IdFilter;
-import eu.isas.peptideshaker.filtering.PeptideFilter;
 import eu.isas.peptideshaker.filtering.ProteinFilter;
 import eu.isas.peptideshaker.gui.preferencesdialogs.AnnotationPreferencesDialog;
 import eu.isas.peptideshaker.gui.preferencesdialogs.BugReport;
@@ -68,19 +67,7 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
@@ -2346,7 +2333,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                             // zip the project
                             try {
                                 FileOutputStream fos = new FileOutputStream(zipFile);
-                                ZipOutputStream out = new ZipOutputStream(fos);
+                                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                                ZipOutputStream out = new ZipOutputStream(bos);
                                 final int BUFFER = 2048;
                                 byte data[] = new byte[BUFFER];
 
@@ -2424,6 +2412,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                                 progressDialog.setTitle("Cleaning Up. Please Wait...");
 
                                 out.close();
+                                bos.close();
+                                fos.close();
 
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
@@ -2570,7 +2560,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             identificationFeaturesMenu.setEnabled(true);
             followUpAnalysisMenu.setEnabled(true);
             exportProjectMenuItem.setEnabled(true);
-            //exportPrideXmlMenuItem.setEnabled(true);
+            exportPrideXmlMenuItem.setEnabled(true);
             projectPropertiesMenuItem.setEnabled(true);
             spectrumCountingMenuItem.setEnabled(true);
             findJMenuItem.setEnabled(true);
@@ -2845,9 +2835,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 saveUserPreferences();
             } else {
                 FileInputStream fis = new FileInputStream(file);
-                ObjectInputStream in = new ObjectInputStream(fis);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                ObjectInputStream in = new ObjectInputStream(bis);
                 Object inObject = in.readObject();
                 fis.close();
+                bis.close();
                 in.close();
                 userPreferences = (UserPreferences) inObject;
                 checkVersionCompatibility();
@@ -2884,9 +2876,11 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 file.getParentFile().mkdir();
             }
             FileOutputStream fos = new FileOutputStream(file);
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
             oos.writeObject(userPreferences);
             oos.close();
+            bos.close();
             fos.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -2904,6 +2898,8 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         if (path.lastIndexOf("/PeptideShaker-") != -1) {
             path = path.substring(5, path.lastIndexOf("/PeptideShaker-"));
             path = path.replace("%20", " ");
+            path = path.replace("%5b", "[");
+            path = path.replace("%5d", "]");
         } else {
             path = ".";
         }
@@ -3027,9 +3023,12 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     private void loadModificationProfile(File aFile) {
         try {
             FileInputStream fis = new FileInputStream(aFile);
-            ObjectInputStream in = new ObjectInputStream(fis);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            ObjectInputStream in = new ObjectInputStream(bis);
             ModificationProfile modificationProfile = (ModificationProfile) in.readObject();
             in.close();
+            bis.close();
+            fis.close();
             searchParameters.setModificationProfile(modificationProfile);
         } catch (FileNotFoundException e) {
             JOptionPane.showMessageDialog(this, aFile.getName() + " not found.", "File Not Found", JOptionPane.WARNING_MESSAGE);
