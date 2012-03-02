@@ -179,8 +179,8 @@ public class OutputGenerator {
                                 writer.write("Sequence Coverage (%)" + SEPARATOR);
                             }
                             if (ptmSummary) {
-                                writer.write("Confident Phosphorylation Sites" + SEPARATOR);
-                                writer.write("Other Phosphorylation Sites" + SEPARATOR);
+                                writer.write("Confident PTM Sites" + SEPARATOR);
+                                writer.write("Other PTM Sites" + SEPARATOR);
                             }
                             if (nPeptides) {
                                 writer.write("#Validated Peptides" + SEPARATOR);

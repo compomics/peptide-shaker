@@ -87,7 +87,7 @@ public class FileImporter {
     /**
      * Peptide to protein map: peptide sequence -> protein accession
      */
-    private HashMap<String, ArrayList<String>> sequences = new HashMap<String, ArrayList<String>>();
+    private HashMap<String, ArrayList<String>> sharedPeptides = new HashMap<String, ArrayList<String>>();
     /**
      * db processing disabled if no X!Tandem file is selected
      */
@@ -200,7 +200,10 @@ public class FileImporter {
                     int nMissedCleavages = searchParameters.getnMissedCleavages();
                     int nMin = idFilter.getMinPepLength();
                     int nMax = idFilter.getMaxPepLength();
-                    sequences = new HashMap<String, ArrayList<String>>();
+                    sharedPeptides = new HashMap<String, ArrayList<String>>();
+                    HashMap<String, String> tempMap = new HashMap<String, String>();
+                    String tempProtein;
+                    ArrayList<String> tempList;
 
                     int numberOfSequences = sequenceFactory.getAccessions().size();
 
@@ -214,17 +217,26 @@ public class FileImporter {
                         String sequence = sequenceFactory.getProtein(proteinKey).getSequence();
 
                         for (String peptide : enzyme.digest(sequence, nMissedCleavages, nMin, nMax)) {
-                            if (!sequences.containsKey(peptide)) {
-                                sequences.put(peptide, new ArrayList<String>());
-                            }
-                            if (!sequences.get(peptide).contains(proteinKey)) {
-                                sequences.get(peptide).add(proteinKey);
-                            }
-                            if (waitingDialog.isRunCanceled()) {
-                                return;
+                            ArrayList<String> proteins = sharedPeptides.get(peptide);
+                            if (proteins != null) {
+                                proteins.add(proteinKey);
+                            } else {
+                                tempProtein = tempMap.get(peptide);
+                                if (tempProtein != null) {
+                                    tempList = new ArrayList<String>();
+                                    tempList.add(tempProtein);
+                                    tempList.add(proteinKey);
+                                    sharedPeptides.put(peptide, tempList);
+                                } else {
+                                    tempMap.put(peptide, proteinKey);
+                                }
                             }
                         }
+                        if (waitingDialog.isRunCanceled()) {
+                                return;
+                        }
                     }
+                    tempMap.clear();
 
                     waitingDialog.setSecondaryProgressDialogIntermediate(true);
                 } else {
@@ -271,7 +283,7 @@ public class FileImporter {
      * @return a list of corresponding proteins found in the database
      */
     private ArrayList<String> getProteins(String peptideSequence, WaitingDialog waitingDialog) {
-        ArrayList<String> result = sequences.get(peptideSequence);
+        ArrayList<String> result = sharedPeptides.get(peptideSequence);
         boolean inspectAll = 2 * sequenceFactory.getNTargetSequences() < sequenceFactory.getnCache() && needPeptideMap;
 
         if (result == null) {
@@ -297,7 +309,7 @@ public class FileImporter {
                     e.printStackTrace();
                     waitingDialog.setRunCanceled();
                 }
-                sequences.put(peptideSequence, result);
+                sharedPeptides.put(peptideSequence, result);
             }
         }
         return result;
@@ -530,7 +542,7 @@ public class FileImporter {
                 }
 
                 // clear the sequence to protein map as it is no longer needed
-                sequences.clear();
+                sharedPeptides.clear();
 
                 if (nRetained == 0) {
                     waitingDialog.appendReport("No identifications retained.");

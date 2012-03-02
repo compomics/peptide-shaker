@@ -711,17 +711,17 @@ public class IdentificationFeaturesGenerator {
 
             for (int aa = 0; aa < sequence.length(); aa++) {
                 if (!psPtmScores.getMainModificationsAt(aa).isEmpty()) {
-                index = aa+1;
+                    index = aa + 1;
                     for (String ptm : psPtmScores.getMainModificationsAt(aa)) {
-                        if (!locations.containsKey(ptm)) {
-                            locations.put(ptm, new ArrayList<String>());
-                        }
-                        report = sequence.charAt(aa) + "" + index;
-                        if (!locations.get(ptm).contains(report)) {
-                            locations.get(ptm).add(report);
+                            if (!locations.containsKey(ptm)) {
+                                locations.put(ptm, new ArrayList<String>());
+                            }
+                            report = sequence.charAt(aa) + "" + index;
+                            if (!locations.get(ptm).contains(report)) {
+                                locations.get(ptm).add(report);
+                            }
                         }
                     }
-                }
             }
 
             String result = "";
@@ -729,6 +729,7 @@ public class IdentificationFeaturesGenerator {
             ArrayList<String> ptms = new ArrayList<String>(locations.keySet());
             Collections.sort(ptms);
             for (String ptm : ptms) {
+                        if (ptm.equals("phosphorylation")) {
                 if (firstPtm) {
                     firstPtm = false;
                 } else {
@@ -743,6 +744,11 @@ public class IdentificationFeaturesGenerator {
                     }
                     result += site;
                 }
+                }
+            }
+            result += "\t";
+            if (locations.containsKey("phosphorylation")) {
+                result += locations.get("phosphorylation").size();
             }
 
             return result;
@@ -775,14 +781,16 @@ public class IdentificationFeaturesGenerator {
 
             for (int aa = 0; aa < sequence.length(); aa++) {
                 if (!psPtmScores.getSecondaryModificationsAt(aa).isEmpty()) {
-                    index = aa+1;
+                    index = aa + 1;
                     for (String ptm : psPtmScores.getSecondaryModificationsAt(aa)) {
+                        if (ptm.equals("phosphorylation")) {
                         if (!locations.containsKey(ptm)) {
                             locations.put(ptm, new ArrayList<String>());
                         }
                         report = sequence.charAt(aa) + "" + index;
                         if (!locations.get(ptm).contains(report)) {
                             locations.get(ptm).add(report);
+                        }
                         }
                     }
                 }
@@ -807,6 +815,10 @@ public class IdentificationFeaturesGenerator {
                     }
                     result += site;
                 }
+            }
+            result += "\t";
+            if (locations.containsKey("phosphorylation")) {
+                result += locations.get("phosphorylation").size();
             }
 
             return result;
