@@ -193,7 +193,7 @@ public class PeptideShaker {
             waitingDialog.appendReport("Computing assumptions probabilities.");
             inputMap.estimateProbabilities(waitingDialog);
             waitingDialog.increaseProgressValue();
-            waitingDialog.appendReport("Adding assumptions probabilities.");
+            waitingDialog.appendReport("Saving assumptions probabilities.");
             attachAssumptionsProbabilities(inputMap, waitingDialog);
             waitingDialog.increaseProgressValue();
             waitingDialog.appendReport("Selecting best hit per spectrum.");
