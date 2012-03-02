@@ -59,6 +59,8 @@ public class PeptideShakerWrapper {
                 String path = this.getClass().getResource("PeptideShakerWrapper.class").getPath();
                 path = path.substring(5, path.indexOf(jarFileName));
                 path = path.replace("%20", " ");
+                path = path.replace("%5b", "[");
+                path = path.replace("%5d", "]");
                 File debugOutput = new File(path + "conf/debug.txt");
                 bw = new BufferedWriter(new FileWriter(debugOutput));
                 bw.write("Memory settings read from the user preferences: " + userPreferences.getMemoryPreference() + "\n");
@@ -87,6 +89,8 @@ public class PeptideShakerWrapper {
         path = this.getClass().getResource("PeptideShakerWrapper.class").getPath();
         path = path.substring(5, path.indexOf(jarFileName));
         path = path.replace("%20", " ");
+        path = path.replace("%5b", "[");
+        path = path.replace("%5d", "]");
 
         File javaOptions = new File(path + "conf/JavaOptions.txt");
         File nonStandardJavaHome = new File(path + "conf/JavaHome.txt");
@@ -392,6 +396,8 @@ public class PeptideShakerWrapper {
         String currentLine, lines = "";
         path = path.substring(5, path.indexOf(jarFileName));
         path = path.replace("%20", " ");
+        path = path.replace("%5b", "[");
+        path = path.replace("%5d", "]");
 
         File javaOptions = new File(path + "conf/JavaOptions.txt");
         // read any java option settings
@@ -410,11 +416,11 @@ public class PeptideShakerWrapper {
                 f.close();
 
                 FileWriter fw = new FileWriter(javaOptions);
-                BufferedWriter bw = new BufferedWriter(fw);
-                bw.write(lines);
-                bw.write("-Xmx" + userPreferences.getMemoryPreference() + "M\n");
+                BufferedWriter bow = new BufferedWriter(fw);
+                bow.write(lines);
+                bow.write("-Xmx" + userPreferences.getMemoryPreference() + "M\n");
 
-                bw.close();
+                bow.close();
                 fw.close();
 
             } catch (FileNotFoundException ex) {
