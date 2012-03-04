@@ -150,10 +150,10 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel1" min="-2" pref="75" max="-2" attributes="0"/>
-                                  <Component id="jLabel3" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
-                                  <Component id="jLabel4" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
-                                  <Component id="jLabel10" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="experimentPropertiesLabel" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="projectLabel" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="descriptionLabel" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="referencesLabel" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -162,7 +162,7 @@
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="titleJTextField" max="32767" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="jLabel2" min="-2" pref="39" max="-2" attributes="0"/>
+                                      <Component id="experimentLabel" min="-2" pref="39" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="labelJTextField" min="-2" pref="171" max="-2" attributes="0"/>
                                   </Group>
@@ -175,10 +175,10 @@
                           </Group>
                           <Group type="102" alignment="1" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabel8" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
-                                  <Component id="jLabel5" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
-                                  <Component id="jLabel6" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
-                                  <Component id="jLabel7" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="instrumentLabel" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="contactLabel" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="sampleLabel" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
+                                  <Component id="protocolLabel" alignment="0" min="-2" pref="75" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="1" attributes="0">
@@ -205,48 +205,48 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="experimentPropertiesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="titleJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="experimentLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="labelJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="projectLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="projectJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
-                          <Component id="jLabel4" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="descriptionLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="descriptionJScrollPane" alignment="2" min="-2" pref="65" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="2" attributes="0">
-                          <Component id="jLabel10" alignment="2" min="-2" max="-2" attributes="0"/>
+                          <Component id="referencesLabel" alignment="2" min="-2" max="-2" attributes="0"/>
                           <Component id="referencesJScrollPane" alignment="2" min="-2" pref="76" max="-2" attributes="0"/>
                           <Component id="addReferencesJButton" alignment="2" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="separate" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="contactLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="contactsJComboBox" linkSize="1" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editContactJButton" linkSize="1" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="sampleLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="sampleJComboBox" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editSampleJButton" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="protocolLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="protocolJComboBox" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editProtocolJButton" linkSize="3" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="instrumentLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="instrumentJComboBox" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editInstrumentJButton" linkSize="4" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -256,8 +256,11 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel1">
+            <Component class="javax.swing.JLabel" name="experimentPropertiesLabel">
               <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Title*"/>
               </Properties>
             </Component>
@@ -271,8 +274,11 @@
                 <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="titleJTextFieldKeyReleased"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel2">
+            <Component class="javax.swing.JLabel" name="experimentLabel">
               <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Label*"/>
               </Properties>
             </Component>
@@ -287,8 +293,11 @@
                 <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="labelJTextFieldKeyReleased"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel3">
+            <Component class="javax.swing.JLabel" name="projectLabel">
               <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Project*"/>
               </Properties>
             </Component>
@@ -302,8 +311,11 @@
                 <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="projectJTextFieldKeyReleased"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel4">
+            <Component class="javax.swing.JLabel" name="descriptionLabel">
               <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Description*"/>
               </Properties>
             </Component>
@@ -319,6 +331,7 @@
                     <Property name="columns" type="int" value="10"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="2"/>
+                    <Property name="text" type="java.lang.String" value="&#xa;"/>
                     <Property name="toolTipText" type="java.lang.String" value="A general free-text description of the experiment"/>
                     <Property name="wrapStyleWord" type="boolean" value="true"/>
                   </Properties>
@@ -328,7 +341,7 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JLabel" name="jLabel10">
+            <Component class="javax.swing.JLabel" name="referencesLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="References"/>
               </Properties>
@@ -341,8 +354,11 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="addReferencesJButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel5">
+            <Component class="javax.swing.JLabel" name="contactLabel">
               <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Contact*"/>
               </Properties>
             </Component>
@@ -371,8 +387,11 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editContactJButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel6">
+            <Component class="javax.swing.JLabel" name="sampleLabel">
               <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Sample*"/>
               </Properties>
             </Component>
@@ -401,8 +420,11 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editSampleJButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel7">
+            <Component class="javax.swing.JLabel" name="protocolLabel">
               <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Protocol*"/>
               </Properties>
             </Component>
@@ -431,8 +453,11 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="editProtocolJButtonActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel8">
+            <Component class="javax.swing.JLabel" name="instrumentLabel">
               <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Instrument*"/>
               </Properties>
             </Component>
@@ -556,7 +581,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jLabel9" min="-2" pref="75" max="-2" attributes="0"/>
+                      <Component id="outpitFolderLabel" min="-2" pref="75" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="outputFolderJTextField" max="32767" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -570,7 +595,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="outpitFolderLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="outputFolderJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browseOutputFolderJButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -580,8 +605,11 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel9">
+            <Component class="javax.swing.JLabel" name="outpitFolderLabel">
               <Properties>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
                 <Property name="text" type="java.lang.String" value="Folder*"/>
               </Properties>
             </Component>

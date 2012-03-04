@@ -503,72 +503,76 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private void exportMgfButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportMgfButtonActionPerformed
 
         final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".mgf", "(Mascot Generic File) *.mgf", "Select Destination File", false);
-        final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        if (finalOutputFile != null) {
 
-        new Thread(new Runnable() {
+            final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-        new Thread("SaveThread") {
+            new Thread(new Runnable() {
 
-            @Override
-            public void run() {
+                public void run() {
+                    progressDialog.setIndeterminate(true);
+                    progressDialog.setTitle("Exporting. Please Wait...");
+                    progressDialog.setVisible(true);
+                }
+            }, "ProgressDialog").start();
 
-                try {
-                    // change the peptide shaker icon to a "waiting version"
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
+            new Thread("SaveThread") {
 
-                    progressDialog.setIndeterminate(false);
-                    int total = 0;
-                    for (String mgfFile : spectrumFactory.getMgfFileNames()) {
-                        total += spectrumFactory.getSpectrumTitles(mgfFile).size();
-                    }
-                    progressDialog.setMax(total);
+                @Override
+                public void run() {
 
-                    FileWriter f = new FileWriter(finalOutputFile);
-                    BufferedWriter b = new BufferedWriter(f);
+                    try {
+                        // change the peptide shaker icon to a "waiting version"
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
-                    for (String mgfFile : spectrumFactory.getMgfFileNames()) {
-                        for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
-                            String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
-                            if (!isValidated(spectrumKey)) {
-                                b.write(((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey)).asMgf());
-                            }
-                            progressDialog.incrementValue();
+                        progressDialog.setIndeterminate(false);
+                        int total = 0;
+                        for (String mgfFile : spectrumFactory.getMgfFileNames()) {
+                            total += spectrumFactory.getSpectrumTitles(mgfFile).size();
                         }
+                        progressDialog.setMax(total);
+
+                        FileWriter f = new FileWriter(finalOutputFile);
+                        BufferedWriter b = new BufferedWriter(f);
+
+                        for (String mgfFile : spectrumFactory.getMgfFileNames()) {
+                            for (String spectrumTitle : spectrumFactory.getSpectrumTitles(mgfFile)) {
+                                String spectrumKey = Spectrum.getSpectrumKey(mgfFile, spectrumTitle);
+                                if (!isValidated(spectrumKey)) {
+                                    b.write(((MSnSpectrum) spectrumFactory.getSpectrum(spectrumKey)).asMgf());
+                                }
+                                progressDialog.incrementValue();
+                            }
+                        }
+
+                        b.close();
+                        f.close();
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+
+                        JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + finalOutputFile + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (Exception e) {
+                        // change the peptide shaker icon back to the default version
+                        peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
+                        e.printStackTrace();
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
                     }
 
-                    b.close();
-                    f.close();
-
-                    progressDialog.setVisible(false);
-                    progressDialog.dispose();
-
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-
-                    JOptionPane.showMessageDialog(tempRef, "Spectra saved to " + finalOutputFile + ".", "Save Complete", JOptionPane.INFORMATION_MESSAGE);
-                } catch (Exception e) {
-                    // change the peptide shaker icon back to the default version
-                    peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(tempRef, "An error occured when saving the file.", "Saving Failed", JOptionPane.ERROR_MESSAGE);
+                    if (progressDialog != null) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                    }
                 }
-
-                if (progressDialog != null) {
-                    progressDialog.setVisible(false);
-                    progressDialog.dispose();
-                }
-            }
-        }.start();
+            }.start();
+        }
     }//GEN-LAST:event_exportMgfButtonActionPerformed
 
     /**
@@ -764,57 +768,61 @@ public class FollowupPreferencesDialog extends javax.swing.JDialog {
     private void exportProgenesisButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportProgenesisButtonActionPerformed
 
         final File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Tab Separated Text File) *.txt", "Select Destination File", false);
-        final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-        progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
-        progressDialog.doNothingOnClose();
+        if (finalOutputFile != null) {
 
-        new Thread(new Runnable() {
+            final FollowupPreferencesDialog tempRef = this; // needed due to threading issues
 
-            public void run() {
-                progressDialog.setIndeterminate(true);
-                progressDialog.setTitle("Exporting. Please Wait...");
-                progressDialog.setVisible(true);
-            }
-        }, "ProgressDialog").start();
+            progressDialog = new ProgressDialogX(peptideShakerGUI, peptideShakerGUI, true);
+            progressDialog.doNothingOnClose();
 
-        new Thread("ExoportThread") {
+            new Thread(new Runnable() {
 
-            @Override
-            public void run() {
-
-                try {
+                public void run() {
                     progressDialog.setIndeterminate(true);
                     progressDialog.setTitle("Exporting. Please Wait...");
-
-                    FileWriter f = new FileWriter(finalOutputFile);
-                    BufferedWriter b = new BufferedWriter(f);
-
-                    OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
-                    outputGenerator.getPSMsProgenesisExport(progressDialog, null, b);
-
-                    b.close();
-                    f.close();
-
-                    progressDialog.setVisible(false);
-                    progressDialog.dispose();
-
-                    JOptionPane.showMessageDialog(tempRef, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
-
-                } catch (IOException e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
-                    e.printStackTrace();
+                    progressDialog.setVisible(true);
                 }
+            }, "ProgressDialog").start();
 
-                if (progressDialog != null) {
-                    progressDialog.setVisible(false);
-                    progressDialog.dispose();
+            new Thread("ExoportThread") {
+
+                @Override
+                public void run() {
+
+                    try {
+                        progressDialog.setIndeterminate(true);
+                        progressDialog.setTitle("Exporting. Please Wait...");
+
+                        FileWriter f = new FileWriter(finalOutputFile);
+                        BufferedWriter b = new BufferedWriter(f);
+
+                        OutputGenerator outputGenerator = new OutputGenerator(peptideShakerGUI);
+                        outputGenerator.getPSMsProgenesisExport(progressDialog, null, b);
+
+                        b.close();
+                        f.close();
+
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+
+                        JOptionPane.showMessageDialog(tempRef, "Results exported to \'" + finalOutputFile.getName() + "\'.", "Export Complete", JOptionPane.INFORMATION_MESSAGE);
+
+                    } catch (IOException e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(tempRef, "An error occured when exporting.", "Export Failed", JOptionPane.ERROR_MESSAGE);
+                        e.printStackTrace();
+                    }
+
+                    if (progressDialog != null) {
+                        progressDialog.setVisible(false);
+                        progressDialog.dispose();
+                    }
                 }
-            }
-        }.start();
+            }.start();
+        }
     }//GEN-LAST:event_exportProgenesisButtonActionPerformed
 
     /**
