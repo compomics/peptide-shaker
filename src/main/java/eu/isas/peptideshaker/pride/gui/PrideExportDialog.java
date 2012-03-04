@@ -6,6 +6,7 @@ import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import eu.isas.peptideshaker.pride.*;
+import java.awt.Color;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -66,6 +67,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         // insert project data
         insertProjectData();
+        
+        validateInput();
 
         // insert available contacts, instruments, protocols and samples
         insertOptions("conf/pride/contacts", ".con", "--- Select a Contact ---", "   Create a New Contact...", contactsJComboBox);
@@ -148,27 +151,27 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         refDeleteSelectedRowJMenuItem = new javax.swing.JMenuItem();
         backgroundJPanel = new javax.swing.JPanel();
         experimentPropertiesPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        experimentPropertiesLabel = new javax.swing.JLabel();
         titleJTextField = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
+        experimentLabel = new javax.swing.JLabel();
         labelJTextField = new javax.swing.JTextField();
-        jLabel3 = new javax.swing.JLabel();
+        projectLabel = new javax.swing.JLabel();
         projectJTextField = new javax.swing.JTextField();
-        jLabel4 = new javax.swing.JLabel();
+        descriptionLabel = new javax.swing.JLabel();
         descriptionJScrollPane = new javax.swing.JScrollPane();
         descriptionJTextArea = new javax.swing.JTextArea();
-        jLabel10 = new javax.swing.JLabel();
+        referencesLabel = new javax.swing.JLabel();
         addReferencesJButton = new javax.swing.JButton();
-        jLabel5 = new javax.swing.JLabel();
+        contactLabel = new javax.swing.JLabel();
         contactsJComboBox = new javax.swing.JComboBox();
         editContactJButton = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
+        sampleLabel = new javax.swing.JLabel();
         sampleJComboBox = new javax.swing.JComboBox();
         editSampleJButton = new javax.swing.JButton();
-        jLabel7 = new javax.swing.JLabel();
+        protocolLabel = new javax.swing.JLabel();
         protocolJComboBox = new javax.swing.JComboBox();
         editProtocolJButton = new javax.swing.JButton();
-        jLabel8 = new javax.swing.JLabel();
+        instrumentLabel = new javax.swing.JLabel();
         instrumentJComboBox = new javax.swing.JComboBox();
         editInstrumentJButton = new javax.swing.JButton();
         referencesJScrollPane = new javax.swing.JScrollPane();
@@ -189,7 +192,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         openDialogHelpJButton = new javax.swing.JButton();
         helpLabel = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
+        outpitFolderLabel = new javax.swing.JLabel();
         outputFolderJTextField = new javax.swing.JTextField();
         browseOutputFolderJButton = new javax.swing.JButton();
 
@@ -240,7 +243,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         experimentPropertiesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Experiment Properties"));
         experimentPropertiesPanel.setOpaque(false);
 
-        jLabel1.setText("Title*");
+        experimentPropertiesLabel.setForeground(new java.awt.Color(255, 0, 0));
+        experimentPropertiesLabel.setText("Title*");
 
         titleJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         titleJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -249,7 +253,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             }
         });
 
-        jLabel2.setText("Label*");
+        experimentLabel.setForeground(new java.awt.Color(255, 0, 0));
+        experimentLabel.setText("Label*");
 
         labelJTextField.setToolTipText("Allows experiments to be grouped or organized under projects");
         labelJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
@@ -259,7 +264,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             }
         });
 
-        jLabel3.setText("Project*");
+        projectLabel.setForeground(new java.awt.Color(255, 0, 0));
+        projectLabel.setText("Project*");
 
         projectJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         projectJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -268,11 +274,13 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             }
         });
 
-        jLabel4.setText("Description*");
+        descriptionLabel.setForeground(new java.awt.Color(255, 0, 0));
+        descriptionLabel.setText("Description*");
 
         descriptionJTextArea.setColumns(10);
         descriptionJTextArea.setLineWrap(true);
         descriptionJTextArea.setRows(2);
+        descriptionJTextArea.setText("\n");
         descriptionJTextArea.setToolTipText("A general free-text description of the experiment");
         descriptionJTextArea.setWrapStyleWord(true);
         descriptionJTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -282,7 +290,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         });
         descriptionJScrollPane.setViewportView(descriptionJTextArea);
 
-        jLabel10.setText("References");
+        referencesLabel.setText("References");
 
         addReferencesJButton.setText("Add");
         addReferencesJButton.addActionListener(new java.awt.event.ActionListener() {
@@ -291,7 +299,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             }
         });
 
-        jLabel5.setText("Contact*");
+        contactLabel.setForeground(new java.awt.Color(255, 0, 0));
+        contactLabel.setText("Contact*");
 
         contactsJComboBox.setMaximumRowCount(20);
         contactsJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--- Select ---", "Item 2", "Item 3", "Item 4" }));
@@ -309,7 +318,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             }
         });
 
-        jLabel6.setText("Sample*");
+        sampleLabel.setForeground(new java.awt.Color(255, 0, 0));
+        sampleLabel.setText("Sample*");
 
         sampleJComboBox.setMaximumRowCount(20);
         sampleJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--- Select ---", "Item 2", "Item 3", "Item 4" }));
@@ -327,7 +337,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             }
         });
 
-        jLabel7.setText("Protocol*");
+        protocolLabel.setForeground(new java.awt.Color(255, 0, 0));
+        protocolLabel.setText("Protocol*");
 
         protocolJComboBox.setMaximumRowCount(20);
         protocolJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--- Select ---", "Item 2", "Item 3", "Item 4" }));
@@ -345,7 +356,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             }
         });
 
-        jLabel8.setText("Instrument*");
+        instrumentLabel.setForeground(new java.awt.Color(255, 0, 0));
+        instrumentLabel.setText("Instrument*");
 
         instrumentJComboBox.setMaximumRowCount(20);
         instrumentJComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "--- Select ---", "Item 2", "Item 3", "Item 4" }));
@@ -408,10 +420,10 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                 .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(experimentPropertiesPanelLayout.createSequentialGroup()
                         .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(experimentPropertiesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(projectLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(descriptionLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(referencesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(descriptionJScrollPane)
@@ -419,7 +431,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                             .addGroup(experimentPropertiesPanelLayout.createSequentialGroup()
                                 .addComponent(titleJTextField)
                                 .addGap(18, 18, 18)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(experimentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(labelJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, experimentPropertiesPanelLayout.createSequentialGroup()
@@ -428,10 +440,10 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                                 .addComponent(addReferencesJButton, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, experimentPropertiesPanelLayout.createSequentialGroup()
                         .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(instrumentLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(contactLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(sampleLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(protocolLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(instrumentJComboBox, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -451,41 +463,41 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             .addGroup(experimentPropertiesPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(experimentPropertiesLabel)
                     .addComponent(titleJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2)
+                    .addComponent(experimentLabel)
                     .addComponent(labelJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
+                    .addComponent(projectLabel)
                     .addComponent(projectJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel4)
+                    .addComponent(descriptionLabel)
                     .addComponent(descriptionJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel10)
+                    .addComponent(referencesLabel)
                     .addComponent(referencesJScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addReferencesJButton))
                 .addGap(18, 18, Short.MAX_VALUE)
                 .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
+                    .addComponent(contactLabel)
                     .addComponent(contactsJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editContactJButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
+                    .addComponent(sampleLabel)
                     .addComponent(sampleJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editSampleJButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
+                    .addComponent(protocolLabel)
                     .addComponent(protocolJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editProtocolJButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(experimentPropertiesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
+                    .addComponent(instrumentLabel)
                     .addComponent(instrumentJComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editInstrumentJButton))
                 .addContainerGap())
@@ -535,7 +547,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Output Folder"));
         jPanel1.setOpaque(false);
 
-        jLabel9.setText("Folder*");
+        outpitFolderLabel.setForeground(new java.awt.Color(255, 0, 0));
+        outpitFolderLabel.setText("Folder*");
 
         outputFolderJTextField.setEditable(false);
         outputFolderJTextField.setToolTipText("The folder where the PRIDE XML file will be saved");
@@ -554,7 +567,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(outpitFolderLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(outputFolderJTextField)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -566,7 +579,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
+                    .addComponent(outpitFolderLabel)
                     .addComponent(outputFolderJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(browseOutputFolderJButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -1073,43 +1086,43 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
     private javax.swing.JButton addReferencesJButton;
     private javax.swing.JPanel backgroundJPanel;
     private javax.swing.JButton browseOutputFolderJButton;
+    private javax.swing.JLabel contactLabel;
     private javax.swing.JComboBox contactsJComboBox;
     private javax.swing.JButton convertJButton;
     private javax.swing.JScrollPane descriptionJScrollPane;
     private javax.swing.JTextArea descriptionJTextArea;
+    private javax.swing.JLabel descriptionLabel;
     private javax.swing.JButton editContactJButton;
     private javax.swing.JButton editInstrumentJButton;
     private javax.swing.JButton editProtocolJButton;
     private javax.swing.JButton editSampleJButton;
+    private javax.swing.JLabel experimentLabel;
+    private javax.swing.JLabel experimentPropertiesLabel;
     private javax.swing.JPanel experimentPropertiesPanel;
     private javax.swing.JLabel helpLabel;
     private javax.swing.JComboBox instrumentJComboBox;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel instrumentLabel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JTextField labelJTextField;
     private javax.swing.JButton openDialogHelpJButton;
+    private javax.swing.JLabel outpitFolderLabel;
     private javax.swing.JTextField outputFolderJTextField;
     private javax.swing.JTextField projectJTextField;
+    private javax.swing.JLabel projectLabel;
     private javax.swing.JComboBox protocolJComboBox;
+    private javax.swing.JLabel protocolLabel;
     private javax.swing.JMenuItem refDeleteSelectedRowJMenuItem;
     private javax.swing.JMenuItem refEditJMenuItem;
     private javax.swing.JMenuItem refMoveDownJMenuItem;
     private javax.swing.JMenuItem refMoveUpJMenuItem;
     private javax.swing.JScrollPane referencesJScrollPane;
     private javax.swing.JTable referencesJTable;
+    private javax.swing.JLabel referencesLabel;
     private javax.swing.JPopupMenu referencesPopupJMenu;
     private javax.swing.JComboBox sampleJComboBox;
+    private javax.swing.JLabel sampleLabel;
     private javax.swing.JTextField titleJTextField;
     // End of variables declaration//GEN-END:variables
 
@@ -1140,6 +1153,61 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         }
 
         convertJButton.setEnabled(inputValid);
+        
+        // highlight the fields that have not been filled
+        if (titleJTextField.getText().length() > 0) {
+            experimentPropertiesLabel.setForeground(Color.BLACK);
+        } else {
+            experimentPropertiesLabel.setForeground(Color.RED);
+        }
+        
+        if (labelJTextField.getText().length() > 0) {
+            experimentLabel.setForeground(Color.BLACK);
+        } else {
+            experimentLabel.setForeground(Color.RED);
+        }
+        
+        if (projectJTextField.getText().length() > 0) {
+            projectLabel.setForeground(Color.BLACK);
+        } else {
+            projectLabel.setForeground(Color.RED);
+        }
+        
+        if (descriptionJTextArea.getText().length() > 0) {
+            descriptionLabel.setForeground(Color.BLACK);
+        } else {
+            descriptionLabel.setForeground(Color.RED);
+        }
+        
+        if (outputFolderJTextField.getText().length() > 0) {
+            outpitFolderLabel.setForeground(Color.BLACK);
+        } else {
+            outpitFolderLabel.setForeground(Color.RED);
+        }
+        
+        if (contactsJComboBox.getSelectedIndex() != 0) {
+            contactLabel.setForeground(Color.BLACK);
+        } else {
+            contactLabel.setForeground(Color.RED);
+        }
+        
+        if (sampleJComboBox.getSelectedIndex() != 0) {
+            sampleLabel.setForeground(Color.BLACK);
+        } else {
+            sampleLabel.setForeground(Color.RED);
+        }
+        
+        if (protocolJComboBox.getSelectedIndex() != 0) {
+            protocolLabel.setForeground(Color.BLACK);
+        } else {
+            protocolLabel.setForeground(Color.RED);
+        }
+        
+        if (instrumentJComboBox.getSelectedIndex() != 0) {
+            instrumentLabel.setForeground(Color.BLACK);
+        } else {
+            instrumentLabel.setForeground(Color.RED);
+        }
     }
 
     /**

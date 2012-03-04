@@ -3,6 +3,7 @@ package eu.isas.peptideshaker.pride.gui;
 
 import eu.isas.peptideshaker.pride.CvTerm;
 import eu.isas.peptideshaker.pride.Instrument;
+import java.awt.Color;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -119,14 +120,14 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         jSeparator4 = new javax.swing.JSeparator();
         deleteSelectedRowJMenuItem = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
-        jLabel9 = new javax.swing.JLabel();
+        sourceLabel = new javax.swing.JLabel();
         instrumentSourceJTextField = new javax.swing.JTextField();
-        jLabel12 = new javax.swing.JLabel();
+        detectorLabel = new javax.swing.JLabel();
         instrumentDetectorJButton = new javax.swing.JButton();
         instrumentSourceJButton = new javax.swing.JButton();
         instrumentDetectorJTextField = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        analyzerLabel = new javax.swing.JLabel();
+        nameLabel = new javax.swing.JLabel();
         analyzerCvScrollPane = new javax.swing.JScrollPane();
         analyzerCvTermsJTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
@@ -188,13 +189,15 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Instrument"));
 
-        jLabel9.setText("Source:");
+        sourceLabel.setForeground(new java.awt.Color(255, 0, 0));
+        sourceLabel.setText("Source*");
 
         instrumentSourceJTextField.setEditable(false);
-        instrumentSourceJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        instrumentSourceJTextField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         instrumentSourceJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
 
-        jLabel12.setText("Detector:");
+        detectorLabel.setForeground(new java.awt.Color(255, 0, 0));
+        detectorLabel.setText("Detector*");
 
         instrumentDetectorJButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/ols_transparent.GIF"))); // NOI18N
         instrumentDetectorJButton.setToolTipText("Ontology Lookup Service");
@@ -215,12 +218,14 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
         });
 
         instrumentDetectorJTextField.setEditable(false);
-        instrumentDetectorJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        instrumentDetectorJTextField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         instrumentDetectorJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
 
-        jLabel1.setText("Analyzers:");
+        analyzerLabel.setForeground(new java.awt.Color(255, 0, 0));
+        analyzerLabel.setText("Analyzers*");
 
-        jLabel3.setText("Name:");
+        nameLabel.setForeground(new java.awt.Color(255, 0, 0));
+        nameLabel.setText("Name*");
 
         analyzerCvTermsJTable.setFont(analyzerCvTermsJTable.getFont());
         analyzerCvTermsJTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -268,7 +273,7 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
             }
         });
 
-        nameJTextField.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        nameJTextField.setHorizontalAlignment(javax.swing.JTextField.LEFT);
         nameJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         nameJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -286,10 +291,10 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
                     .addComponent(analyzerCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 541, Short.MAX_VALUE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel12)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel1))
+                            .addComponent(sourceLabel)
+                            .addComponent(detectorLabel)
+                            .addComponent(nameLabel)
+                            .addComponent(analyzerLabel))
                         .addGap(4, 4, 4)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -312,20 +317,20 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(3, 3, 3)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
+                    .addComponent(nameLabel)
                     .addComponent(nameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel9)
+                    .addComponent(sourceLabel)
                     .addComponent(instrumentSourceJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(instrumentSourceJButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel12)
+                    .addComponent(detectorLabel)
                     .addComponent(instrumentDetectorJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(instrumentDetectorJButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel1)
+                .addComponent(analyzerLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(analyzerCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 132, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -613,24 +618,24 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
     private javax.swing.JButton addAnalyzerJButton;
     private javax.swing.JScrollPane analyzerCvScrollPane;
     private javax.swing.JTable analyzerCvTermsJTable;
+    private javax.swing.JLabel analyzerLabel;
     private javax.swing.JMenuItem deleteSelectedRowJMenuItem;
+    private javax.swing.JLabel detectorLabel;
     private javax.swing.JMenuItem editJMenuItem;
     private javax.swing.JButton instrumentDetectorJButton;
     private javax.swing.JTextField instrumentDetectorJTextField;
     private javax.swing.JButton instrumentSourceJButton;
     private javax.swing.JTextField instrumentSourceJTextField;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JMenuItem moveDownJMenuItem;
     private javax.swing.JMenuItem moveUpJMenuItem;
     private javax.swing.JTextField nameJTextField;
+    private javax.swing.JLabel nameLabel;
     private javax.swing.JButton okJButton;
     private javax.swing.JPopupMenu popupJMenu;
+    private javax.swing.JLabel sourceLabel;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -696,6 +701,31 @@ public class NewInstrumentDialog extends javax.swing.JDialog implements OLSInput
             okJButton.setEnabled(true);
         } else {
             okJButton.setEnabled(false);
+        }
+        
+        // highlight the fields that have not been filled
+        if (nameJTextField.getText().length() > 0) {
+            nameLabel.setForeground(Color.BLACK);
+        } else {
+            nameLabel.setForeground(Color.RED);
+        }
+        
+        if (instrumentSourceJTextField.getText().length() > 0) {
+            sourceLabel.setForeground(Color.BLACK);
+        } else {
+            sourceLabel.setForeground(Color.RED);
+        }
+        
+        if (instrumentDetectorJTextField.getText().length() > 0) {
+            detectorLabel.setForeground(Color.BLACK);
+        } else {
+            detectorLabel.setForeground(Color.RED);
+        }
+        
+        if (analyzerCvTermsJTable.getRowCount() > 0) {
+            analyzerLabel.setForeground(Color.BLACK);
+        } else {
+            analyzerLabel.setForeground(Color.RED);
         }
     }
     

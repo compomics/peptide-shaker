@@ -32,7 +32,7 @@ import java.util.HashMap;
 import javax.swing.JOptionPane;
 
 /**
- * This class will generate the output as requested by the user
+ * This class will generate the output as requested by the user.
  *
  * @author Marc Vaudel
  * @author Harald Barsnes
@@ -40,7 +40,7 @@ import javax.swing.JOptionPane;
 public class OutputGenerator {
 
     /**
-     * The main gui
+     * The main gui.
      */
     private PeptideShakerGUI peptideShakerGUI;
     /**
@@ -48,19 +48,19 @@ public class OutputGenerator {
      */
     private ProgressDialogX progressDialog;
     /**
-     * The corresponding identification
+     * The corresponding identification.
      */
     private Identification identification;
     /**
-     * The separator (tab by default)
+     * The separator (tab by default).
      */
     public static final String SEPARATOR = "\t";
     /**
-     * The sequence factory
+     * The sequence factory.
      */
     private SequenceFactory sequenceFactory = SequenceFactory.getInstance();
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
@@ -69,7 +69,7 @@ public class OutputGenerator {
     private BufferedWriter writer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param peptideShakerGUI
      */
@@ -91,7 +91,7 @@ public class OutputGenerator {
      * @param aNPeptides boolean indicating whether the number of validated peptides shall be output
      * @param aEmPAI boolean indicating whether the emPAI index shall be output
      * @param aSequenceCoverage boolean indicating whether the sequence coverage shall be output
-     * @param aModifiedSequence boolean indicating whether the modified sequence of the protein shall be output
+     * @param aPtmSummary boolean indicating whether a ptm summary shall be output
      * @param aNSpectra boolean indicating whether the number of validated spectra shall be output
      * @param aNsaf boolean indicating whether the NSAF index shall be output
      * @param aScore boolean indicating whether the protein match score shall be output

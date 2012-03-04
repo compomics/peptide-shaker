@@ -344,13 +344,16 @@ public class PRIDEExport {
         boolean precursorAdded = false;
 
         if (fragmentIon.getNeutralLosses().isEmpty()) {
-            ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000263\" name=\"precursor ion\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+            ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000263\" name=\"precursor ion\"/>\n";
+            //ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001523\" name=\"frag: precursor ion\"/>\n";
             precursorAdded = true;
         } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0) == NeutralLoss.H2O) {
-            ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000262\" name=\"precursor ion -H2O\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+            ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000262\" name=\"precursor ion -H2O\"/>\n";
+            //ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001521\" name=\"frag: precursor ion - H2O\"/>\n";
             precursorAdded = true;
         } else if (fragmentIon.getNeutralLosses().size() == 1 && fragmentIon.getNeutralLosses().get(0) == NeutralLoss.NH3) {
-            ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000261\" name=\"precursor ion -NH3\" value=\"" + fragmentIon.getNumber() + "\" />\n";
+            ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000261\" name=\"precursor ion -NH3\"/>\n";
+            //ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1001522\" name=\"frag: precursor ion - NH3\"/>\n";
             precursorAdded = true;
         }
 

@@ -13,51 +13,51 @@ import java.util.ArrayList;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
- * This class achieves a pre-filtering of the identifications
+ * This class achieves a pre-filtering of the identifications.
  *
  * @author Marc Vaudel
  */
 public class IdFilter implements Serializable {
 
     /**
-     * The minimal peptide length allowed
+     * The minimal peptide length allowed.
      */
     private int minPepLength;
     /**
-     * The maximal peptide length allowed
+     * The maximal peptide length allowed.
      */
     private int maxPepLength;
     /**
-     * Mascot maximal e-value allowed
+     * Mascot maximal e-value allowed.
      */
     private double mascotMaxEvalue;
     /**
-     * OMSSA maximal e-value allowed
+     * OMSSA maximal e-value allowed.
      */
     private double omssaMaxEvalue;
     /**
-     * X!Tandem maximal e-value allowed
+     * X!Tandem maximal e-value allowed.
      */
     private double xtandemMaxEvalue;
     /**
-     * The maximal m/z deviation allowed
+     * The maximal m/z deviation allowed.
      */
     private double maxMassDeviation;
     /**
-     * Boolean indicating the unit of the allowed m/z deviation (true: ppm, false: Da)
+     * Boolean indicating the unit of the allowed m/z deviation (true: ppm, false: Da).
      */
     private boolean isPpm;
     /**
-     * Boolean indicating whether peptides presenting unknown PTMs should be ignored
+     * Boolean indicating whether peptides presenting unknown PTMs should be ignored.
      */
     private boolean unknownPtm;
     /**
-     * The spectrum factory
+     * The spectrum factory.
      */
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance(100);
 
     /**
-     * Constructor with default settings
+     * Constructor with default settings.
      */
     public IdFilter() {
         minPepLength = 6;
@@ -71,14 +71,14 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Constructor for an Identification filter
+     * Constructor for an Identification filter.
      *
      * @param minPepLength      The minimal peptide length allowed
      * @param maxPepLength      The maximal peptide length allowed
      * @param mascotMaxEvalue   The maximal Mascot e-value allowed
      * @param omssaMaxEvalue    The maximal OMSSA e-value allowed
      * @param xtandemMaxEvalue  The maximal X!Tandem e-value allowed
-     * @param maxMassDeviation  The maximal m/z deviation allowed
+     * @param maxMzDeviation    The maximal m/z deviation allowed
      * @param isPpm             Boolean indicating the unit of the allowed m/z deviation (true: ppm, false: Da)
      * @param unknownPTM        Shall peptides presenting unknownPTMs be ignored
      */
@@ -149,7 +149,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Returns a boolean indicating whether unkown PTMs shall be removed
+     * Returns a boolean indicating whether unkown PTMs shall be removed.
+     * 
      * @return a boolean indicating whether unkown PTMs shall be removed
      */
     public boolean removeUnknownPTMs() {
@@ -157,7 +158,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Indicates whether the mass tolerance is in ppm (true) or Dalton (false)
+     * Indicates whether the mass tolerance is in ppm (true) or Dalton (false).
+     * 
      * @return a boolean indicating whether the mass tolerance is in ppm (true) or Dalton (false)
      */
     public boolean isIsPpm() {
@@ -165,7 +167,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Sets whether the mass tolerance is in ppm (true) or Dalton (false)
+     * Sets whether the mass tolerance is in ppm (true) or Dalton (false).
+     * 
      * @param isPpm a boolean indicating whether the mass tolerance is in ppm (true) or Dalton (false)
      */
     public void setIsPpm(boolean isPpm) {
@@ -173,7 +176,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Returns the maximal Mascot e-value allowed
+     * Returns the maximal Mascot e-value allowed.
+     * 
      * @return the maximal Mascot e-value allowed 
      */
     public double getMascotMaxEvalue() {
@@ -181,7 +185,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Sets  the maximal Mascot e-value allowed
+     * Sets  the maximal Mascot e-value allowed.
+     * 
      * @param mascotMaxEvalue  the maximal Mascot e-value allowed
      */
     public void setMascotMaxEvalue(double mascotMaxEvalue) {
@@ -189,7 +194,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Returns the maximal m/z deviation allowed
+     * Returns the maximal m/z deviation allowed.
+     * 
      * @return the maximal mass deviation allowed 
      */
     public double getMaxMzDeviation() {
@@ -197,7 +203,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Sets  the maximal m/z deviation allowed
+     * Sets the maximal m/z deviation allowed.
+     * 
      * @param maxMzDeviation  the maximal mass deviation allowed
      */
     public void setMaxMzDeviation(double maxMzDeviation) {
@@ -205,7 +212,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Returns the maximal peptide length allowed
+     * Returns the maximal peptide length allowed.
+     * 
      * @return the maximal peptide length allowed 
      */
     public int getMaxPepLength() {
@@ -213,7 +221,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Sets the maximal peptide length allowed
+     * Sets the maximal peptide length allowed.
+     * 
      * @param maxPepLength  the maximal peptide length allowed
      */
     public void setMaxPepLength(int maxPepLength) {
@@ -221,7 +230,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Returns the maximal peptide length allowed
+     * Returns the maximal peptide length allowed.
+     * 
      * @return the maximal peptide length allowed 
      */
     public int getMinPepLength() {
@@ -229,7 +239,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Sets the maximal peptide length allowed
+     * Sets the maximal peptide length allowed.
+     * 
      * @param minPepLength  the maximal peptide length allowed
      */
     public void setMinPepLength(int minPepLength) {
@@ -237,7 +248,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Returns the OMSSA maximal e-value allowed
+     * Returns the OMSSA maximal e-value allowed.
+     * 
      * @return the OMSSA maximal e-value allowed 
      */
     public double getOmssaMaxEvalue() {
@@ -245,7 +257,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Sets the OMSSA maximal e-value allowed
+     * Sets the OMSSA maximal e-value allowed.
+     * 
      * @param omssaMaxEvalue  the OMSSA maximal e-value allowed
      */
     public void setOmssaMaxEvalue(double omssaMaxEvalue) {
@@ -253,7 +266,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Returns the maximal X!Tandem e-value allowed
+     * Returns the maximal X!Tandem e-value allowed.
+     * 
      * @return  the OMSSA maximal e-value allowed
      */
     public double getXtandemMaxEvalue() {
@@ -261,7 +275,8 @@ public class IdFilter implements Serializable {
     }
 
     /**
-     * Sets the OMSSA maximal e-value allowed
+     * Sets the OMSSA maximal e-value allowed.
+     * 
      * @param xtandemMaxEvalue  the OMSSA maximal e-value allowed
      */
     public void setXtandemMaxEvalue(double xtandemMaxEvalue) {

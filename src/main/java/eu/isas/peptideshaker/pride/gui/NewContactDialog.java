@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.pride.gui;
 
 import eu.isas.peptideshaker.pride.Contact;
+import java.awt.Color;
 
 /**
  * A dialog for creating new contacts and editing old ones.
@@ -61,9 +62,9 @@ public class NewContactDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
+        institutionLabel = new javax.swing.JLabel();
+        nameLabel = new javax.swing.JLabel();
+        eMailLabel = new javax.swing.JLabel();
         eMailJTextField = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         institutionJTextArea = new javax.swing.JTextArea();
@@ -75,11 +76,14 @@ public class NewContactDialog extends javax.swing.JDialog {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Contact"));
 
-        jLabel6.setText("Institution");
+        institutionLabel.setForeground(new java.awt.Color(255, 0, 0));
+        institutionLabel.setText("Institution*");
 
-        jLabel7.setText("Name");
+        nameLabel.setForeground(new java.awt.Color(255, 0, 0));
+        nameLabel.setText("Name*");
 
-        jLabel8.setText("E-mail");
+        eMailLabel.setForeground(new java.awt.Color(255, 0, 0));
+        eMailLabel.setText("E-mail*");
 
         eMailJTextField.setFont(eMailJTextField.getFont());
         eMailJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
@@ -116,12 +120,12 @@ public class NewContactDialog extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel6))
+                    .addComponent(eMailLabel)
+                    .addComponent(nameLabel)
+                    .addComponent(institutionLabel))
                 .addGap(16, 16, 16)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 431, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
                     .addComponent(eMailJTextField, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(nameJTextField))
                 .addContainerGap())
@@ -131,15 +135,15 @@ public class NewContactDialog extends javax.swing.JDialog {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
+                    .addComponent(nameLabel)
                     .addComponent(nameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
+                    .addComponent(eMailLabel)
                     .addComponent(eMailJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel6)
+                    .addComponent(institutionLabel)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -211,13 +215,13 @@ public class NewContactDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField eMailJTextField;
+    private javax.swing.JLabel eMailLabel;
     private javax.swing.JTextArea institutionJTextArea;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel institutionLabel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextField nameJTextField;
+    private javax.swing.JLabel nameLabel;
     private javax.swing.JButton okJButton;
     // End of variables declaration//GEN-END:variables
 
@@ -225,13 +229,32 @@ public class NewContactDialog extends javax.swing.JDialog {
      * Checks if all mandatory information is filled in. Enables or disables the
      * OK button.
      */
-    public void validateInput() {
+    private void validateInput() {
         if (nameJTextField.getText().length() > 0 
                 && eMailJTextField.getText().length() > 0
                 && institutionJTextArea.getText().length() > 0) {
             okJButton.setEnabled(true);
         } else {
             okJButton.setEnabled(false);
+        }
+        
+        // highlight the fields that have not been filled
+        if (nameJTextField.getText().length() > 0) {
+            nameLabel.setForeground(Color.BLACK);
+        } else {
+            nameLabel.setForeground(Color.RED);
+        }
+        
+        if (eMailJTextField.getText().length() > 0) {
+            eMailLabel.setForeground(Color.BLACK);
+        } else {
+            eMailLabel.setForeground(Color.RED);
+        }
+        
+        if (institutionJTextArea.getText().length() > 0) {
+            institutionLabel.setForeground(Color.BLACK);
+        } else {
+            institutionLabel.setForeground(Color.RED);
         }
     }
 }

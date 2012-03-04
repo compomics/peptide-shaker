@@ -1,9 +1,11 @@
 package eu.isas.peptideshaker.gui.preferencesdialogs;
 
+import com.compomics.util.Util;
 import com.compomics.util.examples.BareBonesBrowserLaunch;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
 import java.io.*;
 import java.util.Date;
+import javax.swing.JOptionPane;
 
 /**
  * A simple bug report dialog.
@@ -17,10 +19,10 @@ public class BugReport extends javax.swing.JDialog {
      * The PeptideShakerGUI main frame.
      */
     private PeptideShakerGUI peptideShakerGUI;
-    
+
     /**
      * Creates a new BugReport dialog.
-     * 
+     *
      * @param peptideShakerGUI
      */
     public BugReport(PeptideShakerGUI peptideShakerGUI) {
@@ -31,13 +33,13 @@ public class BugReport extends javax.swing.JDialog {
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
     }
-    
+
     /**
      * Displays the content of the log file.
      */
     private void insertLogFileContent() {
         String log = "";
-        
+
         try {
             BufferedReader br = new BufferedReader(new FileReader(new File("conf/PeptideShaker.log")));
             String line;
@@ -49,7 +51,7 @@ public class BugReport extends javax.swing.JDialog {
         } catch (IOException e) {
             log = "An error occured while reafing conf/peptideshaker.log.";
         }
-        
+
         logTxt.setText(log);
         logTxt.setCaretPosition(0);
     }
@@ -68,6 +70,7 @@ public class BugReport extends javax.swing.JDialog {
         logJScrollPane = new javax.swing.JScrollPane();
         logTxt = new javax.swing.JTextArea();
         clearJButton = new javax.swing.JButton();
+        saveJButton = new javax.swing.JButton();
         infoJPanel = new javax.swing.JPanel();
         infoJScrollPane = new javax.swing.JScrollPane();
         infoJEditorPane = new javax.swing.JEditorPane();
@@ -87,10 +90,18 @@ public class BugReport extends javax.swing.JDialog {
         logJScrollPane.setViewportView(logTxt);
 
         clearJButton.setText("Clear");
-        clearJButton.setToolTipText("Clear the log file");
+        clearJButton.setToolTipText("Clear the log");
         clearJButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 clearJButtonActionPerformed(evt);
+            }
+        });
+
+        saveJButton.setText("Save");
+        saveJButton.setToolTipText("Save the log to a text file");
+        saveJButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveJButtonActionPerformed(evt);
             }
         });
 
@@ -101,19 +112,26 @@ public class BugReport extends javax.swing.JDialog {
             .addGroup(logJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(logJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(logJScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE)
+                    .addComponent(logJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 691, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, logJPanelLayout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(saveJButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(clearJButton)))
                 .addContainerGap())
         );
+
+        logJPanelLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {clearJButton, saveJButton});
+
         logJPanelLayout.setVerticalGroup(
             logJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(logJPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(logJScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(clearJButton)
+                .addGroup(logJPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(saveJButton)
+                    .addComponent(clearJButton))
                 .addGap(6, 6, 6))
         );
 
@@ -208,11 +226,11 @@ public class BugReport extends javax.swing.JDialog {
 
     /**
      * Clears the log file.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void clearJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearJButtonActionPerformed
-        
+
         try {
             FileWriter w = new FileWriter(new File("conf/PeptideShaker.log"));
             BufferedWriter bw = new BufferedWriter(w);
@@ -224,10 +242,41 @@ public class BugReport extends javax.swing.JDialog {
         } catch (IOException e) {
             // ignore error
         }
-        
+
         insertLogFileContent();
     }//GEN-LAST:event_clearJButtonActionPerformed
 
+    /**
+     * Save the log file to a user specified file.
+     * 
+     * @param evt 
+     */
+    private void saveJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveJButtonActionPerformed
+
+        File finalOutputFile = peptideShakerGUI.getUserSelectedFile(".txt", "(Text File) *.txt", "Select Destination File", false);
+
+        if (finalOutputFile != null) {
+
+            try {
+
+                File logFile = new File("conf/PeptideShaker.log");
+
+                if (logFile.exists()) {
+                    Util.copyFile(logFile, finalOutputFile);
+                }
+                
+                if (!finalOutputFile.exists()) {
+                    JOptionPane.showMessageDialog(this, "An error occured when saving the log.", "Save Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, "The log has been saved to \'" + finalOutputFile.getPath() + "\'.", "Log Saved", JOptionPane.INFORMATION_MESSAGE);
+                }
+
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "An error occured when saving the log file.", "Save Error", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_saveJButtonActionPerformed
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel backgroundPanel;
     private javax.swing.JButton clearJButton;
@@ -237,5 +286,6 @@ public class BugReport extends javax.swing.JDialog {
     private javax.swing.JPanel logJPanel;
     private javax.swing.JScrollPane logJScrollPane;
     private javax.swing.JTextArea logTxt;
+    private javax.swing.JButton saveJButton;
     // End of variables declaration//GEN-END:variables
 }

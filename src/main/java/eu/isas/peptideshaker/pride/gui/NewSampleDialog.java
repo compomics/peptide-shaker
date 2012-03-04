@@ -2,6 +2,7 @@ package eu.isas.peptideshaker.pride.gui;
 
 import eu.isas.peptideshaker.pride.CvTerm;
 import eu.isas.peptideshaker.pride.Sample;
+import java.awt.Color;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -122,7 +123,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
         jSeparator4 = new javax.swing.JSeparator();
         deleteSelectedRowJMenuItem = new javax.swing.JMenuItem();
         jPanel1 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
+        preferredOntologiesLabel = new javax.swing.JLabel();
         sampleCvScrollPane = new javax.swing.JScrollPane();
         sampleCvTermsJTable = new JTable() {
             protected JTableHeader createDefaultTableHeader() {
@@ -138,7 +139,7 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
             }
         };
         sampleDetailsJButton = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        nameLabel = new javax.swing.JLabel();
         sampleNameJTextField = new javax.swing.JTextField();
         okButton = new javax.swing.JButton();
 
@@ -184,8 +185,9 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Sample Details"));
 
-        jLabel2.setFont(jLabel2.getFont().deriveFont((jLabel2.getFont().getStyle() | java.awt.Font.ITALIC), jLabel2.getFont().getSize()-2));
-        jLabel2.setText("Preferred Ontologies: NEWT (species), BTO (tissue), CL (cell type), GO (gene ontology) and DOID (disease state)");
+        preferredOntologiesLabel.setFont(preferredOntologiesLabel.getFont().deriveFont((preferredOntologiesLabel.getFont().getStyle() | java.awt.Font.ITALIC), preferredOntologiesLabel.getFont().getSize()-2));
+        preferredOntologiesLabel.setForeground(new java.awt.Color(255, 0, 0));
+        preferredOntologiesLabel.setText("Preferred Ontologies: NEWT (species), BTO (tissue), CL (cell type), GO (gene ontology) and DOID (disease state)*");
 
         sampleCvTermsJTable.setFont(sampleCvTermsJTable.getFont());
         sampleCvTermsJTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -233,7 +235,8 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
             }
         });
 
-        jLabel1.setText("Name:");
+        nameLabel.setForeground(new java.awt.Color(255, 0, 0));
+        nameLabel.setText("Name*");
 
         sampleNameJTextField.setMargin(new java.awt.Insets(2, 4, 2, 2));
         sampleNameJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -251,10 +254,10 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(sampleCvScrollPane)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(0, 118, Short.MAX_VALUE))
+                        .addComponent(preferredOntologiesLabel)
+                        .addGap(0, 112, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addComponent(nameLabel)
                         .addGap(18, 18, 18)
                         .addComponent(sampleNameJTextField))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
@@ -267,10 +270,10 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel1)
+                    .addComponent(nameLabel)
                     .addComponent(sampleNameJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jLabel2)
+                .addComponent(preferredOntologiesLabel)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(sampleCvScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -481,15 +484,15 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem deleteSelectedRowJMenuItem;
     private javax.swing.JMenuItem editJMenuItem;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JSeparator jSeparator3;
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JMenuItem moveDownJMenuItem;
     private javax.swing.JMenuItem moveUpJMenuItem;
+    private javax.swing.JLabel nameLabel;
     private javax.swing.JButton okButton;
     private javax.swing.JPopupMenu popupJMenu;
+    private javax.swing.JLabel preferredOntologiesLabel;
     private javax.swing.JScrollPane sampleCvScrollPane;
     private javax.swing.JTable sampleCvTermsJTable;
     private javax.swing.JButton sampleDetailsJButton;
@@ -513,6 +516,19 @@ public class NewSampleDialog extends javax.swing.JDialog implements OLSInputable
             okButton.setEnabled(true);
         } else {
             okButton.setEnabled(false);
+        }
+        
+        // highlight the fields that have not been filled
+        if (sampleNameJTextField.getText().length() > 0) {
+            nameLabel.setForeground(Color.BLACK);
+        } else {
+            nameLabel.setForeground(Color.RED);
+        }
+        
+        if (sampleCvTermsJTable.getRowCount() > 0) {
+            preferredOntologiesLabel.setForeground(Color.BLACK);
+        } else {
+            preferredOntologiesLabel.setForeground(Color.RED);
         }
     }
 

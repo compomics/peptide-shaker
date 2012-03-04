@@ -1,6 +1,7 @@
 package eu.isas.peptideshaker.pride.gui;
 
 import eu.isas.peptideshaker.pride.Reference;
+import java.awt.Color;
 
 /**
  * A dialog for adding new references or editing old ones.
@@ -67,11 +68,11 @@ public class NewReferenceDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         referenceDetailsPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        referenceLabel = new javax.swing.JLabel();
+        referenceScrollPane = new javax.swing.JScrollPane();
         referenceJTextArea = new javax.swing.JTextArea();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        pmidLabel = new javax.swing.JLabel();
+        doiLabel = new javax.swing.JLabel();
         doiJTextField = new javax.swing.JTextField();
         pmidIDJTextField = new javax.swing.JTextField();
         okJButton = new javax.swing.JButton();
@@ -82,7 +83,8 @@ public class NewReferenceDialog extends javax.swing.JDialog {
 
         referenceDetailsPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Reference"));
 
-        jLabel1.setText("Reference");
+        referenceLabel.setForeground(new java.awt.Color(255, 0, 0));
+        referenceLabel.setText("Reference*");
 
         referenceJTextArea.setColumns(20);
         referenceJTextArea.setFont(referenceJTextArea.getFont());
@@ -94,13 +96,13 @@ public class NewReferenceDialog extends javax.swing.JDialog {
                 referenceJTextAreaKeyReleased(evt);
             }
         });
-        jScrollPane1.setViewportView(referenceJTextArea);
+        referenceScrollPane.setViewportView(referenceJTextArea);
 
-        jLabel2.setText("PMID");
-        jLabel2.setToolTipText("PubMed ID");
+        pmidLabel.setText("PMID");
+        pmidLabel.setToolTipText("PubMed ID");
 
-        jLabel3.setText("DOI");
-        jLabel3.setToolTipText("Digital Object Identifier");
+        doiLabel.setText("DOI");
+        doiLabel.setToolTipText("Digital Object Identifier");
 
         doiJTextField.setToolTipText("Digital Object Identifier");
         doiJTextField.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -125,16 +127,16 @@ public class NewReferenceDialog extends javax.swing.JDialog {
                 .addGroup(referenceDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(referenceDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(referenceDetailsPanelLayout.createSequentialGroup()
-                            .addComponent(jLabel2)
+                            .addComponent(pmidLabel)
                             .addGap(35, 35, 35))
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, referenceDetailsPanelLayout.createSequentialGroup()
-                            .addComponent(jLabel1)
+                            .addComponent(referenceLabel)
                             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                     .addGroup(referenceDetailsPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel3)
+                        .addComponent(doiLabel)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(referenceDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+                    .addComponent(referenceScrollPane, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 443, Short.MAX_VALUE)
                     .addComponent(pmidIDJTextField)
                     .addComponent(doiJTextField, javax.swing.GroupLayout.Alignment.LEADING))
                 .addContainerGap())
@@ -144,16 +146,16 @@ public class NewReferenceDialog extends javax.swing.JDialog {
             .addGroup(referenceDetailsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(referenceDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.CENTER)
-                    .addComponent(jLabel1)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(referenceLabel)
+                    .addComponent(referenceScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(referenceDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
+                    .addComponent(pmidLabel)
                     .addComponent(pmidIDJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(7, 7, 7)
                 .addGroup(referenceDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(doiJTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(doiLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -197,11 +199,7 @@ public class NewReferenceDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void referenceJTextAreaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_referenceJTextAreaKeyReleased
-        if (referenceJTextArea.getText().length() > 0) {
-            okJButton.setEnabled(true);
-        } else {
-            okJButton.setEnabled(false);
-        }
+        validateInput();
     }//GEN-LAST:event_referenceJTextAreaKeyReleased
 
     /**
@@ -251,14 +249,14 @@ public class NewReferenceDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField doiJTextField;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JLabel doiLabel;
     private javax.swing.JButton okJButton;
     private javax.swing.JTextField pmidIDJTextField;
+    private javax.swing.JLabel pmidLabel;
     private javax.swing.JPanel referenceDetailsPanel;
     private javax.swing.JTextArea referenceJTextArea;
+    private javax.swing.JLabel referenceLabel;
+    private javax.swing.JScrollPane referenceScrollPane;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -266,5 +264,11 @@ public class NewReferenceDialog extends javax.swing.JDialog {
      */
     private void validateInput() {
         okJButton.setEnabled(referenceJTextArea.getText().length() > 0);
+        
+        if (referenceJTextArea.getText().length() > 0) {
+            referenceLabel.setForeground(Color.BLACK);
+        } else {
+            referenceLabel.setForeground(Color.RED);
+        }
     }
 }
