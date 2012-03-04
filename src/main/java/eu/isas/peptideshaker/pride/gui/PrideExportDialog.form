@@ -331,7 +331,6 @@
                     <Property name="columns" type="int" value="10"/>
                     <Property name="lineWrap" type="boolean" value="true"/>
                     <Property name="rows" type="int" value="2"/>
-                    <Property name="text" type="java.lang.String" value="&#xa;"/>
                     <Property name="toolTipText" type="java.lang.String" value="A general free-text description of the experiment"/>
                     <Property name="wrapStyleWord" type="boolean" value="true"/>
                   </Properties>

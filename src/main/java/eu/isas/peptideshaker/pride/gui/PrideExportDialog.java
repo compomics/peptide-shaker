@@ -280,7 +280,6 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         descriptionJTextArea.setColumns(10);
         descriptionJTextArea.setLineWrap(true);
         descriptionJTextArea.setRows(2);
-        descriptionJTextArea.setText("\n");
         descriptionJTextArea.setToolTipText("A general free-text description of the experiment");
         descriptionJTextArea.setWrapStyleWord(true);
         descriptionJTextArea.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -1282,6 +1281,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                     "File Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
+        
+        protocolJComboBoxActionPerformed(null);
     }
 
     /**
@@ -1320,6 +1321,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                     "File Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
+        
+        instrumentJComboBoxActionPerformed(null);
     }
 
     /**
@@ -1346,6 +1349,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
             }
 
             sampleJComboBox.setSelectedIndex(selectedSampleIndex);
+            
 
         } catch (FileNotFoundException ex) {
             JOptionPane.showMessageDialog(
@@ -1358,6 +1362,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                     "File Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
+        
+        sampleJComboBoxActionPerformed(null);
     }
 
     /**
@@ -1396,6 +1402,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
                     "File Error", JOptionPane.ERROR_MESSAGE);
             ex.printStackTrace();
         }
+        
+        contactsJComboBoxActionPerformed(null);
     }
 
     /**

@@ -75,7 +75,7 @@
           <Group type="102" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jPanel1" alignment="0" max="32767" attributes="0"/>
+                  <Component id="sampleDetailsPanel" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                       <Component id="okButton" min="-2" max="-2" attributes="0"/>
@@ -89,7 +89,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanel1" min="-2" max="-2" attributes="0"/>
+              <Component id="sampleDetailsPanel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="okButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
@@ -98,7 +98,7 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Container class="javax.swing.JPanel" name="jPanel1">
+    <Container class="javax.swing.JPanel" name="sampleDetailsPanel">
       <Properties>
         <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
           <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
@@ -114,18 +114,29 @@
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="sampleCvScrollPane" alignment="0" max="32767" attributes="1"/>
-                      <Group type="102" attributes="0">
-                          <Component id="preferredOntologiesLabel" min="-2" max="-2" attributes="1"/>
-                          <EmptySpace min="0" pref="112" max="32767" attributes="0"/>
-                      </Group>
                       <Group type="102" alignment="0" attributes="0">
-                          <Component id="nameLabel" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="cellTypeLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="tissueLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="speciesLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="nameLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Component id="sampleNameJTextField" max="32767" attributes="0"/>
+                          <Group type="103" groupAlignment="0" attributes="0">
+                              <Component id="sampleNameJTextField" max="32767" attributes="0"/>
+                              <Component id="speciesJComboBox" max="32767" attributes="0"/>
+                              <Component id="tissueJComboBox" max="32767" attributes="0"/>
+                              <Component id="cellTypeJComboBox" max="32767" attributes="0"/>
+                          </Group>
                       </Group>
                       <Group type="102" alignment="1" attributes="0">
                           <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
                           <Component id="sampleDetailsJButton" min="-2" pref="184" max="-2" attributes="1"/>
+                      </Group>
+                      <Group type="102" alignment="1" attributes="0">
+                          <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
+                          <EmptySpace pref="97" max="32767" attributes="0"/>
+                          <Component id="preferredOntologiesLabel" min="-2" max="-2" attributes="1"/>
                       </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -141,9 +152,27 @@
                       <Component id="sampleNameJTextField" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Component id="preferredOntologiesLabel" min="-2" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="speciesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="speciesJComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
                   <EmptySpace max="-2" attributes="0"/>
-                  <Component id="sampleCvScrollPane" pref="260" max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="tissueLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="tissueJComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="cellTypeLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="cellTypeJComboBox" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="preferredOntologiesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="sampleCvScrollPane" pref="176" max="32767" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="sampleDetailsJButton" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
@@ -159,10 +188,7 @@
                 <Font component="preferredOntologiesLabel" italic="true" property="font" relativeSize="true" size="-2"/>
               </FontInfo>
             </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="0" green="0" red="ff" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Preferred Ontologies: NEWT (species), BTO (tissue), CL (cell type), GO (gene ontology) and DOID (disease state)*"/>
+            <Property name="text" type="java.lang.String" value="NEWT (species), BTO (tissue), CL (cell type), GO (gene ontology) and DOID (disease state)"/>
           </Properties>
         </Component>
         <Container class="javax.swing.JScrollPane" name="sampleCvScrollPane">
@@ -228,6 +254,62 @@
           <Events>
             <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="sampleNameJTextFieldKeyReleased"/>
           </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="speciesLabel">
+          <Properties>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="0" green="0" red="ff" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Species*"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="speciesJComboBox">
+          <Properties>
+            <Property name="maximumRowCount" type="int" value="20"/>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="1">
+                <StringItem index="0" value="--- Select ---"/>
+              </StringArray>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="speciesJComboBoxActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JLabel" name="tissueLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Tissue"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="tissueJComboBox">
+          <Properties>
+            <Property name="maximumRowCount" type="int" value="20"/>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="1">
+                <StringItem index="0" value="--- Select ---"/>
+              </StringArray>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="cellTypeLabel">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Cell Type"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JComboBox" name="cellTypeJComboBox">
+          <Properties>
+            <Property name="maximumRowCount" type="int" value="20"/>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="1">
+                <StringItem index="0" value="--- Select ---"/>
+              </StringArray>
+            </Property>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JLabel" name="jLabel1">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Additional Annotation"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

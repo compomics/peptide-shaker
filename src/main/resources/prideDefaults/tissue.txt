@@ -1,0 +1,41 @@
+BTO:0000121 	bile
+BTO:0000089 	blood
+BTO:0000131 	blood plasma
+BTO:0000132 	blood platelet
+BTO:0000133 	blood serum
+BTO:0000141 	bone marrow
+BTO:0000142 	brain
+BTO:0000214 	cell culture
+BTO:0000221 	cell suspension culture
+BTO:0000237 	cerebrospinal fluid
+BTO:0000269 	colon
+BTO:0000300 	cotyledon
+BTO:0002042 	dendritic cell
+BTO:0000369 	egg
+BTO:0000379 	embryo
+BTO:0000390 	endosperm
+BTO:0000424 	erythrocyte
+BTO:0000469 	flower
+BTO:0000470 	flower bud
+BTO:0000562 	heart
+BTO:0000567 	HeLa cell
+BTO:0000661 	JURKAT cell
+BTO:0000671 	kidney
+BTO:0000713 	leaf
+BTO:0000759 	liver
+BTO:0000763 	lung
+BTO:0000784 	lymph node
+BTO:0001656 	nerve cord
+BTO:0000964 	oocyte
+BTO:0001078 	placenta
+BTO:0001097 	pollen
+BTO:0001413 	primary cell
+BTO:0001188 	root
+BTO:0001201 	rosette
+BTO:0001202 	saliva
+BTO:0001243 	shoot
+BTO:0001253 	skin
+BTO:0001281 	spleen
+BTO:0001363 	testis
+BTO:0001419 	urine
+BTO:0001489 	whole body
