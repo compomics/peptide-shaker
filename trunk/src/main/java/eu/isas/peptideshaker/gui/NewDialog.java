@@ -161,6 +161,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         fastaFileTxt.setText("");
+        validateInput();
     }
 
     /**
@@ -177,28 +178,28 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         projectDetailsPanel = new javax.swing.JPanel();
         replicateNumberIdtxt = new javax.swing.JTextField();
         projectNameIdTxt = new javax.swing.JTextField();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
+        replicateLabel = new javax.swing.JLabel();
+        sampleNameLabel = new javax.swing.JLabel();
+        projectReferenceLabel = new javax.swing.JLabel();
         sampleNameIdtxt = new javax.swing.JTextField();
         helpLabel = new javax.swing.JLabel();
         processingParametersPanel = new javax.swing.JPanel();
         importFilterTxt = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
+        importFiltersLabel = new javax.swing.JLabel();
+        searchParamsLabel = new javax.swing.JLabel();
         searchTxt = new javax.swing.JTextField();
         editSearchButton = new javax.swing.JButton();
         editImportFilterButton = new javax.swing.JButton();
         inputFilesPanel = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        idFilesLabel = new javax.swing.JLabel();
         idFilesTxt = new javax.swing.JTextField();
         browseId = new javax.swing.JButton();
         clearId = new javax.swing.JButton();
-        jLabel10 = new javax.swing.JLabel();
+        spectrumFilesLabel = new javax.swing.JLabel();
         spectrumFilesTxt = new javax.swing.JTextField();
         browseSpectra = new javax.swing.JButton();
         clearSpectra = new javax.swing.JButton();
-        jLabel14 = new javax.swing.JLabel();
+        databaseLabel = new javax.swing.JLabel();
         fastaFileTxt = new javax.swing.JTextField();
         browseDbButton = new javax.swing.JButton();
         clearDbButton = new javax.swing.JButton();
@@ -233,19 +234,37 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         replicateNumberIdtxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         replicateNumberIdtxt.setText("0");
         replicateNumberIdtxt.setToolTipText("Replicate Number");
+        replicateNumberIdtxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                replicateNumberIdtxtKeyReleased(evt);
+            }
+        });
 
         projectNameIdTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         projectNameIdTxt.setText("new project");
+        projectNameIdTxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                projectNameIdTxtKeyReleased(evt);
+            }
+        });
 
-        jLabel9.setText("Replicate:");
-        jLabel9.setToolTipText("Replicate Number");
+        replicateLabel.setForeground(new java.awt.Color(255, 0, 0));
+        replicateLabel.setText("Replicate*");
+        replicateLabel.setToolTipText("Replicate Number");
 
-        jLabel8.setText("Sample Name:");
+        sampleNameLabel.setForeground(new java.awt.Color(255, 0, 0));
+        sampleNameLabel.setText("Sample Name*");
 
-        jLabel2.setText("Project Reference:");
+        projectReferenceLabel.setForeground(new java.awt.Color(255, 0, 0));
+        projectReferenceLabel.setText("Project Reference*");
 
         sampleNameIdtxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         sampleNameIdtxt.setText("new sample");
+        sampleNameIdtxt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                sampleNameIdtxtKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout projectDetailsPanelLayout = new javax.swing.GroupLayout(projectDetailsPanel);
         projectDetailsPanel.setLayout(projectDetailsPanelLayout);
@@ -254,14 +273,14 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             .addGroup(projectDetailsPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(projectReferenceLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(sampleNameLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(projectNameIdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE)
-                    .addComponent(sampleNameIdtxt, javax.swing.GroupLayout.DEFAULT_SIZE, 482, Short.MAX_VALUE))
+                    .addComponent(projectNameIdTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
+                    .addComponent(sampleNameIdtxt, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE))
                 .addGap(20, 20, 20)
-                .addComponent(jLabel9)
+                .addComponent(replicateLabel)
                 .addGap(18, 18, 18)
                 .addComponent(replicateNumberIdtxt, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -272,18 +291,18 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                 .addContainerGap()
                 .addGroup(projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(projectNameIdTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                    .addComponent(projectReferenceLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(projectDetailsPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(sampleNameIdtxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(replicateNumberIdtxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel9)
-                    .addComponent(jLabel8))
+                    .addComponent(replicateLabel)
+                    .addComponent(sampleNameLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         helpLabel.setFont(helpLabel.getFont().deriveFont((helpLabel.getFont().getStyle() | java.awt.Font.ITALIC)));
-        helpLabel.setText("Insert the required information and click Create to load and view the results.");
+        helpLabel.setText("Insert the required information (*) and click Create to load and view the results.");
 
         processingParametersPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Processing Parameters"));
         processingParametersPanel.setOpaque(false);
@@ -293,9 +312,9 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         importFilterTxt.setText("Default");
         importFilterTxt.setToolTipText("Minimum Peptide Length");
 
-        jLabel7.setText("Import Filters:");
+        importFiltersLabel.setText("Import Filters:");
 
-        jLabel4.setText("Search Parameters:");
+        searchParamsLabel.setText("Search Parameters:");
 
         searchTxt.setEditable(false);
         searchTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -322,8 +341,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             .addGroup(processingParametersPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel7, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
+                    .addComponent(importFiltersLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(searchParamsLabel, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(searchTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 483, Short.MAX_VALUE)
@@ -339,12 +358,12 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             .addGroup(processingParametersPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
+                    .addComponent(searchParamsLabel)
                     .addComponent(searchTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editSearchButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(processingParametersPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
+                    .addComponent(importFiltersLabel)
                     .addComponent(importFilterTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(editImportFilterButton))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -353,7 +372,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         inputFilesPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Input Files"));
         inputFilesPanel.setOpaque(false);
 
-        jLabel1.setText("Identification File(s):");
+        idFilesLabel.setForeground(new java.awt.Color(255, 0, 0));
+        idFilesLabel.setText("Identification File(s)*");
 
         idFilesTxt.setEditable(false);
         idFilesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -372,7 +392,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             }
         });
 
-        jLabel10.setText("Spectrum File(s):");
+        spectrumFilesLabel.setForeground(new java.awt.Color(255, 0, 0));
+        spectrumFilesLabel.setText("Spectrum File(s)*");
 
         spectrumFilesTxt.setEditable(false);
         spectrumFilesTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -391,7 +412,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             }
         });
 
-        jLabel14.setText("Database File (FASTA):");
+        databaseLabel.setForeground(new java.awt.Color(255, 0, 0));
+        databaseLabel.setText("Database File (FASTA)*");
 
         fastaFileTxt.setEditable(false);
         fastaFileTxt.setHorizontalAlignment(javax.swing.JTextField.CENTER);
@@ -418,7 +440,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                 .addContainerGap()
                 .addGroup(inputFilesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, inputFilesPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(idFilesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(idFilesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -426,7 +448,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(clearId))
                     .addGroup(inputFilesPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(spectrumFilesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(spectrumFilesTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -434,7 +456,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(clearSpectra))
                     .addGroup(inputFilesPanelLayout.createSequentialGroup()
-                        .addComponent(jLabel14, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(databaseLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fastaFileTxt, javax.swing.GroupLayout.DEFAULT_SIZE, 484, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -456,12 +478,12 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                 .addContainerGap()
                 .addGroup(inputFilesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(idFilesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1)
+                    .addComponent(idFilesLabel)
                     .addComponent(clearId)
                     .addComponent(browseId))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(inputFilesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel10)
+                    .addComponent(spectrumFilesLabel)
                     .addComponent(clearSpectra)
                     .addComponent(browseSpectra)
                     .addComponent(spectrumFilesTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -470,7 +492,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                     .addComponent(clearDbButton)
                     .addComponent(browseDbButton)
                     .addComponent(fastaFileTxt, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel14))
+                    .addComponent(databaseLabel))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -521,7 +543,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                         .addComponent(helpLabel)
                         .addGap(18, 18, 18)
                         .addComponent(exampleFilesLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 99, Short.MAX_VALUE)
                         .addComponent(openButton, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(20, 20, 20))
                     .addComponent(projectDetailsPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -569,7 +591,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      * @param evt
      */
     private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
-        if (validateInput()) {
+        if (validateReplicateNumberAndFastaFile()) {
 
             this.setVisible(false);
 
@@ -641,6 +663,7 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     private void clearDbButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearDbButtonActionPerformed
         fastaFile = null;
         fastaFileTxt.setText("");
+        validateInput();
 }//GEN-LAST:event_clearDbButtonActionPerformed
 
     /**
@@ -678,6 +701,8 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             peptideShakerGUI.setLastSelectedFolder(fastaFile.getAbsolutePath());
             fastaFileTxt.setText(fastaFile.getName());
         }
+
+        validateInput();
 }//GEN-LAST:event_browseDbButtonActionPerformed
 
     /**
@@ -688,9 +713,11 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     private void clearSpectraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearSpectraActionPerformed
         spectrumFiles = new ArrayList<File>();
         spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
+        validateInput();
 }//GEN-LAST:event_clearSpectraActionPerformed
 
     private void browseSpectraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseSpectraActionPerformed
+
         // @TODO: implement mzML
         JFileChooser fileChooser = new JFileChooser(peptideShakerGUI.getLastSelectedFolder());
         fileChooser.setDialogTitle("Select Spectrum File(s)");
@@ -729,14 +756,15 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
             }
             spectrumFilesTxt.setText(spectrumFiles.size() + " file(s) selected");
         }
+
+        validateInput();
 }//GEN-LAST:event_browseSpectraActionPerformed
 
     private void clearIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearIdActionPerformed
         idFiles = new ArrayList<File>();
         idFilesTxt.setText(idFiles.size() + " file(s) selected");
         searchParametersFiles = new ArrayList<File>();
-
-        openButton.setEnabled(false);
+        validateInput();
 }//GEN-LAST:event_clearIdActionPerformed
 
     private void browseIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_browseIdActionPerformed
@@ -825,11 +853,9 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
                 }
             }
             idFilesTxt.setText(idFiles.size() + " file(s) selected");
-
-            if (!idFiles.isEmpty()) {
-                openButton.setEnabled(true);
-            }
         }
+
+        validateInput();
 }//GEN-LAST:event_browseIdActionPerformed
 
     /**
@@ -920,6 +946,33 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
         this.setVisible(false);
         this.dispose();
     }//GEN-LAST:event_formWindowClosing
+
+    /**
+     * Validate the input.
+     *
+     * @param evt
+     */
+    private void projectNameIdTxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_projectNameIdTxtKeyReleased
+        validateInput();
+    }//GEN-LAST:event_projectNameIdTxtKeyReleased
+
+    /**
+     * Validate the input.
+     *
+     * @param evt
+     */
+    private void sampleNameIdtxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_sampleNameIdtxtKeyReleased
+        validateInput();
+    }//GEN-LAST:event_sampleNameIdtxtKeyReleased
+
+    /**
+     * Validate the input.
+     *
+     * @param evt
+     */
+    private void replicateNumberIdtxtKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_replicateNumberIdtxtKeyReleased
+        validateInput();
+    }//GEN-LAST:event_replicateNumberIdtxtKeyReleased
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton browseDbButton;
     private javax.swing.JButton browseId;
@@ -927,31 +980,31 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
     private javax.swing.JButton clearDbButton;
     private javax.swing.JButton clearId;
     private javax.swing.JButton clearSpectra;
+    private javax.swing.JLabel databaseLabel;
     private javax.swing.JButton editImportFilterButton;
     private javax.swing.JButton editSearchButton;
     private javax.swing.JLabel exampleFilesLabel;
     private javax.swing.JTextField fastaFileTxt;
     private javax.swing.JLabel helpLabel;
+    private javax.swing.JLabel idFilesLabel;
     private javax.swing.JTextField idFilesTxt;
     private javax.swing.JTextField importFilterTxt;
+    private javax.swing.JLabel importFiltersLabel;
     private javax.swing.JPanel inputFilesPanel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JButton openButton;
     private javax.swing.JButton openDialogHelpJButton;
     private javax.swing.JPanel processingParametersPanel;
     private javax.swing.JPanel projectDetailsPanel;
     private javax.swing.JTextField projectNameIdTxt;
+    private javax.swing.JLabel projectReferenceLabel;
+    private javax.swing.JLabel replicateLabel;
     private javax.swing.JTextField replicateNumberIdtxt;
     private javax.swing.JPanel sampleDetailsPanel;
     private javax.swing.JTextField sampleNameIdtxt;
+    private javax.swing.JLabel sampleNameLabel;
+    private javax.swing.JLabel searchParamsLabel;
     private javax.swing.JTextField searchTxt;
+    private javax.swing.JLabel spectrumFilesLabel;
     private javax.swing.JTextField spectrumFilesTxt;
     // End of variables declaration//GEN-END:variables
 
@@ -969,12 +1022,70 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      *
      * @return true if the input is valid, false otherwise.
      */
-    private boolean validateInput() {
+    private void validateInput() {
+
+        boolean allValid = true;
+
+        // highlight the fields that have not been filled
+        if (projectNameIdTxt.getText().length() > 0) {
+            projectReferenceLabel.setForeground(Color.BLACK);
+        } else {
+            projectReferenceLabel.setForeground(Color.RED);
+            allValid = false;
+        }
+
+        if (sampleNameIdtxt.getText().length() > 0) {
+            sampleNameLabel.setForeground(Color.BLACK);
+        } else {
+            sampleNameLabel.setForeground(Color.RED);
+            allValid = false;
+        }
+
+        if (replicateNumberIdtxt.getText().length() > 0) {
+            replicateLabel.setForeground(Color.BLACK);
+        } else {
+            replicateLabel.setForeground(Color.RED);
+            allValid = false;
+        }
+
+        if (searchParametersFiles.size() > 0) {
+            idFilesLabel.setForeground(Color.BLACK);
+        } else {
+            idFilesLabel.setForeground(Color.RED);
+            allValid = false;
+        }
+
+        if (spectrumFiles.size() > 0) {
+            spectrumFilesLabel.setForeground(Color.BLACK);
+        } else {
+            spectrumFilesLabel.setForeground(Color.RED);
+            allValid = false;
+        }
+
+        if (fastaFileTxt.getText().length() > 0) {
+            databaseLabel.setForeground(Color.BLACK);
+        } else {
+            databaseLabel.setForeground(Color.RED);
+            allValid = false;
+        }
+
+        // enable/disable the Create! button
+        openButton.setEnabled(allValid);
+    }
+
+    /**
+     * Validates the format of the replicate number and the FASTA file.
+     *
+     * @return true if the input is valid, false otherwise.
+     */
+    private boolean validateReplicateNumberAndFastaFile() {
         try {
             getReplicateNumber();
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please verify the input for replicate number.",
+            JOptionPane.showMessageDialog(null, "Please verify the input for replicate number.\n"
+                    + "Has to be a number!",
                     "Input Error", JOptionPane.ERROR_MESSAGE);
+            replicateLabel.setForeground(Color.RED);
             return false;
         }
         if (fastaFile == null) {
@@ -1002,7 +1113,9 @@ public class NewDialog extends javax.swing.JDialog implements ProgressDialogPare
      */
     private void importIdentificationFiles(WaitingDialog waitingDialog) {
         peptideShakerGUI.getSearchParameters().setFastaFile(fastaFile);
-        peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles, spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(), peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails());
+        peptideShaker.importFiles(waitingDialog, peptideShakerGUI.getIdFilter(), idFiles, 
+                spectrumFiles, fastaFile, peptideShakerGUI.getSearchParameters(), 
+                peptideShakerGUI.getAnnotationPreferences(), peptideShakerGUI.getProjectDetails());
     }
 
     /**

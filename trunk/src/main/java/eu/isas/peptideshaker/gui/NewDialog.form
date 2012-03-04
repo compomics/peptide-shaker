@@ -57,7 +57,7 @@
                           <Component id="helpLabel" min="-2" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
                           <Component id="exampleFilesLabel" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace pref="116" max="32767" attributes="0"/>
+                          <EmptySpace pref="99" max="32767" attributes="0"/>
                           <Component id="openButton" min="-2" pref="141" max="-2" attributes="0"/>
                           <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
                       </Group>
@@ -129,16 +129,16 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" attributes="0">
-                          <Component id="jLabel2" min="-2" pref="130" max="-2" attributes="0"/>
-                          <Component id="jLabel8" min="-2" pref="130" max="-2" attributes="1"/>
+                          <Component id="projectReferenceLabel" min="-2" pref="130" max="-2" attributes="0"/>
+                          <Component id="sampleNameLabel" min="-2" pref="130" max="-2" attributes="1"/>
                       </Group>
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="projectNameIdTxt" pref="482" max="32767" attributes="2"/>
-                          <Component id="sampleNameIdtxt" alignment="0" pref="482" max="32767" attributes="2"/>
+                          <Component id="projectNameIdTxt" pref="480" max="32767" attributes="2"/>
+                          <Component id="sampleNameIdtxt" alignment="0" pref="480" max="32767" attributes="2"/>
                       </Group>
                       <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
-                      <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                      <Component id="replicateLabel" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" min="-2" max="-2" attributes="0"/>
                       <Component id="replicateNumberIdtxt" min="-2" pref="66" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -151,14 +151,14 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="projectNameIdTxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="projectReferenceLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="sampleNameIdtxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="replicateNumberIdtxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="replicateLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="sampleNameLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -172,27 +172,42 @@
                 <Property name="text" type="java.lang.String" value="0"/>
                 <Property name="toolTipText" type="java.lang.String" value="Replicate Number"/>
               </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="replicateNumberIdtxtKeyReleased"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JTextField" name="projectNameIdTxt">
               <Properties>
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="new project"/>
               </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="projectNameIdTxtKeyReleased"/>
+              </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel9">
+            <Component class="javax.swing.JLabel" name="replicateLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Replicate:"/>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Replicate*"/>
                 <Property name="toolTipText" type="java.lang.String" value="Replicate Number"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel8">
+            <Component class="javax.swing.JLabel" name="sampleNameLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Sample Name:"/>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Sample Name*"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel2">
+            <Component class="javax.swing.JLabel" name="projectReferenceLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Project Reference:"/>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Project Reference*"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="sampleNameIdtxt">
@@ -200,6 +215,9 @@
                 <Property name="horizontalAlignment" type="int" value="0"/>
                 <Property name="text" type="java.lang.String" value="new sample"/>
               </Properties>
+              <Events>
+                <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="sampleNameIdtxtKeyReleased"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
@@ -210,7 +228,7 @@
                 <Font component="helpLabel" italic="true" property="font" relativeSize="true" size="0"/>
               </FontInfo>
             </Property>
-            <Property name="text" type="java.lang.String" value="Insert the required information and click Create to load and view the results."/>
+            <Property name="text" type="java.lang.String" value="Insert the required information (*) and click Create to load and view the results."/>
           </Properties>
         </Component>
         <Container class="javax.swing.JPanel" name="processingParametersPanel">
@@ -229,8 +247,8 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="jLabel7" alignment="0" max="32767" attributes="1"/>
-                          <Component id="jLabel4" alignment="0" pref="130" max="32767" attributes="1"/>
+                          <Component id="importFiltersLabel" alignment="0" max="32767" attributes="1"/>
+                          <Component id="searchParamsLabel" alignment="0" pref="130" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -251,13 +269,13 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="-2" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="searchParamsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="searchTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editSearchButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="importFiltersLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="importFilterTxt" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="editImportFilterButton" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
@@ -275,12 +293,12 @@
                 <Property name="toolTipText" type="java.lang.String" value="Minimum Peptide Length"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel7">
+            <Component class="javax.swing.JLabel" name="importFiltersLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Import Filters:"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel4">
+            <Component class="javax.swing.JLabel" name="searchParamsLabel">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Search Parameters:"/>
               </Properties>
@@ -327,7 +345,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="1" attributes="0">
-                              <Component id="jLabel1" min="-2" pref="130" max="-2" attributes="1"/>
+                              <Component id="idFilesLabel" min="-2" pref="130" max="-2" attributes="1"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="idFilesTxt" pref="484" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
@@ -336,7 +354,7 @@
                               <Component id="clearId" linkSize="2" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel10" min="-2" pref="130" max="-2" attributes="0"/>
+                              <Component id="spectrumFilesLabel" min="-2" pref="130" max="-2" attributes="0"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="spectrumFilesTxt" pref="484" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
@@ -345,7 +363,7 @@
                               <Component id="clearSpectra" linkSize="4" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
-                              <Component id="jLabel14" min="-2" pref="130" max="-2" attributes="0"/>
+                              <Component id="databaseLabel" min="-2" pref="130" max="-2" attributes="0"/>
                               <EmptySpace min="-2" max="-2" attributes="0"/>
                               <Component id="fastaFileTxt" pref="484" max="32767" attributes="0"/>
                               <EmptySpace type="unrelated" min="-2" max="-2" attributes="0"/>
@@ -364,13 +382,13 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="idFilesTxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="idFilesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="clearId" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browseId" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
-                          <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="spectrumFilesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="clearSpectra" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browseSpectra" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="spectrumFilesTxt" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -380,7 +398,7 @@
                           <Component id="clearDbButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="browseDbButton" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="fastaFileTxt" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel14" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="databaseLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
@@ -388,9 +406,12 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JLabel" name="jLabel1">
+            <Component class="javax.swing.JLabel" name="idFilesLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Identification File(s):"/>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Identification File(s)*"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="idFilesTxt">
@@ -415,9 +436,12 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearIdActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel10">
+            <Component class="javax.swing.JLabel" name="spectrumFilesLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Spectrum File(s):"/>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Spectrum File(s)*"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="spectrumFilesTxt">
@@ -442,9 +466,12 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearSpectraActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JLabel" name="jLabel14">
+            <Component class="javax.swing.JLabel" name="databaseLabel">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Database File (FASTA):"/>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="0" green="0" red="ff" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Database File (FASTA)*"/>
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="fastaFileTxt">
