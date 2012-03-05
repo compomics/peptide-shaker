@@ -55,6 +55,7 @@ import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.preferences.UserPreferences;
+import eu.isas.peptideshaker.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.pride.gui.PrideExportDialog;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
 import eu.isas.peptideshaker.utils.Metrics;
@@ -373,7 +374,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
 
         // update the look and feel after adding the panels
         UtilitiesGUIDefaults.setLookAndFeel();
-        
+
         new PeptideShakerGUI();
     }
 
@@ -1704,20 +1705,20 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
             } else if (selectedIndex == STRUCTURES_TAB_INDEX) {
                 if (updateNeeded.get(STRUCTURES_TAB_INDEX)) {
                     //@TODO: here the panel is actually emptied and reloaded. The displayResults() method should ideally load results when nothing is displayed and simply update the results otherwise.
-            resetPanel(STRUCTURES_TAB_INDEX);
+                    resetPanel(STRUCTURES_TAB_INDEX);
                     proteinStructurePanel.displayResults();
                 } else {
                     proteinStructurePanel.updateSelection();
                 }
             } else if (selectedIndex == GO_ANALYSIS_TAB_INDEX
                     && updateNeeded.get(GO_ANALYSIS_TAB_INDEX)) {
-            resetPanel(GO_ANALYSIS_TAB_INDEX);
+                resetPanel(GO_ANALYSIS_TAB_INDEX);
                 goPanel.displayResults();
                 // @TODO: set species from cps file? 
                 // @TODO: reload GO enrichment tab if hidden selection is changed!
             } else if (selectedIndex == SPECTRUM_ID_TAB_INDEX) {
                 if (updateNeeded.get(SPECTRUM_ID_TAB_INDEX)) {
-            resetPanel(SPECTRUM_ID_TAB_INDEX);
+                    resetPanel(SPECTRUM_ID_TAB_INDEX);
                     spectrumIdentificationPanel.displayResults();
                 } else {
                     spectrumIdentificationPanel.updateSelection();
@@ -1896,7 +1897,7 @@ public class PeptideShakerGUI extends javax.swing.JFrame implements ProgressDial
      * @see #updateAnnotationPreferences()
      */
 private void aIonCheckBoxMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aIonCheckBoxMenuItemActionPerformed
-        updateAnnotationPreferences();
+    updateAnnotationPreferences();
 }//GEN-LAST:event_aIonCheckBoxMenuItemActionPerformed
 
     /**
@@ -2450,10 +2451,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
         }
     }//GEN-LAST:event_exportProjectMenuItemActionPerformed
 
-     /**
+    /**
      * Open the PRIDE Export dialog.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void exportPrideXmlMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportPrideXmlMenuItemActionPerformed
         new PrideExportDialog(this, true);
@@ -2504,7 +2505,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
     /**
      * Opens a new bug report dialog.
-     * 
+     *
      * @param evt
      */
     private void logReportMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logReportMenuActionPerformed
@@ -4721,6 +4722,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
 
     /**
      * Allows the user to locate the fasta file manually
+     *
      * @return the selected fasta file or null if the operation was canceled
      */
     private File locateFastaFileManually() {
@@ -5095,9 +5097,10 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     public void setMetrics(Metrics metrics) {
         this.metrics = metrics;
     }
-    
+
     /**
      * Sets the new mgf file selected
+     *
      * @param mgfFile the name of the new mgf file
      */
     public void mgfFileSelectionChanged(String mgfFile) {
@@ -5195,6 +5198,76 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
                 }
             }
         }.start();
+    }
+
+    /**
+     * Loads the Pride to Ptm map from the user folder or creates a new one if
+     * the file is not present. Loads a default mapping if a ptm is not present.
+     */
+    public PtmToPrideMap loadPrideToPtmMap() {
+        PtmToPrideMap ptmToPrideMap = null;
+        File settingFile = new File(PrideExportDialog.prideFolder, PtmToPrideMap.fileName);
+        if (settingFile.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(settingFile);
+                BufferedInputStream bis = new BufferedInputStream(fis);
+                ObjectInputStream in = new ObjectInputStream(bis);
+                ptmToPrideMap = (PtmToPrideMap) in.readObject();
+                fis.close();
+                bis.close();
+                in.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(this, "An error occured while reading " + settingFile.getAbsolutePath() + ".\n", "File Import Error", JOptionPane.WARNING_MESSAGE);
+                ptmToPrideMap = null;
+            }
+        } else {
+            ptmToPrideMap = new PtmToPrideMap();
+        }
+        boolean changes = false;
+        ModificationProfile modificationProfile = searchParameters.getModificationProfile();
+        for (String psPtm : modificationProfile.getPeptideShakerNames()) {
+            if (ptmToPrideMap.getCVTerm(psPtm) == null) {
+                for (String utilitiesPtm : modificationProfile.getUtilitiesNames()) {
+                    if (modificationProfile.getPeptideShakerName(utilitiesPtm).equals(psPtm)) {
+                        String defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(utilitiesPtm);
+                        if (defaultCVTerm != null) {
+                            ptmToPrideMap.putCVTerm(psPtm, defaultCVTerm);
+                            changes = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if (changes) {
+            savePtmToPrideMap(ptmToPrideMap);
+        }
+        return ptmToPrideMap;
+    }
+
+    /**
+     * Saves the ptm to cv term map
+     *
+     * @param ptmToPrideMap the map to save
+     */
+    public void savePtmToPrideMap(PtmToPrideMap ptmToPrideMap) {
+        try {
+            File matchFile = new File(PrideExportDialog.prideFolder, PtmToPrideMap.fileName);
+            if (!matchFile.getParentFile().exists()) {
+                matchFile.getParentFile().mkdir();
+            }
+            FileOutputStream fos = new FileOutputStream(matchFile);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            ObjectOutputStream oos = new ObjectOutputStream(bos);
+            oos.writeObject(ptmToPrideMap);
+            oos.close();
+            bos.close();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "An error occured while saving the pride preferences.\n", "File Export Error", JOptionPane.WARNING_MESSAGE);
+        }
     }
 
     /**

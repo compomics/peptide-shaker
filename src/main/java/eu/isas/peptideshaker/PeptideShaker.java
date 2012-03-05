@@ -525,6 +525,9 @@ public class PeptideShaker {
             } else {
                 waitingDialog.increaseSecondaryProgressValue();
             }
+            if (waitingDialog.isRunCanceled()) {
+                return;
+            }
         }
         SpectrumMatch conflictingPSM;
         PeptideAssumption bestAssumption;
@@ -563,6 +566,9 @@ public class PeptideShaker {
                 }
             }
             waitingDialog.increaseSecondaryProgressValue();
+            if (waitingDialog.isRunCanceled()) {
+                return;
+            }
         }
 
         waitingDialog.setSecondaryProgressDialogIntermediate(true);

@@ -82,6 +82,9 @@ public class Contact {
             tempInstitution = tempInstitution.substring(0, tempInstitution.length() - 1);
         }
 
+        if (!contactFile.getParentFile().exists()) {
+            contactFile.getParentFile().mkdirs();
+        }
 
         FileWriter r = new FileWriter(contactFile);
         BufferedWriter bw = new BufferedWriter(r);

@@ -16,15 +16,16 @@ import com.compomics.util.experiment.massspectrometry.Spectrum;
 import com.compomics.util.experiment.massspectrometry.SpectrumFactory;
 import com.compomics.util.gui.dialogs.ProgressDialogX;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.myparameters.PSMaps;
 import eu.isas.peptideshaker.myparameters.PSParameter;
 import eu.isas.peptideshaker.preferences.AnnotationPreferences;
+import eu.isas.peptideshaker.pride.gui.PrideExportDialog;
 import eu.isas.peptideshaker.pride.util.BinaryArrayImpl;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import eu.isas.peptideshaker.scoring.PsmSpecificMap;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.JOptionPane;
 import uk.ac.ebi.jmzml.xml.io.MzMLUnmarshallerException;
 
 /**
@@ -48,6 +49,10 @@ public class PRIDEExport {
     private int tabCounter = 0;
     private SpectrumFactory spectrumFactory = SpectrumFactory.getInstance();
     /**
+     * The ptm to pride map
+     */
+    private PtmToPrideMap ptmToPrideMap;
+    /**
      * The spectrum key to PRIDE spectrum index map - key: spectrum key,
      * element: PRIDE XML file spectrum index.
      */
@@ -67,6 +72,7 @@ public class PRIDEExport {
         this.protocol = protocol;
         this.instrument = instrument;
         this.outputFolder = outputFolder;
+        ptmToPrideMap = peptideShakerGUI.loadPrideToPtmMap();
     }
 
     public void createPrideXmlFile(ProgressDialogX progressDialog) {
@@ -129,6 +135,10 @@ public class PRIDEExport {
         progressDialog.setMax(proteinKeys.size());
         progressDialog.setValue(0);
 
+        PSMaps pSMaps = new PSMaps();
+        pSMaps = (PSMaps) peptideShakerGUI.getIdentification().getUrParam(pSMaps);
+        PsmSpecificMap targetDecoyMap = pSMaps.getPsmSpecificMap();
+
         for (int i = 0; i < proteinKeys.size(); i++) {
             String proteinKey = proteinKeys.get(i);
             ProteinMatch proteinMatch = identification.getProteinMatch(proteinKey);
@@ -164,6 +174,8 @@ public class PRIDEExport {
                                     Peptide tempPeptide = bestAssumption.getPeptide();
                                     probabilities = (PSParameter) identification.getMatchParameter(tempPeptide.getKey(), probabilities);
 
+                                    double confidenceThreshold = targetDecoyMap.getTargetDecoyMap(bestAssumption.getIdentificationCharge().value).getTargetDecoyResults().getConfidenceLimit();
+
                                     // the peptide
                                     br.write(getCurrentTabSpace() + "<PeptideItem>\n");
                                     tabCounter++;
@@ -195,15 +207,15 @@ public class PRIDEExport {
                                     br.write(getCurrentTabSpace() + "<additional>\n");
                                     tabCounter++;
                                     // @TODO: add additional parameters
-                                    // example: <userParam name="MascotConfidenceLevel" value="95.0" />
+                                    //br.write(getCurrentTabSpace() + "<userParam name=\"MascotConfidenceLevel\" value=\"95.0\" />");
                                     tabCounter--;
                                     br.write(getCurrentTabSpace() + "</additional>\n");
 
                                     // score
-                                    br.write(getCurrentTabSpace() + "<Score>" + probabilities.getPsmConfidence() + "</Score>\n"); // @TODO: is this the correct value to use??
+                                    br.write(getCurrentTabSpace() + "<Score>" + probabilities.getPsmConfidence() + "</Score>\n");
 
                                     // threshold
-                                    //br.write(getCurrentTabSpace() + "<Threshold>" + probabilities. + "</Threshold>\n"); // @TODO: do we have a threshold to put here??
+                                    br.write(getCurrentTabSpace() + "<Threshold>" + confidenceThreshold + "</Threshold>\n");
 
                                     // SearchEngine
                                     br.write(getCurrentTabSpace() + "<SearchEngine>" + "PeptideShaker" + "</SearchEngine>\n"); // @TODO: is this correct??
@@ -336,11 +348,11 @@ public class PRIDEExport {
     }
 
     private void writePrecursorIon(BufferedWriter br, IonMatch ionMatch) throws IOException {
-        
+
         PeptideFragmentIon fragmentIon = ((PeptideFragmentIon) ionMatch.ion);
-        
+
         String ionNameLine = "";
-        
+
         boolean precursorAdded = false;
 
         if (fragmentIon.getNeutralLosses().isEmpty()) {
@@ -358,9 +370,9 @@ public class PRIDEExport {
         }
 
         if (precursorAdded) {
-            
+
             // @TODO: the required precursor CV terms are missing... using product ion cv terms instead!!
-            
+
             br.write(getCurrentTabSpace() + "<FragmentIon>\n");
             tabCounter++;
             br.write(ionNameLine);
@@ -444,7 +456,7 @@ public class PRIDEExport {
                 ionNameLine = getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000259\" name=\"immonium Y\" />\n";
                 break;
         }
-        
+
         // @TODO: the immonium type seems to be ignored by PRIDE Inspector!! and just listed as "immonium"...
 
         br.write(getCurrentTabSpace() + "<FragmentIon>\n");
@@ -466,10 +478,15 @@ public class PRIDEExport {
             tabCounter++;
 
             ModificationMatch modMatch = peptide.getModificationMatches().get(i);
-            PTM ptm = pTMFactory.getPTM(modMatch.getTheoreticPtm());
+            String modName = modMatch.getTheoreticPtm();
+            PTM ptm = pTMFactory.getPTM(modName);
+            String cvTerm = ptmToPrideMap.getCVTerm(modName);
+            if (cvTerm == null) {
+                cvTerm = modName;
+            }
 
             br.write(getCurrentTabSpace() + "<ModLocation>" + modMatch.getModificationSite() + "</ModLocation>\n");
-            br.write(getCurrentTabSpace() + "<ModAccession>" + "unknown" + "</ModAccession>\n"); // @TODO: add PSI-MOD term!! example: MOD:00394
+            br.write(getCurrentTabSpace() + "<ModAccession>" + cvTerm + "</ModAccession>\n");
             br.write(getCurrentTabSpace() + "<ModDatabase>" + "MOD" + "</ModDatabase>\n");
             br.write(getCurrentTabSpace() + "<ModMonoDelta>" + ptm.getMass() + "</ModMonoDelta>\n");
 
@@ -556,7 +573,7 @@ public class PRIDEExport {
         tabCounter++;
         br.write(getCurrentTabSpace() + "<spectrumInstrument mzRangeStop=\"" + spectrum.getMaxMz()
                 + " \" mzRangeStart=\"" + spectrum.getMinMz()
-                + "\" msLevel=\"" + spectrum.getLevel() +"\" />\n");
+                + "\" msLevel=\"" + spectrum.getLevel() + "\" />\n");
         tabCounter--;
         br.write(getCurrentTabSpace() + "</spectrumSettings>\n");
 
