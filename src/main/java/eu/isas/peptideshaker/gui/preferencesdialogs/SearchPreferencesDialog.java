@@ -13,7 +13,6 @@ import eu.isas.peptideshaker.preferences.ModificationProfile;
 import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.pride.CvTerm;
 import eu.isas.peptideshaker.pride.PtmToPrideMap;
-import eu.isas.peptideshaker.pride.gui.PrideExportDialog;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 import java.io.*;
@@ -1531,9 +1530,9 @@ private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRS
                             searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row)));
                 case 5:
                     String psName = searchParameters.getModificationProfile().getPeptideShakerName(modificationList.get(row));
-                    String cvTerm = ptmToPrideMap.getCVTerm(psName);
+                    CvTerm cvTerm = ptmToPrideMap.getCVTerm(psName);
                     if (cvTerm != null) {
-                        return cvTerm;
+                        return cvTerm.getAccession();
                     }
                     return "";
                 default:

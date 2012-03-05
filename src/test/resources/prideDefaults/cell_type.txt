@@ -1,0 +1,26 @@
+CL:0000236 	B cell
+CL:0000081 	blood cell
+CL:0000451 	dendritic cell
+CL:0000415 	diploid cell
+CL:0000007 	early embryonic cell
+CL:0000211 	electrically active cell
+CL:0002322 	embryonic stem cell
+CL:0000066 	epithelial cell
+CL:0000232 	erythrocyte
+CL:0000057 	fibroblast
+CL:0000182 	hepatocyte
+CL:0000312 	keratinocyte
+CL:0000738 	leukocyte
+CL:0000235 	macrophage
+CL:0000148 	melanocyte
+CL:0000576 	monocyte
+CL:0000048 	multi fate stem cell
+CL:0000775 	neutrophil
+CL:0000023 	oocyte
+CL:0000002 	permanent cell line cell
+CL:0000628 	photosynthetic cell
+CL:0000610 	plant cell
+CL:0000233 	platelet
+CL:0000019 	sperm
+CL:0000034 	stem cell
+CL:0000084 	T cell

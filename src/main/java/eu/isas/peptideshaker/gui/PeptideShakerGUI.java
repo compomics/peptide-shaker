@@ -55,6 +55,7 @@ import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences;
 import eu.isas.peptideshaker.preferences.SpectrumCountingPreferences.SpectralCountingMethod;
 import eu.isas.peptideshaker.preferences.UserPreferences;
+import eu.isas.peptideshaker.pride.CvTerm;
 import eu.isas.peptideshaker.pride.PtmToPrideMap;
 import eu.isas.peptideshaker.pride.gui.PrideExportDialog;
 import eu.isas.peptideshaker.utils.IdentificationFeaturesGenerator;
@@ -5203,10 +5204,15 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
     /**
      * Loads the Pride to Ptm map from the user folder or creates a new one if
      * the file is not present. Loads a default mapping if a ptm is not present.
+     * 
+     * @return the Pride to Ptm map
      */
     public PtmToPrideMap loadPrideToPtmMap() {
-        PtmToPrideMap ptmToPrideMap = null;
+        
+        PtmToPrideMap ptmToPrideMap;
+        
         File settingFile = new File(PrideExportDialog.prideFolder, PtmToPrideMap.fileName);
+        
         if (settingFile.exists()) {
             try {
                 FileInputStream fis = new FileInputStream(settingFile);
@@ -5230,7 +5236,7 @@ private void projectPropertiesMenuItemActionPerformed(java.awt.event.ActionEvent
             if (ptmToPrideMap.getCVTerm(psPtm) == null) {
                 for (String utilitiesPtm : modificationProfile.getUtilitiesNames()) {
                     if (modificationProfile.getPeptideShakerName(utilitiesPtm).equals(psPtm)) {
-                        String defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(utilitiesPtm);
+                        CvTerm defaultCVTerm = PtmToPrideMap.getDefaultCVTerm(utilitiesPtm);
                         if (defaultCVTerm != null) {
                             ptmToPrideMap.putCVTerm(psPtm, defaultCVTerm);
                             changes = true;
