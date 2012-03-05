@@ -378,6 +378,13 @@ public class PRIDEExport {
             br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000189\" name=\"product ion intensity\" value=\"" + ionMatch.peak.intensity + "\" />\n"); // @TODO: precursor cv term does not exist!!
             br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000190\" name=\"product ion mass error\" value=\"" + ionMatch.getAbsoluteError() + "\" />\n"); // @TODO: precursor cv term does not exist!!
             br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"PRIDE\" accession=\"PRIDE:0000204\" name=\"product ion charge\" value=\"" + ionMatch.charge + "\" />\n"); // @TODO: precursor cv term does not exist!!
+            
+            // @TODO: use these instead of the PRIDE ones??
+//            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000744\" name=\"selected ion m/z\" value=\"" + ionMatch.peak.mz + "\" />\n");
+//            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000042\" name=\"peak intensity\" value=\"" + ionMatch.peak.intensity + "\" />\n");
+//            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:???????\" name=\"precursor ion mass error\" value=\"" + ionMatch.getAbsoluteError() + "\" />\n"); // @TODO: precursor cv term does not exist!!
+//            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000041\" name=\"ChargeState\" value=\"" + ionMatch.charge + "\" />\n");
+            
             tabCounter--;
             br.write(getCurrentTabSpace() + "</FragmentIon>\n");
         }
@@ -612,7 +619,13 @@ public class PRIDEExport {
         // precursor m/z value
         br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000744\" name=\"selected ion m/z\" value=\""
                 + spectrum.getPrecursor().getMz() + "\" />\n");
-
+        
+        // precursor intensity
+        if (spectrum.getPrecursor().getIntensity() > 0) {
+            br.write(getCurrentTabSpace() + "<cvParam cvLabel=\"MS\" accession=\"MS:1000042\" name=\"peak intensity\" value=\""
+                + spectrum.getPrecursor().getIntensity() + "\" />\n");
+        }
+        
         tabCounter--;
         br.write(getCurrentTabSpace() + "</ionSelection>\n");
 
