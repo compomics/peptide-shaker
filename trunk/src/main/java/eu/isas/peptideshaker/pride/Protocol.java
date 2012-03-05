@@ -37,6 +37,9 @@ public class Protocol {
      */
     public Protocol(File protocolFile) {
         try {
+            if (!protocolFile.getParentFile().exists()) {
+                protocolFile.getParentFile().mkdirs();
+            }
             FileReader r = new FileReader(protocolFile);
             BufferedReader br = new BufferedReader(r);
 
@@ -78,9 +81,9 @@ public class Protocol {
 
     /**
      * Save the Protocol to file.
-     * 
+     *
      * @param sampleFile
-     * @throws IOException 
+     * @throws IOException
      */
     public void saveAsFile(File sampleFile) throws IOException {
 

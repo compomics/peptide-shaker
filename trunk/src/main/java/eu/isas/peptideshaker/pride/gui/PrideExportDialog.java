@@ -5,6 +5,9 @@ import com.compomics.util.gui.dialogs.ProgressDialogX;
 import com.compomics.util.gui.renderers.AlignedListCellRenderer;
 import eu.isas.peptideshaker.gui.HelpDialog;
 import eu.isas.peptideshaker.gui.PeptideShakerGUI;
+import eu.isas.peptideshaker.gui.preferencesdialogs.SearchPreferencesDialog;
+import eu.isas.peptideshaker.gui.tabpanels.PtmPanel;
+import eu.isas.peptideshaker.preferences.SearchParameters;
 import eu.isas.peptideshaker.pride.*;
 import java.awt.Color;
 import java.awt.Toolkit;
@@ -36,6 +39,14 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
      * The references table column tool tips.
      */
     private Vector referenceTableColumnToolTips;
+    /**
+     * The folder where pride related infos are stored
+     */
+    public static final String prideFolder = System.getProperty("user.home") + "/.peptideshaker/pride/";
+    /**
+     * The ptm to pride map
+     */
+    private PtmToPrideMap ptmToPrideMap;
 
     /**
      * Create a new PrideExportDialog.
@@ -46,6 +57,24 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
     public PrideExportDialog(PeptideShakerGUI peptideShakerGUI, boolean modal) {
         super(peptideShakerGUI, modal);
         this.peptideShakerGUI = peptideShakerGUI;
+        ptmToPrideMap = peptideShakerGUI.loadPrideToPtmMap();
+        ArrayList<String> missingMods = checkModifications();
+        if (!missingMods.isEmpty()) {
+            String report = "Pride CV term missing for the following modifications:\n";
+            boolean first = true;
+            for (String mod : missingMods) {
+                if (first) {
+                    first = false;
+                } else {
+                    report += ",\n";
+                }
+                report += mod;
+            }
+            report += ".\nPlease add a CV term by clicking on the corresponding case in the PTM table.";
+            JOptionPane.showMessageDialog(this, report, "PTM cv term(s) missing.", JOptionPane.WARNING_MESSAGE);
+            new SearchPreferencesDialog(peptideShakerGUI, modal);
+        }
+
         initComponents();
 
         referenceTableColumnToolTips = new Vector();
@@ -71,13 +100,28 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
         validateInput();
 
         // insert available contacts, instruments, protocols and samples
-        insertOptions("conf/pride/contacts", ".con", "--- Select a Contact ---", "   Create a New Contact...", contactsJComboBox);
-        insertOptions("conf/pride/samples", ".sam", "--- Select a Sample Set ---", "   Create a New Sample Set...", sampleJComboBox);
-        insertOptions("conf/pride/protocols", ".pro", "--- Select a Protocol ---", "   Create a New Protocol...", protocolJComboBox);
-        insertOptions("conf/pride/instruments", ".int", "--- Select an Instrument ---", "   Create a New Instrument...", instrumentJComboBox);
+        insertOptions("contacts", ".con", "--- Select a Contact ---", "   Create a New Contact...", contactsJComboBox);
+        insertOptions("samples", ".sam", "--- Select a Sample Set ---", "   Create a New Sample Set...", sampleJComboBox);
+        insertOptions("protocols", ".pro", "--- Select a Protocol ---", "   Create a New Protocol...", protocolJComboBox);
+        insertOptions("instruments", ".int", "--- Select an Instrument ---", "   Create a New Instrument...", instrumentJComboBox);
 
         setLocationRelativeTo(peptideShakerGUI);
         setVisible(true);
+    }
+
+    /**
+     * Verifies that all modifications have a pride cv term
+     *
+     * @return a boolean indicating that PTMs are configured correctly
+     */
+    private ArrayList<String> checkModifications() {
+        ArrayList<String> missingTerm = new ArrayList<String>();
+        for (String modification : peptideShakerGUI.getFoundModifications()) {
+            if (!modification.equals(PtmPanel.NO_MODIFICATION) && ptmToPrideMap.getCVTerm(modification) == null) {
+                missingTerm.add(modification);
+            }
+        }
+        return missingTerm;
     }
 
     /**
@@ -90,8 +134,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
     /**
      * Insert the contact, sample, protocol and instrument options.
      *
-     * @param optionsPath the path to the option files, e.g.,
-     * conf/pride/contacts
+     * @param optionsPath the path to the option files, e.g., contacts
      * @param fileEnding the file ending, e.g., .con
      * @param selectText the text to use for the select item, e.g., --- Select a
      * Contact ---
@@ -101,10 +144,10 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
      */
     private void insertOptions(String optionsPath, String fileEnding, String selectText, String insertNewText, JComboBox optionComboBox) {
 
-        File optionFolder = new File(peptideShakerGUI.getJarFilePath(), optionsPath);
+        File optionFolder = new File(prideFolder, optionsPath);
 
         if (!optionFolder.exists()) {
-            optionFolder.mkdir();
+            optionFolder.mkdirs();
         }
 
         File[] optionFiles = optionFolder.listFiles();
@@ -959,7 +1002,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         // get the selected contact details
         String selectedContact = (String) contactsJComboBox.getSelectedItem();
-        File contactsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/contacts");
+        File contactsFolder = new File(prideFolder, "contacts");
         Contact tempContact = new Contact(new File(contactsFolder, selectedContact + ".con"));
 
         new NewContactDialog(this, true, tempContact);
@@ -974,7 +1017,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
         // get the selected sample details
         String selectedSample = (String) sampleJComboBox.getSelectedItem();
-        File samplesFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/samples");
+        File samplesFolder = new File(prideFolder, "samples");
         Sample tempSample = new Sample(new File(samplesFolder, selectedSample + ".sam"));
 
         new NewSampleDialog(this, true, tempSample);
@@ -988,7 +1031,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
     private void editProtocolJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editProtocolJButtonActionPerformed
         // get the selected protcol details
         String selectedProtocol = (String) protocolJComboBox.getSelectedItem();
-        File protocolsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/protocols");
+        File protocolsFolder = new File(prideFolder, "protocols");
         Protocol tempProtocol = new Protocol(new File(protocolsFolder, selectedProtocol + ".pro"));
 
         new NewProtocolDialog(this, true, tempProtocol);
@@ -1002,7 +1045,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
     private void editInstrumentJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_editInstrumentJButtonActionPerformed
         // get the selected instrument details
         String selectedInstrument = (String) instrumentJComboBox.getSelectedItem();
-        File instrumentFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/instruments");
+        File instrumentFolder = new File(prideFolder, "instruments");
         Instrument tempInstrument = new Instrument(new File(instrumentFolder, selectedInstrument + ".int"));
 
         new NewInstrumentDialog(this, true, tempInstrument);
@@ -1010,8 +1053,8 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
     /**
      * Convert the project to a PRIDE XML file.
-     * 
-     * @param evt 
+     *
+     * @param evt
      */
     private void convertJButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_convertJButtonActionPerformed
 
@@ -1033,7 +1076,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
             @Override
             public void run() {
-                
+
                 // change the peptide shaker icon to a "waiting version"
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker-orange.gif")));
 
@@ -1049,22 +1092,22 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
                 // get the selected contact details
                 String selectedContact = (String) contactsJComboBox.getSelectedItem();
-                File contactsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/contacts");
+                File contactsFolder = new File(prideFolder, "contacts");
                 Contact contact = new Contact(new File(contactsFolder, selectedContact + ".con"));
 
                 // get the selected sample details
                 String selectedSample = (String) sampleJComboBox.getSelectedItem();
-                File samplesFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/samples");
+                File samplesFolder = new File(prideFolder, "samples");
                 Sample sample = new Sample(new File(samplesFolder, selectedSample + ".sam"));
 
                 // get the selected protcol details
                 String selectedProtocol = (String) protocolJComboBox.getSelectedItem();
-                File protocolsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/protocols");
+                File protocolsFolder = new File(prideFolder, "protocols");
                 Protocol protocol = new Protocol(new File(protocolsFolder, selectedProtocol + ".pro"));
 
                 // get the selected instrument details
                 String selectedInstrument = (String) instrumentJComboBox.getSelectedItem();
-                File instrumentFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/instruments");
+                File instrumentFolder = new File(prideFolder, "instruments");
                 Instrument instrument = new Instrument(new File(instrumentFolder, selectedInstrument + ".int"));
 
                 PRIDEExport prideExport = new PRIDEExport(peptideShakerGUI, titleJTextField.getText(), labelJTextField.getText(), descriptionJTextArea.getText(), projectJTextField.getText(),
@@ -1072,7 +1115,7 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
 
                 prideExport.createPrideXmlFile(progressDialog);
                 progressDialog.dispose();
-                
+
                 // return the peptide shaker icon to the standard version
                 peptideShakerGUI.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/icons/peptide-shaker.gif")));
 
@@ -1252,13 +1295,13 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
      */
     public void setProtocol(Protocol protocol) {
 
-        File protocolsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/protocols");
+        File protocolsFolder = new File(prideFolder, "protocols");
         File protocolsFile = new File(protocolsFolder, protocol.getName() + ".pro");
 
         try {
             protocol.saveAsFile(protocolsFile);
 
-            insertOptions("conf/pride/protocols", ".pro", "--- Select a Protocol ---", "   Create a New Protocol...", protocolJComboBox);
+            insertOptions("protocols", ".pro", "--- Select a Protocol ---", "   Create a New Protocol...", protocolJComboBox);
 
             int selectedProtocolIndex = 0;
 
@@ -1292,13 +1335,13 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
      */
     public void setInstrument(Instrument instrument) {
 
-        File instrumentsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/instruments");
+        File instrumentsFolder = new File(prideFolder, "instruments");
         File instrumentsFile = new File(instrumentsFolder, instrument.getName() + ".int");
 
         try {
             instrument.saveAsFile(instrumentsFile);
 
-            insertOptions("conf/pride/instruments", ".int", "--- Select an Instrument ---", "   Create a New Instrument...", instrumentJComboBox);
+            insertOptions("instruments", ".int", "--- Select an Instrument ---", "   Create a New Instrument...", instrumentJComboBox);
 
             int selectedInstrumentIndex = 0;
 
@@ -1332,13 +1375,13 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
      */
     public void setSample(Sample sample) {
 
-        File samplesFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/samples");
+        File samplesFolder = new File(prideFolder, "samples");
         File samplesFile = new File(samplesFolder, sample.getName() + ".sam");
 
         try {
             sample.saveAsFile(samplesFile);
 
-            insertOptions("conf/pride/samples", ".sam", "--- Select a Sample ---", "   Create a New Sample...", sampleJComboBox);
+            insertOptions("samples", ".sam", "--- Select a Sample ---", "   Create a New Sample...", sampleJComboBox);
 
             int selectedSampleIndex = 0;
 
@@ -1373,13 +1416,13 @@ public class PrideExportDialog extends javax.swing.JDialog implements ProgressDi
      */
     public void setContact(Contact contact) {
 
-        File contactsFolder = new File(peptideShakerGUI.getJarFilePath(), "conf/pride/contacts");
+        File contactsFolder = new File(prideFolder, "contacts");
         File contactFile = new File(contactsFolder, contact.getName() + ".con");
 
         try {
             contact.saveAsFile(contactFile);
 
-            insertOptions("conf/pride/contacts", ".con", "--- Select a Contact ---", "   Create a New Contact...", contactsJComboBox);
+            insertOptions("contacts", ".con", "--- Select a Contact ---", "   Create a New Contact...", contactsJComboBox);
 
             int selectedContactIndex = 0;
 

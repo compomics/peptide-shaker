@@ -37,6 +37,9 @@ public class Sample {
      */
     public Sample(File sampleFile) {
         try {
+            if (!sampleFile.getParentFile().exists()) {
+                sampleFile.getParentFile().mkdirs();
+            }
             FileReader r = new FileReader(sampleFile);
             BufferedReader br = new BufferedReader(r);
 
@@ -78,9 +81,9 @@ public class Sample {
 
     /**
      * Save the Sample to file.
-     * 
+     *
      * @param sampleFile
-     * @throws IOException 
+     * @throws IOException
      */
     public void saveAsFile(File sampleFile) throws IOException {
 

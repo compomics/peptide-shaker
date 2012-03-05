@@ -49,6 +49,10 @@ public class Instrument {
      */
     public Instrument(File instrumentFile) {
         try {
+
+            if (!instrumentFile.getParentFile().exists()) {
+                instrumentFile.getParentFile().mkdirs();
+            }
             FileReader r = new FileReader(instrumentFile);
             BufferedReader br = new BufferedReader(r);
 
@@ -146,14 +150,14 @@ public class Instrument {
         br.write("Name: " + source.getName() + "\n");
         br.write("Value: " + source.getValue() + "\n");
         br.write("\n");
-        
+
         br.write("#instrument detector\n");
         br.write("Accession: " + detector.getAccession() + "\n");
         br.write("Ontology: " + detector.getOntology() + "\n");
         br.write("Name: " + detector.getName() + "\n");
         br.write("Value: " + detector.getValue() + "\n");
         br.write("\n");
-        
+
         br.write("#analyzers\n" + cvTerms.size() + "\n");
 
         for (int i = 0; i < cvTerms.size(); i++) {
